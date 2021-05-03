@@ -1,41 +1,13 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSchedulingConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasHibernateJpaConfiguration;
-import org.apereo.cas.config.CasOAuth20Configuration;
-import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
-import org.apereo.cas.config.CasOAuth20TicketSerializationConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.JpaTicketRegistryConfiguration;
-import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
-import org.apereo.cas.config.OAuth20ProtocolTicketCatalogConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
@@ -43,22 +15,24 @@ import org.apereo.cas.ticket.device.OAuth20DeviceToken;
 import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
-import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Import;
 
 import java.util.Collections;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -68,8 +42,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@SpringBootTest(classes = JpaTicketRegistryCleanerTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = JpaTicketRegistryTests.SharedTestConfiguration.class)
 @Tag("JDBC")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class JpaTicketRegistryCleanerTests {
     @Autowired
     @Qualifier("defaultTicketFactory")
@@ -93,6 +68,7 @@ public class JpaTicketRegistryCleanerTests {
     }
 
     @Test
+    @Order(10)
     public void verifyOperation() {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
@@ -121,6 +97,7 @@ public class JpaTicketRegistryCleanerTests {
     }
 
     @Test
+    @Order(10)
     public void verifyTransientTicketCleaning() {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
@@ -145,6 +122,7 @@ public class JpaTicketRegistryCleanerTests {
     }
 
     @Test
+    @Order(1)
     public void verifyOauthOperation() {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
@@ -168,12 +146,12 @@ public class JpaTicketRegistryCleanerTests {
         ticketRegistry.updateTicket(tgt);
 
         assertEquals(2, ticketRegistryCleaner.clean());
-
         assertEquals(0, ticketRegistry.sessionCount());
         assertNull(ticketRegistry.getTicket(at.getId()));
     }
 
     @Test
+    @Order(10)
     public void verifyDeviceCodeAndUserCleaning() {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
@@ -203,44 +181,39 @@ public class JpaTicketRegistryCleanerTests {
         assertTrue(ticketRegistry.getTickets().isEmpty());
     }
 
-    @ImportAutoConfiguration({
-        AopAutoConfiguration.class,
-        RefreshAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
-        JpaTicketRegistryTicketCatalogConfiguration.class,
-        JpaTicketRegistryConfiguration.class,
-        CasHibernateJpaConfiguration.class,
-        CasCoreTicketsSchedulingConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreNotificationsConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCookieConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreTicketsSerializationConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasOAuth20Configuration.class,
-        CasOAuth20EndpointsConfiguration.class,
-        CasOAuth20TicketSerializationConfiguration.class,
-        OAuth20ProtocolTicketCatalogConfiguration.class
-    })
-    public static class SharedTestConfiguration {
+    @Test
+    @Order(100)
+    public void verifyConcurrentCleaner() throws Exception {
+        val registryTask = new TimerTask() {
+            public void run() {
+                for (int i = 0; i < 5; i++) {
+                    val tgt = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + '-' + RandomUtils.randomAlphabetic(16),
+                        CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()),
+                        new HardTimeoutExpirationPolicy(1));
+                    ticketRegistry.addTicket(tgt);
+
+                    val st = tgt.grantServiceTicket(ServiceTicket.PREFIX + '-'
+                            + RandomUtils.randomAlphabetic(16), RegisteredServiceTestUtils.getService(),
+                        new HardTimeoutExpirationPolicy(1), true, false);
+                    ticketRegistry.addTicket(st);
+                    ticketRegistry.updateTicket(tgt);
+                }
+            }
+        };
+        val registryTimer = new Timer("TicketRegistry");
+        registryTimer.scheduleAtFixedRate(registryTask, 5, 5);
+
+
+        val cleanerTask = new TimerTask() {
+            public void run() {
+                ticketRegistryCleaner.clean();
+            }
+        };
+        val cleanerTimer = new Timer("TicketRegistryCleaner");
+        cleanerTimer.scheduleAtFixedRate(cleanerTask, 10, 5);
+
+        Thread.sleep(1000 * 15);
+        ticketRegistry.deleteAll();
     }
+
 }

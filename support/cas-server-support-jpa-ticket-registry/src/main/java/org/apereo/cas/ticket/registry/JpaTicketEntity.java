@@ -19,6 +19,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 
 /**
  * This is {@link JpaTicketEntity}.
@@ -61,6 +62,9 @@ public class JpaTicketEntity implements Serializable {
     @Column(nullable = false, length = 1024)
     private String type;
 
+    @Column(name = "CREATION_TIME", length = 512)
+    private ZonedDateTime creationTime;
+
     private static TicketSerializationManager getInstance() {
         if (TICKET_SERIALIZATION_MANAGER == null) {
             TICKET_SERIALIZATION_MANAGER = ApplicationContextProvider.getApplicationContext().getBean(TicketSerializationManager.class);
@@ -85,6 +89,7 @@ public class JpaTicketEntity implements Serializable {
             .body(jsonBody)
             .type(ticket.getClass().getName())
             .principalId(authentication != null ? authentication.getPrincipal().getId() : null)
+            .creationTime(ticket.getCreationTime())
             .build();
     }
 
