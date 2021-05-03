@@ -58,7 +58,7 @@ public class DynamoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request,
-                                  final YubiKeyRegisteredDevice... device) {
+                               final YubiKeyRegisteredDevice... device) {
         val account = YubiKeyAccount.builder()
             .username(request.getUsername())
             .devices(Arrays.stream(device).collect(Collectors.toList()))
