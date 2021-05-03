@@ -46,8 +46,6 @@ The following endpoints are provided by CAS:
 | Endpoint                 | Description
 |--------------------------|------------------------------------------------
 | `registeredServices`     | Provides a JSON representation of the [CAS service registry](Service-Management.html). The endpoint can also accept a mime-type of `application/vnd.cas.services+yaml` to produce YAML output. A `GET` operation with a parameter selector of `/{id}` will fetch a specific service definition. A `DELETE` operation with a parameter selector of `/{id}` will delete the specific service definition by its id.
-| `exportRegisteredServices`    | Provides a ZIP-file representation of the [CAS service registry](Service-Management.html).
-| `importRegisteredServices`    | Import service definitions into the [CAS service registry](Service-Management.html). The request body is expected to be the service definition itself. For bulk imports, you may also specify a zip file containing service definition files with the content-type of `application/octet-stream`.
 
 ## Service Management Web Application
 

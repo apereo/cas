@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -62,7 +63,7 @@ public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegis
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() {
-                getNewTicketRegistry().addTicket(null);
+                getNewTicketRegistry().addTicket((Ticket) null);
                 getNewTicketRegistry().updateTicket(null);
             }
         });

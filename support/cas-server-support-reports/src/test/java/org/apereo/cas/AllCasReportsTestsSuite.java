@@ -5,8 +5,6 @@ import org.apereo.cas.web.report.CasInfoEndpointContributorTests;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpointTests;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpointTests;
 import org.apereo.cas.web.report.CasRuntimeModulesEndpointTests;
-import org.apereo.cas.web.report.ExportRegisteredServicesEndpointTests;
-import org.apereo.cas.web.report.ImportRegisteredServicesEndpointTests;
 import org.apereo.cas.web.report.LoggingConfigurationEndpointTests;
 import org.apereo.cas.web.report.RegisteredAuthenticationHandlersEndpointTests;
 import org.apereo.cas.web.report.RegisteredAuthenticationPoliciesEndpointTests;
@@ -35,10 +33,9 @@ import org.junit.runner.RunWith;
     RegisteredServicesEndpointTests.class,
     RegisteredAuthenticationHandlersEndpointTests.class,
     StatusEndpointTests.class,
+    StatusEndpointWithHealthTests.class,
     CasRuntimeModulesEndpointTests.class,
     TicketExpirationPoliciesEndpointTests.class,
-    ImportRegisteredServicesEndpointTests.class,
-    StatusEndpointWithHealthTests.class,
     StatisticsEndpointTests.class,
     SingleSignOnSessionsEndpointTests.class,
     SpringWebflowEndpointTests.class,
@@ -46,8 +43,7 @@ import org.junit.runner.RunWith;
     CasInfoEndpointContributorTests.class,
     RegisteredAuthenticationPoliciesEndpointTests.class,
     CasResolveAttributesReportEndpointTests.class,
-    CasReleaseAttributesReportEndpointTests.class,
-    ExportRegisteredServicesEndpointTests.class
+    CasReleaseAttributesReportEndpointTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllCasReportsTestsSuite {
