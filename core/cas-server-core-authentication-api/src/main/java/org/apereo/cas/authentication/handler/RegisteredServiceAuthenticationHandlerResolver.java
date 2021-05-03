@@ -93,7 +93,7 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
                     && !requiredHandlers.contains(handlerName);
                 if (removeHandler) {
                     it.remove();
-                    LOGGER.debug("Authentication handler ReturnAllAttributeRelease[{}] is not required for this transaction and is removed", handlerName);
+                    LOGGER.debug("Authentication handler [{}] is removed", handlerName);
                 }
             }
         }
