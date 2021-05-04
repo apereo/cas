@@ -3,7 +3,6 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.Tag;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -20,7 +19,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.jpa.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
 })
 @EnabledIfPortOpen(port = 5432)
-@Tag("Unknown")
-@DirtiesContext
+@Tag("Postgres")
 public class PostgresJpaTicketRegistryTests extends JpaTicketRegistryTests {
 }

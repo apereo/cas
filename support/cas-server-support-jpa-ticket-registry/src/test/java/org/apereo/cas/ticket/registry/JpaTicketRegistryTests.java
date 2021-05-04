@@ -10,6 +10,7 @@ import org.apereo.cas.config.CasWsSecurityTokenTicketComponentSerializationConfi
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.OAuth20ProtocolTicketCatalogConfiguration;
+import org.apereo.cas.configuration.support.CloseableDataSource;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.DefaultSecurityTokenTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -19,13 +20,14 @@ import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,13 +71,18 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
     @Qualifier("ticketRegistry")
     protected TicketRegistry newTicketRegistry;
 
+    @AfterAll
+    public static void afterAllTests() throws Exception {
+        ApplicationContextProvider.getApplicationContext()
+            .getBean("dataSourceTicket", CloseableDataSource.class).close();
+    }
+
     @AfterEach
     public void cleanup() {
         newTicketRegistry.deleteAll();
     }
 
     @RepeatedTest(2)
-    @Disabled
     public void verifyLargeDataset() {
         val ticketGrantingTickets = Stream.generate(() -> {
             var ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
