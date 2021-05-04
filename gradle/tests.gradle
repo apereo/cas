@@ -19,7 +19,7 @@ enum TestCategories {
 //    Ignite,
 //    Infinispan,
 //    InfluxDb,
-    JDBC,
+//    JDBC,
 //    JMS,
 //    JMX,
 //    Kafka,

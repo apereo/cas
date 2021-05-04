@@ -25,6 +25,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,7 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
+    @Disabled
     public void verifyLargeDataset() {
         val ticketGrantingTickets = Stream.generate(() -> {
             var ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
