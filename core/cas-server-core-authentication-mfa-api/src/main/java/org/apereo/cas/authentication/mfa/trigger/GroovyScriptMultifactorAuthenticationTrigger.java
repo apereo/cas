@@ -68,16 +68,6 @@ public class GroovyScriptMultifactorAuthenticationTrigger implements Multifactor
             return Optional.empty();
         }
         
-        if (registeredService == null) {
-            LOGGER.debug("No registered service is available to determine event for principal [{}]", authentication.getPrincipal());
-            return Optional.empty();
-        }
-
-        if (service == null) {
-            LOGGER.debug("No service is available to determine event for principal [{}]", authentication.getPrincipal());
-            return Optional.empty();
-        }
-        
         val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");

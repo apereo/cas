@@ -74,7 +74,8 @@ public class DefaultAuthenticationResultBuilderTests {
         assertNotNull(authentication);
         val authnAttributes = authentication.getAttributes();
         assertTrue(authnAttributes.containsKey("authn"));
-        assertEquals(2, ((Collection) authnAttributes.get("authn")).size());
+        assertEquals(1, ((Collection) authnAttributes.get("authn")).size());
+        assertEquals("test2", authnAttributes.get("authn").iterator().next());
 
         val principal = authentication.getPrincipal();
         assertNotNull(principal);

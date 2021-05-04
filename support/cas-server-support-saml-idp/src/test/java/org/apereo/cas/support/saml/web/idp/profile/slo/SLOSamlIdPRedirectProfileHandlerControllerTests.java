@@ -103,8 +103,10 @@ public class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdP
         logoutResponse.setInResponseTo("https://cas.example.org");
 
         val encoder = new SamlIdPHttpRedirectDeflateEncoder("https://cas.example.org/logout", logoutResponse);
+        encoder.setRelayState("CasRelayState");
         encoder.doEncode();
 
+        assertTrue(encoder.getRedirectUrl().contains("CasRelayState"));
         val queryStrings = StringUtils.remove(encoder.getRedirectUrl(), "https://cas.example.org/logout?");
         new URLBuilder(encoder.getRedirectUrl())
             .getQueryParams().forEach(param -> request.addParameter(param.getFirst(), param.getSecond()));

@@ -774,6 +774,16 @@ public class WebUtils {
     }
 
     /**
+     * Is password management enabled.
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    public static boolean isPasswordManagementEnabled(final RequestContext context) {
+        return context.getFlowScope().get("passwordManagementEnabled", Boolean.class);
+    }
+
+    /**
      * Put principal.
      *
      * @param requestContext          the request context
@@ -1624,5 +1634,37 @@ public class WebUtils {
      */
     public static Boolean isRecaptchaPasswordManagementEnabled(final RequestContext requestContext) {
         return requestContext.getFlowScope().get("recaptchaPasswordManagementEnabled", Boolean.class);
+    }
+
+    /**
+     * Put simple multifactor authentication token.
+     *
+     * @param requestContext the request context
+     * @param token          the token
+     */
+    public static void putSimpleMultifactorAuthenticationToken(final RequestContext requestContext, final Ticket token) {
+        requestContext.getFlowScope().put("simpleMultifactorAuthenticationToken", token);
+    }
+
+    /**
+     * Remove simple multifactor authentication token.
+     *
+     * @param requestContext the request context
+     */
+    public static void removeSimpleMultifactorAuthenticationToken(final RequestContext requestContext) {
+        requestContext.getFlowScope().remove("simpleMultifactorAuthenticationToken");
+    }
+
+    /**
+     * Gets simple multifactor authentication token.
+     *
+     * @param <T>            the type parameter
+     * @param requestContext the request context
+     * @param clazz          the clazz
+     * @return the simple multifactor authentication token
+     */
+    public static <T extends Ticket> T getSimpleMultifactorAuthenticationToken(final RequestContext requestContext,
+                                                                               final Class<T> clazz) {
+        return requestContext.getFlowScope().get("simpleMultifactorAuthenticationToken", clazz);
     }
 }

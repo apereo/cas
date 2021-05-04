@@ -54,6 +54,8 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
         properties.put(Environment.DIALECT, jpaProperties.getDialect());
         properties.put(Environment.HBM2DDL_AUTO, jpaProperties.getDdlAuto());
         properties.put(Environment.STATEMENT_BATCH_SIZE, jpaProperties.getBatchSize());
+        properties.put(Environment.GENERATE_STATISTICS, jpaProperties.isGenerateStatistics());
+
         if (StringUtils.isNotBlank(jpaProperties.getDefaultCatalog())) {
             properties.put(Environment.DEFAULT_CATALOG, jpaProperties.getDefaultCatalog());
         }
@@ -67,6 +69,8 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
         properties.put("hibernate.connection.charSet", StandardCharsets.UTF_8.name());
         properties.put(Environment.AUTOCOMMIT, jpaProperties.isAutocommit());
         properties.put("hibernate.jdbc.time_zone", "UTC");
+        properties.put("hibernate.jdbc.fetch_size", jpaProperties.getFetchSize());
+
         if (StringUtils.isNotBlank(jpaProperties.getPhysicalNamingStrategyClassName())) {
             try {
                 val clazz = ClassUtils.getClass(JpaBeans.class.getClassLoader(), jpaProperties.getPhysicalNamingStrategyClassName());

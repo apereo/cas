@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationProviderResolver;
-import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
+import org.apereo.cas.authentication.DefaultMultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
@@ -257,7 +257,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @Autowired
     public MultifactorAuthenticationTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy(final List<MultifactorAuthenticationTrigger> triggers) {
         AnnotationAwareOrderComparator.sortIfNecessary(triggers);
-        return new DefaultMultifactorTriggerSelectionStrategy(triggers);
+        return new DefaultMultifactorAuthenticationTriggerSelectionStrategy(triggers);
     }
 
     @Bean

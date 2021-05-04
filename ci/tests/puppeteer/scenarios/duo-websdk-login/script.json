@@ -4,7 +4,12 @@
     "--cas.authn.mfa.duo[0].duo-secret-key=0K4VewoCASar64vFwdUfg8SvAm8GF6MnMaBWCk21",
     "--cas.authn.mfa.duo[0].duo-application-key=u4IHBaDUDE8Cb0S5QMISAgHycpj9lPBkDGfWt66I",
     "--cas.authn.mfa.duo[0].duo-integration-key=DIBLHRWL2KQK8EUAQZ55",
-    "--cas.authn.mfa.duo[0].duo-api-host=api.duosecurity.com"
+    "--cas.authn.mfa.duo[0].duo-api-host=api.duosecurity.com",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=duoPing,duoAccountStatus",
+    "--management.endpoint.health.show-details=always",
+    "--management.endpoints.enabled-by-default=true"
   ]
 }
 

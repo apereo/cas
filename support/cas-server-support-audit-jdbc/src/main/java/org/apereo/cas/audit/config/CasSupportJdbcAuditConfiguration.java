@@ -86,7 +86,7 @@ public class CasSupportJdbcAuditConfiguration {
             .jpaVendorAdapter(factory.newJpaVendorAdapter(casProperties.getJdbc()))
             .persistenceUnitName("jpaInspektrAuditContext")
             .dataSource(inspektrAuditTrailDataSource())
-            .packagesToScan(CollectionUtils.wrap(AuditTrailEntity.class.getPackage().getName()))
+            .packagesToScan(CollectionUtils.wrapSet(AuditTrailEntity.class.getPackage().getName()))
             .build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc());
     }

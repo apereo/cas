@@ -76,6 +76,16 @@ public class AuthenticationExceptionHandlerActionTests {
     }
 
     @Test
+    public void handleDefaultError() throws Exception {
+        val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(new LinkedHashSet<>()));
+        val req = getMockRequestContext();
+        val event = new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
+        when(req.getCurrentEvent()).thenReturn(event);
+        val id = handler.execute(req);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, id.getId());
+    }
+
+    @Test
     public void handleUnknownTicketExceptionByDefault() {
         val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(new LinkedHashSet<>()));
         val req = getMockRequestContext();

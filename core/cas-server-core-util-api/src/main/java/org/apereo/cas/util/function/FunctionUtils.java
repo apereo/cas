@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
@@ -318,5 +319,18 @@ public class FunctionUtils {
         retryTemplate.setRetryPolicy(new SimpleRetryPolicy(SimpleRetryPolicy.DEFAULT_MAX_ATTEMPTS, classified, true));
         retryTemplate.setThrowLastExceptionOnExhausted(true);
         return retryTemplate.execute(callback);
+    }
+
+    /**
+     * Throw if value is blank.
+     *
+     * @param value the value
+     * @return the value
+     */
+    public static String throwIfBlank(final String value) {
+        if (StringUtils.isBlank(value)) {
+            throw new IllegalArgumentException("Value cannot be empty or blank");
+        }
+        return value;
     }
 }

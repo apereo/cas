@@ -123,6 +123,15 @@ configuration settings. You will need get your integration key, secret key, and 
 hostname from Duo Security when you register CAS as a protected application.
 
 
+## REST Protocol Credential Extraction
+
+In the event that the [CAS REST Protocol](../protocol/REST-Protocol.html) is turned on, a 
+special credential extractor is injected into the REST authentication engine in order 
+to recognize credentials and authenticate them as part of the REST request.
+The expected parameter name in the request body is `passcode` that can be found from
+Duo Security's mobile application or received via SMS. 
+
+
 ## Troubleshooting
 
 To enable additional logging, configure the log4j configuration file to add the following

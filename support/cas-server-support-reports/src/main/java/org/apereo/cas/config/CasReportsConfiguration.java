@@ -12,6 +12,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -19,6 +20,7 @@ import org.apereo.cas.web.report.AuditLogEndpoint;
 import org.apereo.cas.web.report.CasInfoEndpointContributor;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
+import org.apereo.cas.web.report.CasRuntimeModulesEndpoint;
 import org.apereo.cas.web.report.ExportRegisteredServicesEndpoint;
 import org.apereo.cas.web.report.ImportRegisteredServicesEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationHandlersEndpoint;
@@ -29,6 +31,7 @@ import org.apereo.cas.web.report.SingleSignOnSessionsEndpoint;
 import org.apereo.cas.web.report.SpringWebflowEndpoint;
 import org.apereo.cas.web.report.StatisticsEndpoint;
 import org.apereo.cas.web.report.StatusEndpoint;
+import org.apereo.cas.web.report.TicketExpirationPoliciesEndpoint;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
@@ -36,10 +39,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.health.HealthEndpoint;
+import org.springframework.boot.actuate.trace.http.HttpTraceEndpoint;
+import org.springframework.boot.actuate.trace.http.HttpTraceRepository;
+import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 /**
  * This this {@link CasReportsConfiguration}.
@@ -111,6 +119,12 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
+    public CasRuntimeModulesEndpoint casRuntimeModulesEndpoint() {
+        return new CasRuntimeModulesEndpoint(casProperties, applicationContext);
+    }
+
+    @Bean
+    @ConditionalOnAvailableEndpoint
     public RegisteredServicesEndpoint registeredServicesReportEndpoint() {
         return new RegisteredServicesEndpoint(casProperties, servicesManager.getObject(),
             webApplicationServiceFactory.getObject());
@@ -168,6 +182,19 @@ public class CasReportsConfiguration {
     @ConditionalOnAvailableEndpoint
     public CasResolveAttributesReportEndpoint resolveAttributesReportEndpoint() {
         return new CasResolveAttributesReportEndpoint(casProperties, defaultPrincipalResolver.getObject());
+    }
+
+    @Autowired
+    @Bean
+    @ConditionalOnAvailableEndpoint
+    public TicketExpirationPoliciesEndpoint ticketExpirationPoliciesEndpoint(final List<ExpirationPolicyBuilder> builders) {
+        return new TicketExpirationPoliciesEndpoint(casProperties, builders, servicesManager.getObject(), webApplicationServiceFactory.getObject());
+    }
+
+    @Bean
+    @ConditionalOnAvailableEndpoint(endpoint = HttpTraceEndpoint.class)
+    public HttpTraceRepository httpTraceRepository() {
+        return new InMemoryHttpTraceRepository();
     }
 
     @Bean

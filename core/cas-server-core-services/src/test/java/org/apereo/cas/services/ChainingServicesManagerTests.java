@@ -1,15 +1,19 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.util.RandomUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.Ordered;
 
 import java.util.HashSet;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -53,12 +57,36 @@ public class ChainingServicesManagerTests extends AbstractServicesManagerTests<C
     @Test
     public void verifySaveWithDomains() {
         val svc = new RegexRegisteredService();
-        svc.setId(100);
+        svc.setId(RandomUtils.nextLong());
         svc.setName("domainService2");
-        svc.setServiceId("https://www.example.com/two");
+        svc.setServiceId("https://www.example.com/" + svc.getId());
         assertNotNull(servicesManager.save(svc, false));
-        assertEquals(servicesManager.getDomains().count(), 0);
-        assertTrue(servicesManager.getServicesForDomain("example.org").isEmpty());
+        assertEquals(servicesManager.getDomains().count(), 1);
+        assertFalse(servicesManager.getServicesForDomain("example.org").isEmpty());
+    }
+
+    @Test
+    public void verifySaveInBulk() {
+        servicesManager.deleteAll();
+        servicesManager.save(() -> {
+            val svc = new RegexRegisteredService();
+            svc.setId(RandomUtils.nextLong());
+            svc.setName("domainService2");
+            svc.setServiceId("https://www.example.com/" + svc.getId());
+            return svc;
+        }, Assertions::assertNotNull, 10);
+        val results = servicesManager.load();
+        assertEquals(10, results.size());
+    }
+
+    @Test
+    public void verifySaveInStreams() {
+        servicesManager.deleteAll();
+        val s1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
+        val s2 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
+        servicesManager.save(Stream.of(s1, s2));
+        val results = servicesManager.load();
+        assertEquals(2, results.size());
     }
 
     @Override
@@ -70,7 +98,7 @@ public class ChainingServicesManagerTests extends AbstractServicesManagerTests<C
             .serviceRegistry(serviceRegistry)
             .applicationContext(applicationContext)
             .environments(new HashSet<>())
-            .servicesCache(Caffeine.newBuilder().build())
+            .servicesCache(Caffeine.newBuilder().initialCapacity(100).maximumSize(100).build())
             .build();
         val manager = new DefaultServicesManager(context);
         chain.registerServiceManager(manager);

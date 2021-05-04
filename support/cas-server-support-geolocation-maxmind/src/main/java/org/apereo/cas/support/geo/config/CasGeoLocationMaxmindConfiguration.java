@@ -47,8 +47,6 @@ public class CasGeoLocationMaxmindConfiguration {
         val properties = casProperties.getMaxmind();
         val cityDatabase = readDatabase(properties.getCityDatabase());
         val countryDatabase = readDatabase(properties.getCountryDatabase());
-        val svc = new MaxmindDatabaseGeoLocationService(cityDatabase, countryDatabase);
-        svc.setIpStackAccessKey(properties.getIpStackApiAccessKey());
-        return svc;
+        return new MaxmindDatabaseGeoLocationService(cityDatabase, countryDatabase);
     }
 }

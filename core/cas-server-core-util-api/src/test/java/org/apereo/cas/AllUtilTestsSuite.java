@@ -5,6 +5,7 @@ import org.apereo.cas.util.HttpRequestUtilsTests;
 import org.apereo.cas.util.HttpUtilsTests;
 import org.apereo.cas.util.InetAddressUtilsTests;
 import org.apereo.cas.util.LoggingUtilsTests;
+import org.apereo.cas.util.SchedulingUtilsTests;
 import org.apereo.cas.util.SocketUtilsTests;
 import org.apereo.cas.util.cache.DistributedCacheManagerTests;
 import org.apereo.cas.util.cache.DistributedCacheObjectTests;
@@ -57,6 +58,7 @@ import org.junit.runner.RunWith;
     SpringAwareMessageMessageInterpolatorTests.class,
     HttpUtilsTests.class,
     ConvertersTests.class,
+    SchedulingUtilsTests.class,
     BeanDefinitionStoreFailureAnalyzerTests.class,
     SimpleHttpClientFactoryBeanTests.class,
     GroovyScriptResourceCacheManagerTests.class,

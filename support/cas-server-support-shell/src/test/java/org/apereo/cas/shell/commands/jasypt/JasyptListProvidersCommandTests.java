@@ -21,5 +21,10 @@ public class JasyptListProvidersCommandTests extends BaseCasShellCommandTests {
     public void verifyOperation() {
         assertDoesNotThrow(() -> shell.evaluate(() -> "jasypt-list-providers --includeBC"));
     }
+
+    @Test
+    public void verifyNoBouncyCastleOperation() {
+        assertDoesNotThrow(() -> shell.evaluate(() -> "jasypt-list-providers"));
+    }
 }
 

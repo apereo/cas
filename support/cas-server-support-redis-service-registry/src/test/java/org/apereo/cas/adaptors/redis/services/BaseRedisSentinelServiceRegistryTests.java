@@ -6,6 +6,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.RedisServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 
 import lombok.Getter;
@@ -42,7 +43,7 @@ public abstract class BaseRedisSentinelServiceRegistryTests extends AbstractServ
 
     @Test
     public void verifyFailures() {
-        assertNull(newServiceRegistry.save(null));
+        assertNull(newServiceRegistry.save((RegisteredService) null));
         assertFalse(newServiceRegistry.delete(null));
     }
 }

@@ -621,11 +621,6 @@ public interface CasWebflowConstants {
     String STATE_ID_EVALUATE_SPNEGO_CLIENT = "evaluateClientRequest";
 
     /**
-     * The view state 'casPac4jStopWebflow'.
-     */
-    String STATE_ID_PAC4J_STOP_WEBFLOW = "casPac4jStopWebflow";
-
-    /**
      * The view state 'casWsFedStopWebflow'.
      */
     String STATE_ID_WSFED_STOP_WEBFLOW = "casWsFedStopWebflow";
@@ -775,6 +770,11 @@ public interface CasWebflowConstants {
      * View id 'casDelegatedAuthnErrorView'.
      */
     String VIEW_ID_DELEGATED_AUTHN_ERROR_VIEW = "casDelegatedAuthnErrorView";
+
+    /**
+     * The view state 'casPac4jStopWebflow'.
+     */
+    String VIEW_ID_PAC4J_STOP_WEBFLOW = "casPac4jStopWebflow";
 
     /*
      ****************************************

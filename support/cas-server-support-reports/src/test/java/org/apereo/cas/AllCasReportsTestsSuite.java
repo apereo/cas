@@ -4,6 +4,7 @@ import org.apereo.cas.web.report.AuditLogEndpointTests;
 import org.apereo.cas.web.report.CasInfoEndpointContributorTests;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpointTests;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpointTests;
+import org.apereo.cas.web.report.CasRuntimeModulesEndpointTests;
 import org.apereo.cas.web.report.ExportRegisteredServicesEndpointTests;
 import org.apereo.cas.web.report.ImportRegisteredServicesEndpointTests;
 import org.apereo.cas.web.report.LoggingConfigurationEndpointTests;
@@ -16,6 +17,7 @@ import org.apereo.cas.web.report.SpringWebflowEndpointTests;
 import org.apereo.cas.web.report.StatisticsEndpointTests;
 import org.apereo.cas.web.report.StatusEndpointTests;
 import org.apereo.cas.web.report.StatusEndpointWithHealthTests;
+import org.apereo.cas.web.report.TicketExpirationPoliciesEndpointTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -33,6 +35,8 @@ import org.junit.runner.RunWith;
     RegisteredServicesEndpointTests.class,
     RegisteredAuthenticationHandlersEndpointTests.class,
     StatusEndpointTests.class,
+    CasRuntimeModulesEndpointTests.class,
+    TicketExpirationPoliciesEndpointTests.class,
     ImportRegisteredServicesEndpointTests.class,
     StatusEndpointWithHealthTests.class,
     StatisticsEndpointTests.class,

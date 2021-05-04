@@ -60,7 +60,7 @@ public class CasEclipseLinkJpaBeanFactoryTests {
 
         val ctx = JpaConfigurationContext.builder()
             .dataSource(dataSource())
-            .packagesToScan(CollectionUtils.wrap(SampleEntity.class.getPackage().getName()))
+            .packagesToScan(CollectionUtils.wrapSet(SampleEntity.class.getPackage().getName()))
             .persistenceUnitName("sampleContext")
             .jpaVendorAdapter(adapter)
             .build();

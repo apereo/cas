@@ -151,8 +151,7 @@ public class CasWebflowContextConfiguration {
     @Lazy(false)
     @RefreshScope
     @Bean
-    @Qualifier("flowBuilderServices")
-    public FlowBuilderServices builder() {
+    public FlowBuilderServices flowBuilderServices() {
         val builder = new FlowBuilderServicesBuilder();
         builder.setViewFactoryCreator(viewFactoryCreator());
         builder.setExpressionParser(expressionParser());
@@ -215,7 +214,7 @@ public class CasWebflowContextConfiguration {
     @Lazy(false)
     @Bean
     public FlowDefinitionRegistry logoutFlowRegistry() {
-        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
+        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices());
         builder.addFlowBuilder(flowBuilder(), CasWebflowConfigurer.FLOW_ID_LOGOUT);
         return builder.build();
     }
@@ -223,7 +222,7 @@ public class CasWebflowContextConfiguration {
     @Lazy(false)
     @Bean
     public FlowDefinitionRegistry loginFlowRegistry() {
-        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
+        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices());
         builder.addFlowBuilder(flowBuilder(), CasWebflowConfigurer.FLOW_ID_LOGIN);
         return builder.build();
     }
@@ -254,7 +253,7 @@ public class CasWebflowContextConfiguration {
     @RefreshScope
     @Lazy(false)
     public CasWebflowConfigurer defaultWebflowConfigurer() {
-        val c = new DefaultLoginWebflowConfigurer(builder(), loginFlowRegistry(), applicationContext, casProperties);
+        val c = new DefaultLoginWebflowConfigurer(flowBuilderServices(), loginFlowRegistry(), applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry());
         c.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return c;
@@ -266,7 +265,7 @@ public class CasWebflowContextConfiguration {
     @RefreshScope
     @Lazy(false)
     public CasWebflowConfigurer defaultLogoutWebflowConfigurer() {
-        val c = new DefaultLogoutWebflowConfigurer(builder(), loginFlowRegistry(),
+        val c = new DefaultLogoutWebflowConfigurer(flowBuilderServices(), loginFlowRegistry(),
             applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry());
         c.setOrder(Ordered.HIGHEST_PRECEDENCE);
@@ -279,7 +278,7 @@ public class CasWebflowContextConfiguration {
     @RefreshScope
     @Lazy(false)
     public CasWebflowConfigurer groovyWebflowConfigurer() {
-        val c = new GroovyWebflowConfigurer(builder(), loginFlowRegistry(), applicationContext, casProperties);
+        val c = new GroovyWebflowConfigurer(flowBuilderServices(), loginFlowRegistry(), applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry());
         return c;
     }

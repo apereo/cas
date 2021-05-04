@@ -102,7 +102,7 @@ public class ConfigurationMetadataGenerator {
         if (!jsonFile.exists()) {
             throw new RuntimeException("Could not locate file " + jsonFile.getCanonicalPath());
         }
-        final TypeReference<Map<String, Set<ConfigurationMetadataProperty>>> values = new TypeReference<>() {
+        val values = new TypeReference<Map<String, Set<ConfigurationMetadataProperty>>>() {
         };
         final Map<String, Set> jsonMap = (Map) MAPPER.readValue(jsonFile, values);
         final Set<ConfigurationMetadataProperty> properties = jsonMap.get("properties");

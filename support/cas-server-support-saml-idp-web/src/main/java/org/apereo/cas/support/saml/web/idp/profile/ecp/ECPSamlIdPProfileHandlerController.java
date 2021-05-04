@@ -165,7 +165,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
         val service = getSamlProfileHandlerConfigurationContext().getWebApplicationServiceFactory().createService(issuer);
         LOGGER.debug("Executing authentication request for service [{}] on behalf of credential id [{}]", service, credential.getId());
         val authenticationResult = getSamlProfileHandlerConfigurationContext()
-            .getAuthenticationSystemSupport().handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+            .getAuthenticationSystemSupport().finalizeAuthenticationTransaction(service, credential);
         return authenticationResult.getAuthentication();
     }
 }

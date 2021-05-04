@@ -83,7 +83,7 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
             response = HttpUtils.execute(exec);
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                final TypeReference<Set<AuditActionContext>> values = new TypeReference<>() {
+                val values = new TypeReference<Set<AuditActionContext>>() {
                 };
                 return MAPPER.readValue(JsonValue.readHjson(result).toString(), values);
             }

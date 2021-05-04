@@ -15,5 +15,14 @@ const assert = require('assert');
     let element = await page.$('#duo_iframe');
     assert(await element.boundingBox() != null);
 
+    const endpoints = ["duoPing", "duoAccountStatus/casuser"];
+    const baseUrl = "https://localhost:8443/cas/actuator/"
+    for (let i = 0; i < endpoints.length; i++) {
+        let url = baseUrl + endpoints[i];
+        const response = await page.goto(url);
+        console.log(response.status() + " " + response.statusText())
+        assert(response.ok())
+    }
+    
     await browser.close();
 })();

@@ -105,12 +105,12 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         }
 
         LOGGER.trace("Validating authentication context for event [{}] and service [{}]", id, service);
-        val result = this.authenticationContextValidator.validate(authentication, id, service);
-        val value = result.getValue();
+        val result = this.authenticationContextValidator.validate(authentication, id, Optional.of(service));
+        val validatedProvider = result.getProvider();
 
-        if (result.getKey()) {
-            if (service.getMultifactorPolicy().isForceExecution() && value.isPresent()) {
-                val provider = value.get();
+        if (result.isSuccess()) {
+            if (service.getMultifactorPolicy().isForceExecution() && validatedProvider.isPresent()) {
+                val provider = validatedProvider.get();
                 LOGGER.trace("Multifactor authentication policy for [{}] is set to force execution for [{}]", service, provider);
                 return buildEventForMultifactorProvider(context, service, authentication, id, provider);
             }
@@ -118,8 +118,8 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
             return resumeFlow();
         }
 
-        if (value.isPresent()) {
-            val provider = value.get();
+        if (validatedProvider.isPresent()) {
+            val provider = validatedProvider.get();
             return buildEventForMultifactorProvider(context, service, authentication, id, provider);
         }
 

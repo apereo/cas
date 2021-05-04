@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link U2FJpaConfiguration}.
@@ -69,8 +69,8 @@ public class U2FJpaConfiguration {
     }
 
     @Bean
-    public List<String> jpaU2fPackagesToScan() {
-        return CollectionUtils.wrapList(U2FDeviceRegistration.class.getPackage().getName());
+    public Set<String> jpaU2fPackagesToScan() {
+        return CollectionUtils.wrapSet(U2FDeviceRegistration.class.getPackage().getName());
     }
 
     @Lazy

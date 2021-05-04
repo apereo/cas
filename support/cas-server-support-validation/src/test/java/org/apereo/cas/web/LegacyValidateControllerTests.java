@@ -9,14 +9,11 @@ import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.v1.LegacyValidateController;
 
 import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-
-import java.util.Optional;
 
 /**
  * This is {@link LegacyValidateControllerTests}.
@@ -46,7 +43,7 @@ public class LegacyValidateControllerTests extends AbstractServiceValidateContro
             .centralAuthenticationService(getCentralAuthenticationService())
             .argumentExtractor(getArgumentExtractor())
             .proxyHandler(getProxyHandler())
-            .requestedContextValidator((assertion, request) -> Pair.of(Boolean.TRUE, Optional.empty()))
+            .requestedContextValidator(new MockRequestedAuthenticationContextValidator())
             .authnContextAttribute("authenticationContext")
             .validationAuthorizers(new DefaultServiceTicketValidationAuthorizersExecutionPlan())
             .renewEnabled(true)

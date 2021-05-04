@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link SamlIdPJpaRegisteredServiceMetadataConfiguration}.
@@ -77,8 +77,8 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
 
     @Bean
     @RefreshScope
-    public List<String> jpaSamlMetadataPackagesToScan() {
-        return CollectionUtils.wrapList(SamlMetadataDocument.class.getPackage().getName());
+    public Set<String> jpaSamlMetadataPackagesToScan() {
+        return CollectionUtils.wrapSet(SamlMetadataDocument.class.getPackage().getName());
     }
 
     @Lazy

@@ -27,7 +27,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link JpaWebAuthnConfiguration}.
@@ -63,8 +63,8 @@ public class JpaWebAuthnConfiguration {
     }
 
     @Bean
-    public List<String> jpaWebAuthnPackagesToScan() {
-        return CollectionUtils.wrapList(JpaWebAuthnCredentialRegistration.class.getPackage().getName());
+    public Set<String> jpaWebAuthnPackagesToScan() {
+        return CollectionUtils.wrapSet(JpaWebAuthnCredentialRegistration.class.getPackage().getName());
     }
 
     @Lazy

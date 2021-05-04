@@ -87,7 +87,7 @@ public class ServiceTicketResource {
                     throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
                 }
                 val authenticationResult =
-                    authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+                    authenticationSystemSupport.finalizeAuthenticationTransaction(service, credential);
 
                 return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
             }
