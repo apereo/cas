@@ -3,8 +3,10 @@ package org.apereo.cas.consent;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasConsentCoreConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -12,7 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
+
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,6 +31,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("ActuatorEndpoint")
 @Import(CasConsentCoreConfiguration.class)
 public class AttributeConsentReportEndpointTests extends AbstractCasEndpointTests {
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
+
     @Autowired
     @Qualifier("attributeConsentReportEndpoint")
     private AttributeConsentReportEndpoint attributeConsentReportEndpoint;
@@ -54,6 +62,16 @@ public class AttributeConsentReportEndpointTests extends AbstractCasEndpointTest
         assertTrue(attributeConsentReportEndpoint.revokeConsents(desc.getPrincipal(), desc.getId()));
         results = attributeConsentReportEndpoint.consentDecisions("casuser");
         assertTrue(results.isEmpty());
+    }
 
+    @Test
+    public void verifyImportOperation() throws Exception {
+        val toSave = consentDecisionBuilder.build(RegisteredServiceTestUtils.getService(),
+            RegisteredServiceTestUtils.getRegisteredService(), "casuser",
+            CoreAuthenticationTestUtils.getAttributes());
+        val request = new MockHttpServletRequest();
+        val content = MAPPER.writeValueAsString(toSave);
+        request.setContent(content.getBytes(StandardCharsets.UTF_8));
+        assertEquals(HttpStatus.CREATED, attributeConsentReportEndpoint.importAccount(request));
     }
 }
