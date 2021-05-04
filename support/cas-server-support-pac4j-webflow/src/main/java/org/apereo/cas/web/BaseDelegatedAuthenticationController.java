@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.client.utils.URIBuilder;
 import org.pac4j.core.client.IndirectClient;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.exception.http.RedirectionAction;
 import org.pac4j.core.exception.http.WithContentAction;
 import org.pac4j.core.exception.http.WithLocationAction;
@@ -59,7 +59,7 @@ public abstract class BaseDelegatedAuthenticationController {
      * @param properties            the properties
      */
     protected void configureWebContextForRegisteredServiceProperties(final RegisteredService registeredService,
-                                                                     final JEEContext webContext,
+                                                                     final WebContext webContext,
                                                                      final List<RegisteredServiceProperties> properties) {
         properties.stream()
             .filter(prop -> prop.isAssignedTo(registeredService))
@@ -95,7 +95,7 @@ public abstract class BaseDelegatedAuthenticationController {
      * @return the resulting view
      */
     @SneakyThrows
-    protected View getResultingView(final IndirectClient client, final JEEContext webContext,
+    protected View getResultingView(final IndirectClient client, final WebContext webContext,
                                     final TransientSessionTicket ticket) {
         client.init();
         val actionResult = getRedirectionAction(client, webContext, ticket);
@@ -126,7 +126,7 @@ public abstract class BaseDelegatedAuthenticationController {
      * @param ticket     the ticket
      * @return the redirection action
      */
-    protected Optional<RedirectionAction> getRedirectionAction(final IndirectClient client, final JEEContext webContext,
+    protected Optional<RedirectionAction> getRedirectionAction(final IndirectClient client, final WebContext webContext,
                                                                final TransientSessionTicket ticket) {
         val properties = ticket.getProperties();
         if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN)) {
@@ -149,7 +149,7 @@ public abstract class BaseDelegatedAuthenticationController {
      * @param webContext the web context
      * @param ticket     the ticket
      */
-    protected void configureWebContextForRegisteredService(final JEEContext webContext, final TransientSessionTicket ticket) {
+    protected void configureWebContextForRegisteredService(final WebContext webContext, final TransientSessionTicket ticket) {
         val registeredService = configurationContext.getServicesManager().findServiceBy(ticket.getService());
         val audit = AuditableContext.builder()
             .service(ticket.getService())

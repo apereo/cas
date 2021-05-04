@@ -67,6 +67,6 @@ public class RedisObjectFactoryTests {
 
     @Test
     public void validateRedisReadFromValues() {
-        Stream.of(BaseRedisProperties.RedisReadFromTypes.values()).map(e -> e.name()).forEach(ReadFrom::valueOf);
+        Stream.of(BaseRedisProperties.RedisReadFromTypes.values()).map(Enum::name).forEach(ReadFrom::valueOf);
     }
 }
