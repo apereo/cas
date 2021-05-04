@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry.support;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.Tag;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -19,6 +20,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.jpa.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
 })
 @EnabledIfPortOpen(port = 5432)
-@Tag("Postgres")
+@Tag("Unknown")
+@DirtiesContext
 public class PostgresJpaLockingStrategyTests extends JpaLockingStrategyTests {
 }
