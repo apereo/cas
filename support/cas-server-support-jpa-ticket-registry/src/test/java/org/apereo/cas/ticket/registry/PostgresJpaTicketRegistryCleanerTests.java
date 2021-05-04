@@ -20,6 +20,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.jpa.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
 })
 @EnabledIfPortOpen(port = 5432)
-@Tag("Unknown")
+@Tag("Postgres")
 public class PostgresJpaTicketRegistryCleanerTests extends JpaTicketRegistryCleanerTests {
 }
