@@ -20,7 +20,6 @@ import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
@@ -45,7 +44,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @SpringBootTest(classes = JpaTicketRegistryTests.SharedTestConfiguration.class,
-    properties = "cas.ticket.registry.jpa.ddl-auto=create-drop")
+    properties = {
+        "cas.ticket.registry.cleaner.schedule.enabled=false",
+        "cas.ticket.registry.jpa.ddl-auto=create-drop"
+    })
 @Tag("JDBC")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class JpaTicketRegistryCleanerTests {
@@ -186,7 +188,7 @@ public class JpaTicketRegistryCleanerTests {
 
     @Test
     @Order(100)
-    @Disabled
+    @DisabledIfEnvironmentVariable(named = "CI", matches = "true")
     public void verifyConcurrentCleaner() throws Exception {
         val registryTask = new TimerTask() {
             public void run() {
@@ -221,5 +223,4 @@ public class JpaTicketRegistryCleanerTests {
         registryTimer.cancel();
         ticketRegistry.deleteAll();
     }
-
 }
