@@ -4,7 +4,6 @@ import org.apereo.cas.ticket.registry.support.JpaLockingStrategy;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.Tag;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -23,6 +22,5 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfPortOpen(port = 5432)
 @Tag("Postgres")
-@DirtiesContext
 public class PostgresJpaTicketRegistryCleanerTests extends JpaTicketRegistryCleanerTests {
 }

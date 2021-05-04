@@ -20,13 +20,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DataSourceProxyTests {
 
     @Test
-    public void verifyOperation() throws Exception {
-        val ds = JpaBeans.newDataSource("org.hsqldb.jdbcDriver", "sa", StringUtils.EMPTY, "jdbc:hsqldb:mem:cas");
-        assertNotNull(new DataSourceProxy(ds).getConnection());
-        assertNotNull(new DataSourceProxy(ds).getConnection("sa", StringUtils.EMPTY));
-    }
-
-    @Test
     public void verifyProxySource() throws Exception {
         val builder = new SimpleNamingContextBuilder();
         val ds = JpaBeans.newDataSource("org.hsqldb.jdbcDriver", "sa", StringUtils.EMPTY, "jdbc:hsqldb:mem:cas");
@@ -34,10 +27,7 @@ public class DataSourceProxyTests {
         builder.activate();
 
         val props = new JpaServiceRegistryProperties();
-        props.setDataSourceProxy(true);
         props.setDataSourceName("java:comp/env/jdbc/MyDS");
-        assertNotNull(JpaBeans.newDataSource(props));
-        props.setDataSourceProxy(false);
         assertNotNull(JpaBeans.newDataSource(props));
 
         props.setDataSourceName("bad-name");

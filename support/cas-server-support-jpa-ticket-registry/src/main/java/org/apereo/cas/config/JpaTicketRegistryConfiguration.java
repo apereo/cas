@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.CloseableDataSource;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -36,7 +37,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
 import java.util.Set;
 
 /**
@@ -98,7 +98,7 @@ public class JpaTicketRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "dataSourceTicket")
     @RefreshScope
-    public DataSource dataSourceTicket() {
+    public CloseableDataSource dataSourceTicket() {
         return JpaBeans.newDataSource(casProperties.getTicket().getRegistry().getJpa());
     }
 
