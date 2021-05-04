@@ -94,7 +94,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         val tokenCredential = (TokenCredential) credential;
         LOGGER.debug("Locating token secret for service [{}]", tokenCredential.getService());
 
-        val service = this.servicesManager.findServiceBy(tokenCredential.getService());
+        val service = getServicesManager().findServiceBy(tokenCredential.getService());
         val signingSecret = getRegisteredServiceJwtSigningSecret(service);
 
         if (StringUtils.isNotBlank(signingSecret)) {

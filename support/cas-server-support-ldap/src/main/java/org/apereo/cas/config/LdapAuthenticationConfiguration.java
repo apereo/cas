@@ -207,6 +207,7 @@ public class LdapAuthenticationConfiguration {
                 val handler = new LdapAuthenticationHandler(l.getName(),
                     servicesManager.getObject(), ldapPrincipalFactory(),
                     l.getOrder(), authenticator, strategy);
+                handler.setState(l.getState());
                 handler.setCollectDnAttribute(l.isCollectDnAttribute());
 
                 if (!l.getAdditionalAttributes().isEmpty()) {
