@@ -110,7 +110,9 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
         registerNativeJdkComponentsWithKryo(kryo);
         registerImmutableOrEmptyCollectionsWithKryo(kryo);
 
-        classesToRegister.forEach(c -> {
+        val classes = new ArrayList<>(classesToRegister);
+        classes.sort((c1, c2) -> c1.getName().compareTo(c2.getName()));
+        classes.forEach(c -> {
             LOGGER.trace("Registering serializable class [{}] with Kryo", c.getName());
             kryo.register(c);
         });
