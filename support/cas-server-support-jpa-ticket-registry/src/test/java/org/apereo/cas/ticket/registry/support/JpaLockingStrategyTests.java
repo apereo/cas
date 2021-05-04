@@ -53,7 +53,8 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@SpringBootTest(classes = JpaTicketRegistryTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = JpaTicketRegistryTests.SharedTestConfiguration.class,
+    properties = "cas.ticket.registry.cleaner.schedule.enabled=false")
 @DirtiesContext
 @Slf4j
 @Tag("JDBC")

@@ -32,7 +32,7 @@ enum TestCategories {
 //    MFA,
 //    MongoDb,
 //    MsSqlServer,
-    MySQL,
+//    MySQL,
 //    OAuth,
 //    OIDC,
 //    Oracle,
