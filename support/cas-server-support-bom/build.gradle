@@ -10,17 +10,17 @@ publishing {
             artifact file("cas-server-support-bom.md")
 
             pom.withXml {
-                println "Creating BOM with all project dependencies for ${project.name}"
+                ansi.green "Creating BOM with all project dependencies for ${project.name}"
 
                 def iter = asNode().iterator()
                 while (iter.hasNext()) {
                     def node = iter.next()
                     if (node.name().getLocalPart().equals("dependencies")) {
-                        println "Removing dependencies block from generated POM"
+                        ansi.green "Removing dependencies block from generated POM"
                         iter.remove()
                     }
                     if (node.name().getLocalPart().equals("properties")) {
-                        println "Removing properties block from generated POM"
+                        ansi.green "Removing properties block from generated POM"
                         iter.remove()
                     }
                 }
