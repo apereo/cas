@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.configuration.model.support.jdbc.authn.SearchJdbcAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
@@ -28,28 +29,22 @@ import java.util.ArrayList;
  */
 @Slf4j
 public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
+    private final SearchJdbcAuthenticationProperties properties;
 
-    private final String fieldUser;
-    private final String fieldPassword;
-    private final String tableUsers;
-
-    public SearchModeSearchDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public SearchModeSearchDatabaseAuthenticationHandler(final SearchJdbcAuthenticationProperties properties,
+                                                         final ServicesManager servicesManager,
                                                          final PrincipalFactory principalFactory,
-                                                         final Integer order, final DataSource datasource,
-                                                         final String fieldUser, final String fieldPassword,
-                                                         final String tableUsers) {
-        super(name, servicesManager, principalFactory, order, datasource);
-        this.fieldUser = fieldUser;
-        this.fieldPassword = fieldPassword;
-        this.tableUsers = tableUsers;
+                                                         final DataSource datasource) {
+        super(properties.getName(), servicesManager, principalFactory, properties.getOrder(), datasource);
+        this.properties = properties;
     }
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
                                                                                         final String originalPassword)
         throws GeneralSecurityException, PreventedException {
-        val sql = "SELECT COUNT('x') FROM ".concat(this.tableUsers).concat(" WHERE ").concat(this.fieldUser)
-            .concat(" = ? AND ").concat(this.fieldPassword).concat("= ?");
+        val sql = "SELECT COUNT('x') FROM ".concat(properties.getTableUsers()).concat(" WHERE ").concat(properties.getFieldUser())
+            .concat(" = ? AND ").concat(properties.getFieldPassword()).concat("= ?");
         val username = credential.getUsername();
         try {
             LOGGER.debug("Executing SQL query [{}]", sql);

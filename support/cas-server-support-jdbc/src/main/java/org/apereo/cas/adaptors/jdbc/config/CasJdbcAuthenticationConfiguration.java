@@ -129,11 +129,8 @@ public class CasJdbcAuthenticationConfiguration {
     }
 
     private AuthenticationHandler queryAndEncodeDatabaseAuthenticationHandler(final QueryEncodeJdbcAuthenticationProperties b) {
-        val h = new QueryAndEncodeDatabaseAuthenticationHandler(b.getName(), servicesManager.getObject(),
-            jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b), b.getAlgorithmName(), b.getSql(), b.getPasswordFieldName(),
-            b.getSaltFieldName(), b.getExpiredFieldName(), b.getDisabledFieldName(), b.getNumberOfIterationsFieldName(), b.getNumberOfIterations(),
-            b.getStaticSalt());
-
+        val h = new QueryAndEncodeDatabaseAuthenticationHandler(b, servicesManager.getObject(),
+            jdbcPrincipalFactory(), JpaBeans.newDataSource(b));
         configureJdbcAuthenticationHandler(h, b);
         return h;
     }
@@ -141,21 +138,16 @@ public class CasJdbcAuthenticationConfiguration {
     private AuthenticationHandler queryDatabaseAuthenticationHandler(final QueryJdbcAuthenticationProperties b) {
         val attributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(b.getPrincipalAttributeList());
         LOGGER.trace("Created and mapped principal attributes [{}] for [{}]...", attributes, b.getName());
-
-        val h = new QueryDatabaseAuthenticationHandler(b.getName(), servicesManager.getObject(),
-            jdbcPrincipalFactory(), b.getOrder(),
-            JpaBeans.newDataSource(b), b.getSql(), b.getFieldPassword(),
-            b.getFieldExpired(), b.getFieldDisabled(), CollectionUtils.wrap(attributes));
-
+        val h = new QueryDatabaseAuthenticationHandler(b, servicesManager.getObject(),
+            jdbcPrincipalFactory(), JpaBeans.newDataSource(b), CollectionUtils.wrap(attributes));
         configureJdbcAuthenticationHandler(h, b);
         h.setPasswordPolicyConfiguration(queryPasswordPolicyConfiguration());
         return h;
     }
 
     private AuthenticationHandler searchModeSearchDatabaseAuthenticationHandler(final SearchJdbcAuthenticationProperties b) {
-        val h = new SearchModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager.getObject(),
-            jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b),
-            b.getFieldUser(), b.getFieldPassword(), b.getTableUsers());
+        val h = new SearchModeSearchDatabaseAuthenticationHandler(b, servicesManager.getObject(),
+            jdbcPrincipalFactory(), JpaBeans.newDataSource(b));
         configureJdbcAuthenticationHandler(h, b);
         return h;
     }
@@ -165,7 +157,7 @@ public class CasJdbcAuthenticationConfiguration {
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(properties.getPasswordEncoder(), applicationContext));
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(properties.getPrincipalTransformation()));
         handler.setPasswordPolicyConfiguration(bindSearchPasswordPolicyConfiguration());
-
+        handler.setState(properties.getState());
         if (StringUtils.isNotBlank(properties.getCredentialCriteria())) {
             handler.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(properties.getCredentialCriteria()));
         }
