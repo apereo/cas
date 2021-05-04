@@ -91,7 +91,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
      * @param webContext the web context
      * @param ticket     the ticket
      */
-    protected void trackSessionIdForOAuth10Client(final JEEContext webContext, final TransientSessionTicket ticket) {
+    protected void trackSessionIdForOAuth10Client(final WebContext webContext, final TransientSessionTicket ticket) {
         configContext.getSessionStore().set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, ticket.getId());
     }
 
@@ -102,7 +102,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
      * @param ticket     the ticket
      * @param casClient  the cas client
      */
-    protected void trackSessionIdForCasClient(final JEEContext webContext, final TransientSessionTicket ticket,
+    protected void trackSessionIdForCasClient(final WebContext webContext, final TransientSessionTicket ticket,
                                               final CasClient casClient) {
         casClient.getConfiguration().addCustomParam(PARAMETER_CLIENT_ID, ticket.getId());
         configContext.getSessionStore().set(webContext, CAS_CLIENT_ID_SESSION_KEY, ticket.getId());
@@ -115,7 +115,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
      * @param client     the client
      * @param ticket     the ticket
      */
-    protected void trackSessionIdForOidcClient(final JEEContext webContext, final OidcClient client, final TransientSessionTicket ticket) {
+    protected void trackSessionIdForOidcClient(final WebContext webContext, final OidcClient client, final TransientSessionTicket ticket) {
         val oidcClient = client;
         val config = oidcClient.getConfiguration();
         config.setWithState(true);
@@ -129,7 +129,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
      * @param client     the client
      * @param ticket     the ticket
      */
-    protected void trackSessionIdForOAuth20Client(final JEEContext webContext,
+    protected void trackSessionIdForOAuth20Client(final WebContext webContext,
                                                   final OAuth20Client client, final TransientSessionTicket ticket) {
         val config = client.getConfiguration();
         config.setWithState(true);
@@ -143,7 +143,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
      * @param ticket      the ticket
      * @param saml2Client the saml 2 client
      */
-    protected void trackSessionIdForSAML2Client(final JEEContext webContext, final TransientSessionTicket ticket,
+    protected void trackSessionIdForSAML2Client(final WebContext webContext, final TransientSessionTicket ticket,
                                                 final SAML2Client saml2Client) {
         configContext.getSessionStore().set(webContext, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE, ticket.getId());
     }
@@ -203,7 +203,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
      * @param webContext the web context
      * @return the ticket properties
      */
-    protected Map<String, Serializable> buildTicketProperties(final JEEContext webContext) {
+    protected Map<String, Serializable> buildTicketProperties(final WebContext webContext) {
         val properties = new HashMap<String, Serializable>();
 
         val themeParamName = configContext.getCasProperties().getTheme().getParamName();
