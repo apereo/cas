@@ -20,6 +20,7 @@ import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
@@ -185,7 +186,7 @@ public class JpaTicketRegistryCleanerTests {
 
     @Test
     @Order(100)
-    @DisabledIfEnvironmentVariable(named = "CI", matches = "true")
+    @Disabled
     public void verifyConcurrentCleaner() throws Exception {
         val registryTask = new TimerTask() {
             public void run() {
