@@ -7,8 +7,11 @@ import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.core.io.Resource;
@@ -20,9 +23,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -33,6 +39,7 @@ import java.util.Objects;
  * @since 6.0.0
  */
 @RestControllerEndpoint(id = "yubikeyAccountRepository", enableByDefault = false)
+@Slf4j
 public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
@@ -109,5 +116,23 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
         headers.setContentDisposition(ContentDisposition.attachment()
             .filename(Objects.requireNonNull(resource.getFilename())).build());
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+    }
+
+    /**
+     * Import account.
+     *
+     * @param request the request
+     * @return the http status
+     * @throws Exception the exception
+     */
+    @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public HttpStatus importAccount(final HttpServletRequest request) throws Exception {
+        val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
+        LOGGER.trace("Submitted account: [{}]", requestBody);
+        val account = MAPPER.readValue(requestBody, new TypeReference<YubiKeyAccount>() {
+        });
+        LOGGER.trace("Storing account: [{}]", account);
+        registry.save(account);
+        return HttpStatus.CREATED;
     }
 }
