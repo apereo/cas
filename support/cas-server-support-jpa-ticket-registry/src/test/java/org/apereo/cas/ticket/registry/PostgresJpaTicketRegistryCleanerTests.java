@@ -4,6 +4,7 @@ import org.apereo.cas.ticket.registry.support.JpaLockingStrategy;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.Tag;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -13,6 +14,7 @@ import org.springframework.test.context.TestPropertySource;
  * @since 3.0.0
  */
 @TestPropertySource(properties = {
+    "cas.ticket.registry.cleaner.schedule.enabled=false",
     "cas.ticket.registry.jpa.user=postgres",
     "cas.ticket.registry.jpa.password=password",
     "cas.ticket.registry.jpa.driver-class=org.postgresql.Driver",
@@ -20,6 +22,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.jpa.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
 })
 @EnabledIfPortOpen(port = 5432)
-@Tag("Unknown")
+@Tag("Postgres")
+@DirtiesContext
 public class PostgresJpaTicketRegistryCleanerTests extends JpaTicketRegistryCleanerTests {
 }
