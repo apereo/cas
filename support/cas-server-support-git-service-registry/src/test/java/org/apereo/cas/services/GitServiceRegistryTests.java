@@ -34,7 +34,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import java.io.File;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -123,6 +123,33 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
                 new RegisteredServiceYamlSerializer()),
             false, null, List.of(), List.of());
         assertEquals(size, registry.load().size());
+    }
+
+    /**
+     * Validate that load doesn't find services at root of git repo (or sub-directories other than the root-directory).
+     * Second service is copied to two other locations and deleted in order to commit all changes to the repository.
+     */
+    @Test
+    public void verifyLoadWithRootDirectory() throws IOException {
+        val svc = buildRegisteredServiceInstance(RandomUtils.nextLong(), RegexRegisteredService.class);
+        val svc2 = buildRegisteredServiceInstance(RandomUtils.nextLong(), RegexRegisteredService.class);
+        svc.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
+        svc2.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
+        newServiceRegistry.save(svc);
+        newServiceRegistry.save(svc2);
+        val size = newServiceRegistry.load().size();
+        assertEquals(2, size);
+        val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
+        val rootDir = new File(gitDir, "svc-cfg");
+        val clientDir = new File(rootDir, RegexRegisteredService.FRIENDLY_NAME);
+        val svc2FileName = svc2.getName() + "-" + svc2.getId() + ".json";
+        val svc2File = new File(clientDir, svc2FileName);
+        val anotherRootDir = new File(gitDir, "svc-cfg2");
+        FileUtils.copyFile(svc2File, new File(gitDir, svc2FileName));
+        FileUtils.copyFile(svc2File, new File(anotherRootDir, svc2FileName));
+        newServiceRegistry.delete(svc2);
+        val size2 = newServiceRegistry.load().size();
+        assertEquals(1, size2);
     }
 
     @AfterAll
