@@ -23,12 +23,15 @@ public class MessageSanitizationUtilsTests {
         assertTrue(results.contains("PGT-1-*****"));
 
         results = MessageSanitizationUtils.sanitize("found a [password =se!ns4357$##@@**it!!_ive] here...");
-        assertTrue(results.contains("[password =*****]"));
+        assertTrue(results.contains("[password =*****"));
 
         results = MessageSanitizationUtils.sanitize(new ToStringBuilder(this)
             .append("password", "abcdefgs")
             .append("field", "value")
             .toString());
         assertTrue(results.contains("password = *****"));
+
+        results = MessageSanitizationUtils.sanitize("found a [token=mgf63isnfb1s!!#ut0__|] here...");
+        assertTrue(results.contains("[token=*****"));
     }
 }
