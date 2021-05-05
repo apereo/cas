@@ -214,7 +214,7 @@ public class JpaTicketRegistryCleanerTests {
         cleanerTimer.scheduleAtFixedRate(cleanerTask, 10, 5);
 
         Thread.sleep(1000 * 15);
-        registryTimer.cancel();
+        cleanerTimer.cancel();
         registryTimer.cancel();
         ticketRegistry.deleteAll();
     }

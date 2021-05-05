@@ -37,11 +37,11 @@ public class AuthenticationCredentialTypeMetaDataPopulatorTests {
     public void verifyPopulatorMultipleTimes() {
         val credentials = new UsernamePasswordCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        IntStream.range(1, 5)
+        IntStream.rangeClosed(1, 2)
             .forEach(i -> populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials)));
         val auth = builder.build();
         val result = auth.getAttributes().get(Credential.CREDENTIAL_TYPE_ATTRIBUTE);
         assertNotNull(result);
-        assertEquals(5, result.size());
+        assertEquals(2, result.size());
     }
 }

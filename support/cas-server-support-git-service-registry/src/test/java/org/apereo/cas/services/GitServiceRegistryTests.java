@@ -34,7 +34,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -43,6 +44,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * This is {@link GitServiceRegistryTests}.
+ *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
@@ -83,12 +85,12 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
             val gitRepoSampleDir = new File(FileUtils.getTempDirectory(), "cas-sample-data");
             if (gitRepoSampleDir.exists()) {
                 PathUtils.delete(gitRepoSampleDir.toPath(),
-                        StandardDeleteOption.OVERRIDE_READ_ONLY);
+                    StandardDeleteOption.OVERRIDE_READ_ONLY);
             }
             val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
             if (gitDir.exists()) {
                 PathUtils.delete(gitDir.toPath(),
-                        StandardDeleteOption.OVERRIDE_READ_ONLY);
+                    StandardDeleteOption.OVERRIDE_READ_ONLY);
             }
             val gitSampleRepo = Git.init().setDirectory(gitRepoSampleDir).setBare(false).call();
             FileUtils.write(new File(gitRepoSampleDir, "readme.txt"), "text", StandardCharsets.UTF_8);
@@ -105,18 +107,28 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
         }
     }
 
+    @AfterAll
+    public static void cleanUp() throws Exception {
+        val gitRepoDir = new File(FileUtils.getTempDirectory(), "cas-sample-data");
+        PathUtils.deleteDirectory(gitRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+        val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
+        if (gitDir.exists()) {
+            PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+        }
+    }
+
     @Test
     public void verifyPullFails() {
         val gitRepository = mock(GitRepository.class);
         when(gitRepository.getObjectsInRepository()).thenThrow(new JGitInternalException("error"));
         when(gitRepository.getObjectsInRepository(any())).thenThrow(new JGitInternalException("error"));
         when(gitRepository.getRepositoryDirectory()).thenReturn(gitRepositoryInstance.getRepositoryDirectory());
-        
+
         val svc = buildRegisteredServiceInstance(RandomUtils.nextLong(), RegexRegisteredService.class);
         svc.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
         newServiceRegistry.save(svc);
         val size = newServiceRegistry.load().size();
-        
+
         val registry = new GitServiceRegistry(applicationContext, gitRepository,
             CollectionUtils.wrapList(
                 new RegisteredServiceJsonSerializer(),
@@ -150,15 +162,5 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
         newServiceRegistry.delete(svc2);
         val size2 = newServiceRegistry.load().size();
         assertEquals(1, size2);
-    }
-
-    @AfterAll
-    public static void cleanUp() throws Exception {
-        val gitRepoDir = new File(FileUtils.getTempDirectory(), "cas-sample-data");
-        PathUtils.deleteDirectory(gitRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
-        val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
-        if (gitDir.exists()) {
-            PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
-        }
     }
 }
