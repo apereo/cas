@@ -55,7 +55,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = JpaTicketRegistryTests.SharedTestConfiguration.class,
     properties = {
         "cas.jdbc.show-sql=false",
-        "cas.ticket.registry.cleaner.schedule.enabled=false",
         "cas.ticket.registry.jpa.ddl-auto=create-drop"
     })
 @Tag("JDBC")
