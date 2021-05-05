@@ -2,7 +2,6 @@ package org.apereo.cas.services.locator;
 
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.RegexUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.util.FileUtils;
@@ -11,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link GitRepositoryRegisteredServiceLocator}.
@@ -27,10 +25,9 @@ public interface GitRepositoryRegisteredServiceLocator {
     List<String> FILE_EXTENSIONS = CollectionUtils.wrapList("json", "yaml", "yml");
 
     /**
-     * The constant PATTERN_ACCEPTED_REPOSITORY_FILES.
+     * The constant PATTERN_ACCEPTED_REPOSITORY_FILES to optionally be combined with root-directory prefix.
      */
-    Pattern PATTERN_ACCEPTED_REPOSITORY_FILES = RegexUtils.createPattern(".+\\.("
-        + String.join("|", FILE_EXTENSIONS) + ')', Pattern.CASE_INSENSITIVE);
+    String PATTEN_ACCEPTED_REPOSITORY_FILES = ".+\\.(" + String.join("|", FILE_EXTENSIONS) + ')';
 
     /**
      * Determine file.
