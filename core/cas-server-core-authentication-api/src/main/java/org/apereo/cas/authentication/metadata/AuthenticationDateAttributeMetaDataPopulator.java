@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationCredential;
 
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -27,6 +28,6 @@ public class AuthenticationDateAttributeMetaDataPopulator extends BaseAuthentica
 
     @Override
     public boolean supports(final Credential credential) {
-        return credential != null;
+        return !(credential instanceof MultifactorAuthenticationCredential);
     }
 }

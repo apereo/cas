@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class WebApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
     private static final List<String> IGNORED_ATTRIBUTES_PARAMS = List.of(
+        "password",
         CasProtocolConstants.PARAMETER_SERVICE,
         CasProtocolConstants.PARAMETER_TARGET_SERVICE,
         CasProtocolConstants.PARAMETER_TICKET,
