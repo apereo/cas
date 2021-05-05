@@ -13,7 +13,6 @@ import org.springframework.test.context.TestPropertySource;
  * @since 3.0.0
  */
 @TestPropertySource(properties = {
-    "cas.ticket.registry.cleaner.schedule.enabled=false",
     "cas.ticket.registry.jpa.user=postgres",
     "cas.ticket.registry.jpa.password=password",
     "cas.ticket.registry.jpa.driver-class=org.postgresql.Driver",
