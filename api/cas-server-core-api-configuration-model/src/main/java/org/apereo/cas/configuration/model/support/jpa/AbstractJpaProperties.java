@@ -113,8 +113,7 @@ public abstract class AbstractJpaProperties implements Serializable {
 
     /**
      * Attempts to do a JNDI data source look up for the data source name specified.
-     * Will attempt to locate the data source object as is, or will try to return a proxy
-     * instance of it, in the event that {@link #dataSourceProxy} is used.
+     * Will attempt to locate the data source object as is.
      */
     private String dataSourceName;
 
