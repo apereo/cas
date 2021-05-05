@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "database.driver-class=org.postgresql.Driver",
     "database.name=postgres",
     "database.url=jdbc:postgresql://localhost:5432/",
-    "database.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
+    "database.dialect=org.hibernate.dialect.PostgreSQL10Dialect"
 })
 @EnabledIfPortOpen(port = 5432)
 @Tag("Postgres")

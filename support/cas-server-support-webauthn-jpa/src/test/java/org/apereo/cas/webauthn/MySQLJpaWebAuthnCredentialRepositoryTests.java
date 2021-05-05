@@ -16,7 +16,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.mfa.web-authn.jpa.password=password",
     "cas.authn.mfa.web-authn.jpa.driver-class=com.mysql.cj.jdbc.Driver",
     "cas.authn.mfa.web-authn.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
-    "cas.authn.mfa.web-authn.jpa.dialect=org.hibernate.dialect.MySQL57InnoDBDialect"
+    "cas.authn.mfa.web-authn.jpa.dialect=org.hibernate.dialect.MySQL8Dialect"
 })
 @EnabledIfPortOpen(port = 3306)
 @Tag("MySQL")

@@ -32,6 +32,7 @@ public class DefaultCloseableDataSourceTests {
             @Override
             public void execute() throws Throwable {
                 ds.close();
+                ds.destroy();
             }
         });
     }

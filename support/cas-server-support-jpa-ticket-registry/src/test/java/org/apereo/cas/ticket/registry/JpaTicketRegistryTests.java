@@ -71,6 +71,10 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
     @Qualifier("ticketRegistry")
     protected TicketRegistry newTicketRegistry;
 
+    @Autowired
+    @Qualifier("dataSourceTicket")
+    protected CloseableDataSource dataSourceTicket;
+
     @AfterAll
     public static void afterAllTests() throws Exception {
         ApplicationContextProvider.getApplicationContext()
@@ -78,7 +82,8 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @AfterEach
-    public void cleanup() {
+    public void cleanup() throws Exception {
+        assertNotNull(dataSourceTicket);
         newTicketRegistry.deleteAll();
     }
 
