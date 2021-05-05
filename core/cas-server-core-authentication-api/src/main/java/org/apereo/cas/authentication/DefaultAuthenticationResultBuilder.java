@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.support.merger.IAttributeMerger;
-import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -104,11 +103,13 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
      * Merge authentication attributes.
      *
      * @param authenticationAttributes the authentication attributes
+     * @param merger                   the merger
      * @param authn                    the authn
      */
-    protected void mergeAuthenticationAttributes(final Map<String, List<Object>> authenticationAttributes, final Authentication authn) {
-        authenticationAttributes.putAll(CoreAuthenticationUtils.mergeAttributes(authenticationAttributes,
-            authn.getAttributes(), new ReplacingAttributeAdder()));
+    protected void mergeAuthenticationAttributes(final Map<String, List<Object>> authenticationAttributes,
+                                                 final IAttributeMerger merger,
+                                                 final Authentication authn) {
+        authenticationAttributes.putAll(CoreAuthenticationUtils.mergeAttributes(authenticationAttributes, authn.getAttributes(), merger));
         LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result", authenticationAttributes);
     }
 
@@ -140,7 +141,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         LOGGER.trace("Collecting authentication history based on [{}] authentication events", authentications.size());
         authentications.forEach(authn -> {
             mergePrincipalAttributes(principalAttributes, merger, authn);
-            mergeAuthenticationAttributes(authenticationAttributes, authn);
+            mergeAuthenticationAttributes(authenticationAttributes, merger, authn);
 
             authenticationBuilder
                 .addSuccesses(authn.getSuccesses())
