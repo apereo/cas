@@ -13,7 +13,7 @@ import lombok.val;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
-import static org.apereo.cas.util.serialization.TicketIdSanitizationUtils.sanitize;
+import static org.apereo.cas.util.serialization.MessageSanitizationUtils.sanitize;
 
 /**
  * Listener implementation for core CAS events which adds contextual debug logging for each event to instrument CAS logs

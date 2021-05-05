@@ -1,6 +1,6 @@
 package org.apereo.cas.logging;
 
-import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
+import org.apereo.cas.util.serialization.MessageSanitizationUtils;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -25,7 +25,7 @@ public class LoggingUtils {
      * @return the log event
      */
     public static LogEvent prepareLogEvent(final LogEvent logEvent) {
-        val messageModified = TicketIdSanitizationUtils.sanitize(logEvent.getMessage().getFormattedMessage());
+        val messageModified = MessageSanitizationUtils.sanitize(logEvent.getMessage().getFormattedMessage());
         val message = new SimpleMessage(messageModified);
         val newLogEventBuilder = Log4jLogEvent.newBuilder()
             .setLevel(logEvent.getLevel())
