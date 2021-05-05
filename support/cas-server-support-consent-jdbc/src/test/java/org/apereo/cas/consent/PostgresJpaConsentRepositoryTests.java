@@ -21,7 +21,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.consent.jpa.password=password",
     "cas.consent.jpa.driver-class=org.postgresql.Driver",
     "cas.consent.jpa.url=jdbc:postgresql://localhost:5432/audit",
-    "cas.consent.jpa.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
+    "cas.consent.jpa.dialect=org.hibernate.dialect.PostgreSQL10Dialect"
 })
 public class PostgresJpaConsentRepositoryTests extends JpaConsentRepositoryTests {
 }

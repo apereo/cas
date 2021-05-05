@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.support;
 
+import org.springframework.beans.factory.DisposableBean;
+
 import javax.sql.DataSource;
 import java.io.IOException;
 
@@ -9,7 +11,7 @@ import java.io.IOException;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-public interface CloseableDataSource extends DataSource {
+public interface CloseableDataSource extends DataSource, DisposableBean {
     /**
      * Close.
      *
@@ -23,4 +25,9 @@ public interface CloseableDataSource extends DataSource {
      * @return the target data source
      */
     DataSource getTargetDataSource();
+
+    @Override
+    default void destroy() throws Exception {
+        close();
+    }
 }
