@@ -28,6 +28,6 @@ public class AuthenticationDateAttributeMetaDataPopulator extends BaseAuthentica
 
     @Override
     public boolean supports(final Credential credential) {
-        return !(credential instanceof MultifactorAuthenticationCredential);
+        return credential != null && !(credential instanceof MultifactorAuthenticationCredential);
     }
 }
