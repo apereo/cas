@@ -82,7 +82,8 @@ import static org.junit.jupiter.api.Assumptions.*;
  * @since 5.3.0
  */
 @Slf4j
-@SpringBootTest(classes = BaseTicketRegistryTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = BaseTicketRegistryTests.SharedTestConfiguration.class,
+    properties = "cas.ticket.registry.cleaner.schedule.enabled=false")
 public abstract class BaseTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 1;
