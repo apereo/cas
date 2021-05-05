@@ -23,7 +23,8 @@ public class MessageSanitizationUtils {
         + ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + '|' + ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
         + ")-\\d+-)([\\w.-]+)");
 
-    private static final Pattern SENSITIVE_TEXT_PATTERN = Pattern.compile("password\\s*=\\s*(['\"]*\\b\\S+\\b['\"]*)");
+    private static final Pattern SENSITIVE_TEXT_PATTERN =
+        Pattern.compile("(password|token|credential|secret)\\s*=\\s*(['\"]*\\S+['\"]*)");
 
     /**
      * Specifies the ending tail length of the ticket id that would still be visible in the output
@@ -64,7 +65,7 @@ public class MessageSanitizationUtils {
 
         val matcher = SENSITIVE_TEXT_PATTERN.matcher(msg);
         while (matcher.find()) {
-            val group = matcher.group(1);
+            val group = matcher.group(2);
             modifiedMessage = modifiedMessage.replace(group, "*".repeat(OBFUSCATION_LENGTH));
         }
         return modifiedMessage;
