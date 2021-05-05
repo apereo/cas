@@ -43,10 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @SpringBootTest(classes = JpaTicketRegistryTests.SharedTestConfiguration.class,
-    properties = {
-        "cas.ticket.registry.cleaner.schedule.enabled=false",
-        "cas.ticket.registry.jpa.ddl-auto=create-drop"
-    })
+    properties = "cas.ticket.registry.jpa.ddl-auto=create-drop")
 @Tag("JDBC")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class JpaTicketRegistryCleanerTests {
