@@ -7,6 +7,8 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.stream.IntStream;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -29,5 +31,17 @@ public class AuthenticationCredentialTypeMetaDataPopulatorTests {
         assertEquals(
             credentials.getClass().getSimpleName(),
             auth.getAttributes().get(Credential.CREDENTIAL_TYPE_ATTRIBUTE).get(0));
+    }
+
+    @Test
+    public void verifyPopulatorMultipleTimes() {
+        val credentials = new UsernamePasswordCredential();
+        val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        IntStream.range(1, 5)
+            .forEach(i -> populator.populateAttributes(builder, DefaultAuthenticationTransaction.of(credentials)));
+        val auth = builder.build();
+        val result = auth.getAttributes().get(Credential.CREDENTIAL_TYPE_ATTRIBUTE);
+        assertNotNull(result);
+        assertEquals(5, result.size());
     }
 }

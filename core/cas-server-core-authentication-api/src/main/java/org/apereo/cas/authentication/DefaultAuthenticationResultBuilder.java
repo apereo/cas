@@ -47,8 +47,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
             LOGGER.debug("Collected principal attributes [{}] for inclusion in this result for principal [{}]",
                 principalAttributes, authenticatedPrincipal.getId());
 
-            authenticationAttributes.putAll(CoreAuthenticationUtils.mergeAttributes(authenticationAttributes,
-                authn.getAttributes(), new ReplacingAttributeAdder()));
+            authenticationAttributes.putAll(CoreAuthenticationUtils.mergeAttributes(authenticationAttributes,authn.getAttributes()));
             LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result", authenticationAttributes);
 
             authenticationBuilder
