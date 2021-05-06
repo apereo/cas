@@ -36,12 +36,13 @@ public class SSOSamlIdPPostSimpleSignProfileHandlerController extends AbstractSa
      *
      * @param response the response
      * @param request  the request
+     * @return the model and view
      * @throws Exception the exception
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_SIMPLE_SIGN)
     protected ModelAndView handleSaml2ProfileSsoRedirectRequest(final HttpServletResponse response,
-                                                        final HttpServletRequest request) throws Exception {
-        val decoder = getSamlProfileHandlerConfigurationContext().getSamlMessageDecoders().getInstance(HttpMethod.GET);
+                                                                final HttpServletRequest request) throws Exception {
+        val decoder = getConfigurationContext().getSamlMessageDecoders().getInstance(HttpMethod.GET);
         return handleSsoPostProfileRequest(response, request, decoder);
     }
 
@@ -50,12 +51,13 @@ public class SSOSamlIdPPostSimpleSignProfileHandlerController extends AbstractSa
      *
      * @param response the response
      * @param request  the request
+     * @return the model and view
      * @throws Exception the exception
      */
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_SIMPLE_SIGN)
     protected ModelAndView handleSaml2ProfileSsoPostRequest(final HttpServletResponse response,
                                                             final HttpServletRequest request) throws Exception {
-        val decoder = getSamlProfileHandlerConfigurationContext().getSamlMessageDecoders().getInstance(HttpMethod.POST);
+        val decoder = getConfigurationContext().getSamlMessageDecoders().getInstance(HttpMethod.POST);
         return handleSsoPostProfileRequest(response, request, decoder);
     }
 
@@ -65,13 +67,13 @@ public class SSOSamlIdPPostSimpleSignProfileHandlerController extends AbstractSa
      * @param response the response
      * @param request  the request
      * @param decoder  the decoder
-     * @throws Exception the exception
+     * @return the model and view
      */
     protected ModelAndView handleSsoPostProfileRequest(final HttpServletResponse response,
                                                        final HttpServletRequest request,
-                                                       final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
+                                                       final BaseHttpServletRequestXMLMessageDecoder decoder) {
         try {
-            val result = getSamlProfileHandlerConfigurationContext().getSamlHttpRequestExtractor()
+            val result = getConfigurationContext().getSamlHttpRequestExtractor()
                 .extract(request, decoder, AuthnRequest.class)
                 .orElseThrow(() -> new IllegalArgumentException("Unable to extract SAML request"));
             return initiateAuthenticationRequest(result, response, request);
