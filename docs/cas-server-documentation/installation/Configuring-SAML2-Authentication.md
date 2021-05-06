@@ -127,7 +127,7 @@ The following endpoints are provided by CAS:
  
 | Endpoint          | Description
 |-------------------|-------------------------------------------------------------------------------------------------------
-| `samlPostProfileResponse` | Obtain a SAML2 response payload by supplying a `username`, `password` and `entityId` as parameters.
+| `samlPostProfileResponse` | Obtain a SAML2 response payload by supplying a `username`, `password`, `entityId` and `encrypt` as parameters.
 
 ### SAML Services
 
