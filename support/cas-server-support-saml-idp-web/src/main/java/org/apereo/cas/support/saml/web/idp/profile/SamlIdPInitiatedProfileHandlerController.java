@@ -20,6 +20,7 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,8 +50,8 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
      * @throws Exception the exception
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_IDP_INIT_PROFILE_SSO)
-    protected void handleIdPInitiatedSsoRequest(final HttpServletResponse response,
-                                                final HttpServletRequest request) throws Exception {
+    protected ModelAndView handleIdPInitiatedSsoRequest(final HttpServletResponse response,
+                                                        final HttpServletRequest request) throws Exception {
 
         val providerId = request.getParameter(SamlIdPConstants.PROVIDER_ID);
         if (StringUtils.isBlank(providerId)) {
@@ -125,6 +126,6 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
         SAMLBindingSupport.setRelayState(ctx, target);
 
         val pair = Pair.<SignableSAMLObject, MessageContext>of(authnRequest, ctx);
-        initiateAuthenticationRequest(pair, response, request);
+        return initiateAuthenticationRequest(pair, response, request);
     }
 }
