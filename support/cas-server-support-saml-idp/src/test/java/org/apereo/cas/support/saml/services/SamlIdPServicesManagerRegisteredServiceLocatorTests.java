@@ -74,7 +74,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
 
     @Test
     public void verifyInCommonAggregateWithCallback() {
-        val callbackUrl = "http://localhost:8443/cas" + SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK;
+        val callbackUrl = "http://localhost:8443/cas" + SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK;
 
         val service0 = RegisteredServiceTestUtils.getRegisteredService(callbackUrl + ".*");
         service0.setEvaluationOrder(0);
@@ -310,7 +310,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
     @Test
     public void verifyWithSelectionStrategy() {
         val prefix = "http://localhost:8443/cas";
-        val callbackUrl = prefix + SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK;
+        val callbackUrl = prefix + SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK;
 
         val service0 = RegisteredServiceTestUtils.getRegisteredService(callbackUrl + ".*");
         service0.setEvaluationOrder(0);

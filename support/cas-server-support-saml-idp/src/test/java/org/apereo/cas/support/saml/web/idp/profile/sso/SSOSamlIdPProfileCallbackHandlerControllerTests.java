@@ -69,7 +69,7 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
     public void verifyNoRequest() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        assertThrows(IllegalArgumentException.class, () -> controller.handleCallbackProfileRequest(response, request));
+        assertThrows(IllegalArgumentException.class, () -> controller.handleCallbackProfileRequestGet(response, request));
     }
 
     @Test
@@ -81,7 +81,7 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
         request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
 
-        controller.handleCallbackProfileRequest(response, request);
+        controller.handleCallbackProfileRequestGet(response, request);
         assertEquals(HttpStatus.SC_FORBIDDEN, response.getStatus());
     }
 
@@ -98,7 +98,7 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
         request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
         request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, UUID.randomUUID().toString());
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, "ST-1234567890");
-        controller.handleCallbackProfileRequest(response, request);
+        controller.handleCallbackProfileRequestGet(response, request);
         assertEquals(HttpStatus.SC_OK, response.getStatus());
     }
 
@@ -115,7 +115,7 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
         request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
         request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, UUID.randomUUID().toString());
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, "ST-1234567890");
-        controller.handleCallbackProfileRequest(response, request);
+        controller.handleCallbackProfileRequestGet(response, request);
         assertEquals(HttpStatus.SC_OK, response.getStatus());
     }
 
