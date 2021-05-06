@@ -1,7 +1,6 @@
 package org.apereo.cas.webauthn;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -31,7 +30,6 @@ public class JpaWebAuthnCredentialRegistration implements Serializable {
     private static final long serialVersionUID = 1505204109111619367L;
 
     @Id
-    @Builder.Default
     @JsonProperty("id")
     @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "webauthn_sequence")
