@@ -55,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML")
 @TestPropertySource(properties = {
     "cas.session-replication.cookie.auto-configure-cookie-path=true",
-    "cas.authn.saml-idp.core.replicate-sessions=true",
+    "cas.authn.saml-idp.core.session-storage-type=TICKET_REGISTRY",
     "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
     "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata4"
 })
