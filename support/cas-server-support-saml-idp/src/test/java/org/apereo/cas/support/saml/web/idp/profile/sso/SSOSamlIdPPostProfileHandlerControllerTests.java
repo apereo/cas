@@ -11,7 +11,6 @@ import org.apereo.cas.util.EncodingUtils;
 import lombok.val;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -24,6 +23,7 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
@@ -65,8 +65,8 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
         val authnRequest = signAuthnRequest(request, response, getAuthnRequest());
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
         request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
-        controller.handleSaml2ProfileSsoPostRequest(response, request);
-        assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
+        val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
+        assertEquals(HttpStatus.FOUND, mv.getStatus());
     }
 
     @Test
@@ -84,8 +84,8 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
             .getQueryParams().forEach(param -> request.addParameter(param.getFirst(), param.getSecond()));
         request.setQueryString(queryStrings);
 
-        controller.handleSaml2ProfileSsoRedirectRequest(response, request);
-        assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
+        val mv = controller.handleSaml2ProfileSsoRedirectRequest(response, request);
+        assertEquals(HttpStatus.FOUND, mv.getStatus());
     }
 
     @Test
@@ -94,8 +94,19 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
         val request = new MockHttpServletRequest();
         request.setMethod("PUT");
         val response = new MockHttpServletResponse();
-        controller.handleSaml2ProfileSsoRedirectHeadRequest(response, request);
-        assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatus());
+        val mv = controller.handleSaml2ProfileSsoRedirectHeadRequest(response, request);
+        assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
+    }
+
+    @Test
+    @Order(3)
+    public void verifyBadRequest() throws Exception {
+        val request = new MockHttpServletRequest();
+        request.setMethod("POST");
+        val response = new MockHttpServletResponse();
+        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, "Bad Data");
+        val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
+        assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
     }
 
     @Test
@@ -107,8 +118,8 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
         val authnRequest = getAuthnRequest();
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
         request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
-        controller.handleSaml2ProfileSsoPostRequest(response, request);
-        assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
+        val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
+        assertEquals(HttpStatus.FOUND, mv.getStatus());
     }
 
     private AuthnRequest signAuthnRequest(final HttpServletRequest request,
