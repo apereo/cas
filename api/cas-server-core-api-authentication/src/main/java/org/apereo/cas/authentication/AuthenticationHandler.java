@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 
 import org.springframework.core.Ordered;
 

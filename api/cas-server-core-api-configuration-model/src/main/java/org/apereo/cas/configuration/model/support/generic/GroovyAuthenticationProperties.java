@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.generic;
 
-import org.apereo.cas.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;

@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.EqualsAndHashCode;
@@ -54,7 +55,6 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
      * order numbers be unique on a best-effort basis.
      */
     private final int order;
-
 
     /**
      * Define the scope and state of this authentication handler

@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication.handler.support;
 
-import org.apereo.cas.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
+
 import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

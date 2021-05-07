@@ -1,4 +1,4 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.configuration.model.core.authentication;
 
 /**
  * This is {@link AuthenticationHandlerStates}.
