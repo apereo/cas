@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.jdbc.authn;
 
-import org.apereo.cas.authentication.AuthenticationHandlerStates;
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;

@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.token;
 
-import org.apereo.cas.authentication.AuthenticationHandlerStates;
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningOptionalJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
