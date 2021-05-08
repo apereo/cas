@@ -288,13 +288,13 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
                 .map(String::valueOf).orElse(StringUtils.EMPTY);
         }
 
-        if (StringUtils.isBlank(clientId) && (client instanceof OAuth10Client)) {
+        if (StringUtils.isBlank(clientId) && client instanceof OAuth10Client) {
             LOGGER.debug("Client identifier could not be found in request parameters. Looking at session store for the OAuth1 client");
             clientId = configContext.getSessionStore().get(webContext, OAUTH10_CLIENT_ID_SESSION_KEY)
                 .map(Object::toString).orElse(StringUtils.EMPTY);
             configContext.getSessionStore().set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, null);
         }
-        if (StringUtils.isBlank(clientId) && (client instanceof CasClient)) {
+        if (StringUtils.isBlank(clientId) && client instanceof CasClient) {
             LOGGER.debug("Client identifier could not be found in request parameters. Looking at the session store for the CAS client");
             clientId = configContext.getSessionStore().get(webContext, CAS_CLIENT_ID_SESSION_KEY)
                 .map(Object::toString).orElse(StringUtils.EMPTY);

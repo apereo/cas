@@ -35,6 +35,7 @@ import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.BindingDescriptor;
@@ -324,6 +325,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param pair     the pair
      * @param response the response
      * @param request  the request
+     * @return the model and view
      * @throws Exception the exception
      */
     protected ModelAndView initiateAuthenticationRequest(final Pair<? extends SignableSAMLObject, MessageContext> pair,
@@ -506,6 +508,28 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                 LOGGER.trace("SAML2 authentication cookie domain is [{}] with path [{}]",
                     cookieBuilder.getCookieDomain(), path);
             }
+        }
+    }
+
+    /**
+     * Handle profile request.
+     *
+     * @param response the response
+     * @param request  the request
+     * @param decoder  the decoder
+     * @return the model and view
+     */
+    protected ModelAndView handleSsoPostProfileRequest(final HttpServletResponse response,
+                                                       final HttpServletRequest request,
+                                                       final BaseHttpServletRequestXMLMessageDecoder decoder) {
+        try {
+            val result = getConfigurationContext().getSamlHttpRequestExtractor()
+                .extract(request, decoder, AuthnRequest.class)
+                .orElseThrow(() -> new IllegalArgumentException("Unable to extract SAML request"));
+            return initiateAuthenticationRequest(result, response, request);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+            return WebUtils.produceErrorView(e);
         }
     }
 }

@@ -47,6 +47,7 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
      *
      * @param response the response
      * @param request  the request
+     * @return the model and view
      * @throws Exception the exception
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_IDP_INIT_PROFILE_SSO)

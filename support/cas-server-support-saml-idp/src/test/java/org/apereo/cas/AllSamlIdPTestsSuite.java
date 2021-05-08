@@ -57,6 +57,7 @@ import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostProfileHand
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostProfileHandlerEndpointTests;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostSimpleSignProfileHandlerControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPProfileCallbackHandlerControllerTests;
+import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.DefaultSSOSamlHttpRequestExtractorTests;
 import org.apereo.cas.support.saml.web.velocity.SamlTemplatesVelocityEngineTests;
 import org.apereo.cas.ticket.artifact.DefaultSamlArtifactTicketFactoryTests;
@@ -132,6 +133,7 @@ import org.junit.runner.RunWith;
     SamlRegisteredServiceMetadataHealthIndicatorTests.class,
     SamlTemplatesVelocityEngineTests.class,
     SamlProfileSamlAuthNStatementBuilderTests.class,
+    SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests.class,
     SSOSamlIdPPostProfileHandlerControllerWithBrowserStorageTests.class,
     SamlIdPProfileHandlerControllerTests.class,
     ECPSamlIdPProfileHandlerControllerTests.class,
