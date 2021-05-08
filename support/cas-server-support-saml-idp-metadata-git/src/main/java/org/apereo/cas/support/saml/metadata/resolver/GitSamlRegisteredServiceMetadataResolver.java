@@ -48,6 +48,30 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
         this.gitRepository = gitRepository;
     }
 
+    private static void removeFile(final File metadataFile) throws IOException {
+        val result = !metadataFile.exists() || metadataFile.delete();
+        if (!result) {
+            LOGGER.warn("Failed to delete service definition file [{}]", metadataFile.getCanonicalPath());
+        }
+    }
+
+    private static SamlMetadataDocument parseGitObjectContentIntoSamlMetadataDocument(final GitRepository.GitObject gitObject,
+                                                                                      final Collection<GitRepository.GitObject> signatureFiles) {
+        val name = FilenameUtils.removeExtension(gitObject.getPath());
+        val signature = signatureFiles.stream()
+            .filter(sigFile -> name.equalsIgnoreCase(FilenameUtils.removeExtension(sigFile.getPath())))
+            .findFirst()
+            .map(GitRepository.GitObject::getContent)
+            .orElse(StringUtils.EMPTY);
+
+        return SamlMetadataDocument.builder()
+            .id(System.nanoTime())
+            .name(name)
+            .value(gitObject.getContent())
+            .signature(signature)
+            .build();
+    }
+
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         try {
@@ -80,8 +104,8 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
             }
             val metadataLocation = service.getMetadataLocation();
             return metadataLocation != null
-                    && (metadataLocation.trim().startsWith("git://")
-                            || (metadataLocation.trim().startsWith("http") && metadataLocation.trim().endsWith(".git")));
+                && (metadataLocation.trim().startsWith("git://")
+                || (metadataLocation.trim().startsWith("http") && metadataLocation.trim().endsWith(".git")));
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
@@ -92,7 +116,7 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     public void saveOrUpdate(final SamlMetadataDocument document) {
         try {
             val repoDirectory = this.gitRepository.getRepositoryDirectory();
-            
+
             val metadataFile = new File(repoDirectory, document.getName() + ".xml");
             removeFile(metadataFile);
 
@@ -108,32 +132,8 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
         }
     }
 
-    private static void removeFile(final File metadataFile) throws IOException {
-        val result = !metadataFile.exists() || metadataFile.delete();
-        if (!result) {
-            LOGGER.warn("Failed to delete service definition file [{}]", metadataFile.getCanonicalPath());
-        }
-    }
-
     @Override
     public boolean isAvailable(final SamlRegisteredService service) {
         return supports(service);
-    }
-
-    private static SamlMetadataDocument parseGitObjectContentIntoSamlMetadataDocument(final GitRepository.GitObject gitObject,
-                                                                                      final Collection<GitRepository.GitObject> signatureFiles) {
-        val name = FilenameUtils.removeExtension(gitObject.getPath());
-        val signature = signatureFiles.stream()
-            .filter(sigFile -> name.equalsIgnoreCase(FilenameUtils.removeExtension(sigFile.getPath())))
-            .findFirst()
-            .map(GitRepository.GitObject::getContent)
-            .orElse(StringUtils.EMPTY);
-
-        return SamlMetadataDocument.builder()
-            .id(System.nanoTime())
-            .name(name)
-            .value(gitObject.getContent())
-            .signature(signature)
-            .build();
     }
 }
