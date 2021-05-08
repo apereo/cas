@@ -116,7 +116,7 @@ public class CasServicesStreamingKafkaConfigurationTests {
         assertFalse(c.isEmpty());
 
         registeredServiceDistributedCacheManager.remove(registeredService, cache, true);
-        Thread.sleep(2000);
+        Thread.sleep(5000);
         
         assertTrue(registeredServiceDistributedCacheManager.getAll().isEmpty());
     }
