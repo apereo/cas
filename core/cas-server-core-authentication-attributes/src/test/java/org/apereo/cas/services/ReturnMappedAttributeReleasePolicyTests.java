@@ -13,6 +13,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -363,18 +364,21 @@ public class ReturnMappedAttributeReleasePolicyTests {
 
         val service = Executors.newFixedThreadPool(50);
         IntStream.range(0, 1000)
-            .forEach(count -> service.submit(() -> {
-                val principalAttributes = new HashMap<String, List<Object>>();
-                val uid = "user" + count;
-                principalAttributes.put("uid", List.of(uid));
-                principalAttributes.put("fiscalNumber", List.of(uid + '-' + RandomUtils.randomAlphabetic(9)));
-                val principal = CoreAttributesTestUtils.getPrincipal(uid, principalAttributes);
-                val result = policy.getAttributes(principal, CoreAttributesTestUtils.getService(), registeredService);
-                assertNotNull(result);
-                assertTrue(result.containsKey("uid"));
-                assertTrue(result.containsKey("taxId"));
-                assertEquals(uid, result.get("uid").get(0));
-                assertTrue(result.get("taxId").get(0).toString().contains(uid));
+            .forEach(Unchecked.intConsumer(count -> {
+                val future = service.submit(() -> {
+                    val principalAttributes = new HashMap<String, List<Object>>();
+                    val uid = "user" + count;
+                    principalAttributes.put("uid", List.of(uid));
+                    principalAttributes.put("fiscalNumber", List.of(uid + '-' + RandomUtils.randomAlphabetic(9)));
+                    val principal = CoreAttributesTestUtils.getPrincipal(uid, principalAttributes);
+                    val result = policy.getAttributes(principal, CoreAttributesTestUtils.getService(), registeredService);
+                    assertNotNull(result);
+                    assertTrue(result.containsKey("uid"));
+                    assertTrue(result.containsKey("taxId"));
+                    assertEquals(uid, result.get("uid").get(0));
+                    assertTrue(result.get("taxId").get(0).toString().contains(uid));
+                });
+                future.get();
             }));
         service.awaitTermination(5, TimeUnit.SECONDS);
     }
