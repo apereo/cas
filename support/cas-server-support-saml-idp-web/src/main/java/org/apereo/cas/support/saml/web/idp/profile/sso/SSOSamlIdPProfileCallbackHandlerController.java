@@ -62,6 +62,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
      *
      * @param response the response
      * @param request  the request
+     * @return the model and view
      * @throws Exception the exception
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK)

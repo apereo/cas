@@ -35,6 +35,7 @@ public class SSOSamlIdPPostProfileHandlerController extends AbstractSamlIdPProfi
      *
      * @param response the response
      * @param request  the request
+     * @return the model and view
      * @throws Exception the exception
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_REDIRECT)
@@ -49,6 +50,7 @@ public class SSOSamlIdPPostProfileHandlerController extends AbstractSamlIdPProfi
      *
      * @param response the response
      * @param request  the request
+     * @return the model and view
      */
     @RequestMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_REDIRECT, method = RequestMethod.HEAD)
     public ModelAndView handleSaml2ProfileSsoRedirectHeadRequest(final HttpServletResponse response,
@@ -62,6 +64,7 @@ public class SSOSamlIdPPostProfileHandlerController extends AbstractSamlIdPProfi
      *
      * @param response the response
      * @param request  the request
+     * @return the model and view
      * @throws Exception the exception
      */
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST)
