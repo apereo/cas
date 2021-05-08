@@ -779,7 +779,9 @@ public interface CasWebflowConstants {
      * The view state 'casSessionStorageWriteView'.
      */
     String VIEW_ID_SESSION_STORAGE_WRITE = "storage/casSessionStorageWriteView";
-
+    /**
+     * The view state 'casSessionStorageReadView'.
+     */
     String VIEW_ID_SESSION_STORAGE_READ = "storage/casSessionStorageReadView";
 
     /*

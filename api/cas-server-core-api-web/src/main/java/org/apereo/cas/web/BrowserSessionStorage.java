@@ -12,6 +12,9 @@ import java.io.Serializable;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface BrowserSessionStorage extends Serializable {
+    /**
+     * session storage key to track data.
+     */
     String KEY_SESSION_STORAGE = "sessionStorage";
 
     /**

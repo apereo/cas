@@ -64,7 +64,6 @@ public abstract class AbstractDynamoDbProperties extends BaseAmazonWebServicesPr
          * Provisioned mode means that you specify the number of reads
          * and writes per second that you expect your
          * application to use.
-         * <br/><br/>
          * Provisioned mode is a good option if any of the following are true:
          *
          * <ul>
@@ -81,7 +80,6 @@ public abstract class AbstractDynamoDbProperties extends BaseAmazonWebServicesPr
         /**
          * Pay-per-request or on-demand billing means that you're charged for only the read/write
          * requests that you use.
-         * <br/><br/>
          * On-demand mode is a good option if any of the following are true:
          * <ul>
          *     <li>You create new tables with unknown workloads.</li>

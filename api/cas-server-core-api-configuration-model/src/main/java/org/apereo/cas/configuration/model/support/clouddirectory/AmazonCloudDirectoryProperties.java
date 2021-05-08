@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
- * This is {@link CloudDirectoryProperties}.
+ * This is {@link AmazonCloudDirectoryProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0

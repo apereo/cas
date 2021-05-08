@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.CoreAttributesTestUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
@@ -30,7 +31,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -314,7 +318,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
         val principalAttributes = new HashMap<String, List<Object>>();
         principalAttributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
-        
+
         val result = policyWritten.getAttributes(
             CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes),
             CoreAttributesTestUtils.getService(), registeredService);
@@ -343,5 +347,35 @@ public class ReturnMappedAttributeReleasePolicyTests {
 
         assertFalse(result.containsKey("attr1"));
         assertTrue(result.containsKey("userId"));
+    }
+
+    @Test
+    @Order(12)
+    public void verifyConcurrentScript() throws Exception {
+        val allowedAttributes = ArrayListMultimap.<String, Object>create();
+        allowedAttributes.put("taxId", "groovy { attributes['fiscalNumber'][0] }");
+        allowedAttributes.put("uid", "uid");
+
+        val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
+        val policy = new ReturnMappedAttributeReleasePolicy(wrap);
+        val registeredService = CoreAttributesTestUtils.getRegisteredService();
+        when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
+
+        val service = Executors.newFixedThreadPool(50);
+        IntStream.range(0, 1000)
+            .forEach(count -> service.submit(() -> {
+                val principalAttributes = new HashMap<String, List<Object>>();
+                val uid = "user" + count;
+                principalAttributes.put("uid", List.of(uid));
+                principalAttributes.put("fiscalNumber", List.of(uid + '-' + RandomUtils.randomAlphabetic(9)));
+                val principal = CoreAttributesTestUtils.getPrincipal(uid, principalAttributes);
+                val result = policy.getAttributes(principal, CoreAttributesTestUtils.getService(), registeredService);
+                assertNotNull(result);
+                assertTrue(result.containsKey("uid"));
+                assertTrue(result.containsKey("taxId"));
+                assertEquals(uid, result.get("uid").get(0));
+                assertTrue(result.get("taxId").get(0).toString().contains(uid));
+            }));
+        service.awaitTermination(5, TimeUnit.SECONDS);
     }
 }
