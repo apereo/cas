@@ -3,10 +3,12 @@ dependencies {
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-tickets")
-    implementation project(":support:cas-server-support-hazelcast-core")
-    implementation project(":support:cas-server-support-hazelcast")
+    implementation project(":core:cas-server-core-cookie")
     implementation project(":core:cas-server-core-configuration-api")
     
+    implementation project(":support:cas-server-support-hazelcast-core")
+    implementation project(":support:cas-server-support-hazelcast")
+
     api project(":api:cas-server-core-api-util")
 
     implementation libraries.hazelcast

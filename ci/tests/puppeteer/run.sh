@@ -6,7 +6,7 @@
 random=$(openssl rand -hex 8)
 
 echo "Installing Puppeteer"
-npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer
+npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer jsonwebtoken axios
 
 echo "Creating overlay work directory"
 rm -Rf "$TMPDIR/cas" "$PWD"/ci/tests/puppeteer/overlay
@@ -52,7 +52,8 @@ properties="${properties//\$\{PWD\}/${PWD}}"
 properties="${properties//\%\{random\}/${random}}"
 
 echo -e "\nLaunching CAS with properties [${properties}] and dependencies [${dependencies}]"
-java ${runArgs} -jar "$PWD"/cas.war ${properties} --spring.profiles.active=none --server.ssl.key-store="$keystore" &
+java ${runArgs} -jar "$PWD"/cas.war ${properties} \
+  --spring.profiles.active=none --server.ssl.key-store="$keystore" &
 pid=$!
 echo -e "\nWaiting for CAS under process id ${pid}"
 until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
@@ -67,8 +68,8 @@ echo -e "Running ${scriptPath}\n"
 node --unhandled-rejections=strict ${scriptPath} ${config}
 echo -e "*************************************\n"
 
-docker container stop $(docker container ls -aq) >/dev/null 2>/dev/null
-docker container rm $(docker container ls -aq) >/dev/null 2>/dev/null
+docker container stop $(docker container ls -aq) >/dev/null 2>&1 || true
+docker container rm $(docker container ls -aq) >/dev/null 2>&1 || true
 
 echo -e "\nKilling process ${pid} ..."
 kill -9 $pid

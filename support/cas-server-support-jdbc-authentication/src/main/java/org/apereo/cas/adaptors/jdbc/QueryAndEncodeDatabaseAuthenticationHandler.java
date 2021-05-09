@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.configuration.model.support.jdbc.authn.QueryEncodeJdbcAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
@@ -44,86 +45,14 @@ import java.util.Map;
  */
 public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
-    /**
-     * The Algorithm name.
-     */
-    protected String algorithmName;
+    private final QueryEncodeJdbcAuthenticationProperties properties;
 
-    /**
-     * The Sql statement to execute.
-     */
-    protected String sql;
-
-    /**
-     * The Password field name.
-     */
-    protected String passwordFieldName = "password";
-
-    /**
-     * The Salt field name.
-     */
-    protected String saltFieldName = "salt";
-
-    /**
-     * The Expired field name.
-     */
-    protected String expiredFieldName;
-
-    /**
-     * The Expired field name.
-     */
-    protected String disabledFieldName;
-
-    /**
-     * The Number of iterations field name.
-     */
-    protected String numberOfIterationsFieldName;
-
-    /**
-     * The number of iterations. Defaults to 0.
-     */
-    protected int numberOfIterations;
-
-    /**
-     * Static/private salt to be combined with the dynamic salt retrieved
-     * from the database. Optional.
-     * <p>If using this implementation as part of a password hashing strategy,
-     * it might be desirable to configure a private salt.
-     * A hash and the salt used to compute it are often stored together.
-     * If an attacker is ever able to access the hash (e.g. during password cracking)
-     * and it has the full salt value, the attacker has all of the input necessary
-     * to try to brute-force crack the hash (source + complete salt).</p>
-     * <p>However, if part of the salt is not available to the attacker (because it is not stored with the hash),
-     * it is much harder to crack the hash value since the attacker does not have the complete inputs necessary.
-     * The privateSalt property exists to satisfy this private-and-not-shared part of the salt.</p>
-     * <p>If you configure this attribute, you can obtain this additional very important safety feature.</p>
-     */
-    protected String staticSalt;
-
-    public QueryAndEncodeDatabaseAuthenticationHandler(final String name,
+    public QueryAndEncodeDatabaseAuthenticationHandler(final QueryEncodeJdbcAuthenticationProperties properties,
                                                        final ServicesManager servicesManager,
                                                        final PrincipalFactory principalFactory,
-                                                       final Integer order,
-                                                       final DataSource dataSource,
-                                                       final String algorithmName,
-                                                       final String sql,
-                                                       final String passwordFieldName,
-                                                       final String saltFieldName,
-                                                       final String expiredFieldName,
-                                                       final String disabledFieldName,
-                                                       final String numberOfIterationsFieldName,
-                                                       final int numberOfIterations,
-                                                       final String staticSalt) {
-        super(name, servicesManager, principalFactory, order, dataSource);
-        this.algorithmName = algorithmName;
-        this.sql = sql;
-        this.passwordFieldName = passwordFieldName;
-        this.saltFieldName = saltFieldName;
-        this.expiredFieldName = expiredFieldName;
-        this.disabledFieldName = disabledFieldName;
-        this.numberOfIterationsFieldName = numberOfIterationsFieldName;
-        this.numberOfIterations = numberOfIterations;
-        this.staticSalt = staticSalt;
+                                                       final DataSource dataSource) {
+        super(properties.getName(), servicesManager, principalFactory, properties.getOrder(), dataSource);
+        this.properties = properties;
     }
 
     @Override
@@ -131,26 +60,26 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
                                                                                         final String originalPassword)
         throws GeneralSecurityException, PreventedException {
 
-        if (StringUtils.isBlank(this.sql) || StringUtils.isBlank(this.algorithmName) || getJdbcTemplate() == null) {
+        if (StringUtils.isBlank(properties.getSql()) || StringUtils.isBlank(properties.getAlgorithmName()) || getJdbcTemplate() == null) {
             throw new GeneralSecurityException("Authentication handler is not configured correctly");
         }
 
         val username = transformedCredential.getUsername();
         try {
-            val values = getJdbcTemplate().queryForMap(this.sql, username);
+            val values = getJdbcTemplate().queryForMap(properties.getSql(), username);
             val digestedPassword = digestEncodedPassword(transformedCredential.getPassword(), values);
 
-            if (!values.get(this.passwordFieldName).equals(digestedPassword)) {
+            if (!values.get(properties.getPasswordFieldName()).equals(digestedPassword)) {
                 throw new FailedLoginException("Password does not match value on record.");
             }
-            if (StringUtils.isNotBlank(this.expiredFieldName) && values.containsKey(this.expiredFieldName)) {
-                val dbExpired = values.get(this.expiredFieldName).toString();
+            if (StringUtils.isNotBlank(properties.getExpiredFieldName()) && values.containsKey(properties.getExpiredFieldName())) {
+                val dbExpired = values.get(properties.getExpiredFieldName()).toString();
                 if (BooleanUtils.toBoolean(dbExpired) || "1".equals(dbExpired)) {
                     throw new AccountPasswordMustChangeException("Password has expired");
                 }
             }
-            if (StringUtils.isNotBlank(this.disabledFieldName) && values.containsKey(this.disabledFieldName)) {
-                val dbDisabled = values.get(this.disabledFieldName).toString();
+            if (StringUtils.isNotBlank(properties.getDisabledFieldName()) && values.containsKey(properties.getDisabledFieldName())) {
+                val dbDisabled = values.get(properties.getDisabledFieldName()).toString();
                 if (BooleanUtils.toBoolean(dbDisabled) || "1".equals(dbDisabled)) {
                     throw new AccountDisabledException("Account has been disabled");
                 }
@@ -176,23 +105,23 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      */
     protected String digestEncodedPassword(final String encodedPassword, final Map<String, Object> values) {
         val hashService = new DefaultHashService();
-        if (StringUtils.isNotBlank(this.staticSalt)) {
-            hashService.setPrivateSalt(ByteSource.Util.bytes(this.staticSalt));
+        if (StringUtils.isNotBlank(properties.getStaticSalt())) {
+            hashService.setPrivateSalt(ByteSource.Util.bytes(properties.getStaticSalt()));
         }
-        hashService.setHashAlgorithmName(this.algorithmName);
+        hashService.setHashAlgorithmName(properties.getAlgorithmName());
 
-        if (values.containsKey(this.numberOfIterationsFieldName)) {
-            val longAsStr = values.get(this.numberOfIterationsFieldName).toString();
+        if (values.containsKey(properties.getNumberOfIterationsFieldName())) {
+            val longAsStr = values.get(properties.getNumberOfIterationsFieldName()).toString();
             hashService.setHashIterations(Integer.parseInt(longAsStr));
         } else {
-            hashService.setHashIterations(this.numberOfIterations);
+            hashService.setHashIterations(properties.getNumberOfIterations());
         }
 
-        if (!values.containsKey(this.saltFieldName)) {
+        if (!values.containsKey(properties.getSaltFieldName())) {
             throw new IllegalArgumentException("Specified field name for salt does not exist in the results");
         }
 
-        val dynaSalt = values.get(this.saltFieldName).toString();
+        val dynaSalt = values.get(properties.getSaltFieldName()).toString();
         val request = new HashRequest.Builder()
             .setSalt(dynaSalt)
             .setSource(encodedPassword)

@@ -54,7 +54,6 @@ import static org.mockito.Mockito.*;
 },
     properties = {
         "cas.authn.mfa.duo[0].duo-secret-key=Q2IU2i8BFNd6VYflZT8Evl6lF7oPlj3PM15BmRU7",
-        "cas.authn.mfa.duo[0].mode=UNIVERSAL",
         "cas.authn.mfa.duo[0].duo-integration-key=DIOXVRZD2UMZ8XXMNFQ5",
         "cas.authn.mfa.duo[0].trusted-device-enabled=true",
         "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
@@ -152,9 +151,8 @@ public class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasW
 
             val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
             when(provider.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
-            when(provider.createUniqueId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
-            when(provider.validateId(anyString())).thenReturn(Boolean.TRUE);
             when(provider.getDuoAuthenticationService()).thenReturn(duoAuthService);
+            when(provider.matches(anyString())).thenReturn(true);
             val bean = mock(MultifactorAuthenticationProviderBean.class);
             when(bean.getProvider(anyString())).thenReturn(provider);
             return bean;

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -9,6 +10,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
 
 import com.duosecurity.Client;
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -37,16 +39,19 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
         final DuoSecurityMultifactorAuthenticationProperties duoProperties,
         final HttpClient httpClient,
         final CasConfigurationProperties casProperties,
-        final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver) {
-        this(duoProperties, httpClient, getDuoClient(duoProperties, casProperties), multifactorAuthenticationPrincipalResolver);
+        final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver,
+        final Cache<String, DuoSecurityUserAccount> userAccountCache) {
+        this(duoProperties, httpClient, getDuoClient(duoProperties, casProperties),
+            multifactorAuthenticationPrincipalResolver, userAccountCache);
     }
 
     UniversalPromptDuoSecurityAuthenticationService(
         final DuoSecurityMultifactorAuthenticationProperties duoProperties,
         final HttpClient httpClient,
         final Client duoClient,
-        final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver) {
-        super(duoProperties, httpClient, multifactorAuthenticationPrincipalResolver);
+        final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver,
+        final Cache<String, DuoSecurityUserAccount> userAccountCache) {
+        super(duoProperties, httpClient, multifactorAuthenticationPrincipalResolver, userAccountCache);
         this.duoClient = duoClient;
     }
 
@@ -145,9 +150,10 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
     @SneakyThrows
     private static Client getDuoClient(final DuoSecurityMultifactorAuthenticationProperties duoProperties,
         final CasConfigurationProperties casProperties) {
-        return new Client(duoProperties.getDuoIntegrationKey(),
+        return new Client.Builder(duoProperties.getDuoIntegrationKey(),
             duoProperties.getDuoSecretKey(),
             duoProperties.getDuoApiHost(),
-            casProperties.getServer().getLoginUrl());
+            casProperties.getServer().getLoginUrl()).build();
+
     }
 }

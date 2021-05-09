@@ -77,7 +77,7 @@ public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepo
     }
 
     @Override
-    protected Stream<CredentialRegistration> load() {
+    public Stream<CredentialRegistration> stream() {
         val ldapProperties = getProperties().getAuthn().getMfa().getWebAuthn().getLdap();
         return locateLdapEntriesForAll()
             .map(e -> e.getAttribute(ldapProperties.getAccountAttributeName()))

@@ -131,4 +131,5 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
         val redirectUrl = WebUtils.getLogoutRedirectUrl(request, String.class);
         assertEquals("https://oauth.example.org/logout?state=abcd1234&client_id=clientid", redirectUrl);
     }
+
 }

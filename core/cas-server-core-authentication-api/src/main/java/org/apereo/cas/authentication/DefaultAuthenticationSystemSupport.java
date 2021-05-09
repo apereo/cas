@@ -67,7 +67,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     }
 
     @Override
-    public AuthenticationResult handleAndFinalizeSingleAuthenticationTransaction(final Service service, final Credential... credential)
+    public AuthenticationResult finalizeAuthenticationTransaction(final Service service, final Credential... credential)
         throws AuthenticationException {
 
         return finalizeAllAuthenticationTransactions(handleInitialAuthenticationTransaction(service, credential), service);

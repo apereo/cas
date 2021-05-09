@@ -62,7 +62,7 @@ public class CasHibernateJpaBeanFactoryTests {
             .jpaVendorAdapter(adapter)
             .persistenceUnitName("sampleContext")
             .dataSource(dataSource())
-            .packagesToScan(CollectionUtils.wrap(SampleEntity.class.getPackage().getName()))
+            .packagesToScan(CollectionUtils.wrapSet(SampleEntity.class.getPackage().getName()))
             .build();
         assertNotNull(jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc()));
     }

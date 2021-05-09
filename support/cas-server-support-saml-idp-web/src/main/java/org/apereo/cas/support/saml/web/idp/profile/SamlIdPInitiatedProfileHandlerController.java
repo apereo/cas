@@ -20,6 +20,7 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,8 +38,8 @@ import java.util.Objects;
 @Slf4j
 public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
 
-    public SamlIdPInitiatedProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
-        super(samlProfileHandlerConfigurationContext);
+    public SamlIdPInitiatedProfileHandlerController(final SamlProfileHandlerConfigurationContext ctx) {
+        super(ctx);
     }
 
     /**
@@ -46,11 +47,12 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
      *
      * @param response the response
      * @param request  the request
+     * @return the model and view
      * @throws Exception the exception
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_IDP_INIT_PROFILE_SSO)
-    protected void handleIdPInitiatedSsoRequest(final HttpServletResponse response,
-                                                final HttpServletRequest request) throws Exception {
+    protected ModelAndView handleIdPInitiatedSsoRequest(final HttpServletResponse response,
+                                                        final HttpServletRequest request) throws Exception {
 
         val providerId = request.getParameter(SamlIdPConstants.PROVIDER_ID);
         if (StringUtils.isBlank(providerId)) {
@@ -86,19 +88,19 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
         val target = request.getParameter(SamlIdPConstants.TARGET);
         val time = request.getParameter(SamlIdPConstants.TIME);
 
-        val builder = (SAMLObjectBuilder) getSamlProfileHandlerConfigurationContext()
+        val builder = (SAMLObjectBuilder) getConfigurationContext()
             .getOpenSamlConfigBean().getBuilderFactory().getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
         val authnRequest = (AuthnRequest) builder.buildObject();
         authnRequest.setAssertionConsumerServiceURL(shire);
 
-        val isBuilder = (SAMLObjectBuilder) getSamlProfileHandlerConfigurationContext()
+        val isBuilder = (SAMLObjectBuilder) getConfigurationContext()
             .getOpenSamlConfigBean().getBuilderFactory().getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
         val issuer = (Issuer) isBuilder.buildObject();
         issuer.setValue(providerId);
         authnRequest.setIssuer(issuer);
 
         authnRequest.setProtocolBinding(SAMLConstants.SAML2_POST_BINDING_URI);
-        val pBuilder = (SAMLObjectBuilder) getSamlProfileHandlerConfigurationContext()
+        val pBuilder = (SAMLObjectBuilder) getConfigurationContext()
             .getOpenSamlConfigBean().getBuilderFactory().getBuilder(NameIDPolicy.DEFAULT_ELEMENT_NAME);
         val nameIDPolicy = (NameIDPolicy) pBuilder.buildObject();
         nameIDPolicy.setAllowCreate(Boolean.TRUE);
@@ -116,7 +118,7 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
 
         val ctx = new MessageContext();
         if (facade.isAuthnRequestsSigned() || registeredService.isSignUnsolicitedAuthnRequest()) {
-            getSamlProfileHandlerConfigurationContext().getSamlObjectSigner().encode(authnRequest, registeredService,
+            getConfigurationContext().getSamlObjectSigner().encode(authnRequest, registeredService,
                 facade, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest);
         }
         ctx.setMessage(authnRequest);
@@ -125,6 +127,6 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
         SAMLBindingSupport.setRelayState(ctx, target);
 
         val pair = Pair.<SignableSAMLObject, MessageContext>of(authnRequest, ctx);
-        initiateAuthenticationRequest(pair, response, request);
+        return initiateAuthenticationRequest(pair, response, request);
     }
 }

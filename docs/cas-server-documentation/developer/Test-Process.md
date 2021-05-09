@@ -95,13 +95,16 @@ specific functionality such as successful logins, generation of tickets, etc.
 
 All functional and browser tests are executed by the [continuous integration system](Test-Process.html#continuous-integration). If you 
 are adding a new batch of tests, make sure the scenario (i.e. test) name is included in the CI configuration.
+  
+To install Puppeteer once, please refer to [this reference guide](https://www.npmjs.com/package/puppeteer).
 
 To help simplify the testing process, you may use the following bash function in your `~/.profile`:
 
 ```bash
 function pupcas() {
   scenario=$1
-  /path/to/cas/ci/tests/puppeteer/run.sh /path/to/cas/ci/tests/puppeteer/scenarios/"${scenario}"
+  cd /path/to/cas 
+  ./ci/tests/puppeteer/run.sh ./ci/tests/puppeteer/scenarios/"${scenario}"
 }
 ```
 

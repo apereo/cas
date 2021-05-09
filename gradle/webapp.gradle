@@ -4,6 +4,7 @@ ext {
 }
 description = "Apereo CAS Web Application"
 
+
 sourceSets {
     main {
         resources {
@@ -63,8 +64,9 @@ dependencies {
                 logger.debug("Matching ${pattern} against CAS module ${project.name}")
                 project.name.matches(pattern)
             }
+
+            ansi.green("Adding CAS module(s): ${projectsToAdd}")
             projectsToAdd.each {
-                println "Adding CAS module ${it.path}"
                 implementation it
             }
         }

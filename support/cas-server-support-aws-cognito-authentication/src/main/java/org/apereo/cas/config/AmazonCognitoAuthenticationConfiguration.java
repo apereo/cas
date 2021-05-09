@@ -90,6 +90,7 @@ public class AmazonCognitoAuthenticationConfiguration {
             amazonCognitoIdentityProvider(),
             cognito,
             amazonCognitoAuthenticationJwtProcessor());
+        handler.setState(cognito.getState());
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(cognito.getPrincipalTransformation()));
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(cognito.getPasswordEncoder(), applicationContext));
         return handler;

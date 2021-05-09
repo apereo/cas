@@ -2,6 +2,7 @@ package org.apereo.cas.shell.commands.db;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.AvailableSettings;
@@ -13,11 +14,13 @@ import org.hibernate.dialect.MariaDB53Dialect;
 import org.hibernate.dialect.MariaDBDialect;
 import org.hibernate.dialect.MySQL57Dialect;
 import org.hibernate.dialect.MySQL5Dialect;
+import org.hibernate.dialect.MySQL8Dialect;
 import org.hibernate.dialect.MySQLDialect;
 import org.hibernate.dialect.Oracle10gDialect;
 import org.hibernate.dialect.Oracle12cDialect;
 import org.hibernate.dialect.Oracle8iDialect;
 import org.hibernate.dialect.Oracle9iDialect;
+import org.hibernate.dialect.PostgreSQL10Dialect;
 import org.hibernate.dialect.PostgreSQL91Dialect;
 import org.hibernate.dialect.PostgreSQL92Dialect;
 import org.hibernate.dialect.PostgreSQL93Dialect;
@@ -37,7 +40,6 @@ import org.springframework.shell.standard.ShellOption;
 
 import javax.persistence.Entity;
 import javax.persistence.MappedSuperclass;
-
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,7 +64,9 @@ public class GenerateDdlCommand {
         DIALECTS_MAP.put("MYSQL57", MySQL57Dialect.class.getName());
         DIALECTS_MAP.put("MYSQL55", MySQL57Dialect.class.getName());
         DIALECTS_MAP.put("MYSQL5", MySQL5Dialect.class.getName());
+        DIALECTS_MAP.put("MYSQL8", MySQL8Dialect.class.getName());
 
+        DIALECTS_MAP.put("PG10", PostgreSQL10Dialect.class.getName());
         DIALECTS_MAP.put("PG95", PostgreSQL95Dialect.class.getName());
         DIALECTS_MAP.put("PG94", PostgreSQL94Dialect.class.getName());
         DIALECTS_MAP.put("PG93", PostgreSQL93Dialect.class.getName());
@@ -86,6 +90,19 @@ public class GenerateDdlCommand {
         DIALECTS_MAP.put("SQLSERVER2005", SQLServer2005Dialect.class.getName());
         DIALECTS_MAP.put("SQLSERVER2008", SQLServer2008Dialect.class.getName());
         DIALECTS_MAP.put("SQLSERVER2012", SQLServer2012Dialect.class.getName());
+    }
+
+    private static SchemaExport.Action getAction(final boolean dropSchema, final boolean createSchema) {
+        if (createSchema && dropSchema) {
+            return SchemaExport.Action.BOTH;
+        }
+        if (createSchema) {
+            return SchemaExport.Action.CREATE;
+        }
+        if (dropSchema) {
+            return SchemaExport.Action.DROP;
+        }
+        return SchemaExport.Action.NONE;
     }
 
     /**
@@ -117,16 +134,16 @@ public class GenerateDdlCommand {
             defaultValue = ";") final String delimiter,
         @ShellOption(value = {"pretty", "--pretty"},
             help = "Format DDL scripts and pretty-print the output",
-            defaultValue = "true") final boolean pretty,
+            defaultValue = "false") final Boolean pretty,
         @ShellOption(value = {"dropSchema", "--dropSchema"},
             help = "Generate DROP SQL statements in the DDL",
-            defaultValue = "true") final boolean dropSchema,
+            defaultValue = "false") final Boolean dropSchema,
         @ShellOption(value = {"createSchema", "--createSchema"},
             help = "Generate DROP SQL statements in the DDL",
-            defaultValue = "true") final boolean createSchema,
+            defaultValue = "false") final Boolean createSchema,
         @ShellOption(value = {"haltOnError", "--haltOnError"},
             help = "Halt if an error occurs during the generation process",
-            defaultValue = "true") final boolean haltOnError) {
+            defaultValue = "false") final Boolean haltOnError) {
 
         LOGGER.info("Requested database dialect type [{}]", dialect);
         val dialectName = DIALECTS_MAP.getOrDefault(dialect.trim(), dialect);
@@ -155,20 +172,11 @@ public class GenerateDdlCommand {
         val export = new SchemaExport();
         export.setDelimiter(delimiter);
         export.setOutputFile(file);
-        export.setFormat(pretty);
-        export.setHaltOnError(haltOnError);
+        export.setFormat(BooleanUtils.toBoolean(pretty));
+        export.setHaltOnError(BooleanUtils.toBoolean(haltOnError));
         export.setManageNamespaces(true);
 
-        final SchemaExport.Action action;
-        if (createSchema && dropSchema) {
-            action = SchemaExport.Action.BOTH;
-        } else if (createSchema) {
-            action = SchemaExport.Action.CREATE;
-        } else if (dropSchema) {
-            action = SchemaExport.Action.DROP;
-        } else {
-            action = SchemaExport.Action.NONE;
-        }
+        val action = getAction(BooleanUtils.toBoolean(dropSchema), BooleanUtils.toBoolean(createSchema));
         LOGGER.info("Exporting Database DDL to [{}] using dialect [{}] with export type set to [{}]", file, dialect, action);
         export.execute(EnumSet.of(TargetType.SCRIPT, TargetType.STDOUT), SchemaExport.Action.BOTH, metadataSources);
         LOGGER.info("Database DDL is exported to [{}]", file);

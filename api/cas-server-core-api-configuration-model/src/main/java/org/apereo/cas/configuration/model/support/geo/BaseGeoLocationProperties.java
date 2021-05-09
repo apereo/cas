@@ -20,10 +20,4 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-geolocation-googlemaps")
 public abstract class BaseGeoLocationProperties implements Serializable {
     private static final long serialVersionUID = 4548572400079087989L;
-
-    /**
-     * The access key for ip-stack used to look up ip addresses
-     * for geo locations. See <a href="http://ipstack.com">this link</a> for more info.
-     */
-    private String ipStackApiAccessKey;
 }

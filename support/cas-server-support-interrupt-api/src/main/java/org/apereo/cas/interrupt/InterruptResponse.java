@@ -87,4 +87,5 @@ public class InterruptResponse implements Serializable {
     public static InterruptResponse interrupt() {
         return new InterruptResponse(DEFAULT_MESSAGE);
     }
+    
 }

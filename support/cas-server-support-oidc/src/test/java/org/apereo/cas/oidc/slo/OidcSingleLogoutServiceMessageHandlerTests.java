@@ -27,7 +27,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 public class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTests {
 
-    private static final String LOGOUT_URL = "https://mocky.io/post";
+    private static final String LOGOUT_URL_OK = "https://mocky.io/post";
+
+    private static final String LOGOUT_URL_BAD = "https://unknown-1234-unknown.xyz";
 
     @Autowired
     @Qualifier("oidcSingleLogoutServiceMessageHandler")
@@ -35,12 +37,17 @@ public class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTest
 
     @Test
     public void verifyCreateLogoutRequestsFrontChannel() {
-        verifyCreateLogoutRequests(RegisteredServiceLogoutType.FRONT_CHANNEL);
+        verifyCreateLogoutRequests(RegisteredServiceLogoutType.FRONT_CHANNEL, LOGOUT_URL_OK);
     }
 
     @Test
     public void verifyCreateLogoutRequestsBackChannel() {
-        verifyCreateLogoutRequests(RegisteredServiceLogoutType.BACK_CHANNEL);
+        verifyCreateLogoutRequests(RegisteredServiceLogoutType.BACK_CHANNEL, LOGOUT_URL_OK);
+    }
+
+    @Test
+    public void verifyUnknownRequestsBackChannel() {
+        verifyCreateLogoutRequests(RegisteredServiceLogoutType.BACK_CHANNEL, LOGOUT_URL_BAD);
     }
 
     @BeforeEach
@@ -48,11 +55,11 @@ public class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTest
         this.servicesManager.deleteAll();
     }
 
-    private void verifyCreateLogoutRequests(final RegisteredServiceLogoutType type) {
-        val registeredService = getOidcRegisteredService("clientid", LOGOUT_URL + ".*");
+    private void verifyCreateLogoutRequests(final RegisteredServiceLogoutType type, final String logoutUrl) {
+        val registeredService = getOidcRegisteredService("clientid", logoutUrl + ".*");
         registeredService.setLogoutType(type);
-        registeredService.setLogoutUrl(LOGOUT_URL);
-        val service = RegisteredServiceTestUtils.getService(LOGOUT_URL + "?client_id=" + registeredService.getClientId());
+        registeredService.setLogoutUrl(logoutUrl);
+        val service = RegisteredServiceTestUtils.getService(logoutUrl + "?client_id=" + registeredService.getClientId());
         servicesManager.save(registeredService);
 
         val executionRequest = SingleLogoutExecutionRequest.builder()

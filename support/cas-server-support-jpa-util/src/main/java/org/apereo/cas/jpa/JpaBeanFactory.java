@@ -8,7 +8,10 @@ import lombok.val;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
+import javax.persistence.TypedQuery;
 import javax.persistence.spi.PersistenceProvider;
+import java.io.Serializable;
+import java.util.stream.Stream;
 
 /**
  * This is {@link JpaBeanFactory}.
@@ -56,4 +59,12 @@ public interface JpaBeanFactory {
      * @return the persistence provider
      */
     PersistenceProvider newPersistenceProvider(AbstractJpaProperties jpa);
+
+    /**
+     * Stream query.
+     *
+     * @param query the query
+     * @return the stream
+     */
+    Stream<? extends Serializable> streamQuery(TypedQuery<? extends Serializable> query);
 }

@@ -1,23 +1,7 @@
 package org.apereo.cas.integration.pac4j;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketComponentSerializationConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.web.support.CookieUtils;
@@ -25,12 +9,12 @@ import org.apereo.cas.web.support.CookieUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.pac4j.core.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -42,27 +26,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@SpringBootTest(classes = {
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketsSerializationConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasCoreTicketComponentSerializationConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    RefreshAutoConfiguration.class
-})
+@SpringBootTest(classes = BaseSessionStoreTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Simple")
+@Tag("Web")
 public class DistributedJEESessionStoreTests {
 
     @Autowired
@@ -80,12 +46,18 @@ public class DistributedJEESessionStoreTests {
     public void verifyOperation() {
         val cookie = casProperties.getSessionReplication().getCookie();
         val cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
+
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
+
         val store = new DistributedJEESessionStore(centralAuthenticationService, ticketFactory, cookieGenerator);
         val context = new JEEContext(request, response);
 
         assertNotNull(request.getSession());
+
+        assertFalse(store.renewSession(context));
+        assertTrue(store.buildFromTrackableSession(context, "trackable-session").isPresent());
+        assertTrue(store.getTrackableSession(context).isPresent());
 
         store.set(context, "attribute", "test");
         var value = store.get(context, "attribute");
@@ -104,8 +76,19 @@ public class DistributedJEESessionStoreTests {
         assertTrue(value.isPresent());
         assertEquals("test3", value.get());
 
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                store.set(context, "not-serializable", new NoSerializable());
+            }
+        });
         store.destroySession(context);
         value = store.get(context, "attribute");
         assertTrue(value.isEmpty());
+
+        assertTrue(store.getSessionId(context, false).isPresent());
+    }
+
+    private static class NoSerializable {
     }
 }

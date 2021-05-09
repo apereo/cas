@@ -17,7 +17,6 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.annotation.DirtiesContext;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -37,7 +36,6 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
 @Tag("Authentication")
 @Slf4j
 public class DefaultAuthenticationManagerTests {
@@ -45,9 +43,10 @@ public class DefaultAuthenticationManagerTests {
 
     private static final String HANDLER_B = "HandlerB";
 
-    private final AuthenticationTransaction transaction = new DefaultAuthenticationTransactionFactory().newTransaction(CoreAuthenticationTestUtils.getService(),
-        mock(Credential.class, withSettings().serializable()),
-        mock(Credential.class, withSettings().serializable()));
+    private final AuthenticationTransaction transaction = new DefaultAuthenticationTransactionFactory()
+        .newTransaction(CoreAuthenticationTestUtils.getService(),
+            mock(Credential.class, withSettings().serializable()),
+            mock(Credential.class, withSettings().serializable()));
 
     protected static ServicesManager mockServicesManager() {
         val svc = mock(ServicesManager.class);
@@ -58,7 +57,8 @@ public class DefaultAuthenticationManagerTests {
     }
 
     /**
-     * Creates a new mock authentication handler that either successfully validates all credentials or fails to
+     * Creates a new mock authentication handler that either
+     * successfully validates all credentials or fails to
      * validate all credentials.
      *
      * @param success True to authenticate all credentials, false to fail all credentials.
@@ -107,6 +107,7 @@ public class DefaultAuthenticationManagerTests {
         val mock = mock(AuthenticationHandler.class);
         when(mock.getName()).thenReturn(name);
         when(mock.supports(any(Credential.class))).thenReturn(true);
+        when(mock.getState()).thenCallRealMethod();
         if (success) {
             val p = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("nobody");
 

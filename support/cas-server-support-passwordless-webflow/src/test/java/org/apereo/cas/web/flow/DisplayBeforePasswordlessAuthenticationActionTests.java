@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     
     "cas.authn.passwordless.accounts.groovy.location=classpath:PasswordlessAccount.groovy"
 })
-@Tag("WebflowActions")
+@Tag("Mail")
 @EnabledIfPortOpen(port = 25000)
 @Import(DisplayBeforePasswordlessAuthenticationActionTests.PasswordlessAuthenticationActionTestConfiguration.class)
 public class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {

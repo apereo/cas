@@ -43,7 +43,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
                                      final HttpServletRequest request) {
         val ctx = decodeSoapRequest(request);
         val query = (AttributeQuery) ctx.getMessage();
-        val config = getSamlProfileHandlerConfigurationContext();
+        val config = getConfigurationContext();
         try {
             val issuer = Objects.requireNonNull(query).getIssuer().getValue();
             val service = verifySamlRegisteredService(issuer);

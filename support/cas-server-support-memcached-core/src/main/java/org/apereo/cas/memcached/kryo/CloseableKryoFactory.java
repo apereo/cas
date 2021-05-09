@@ -52,6 +52,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -110,7 +111,9 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
         registerNativeJdkComponentsWithKryo(kryo);
         registerImmutableOrEmptyCollectionsWithKryo(kryo);
 
-        classesToRegister.forEach(c -> {
+        val classes = new ArrayList<>(classesToRegister);
+        classes.sort(Comparator.comparing(Class::getName));
+        classes.forEach(c -> {
             LOGGER.trace("Registering serializable class [{}] with Kryo", c.getName());
             kryo.register(c);
         });

@@ -25,7 +25,7 @@ public class DuoSecurityPrepareWebLoginFormAction extends AbstractMultifactorAut
         val principal = resolvePrincipal(WebUtils.getAuthentication(requestContext).getPrincipal());
         val credential = requestContext.getFlowScope().get(CasWebflowConstants.VAR_ID_CREDENTIAL, DuoSecurityCredential.class);
         Objects.requireNonNull(credential).setUsername(principal.getId());
-        credential.setProviderId(provider.createUniqueId());
+        credential.setProviderId(provider.getId());
 
         val duoAuthenticationService = provider.getDuoAuthenticationService();
         val viewScope = requestContext.getViewScope();

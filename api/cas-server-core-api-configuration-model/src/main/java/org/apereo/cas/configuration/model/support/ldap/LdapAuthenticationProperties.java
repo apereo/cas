@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -75,7 +76,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
      * To fetch and resolve attributes that carry tags/options,
      * consider tagging the mapped attribute as such: {@code homePostalAddress:homePostalAddress;}.
      */
-    private List principalAttributeList = new ArrayList<>(0);
+    private List<String> principalAttributeList = new ArrayList<>(0);
 
     /**
      * Sets a flag that determines whether multiple values are allowed for the {@link #principalAttributeId}.
@@ -88,7 +89,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
     /**
      * List of additional attributes to retrieve, if any.
      */
-    private List additionalAttributes = new ArrayList<>(0);
+    private List<String> additionalAttributes = new ArrayList<>(0);
 
     /**
      * Flag to indicate whether CAS should block authentication
@@ -105,4 +106,10 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
      * Order of the authentication handler in the chain.
      */
     private Integer order;
+
+    /**
+     * Define the scope and state of this authentication handler
+     * and the lifecycle in which it can be invoked or activated.
+     */
+    private AuthenticationHandlerStates state = AuthenticationHandlerStates.ACTIVE;
 }

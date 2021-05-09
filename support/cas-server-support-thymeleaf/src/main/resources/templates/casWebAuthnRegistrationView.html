@@ -103,10 +103,26 @@
                         </div>
                     </div>
                 </section>
+
                 <button class="mdc-button mdc-button--raised mr-2"
                         name="registerButton" id="registerButton" accesskey="r" type="button">
                     <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register Device</span>
                 </button>
+
+                <section id="residentKeysPanel" class="cas-field my-3 mdc-input-group">
+                    <p>
+                        You may also register your device using <i>Discoverable Credentials / Resident Keys</i>.
+                        This means that the private key and associated metadata is stored in persistent
+                        memory on the authenticator and not on the CAS server.
+                    </p>
+                </section>
+                <button class="mdc-button mdc-button--raised mr-2"
+                        name="registerDiscoverableCredentialButton"
+                        id="registerDiscoverableCredentialButton" accesskey="d" type="button">
+                        <span class="mdc-button__label"
+                              th:text="#{screen.welcome.button.register-residentkey}">Register Device with Discoverable Credentials</span>
+                </button>
+
                 <!--
                 <button class="mdc-button mdc-button--raised mr-2"
                         id="logoutButton" disabled="disabled" name="logout"
@@ -142,6 +158,15 @@
                 const credentialNickname = $('#credentialNickname').val();
                 register(username, displayName, credentialNickname);
             }, false);
+
+            var btnResident = document.getElementById('registerDiscoverableCredentialButton');
+            btnResident.addEventListener('click', function (event) {
+                const username = '[[${principal.id}]]';
+                const displayName = '[[${displayName}]]';
+                const credentialNickname = $('#credentialNickname').val();
+                register(username, displayName, credentialNickname, true);
+            }, false);
+
         </script>
 
     </div>

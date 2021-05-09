@@ -4,7 +4,7 @@
 
 echo "Running LDAP docker image"
 docker stop ldap-server || true && docker rm ldap-server || true
-docker run --rm  -d -p 10389:389 --name="ldap-server" mmoayyed/ldap
+docker run --rm  -d -p 10389:389 -p 1389:389 --name="ldap-server" mmoayyed/ldap
 
 docker ps | grep "ldap-server"
 retVal=$?

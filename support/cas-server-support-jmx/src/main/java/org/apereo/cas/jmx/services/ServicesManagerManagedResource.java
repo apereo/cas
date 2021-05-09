@@ -22,7 +22,7 @@ public class ServicesManagerManagedResource {
 
     @ManagedOperation
     public Collection<String> getServices() {
-        return servicesManager.getAllServicesStream()
+        return servicesManager.stream()
             .map(service -> String.format("%s-%s:%s", service.getId(), service.getName(), service.getServiceId()))
             .collect(Collectors.toSet());
     }

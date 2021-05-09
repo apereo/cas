@@ -17,6 +17,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.Charset;
+import java.util.Collections;
 
 /**
  * Second action of a SPNEGO flow : decode the gssapi-data and build a new
@@ -61,9 +62,11 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
 
-        val authorizationHeader = request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
+        LOGGER.debug("Available request headers are [{}]", Collections.list(request.getHeaderNames()));
+        val authorizationHeader = StringUtils.defaultString(
+            request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION),
+            request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION.toLowerCase()));
         LOGGER.debug("SPNEGO Authorization header located as [{}]", authorizationHeader);
-
         if (StringUtils.isBlank(authorizationHeader)) {
             LOGGER.warn("SPNEGO Authorization header is not found under [{}]", SpnegoConstants.HEADER_AUTHORIZATION);
             return null;
@@ -101,12 +104,6 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
      */
     private void setResponseHeader(final RequestContext context) {
         val credential = WebUtils.getCredential(context);
-
-        if (credential == null) {
-            LOGGER.debug("No credential was provided. No response header set.");
-            return;
-        }
-
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val spnegoCredentials = (SpnegoCredential) credential;
         val nextToken = spnegoCredentials.getNextToken();

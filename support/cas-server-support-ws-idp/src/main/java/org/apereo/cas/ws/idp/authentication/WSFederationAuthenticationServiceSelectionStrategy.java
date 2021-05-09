@@ -5,15 +5,16 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
+import org.jooq.lambda.Unchecked;
 
 import java.util.Optional;
 
@@ -30,8 +31,29 @@ public class WSFederationAuthenticationServiceSelectionStrategy extends BaseAuth
     private static final long serialVersionUID = 8035218407906419228L;
 
     public WSFederationAuthenticationServiceSelectionStrategy(final ServicesManager servicesManager,
-        final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
+                                                              final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
         super(servicesManager, webApplicationServiceFactory);
+    }
+
+    @SneakyThrows
+    private static Optional<NameValuePair> getRealmAsParameter(final Service service) {
+        val builder = new URIBuilder(service.getId());
+        return builder.getQueryParams()
+            .stream()
+            .filter(p -> p.getName().equals(WSFederationConstants.WTREALM))
+            .findFirst();
+    }
+
+    private static Optional<NameValuePair> getReplyAsParameter(final Service service) {
+        return Optional.ofNullable(service)
+            .map(Unchecked.function(svc -> {
+                val builder = new URIBuilder(svc.getId());
+                return builder.getQueryParams()
+                    .stream()
+                    .filter(p -> p.getName().equals(WSFederationConstants.WREPLY))
+                    .findFirst()
+                    .orElse(null);
+            }));
     }
 
     @Override
@@ -58,41 +80,6 @@ public class WSFederationAuthenticationServiceSelectionStrategy extends BaseAuth
             LOGGER.trace("Parameter [{}] is undefined in the request", WSFederationConstants.WTREALM);
             return false;
         }
-        val replyAsParameter = getReplyAsParameter(service);
-        if (replyAsParameter.isEmpty()) {
-            LOGGER.trace("Parameter [{}] is undefined in the request", WSFederationConstants.WREPLY);
-            return false;
-        }
-        return true;
-    }
-
-    private static Optional<NameValuePair> getRealmAsParameter(final Service service) {
-        try {
-            val builder = new URIBuilder(service.getId());
-            return builder.getQueryParams()
-                .stream()
-                .filter(p -> p.getName().equals(WSFederationConstants.WTREALM))
-                .findFirst();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return Optional.empty();
-    }
-
-    private static Optional<NameValuePair> getReplyAsParameter(final Service service) {
-        try {
-            if (service == null) {
-                return Optional.empty();
-            }
-
-            val builder = new URIBuilder(service.getId());
-            return builder.getQueryParams()
-                .stream()
-                .filter(p -> p.getName().equals(WSFederationConstants.WREPLY))
-                .findFirst();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return Optional.empty();
+        return getReplyAsParameter(service).isPresent();
     }
 }

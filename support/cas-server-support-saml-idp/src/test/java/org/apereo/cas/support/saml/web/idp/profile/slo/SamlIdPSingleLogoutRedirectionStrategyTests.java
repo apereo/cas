@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
 import org.apereo.cas.logout.LogoutRedirectionStrategy;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -109,4 +110,31 @@ public class SamlIdPSingleLogoutRedirectionStrategyTests extends BaseSamlIdPConf
         assertNotNull(WebUtils.getLogoutRedirectUrl(request, String.class));
     }
 
+    @Test
+    public void verifyNoLogoutResponse() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val registeredService = getSamlRegisteredServiceFor(false, false,
+            false, "https://mocky.io");
+        registeredService.setLogoutResponseEnabled(false);
+        WebUtils.putRegisteredService(request, registeredService);
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        assertFalse(samlIdPSingleLogoutRedirectionStrategy.supports(context));
+    }
+
+    @Test
+    public void verifyLogoutForNonSamlService() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        WebUtils.putRegisteredService(request, registeredService);
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        assertFalse(samlIdPSingleLogoutRedirectionStrategy.supports(context));
+    }
 }

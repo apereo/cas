@@ -3,6 +3,7 @@ package org.apereo.cas.mfa.simple;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -26,7 +27,7 @@ import java.security.GeneralSecurityException;
  * @since 6.0.0
  */
 @Slf4j
-public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler implements MultifactorAuthenticationHandler {
     private final CentralAuthenticationService centralAuthenticationService;
 
     public CasSimpleMultifactorAuthenticationHandler(final String name,

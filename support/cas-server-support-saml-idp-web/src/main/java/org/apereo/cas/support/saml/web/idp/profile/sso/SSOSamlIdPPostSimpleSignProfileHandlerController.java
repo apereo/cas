@@ -5,11 +5,10 @@ import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandler
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 
 import lombok.val;
-import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
-import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,8 +21,8 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.2.0
  */
 public class SSOSamlIdPPostSimpleSignProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
-    public SSOSamlIdPPostSimpleSignProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
-        super(samlProfileHandlerConfigurationContext);
+    public SSOSamlIdPPostSimpleSignProfileHandlerController(final SamlProfileHandlerConfigurationContext ctx) {
+        super(ctx);
     }
 
     /**
@@ -31,13 +30,14 @@ public class SSOSamlIdPPostSimpleSignProfileHandlerController extends AbstractSa
      *
      * @param response the response
      * @param request  the request
+     * @return the model and view
      * @throws Exception the exception
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_SIMPLE_SIGN)
-    protected void handleSaml2ProfileSsoRedirectRequest(final HttpServletResponse response,
-                                                        final HttpServletRequest request) throws Exception {
-        val decoder = getSamlProfileHandlerConfigurationContext().getSamlMessageDecoders().getInstance(HttpMethod.GET);
-        handleSsoPostProfileRequest(response, request, decoder);
+    protected ModelAndView handleSaml2ProfileSsoRedirectRequest(final HttpServletResponse response,
+                                                                final HttpServletRequest request) throws Exception {
+        val decoder = getConfigurationContext().getSamlMessageDecoders().getInstance(HttpMethod.GET);
+        return handleSsoPostProfileRequest(response, request, decoder);
     }
 
     /**
@@ -45,31 +45,13 @@ public class SSOSamlIdPPostSimpleSignProfileHandlerController extends AbstractSa
      *
      * @param response the response
      * @param request  the request
+     * @return the model and view
      * @throws Exception the exception
      */
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_SIMPLE_SIGN)
-    protected void handleSaml2ProfileSsoPostRequest(final HttpServletResponse response,
-                                                    final HttpServletRequest request) throws Exception {
-        val decoder = getSamlProfileHandlerConfigurationContext().getSamlMessageDecoders().getInstance(HttpMethod.POST);
-        handleSsoPostProfileRequest(response, request, decoder);
+    protected ModelAndView handleSaml2ProfileSsoPostRequest(final HttpServletResponse response,
+                                                            final HttpServletRequest request) throws Exception {
+        val decoder = getConfigurationContext().getSamlMessageDecoders().getInstance(HttpMethod.POST);
+        return handleSsoPostProfileRequest(response, request, decoder);
     }
-
-    /**
-     * Handle profile request.
-     *
-     * @param response the response
-     * @param request  the request
-     * @param decoder  the decoder
-     * @throws Exception the exception
-     */
-    protected void handleSsoPostProfileRequest(final HttpServletResponse response,
-                                               final HttpServletRequest request,
-                                               final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
-        val result = getSamlProfileHandlerConfigurationContext().getSamlHttpRequestExtractor()
-            .extract(request, decoder, AuthnRequest.class);
-        if (result.isPresent()) {
-            initiateAuthenticationRequest(result.get(), response, request);
-        }
-    }
-
 }

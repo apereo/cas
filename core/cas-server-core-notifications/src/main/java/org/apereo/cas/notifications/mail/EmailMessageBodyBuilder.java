@@ -6,6 +6,7 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
+import groovy.text.GStringTemplateEngine;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
@@ -65,7 +66,14 @@ public class EmailMessageBodyBuilder {
                 script.setBinding(args);
                 return script.execute(args.values().toArray(), String.class);
             }
+
             val contents = FileUtils.readFileToString(templateFile, StandardCharsets.UTF_8);
+            if (templateFile.getName().endsWith(".gtemplate")) {
+                val engine = new GStringTemplateEngine();
+                val template = engine.createTemplate(contents).make(this.parameters);
+                return template.toString();
+            }
+
             return String.format(contents, parameters.values().toArray());
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);

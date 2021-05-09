@@ -30,5 +30,14 @@ const assert = require('assert');
     var authnButton = await page.$('#authnButton');
     assert(await authnButton.boundingBox() != null);
 
+    const endpoints = ["health", "webAuthnDevices/casuser"];
+    const baseUrl = "https://localhost:8443/cas/actuator/"
+    for (let i = 0; i < endpoints.length; i++) {
+        let url = baseUrl + endpoints[i];
+        const response = await page.goto(url);
+        console.log(response.status() + " " + response.statusText())
+        assert(response.ok())
+    }
+
     await browser.close();
 })();

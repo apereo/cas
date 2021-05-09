@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -80,9 +81,10 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         val service = new WebApplicationServiceFactory().createService(callback);
         when(tgt.getServices()).thenReturn(CollectionUtils.wrap("service", service));
 
+        val phoneValues = List.of("123456789", "4805553241");
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap(
             OIDC_CLAIM_EMAIL, List.of("casuser@example.org"),
-            OIDC_CLAIM_PHONE_NUMBER, List.of("123456789"),
+            OIDC_CLAIM_PHONE_NUMBER, phoneValues,
             OIDC_CLAIM_NAME, List.of("casuser")));
 
         var authentication = CoreAuthenticationTestUtils.getAuthentication(principal,
@@ -94,9 +96,10 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         when(accessToken.getAuthentication()).thenReturn(authentication);
         when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
         when(accessToken.getId()).thenReturn(getClass().getSimpleName());
-        when(accessToken.getScopes()).thenReturn(Set.of(OPENID.getScope(), PROFILE.getScope(), EMAIL.getScope()));
+        when(accessToken.getScopes()).thenReturn(Set.of(OPENID.getScope(), PROFILE.getScope(), EMAIL.getScope(), PHONE.getScope()));
 
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid");
+        val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid");
+        registeredService.setScopes(CollectionUtils.wrapSet(EMAIL.getScope(), PROFILE.getScope(), PHONE.getScope()));
         val idToken = oidcIdTokenGenerator.generate(request, response, accessToken, 30,
             OAuth20ResponseTypes.CODE, registeredService);
         assertNotNull(idToken);
@@ -106,9 +109,10 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         assertTrue(claims.hasClaim(OIDC_CLAIM_EMAIL));
         assertTrue(claims.hasClaim(OidcConstants.CLAIM_AUTH_TIME));
         assertTrue(claims.hasClaim(OIDC_CLAIM_NAME));
-        assertFalse(claims.hasClaim(OIDC_CLAIM_PHONE_NUMBER));
+        assertTrue(claims.hasClaim(OIDC_CLAIM_PHONE_NUMBER));
         assertEquals("casuser@example.org", claims.getStringClaimValue(OIDC_CLAIM_EMAIL));
         assertEquals("casuser", claims.getStringClaimValue(OIDC_CLAIM_NAME));
+        assertEquals(phoneValues, claims.getStringListClaimValue(OIDC_CLAIM_PHONE_NUMBER));
     }
 
     @Test

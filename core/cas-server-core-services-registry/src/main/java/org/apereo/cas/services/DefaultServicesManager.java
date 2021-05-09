@@ -26,4 +26,13 @@ public class DefaultServicesManager extends AbstractServicesManager {
             .collect(Collectors.toList());
     }
 
+    @Override
+    public Collection<RegisteredService> getServicesForDomain(final String domain) {
+        return getConfigurationContext().getServicesCache()
+            .asMap()
+            .values()
+            .stream()
+            .sorted(Comparator.naturalOrder())
+            .collect(Collectors.toList());
+    }
 }

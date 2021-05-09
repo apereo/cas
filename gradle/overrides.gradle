@@ -1,6 +1,6 @@
 configurations.all {
     resolutionStrategy {
-        if (!Boolean.getBoolean("skipVersionConflict")) {
+        if (!providers.systemProperty("skipVersionConflict").forUseAtConfigurationTime().present) {
             failOnVersionConflict()
         }
         preferProjectModules()
@@ -133,9 +133,9 @@ ext["spring.version"] = ext["springVersion"]
 ext["jackson.version"] = ext["jacksonVersion"]
 ext["thymeleaf.version"] = ext["thymeleafVersion"]
 ext["thymeleaf-layout-dialect.version"] = ext["thymeleafDialectVersion"]
-ext["spring-session.version"] = ext["springSessionVersion"]
 ext["hsqldb.version"] = ext["hsqlVersion"]
 ext["httpcore.version"] = ext["httpCoreVersion"]
+ext["spring-session.version"] = ext["springSessionVersion"]
 ext["hikaricp.version"] = ext["hikariVersion"]
 ext["groovy.version"] = ext["groovyVersion"]
 ext["log4j2.version"] = ext["log4jVersion"]

@@ -2,11 +2,13 @@ package org.apereo.cas.oidc.web.controllers.logout;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.logout.slo.SingleLogoutUrl;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
+import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.SneakyThrows;
@@ -23,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcLogoutEndpointController}.
@@ -32,8 +35,17 @@ import java.util.Optional;
  */
 @Slf4j
 public class OidcLogoutEndpointController extends BaseOAuth20Controller {
-    public OidcLogoutEndpointController(final OidcConfigurationContext context) {
+
+    private final UrlValidator urlValidator;
+
+    private final OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher;
+
+    public OidcLogoutEndpointController(final OidcConfigurationContext context,
+                                        final OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher,
+                                        final UrlValidator urlValidator) {
         super(context);
+        this.urlValidator = urlValidator;
+        this.postLogoutRedirectUrlMatcher = postLogoutRedirectUrlMatcher;
     }
 
     /**
@@ -53,12 +65,13 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
         @RequestParam(value = "state", required = false) final String state,
         @RequestParam(value = "id_token_hint", required = false) final String idToken,
         final HttpServletRequest request, final HttpServletResponse response) {
+        String clientId = null;
 
         if (StringUtils.isNotBlank(idToken)) {
             LOGGER.trace("Decoding logout id token [{}]", idToken);
             val configContext = getOAuthConfigurationContext();
             val claims = configContext.getIdTokenSigningAndEncryptionService().decode(idToken, Optional.empty());
-            val clientId = claims.getStringClaimValue(OAuth20Constants.CLIENT_ID);
+            clientId = claims.getStringClaimValue(OAuth20Constants.CLIENT_ID);
             LOGGER.debug("Client id retrieved from id token is [{}]", clientId);
 
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configContext.getServicesManager(), clientId);
@@ -73,11 +86,12 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
 
             WebUtils.putRegisteredService(request, Objects.requireNonNull(registeredService));
             val urls = configContext.getSingleLogoutServiceLogoutUrlBuilder()
-                .determineLogoutUrl(registeredService, service, Optional.of(request));
+                .determineLogoutUrl(registeredService, service, Optional.of(request))
+                    .stream().map(SingleLogoutUrl::getUrl).collect(Collectors.toList());
             LOGGER.debug("Logout urls assigned to registered service are [{}]", urls);
-            if (StringUtils.isNotBlank(postLogoutRedirectUrl)) {
+            if (StringUtils.isNotBlank(postLogoutRedirectUrl) && registeredService.getMatchingStrategy() != null) {
                 val matchResult = registeredService.matches(postLogoutRedirectUrl)
-                    || urls.stream().anyMatch(url -> url.getUrl().equalsIgnoreCase(postLogoutRedirectUrl));
+                    || urls.stream().anyMatch(url -> postLogoutRedirectUrlMatcher.matches(postLogoutRedirectUrl, url));
                 if (matchResult) {
                     LOGGER.debug("Requested logout URL [{}] is authorized for redirects", postLogoutRedirectUrl);
                     return new ResponseEntity<>(executeLogoutRedirect(Optional.ofNullable(StringUtils.trimToNull(state)),
@@ -85,18 +99,15 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
                         request, response));
                 }
             }
-
-            if (urls.isEmpty()) {
-                LOGGER.debug("No logout urls could be determined for registered service [{}]", registeredService.getName());
+            val validURL = urls.stream().filter(urlValidator::isValid).findFirst();
+            if (validURL.isPresent()) {
                 return new ResponseEntity<>(executeLogoutRedirect(Optional.ofNullable(StringUtils.trimToNull(state)),
-                    Optional.empty(), Optional.of(clientId), request, response));
+                        validURL, Optional.of(clientId), request, response));
             }
-            return new ResponseEntity<>(executeLogoutRedirect(Optional.ofNullable(StringUtils.trimToNull(state)),
-                Optional.of(urls.iterator().next().getUrl()), Optional.of(clientId),
-                request, response));
+            LOGGER.debug("No logout urls could be determined for registered service [{}]", registeredService.getName());
         }
         return new ResponseEntity<>(executeLogoutRedirect(Optional.ofNullable(StringUtils.trimToNull(state)),
-            Optional.empty(), Optional.empty(), request, response));
+            Optional.empty(), Optional.ofNullable(clientId), request, response));
     }
 
     /**

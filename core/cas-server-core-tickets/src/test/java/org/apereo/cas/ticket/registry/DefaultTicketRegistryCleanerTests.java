@@ -49,7 +49,7 @@ public class DefaultTicketRegistryCleanerTests {
     public void verifyCleanFail() {
         val logoutManager = mock(LogoutManager.class);
         val ticketRegistry = mock(TicketRegistry.class);
-        when(ticketRegistry.getTicketsStream()).thenThrow(IllegalArgumentException.class);
+        when(ticketRegistry.stream()).thenThrow(IllegalArgumentException.class);
         val c = new DefaultTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, ticketRegistry);
         assertEquals(c.clean(), 0);
     }

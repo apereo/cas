@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.idp.metadata.generator;
 
-import org.apereo.cas.configuration.model.support.saml.idp.metadata.CoreSamlMetadataProperties;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;

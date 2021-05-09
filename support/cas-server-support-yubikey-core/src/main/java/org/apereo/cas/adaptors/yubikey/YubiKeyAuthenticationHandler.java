@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.yubikey;
 import org.apereo.cas.adaptors.yubikey.registry.OpenYubiKeyAccountRegistry;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
@@ -35,7 +36,7 @@ import java.security.GeneralSecurityException;
  */
 @Slf4j
 @Getter
-public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler implements MultifactorAuthenticationHandler {
     private final YubiKeyAccountRegistry registry;
     private final YubicoClient client;
 

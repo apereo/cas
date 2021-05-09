@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,24 +12,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 /**
  * This is {@link SamlAttributeQueryTicketImpl}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Entity
-@Table(name = "SAML2_ATTRIBUTE_QUERY_TICKETS")
-@DiscriminatorColumn(name = "TYPE")
-@DiscriminatorValue(SamlAttributeQueryTicket.PREFIX)
 @Getter
 @NoArgsConstructor
 @Setter
@@ -38,24 +25,19 @@ public class SamlAttributeQueryTicketImpl extends AbstractTicket implements Saml
 
     private static final long serialVersionUID = 6276140828446447398L;
 
-    @Column
     private String relyingParty;
 
-    @Column(length = 5000)
     private String object;
 
     /**
      * The {@link TicketGrantingTicket} this is associated with.
      */
-    @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
     @JsonProperty("ticketGrantingTicket")
     private TicketGrantingTicket ticketGrantingTicket;
 
     /**
      * The service this ticket is valid for.
      */
-    @Lob
-    @Column(name = "SERVICE", nullable = false)
     private Service service;
 
 

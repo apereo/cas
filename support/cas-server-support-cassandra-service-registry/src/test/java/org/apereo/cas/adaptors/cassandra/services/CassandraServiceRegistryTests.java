@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CassandraServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
@@ -56,7 +57,7 @@ public class CassandraServiceRegistryTests extends AbstractServiceRegistryTests 
 
     @Test
     public void verifyFailOps() throws Exception {
-        assertNull(newServiceRegistry.save(null));
+        assertNull(newServiceRegistry.save((RegisteredService) null));
         assertFalse(newServiceRegistry.delete(null));
         if (newServiceRegistry instanceof DisposableBean) {
             DisposableBean.class.cast(newServiceRegistry).destroy();

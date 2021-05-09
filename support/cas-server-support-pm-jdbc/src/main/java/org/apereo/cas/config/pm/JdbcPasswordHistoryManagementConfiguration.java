@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link JdbcPasswordHistoryManagementConfiguration}.
@@ -57,8 +57,8 @@ public class JdbcPasswordHistoryManagementConfiguration {
     }
 
     @Bean
-    public List<String> jpaPasswordHistoryPackagesToScan() {
-        return CollectionUtils.wrapList(JdbcPasswordHistoryEntity.class.getPackage().getName());
+    public Set<String> jpaPasswordHistoryPackagesToScan() {
+        return CollectionUtils.wrapSet(JdbcPasswordHistoryEntity.class.getPackage().getName());
     }
 
     @Lazy

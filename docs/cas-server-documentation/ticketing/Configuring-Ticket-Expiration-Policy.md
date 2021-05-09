@@ -17,6 +17,14 @@ introduce a new ticket type that carries its own expiration policy and you will 
 consult the documentation for that feature or behavior to realize how expiration 
 policies for its own ticket types may be tuned and controlled.</p></div>
 
+## Administrative Endpoints
+
+The following endpoints are provided by CAS:
+
+| Endpoint     | Description
+|--------------|--------------------------------------------------------------------------
+| `ticketExpirationPolicies`    | Outputs the current ticket expiration policies via `GET`. Additional policies for a registered service can be defined by passing a `service` parameter with either the service's numeric identifer or id.
+
 ## Ticket-Granting Ticket Policies
 
 `TGT` expiration policy governs the time span during which an authenticated user may grant `ST`s with a valid (non-expired) `TGT` without

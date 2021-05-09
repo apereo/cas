@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.jpa.JpaPersistenceProviderConfigurer;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
@@ -68,13 +67,13 @@ import org.apereo.cas.oidc.web.controllers.dynareg.OidcDynamicClientRegistration
 import org.apereo.cas.oidc.web.controllers.introspection.OidcIntrospectionEndpointController;
 import org.apereo.cas.oidc.web.controllers.jwks.OidcJwksEndpointController;
 import org.apereo.cas.oidc.web.controllers.logout.OidcLogoutEndpointController;
+import org.apereo.cas.oidc.web.controllers.logout.OidcPostLogoutRedirectUrlMatcher;
 import org.apereo.cas.oidc.web.controllers.profile.OidcUserProfileEndpointController;
 import org.apereo.cas.oidc.web.controllers.token.OidcAccessTokenEndpointController;
 import org.apereo.cas.oidc.web.controllers.token.OidcRevocationEndpointController;
 import org.apereo.cas.oidc.web.flow.OidcMultifactorAuthenticationTrigger;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIAction;
 import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurer;
-import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
@@ -123,6 +122,7 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.ProtocolEndpointConfigurer;
+import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -152,7 +152,6 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -187,6 +186,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class OidcConfiguration implements WebMvcConfigurer {
+
     @Autowired
     @Qualifier("oauthRegisteredServiceCipherExecutor")
     private ObjectProvider<CipherExecutor> oauthRegisteredServiceCipherExecutor;
@@ -348,6 +348,11 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Qualifier("oauthInvalidAuthorizationBuilder")
     private ObjectProvider<OAuth20InvalidAuthorizationResponseBuilder> oauthInvalidAuthorizationBuilder;
 
+    @Autowired
+    @Qualifier("urlValidator")
+    private ObjectProvider<UrlValidator> urlValidator;
+
+
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(oauthInterceptor()).addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
@@ -458,6 +463,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "oidcIntrospectionEndpointController")
     public OidcIntrospectionEndpointController oidcIntrospectionEndpointController() {
         val context = oidcConfigurationContext();
         return new OidcIntrospectionEndpointController(context);
@@ -465,13 +471,22 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @RefreshScope
     @Bean
-    public OidcLogoutEndpointController oidcLogoutEndpointController() {
-        val context = oidcConfigurationContext();
-        return new OidcLogoutEndpointController(context);
+    @ConditionalOnMissingBean(name = OidcPostLogoutRedirectUrlMatcher.BEAN_NAME_POST_LOGOUT_REDIRECT_URL_MATCHER)
+    public OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher() {
+        return String::equalsIgnoreCase;
     }
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "oidcLogoutEndpointController")
+    public OidcLogoutEndpointController oidcLogoutEndpointController() {
+        val context = oidcConfigurationContext();
+        return new OidcLogoutEndpointController(context, postLogoutRedirectUrlMatcher(), urlValidator.getObject());
+    }
+
+    @RefreshScope
+    @Bean
+    @ConditionalOnMissingBean(name = "oidcRevocationEndpointController")
     public OidcRevocationEndpointController oidcRevocationEndpointController() {
         val context = oidcConfigurationContext();
         return new OidcRevocationEndpointController(context);
@@ -479,6 +494,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "oidcAccessTokenController")
     public OidcAccessTokenEndpointController oidcAccessTokenController() {
         val context = oidcConfigurationContext();
         return new OidcAccessTokenEndpointController(context, accessTokenGrantAuditableRequestExtractor.getObject());
@@ -493,12 +509,14 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "oidcDynamicClientRegistrationEndpointController")
     public OidcDynamicClientRegistrationEndpointController oidcDynamicClientRegistrationEndpointController() {
         val context = oidcConfigurationContext();
         return new OidcDynamicClientRegistrationEndpointController(context);
     }
 
     @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcClientConfigurationEndpointController")
     @Bean
     public OidcClientConfigurationEndpointController oidcClientConfigurationEndpointController() {
         val context = oidcConfigurationContext();
@@ -506,6 +524,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcJwksController")
     @Bean
     public OidcJwksEndpointController oidcJwksController() {
         val context = oidcConfigurationContext();
@@ -513,6 +532,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcWellKnownController")
     @Bean
     @Autowired
     public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcWebFingerDiscoveryService") final OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService) {
@@ -523,6 +543,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @RefreshScope
     @Bean
     @SneakyThrows
+    @ConditionalOnMissingBean(name = "oidcWebFingerDiscoveryService")
     public OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService() {
         return new OidcWebFingerDiscoveryService(oidcWebFingerUserInfoRepository(),
             oidcServerDiscoverySettingsFactory().getObject());
@@ -978,17 +999,5 @@ public class OidcConfiguration implements WebMvcConfigurer {
             .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService())
             .accessTokenJwtBuilder(oidcAccessTokenJwtBuilder())
             .build();
-    }
-
-    @ConditionalOnClass(value = JpaPersistenceProviderConfigurer.class)
-    @Configuration("oidcJpaServiceRegistryConfiguration")
-    public static class OidcJpaServiceRegistryConfiguration {
-        @Bean
-        @ConditionalOnMissingBean(name = "oidcJpaServicePersistenceProviderConfigurer")
-        public JpaPersistenceProviderConfigurer oidcJpaServicePersistenceProviderConfigurer() {
-            return context -> context.getIncludeEntityClasses().addAll(List.of(
-                OidcRegisteredService.class.getName(),
-                OAuthRegisteredService.class.getName()));
-        }
     }
 }

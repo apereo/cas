@@ -90,9 +90,6 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
 
         if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
             LOGGER.error("Access token [{}] cannot be found in the ticket registry or has expired.", accessToken);
-            if (accessTokenTicket != null) {
-                getOAuthConfigurationContext().getTicketRegistry().deleteTicket(accessTokenTicket);
-            }
             return expiredAccessTokenResponseEntity;
         }
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(accessTokenTicket.getAuthentication());

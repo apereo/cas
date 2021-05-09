@@ -20,7 +20,7 @@ const assert = require('assert');
     console.log(title)
     assert(title === "CAS - Central Authentication Service")
 
-    const header = await page.$eval('#content div h2', el => el.innerText)
+    const header = await page.$eval('#content div h2', el => el.innerText.trim())
     console.log(header)
     assert(header === "Log In Successful")
 

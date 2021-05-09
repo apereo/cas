@@ -70,7 +70,6 @@ Please see [this guide](REST-Protocol-TicketStatus.html).
 
 Please see [this guide](REST-Protocol-Create-Service.html).
 
-
 ## CAS REST Clients
 
 In order to interact with the CAS REST API, a REST client must be used to submit credentials,

@@ -26,6 +26,7 @@ import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
 import org.apereo.cas.configuration.model.support.acme.AcmeProperties;
 import org.apereo.cas.configuration.model.support.analytics.GoogleAnalyticsProperties;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
+import org.apereo.cas.configuration.model.support.aws.AmazonSecurityTokenServiceProperties;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.configuration.model.support.clearpass.ClearpassProperties;
 import org.apereo.cas.configuration.model.support.consent.ConsentProperties;
@@ -297,6 +298,12 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private GoogleAppsProperties googleApps = new GoogleAppsProperties();
+
+    /**
+     * Integration settings for amazon sts.
+     */
+    @NestedConfigurationProperty
+    private AmazonSecurityTokenServiceProperties amazonSts = new AmazonSecurityTokenServiceProperties();
 
     /**
      * SAML Metadata UI settings and parsing.

@@ -58,7 +58,7 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
             if (currentToken.isPresent() && token.equalsIgnoreCase(currentToken.get())) {
                 val credential = new OneTimePasswordCredential(principal.getUsername(), token);
                 val service = WebUtils.getService(requestContext);
-                val authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+                val authenticationResult = authenticationSystemSupport.finalizeAuthenticationTransaction(service, credential);
                 WebUtils.putAuthenticationResult(authenticationResult, requestContext);
                 WebUtils.putAuthentication(authenticationResult.getAuthentication(), requestContext);
                 WebUtils.putCredential(requestContext, credential);

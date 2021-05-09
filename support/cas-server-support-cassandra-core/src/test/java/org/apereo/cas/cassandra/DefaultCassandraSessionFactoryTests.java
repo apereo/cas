@@ -1,7 +1,7 @@
 package org.apereo.cas.cassandra;
 
 /**
- * This is {@link DefaultCassandraSessionFactoryTests}.
+ * This is {@link org.apereo.cas.cassandra.DefaultCassandraSessionFactoryTests}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
@@ -55,5 +55,4 @@ public class DefaultCassandraSessionFactoryTests {
         assertNotNull(factory.getSession());
         factory.close();
     }
-
 }

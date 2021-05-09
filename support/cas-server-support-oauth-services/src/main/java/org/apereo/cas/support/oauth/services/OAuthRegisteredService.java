@@ -9,11 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * An extension of the {@link RegexRegisteredService} that defines the
@@ -22,8 +19,6 @@ import java.util.HashSet;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@Entity
-@DiscriminatorValue("oauth")
 @ToString(callSuper = true)
 @Getter
 @Setter
@@ -31,52 +26,30 @@ import java.util.HashSet;
 public class OAuthRegisteredService extends RegexRegisteredService {
 
     private static final long serialVersionUID = 5318897374067731021L;
-    
+
     private String clientSecret;
 
-    @Column
     private String clientId;
 
-    @Column
     private boolean bypassApprovalPrompt;
 
-    @Column
     private boolean generateRefreshToken;
 
-    @Column
     private boolean renewRefreshToken;
 
-    @Column
     private boolean jwtAccessToken;
 
-    @Lob
-    @Column(name = "code_exp_policy", length = Integer.MAX_VALUE)
     private RegisteredServiceOAuthCodeExpirationPolicy codeExpirationPolicy;
 
-    @Lob
-    @Column(name = "at_exp_policy", length = Integer.MAX_VALUE)
     private RegisteredServiceOAuthAccessTokenExpirationPolicy accessTokenExpirationPolicy;
 
-    @Lob
-    @Column(name = "rt_exp_policy", length = Integer.MAX_VALUE)
     private RegisteredServiceOAuthRefreshTokenExpirationPolicy refreshTokenExpirationPolicy;
 
-    @Lob
-    @Column(name = "dt_exp_policy", length = Integer.MAX_VALUE)
     private RegisteredServiceOAuthDeviceTokenExpirationPolicy deviceTokenExpirationPolicy;
 
-    @Lob
-    @Column(name = "supported_grants", length = Integer.MAX_VALUE)
-    private HashSet<String> supportedGrantTypes = new HashSet<>(0);
+    private Set<String> supportedGrantTypes = new HashSet<>(0);
 
-    @Lob
-    @Column(name = "supported_responses", length = Integer.MAX_VALUE)
-    private HashSet<String> supportedResponseTypes = new HashSet<>(0);
-
-    @Override
-    protected AbstractRegisteredService newInstance() {
-        return new OAuthRegisteredService();
-    }
+    private Set<String> supportedResponseTypes = new HashSet<>(0);
 
     @Override
     public void initialize() {
@@ -95,10 +68,14 @@ public class OAuthRegisteredService extends RegexRegisteredService {
         return "OAuth2 Client";
     }
 
-
     @JsonIgnore
     @Override
     public int getEvaluationPriority() {
         return 2;
+    }
+
+    @Override
+    protected AbstractRegisteredService newInstance() {
+        return new OAuthRegisteredService();
     }
 }

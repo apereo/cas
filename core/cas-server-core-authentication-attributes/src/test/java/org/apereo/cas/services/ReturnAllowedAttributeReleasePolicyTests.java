@@ -73,6 +73,13 @@ public class ReturnAllowedAttributeReleasePolicyTests {
     @Test
     @Order(2)
     public void verifyConsentable() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, casProperties,
+            CasConfigurationProperties.class.getSimpleName());
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        
         val allowedAttributes = new ArrayList<String>();
         allowedAttributes.add("uid");
         allowedAttributes.add("cn");
@@ -136,7 +143,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
 
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, casProperties,
             CasConfigurationProperties.class.getSimpleName());
-        
+
         val allowedAttributes = new ArrayList<String>();
         allowedAttributes.add("given-name");
         allowedAttributes.add("uid");

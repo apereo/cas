@@ -18,11 +18,14 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.transport.ChainingCredentialsProvider;
 import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.HttpTransport;
 import org.eclipse.jgit.transport.JschConfigSessionFactory;
 import org.eclipse.jgit.transport.NetRCCredentialsProvider;
 import org.eclipse.jgit.transport.OpenSshConfig;
 import org.eclipse.jgit.transport.SshTransport;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.eclipse.jgit.transport.http.JDKHttpConnectionFactory;
+import org.eclipse.jgit.transport.http.apache.HttpClientConnectionFactory;
 import org.eclipse.jgit.util.FS;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
@@ -65,6 +68,8 @@ public class GitRepositoryBuilder {
 
     private final boolean clearExistingIdentities;
 
+    private final BaseGitProperties.HttpClientTypes httpClientType;
+
     private static String getBranchPath(final String branchName) {
         return "refs/heads/" + branchName;
     }
@@ -88,7 +93,8 @@ public class GitRepositoryBuilder {
             .timeoutInSeconds(Beans.newDuration(props.getTimeout()).toSeconds())
             .signCommits(props.isSignCommits())
             .clearExistingIdentities(props.isClearExistingIdentities())
-            .strictHostKeyChecking(props.isStrictHostKeyChecking());
+            .strictHostKeyChecking(props.isStrictHostKeyChecking())
+            .httpClientType(props.getHttpClientType());
         if (StringUtils.hasText(props.getUsername())) {
             val providers = CollectionUtils.wrapList(
                 new UsernamePasswordCredentialsProvider(props.getUsername(), props.getPassword()),
@@ -110,34 +116,41 @@ public class GitRepositoryBuilder {
      * @return the transport config callback
      */
     protected TransportConfigCallback buildTransportConfigCallback() {
-        val sshSessionFactory = new JschConfigSessionFactory() {
-            @Override
-            protected void configure(final OpenSshConfig.Host host, final Session session) {
-                if (StringUtils.hasText(sshSessionPassword)) {
-                    session.setPassword(sshSessionPassword);
-                }
-                if (!strictHostKeyChecking) {
-                    session.setConfig("StrictHostKeyChecking", "no");
-                }
-            }
-
-            @Override
-            protected JSch createDefaultJSch(final FS fs) throws JSchException {
-                val defaultJSch = super.createDefaultJSch(fs);
-                if (clearExistingIdentities) {
-                    defaultJSch.removeAllIdentity();
-                }
-
-                if (StringUtils.hasText(privateKeyPath)) {
-                    defaultJSch.addIdentity(privateKeyPath, privateKeyPassphrase);
-                }
-                return defaultJSch;
-            }
-        };
         return transport -> {
             if (transport instanceof SshTransport) {
+                val sshSessionFactory = new JschConfigSessionFactory() {
+                    @Override
+                    protected void configure(final OpenSshConfig.Host host, final Session session) {
+                        if (StringUtils.hasText(sshSessionPassword)) {
+                            session.setPassword(sshSessionPassword);
+                        }
+                        if (!strictHostKeyChecking) {
+                            session.setConfig("StrictHostKeyChecking", "no");
+                        }
+                    }
+
+                    @Override
+                    protected JSch createDefaultJSch(final FS fs) throws JSchException {
+                        val defaultJSch = super.createDefaultJSch(fs);
+                        if (clearExistingIdentities) {
+                            defaultJSch.removeAllIdentity();
+                        }
+
+                        if (StringUtils.hasText(privateKeyPath)) {
+                            defaultJSch.addIdentity(privateKeyPath, privateKeyPassphrase);
+                        }
+                        return defaultJSch;
+                    }
+                };
                 val sshTransport = (SshTransport) transport;
                 sshTransport.setSshSessionFactory(sshSessionFactory);
+            }
+            if (transport instanceof HttpTransport) {
+                if (httpClientType == BaseGitProperties.HttpClientTypes.JDK) {
+                    HttpTransport.setConnectionFactory(new JDKHttpConnectionFactory());
+                } else if (httpClientType == BaseGitProperties.HttpClientTypes.HTTP_CLIENT) {
+                    HttpTransport.setConnectionFactory(new HttpClientConnectionFactory());
+                }
             }
         };
     }
@@ -182,7 +195,7 @@ public class GitRepositoryBuilder {
                 .map(GitRepositoryBuilder::getBranchPath)
                 .collect(Collectors.toList()));
         }
-        LOGGER.debug("Cloning repository at [{}] with branch [{}]", this.repositoryDirectory, this.activeBranch);
+        LOGGER.debug("Cloning repository to [{}] with branch [{}]", this.repositoryDirectory, this.activeBranch);
         return new GitRepository(cloneCommand.call(), credentialsProviders,
             transportCallback, this.timeoutInSeconds, this.signCommits);
     }

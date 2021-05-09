@@ -17,7 +17,6 @@ import org.pac4j.core.context.JEEContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -31,6 +30,15 @@ import java.util.TreeSet;
 public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAccessTokenGrantRequestExtractor {
     public AccessTokenAuthorizationCodeGrantRequestExtractor(final OAuth20ConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
+    }
+
+    /**
+     * Is allowed to generate refresh token ?
+     *
+     * @return true/false
+     */
+    protected static boolean isAllowedToGenerateRefreshToken() {
+        return true;
     }
 
     @Override
@@ -67,6 +75,28 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             .ticketGrantingTicket(token.getTicketGrantingTicket());
 
         return extractInternal(request, response, builder);
+    }
+
+    /**
+     * Supports the grant type?
+     *
+     * @param context the context
+     * @return true/false
+     */
+    @Override
+    public boolean supports(final HttpServletRequest context) {
+        val grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
+        return OAuth20Utils.isGrantType(grantType, getGrantType());
+    }
+
+    @Override
+    public OAuth20GrantTypes getGrantType() {
+        return OAuth20GrantTypes.AUTHORIZATION_CODE;
+    }
+
+    @Override
+    public OAuth20ResponseTypes getResponseType() {
+        return OAuth20ResponseTypes.NONE;
     }
 
     /**
@@ -109,15 +139,6 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             .orElse(StringUtils.EMPTY);
     }
 
-    /**
-     * Is allowed to generate refresh token ?
-     *
-     * @return true/false
-     */
-    protected static boolean isAllowedToGenerateRefreshToken() {
-        return true;
-    }
-
     protected String getOAuthParameterName() {
         return OAuth20Constants.CODE;
     }
@@ -142,34 +163,9 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         val token = getOAuthConfigurationContext().getTicketRegistry().getTicket(getOAuthParameter(request), OAuth20Token.class);
         if (token == null || token.isExpired()) {
             LOGGER.error("OAuth token indicated by parameter [{}] has expired or not found: [{}]", getOAuthParameter(request), token);
-            if (token != null) {
-                getOAuthConfigurationContext().getTicketRegistry().deleteTicket(token.getId());
-            }
             return null;
         }
         return token;
-    }
-
-    /**
-     * Supports the grant type?
-     *
-     * @param context the context
-     * @return true/false
-     */
-    @Override
-    public boolean supports(final HttpServletRequest context) {
-        val grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
-        return OAuth20Utils.isGrantType(grantType, getGrantType());
-    }
-
-    @Override
-    public OAuth20GrantTypes getGrantType() {
-        return OAuth20GrantTypes.AUTHORIZATION_CODE;
-    }
-
-    @Override
-    public OAuth20ResponseTypes getResponseType() {
-        return OAuth20ResponseTypes.NONE;
     }
 
     /**

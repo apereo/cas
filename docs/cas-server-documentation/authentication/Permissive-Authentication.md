@@ -44,7 +44,8 @@ specify additional account details mostly useful for development and basic testi
       "lastName" : [ "java.util.List", ["CAS"]]
     },
     "status" : "OK",
-    "expirationDate" : "2050-01-01"
+    "expirationDate" : "2050-01-01",
+    "warnings" : [ "java.util.ArrayList", [ "warning.message.code1" ] ]
   }
 }
 ```

@@ -9,7 +9,7 @@ import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
+import org.apereo.cas.util.serialization.MessageSanitizationUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +66,7 @@ public class DefaultCasEventListener {
         if (this.casEventRepository != null) {
             val dto = prepareCasEvent(event);
             dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
-            dto.putEventId(TicketIdSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
+            dto.putEventId(MessageSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
             dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
             this.casEventRepository.save(dto);
         }

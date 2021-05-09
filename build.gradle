@@ -34,25 +34,28 @@ buildscript {
 ext {
     srcTagMap = new ConcurrentHashMap<File, Set<String>>()
 
-    sonatypeUsername = System.getProperty("sonatypeUsername")
-    sonatypePassword = System.getProperty("sonatypePassword")
+    sonatypeUsername = providers.systemProperty("sonatypeUsername").forUseAtConfigurationTime().getOrNull()
+    sonatypePassword = providers.systemProperty("sonatypePassword").forUseAtConfigurationTime().getOrNull()
 
-    publishSnapshots = Boolean.getBoolean("publishSnapshots")
-    publishReleases = Boolean.getBoolean("publishReleases")
+    publishSnapshots = providers.systemProperty("publishSnapshots").forUseAtConfigurationTime().present
+    publishReleases = providers.systemProperty("publishReleases").forUseAtConfigurationTime().present
     
     skipBootifulArtifact = providers.systemProperty("skipBootifulArtifact").forUseAtConfigurationTime().present
     skipErrorProneCompiler = providers.systemProperty("skipErrorProneCompiler").forUseAtConfigurationTime().present
 
-    enableRemoteDebugging = Boolean.getBoolean("enableRemoteDebugging")
-    remoteDebuggingSuspend = Boolean.getBoolean("remoteDebuggingSuspend") ? "y" : "n"
-    generateGitProperties = Boolean.getBoolean("generateGitProperties")
+    enableRemoteDebugging = providers.systemProperty("enableRemoteDebugging").forUseAtConfigurationTime().present
+    remoteDebuggingSuspend = providers.systemProperty("remoteDebuggingSuspend")
+            .forUseAtConfigurationTime().getOrElse("false") == "true" ? "y" : "n"
+    generateGitProperties = publishReleases || publishSnapshots
+            || providers.systemProperty("generateGitProperties").forUseAtConfigurationTime().present
 
-    ci = System.getenv("CI") || Boolean.getBoolean("CI")
+    ci = System.getenv("CI") || providers.systemProperty("CI").forUseAtConfigurationTime().present
 
     excludedFilesFromTestCoverage = [
         '**/docs/**',
         '**/soap/generated/**',
         '**/com/duosecurity/**',
+        '**/support/openid/**',
         '**/**ConfigurationMetadata**',
         '**/**NtlmAuthenticationHandler**',
         '**/**CosmosDbServiceRegistry**',
@@ -82,7 +85,7 @@ nexusStaging {
 apply from: rootProject.file("gradle/dependencies.gradle")
 apply from: rootProject.file("gradle/dependencyUpdates.gradle")
 
-if (!Boolean.getBoolean("skipSonarqube")) {
+if (!providers.systemProperty("skipSonarqube").forUseAtConfigurationTime().present) {
     apply plugin: "org.sonarqube"
 
     sonarqube {
@@ -157,13 +160,8 @@ allprojects {
 
     apply from: rootProject.file("gradle/tasks.gradle")
 
-    if (rootProject.publishReleases || rootProject.publishSnapshots || rootProject.generateGitProperties) {
+    if (rootProject.generateGitProperties) {
         apply plugin: "com.gorylenko.gradle-git-properties"
-        gitProperties {
-            extProperty = "gitProps"
-            keys = ["git.branch", "git.build.time", "git.build.user.name",
-                    "git.build.version", "git.commit.id", "git.remote.origin.url"]
-        }
     }
 
     project.ext["forceBootifulArtifact"] = null
@@ -171,6 +169,18 @@ allprojects {
     afterEvaluate { project ->
         jacoco {
             toolVersion = "$gradleJacocoVersion"
+        }
+
+        if (rootProject.generateGitProperties) {
+            gitProperties {
+                customProperty 'project.group', project.group
+                customProperty 'project.name', project.name
+                customProperty 'project.version', project.version
+                customProperty 'project.description', project.description
+                extProperty = "gitProps"
+                keys = ["git.branch", "git.build.time", "git.build.user.name",
+                        "git.build.version", "git.commit.id", "git.remote.origin.url"]
+            }
         }
     }
 
@@ -195,7 +205,7 @@ allprojects {
 
     javadoc {
         options.addBooleanOption('html5', true)
-        failOnError = Boolean.getBoolean("ignoreJavadocFailures")
+        failOnError = providers.systemProperty("ignoreJavadocFailures").forUseAtConfigurationTime().present
         excludes = ['**/generated/**', '**/com/duosecurity/**']
     }
     
@@ -385,6 +395,11 @@ subprojects {
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
 
     [compileTestJava, compileJava].each {
+
+        if (rootProject.generateGitProperties) {
+            it.dependsOn("generateGitProperties")
+        }
+
         it.options.fork = true
         it.options.incremental = true
 
@@ -439,8 +454,7 @@ subprojects {
         }
     }
 
-
-    if (!Boolean.getBoolean("skipCheckstyle") && projectShouldBePublished(project)) {
+    if (!providers.systemProperty("skipCheckstyle").forUseAtConfigurationTime().present && projectShouldBePublished(project)) {
         apply plugin: "checkstyle"
         checkstyle {
             configProperties = [
@@ -454,7 +468,7 @@ subprojects {
         }
     }
 
-    if (!Boolean.getBoolean("skipSpotbugs") && projectShouldBePublished(project)) {
+    if (!providers.systemProperty("skipSpotbugs").forUseAtConfigurationTime().present && projectShouldBePublished(project)) {
         apply from: rootProject.file("gradle/spotbugs.gradle")
     }
 
@@ -498,12 +512,12 @@ subprojects {
 
         annotationProcessor libraries.springindexer
         
-        if (!Boolean.getBoolean("skipSpotbugs") && projectShouldBePublished(project)) {
+        if (!providers.systemProperty("skipSpotbugs").forUseAtConfigurationTime().present && projectShouldBePublished(project)) {
             spotbugsPlugins libraries.findbugscontrib
             spotbugsPlugins libraries.findbugssec
         }
 
-        if (!Boolean.getBoolean("skipErrorProneCompiler")) {
+        if (!providers.systemProperty("skipErrorProneCompiler").forUseAtConfigurationTime().present) {
             errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
             errorproneJavac "com.google.errorprone:javac:$errorproneJavacVersion"
         }
@@ -518,22 +532,22 @@ tasks.withType(Javadoc) {
     destinationDir = new File(buildDir, "javadoc")
     classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
     options.addBooleanOption('html5', true)
-    failOnError = Boolean.getBoolean("ignoreJavadocFailures")
+    failOnError = providers.systemProperty("ignoreJavadocFailures").forUseAtConfigurationTime().present
 }
 
 task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc, description: "Aggregate all Javadocs into a single directory") {
-    classifier = "javadoc"
+    archiveClassifier.set("javadoc")
     from javadoc
 }
 
 task rootSourcesJar(type: Jar, description: "Build JAR for the root CAS module") {
-    archiveBaseName = "${project.archivesBaseName}"
+    archiveBaseName.set("${project.archivesBaseName}")
     from rootProject.file("src")
 }
 
 task gradleHome(description: "Display GRADLE_HOME environment variable") {
     doFirst {
-        println "\nexport GRADLE_HOME=" + gradle.gradleHomeDir
+        ansi.green "\nexport GRADLE_HOME=" + gradle.gradleHomeDir
     }
 }
 

@@ -18,6 +18,12 @@ public interface ClientCustomPropertyConstants {
     String CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT = "autoRedirect";
 
     /**
+     * Property to indicate the title or display name of the client
+     * for decoration and client presentation purposes.
+     */
+    String CLIENT_CUSTOM_PROPERTY_AUTO_DISPLAY_NAME = "displayName";
+
+    /**
      * CSS class assigned to this client to be used in the UI.
      */
     String CLIENT_CUSTOM_PROPERTY_CSS_CLASS = "cssClass";

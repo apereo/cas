@@ -58,4 +58,19 @@ public class AuthenticationAttributeMultifactorAuthenticationTriggerTests extend
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());
     }
+
+    @Test
+    @Order(3)
+    public void verifyNoMatch() {
+
+        val props = new CasConfigurationProperties();
+        val mfa = props.getAuthn().getMfa().getTriggers().getAuthentication();
+        mfa.setGlobalAuthenticationAttributeNameTriggers("whatever");
+        mfa.setGlobalAuthenticationAttributeValueRegex("whatever");
+        val trigger = new AuthenticationAttributeMultifactorAuthenticationTrigger(props,
+            new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
+            applicationContext);
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        assertTrue(result.isEmpty());
+    }
 }

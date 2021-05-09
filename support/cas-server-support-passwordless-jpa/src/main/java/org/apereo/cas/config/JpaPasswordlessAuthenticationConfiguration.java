@@ -28,8 +28,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
-import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link JpaPasswordlessAuthenticationConfiguration}.
@@ -47,8 +46,8 @@ public class JpaPasswordlessAuthenticationConfiguration {
     @Qualifier("jpaBeanFactory")
     private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
 
-    private static List<String> jpaPasswordlessPackagesToScan() {
-        return List.of(PasswordlessAuthenticationToken.class.getPackage().getName());
+    private static Set<String> jpaPasswordlessPackagesToScan() {
+        return Set.of(PasswordlessAuthenticationToken.class.getPackage().getName());
     }
 
     @RefreshScope

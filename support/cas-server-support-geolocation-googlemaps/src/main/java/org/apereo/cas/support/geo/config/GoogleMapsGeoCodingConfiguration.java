@@ -46,9 +46,6 @@ public class GoogleMapsGeoCodingConfiguration {
         }
         builder.apiKey(properties.getApiKey())
             .connectTimeout(Beans.newDuration(properties.getConnectTimeout()).toMillis(), TimeUnit.MILLISECONDS);
-
-        val svc = new GoogleMapsGeoLocationService(builder.build());
-        svc.setIpStackAccessKey(properties.getIpStackApiAccessKey());
-        return svc;
+        return new GoogleMapsGeoLocationService(builder.build());
     }
 }

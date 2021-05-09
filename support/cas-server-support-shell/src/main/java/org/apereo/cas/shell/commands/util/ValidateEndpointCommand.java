@@ -91,25 +91,21 @@ public class ValidateEndpointCommand {
         return false;
     }
 
+    @SneakyThrows
     private static X509TrustManager[] getSystemTrustManagers() {
-        try {
-            val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            trustManagerFactory.init((KeyStore) null);
-            LOGGER.info("Detected Truststore: [{}]", trustManagerFactory.getProvider().getName());
-            val trustManagers = trustManagerFactory.getTrustManagers();
-            val x509TrustManagers = new ArrayList<X509TrustManager>(trustManagers.length);
-            for (val trustManager : trustManagers) {
-                if (trustManager instanceof X509TrustManager) {
-                    val x509TrustManager = (X509TrustManager) trustManager;
-                    LOGGER.info("Trusted issuers found: [{}]", x509TrustManager.getAcceptedIssuers().length);
-                    x509TrustManagers.add(x509TrustManager);
-                }
+        val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init((KeyStore) null);
+        LOGGER.info("Detected Truststore: [{}]", trustManagerFactory.getProvider().getName());
+        val trustManagers = trustManagerFactory.getTrustManagers();
+        val x509TrustManagers = new ArrayList<X509TrustManager>(trustManagers.length);
+        for (val trustManager : trustManagers) {
+            if (trustManager instanceof X509TrustManager) {
+                val x509TrustManager = (X509TrustManager) trustManager;
+                LOGGER.info("Trusted issuers found: [{}]", x509TrustManager.getAcceptedIssuers().length);
+                x509TrustManagers.add(x509TrustManager);
             }
-            return x509TrustManagers.toArray(X509TrustManager[]::new);
-        } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
         }
-        return new X509TrustManager[]{};
+        return x509TrustManagers.toArray(X509TrustManager[]::new);
     }
 
     private static URLConnection createConnection(final String url, final String proxy) throws Exception {

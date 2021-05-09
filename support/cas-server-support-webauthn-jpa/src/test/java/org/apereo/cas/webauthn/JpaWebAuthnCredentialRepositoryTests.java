@@ -14,7 +14,11 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@TestPropertySource(properties = "cas.jdbc.show-sql=true")
+@TestPropertySource(properties = {
+    "cas.authn.mfa.web-authn.crypto.signing.key=xTjUNTiL1kybVd6j0D_vJlIuQ8_1wojpiEUd_daKTvlmQpCOmQ99RRimAXfBi0niX4Z_rduthbLXGnNaeUhqLw",
+    "cas.authn.mfa.web-authn.crypto.encryption.key=8W_Z0NGvZd094MJAS-XfepaCtRXnrqTFrlp90GXG8Ok",
+    "cas.jdbc.show-sql=false"
+})
 @Tag("JDBC")
 @Import({JpaWebAuthnConfiguration.class, CasHibernateJpaConfiguration.class})
 public class JpaWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {

@@ -4,7 +4,6 @@ dependencies {
     api libraries.dropwizard
     api libraries.bouncycastle
     api libraries.jdom
-    api libraries.xmlapis
     api libraries.apachevelocity
 
     implementation libraries.shibutiljavasupport

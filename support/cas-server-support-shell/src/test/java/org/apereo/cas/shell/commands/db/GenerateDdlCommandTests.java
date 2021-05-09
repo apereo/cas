@@ -23,7 +23,24 @@ public class GenerateDdlCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() throws Exception {
         val file = File.createTempFile("ddl", "sql");
-        var result = shell.evaluate(() -> "generate-ddl --file " + file + " --dialect HSQL");
+        var result = shell.evaluate(() -> "generate-ddl --createSchema --dropSchema --file " + file + " --dialect HSQL");
+        assertNotNull(result);
+
+        result = shell.evaluate(() -> "generate-ddl --file " + file + " --dialect HSQL");
+        assertNotNull(result);
+    }
+
+    @Test
+    public void verifyCreateOperation() throws Exception {
+        val file = File.createTempFile("ddl", "sql");
+        var result = shell.evaluate(() -> "generate-ddl --createSchema --file " + file + " --dialect HSQL");
+        assertNotNull(result);
+    }
+
+    @Test
+    public void verifyDropOperation() throws Exception {
+        val file = File.createTempFile("ddl", "sql");
+        var result = shell.evaluate(() -> "generate-ddl --url jdbc:hsqldb:mem:cas2 --dropSchema --file " + file + " --dialect HSQL");
         assertNotNull(result);
     }
 

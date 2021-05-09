@@ -41,6 +41,16 @@ public class CouchDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
+    public YubiKeyAccount save(final YubiKeyAccount acct) {
+        val account = CouchDbYubiKeyAccount.builder()
+            .username(acct.getUsername())
+            .devices(acct.getDevices())
+            .build();
+        couchDb.add(account);
+        return account;
+    }
+
+    @Override
     public boolean update(final YubiKeyAccount account) {
         couchDb.update(CouchDbYubiKeyAccount.class.cast(account));
         return true;

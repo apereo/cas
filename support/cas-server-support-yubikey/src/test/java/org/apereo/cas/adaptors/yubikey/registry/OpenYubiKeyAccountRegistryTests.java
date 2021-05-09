@@ -41,6 +41,7 @@ public class OpenYubiKeyAccountRegistryTests {
         assertTrue(registry.isYubiKeyRegisteredFor("casuser", "publicId"));
         assertTrue(registry.registerAccountFor(YubiKeyDeviceRegistrationRequest.builder().build()));
         assertTrue(registry.update(YubiKeyAccount.builder().build()));
+        assertNotNull(registry.save(YubiKeyAccount.builder().build()));
     }
 
 }

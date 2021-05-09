@@ -22,6 +22,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
@@ -269,8 +270,11 @@ public class WebUtils {
      * @param map         the map
      * @param ticketValue the ticket value
      */
-    public static void putTicketGrantingTicketIntoMap(final MutableAttributeMap map, final String ticketValue) {
-        map.put(PARAMETER_TICKET_GRANTING_TICKET_ID, ticketValue);
+    public static void putTicketGrantingTicketIntoMap(final MutableAttributeMap<Object> map, final String ticketValue) {
+        FunctionUtils.doIf(StringUtils.isNotBlank(ticketValue),
+            value -> map.put(PARAMETER_TICKET_GRANTING_TICKET_ID, value),
+            value -> map.remove(PARAMETER_TICKET_GRANTING_TICKET_ID))
+            .accept(ticketValue);
     }
 
     /**
@@ -770,6 +774,16 @@ public class WebUtils {
     }
 
     /**
+     * Is password management enabled.
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    public static boolean isPasswordManagementEnabled(final RequestContext context) {
+        return context.getFlowScope().get("passwordManagementEnabled", Boolean.class);
+    }
+
+    /**
      * Put principal.
      *
      * @param requestContext          the request context
@@ -974,7 +988,9 @@ public class WebUtils {
      * @return the model and view
      */
     public static ModelAndView produceErrorView(final String view, final Exception e) {
-        return new ModelAndView(view, CollectionUtils.wrap("rootCauseException", e));
+        val mv = new ModelAndView(view, CollectionUtils.wrap("rootCauseException", e));
+        mv.setStatus(HttpStatus.BAD_REQUEST);
+        return mv;
     }
 
     /**
@@ -1620,5 +1636,37 @@ public class WebUtils {
      */
     public static Boolean isRecaptchaPasswordManagementEnabled(final RequestContext requestContext) {
         return requestContext.getFlowScope().get("recaptchaPasswordManagementEnabled", Boolean.class);
+    }
+
+    /**
+     * Put simple multifactor authentication token.
+     *
+     * @param requestContext the request context
+     * @param token          the token
+     */
+    public static void putSimpleMultifactorAuthenticationToken(final RequestContext requestContext, final Ticket token) {
+        requestContext.getFlowScope().put("simpleMultifactorAuthenticationToken", token);
+    }
+
+    /**
+     * Remove simple multifactor authentication token.
+     *
+     * @param requestContext the request context
+     */
+    public static void removeSimpleMultifactorAuthenticationToken(final RequestContext requestContext) {
+        requestContext.getFlowScope().remove("simpleMultifactorAuthenticationToken");
+    }
+
+    /**
+     * Gets simple multifactor authentication token.
+     *
+     * @param <T>            the type parameter
+     * @param requestContext the request context
+     * @param clazz          the clazz
+     * @return the simple multifactor authentication token
+     */
+    public static <T extends Ticket> T getSimpleMultifactorAuthenticationToken(final RequestContext requestContext,
+                                                                               final Class<T> clazz) {
+        return requestContext.getFlowScope().get("simpleMultifactorAuthenticationToken", clazz);
     }
 }

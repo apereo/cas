@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link GoogleAuthenticatorJpaConfiguration}.
@@ -69,8 +69,8 @@ public class GoogleAuthenticatorJpaConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "jpaPackagesToScanGoogleAuthenticator")
-    public List<String> jpaPackagesToScanGoogleAuthenticator() {
-        return CollectionUtils.wrapList(
+    public Set<String> jpaPackagesToScanGoogleAuthenticator() {
+        return CollectionUtils.wrapSet(
             GoogleAuthenticatorAccount.class.getPackage().getName(),
             JpaGoogleAuthenticatorToken.class.getPackage().getName());
     }

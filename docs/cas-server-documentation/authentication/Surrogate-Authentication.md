@@ -37,29 +37,15 @@ Surrogate accounts may be defined statically in the CAS configuration.
 
 {% include casproperties.html properties="cas.authn.surrogate.simple.surrogates" %}
 
-### JSON
-   
-Please [see this guide](Surrogate-Authentication-Storage-JSON.html).
+### Others
 
-### LDAP
-
-Please [see this guide](Surrogate-Authentication-Storage-LDAP.html).
-
-### CouchDb
-
-Please [see this guide](Surrogate-Authentication-Storage-CouchDb.html).
-
-### JDBC
-
-Please [see this guide](Surrogate-Authentication-Storage-JDBC.html).
-
-### REST
-
-Please [see this guide](Surrogate-Authentication-Storage-REST.html).
-
-### Custom
-
-Please [see this guide](Surrogate-Authentication-Storage-Custom.html).
+| Storage          | Description                                         
+|------------------------------------------------------------------------------------
+| JSON             | [See this guide](Surrogate-Authentication-Storage-JSON.html).
+| CouchDb          | [See this guide](Surrogate-Authentication-Storage-CouchDb.html).
+| JDBC             | [See this guide](Surrogate-Authentication-Storage-JDBC.html).
+| REST             | [See this guide](Surrogate-Authentication-Storage-REST.html).
+| Custom           | [See this guide](Surrogate-Authentication-Storage-Custom.html).
 
 ## Account Selection
 

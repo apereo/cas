@@ -12,6 +12,7 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.1.0
  */
 @TestPropertySource(properties = {
+    "cas.ticket.registry.jpa.ddl-auto=create-drop",
     "cas.ticket.registry.jpa.user=system",
     "cas.ticket.registry.jpa.password=Oradoc_db1",
     "cas.ticket.registry.jpa.driver-class=oracle.jdbc.driver.OracleDriver",

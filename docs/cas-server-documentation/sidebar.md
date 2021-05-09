@@ -497,8 +497,9 @@ layout: null
     *   [Google Analytics](/cas/{{ version }}/integration/Configuring-Google-Analytics.html)
     *   [SCIM Provisioning](/cas/{{ version }}/integration/SCIM-Integration.html)
     *   [ACME](/cas/{{ version }}/integration/ACME-Integration.html)
+    *   [Amazon Web Services](/cas/{{ version }}/integration/AWS-Integration.html)
     *   [CAS Clients](/cas/{{ version }}/integration/CAS-Clients.html)
-    *   [Swagger API](/cas/{{ version }}/integration/Swagger-Integration.html)
+    *   [Swagger](/cas/{{ version }}/integration/Swagger-Integration.html)
     *   [JMX](/cas/{{ version }}/integration/JMX-Integration.html)
     *   [Shibboleth Identity Provider](/cas/{{ version }}/integration/Shibboleth.html)
 

@@ -11,6 +11,7 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -43,6 +44,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
 
     private static final long serialVersionUID = -7302163334687300920L;
 
+    @JsonProperty
     private List<String> allowedAttributes;
 
     @JsonIgnore

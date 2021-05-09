@@ -27,8 +27,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class SamlIdPSaml1ArtifactResolutionProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
-    public SamlIdPSaml1ArtifactResolutionProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
-        super(samlProfileHandlerConfigurationContext);
+    public SamlIdPSaml1ArtifactResolutionProfileHandlerController(final SamlProfileHandlerConfigurationContext ctx) {
+        super(ctx);
     }
 
     /**
@@ -42,7 +42,7 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerController extends Abst
                                      final HttpServletRequest request) {
         val ctx = decodeSoapRequest(request);
         val artifactMsg = (ArtifactResolve) ctx.getMessage();
-        val config = getSamlProfileHandlerConfigurationContext();
+        val config = getConfigurationContext();
         try {
             val issuer = artifactMsg.getIssuer().getValue();
             val service = verifySamlRegisteredService(issuer);

@@ -138,6 +138,6 @@ public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAut
     }
 
     private AuthenticationResult processAuthenticationAttempt(final Service service, final Credential... credential) throws AuthenticationException {
-        return this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+        return this.authenticationSystemSupport.finalizeAuthenticationTransaction(service, credential);
     }
 }

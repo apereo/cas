@@ -49,6 +49,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     public void initialize() {
         serviceRegistry = getServiceRegistryInstance();
         servicesManager = getServicesManagerInstance();
+        servicesManager.deleteAll();
         servicesManager.load();
     }
 
