@@ -147,7 +147,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         LOGGER.debug("Checking service access in CAS service registry for [{}]", service);
         val registeredService = configurationContext.getServicesManager().findServiceBy(service, SamlRegisteredService.class);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            LOGGER.warn("[{}] is not found in the registry or service access is denied. Ensure service is registered in service registry", serviceId);
+            LOGGER.warn("[{}] is not found in the registry or service access is denied.", serviceId);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
         LOGGER.debug("Located SAML service in the registry as [{}] with the metadata location of [{}]",
