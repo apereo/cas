@@ -7,9 +7,12 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import org.apereo.cas.webauthn.WebAuthnUtils;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.data.ByteArray;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.core.io.Resource;
@@ -25,7 +28,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -36,6 +41,7 @@ import java.util.Objects;
  * @since 6.3.0
  */
 @RestControllerEndpoint(id = "webAuthnDevices", enableByDefault = false)
+@Slf4j
 public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
     private final WebAuthnCredentialRepository registrationStorage;
 
@@ -116,5 +122,24 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
         headers.setContentDisposition(ContentDisposition.attachment()
             .filename(Objects.requireNonNull(resource.getFilename())).build());
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+    }
+
+    /**
+     * Import account.
+     *
+     * @param request the request
+     * @return the http status
+     * @throws Exception the exception
+     */
+    @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public HttpStatus importAccount(final HttpServletRequest request) throws Exception {
+        val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
+        LOGGER.trace("Submitted account: [{}]", requestBody);
+        val account = WebAuthnUtils.getObjectMapper()
+            .readValue(requestBody, new TypeReference<CredentialRegistration>() {
+            });
+        LOGGER.trace("Storing account: [{}]", account);
+        registrationStorage.addRegistrationByUsername(account.getUsername(), account);
+        return HttpStatus.CREATED;
     }
 }
