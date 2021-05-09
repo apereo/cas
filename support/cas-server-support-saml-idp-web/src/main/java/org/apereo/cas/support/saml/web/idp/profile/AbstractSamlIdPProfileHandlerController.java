@@ -525,9 +525,33 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         }
     }
 
+    /**
+     * Retrieve authentication request.
+     *
+     * @param response the response
+     * @param request  the request
+     * @return the authn request
+     */
     @Synchronized
-    private void storeAuthenticationRequest(final HttpServletRequest request, final HttpServletResponse response,
-                                            final Pair<? extends SignableSAMLObject, MessageContext> pair) throws Exception {
+    protected AuthnRequest retrieveAuthenticationRequest(final HttpServletResponse response, final HttpServletRequest request) {
+        LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
+        return SamlIdPUtils.retrieveSamlRequest(new JEEContext(request, response),
+            configurationContext.getSessionStore(),
+            configurationContext.getOpenSamlConfigBean(),
+            AuthnRequest.class);
+    }
+
+    /**
+     * Store authentication request.
+     *
+     * @param request  the request
+     * @param response the response
+     * @param pair     the pair
+     * @throws Exception the exception
+     */
+    @Synchronized
+    protected void storeAuthenticationRequest(final HttpServletRequest request, final HttpServletResponse response,
+                                              final Pair<? extends SignableSAMLObject, MessageContext> pair) throws Exception {
         val authnRequest = (AuthnRequest) pair.getLeft();
         val messageContext = pair.getValue();
         try (val writer = SamlUtils.transformSamlObject(configurationContext.getOpenSamlConfigBean(), authnRequest)) {

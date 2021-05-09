@@ -3,7 +3,6 @@ package org.apereo.cas.support.saml.web.idp.profile.sso;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPCoreProperties;
 import org.apereo.cas.support.saml.SamlIdPConstants;
-import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
@@ -11,6 +10,7 @@ import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -131,11 +131,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
     }
 
     private ModelAndView handleProfileRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
-        LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
-        val authnRequest = SamlIdPUtils.retrieveSamlRequest(new JEEContext(request, response),
-            configurationContext.getSessionStore(),
-            configurationContext.getOpenSamlConfigBean(),
-            AuthnRequest.class);
+        final AuthnRequest authnRequest = retrieveAuthenticationRequest(response, request);
 
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
         if (StringUtils.isBlank(ticket)) {
@@ -153,7 +149,8 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         buildSamlResponse(response, request, authenticationContext, assertion, binding);
         return null;
     }
-
+    
+    @Synchronized
     private MessageContext bindRelayStateParameter(final HttpServletRequest request,
                                                    final HttpServletResponse response) {
         val messageContext = new MessageContext();
