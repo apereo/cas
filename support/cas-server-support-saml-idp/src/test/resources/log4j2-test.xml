@@ -10,7 +10,7 @@
 <!--        <Logger name="org.apereo.cas.support.saml.services" level="warn" />-->
 <!--        <Logger name="org.apereo.cas.support.saml.services.idp.metadata" level="warn" />-->
 
-        <Logger name="org.opensaml" level="warn" />
+        <Logger name="org.opensaml" level="debug" />
         <Logger name="PROTOCOL_MESSAGE" level="warn" />
         <Logger name="org.apache.xml.security" level="off" />
         <Root level="off">
