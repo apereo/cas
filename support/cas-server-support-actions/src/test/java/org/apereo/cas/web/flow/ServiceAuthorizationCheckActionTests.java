@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -74,6 +75,15 @@ public class ServiceAuthorizationCheckActionTests extends AbstractWebflowActions
 
     @Test
     public void verifyExclusiveAuthnDelegationMode() {
+        val svc23 = RegisteredServiceTestUtils.getRegisteredService("cas-access-delegation");
+        val strategy23 = new DefaultRegisteredServiceAccessStrategy();
+        strategy23.setEnabled(true);
+        val delegate = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
+        delegate.setExclusive(true);
+        strategy23.setDelegatedAuthenticationPolicy(delegate);
+        svc23.setAccessStrategy(strategy23);
+        servicesManager.save(svc23);
+
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

@@ -99,7 +99,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
             val chainingMetadataResolver = resolver.resolve(registeredService, criterions);
             LOGGER.info("Resolved metadata chain from [{}]. Filtering the chain by entity ID [{}]",
                 registeredService.getMetadataLocation(), entityID);
-
+            
             val entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
             if (entityDescriptor == null) {
                 LOGGER.warn("Cannot find entity [{}] in metadata provider. Ensure the metadata is valid and has not expired.", entityID);
