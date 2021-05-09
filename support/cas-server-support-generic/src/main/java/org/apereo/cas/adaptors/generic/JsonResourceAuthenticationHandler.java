@@ -48,6 +48,7 @@ import java.util.Map;
  */
 @Slf4j
 public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true)
         .failOnUnknownProperties(true)
@@ -66,8 +67,8 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-        final String originalPassword)
-        throws GeneralSecurityException, PreventedException {
+        final String originalPassword) throws GeneralSecurityException, PreventedException {
+        
         val map = readAccountsFromResource();
         val username = credential.getUsername();
         val password = credential.getPassword();
@@ -125,6 +126,8 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
                     }
                 }
             }
+
+            account.getWarnings().forEach(warning -> warnings.add(new DefaultMessageDescriptor(warning, warning, new Serializable[]{username})));
             val principal = this.principalFactory.createPrincipal(username, account.getAttributes());
             return createHandlerResult(credential, principal, warnings);
         }

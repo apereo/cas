@@ -62,7 +62,7 @@ The following commandline boolean flags are supported by the build and can be pa
 |-----------------------------------+---------------------------------------------------------------------------+
 | `enableRemoteDebugging`           | Allows for remote debugging via a pre-defined port (i.e. `5000`).
 | `remoteDebuggingSuspend`          | Set to `true` to suspend JVM remote debugging until the debugger attaches to the running session.
-| `showStandardStreams`             | Let the build output logs that are sent to the standard streams. (i.e. console, etc)
+| `verbose`                         | Control the logging level for tests and output additional data about passing/failing/skipped tests.
 | `skipCheckstyle`                  | Skip running Checkstyle checks.
 | `skipSpotbugs`                    | Skip running Spotbugs checks.
 | `skipVersionConflict`             | If a dependency conflict is found, use the latest version rather than failing the build.
@@ -93,6 +93,10 @@ CAS development may be carried out using any modern IDE that supports Gradle.
 The following IDEA settings for Gradle may also be useful:
 
 ![image](https://user-images.githubusercontent.com/1205228/71612835-5ea5ed80-2bbc-11ea-8f49-9746dc2b3a70.png)
+
+<div class="alert alert-info"><p>
+You should always use the latest version of the Intellij IDEA.
+</p></div>
 
 Additionally, you may need to customize the VM settings to ensure the development environment can load and index the codebase:
 
@@ -128,6 +132,10 @@ Additionally, you may need to customize the VM settings to ensure the developmen
 -Xverify:none
 ```
 
+If you're using OpenJDK 11 or later, you may find the above VM options do not work. The key point for making IntelliJ IDEA 
+handle the project nicely is to give it lots of memory (either by specifying the `-Xmx8g` VM options or in the IDE 
+menu `Help -> Change Memory Settings`).
+
 #### Plugins
 
 The following plugins may prove useful during development:
@@ -152,7 +160,7 @@ should look something like the below screenshot:
 It is possible to run the CAS web application directly from IDEA by 
 creating a *Run Configuration* that roughly matches the following screenshot:
 
-![image](https://user-images.githubusercontent.com/1205228/41805461-9ea25b76-765f-11e8-9a36-fa82d286cf09.png)
+[image](https://user-images.githubusercontent.com/1205228/41805461-9ea25b76-765f-11e8-9a36-fa82d286cf09.png)
 
 This setup allows the developer to run the CAS web 
 application via an [embedded servlet container](Build-Process.html#embedded-containers).

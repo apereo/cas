@@ -81,6 +81,11 @@ public class OpenYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
+    public YubiKeyAccount save(final YubiKeyAccount account) {
+        return getStaticAccount(account.getUsername());
+    }
+
+    @Override
     public boolean update(final YubiKeyAccount account) {
         return true;
     }

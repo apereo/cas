@@ -15,7 +15,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,7 +28,7 @@ import java.util.stream.Stream;
  * @since 6.2.0
  */
 @Getter
-public class ChainingServicesManager implements ServicesManager, DomainAwareServicesManager {
+public class ChainingServicesManager implements ServicesManager {
 
     private final List<ServicesManager> serviceManagers = new ArrayList<>();
 
@@ -56,6 +58,26 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
     public RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
         val manager = findServicesManager(registeredService);
         return manager.map(servicesManager -> servicesManager.save(registeredService, publishEvent)).orElse(null);
+    }
+
+    @Override
+    public void save(final Supplier<RegisteredService> supplier,
+                     final Consumer<RegisteredService> andThenConsume,
+                     final long countExclusive) {
+        serviceManagers.forEach(servicesManager -> {
+            servicesManager.save(() -> {
+                val registeredService = supplier.get();
+                return findServicesManager(registeredService).isPresent() ? registeredService : null;
+            }, andThenConsume, countExclusive);
+        });
+    }
+
+    @Override
+    public void save(final Stream<RegisteredService> toSave) {
+        serviceManagers.forEach(mgr -> {
+            val filtered = toSave.filter(mgr::supports);
+            mgr.save(filtered);
+        });
     }
 
     @Override
@@ -172,16 +194,12 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
     @Override
     public Stream<String> getDomains() {
         return serviceManagers.stream()
-            .filter(mgr -> mgr instanceof DomainAwareServicesManager)
-            .map(DomainAwareServicesManager.class::cast)
-            .flatMap(DomainAwareServicesManager::getDomains);
+            .flatMap(ServicesManager::getDomains);
     }
 
     @Override
     public Collection<RegisteredService> getServicesForDomain(final String domain) {
         return serviceManagers.stream()
-            .filter(mgr -> mgr instanceof DomainAwareServicesManager)
-            .map(DomainAwareServicesManager.class::cast)
             .flatMap(d -> d.getServicesForDomain(domain).stream())
             .collect(Collectors.toList());
     }

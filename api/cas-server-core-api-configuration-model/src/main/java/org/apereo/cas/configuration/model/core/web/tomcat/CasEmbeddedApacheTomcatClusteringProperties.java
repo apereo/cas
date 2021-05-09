@@ -41,7 +41,7 @@ public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable
      * <li> Class implementing {@code org.apache.catalina.tribes.MembershipProvider}</li>
      * </ul>
      */
-    private String cloudMembershipProvider = "kubernetes";
+    private String cloudMembershipProvider = "dns";
 
     /**
      * When a web application is being shutdown, Tomcat issues an expire call to each session to notify all the listeners.

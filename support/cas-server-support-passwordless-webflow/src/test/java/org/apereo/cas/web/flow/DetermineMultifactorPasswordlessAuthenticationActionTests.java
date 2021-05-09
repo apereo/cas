@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
-import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
+import org.apereo.cas.authentication.DefaultMultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.util.model.TriStateBoolean;
@@ -49,7 +49,7 @@ public class DetermineMultifactorPasswordlessAuthenticationActionTests {
     public static class MultifactorAuthenticationTestConfiguration {
         @Bean
         public MultifactorAuthenticationTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy() {
-            return new DefaultMultifactorTriggerSelectionStrategy(List.of());
+            return new DefaultMultifactorAuthenticationTriggerSelectionStrategy(List.of());
         }
     }
     

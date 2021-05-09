@@ -126,6 +126,7 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
                 azure.getClientId(),
                 azure.getLoginUrl(),
                 azure.getResource());
+            handler.setState(azure.getState());
             handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(azure.getPrincipalTransformation()));
             handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(azure.getPasswordEncoder(), applicationContext));
             handler.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(azure.getCredentialCriteria()));

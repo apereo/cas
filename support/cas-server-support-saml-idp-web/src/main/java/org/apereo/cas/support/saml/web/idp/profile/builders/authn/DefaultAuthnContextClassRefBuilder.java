@@ -33,9 +33,9 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
 
     @Override
     public String build(final Object assertion,
-        final RequestAbstractType authnRequest,
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-        final SamlRegisteredService service) {
+                        final RequestAbstractType authnRequest,
+                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                        final SamlRegisteredService service) {
         if (StringUtils.isNotBlank(service.getRequiredAuthenticationContextClass())) {
             LOGGER.debug("Using [{}] as indicated by SAML registered service [{}]",
                 service.getRequiredAuthenticationContextClass(),
@@ -78,8 +78,8 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
      * @return the authentication context by assertion
      */
     protected String getAuthenticationContextByAssertion(final Object assertion,
-        final RequestedAuthnContext requestedAuthnContext,
-        final List<AuthnContextClassRef> authnContextClassRefs) {
+                                                         final RequestedAuthnContext requestedAuthnContext,
+                                                         final List<AuthnContextClassRef> authnContextClassRefs) {
         LOGGER.debug("AuthN Context comparison is requested to use [{}]", requestedAuthnContext.getComparison());
         authnContextClassRefs.forEach(c -> LOGGER.debug("Requested AuthN Context [{}]", c.getURI()));
         val casAssertion = Assertion.class.cast(assertion);

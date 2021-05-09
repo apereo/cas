@@ -19,7 +19,9 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-webflow" %}
 
-Customize the policy by modifying the `src/main/resources/templates/casAcceptableUsagePolicyView.html`. See [this guide](../ux/User-Interface-Customization.html) to learn more about user interface customizations. Note that the view here should have full access to the resolved principal and attributes, if you wish to dynamically alter the page to present different text, etc.
+Customize the policy by modifying the `casAcceptableUsagePolicyView.html`. See [this guide](../ux/User-Interface-Customization.html) to 
+learn more about user interface customizations. Note that the view here should have full access to the 
+resolved principal and attributes, if you wish to dynamically alter the page to present different text, etc.
 
 <div class="alert alert-info"><strong>Webflow Sequence</strong><p>Remember that acceptable usage policy executes
 after a successful authentication event where CAS has already established the authentication principal, since the 

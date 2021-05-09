@@ -4,6 +4,8 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,7 +28,9 @@ public class DefaultServicesManagerTests extends AbstractServicesManagerTests<De
 
         serviceRegistry.save(service);
         assertNotNull(servicesManager.findServiceByName(service.getName()));
-        assertNotEquals(servicesManager.getAllServicesStream().count(), 0);
+        assertNotEquals(servicesManager.stream().count(), 0);
+        assertEquals(1, servicesManager.getDomains().count());
+        assertFalse(servicesManager.getServicesForDomain(UUID.randomUUID().toString()).isEmpty());
     }
 
     @Test
@@ -38,7 +42,7 @@ public class DefaultServicesManagerTests extends AbstractServicesManagerTests<De
 
         serviceRegistry.save(service);
         assertNotNull(servicesManager.findServiceByName(service.getName(), RegexRegisteredService.class));
-        assertNotEquals(servicesManager.getAllServicesStream().count(), 0);
+        assertNotEquals(servicesManager.stream().count(), 0);
     }
 
     @Test

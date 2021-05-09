@@ -16,32 +16,32 @@ def printSpotbugsReportToConsole(File file) {
         def slurper = new XmlSlurper().parse(file)
         def bugsFound = slurper.BugInstance.size()
         if (bugsFound > 0) {
-            println "*********************************\nFound Spotbugs rule violation(s):\n"
+            ansi.red "*********************************\nFound Spotbugs rule violation(s):\n"
             slurper.BugInstance.each { bug ->
-                println "*********************************"
-                println "Bug (" + bug.@abbrev + "): " + bug.@type + " [" + bug.@priority + "-" + bug.@rank + "] @ category " + bug.@category
+                ansi.red "*********************************"
+                ansi.red "Bug (" + bug.@abbrev + "): " + bug.@type + " [" + bug.@priority + "-" + bug.@rank + "] @ category " + bug.@category
                 bug.Class.each { clz ->
-                    println "\tClass: " + clz.@classname
+                    ansi.red "\tClass: " + clz.@classname
                     clz.SourceLine.each { line ->
-                        println "\tStart Line: " + line.@start + ", End Line: " + line.@end + ", Source Path: [" + line.@sourcepath + "], Source File: [" + line.@sourcefile + "]"
+                        ansi.red "\tStart Line: " + line.@start + ", End Line: " + line.@end + ", Source Path: [" + line.@sourcepath + "], Source File: [" + line.@sourcefile + "]"
                     }
                 }
-                println "\t----------------------METHOD-----------------------------"
+                ansi.red "\t----------------------METHOD-----------------------------"
                 bug.Method.each { md ->
-                    println "\tMethod: " + md.@name + " [static: " + md.@isStatic + "]"
-                    println "\tSignature: " + md.@signature
+                    ansi.red "\tMethod: " + md.@name + " [static: " + md.@isStatic + "]"
+                    ansi.red "\tSignature: " + md.@signature
                     md.SourceLine.each { line ->
-                        println "\tStart Line: " + line.@start + ", End Line: " + line.@end
+                        ansi.red "\tStart Line: " + line.@start + ", End Line: " + line.@end
                     }
                 }
-                println "\t-------------------SOURCE LINE---------------------------"
+                ansi.red "\t-------------------SOURCE LINE---------------------------"
                 bug.SourceLine.each { line ->
-                    println "\tStart Line: " + line.@start + ", End Line: " + line.@end + ", Class: [" + line.@classname + "]"
+                    ansi.red "\tStart Line: " + line.@start + ", End Line: " + line.@end + ", Class: [" + line.@classname + "]"
                 }
             }
             def msg = "\n$bugsFound Spotbugs rule violation(s) were found. See the report at: $file"
-            println msg
-            if (!Boolean.getBoolean("ignoreFindbugsFailures")) {
+            ansi.red msg
+            if (!providers.systemProperty("ignoreFindbugsFailures").forUseAtConfigurationTime().present) {
                 throw new GradleException(msg)
             }
         } else {

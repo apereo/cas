@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
+
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -28,12 +30,14 @@ public class AuthenticationHandlerTests {
         assertFalse(input.supports(Credential.class));
         assertNotNull(input.getName());
         assertEquals(Integer.MAX_VALUE, input.getOrder());
+        assertEquals(AuthenticationHandlerStates.ACTIVE, input.getState());
     }
 
     @Test
     public void verifyDisabledOperation() {
         val input = AuthenticationHandler.disabled();
-        
+
+        assertEquals(AuthenticationHandlerStates.ACTIVE, input.getState());
         assertFalse(input.supports(mock(Credential.class)));
         assertFalse(input.supports(Credential.class));
         assertNotNull(input.getName());

@@ -64,15 +64,34 @@ public class DefaultServicesManagerRegisteredServiceLocatorTests {
     }
 
     @Test
-    public void verifyExtensions() {
-        val service = new TestRegisteredService();
-        service.setServiceId("https://example.com.+");
+    public void verifyExtendedServices() {
+        val service = new ExtendedRegisteredService();
+        service.setServiceId("https://\\w+.org.+");
+        service.setId(100);
         val result = defaultServicesManagerRegisteredServiceLocator.locate(List.of(service),
-            webApplicationServiceFactory.createService("https://example.com/test"));
+            webApplicationServiceFactory.createService("https://example.org/test"));
         assertNotNull(result);
     }
 
-    private static class TestRegisteredService extends RegexRegisteredService {
-        private static final long serialVersionUID = -1680743568361887633L;
+    @Test
+    public void verifyUnmatchedExtendedServices() {
+        val service = new ExtendedRegisteredService() {
+            private static final long serialVersionUID = 3435937253967470900L;
+
+            @Override
+            public String getFriendlyName() {
+                return "OtherService";
+            }
+        };
+        service.setServiceId("https://\\w+.org.+");
+        service.setId(100);
+        val result = defaultServicesManagerRegisteredServiceLocator.locate(List.of(service),
+            webApplicationServiceFactory.createService("https://example.org/test"));
+        assertNull(result);
+    }
+
+
+    private static class ExtendedRegisteredService extends RegexRegisteredService {
+        private static final long serialVersionUID = 1820837947166559349L;
     }
 }

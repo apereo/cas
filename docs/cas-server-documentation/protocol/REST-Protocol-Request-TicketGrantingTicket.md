@@ -80,19 +80,9 @@ Support is enabled by including the following in your overlay:
 
 {% include casproperties.html properties="cas.rest.x509" %}
 
-### TLS Client Authentication using a body parameter
+### Body Parameter
 
 ```bash
 POST /cas/v1/tickets HTTP/1.0
 cert=<ascii certificate>
 ```
-
-### TLS Client Authentication using a http header
-
-The cas server should be configured for X509 authentication on the login page for
-this to function properly.
-
-### TLS Client Authentication from the servlet container)
-
-The cas server should be configured for X509 authentication on the login page for
-this to function properly.

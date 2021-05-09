@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -10,6 +11,7 @@ import org.apereo.cas.token.JwtTokenTicketBuilder;
 import org.apereo.cas.token.TokenTicketBuilder;
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 import org.apereo.cas.token.cipher.RegisteredServiceJwtTicketCipherExecutor;
+import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -17,7 +19,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
+import org.jasig.cas.client.validation.TicketValidator;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,7 +46,7 @@ public class TokenCoreConfiguration {
     @Autowired
     @Qualifier("webApplicationServiceFactory")
     private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
-    
+
     @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
@@ -53,8 +55,8 @@ public class TokenCoreConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("casClientTicketValidator")
-    private ObjectProvider<AbstractUrlBasedTicketValidator> casClientTicketValidator;
+    @Qualifier("centralAuthenticationService")
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("grantingTicketExpirationPolicy")
@@ -85,11 +87,18 @@ public class TokenCoreConfiguration {
         return CipherExecutor.noOp();
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "tokenTicketValidator")
+    public TicketValidator tokenTicketValidator() {
+        return new InternalTicketValidator(centralAuthenticationService.getObject(),
+            webApplicationServiceFactory.getObject());
+    }
+
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "tokenTicketBuilder")
     public TokenTicketBuilder tokenTicketBuilder() {
-        return new JwtTokenTicketBuilder(casClientTicketValidator.getObject(),
+        return new JwtTokenTicketBuilder(tokenTicketValidator(),
             grantingTicketExpirationPolicy.getObject(),
             tokenTicketJwtBuilder(),
             servicesManager.getObject());

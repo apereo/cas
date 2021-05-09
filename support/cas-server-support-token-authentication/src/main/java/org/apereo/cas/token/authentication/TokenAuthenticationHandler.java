@@ -30,7 +30,7 @@ import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
 import java.util.HashSet;
 import java.util.Set;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.charset.StandardCharsets.*;
 
 /**
  * This is {@link TokenAuthenticationHandler} that authenticates instances of {@link TokenCredential}.
@@ -69,8 +69,21 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         throw new IllegalArgumentException("Unable to find algorithm " + alg);
     }
 
+    /**
+     * Convert secret to bytes honoring {@link RegisteredServiceProperty.RegisteredServiceProperties#TOKEN_SECRETS_ARE_BASE64_ENCODED}
+     * config parameter.
+     *
+     * @param secret                - String to be represented to byte[]
+     * @param secretIsBase64Encoded - is this a base64 encoded #secret?
+     * @return byte[] representation of #secret
+     */
+    private static byte[] getSecretBytes(final String secret, final boolean secretIsBase64Encoded) {
+        return secretIsBase64Encoded ? new Base64(secret).decode() : secret.getBytes(UTF_8);
+    }
+
     @Override
-    public AuthenticationHandlerExecutionResult postAuthenticate(final Credential credential, final AuthenticationHandlerExecutionResult result) {
+    public AuthenticationHandlerExecutionResult postAuthenticate(final Credential credential,
+                                                                 final AuthenticationHandlerExecutionResult result) {
         val tokenCredential = (TokenCredential) credential;
         tokenCredential.setId(result.getPrincipal().getId());
         return super.postAuthenticate(credential, result);
@@ -81,68 +94,120 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         val tokenCredential = (TokenCredential) credential;
         LOGGER.debug("Locating token secret for service [{}]", tokenCredential.getService());
 
-        val service = this.servicesManager.findServiceBy(tokenCredential.getService());
+        val service = getServicesManager().findServiceBy(tokenCredential.getService());
         val signingSecret = getRegisteredServiceJwtSigningSecret(service);
 
         if (StringUtils.isNotBlank(signingSecret)) {
-            val serviceSigningAlg = getRegisteredServiceJwtProperty(service,
-                RegisteredServiceProperties.TOKEN_SECRET_SIGNING_ALG);
-
-            Set<Algorithm> sets = new HashSet<>(0);
-            sets.addAll(JWSAlgorithm.Family.EC);
-            sets.addAll(JWSAlgorithm.Family.HMAC_SHA);
-            sets.addAll(JWSAlgorithm.Family.RSA);
-            sets.addAll(JWSAlgorithm.Family.SIGNATURE);
-            val signingSecretAlg = StringUtils.defaultString(serviceSigningAlg, JWSAlgorithm.HS256.getName());
-            val signingAlg = findAlgorithmFamily(sets, signingSecretAlg, JWSAlgorithm.class);
-
-            val jwtAuthenticator = new JwtAuthenticator();
-
-            val secretIsBase64String = getRegisteredServiceJwtProperty(service,
-                RegisteredServiceProperties.TOKEN_SECRETS_ARE_BASE64_ENCODED);
-            val secretsAreBase64Encoded = BooleanUtils.toBoolean(secretIsBase64String);
-            val secretBytes = getSecretBytes(signingSecret, secretsAreBase64Encoded);
-            jwtAuthenticator.setSignatureConfiguration(new SecretSignatureConfiguration(secretBytes, signingAlg));
-
-            val encryptionSecret = getRegisteredServiceJwtEncryptionSecret(service);
-            if (StringUtils.isNotBlank(encryptionSecret)) {
-                sets = new HashSet<>(0);
-                sets.addAll(JWEAlgorithm.Family.AES_GCM_KW);
-                sets.addAll(JWEAlgorithm.Family.AES_KW);
-                sets.addAll(JWEAlgorithm.Family.ASYMMETRIC);
-                sets.addAll(JWEAlgorithm.Family.ECDH_ES);
-                sets.addAll(JWEAlgorithm.Family.PBES2);
-                sets.addAll(JWEAlgorithm.Family.RSA);
-                sets.addAll(JWEAlgorithm.Family.SYMMETRIC);
-
-                val encryptionAlg = getRegisteredServiceJwtProperty(service,
-                    RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_ALG);
-
-                val encryptionSecretAlg = StringUtils.defaultString(encryptionAlg, JWEAlgorithm.DIR.getName());
-                val encAlg = findAlgorithmFamily(sets, encryptionSecretAlg, JWEAlgorithm.class);
-
-                sets = new HashSet<>(0);
-                sets.addAll(EncryptionMethod.Family.AES_CBC_HMAC_SHA);
-                sets.addAll(EncryptionMethod.Family.AES_GCM);
-
-                val encryptionMethod = getRegisteredServiceJwtProperty(service,
-                    RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_METHOD);
-
-                val encryptionSecretMethod = StringUtils.defaultString(encryptionMethod, EncryptionMethod.A192CBC_HS384.getName());
-                val encMethod = findAlgorithmFamily(sets, encryptionSecretMethod, EncryptionMethod.class);
-                val encSecretBytes = getSecretBytes(encryptionSecret, secretsAreBase64Encoded);
-                jwtAuthenticator.setEncryptionConfiguration(new SecretEncryptionConfiguration(encSecretBytes, encAlg, encMethod));
-            } else {
-                LOGGER.info("No token encryption secret is defined for service [{}]. You may want to use the [{}] property",
-                        service.getServiceId(),
-                        RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION.getPropertyName());
-            }
-            return jwtAuthenticator;
+            return buildJwtAuthenticatorFor(service);
         }
+
         LOGGER.warn("No token signing secret is defined for service [{}]. Ensure [{}] property is defined for service",
             service.getServiceId(),
             RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_SIGNING.getPropertyName());
         return null;
+    }
+
+    /**
+     * Build jwt authenticator for service.
+     *
+     * @param service the service
+     * @return the jwt authenticator
+     */
+    protected JwtAuthenticator buildJwtAuthenticatorFor(final RegisteredService service) {
+        val jwtAuthenticator = new JwtAuthenticator();
+        val signingConfig = getSecretSignatureConfiguration(service);
+        jwtAuthenticator.setSignatureConfiguration(signingConfig);
+
+        val encryptionSecret = getRegisteredServiceJwtEncryptionSecret(service);
+        if (StringUtils.isNotBlank(encryptionSecret)) {
+            val encConfig = getSecretEncryptionConfiguration(service);
+            jwtAuthenticator.setEncryptionConfiguration(encConfig);
+        } else {
+            LOGGER.info("No token encryption secret is defined for service [{}]. You may want to use the [{}] property",
+                service.getServiceId(),
+                RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION.getPropertyName());
+        }
+        return jwtAuthenticator;
+    }
+
+    /**
+     * Gets registered service jwt secret.
+     *
+     * @param service  the service
+     * @param propName the prop name
+     * @return the registered service jwt secret
+     */
+    protected String getRegisteredServiceJwtProperty(final RegisteredService service,
+                                                     final RegisteredServiceProperty.RegisteredServiceProperties propName) {
+        if (service == null || !service.getAccessStrategy().isServiceAccessAllowed()) {
+            LOGGER.debug("Service is not defined/found or its access is disabled in the registry");
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
+        }
+        if (propName.isAssignedTo(service)) {
+            return propName.getPropertyValue(service).getValue();
+        }
+        LOGGER.trace("Service [{}] does not define a property [{}] in the registry", service.getServiceId(), propName);
+        return null;
+    }
+
+    /**
+     * Gets secret signature configuration.
+     *
+     * @param service the service
+     * @return the secret signature configuration
+     */
+    protected SecretSignatureConfiguration getSecretSignatureConfiguration(final RegisteredService service) {
+        val signingSecret = getRegisteredServiceJwtSigningSecret(service);
+
+        val serviceSigningAlg = getRegisteredServiceJwtProperty(service,
+            RegisteredServiceProperties.TOKEN_SECRET_SIGNING_ALG);
+
+        val sets = new HashSet<Algorithm>(0);
+        sets.addAll(JWSAlgorithm.Family.EC);
+        sets.addAll(JWSAlgorithm.Family.HMAC_SHA);
+        sets.addAll(JWSAlgorithm.Family.RSA);
+        sets.addAll(JWSAlgorithm.Family.SIGNATURE);
+        val signingSecretAlg = StringUtils.defaultString(serviceSigningAlg, JWSAlgorithm.HS256.getName());
+        val signingAlg = findAlgorithmFamily(sets, signingSecretAlg, JWSAlgorithm.class);
+
+        val secretBytes = getSecretBytes(signingSecret, areSecretsBase64Encoded(service));
+        return new SecretSignatureConfiguration(secretBytes, signingAlg);
+    }
+
+    /**
+     * Gets secret encryption configuration.
+     *
+     * @param service the service
+     * @return the secret encryption configuration
+     */
+    protected SecretEncryptionConfiguration getSecretEncryptionConfiguration(final RegisteredService service) {
+        val encryptionSecret = getRegisteredServiceJwtEncryptionSecret(service);
+        val sets = new HashSet<Algorithm>(0);
+        sets.addAll(JWEAlgorithm.Family.AES_GCM_KW);
+        sets.addAll(JWEAlgorithm.Family.AES_KW);
+        sets.addAll(JWEAlgorithm.Family.ASYMMETRIC);
+        sets.addAll(JWEAlgorithm.Family.ECDH_ES);
+        sets.addAll(JWEAlgorithm.Family.PBES2);
+        sets.addAll(JWEAlgorithm.Family.RSA);
+        sets.addAll(JWEAlgorithm.Family.SYMMETRIC);
+
+        val encryptionAlg = getRegisteredServiceJwtProperty(service,
+            RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_ALG);
+
+        val encryptionSecretAlg = StringUtils.defaultString(encryptionAlg, JWEAlgorithm.DIR.getName());
+        val encAlg = findAlgorithmFamily(sets, encryptionSecretAlg, JWEAlgorithm.class);
+
+        sets.clear();
+        sets.addAll(EncryptionMethod.Family.AES_CBC_HMAC_SHA);
+        sets.addAll(EncryptionMethod.Family.AES_GCM);
+
+        val encryptionMethod = getRegisteredServiceJwtProperty(service,
+            RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_METHOD);
+
+        val encryptionSecretMethod = StringUtils.defaultString(encryptionMethod, EncryptionMethod.A192CBC_HS384.getName());
+        val encMethod = findAlgorithmFamily(sets, encryptionSecretMethod, EncryptionMethod.class);
+        val encSecretBytes = getSecretBytes(encryptionSecret, areSecretsBase64Encoded(service));
+        return new SecretEncryptionConfiguration(encSecretBytes, encAlg, encMethod);
     }
 
     /**
@@ -165,34 +230,9 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         return getRegisteredServiceJwtProperty(service, RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_SIGNING);
     }
 
-    /**
-     * Gets registered service jwt secret.
-     *
-     * @param service  the service
-     * @param propName the prop name
-     * @return the registered service jwt secret
-     */
-    protected String getRegisteredServiceJwtProperty(final RegisteredService service, final RegisteredServiceProperty.RegisteredServiceProperties propName) {
-        if (service == null || !service.getAccessStrategy().isServiceAccessAllowed()) {
-            LOGGER.debug("Service is not defined/found or its access is disabled in the registry");
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
-        }
-        if (propName.isAssignedTo(service)) {
-            return propName.getPropertyValue(service).getValue();
-        }
-        LOGGER.trace("Service [{}] does not define a property [{}] in the registry", service.getServiceId(), propName);
-        return null;
-    }
-
-    /**
-     * Convert secret to bytes honoring {@link RegisteredServiceProperty.RegisteredServiceProperties#TOKEN_SECRETS_ARE_BASE64_ENCODED}
-     * config parameter.
-     *
-     * @param secret                - String to be represented to byte[]
-     * @param secretIsBase64Encoded - is this a base64 encoded #secret?
-     * @return byte[] representation of #secret
-     */
-    private static byte[] getSecretBytes(final String secret, final boolean secretIsBase64Encoded) {
-        return secretIsBase64Encoded ? new Base64(secret).decode() : secret.getBytes(UTF_8);
+    private boolean areSecretsBase64Encoded(final RegisteredService service) {
+        val secretIsBase64String = getRegisteredServiceJwtProperty(service,
+            RegisteredServiceProperties.TOKEN_SECRETS_ARE_BASE64_ENCODED);
+        return BooleanUtils.toBoolean(secretIsBase64String);
     }
 }

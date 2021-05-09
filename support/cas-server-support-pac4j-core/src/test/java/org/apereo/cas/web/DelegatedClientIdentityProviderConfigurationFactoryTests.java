@@ -82,7 +82,9 @@ public class DelegatedClientIdentityProviderConfigurationFactoryTests {
         val service = RegisteredServiceTestUtils.getService("example");
         service.setOriginalUrl("http://service.original.url.com?response_type=idtoken+token");
         val client = new CasClient(new CasConfiguration());
-        client.setCustomProperties(Map.of(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, "custom-class"));
+        client.setCustomProperties(Map.of(
+            ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, "custom-class",
+            ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_DISPLAY_NAME, "My Great Client"));
         val factory = DelegatedClientIdentityProviderConfigurationFactory.builder()
             .casProperties(casProperties)
             .client(client)

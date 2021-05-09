@@ -119,10 +119,12 @@ public class RadiusConfiguration {
     @Bean
     public AuthenticationHandler radiusAuthenticationHandler() {
         val radius = casProperties.getAuthn().getRadius();
-        val h = new RadiusAuthenticationHandler(radius.getName(), servicesManager.getObject(),
+        val h = new RadiusAuthenticationHandler(radius.getName(),
+            servicesManager.getObject(),
             radiusPrincipalFactory(), radiusServers(),
-            radius.isFailoverOnException(), radius.isFailoverOnAuthenticationFailure());
-
+            radius.isFailoverOnException(),
+            radius.isFailoverOnAuthenticationFailure());
+        h.setState(radius.getState());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(radius.getPasswordEncoder(), applicationContext));
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(radius.getPrincipalTransformation()));
         h.setPasswordPolicyConfiguration(radiusPasswordPolicyConfiguration());

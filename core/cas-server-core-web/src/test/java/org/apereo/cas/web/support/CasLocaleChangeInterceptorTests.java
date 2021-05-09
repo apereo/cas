@@ -23,8 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Web")
 public class CasLocaleChangeInterceptorTests {
 
-    // note: default request locale returned from MockHttpServletRequest is ENGLISH
-    
     @Test
     public void verifyRequestHeaderBeatsCasDefault() throws Exception {
         val request = new MockHttpServletRequest();

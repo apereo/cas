@@ -4,15 +4,16 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -38,22 +39,31 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 public class InitialFlowSetupActionTests extends AbstractWebflowActionsTests {
     @Autowired
-    @Qualifier("initialFlowSetupAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP)
     private Action action;
 
     @Test
-    @SneakyThrows
-    public void verifyNoServiceFound() {
+    public void verifyResponseStatusAsError() throws Exception {
         val context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
+        var response = new MockHttpServletResponse();
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(),
+            new MockHttpServletRequest(), response));
+        assertThrows(UnauthorizedServiceException.class, () -> action.execute(context));
+    }
+
+    @Test
+    public void verifyNoServiceFound() throws Exception {
+        val context = new MockRequestContext();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(),
+            new MockHttpServletRequest(), new MockHttpServletResponse()));
         val event = this.action.execute(context);
         assertNull(WebUtils.getService(context));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
     }
 
     @Test
-    @SneakyThrows
-    public void verifyServiceFound() {
+    public void verifyServiceFound() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");

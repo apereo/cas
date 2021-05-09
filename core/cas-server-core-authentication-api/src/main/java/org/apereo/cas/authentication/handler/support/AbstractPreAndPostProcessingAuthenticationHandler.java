@@ -30,8 +30,9 @@ import java.util.List;
  */
 public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends AbstractAuthenticationHandler implements PrePostAuthenticationHandler {
 
-    protected AbstractPreAndPostProcessingAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
-                                                             final Integer order) {
+    protected AbstractPreAndPostProcessingAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                                                final PrincipalFactory principalFactory,
+                                                                final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }
 

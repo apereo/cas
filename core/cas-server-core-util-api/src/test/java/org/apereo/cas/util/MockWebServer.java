@@ -53,6 +53,17 @@ public class MockWebServer implements AutoCloseable {
         }
     }
 
+    public MockWebServer(final int port, final Object body) {
+        try {
+            val data = MAPPER.writeValueAsString(body);
+            val resource = new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output");
+            this.worker = new Worker(new ServerSocket(port), resource,
+                HttpStatus.OK, MediaType.APPLICATION_JSON_VALUE, Map.of());
+        } catch (final IOException e) {
+            throw new IllegalArgumentException("Cannot create Web server", e);
+        }
+    }
+
     public MockWebServer(final int port, final Object body, final Map headers, final HttpStatus status) {
         try {
             val data = MAPPER.writeValueAsString(body);

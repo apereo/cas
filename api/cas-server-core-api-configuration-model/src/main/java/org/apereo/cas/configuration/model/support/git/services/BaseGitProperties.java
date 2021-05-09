@@ -115,4 +115,28 @@ public abstract class BaseGitProperties implements Serializable {
     @NestedConfigurationProperty
     @RequiredProperty
     private SpringResourceProperties cloneDirectory = new SpringResourceProperties();
+
+    /**
+     * Implementation of HTTP client to use when doing git operations via http/https.
+     * The jgit library sets the connection factory statically (globally) so this property should
+     * be set to the same value for all git repositories (services, saml, etc). Not doing
+     * so might result in one connection factory being used for clone and another for subsequent
+     * fetches.
+     */
+    private HttpClientTypes httpClientType = HttpClientTypes.JDK;
+
+    /**
+     * The jgit library supports multiple HTTP client implementations.
+     */
+    public enum HttpClientTypes {
+        /**
+         * Built-in JDK http/https client.
+         */
+        JDK,
+        /**
+         * Apache HTTP Client http/https client.
+         */
+        HTTP_CLIENT
+    }
+
 }

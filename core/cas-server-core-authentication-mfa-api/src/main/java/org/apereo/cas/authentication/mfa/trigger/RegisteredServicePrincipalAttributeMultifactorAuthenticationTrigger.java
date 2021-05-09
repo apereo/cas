@@ -51,9 +51,9 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
 
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
-        final RegisteredService registeredService,
-        final HttpServletRequest httpServletRequest,
-        final Service service) {
+                                                                   final RegisteredService registeredService,
+                                                                   final HttpServletRequest httpServletRequest,
+                                                                   final Service service) {
         if (authentication == null || registeredService == null) {
             LOGGER.debug("No authentication or service is available to determine event for principal");
             return Optional.empty();
@@ -86,11 +86,9 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
                 attributeValue != null && RegexUtils.matches(Pattern.compile(policy.getPrincipalAttributeValueToMatch()), attributeValue));
 
         if (result != null && !result.isEmpty()) {
-            val id = CollectionUtils.firstElement(result);
-            if (id.isEmpty()) {
-                return unmatchedMultifactorAuthenticationTrigger(principal, registeredService);
-            }
-            return MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(id.get().toString(), this.applicationContext);
+            return CollectionUtils.firstElement(result)
+                .map(value -> MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(value.toString(), this.applicationContext))
+                .orElse(unmatchedMultifactorAuthenticationTrigger(principal, registeredService));
         }
 
         return unmatchedMultifactorAuthenticationTrigger(principal, registeredService);

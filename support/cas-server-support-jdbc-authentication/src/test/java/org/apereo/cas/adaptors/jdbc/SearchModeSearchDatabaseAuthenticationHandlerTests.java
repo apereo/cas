@@ -1,11 +1,12 @@
 package org.apereo.cas.adaptors.jdbc;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.configuration.model.support.jdbc.authn.SearchJdbcAuthenticationProperties;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -22,7 +23,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,10 +48,11 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests extends BaseData
     }
 
     @BeforeEach
-    @SneakyThrows
-    public void initialize() {
-        this.handler = new SearchModeSearchDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null,
-            null, this.dataSource, "username", "password", "cassearchusers");
+    public void initialize() throws Exception {
+        val props = new SearchJdbcAuthenticationProperties().setFieldUser("username")
+            .setFieldPassword("password").setTableUsers("cassearchusers");
+        this.handler = new SearchModeSearchDatabaseAuthenticationHandler(props, null,
+            PrincipalFactoryUtils.newPrincipalFactory(), this.dataSource);
 
         try (val c = this.dataSource.getConnection()) {
             try (val s = c.createStatement()) {
@@ -66,8 +67,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests extends BaseData
     }
 
     @AfterEach
-    @SneakyThrows
-    public void afterEachTest() {
+    public void afterEachTest() throws Exception {
         try (val c = this.dataSource.getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);

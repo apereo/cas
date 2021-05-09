@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.Ordered;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -78,7 +77,7 @@ public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOi
     @Test
     public void verifyOperation() {
         assertNotNull(oidcServicesManagerRegisteredServiceLocator);
-        assertEquals(Ordered.HIGHEST_PRECEDENCE, oidcServicesManagerRegisteredServiceLocator.getOrder());
+        assertEquals(OidcServicesManagerRegisteredServiceLocator.DEFAULT_ORDER, oidcServicesManagerRegisteredServiceLocator.getOrder());
 
         val clientId = UUID.randomUUID().toString();
         val service = getOidcRegisteredService(clientId);
@@ -105,7 +104,7 @@ public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOi
         servicesManager.save(service1, service2, service3);
 
         var svc = webApplicationServiceFactory.createService(
-            String.format("https://app.example.org/whatever?%s=clientid", OAuth20Constants.CLIENT_ID));
+            String.format("https://app.example.org/whatever?%s=%s", OAuth20Constants.CLIENT_ID, oidcClientId));
         var result = servicesManager.findServiceBy(svc);
         assertTrue(result instanceof OidcRegisteredService);
 

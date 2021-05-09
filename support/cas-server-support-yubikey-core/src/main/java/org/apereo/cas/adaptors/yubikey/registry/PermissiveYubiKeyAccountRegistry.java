@@ -80,7 +80,12 @@ public class PermissiveYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry
             .id(System.currentTimeMillis())
             .devices(CollectionUtils.wrapList(device))
             .build();
-        devices.put(request.getUsername(), yubiAccount);
+        return save(yubiAccount);
+    }
+
+    @Override
+    public YubiKeyAccount save(final YubiKeyAccount yubiAccount) {
+        devices.put(yubiAccount.getUsername(), yubiAccount);
         return yubiAccount;
     }
 

@@ -78,8 +78,7 @@
                                 <span th:case="saml2" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-account-key')}"></span>
                                 <span th:case="cas" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-login')}"></span>
                                 <span th:case="*" class="mdi mdi-account-key"></span>
-
-                                [[${entry.name}]]
+                                [[${#strings.defaultString(entry.title,entry.name)}]]
                             </a>
 
                             <script th:inline="javascript">

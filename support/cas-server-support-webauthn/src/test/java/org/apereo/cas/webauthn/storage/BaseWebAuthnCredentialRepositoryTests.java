@@ -33,10 +33,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.mfa.web-authn.allowed-origins=https://localhost:8443",
-        "cas.authn.mfa.web-authn.application-id=https://localhost:8443",
-        "cas.authn.mfa.web-authn.relying-party-name=CAS WebAuthn Demo",
-        "cas.authn.mfa.web-authn.relying-party-id=example.org"
+        "cas.authn.mfa.web-authn.core.allowed-origins=https://localhost:8443",
+        "cas.authn.mfa.web-authn.core.application-id=https://localhost:8443",
+        "cas.authn.mfa.web-authn.core.relying-party-name=CAS WebAuthn Demo",
+        "cas.authn.mfa.web-authn.core.relying-party-id=example.org"
     })
 public abstract class BaseWebAuthnCredentialRepositoryTests {
     @Autowired
@@ -59,13 +59,16 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
         assertFalse(webAuthnCredentialRepository.getCredentialIdsForUsername(id.toUpperCase()).isEmpty());
 
         val ba = ByteArray.fromBase64Url(id);
-        assertTrue(webAuthnCredentialRepository.getRegistrationByUsernameAndCredentialId(id.toUpperCase(), ba).isPresent());
+        val newRegistration = webAuthnCredentialRepository.getRegistrationByUsernameAndCredentialId(id.toUpperCase(), ba);
+        assertTrue(newRegistration.isPresent());
+        assertNotNull(newRegistration.get().getRegistrationTime());
         assertFalse(webAuthnCredentialRepository.getRegistrationsByUserHandle(ba).isEmpty());
         assertFalse(webAuthnCredentialRepository.getRegistrationsByUsername(id.toUpperCase()).isEmpty());
         assertFalse(webAuthnCredentialRepository.getUserHandleForUsername(id.toUpperCase()).isEmpty());
         assertFalse(webAuthnCredentialRepository.getUsernameForUserHandle(ba).isEmpty());
         assertFalse(webAuthnCredentialRepository.lookup(ba, ba).isEmpty());
         assertFalse(webAuthnCredentialRepository.lookupAll(ba).isEmpty());
+        assertTrue(webAuthnCredentialRepository.stream().count() > 0);
 
         val constructor = AssertionResult.class.getDeclaredConstructor(boolean.class, ByteArray.class,
             ByteArray.class, String.class, long.class, boolean.class, List.class);

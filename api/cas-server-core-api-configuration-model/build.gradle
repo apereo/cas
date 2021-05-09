@@ -10,8 +10,7 @@ dependencies {
     implementation libraries.springbootconfigmetadata
 
     api project(":api:cas-server-core-api-util")
-    api project(":api:cas-server-core-api-authentication")
-    api project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api-protocol")
     
     testImplementation libraries.springbootconfigmetadata
     

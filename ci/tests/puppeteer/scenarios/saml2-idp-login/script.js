@@ -47,7 +47,16 @@ const path = require('path');
     const header = await page.evaluate(element => element.textContent, element);
     console.log(header)
     assert(header.startsWith("Your browser has completed the full SAML 2.0 round-trip"));
-    
+
+    const endpoints = ["health", "samlIdPRegisteredServiceMetadataCache?serviceId=Sample&entityId=https://samltest.id/saml/sp"];
+    const baseUrl = "https://localhost:8443/cas/actuator/"
+    for (let i = 0; i < endpoints.length; i++) {
+        let url = baseUrl + endpoints[i];
+        const response = await page.goto(url);
+        console.log(response.status() + " " + response.statusText())
+        assert(response.ok())
+    }
+
     await browser.close();
 })();
 

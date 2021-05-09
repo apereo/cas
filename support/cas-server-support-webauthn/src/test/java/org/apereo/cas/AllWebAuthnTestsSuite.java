@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.webauthn.storage.InMemoryWebAuthnCredentialRepositoryTests;
 import org.apereo.cas.webauthn.storage.JsonResourceWebAuthnCredentialRepositoryTests;
 import org.apereo.cas.webauthn.web.WebAuthnRegisteredDevicesEndpointTests;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAccountCheckRegistrationActionTests;
@@ -29,6 +30,7 @@ import org.junit.runner.RunWith;
     WebAuthnValidateSessionCredentialTokenActionTests.class,
     JsonResourceWebAuthnCredentialRepositoryTests.class,
     WebAuthnRegisteredDevicesEndpointTests.class,
+    InMemoryWebAuthnCredentialRepositoryTests.class,
     WebAuthnAuthenticationWebflowEventResolverTests.class,
     WebAuthnAuthenticationWebflowActionTests.class,
     WebAuthnStartRegistrationActionTests.class

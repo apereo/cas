@@ -57,7 +57,7 @@ public class MongoDbWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
     }
 
     @Override
-    protected Stream<CredentialRegistration> load() {
+    public Stream<CredentialRegistration> stream() {
         val query = new Query().addCriteria(Criteria.where(MongoDbWebAuthnCredentialRegistration.FIELD_USERNAME).exists(true))
             .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
         val records = mongoTemplate.find(query, MongoDbWebAuthnCredentialRegistration.class,

@@ -13,6 +13,7 @@ import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -49,6 +50,10 @@ public abstract class BaseTicketFactoryTests {
     @Autowired
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("ticketSerializationManager")
+    protected TicketSerializationManager ticketSerializationManager;
 
     @Autowired
     protected CasConfigurationProperties casProperties;

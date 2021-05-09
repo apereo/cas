@@ -75,7 +75,7 @@ public class SamlIdentityProviderEntityParser implements DisposableBean {
         try {
             if (ResourceUtils.doesResourceExist(resource)) {
                 try (val reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
-                    final TypeReference<List<SamlIdentityProviderEntity>> ref = new TypeReference<>() {
+                    val ref = new TypeReference<List<SamlIdentityProviderEntity>>() {
                     };
                     identityProviders.addAll(MAPPER.readValue(JsonValue.readHjson(reader).toString(), ref));
                 }

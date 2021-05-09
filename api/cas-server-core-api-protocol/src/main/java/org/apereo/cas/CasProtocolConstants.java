@@ -61,6 +61,16 @@ public interface CasProtocolConstants {
     String PARAMETER_RENEW = "renew";
 
     /**
+     * Constant representing the username parameter in the request.
+     */
+    String PARAMETER_USERNAME = "username";
+
+    /**
+     * Constant representing the password parameter in the request.
+     */
+    String PARAMETER_PASSWORD = "password";
+
+    /**
      * Constant representing the gateway parameter in the request.
      */
     String PARAMETER_GATEWAY = "gateway";

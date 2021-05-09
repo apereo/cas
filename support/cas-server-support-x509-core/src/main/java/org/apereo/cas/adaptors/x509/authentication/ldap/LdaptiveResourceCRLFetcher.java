@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
+import java.util.Objects;
 
 /**
  * Fetches a CRL from an LDAP instance.
@@ -92,7 +93,8 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
             val result = performLdapSearch(ldapURL);
             if (result.isSuccess()) {
                 val entry = result.getEntry();
-                val attribute = entry.getAttribute(this.certificateAttribute);
+                val attribute = Objects.requireNonNull(entry.getAttribute(this.certificateAttribute),
+                    String.format("Certificate attribute %s does not exist or has no value", this.certificateAttribute));
 
                 if (attribute.isBinary()) {
                     LOGGER.debug("Located entry [{}]. Retrieving first attribute [{}]", entry, attribute);

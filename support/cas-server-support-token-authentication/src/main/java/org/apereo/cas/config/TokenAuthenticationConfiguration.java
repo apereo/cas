@@ -52,8 +52,10 @@ public class TokenAuthenticationConfiguration {
     public AuthenticationHandler tokenAuthenticationHandler() {
         val token = casProperties.getAuthn().getToken();
         val principalNameTransformer = PrincipalNameTransformerUtils.newPrincipalNameTransformer(token.getPrincipalTransformation());
-        return new TokenAuthenticationHandler(token.getName(), servicesManager.getObject(),
+        val handler = new TokenAuthenticationHandler(token.getName(), servicesManager.getObject(),
             tokenPrincipalFactory(), principalNameTransformer, JEESessionStore.INSTANCE);
+        handler.setState(token.getState());
+        return handler;
     }
 
     @ConditionalOnMissingBean(name = "tokenAuthenticationEventExecutionPlanConfigurer")

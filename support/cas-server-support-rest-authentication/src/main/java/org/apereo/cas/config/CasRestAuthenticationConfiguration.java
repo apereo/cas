@@ -87,6 +87,7 @@ public class CasRestAuthenticationConfiguration {
         val rest = casProperties.getAuthn().getRest();
         val r = new RestAuthenticationHandler(servicesManager.getObject(), restAuthenticationPrincipalFactory(), rest);
         r.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rest.getPasswordEncoder(), applicationContext));
+        r.setState(rest.getState());
         return r;
     }
 

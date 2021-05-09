@@ -44,44 +44,38 @@ public class WSFederationMetadataWriter {
      *
      * @param config the config
      * @return the document
+     * @throws Exception the exception
      */
-    public static Document produceMetadataDocument(final CasConfigurationProperties config) {
-        try {
-            val wsfedIdp = config.getAuthn().getWsfedIdp();
-            val sts = wsfedIdp.getSts();
-            val prop = CryptoUtils.getSecurityProperties(sts.getRealm().getKeystoreFile(),
-                sts.getRealm().getKeystorePassword(), sts.getRealm().getKeystoreAlias());
-            val crypto = CryptoFactory.getInstance(prop);
-            val writer = new W3CDOMStreamWriter();
-            writer.writeStartDocument(StandardCharsets.UTF_8.name(), "1.0");
-            val referenceID = IDGenerator.generateID("_");
-            writer.writeStartElement("md", "EntityDescriptor", SAML2_METADATA_NS);
-            writer.writeAttribute("ID", referenceID);
-            val idpEntityId = config.getServer().getPrefix().concat(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST);
-            writer.writeAttribute("entityID", idpEntityId);
-            writer.writeNamespace("md", SAML2_METADATA_NS);
-            writer.writeNamespace("fed", WS_FEDERATION_NS);
-            writer.writeNamespace("wsa", WS_ADDRESSING_NS);
-            writer.writeNamespace("auth", WS_FEDERATION_NS);
-            writer.writeNamespace("xsi", SCHEMA_INSTANCE_NS);
-            val stsUrl = config.getServer().getPrefix().concat(WSFederationConstants.BASE_ENDPOINT_STS).concat(wsfedIdp.getIdp().getRealmName());
-            writeFederationMetadata(writer, idpEntityId, stsUrl, crypto);
-            writer.writeEndElement();
-            writer.writeEndDocument();
-            writer.close();
-            val out = DOM2Writer.nodeToString(writer.getDocument());
-            LOGGER.trace(out);
-            val result = SignatureUtils.signMetaInfo(crypto, null, sts.getRealm().getKeyPassword(), writer.getDocument(), referenceID);
-            if (result != null) {
-                return result;
-            }
-            throw new IllegalArgumentException("Failed to sign the metadata document");
-        } catch (final Exception e) {
-            throw new IllegalArgumentException("Error creating service metadata information: " + e.getMessage(), e);
-        }
+    public static Document produceMetadataDocument(final CasConfigurationProperties config) throws Exception {
+        val wsfedIdp = config.getAuthn().getWsfedIdp();
+        val sts = wsfedIdp.getSts();
+        val prop = CryptoUtils.getSecurityProperties(sts.getRealm().getKeystoreFile(),
+            sts.getRealm().getKeystorePassword(), sts.getRealm().getKeystoreAlias());
+        val crypto = CryptoFactory.getInstance(prop);
+        val writer = new W3CDOMStreamWriter();
+        writer.writeStartDocument(StandardCharsets.UTF_8.name(), "1.0");
+        val referenceID = IDGenerator.generateID("_");
+        writer.writeStartElement("md", "EntityDescriptor", SAML2_METADATA_NS);
+        writer.writeAttribute("ID", referenceID);
+        val idpEntityId = config.getServer().getPrefix().concat(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST);
+        writer.writeAttribute("entityID", idpEntityId);
+        writer.writeNamespace("md", SAML2_METADATA_NS);
+        writer.writeNamespace("fed", WS_FEDERATION_NS);
+        writer.writeNamespace("wsa", WS_ADDRESSING_NS);
+        writer.writeNamespace("auth", WS_FEDERATION_NS);
+        writer.writeNamespace("xsi", SCHEMA_INSTANCE_NS);
+        val stsUrl = config.getServer().getPrefix().concat(WSFederationConstants.BASE_ENDPOINT_STS).concat(wsfedIdp.getIdp().getRealmName());
+        writeFederationMetadata(writer, idpEntityId, stsUrl, crypto);
+        writer.writeEndElement();
+        writer.writeEndDocument();
+        writer.close();
+        val out = DOM2Writer.nodeToString(writer.getDocument());
+        LOGGER.trace(out);
+        return SignatureUtils.signMetaInfo(crypto, null, sts.getRealm().getKeyPassword(), writer.getDocument(), referenceID);
     }
 
-    private static void writeFederationMetadata(final XMLStreamWriter writer, final String idpEntityId, final String ststUrl, final Crypto crypto) throws Exception {
+    private static void writeFederationMetadata(final XMLStreamWriter writer, final String idpEntityId,
+                                                final String ststUrl, final Crypto crypto) throws Exception {
         writer.writeStartElement("md", "RoleDescriptor", WS_FEDERATION_NS);
         writer.writeAttribute(SCHEMA_INSTANCE_NS, "type", "fed:SecurityTokenServiceType");
         writer.writeAttribute("protocolSupportEnumeration", WS_FEDERATION_NS);

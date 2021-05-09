@@ -74,7 +74,6 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
                 return new InetSocketAddress(host, port);
             })
             .forEach(builder::addContactPoint);
-
         return builder.build();
     }
 }

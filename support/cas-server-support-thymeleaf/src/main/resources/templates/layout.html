@@ -11,14 +11,21 @@
     </title>
 
     <!--/* Core CAS CSS */-->
-    <link rel="stylesheet" type="text/css" href="../static/css/normalize.css" th:href="@{#{webjars.normalize.css}}" />
-    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap-grid.min.css" th:href="@{#{webjars.bootstrap-grid.css}}" />
-    <link rel="stylesheet" type="text/css" href="../static/css/material-components-web.min.css" th:href="@{#{webjars.material-components.css}}" />
-    <link rel="stylesheet" type="text/css" href="../static/css/mdi-font.css" th:href="@{#{webjars.mdi-font.css}}" />
-    <link rel="stylesheet" type="text/css" href="../static/css/cas.css" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
+    <span th:remove="tag" th:if="${'true' == #strings.defaultString(#themes.code('cas.css.core.enabled'), 'true')}">
+        <link rel="stylesheet" type="text/css" href="../static/css/normalize.css"
+              th:href="@{#{webjars.normalize.css}}" />
+        <link rel="stylesheet" type="text/css" href="../static/css/bootstrap-grid.min.css"
+              th:href="@{#{webjars.bootstrap-grid.css}}" />
+        <link rel="stylesheet" type="text/css" href="../static/css/material-components-web.min.css"
+              th:href="@{#{webjars.material-components.css}}" />
+        <link rel="stylesheet" type="text/css" href="../static/css/mdi-font.css"
+              th:href="@{#{webjars.mdi-font.css}}" />
+    </span>
 
-    <link rel="shortcut icon"
-          th:href="@{${#strings.defaultString(#themes.code('cas.favicon.file'), '/favicon.ico')}}" />
+    <span th:remove="tag" th:each="file : ${#strings.arraySplit(#themes.code('cas.standard.css.file'), ',')}">
+    <link rel="stylesheet" type="text/css" href="../static/css/cas.css" th:href="@{${file}}"/>
+    </span>
+    <link rel="shortcut icon" th:href="@{${#strings.defaultString(#themes.code('cas.favicon.file'), '/favicon.ico')}}" />
 </head>
 
 <body>

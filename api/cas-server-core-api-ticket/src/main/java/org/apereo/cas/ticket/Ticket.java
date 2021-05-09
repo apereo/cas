@@ -22,15 +22,6 @@ public interface Ticket extends Serializable, Comparable<Ticket> {
     String getId();
 
     /**
-     * Determines if the ticket is expired. Most common implementations might
-     * collaborate with <i>ExpirationPolicy</i> strategy.
-     *
-     * @return true, if the ticket is expired
-     * @see ExpirationPolicy
-     */
-    boolean isExpired();
-
-    /**
      * Method to retrieve the TicketGrantingTicket that granted this ticket.
      *
      * @return the ticket or null if it has no parent
@@ -52,18 +43,27 @@ public interface Ticket extends Serializable, Comparable<Ticket> {
     int getCountOfUses();
 
     /**
-     * Get expiration policy associated with ticket.
-     *
-     * @return the expiration policy
-     */
-    ExpirationPolicy getExpirationPolicy();
-
-    /**
      * Gets prefix.
      *
      * @return the prefix
      */
     String getPrefix();
+
+    /**
+     * Determines if the ticket is expired. Most common implementations might
+     * collaborate with <i>ExpirationPolicy</i> strategy.
+     *
+     * @return true, if the ticket is expired
+     * @see ExpirationPolicy
+     */
+    boolean isExpired();
+
+    /**
+     * Get expiration policy associated with ticket.
+     *
+     * @return the expiration policy
+     */
+    ExpirationPolicy getExpirationPolicy();
 
     /**
      * Mark a ticket as expired.

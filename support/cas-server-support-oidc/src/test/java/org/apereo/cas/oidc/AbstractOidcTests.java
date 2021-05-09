@@ -58,6 +58,7 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationRe
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -255,6 +256,10 @@ public abstract class AbstractOidcTests {
     @Qualifier("oidcAccessTokenJwtBuilder")
     protected JwtBuilder oidcAccessTokenJwtBuilder;
 
+    @Autowired
+    @Qualifier("accessTokenExpirationPolicy")
+    protected ExpirationPolicyBuilder accessTokenExpirationPolicy;
+
     @BeforeEach
     public void initialize() {
         servicesManager.save(getOidcRegisteredService());
@@ -342,7 +347,7 @@ public abstract class AbstractOidcTests {
         svc.setInformationUrl("info");
         svc.setPrivacyUrl("privacy");
         svc.setJwks("classpath:keystore.jwks");
-        svc.setLogoutUrl("https://oauth.example.org/logout,https://logout");
+        svc.setLogoutUrl("https://oauth.example.org/logout,https://logout,https://www.acme.com/.*");
         svc.setLogoutType(RegisteredServiceLogoutType.BACK_CHANNEL);
         svc.setScopes(CollectionUtils.wrapSet(OidcConstants.StandardScopes.EMAIL.getScope(),
             OidcConstants.StandardScopes.PROFILE.getScope()));

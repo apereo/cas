@@ -274,6 +274,22 @@ public interface CasWebflowConstants {
      * The state id 'registerTrustedDevice'.
      */
     String STATE_ID_REGISTER_TRUSTED_DEVICE = "registerTrustedDevice";
+
+    /**
+     * The state id 'finishedInterrupt'.
+     */
+    String STATE_ID_FINISHED_INTERRUPT = "finishedInterrupt";
+
+    /**
+     * The state id 'inquireInterruptAction'.
+     */
+    String STATE_ID_INQUIRE_INTERRUPT_ACTION = "inquireInterruptAction";
+
+    /**
+     * The state id 'finalizeInterruptFlowAction'.
+     */
+    String STATE_ID_FINALIZE_INTERRUPT_ACTION = "finalizeInterruptFlowAction";
+
     /**
      * The state id 'prepareRegisterTrustedDevice'.
      */
@@ -590,6 +606,11 @@ public interface CasWebflowConstants {
     String STATE_ID_SPNEGO = "spnego";
 
     /**
+     * The state id 'interruptView'.
+     */
+    String STATE_ID_INTERRUPT_VIEW = "interruptView";
+
+    /**
      * The state id 'startSpnegoAuthenticate'.
      */
     String STATE_ID_START_SPNEGO_AUTHENTICATE = "startSpnegoAuthenticate";
@@ -598,11 +619,6 @@ public interface CasWebflowConstants {
      * The state id 'evaluateClientRequest'.
      */
     String STATE_ID_EVALUATE_SPNEGO_CLIENT = "evaluateClientRequest";
-
-    /**
-     * The view state 'casPac4jStopWebflow'.
-     */
-    String STATE_ID_PAC4J_STOP_WEBFLOW = "casPac4jStopWebflow";
 
     /**
      * The view state 'casWsFedStopWebflow'.
@@ -639,6 +655,11 @@ public interface CasWebflowConstants {
      * Views.
      ****************************************
      */
+
+    /**
+     * The view state 'casInterruptView'.
+     */
+    String VIEW_ID_INTERRUPT_VIEW = "casInterruptView";
 
     /**
      * The view state 'error'.
@@ -750,6 +771,18 @@ public interface CasWebflowConstants {
      */
     String VIEW_ID_DELEGATED_AUTHN_ERROR_VIEW = "casDelegatedAuthnErrorView";
 
+    /**
+     * The view state 'casPac4jStopWebflow'.
+     */
+    String VIEW_ID_PAC4J_STOP_WEBFLOW = "casPac4jStopWebflow";
+    /**
+     * The view state 'casSessionStorageWriteView'.
+     */
+    String VIEW_ID_SESSION_STORAGE_WRITE = "storage/casSessionStorageWriteView";
+    /**
+     * The view state 'casSessionStorageReadView'.
+     */
+    String VIEW_ID_SESSION_STORAGE_READ = "storage/casSessionStorageReadView";
 
     /*
      ****************************************
@@ -1001,10 +1034,27 @@ public interface CasWebflowConstants {
      * Action id 'acceptableUsagePolicyVerifyServiceAction .
      */
     String ACTION_ID_AUP_VERIFY_SERVICE = "acceptableUsagePolicyVerifyServiceAction";
+
     /**
      * Action id 'sendForgotUsernameInstructionsAction .
      */
     String ACTION_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS_ACTION = "sendForgotUsernameInstructionsAction";
+
+    /**
+     * Action id 'prepareInterruptViewAction .
+     */
+    String ACTION_ID_PREPARE_INTERRUPT_VIEW = "prepareInterruptViewAction";
+
+    /**
+     * Action id 'inquireInterruptAction .
+     */
+    String ACTION_ID_INQUIRE_INTERRUPT = "inquireInterruptAction";
+
+    /**
+     * Action id 'finalizeInterruptFlowAction .
+     */
+    String ACTION_ID_FINALIZE_INTERRUPT = "finalizeInterruptFlowAction";
+
     /**
      * Action id 'oneTimeTokenAuthenticationWebflowAction .
      */

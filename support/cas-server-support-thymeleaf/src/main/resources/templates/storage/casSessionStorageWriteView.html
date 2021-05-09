@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<body id="cas">
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" id="login" class="mdc-card p-4 m-auto w-lg-50">
+        <p>Processing request. This might take a few seconds...</p>
+        <div role="progressbar" class="mdc-linear-progress mdc-linear-progress--indeterminate">
+            <div class="mdc-linear-progress__buffer">
+                <div class="mdc-linear-progress__buffer-bar"></div>
+                <div class="mdc-linear-progress__buffer-dots"></div>
+            </div>
+            <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+                <span class="mdc-linear-progress__bar-inner"></span>
+            </div>
+            <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+                <span class="mdc-linear-progress__bar-inner"></span>
+            </div>
+        </div>
+        <script>new mdc.linearProgress.MDCLinearProgress(document.querySelector('.mdc-linear-progress'));</script>
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+
+            let payload = /*[[${sessionStorage.payload}]]*/;
+            writeToSessionStorage(payload);
+            let url = /*[[${sessionStorage.destinationUrl}]]*/;
+            window.location.href = url;
+            /*]]>*/
+        </script>
+    </div>
+</main>
+</body>
+</html>

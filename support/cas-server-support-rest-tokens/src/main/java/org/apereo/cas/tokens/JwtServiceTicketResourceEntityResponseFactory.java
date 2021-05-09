@@ -28,7 +28,9 @@ public class JwtServiceTicketResourceEntityResponseFactory extends CasProtocolSe
      * The ticket builder that produces tokens.
      */
     private final TokenTicketBuilder tokenTicketBuilder;
+
     private final TicketRegistrySupport ticketRegistrySupport;
+
     private final ServicesManager servicesManager;
 
     public JwtServiceTicketResourceEntityResponseFactory(final CentralAuthenticationService centralAuthenticationService,
@@ -39,6 +41,11 @@ public class JwtServiceTicketResourceEntityResponseFactory extends CasProtocolSe
         this.tokenTicketBuilder = tokenTicketBuilder;
         this.ticketRegistrySupport = ticketRegistrySupport;
         this.servicesManager = servicesManager;
+    }
+
+    @Override
+    public int getOrder() {
+        return super.getOrder() - 1;
     }
 
     @Override
@@ -61,10 +68,5 @@ public class JwtServiceTicketResourceEntityResponseFactory extends CasProtocolSe
         val jwt = tokenTicketBuilder.build(serviceTicket, webApplicationService);
         LOGGER.debug("Generated JWT [{}] for service [{}]", jwt, webApplicationService);
         return jwt;
-    }
-
-    @Override
-    public int getOrder() {
-        return super.getOrder() - 1;
     }
 }

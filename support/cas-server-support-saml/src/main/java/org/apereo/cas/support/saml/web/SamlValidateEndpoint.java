@@ -75,7 +75,7 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
     public Map<String, Object> handle(final String username, final String password, final String service) {
         val credential = new UsernamePasswordCredential(username, password);
         val selectedService = this.serviceFactory.createService(service);
-        val result = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(selectedService, credential);
+        val result = this.authenticationSystemSupport.finalizeAuthenticationTransaction(selectedService, credential);
         val authentication = result.getAuthentication();
 
         val registeredService = this.servicesManager.findServiceBy(selectedService);
