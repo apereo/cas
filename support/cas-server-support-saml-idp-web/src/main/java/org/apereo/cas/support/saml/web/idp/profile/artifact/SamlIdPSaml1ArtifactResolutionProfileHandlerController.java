@@ -27,8 +27,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class SamlIdPSaml1ArtifactResolutionProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
-    public SamlIdPSaml1ArtifactResolutionProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
-        super(samlProfileHandlerConfigurationContext);
+    public SamlIdPSaml1ArtifactResolutionProfileHandlerController(final SamlProfileHandlerConfigurationContext ctx) {
+        super(ctx);
     }
 
     /**
