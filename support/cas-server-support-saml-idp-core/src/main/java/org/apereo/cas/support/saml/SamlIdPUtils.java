@@ -34,7 +34,6 @@ import org.pac4j.core.context.session.SessionStore;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.zip.Inflater;
@@ -149,12 +148,13 @@ public class SamlIdPUtils {
             val acsEndpointFromMetadata = adaptor.getAssertionConsumerService(binding);
             endpoint = determineEndpointForRequest(authnRequest, adaptor, binding, acsEndpointFromReq, acsEndpointFromMetadata);
         }
-        Objects.requireNonNull(endpoint, "Endpoint cannot be null");
+        if (endpoint == null) {
+            throw new SamlException("Endpoint for " + authnRequest.getSchemaType()
+                + " is not available or does not define a binding for " + binding);
+        }
         val foundLocation = StringUtils.isBlank(endpoint.getResponseLocation()) && StringUtils.isBlank(endpoint.getLocation());
         if (StringUtils.isBlank(endpoint.getBinding()) || foundLocation) {
-            throw new SamlException("Endpoint for "
-                + authnRequest.getSchemaType()
-                + " is not available or does not define a binding for " + binding);
+            throw new SamlException("Endpoint for " + authnRequest.getSchemaType() + " does not define a binding or location for " + binding);
         }
         return endpoint;
     }
