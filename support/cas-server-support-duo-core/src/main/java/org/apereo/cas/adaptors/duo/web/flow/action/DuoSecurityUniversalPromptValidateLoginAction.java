@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationPro
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityUniversalPromptCredential;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
@@ -37,12 +38,16 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
     private final MultifactorAuthenticationProviderBean<
         DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean;
 
+    private final AuthenticationSystemSupport authenticationSystemSupport;
+
     public DuoSecurityUniversalPromptValidateLoginAction(final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,
-        final CentralAuthenticationService centralAuthenticationService,
-        final MultifactorAuthenticationProviderBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean) {
+                                                         final CentralAuthenticationService centralAuthenticationService,
+                                                         final MultifactorAuthenticationProviderBean duoProviderBean,
+                                                         final AuthenticationSystemSupport authenticationSystemSupport) {
         super(duoAuthenticationWebflowEventResolver);
         this.centralAuthenticationService = centralAuthenticationService;
         this.duoProviderBean = duoProviderBean;
+        this.authenticationSystemSupport = authenticationSystemSupport;
     }
 
     @Override
@@ -55,19 +60,19 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
             try {
                 val ticket = centralAuthenticationService.getTicket(duoState, TransientSessionTicket.class);
-                val properties = ticket.getProperties();
-
-                val duoSecurityIdentifier = (String) properties.get("duoProviderId");
-                val authentication = (Authentication) properties.get("authentication");
-                val registeredService = (RegisteredService) properties.get("registeredService");
+                val duoSecurityIdentifier = ticket.getProperty("duoProviderId", String.class);
+                val authentication = ticket.getProperty("authentication", Authentication.class);
+                val registeredService = ticket.getProperty("registeredService", RegisteredService.class);
 
                 val credential = new DuoSecurityUniversalPromptCredential(duoCode, authentication);
                 val provider = duoProviderBean.getProvider(duoSecurityIdentifier);
                 credential.setProviderId(provider.getId());
                 WebUtils.putCredential(requestContext, credential);
-
-                val authenticationResultBuilder = (AuthenticationResultBuilder) properties.get("authenticationResultBuilder");
+                val authenticationResultBuilder = ticket.getProperty("authenticationResultBuilder", AuthenticationResultBuilder.class);
                 WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
+                val authenticationResult = authenticationResultBuilder.build(authenticationSystemSupport.getPrincipalElectionStrategy());
+                WebUtils.putAuthenticationResult(authenticationResult, requestContext);
+                WebUtils.putAuthentication(authenticationResult.getAuthentication(), requestContext);
                 WebUtils.putRegisteredService(requestContext, registeredService);
                 WebUtils.putServiceIntoFlowScope(requestContext, ticket.getService());
                 return super.doExecute(requestContext);

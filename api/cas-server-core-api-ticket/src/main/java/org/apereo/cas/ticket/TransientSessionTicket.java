@@ -39,6 +39,16 @@ public interface TransientSessionTicket extends Ticket {
     Map<String, Object> getProperties();
 
     /**
+     * Gets property.
+     *
+     * @param <T>   the type parameter
+     * @param key   the key
+     * @param clazz the clazz
+     * @return the property
+     */
+    <T> T getProperty(String key, Class<T> clazz);
+
+    /**
      * Gets service.
      *
      * @return the service
