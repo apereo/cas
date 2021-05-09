@@ -25,6 +25,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
@@ -295,28 +296,19 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                                          final HttpServletResponse response,
                                          final Pair<? extends SignableSAMLObject, MessageContext> pair) throws SamlException {
         val authnRequest = (AuthnRequest) pair.getLeft();
-        val messageContext = pair.getRight();
+        val builder = new URLBuilder(configurationContext.getCallbackService().getId());
 
-        try (val writer = SamlUtils.transformSamlObject(configurationContext.getOpenSamlConfigBean(), authnRequest)) {
-            val builder = new URLBuilder(configurationContext.getCallbackService().getId());
+        builder.getQueryParams().add(
+            new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID,
+                SamlIdPUtils.getIssuerFromSamlObject(authnRequest)));
+        storeAuthenticationRequest(request, response, pair);
+        val url = builder.buildURL();
 
-            builder.getQueryParams().add(
-                new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID,
-                    SamlIdPUtils.getIssuerFromSamlObject(authnRequest)));
-
-            val samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
-            val sessionStore = configurationContext.getSessionStore();
-            val context = new JEEContext(request, response);
-            sessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
-            sessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, SAMLBindingSupport.getRelayState(messageContext));
-            val url = builder.buildURL();
-
-            LOGGER.trace("Built service callback url [{}]", url);
-            return CommonUtils.constructServiceUrl(request, response,
-                url, configurationContext.getCasProperties().getServer().getName(),
-                CasProtocolConstants.PARAMETER_SERVICE,
-                CasProtocolConstants.PARAMETER_TICKET, false);
-        }
+        LOGGER.trace("Built service callback url [{}]", url);
+        return CommonUtils.constructServiceUrl(request, response,
+            url, configurationContext.getCasProperties().getServer().getName(),
+            CasProtocolConstants.PARAMETER_SERVICE,
+            CasProtocolConstants.PARAMETER_TICKET, false);
     }
 
     /**
@@ -530,6 +522,20 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             return WebUtils.produceErrorView(e);
+        }
+    }
+
+    @Synchronized
+    private void storeAuthenticationRequest(final HttpServletRequest request, final HttpServletResponse response,
+                                            final Pair<? extends SignableSAMLObject, MessageContext> pair) throws Exception {
+        val authnRequest = (AuthnRequest) pair.getLeft();
+        val messageContext = pair.getValue();
+        try (val writer = SamlUtils.transformSamlObject(configurationContext.getOpenSamlConfigBean(), authnRequest)) {
+            val samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
+            val sessionStore = configurationContext.getSessionStore();
+            val context = new JEEContext(request, response);
+            sessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
+            sessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, SAMLBindingSupport.getRelayState(messageContext));
         }
     }
 }

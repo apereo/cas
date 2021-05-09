@@ -56,7 +56,7 @@ public class ServiceAuthorizationCheckActionTests extends AbstractWebflowActions
     }
 
     @Test
-    public void verifyDisabledServiceFound() {
+    public void verifyDisabledServiceFound() throws Exception {
         val svc22 = RegisteredServiceTestUtils.getRegisteredService("cas-access-disabled");
         val strategy = new DefaultRegisteredServiceAccessStrategy();
         strategy.setEnabled(false);
