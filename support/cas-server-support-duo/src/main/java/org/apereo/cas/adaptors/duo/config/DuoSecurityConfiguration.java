@@ -8,6 +8,7 @@ import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityAuthenticationWebf
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityDirectAuthenticationAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityUniversalPromptPrepareLoginAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityUniversalPromptValidateLoginAction;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
@@ -41,6 +42,10 @@ public class DuoSecurityConfiguration {
     private ObjectProvider<MultifactorAuthenticationProviderBean<
         DuoSecurityMultifactorAuthenticationProvider,
         DuoSecurityMultifactorAuthenticationProperties>> duoProviderBean;
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
     @Qualifier("defaultTicketFactory")
@@ -86,7 +91,8 @@ public class DuoSecurityConfiguration {
         return new DuoSecurityUniversalPromptValidateLoginAction(
             duoAuthenticationWebflowEventResolver(),
             centralAuthenticationService.getObject(),
-            duoProviderBean.getObject());
+            duoProviderBean.getObject(),
+            authenticationSystemSupport.getObject());
     }
 
     @ConditionalOnMissingBean(name = "duoAuthenticationWebflowEventResolver")

@@ -51,6 +51,11 @@ public class TransientSessionTicketImpl extends AbstractTicket implements Transi
     }
 
     @Override
+    public <T> T getProperty(final String key, final Class<T> clazz) {
+        return clazz.cast(properties.get(key));
+    }
+
+    @Override
     public String getPrefix() {
         return PREFIX;
     }

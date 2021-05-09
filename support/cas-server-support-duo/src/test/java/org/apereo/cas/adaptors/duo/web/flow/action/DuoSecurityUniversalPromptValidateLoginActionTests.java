@@ -6,8 +6,10 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationResult;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
+import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
@@ -119,6 +121,11 @@ public class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasW
         val builder = mock(AuthenticationResultBuilder.class);
         when(builder.getInitialAuthentication()).thenReturn(Optional.of(authentication));
         when(builder.collect(any(Authentication.class))).thenReturn(builder);
+
+        val authnResult = mock(AuthenticationResult.class);
+        when(authnResult.getAuthentication()).thenReturn(authentication);
+
+        when(builder.build(any(PrincipalElectionStrategy.class))).thenReturn(authnResult);
         WebUtils.putAuthenticationResultBuilder(builder, context);
         val prepResult = duoUniversalPromptPrepareLoginAction.execute(context);
 
@@ -130,6 +137,9 @@ public class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasW
         val result = duoUniversalPromptValidateLoginAction.execute(context);
         assertNotNull(result);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
+        assertNotNull(WebUtils.getAuthentication(context));
+        assertNotNull(WebUtils.getRegisteredService(context));
+        assertNotNull(WebUtils.getAuthenticationResult(context));
     }
 
     @TestConfiguration("DuoSecurityUniversalPromptValidateLoginActionTestConfiguration")
