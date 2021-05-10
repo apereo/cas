@@ -21,8 +21,6 @@ import org.apereo.cas.web.report.CasInfoEndpointContributor;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasRuntimeModulesEndpoint;
-import org.apereo.cas.web.report.ExportRegisteredServicesEndpoint;
-import org.apereo.cas.web.report.ImportRegisteredServicesEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationHandlersEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationPoliciesEndpoint;
 import org.apereo.cas.web.report.RegisteredServicesEndpoint;
@@ -42,6 +40,7 @@ import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.trace.http.HttpTraceEndpoint;
 import org.springframework.boot.actuate.trace.http.HttpTraceRepository;
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -127,21 +126,10 @@ public class CasReportsConfiguration {
     @ConditionalOnAvailableEndpoint
     public RegisteredServicesEndpoint registeredServicesReportEndpoint() {
         return new RegisteredServicesEndpoint(casProperties, servicesManager.getObject(),
-            webApplicationServiceFactory.getObject());
-    }
-
-    @Bean
-    @ConditionalOnAvailableEndpoint
-    public ExportRegisteredServicesEndpoint exportRegisteredServicesEndpoint() {
-        return new ExportRegisteredServicesEndpoint(casProperties, servicesManager.getObject());
-    }
-
-    @Bean
-    @ConditionalOnAvailableEndpoint
-    public ImportRegisteredServicesEndpoint importRegisteredServicesEndpoint() {
-        return new ImportRegisteredServicesEndpoint(casProperties, servicesManager.getObject(),
+            webApplicationServiceFactory.getObject(),
             CollectionUtils.wrapList(new RegisteredServiceYamlSerializer(), new RegisteredServiceJsonSerializer()));
     }
+
 
     @Bean
     @ConditionalOnAvailableEndpoint
@@ -156,8 +144,9 @@ public class CasReportsConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "casInfoEndpointContributor")
     public CasInfoEndpointContributor casInfoEndpointContributor() {
-        return new CasInfoEndpointContributor();
+        return new CasInfoEndpointContributor(applicationContext);
     }
 
     @Bean

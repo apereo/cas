@@ -10,7 +10,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
-import org.apache.http.HttpStatus;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.AssertionImpl;
 import org.jasig.cas.client.validation.TicketValidator;
@@ -30,6 +29,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
@@ -69,7 +69,7 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
     public void verifyNoRequest() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        assertThrows(IllegalArgumentException.class, () -> controller.handleCallbackProfileRequest(response, request));
+        assertThrows(IllegalArgumentException.class, () -> controller.handleCallbackProfileRequestGet(response, request));
     }
 
     @Test
@@ -81,8 +81,8 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
         request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
 
-        controller.handleCallbackProfileRequest(response, request);
-        assertEquals(HttpStatus.SC_FORBIDDEN, response.getStatus());
+        val mv = controller.handleCallbackProfileRequestGet(response, request);
+        assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
     }
 
     @Test
@@ -98,8 +98,8 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
         request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
         request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, UUID.randomUUID().toString());
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, "ST-1234567890");
-        controller.handleCallbackProfileRequest(response, request);
-        assertEquals(HttpStatus.SC_OK, response.getStatus());
+        controller.handleCallbackProfileRequestGet(response, request);
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
     }
 
     @Test
@@ -115,8 +115,21 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
         request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
         request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, UUID.randomUUID().toString());
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, "ST-1234567890");
-        controller.handleCallbackProfileRequest(response, request);
-        assertEquals(HttpStatus.SC_OK, response.getStatus());
+        controller.handleCallbackProfileRequestGet(response, request);
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+    }
+
+    @TestConfiguration
+    @Lazy(false)
+    public static class SamlIdPTestConfiguration {
+
+        @Bean
+        public TicketValidator samlIdPTicketValidator() throws Exception {
+            val validator = mock(TicketValidator.class);
+            val principal = new AttributePrincipalImpl("casuser", CollectionUtils.wrap("cn", "cas"));
+            when(validator.validate(anyString(), anyString())).thenReturn(new AssertionImpl(principal));
+            return validator;
+        }
     }
 
     private AuthnRequest signAuthnRequest(final HttpServletRequest request,
@@ -139,18 +152,5 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
         issuer.setValue(samlRegisteredService.getServiceId());
         authnRequest.setIssuer(issuer);
         return authnRequest;
-    }
-
-    @TestConfiguration
-    @Lazy(false)
-    public static class SamlIdPTestConfiguration {
-
-        @Bean
-        public TicketValidator samlIdPTicketValidator() throws Exception {
-            val validator = mock(TicketValidator.class);
-            val principal = new AttributePrincipalImpl("casuser", CollectionUtils.wrap("cn", "cas"));
-            when(validator.validate(anyString(), anyString())).thenReturn(new AssertionImpl(principal));
-            return validator;
-        }
     }
 }

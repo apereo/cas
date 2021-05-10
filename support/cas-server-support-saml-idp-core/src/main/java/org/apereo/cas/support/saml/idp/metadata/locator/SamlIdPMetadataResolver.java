@@ -74,7 +74,7 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
         LOGGER.trace("Resolved metadata resource is [{}]", resource);
         if (resource.contentLength() > 0) {
             val element = SamlUtils.getRootElementFrom(resource.getInputStream(), openSamlConfigBean);
-
+                  
             LOGGER.trace("Located metadata root element [{}]", element.getNodeName());
             setMetadataRootElement(element);
 

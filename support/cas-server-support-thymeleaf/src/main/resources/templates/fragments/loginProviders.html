@@ -63,7 +63,6 @@
                                 th:attr="autoredirect=${entry.autoRedirect}"
                                 th:inline="text"
                                 th:title="${entry.name + ' ' + entry.type}">
-
                                 <span th:case="twitter" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-twitter fas fa-twitter')}"></span>
                                 <span th:case="windowslive" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-windows fas fa-windows')}"></span>
                                 <span th:case="yahoo" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-yahoo fas fa-yahoo')}"></span>
@@ -79,7 +78,7 @@
                                 <span th:case="cas" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-login fas fa-sign-in-alt')}"></span>
                                 <span th:case="*" class="mdi mdi-account-key fas fa-key"></span>
 
-                                [[${entry.name}]]
+                                 [[${#strings.defaultString(entry.title,entry.name)}]]
                             </a>
 
                             <script th:inline="javascript">

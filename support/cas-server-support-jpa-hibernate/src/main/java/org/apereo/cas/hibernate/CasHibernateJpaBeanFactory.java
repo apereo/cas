@@ -16,6 +16,7 @@ import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.cfg.Environment;
+import org.hibernate.query.Query;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -23,9 +24,12 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
+import javax.persistence.TypedQuery;
 import javax.persistence.spi.PersistenceProvider;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 /**
  * This is {@link CasHibernateJpaBeanFactory}.
@@ -36,7 +40,6 @@ import java.util.Properties;
 @Slf4j
 @RequiredArgsConstructor
 public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
-
     private final ConfigurableApplicationContext applicationContext;
 
     @Override
@@ -97,5 +100,11 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
         val context = new JpaPersistenceProviderContext();
         configurers.forEach(cfg -> cfg.configure(context));
         return new CasHibernatePersistenceProvider(context);
+    }
+
+    @Override
+    public Stream<? extends Serializable> streamQuery(final TypedQuery<? extends Serializable> query) {
+        val hibernateQuery = Query.class.cast(query);
+        return hibernateQuery.stream();
     }
 }

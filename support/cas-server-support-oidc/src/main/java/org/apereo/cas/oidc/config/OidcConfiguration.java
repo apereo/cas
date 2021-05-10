@@ -463,6 +463,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "oidcIntrospectionEndpointController")
     public OidcIntrospectionEndpointController oidcIntrospectionEndpointController() {
         val context = oidcConfigurationContext();
         return new OidcIntrospectionEndpointController(context);
@@ -477,6 +478,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "oidcLogoutEndpointController")
     public OidcLogoutEndpointController oidcLogoutEndpointController() {
         val context = oidcConfigurationContext();
         return new OidcLogoutEndpointController(context, postLogoutRedirectUrlMatcher(), urlValidator.getObject());
@@ -484,6 +486,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "oidcRevocationEndpointController")
     public OidcRevocationEndpointController oidcRevocationEndpointController() {
         val context = oidcConfigurationContext();
         return new OidcRevocationEndpointController(context);
@@ -491,6 +494,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "oidcAccessTokenController")
     public OidcAccessTokenEndpointController oidcAccessTokenController() {
         val context = oidcConfigurationContext();
         return new OidcAccessTokenEndpointController(context, accessTokenGrantAuditableRequestExtractor.getObject());
@@ -505,12 +509,14 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "oidcDynamicClientRegistrationEndpointController")
     public OidcDynamicClientRegistrationEndpointController oidcDynamicClientRegistrationEndpointController() {
         val context = oidcConfigurationContext();
         return new OidcDynamicClientRegistrationEndpointController(context);
     }
 
     @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcClientConfigurationEndpointController")
     @Bean
     public OidcClientConfigurationEndpointController oidcClientConfigurationEndpointController() {
         val context = oidcConfigurationContext();
@@ -518,6 +524,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcJwksController")
     @Bean
     public OidcJwksEndpointController oidcJwksController() {
         val context = oidcConfigurationContext();
@@ -525,6 +532,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcWellKnownController")
     @Bean
     @Autowired
     public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcWebFingerDiscoveryService") final OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService) {
@@ -535,6 +543,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @RefreshScope
     @Bean
     @SneakyThrows
+    @ConditionalOnMissingBean(name = "oidcWebFingerDiscoveryService")
     public OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService() {
         return new OidcWebFingerDiscoveryService(oidcWebFingerUserInfoRepository(),
             oidcServerDiscoverySettingsFactory().getObject());

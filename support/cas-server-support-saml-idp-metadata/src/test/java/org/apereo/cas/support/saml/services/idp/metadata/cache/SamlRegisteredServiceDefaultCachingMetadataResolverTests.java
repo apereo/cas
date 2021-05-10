@@ -33,6 +33,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML")
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.http.metadata-backup-location=file:${#systemProperties['java.io.tmpdir']}")
 public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlIdPServicesTests {
+    private static CriteriaSet getCriteriaFor(final String entityId) {
+        val criteriaSet1 = new CriteriaSet();
+        criteriaSet1.add(new EntityIdCriterion(entityId));
+        criteriaSet1.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
+        return criteriaSet1;
+    }
+
     @Test
     public void verifyAggregateCacheOverUrlResource() {
         val aggregateRegisteredService = new SamlRegisteredService();
@@ -49,7 +56,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
 
         try (val webServer = new MockWebServer(9191, new ClassPathResource("aggregate-md.xml"), MediaType.APPLICATION_XML_VALUE)) {
             webServer.start();
-            
+
             val criteriaSet1 = getCriteriaFor("https://issues.shibboleth.net/shibboleth");
             assertNotNull(resolver.resolve(aggregateRegisteredService, criteriaSet1));
             assertTrue(resolver.resolveIfPresent(aggregateRegisteredService, criteriaSet1).isPresent());
@@ -58,13 +65,6 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
             assertThrows(SamlException.class, () -> resolver.resolve(aggregateRegisteredService, criteriaSet2));
             assertTrue(resolver.resolveIfPresent(aggregateRegisteredService, criteriaSet1).isPresent());
         }
-    }
-
-    private static CriteriaSet getCriteriaFor(final String entityId) {
-        val criteriaSet1 = new CriteriaSet();
-        criteriaSet1.add(new EntityIdCriterion(entityId));
-        criteriaSet1.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
-        return criteriaSet1;
     }
 
     @Test

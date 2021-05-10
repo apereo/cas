@@ -988,7 +988,9 @@ public class WebUtils {
      * @return the model and view
      */
     public static ModelAndView produceErrorView(final String view, final Exception e) {
-        return new ModelAndView(view, CollectionUtils.wrap("rootCauseException", e));
+        val mv = new ModelAndView(view, CollectionUtils.wrap("rootCauseException", e));
+        mv.setStatus(HttpStatus.BAD_REQUEST);
+        return mv;
     }
 
     /**

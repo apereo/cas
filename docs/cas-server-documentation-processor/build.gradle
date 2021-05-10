@@ -19,7 +19,9 @@ if (tasks.findByName("install") != null) {
 
 dependencies {
     api project(":api:cas-server-core-api-configuration-model")
-
+    api project(":api:cas-server-core-api-util")
+    api project(":api:cas-server-core-api-services")
+    
     implementation project(":core:cas-server-core-configuration-metadata-repository")
 
     libraries.each {

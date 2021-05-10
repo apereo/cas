@@ -148,12 +148,13 @@ public class SamlIdPUtils {
             val acsEndpointFromMetadata = adaptor.getAssertionConsumerService(binding);
             endpoint = determineEndpointForRequest(authnRequest, adaptor, binding, acsEndpointFromReq, acsEndpointFromMetadata);
         }
-
-        if (endpoint == null || StringUtils.isBlank(endpoint.getBinding())
-            || (StringUtils.isBlank(endpoint.getResponseLocation()) && StringUtils.isBlank(endpoint.getLocation()))) {
-            throw new SamlException("Endpoint for "
-                + authnRequest.getSchemaType()
+        if (endpoint == null) {
+            throw new SamlException("Endpoint for " + authnRequest.getSchemaType()
                 + " is not available or does not define a binding for " + binding);
+        }
+        val foundLocation = StringUtils.isBlank(endpoint.getResponseLocation()) && StringUtils.isBlank(endpoint.getLocation());
+        if (StringUtils.isBlank(endpoint.getBinding()) || foundLocation) {
+            throw new SamlException("Endpoint for " + authnRequest.getSchemaType() + " does not define a binding or location for " + binding);
         }
         return endpoint;
     }

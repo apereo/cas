@@ -81,6 +81,16 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
+    public YubiKeyAccount save(final YubiKeyAccount account) {
+        val result = MongoDbYubiKeyAccount.builder()
+            .id(System.currentTimeMillis())
+            .username(account.getUsername())
+            .devices(account.getDevices())
+            .build();
+        return mongoTemplate.save(result, this.collectionName);
+    }
+
+    @Override
     protected Collection<? extends YubiKeyAccount> getAccountsInternal() {
         return this.mongoTemplate.findAll(MongoDbYubiKeyAccount.class, this.collectionName);
     }

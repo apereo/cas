@@ -47,23 +47,6 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
         this.allowedAttributes = attributes;
     }
 
-    /**
-     * Gets the allowed attributes.
-     *
-     * @return the allowed attributes
-     */
-    public Map<String, Object> getAllowedAttributes() {
-        return new TreeMap<>(this.allowedAttributes);
-    }
-
-    @Override
-    public Map<String, List<Object>> getAttributesInternal(final Principal principal,
-                                                           final Map<String, List<Object>> attrs,
-                                                           final RegisteredService registeredService,
-                                                           final Service selectedService) {
-        return authorizeReleaseOfAllowedAttributes(principal, attrs, registeredService, selectedService);
-    }
-
     private static void mapSingleAttributeDefinition(final String attributeName,
                                                      final String mappedAttributeName,
                                                      final Object attributeValue,
@@ -153,6 +136,28 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     }
 
     /**
+     * Gets the allowed attributes.
+     *
+     * @return the allowed attributes
+     */
+    public Map<String, Object> getAllowedAttributes() {
+        return new TreeMap<>(this.allowedAttributes);
+    }
+
+    @Override
+    public Map<String, List<Object>> getAttributesInternal(final Principal principal,
+                                                           final Map<String, List<Object>> attrs,
+                                                           final RegisteredService registeredService,
+                                                           final Service selectedService) {
+        return authorizeReleaseOfAllowedAttributes(principal, attrs, registeredService, selectedService);
+    }
+
+    @Override
+    public List<String> determineRequestedAttributeDefinitions() {
+        return new ArrayList<>(getAllowedAttributes().keySet());
+    }
+
+    /**
      * Authorize release of allowed attributes map.
      * Map each entry in the allowed list into an array first
      * by the original key, value and the original entry itself.
@@ -184,10 +189,5 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
             });
         });
         return attributesToRelease;
-    }
-
-    @Override
-    public List<String> determineRequestedAttributeDefinitions() {
-        return new ArrayList<>(getAllowedAttributes().keySet());
     }
 }

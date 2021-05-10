@@ -5,6 +5,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-services-authentication")
     
     implementation project(":support:cas-server-support-consent-api")
     implementation project(":support:cas-server-support-jpa-util")

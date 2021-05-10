@@ -10,6 +10,15 @@
       }
     },
     {
+      "name": "cas.authn.saml-idp.core.replicate-sessions",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.authn.saml-idp.core.session-storage-type",
+        "reason": "Session replication settings for SAML2 are moved to cas.authn.saml-idp.core.session-storage-type",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.interrupt.attribute-value",
       "type": "java.lang.String",
       "deprecation": {

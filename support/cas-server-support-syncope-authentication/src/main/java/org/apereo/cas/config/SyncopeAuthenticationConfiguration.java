@@ -61,6 +61,7 @@ public class SyncopeAuthenticationConfiguration {
         val syncope = casProperties.getAuthn().getSyncope();
         val h = new SyncopeAuthenticationHandler(syncope.getName(), servicesManager.getObject(),
             syncopePrincipalFactory(), syncope.getUrl(), syncope.getDomain());
+        h.setState(syncope.getState());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(syncope.getPasswordEncoder(), applicationContext));
         h.setPasswordPolicyConfiguration(syncopePasswordPolicyConfiguration());
         h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(syncope.getCredentialCriteria()));

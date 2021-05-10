@@ -547,7 +547,7 @@ task rootSourcesJar(type: Jar, description: "Build JAR for the root CAS module")
 
 task gradleHome(description: "Display GRADLE_HOME environment variable") {
     doFirst {
-        println "\nexport GRADLE_HOME=" + gradle.gradleHomeDir
+        ansi.green "\nexport GRADLE_HOME=" + gradle.gradleHomeDir
     }
 }
 

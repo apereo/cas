@@ -33,7 +33,7 @@ public class SLOSamlIdPPostProfileHandlerController extends AbstractSamlSLOProfi
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SLO_PROFILE_POST)
     protected void handleSaml2ProfileSLOPostRequest(final HttpServletResponse response,
                                                     final HttpServletRequest request) throws Exception {
-        val decoder = getSamlProfileHandlerConfigurationContext().getSamlMessageDecoders().getInstance(HttpMethod.POST);
+        val decoder = getConfigurationContext().getSamlMessageDecoders().getInstance(HttpMethod.POST);
         handleSloProfileRequest(response, request, decoder);
     }
 }
