@@ -190,10 +190,6 @@ Allow the CAS Spring Cloud configuration server to load settings from an Apache 
 
 {% include casproperties.html properties="cas.spring.cloud.aws.s3" %}
 
-```properties
-# ${configuration-key}.bucket-name=cas-properties
-```
-
 ### DynamoDb
 
 {% include casproperties.html properties="cas.spring.cloud.dynamo-db" %}

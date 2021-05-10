@@ -61,6 +61,7 @@ public class SamlRegisteredServiceTests {
         val jsonFolder = new File(FileUtils.getTempDirectory(), JSON_SERVICE_REGISTRY_FOLDER);
         if (jsonFolder.isDirectory()) {
             PathUtils.cleanDirectory(jsonFolder.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+            jsonFolder.delete();
         }
         if (!jsonFolder.mkdir()) {
             throw new IOException("Unable to make json folder: " + jsonFolder.getName());

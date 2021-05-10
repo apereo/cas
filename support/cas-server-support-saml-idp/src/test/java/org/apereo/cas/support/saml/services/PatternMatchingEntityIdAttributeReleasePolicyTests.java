@@ -24,13 +24,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
-    
+
     @BeforeEach
     public void setup() {
         servicesManager.deleteAll();
-        defaultSamlRegisteredServiceCachingMetadataResolver.invalidate();
     }
-    
+
     @Test
     @Order(1)
     public void verifyPatternDoesNotMatch() {
