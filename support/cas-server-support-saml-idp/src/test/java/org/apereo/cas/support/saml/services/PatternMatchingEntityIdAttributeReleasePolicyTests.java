@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,9 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,11 +27,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DirtiesContext
 public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @BeforeEach
     public void setup() {
         servicesManager.deleteAll();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
     }
 
     @Test
