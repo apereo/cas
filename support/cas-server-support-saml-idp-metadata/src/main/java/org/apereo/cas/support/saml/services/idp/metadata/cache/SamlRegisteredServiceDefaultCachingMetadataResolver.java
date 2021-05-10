@@ -74,6 +74,19 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
         });
     }
 
+    @Override
+    public void invalidate() {
+        LOGGER.trace("Invalidating cache, removing all metadata resolvers");
+        this.cache.invalidateAll();
+    }
+
+    @Override
+    public void invalidate(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
+        LOGGER.trace("Invalidating cache for [{}].", service.getName());
+        val k = new SamlRegisteredServiceCacheKey(service, criteriaSet);
+        this.cache.invalidate(k);
+    }
+
     /**
      * Is metadata resolver resolvable.
      *
@@ -100,6 +113,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
      */
     protected MetadataResolver locateAndCacheMetadataResolver(final SamlRegisteredService service,
                                                               final SamlRegisteredServiceCacheKey cacheKey) {
+        LOGGER.debug("Loading metadata resolver from the cache using [{}}", cacheKey.getCacheKey());
         val resolver = Objects.requireNonNull(cache.get(cacheKey));
         LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}]",
             resolver.getId(), service.getMetadataLocation());
@@ -116,18 +130,6 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
     Optional<MetadataResolver> resolveIfPresent(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         val cacheKey = new SamlRegisteredServiceCacheKey(service, criteriaSet);
         return Optional.ofNullable(this.cache.getIfPresent(cacheKey));
-    }
-    @Override
-    public void invalidate() {
-        LOGGER.trace("Invalidating cache, removing all metadata resolvers");
-        this.cache.invalidateAll();
-    }
-
-    @Override
-    public void invalidate(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        LOGGER.trace("Invalidating cache for [{}].", service.getName());
-        val k = new SamlRegisteredServiceCacheKey(service, criteriaSet);
-        this.cache.invalidate(k);
     }
 
     /**
