@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPProfileHandlerController {
 
-    public SSOSamlIdPProfileCallbackHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
-        super(samlProfileHandlerConfigurationContext);
+    public SSOSamlIdPProfileCallbackHandlerController(final SamlProfileHandlerConfigurationContext ctx) {
+        super(ctx);
     }
 
     private MessageContext bindRelayStateParameter(final HttpServletRequest request,
