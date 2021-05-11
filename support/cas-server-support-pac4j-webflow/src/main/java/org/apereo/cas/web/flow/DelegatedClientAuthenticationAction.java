@@ -187,28 +187,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         }
     }
 
-    private Service resolveServiceFromRequestContext(final RequestContext context) {
-        val service = WebUtils.getService(context);
-        return configContext.getAuthenticationRequestServiceSelectionStrategies().resolveService(service);
-    }
-
-    private Optional<Authentication> getSingleSignOnAuthenticationFrom(final RequestContext requestContext) {
-        val tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
-        if (StringUtils.isBlank(tgtId)) {
-            LOGGER.trace("No ticket-granting ticket could be located in the webflow context");
-            return Optional.empty();
-        }
-        val ticket = configContext.getCentralAuthenticationService().getTicket(tgtId, TicketGrantingTicket.class);
-        LOGGER.trace("Located a valid ticket-granting ticket");
-        return Optional.of(ticket.getAuthentication());
-    }
-
-    private boolean isDelegatedClientAuthorizedForService(final Client client,
-                                                          final Service service) {
-        return configContext.getDelegatedAuthenticationAccessStrategyHelper()
-            .isDelegatedClientAuthorizedForService(client, service);
-    }
-
     @Override
     protected Event doPreExecute(final RequestContext context) throws Exception {
         val casProperties = configContext.getCasProperties();
@@ -351,16 +329,18 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     /**
      * Single sign on session authorized for service boolean.
      *
-     * @param context the context
+     * @param requestContext the context
      * @return the boolean
      */
-    protected boolean singleSignOnSessionAuthorizedForService(final RequestContext context) {
-        val resolvedService = resolveServiceFromRequestContext(context);
-        val authentication = getSingleSignOnAuthenticationFrom(context);
-        return authentication
+    protected boolean singleSignOnSessionAuthorizedForService(final RequestContext requestContext) {
+        val resolvedService = resolveServiceFromRequestContext(requestContext);
+        val authentication = getSingleSignOnAuthenticationFrom(requestContext);
+        val authorized = authentication
             .map(authn -> configContext.getDelegatedAuthenticationAccessStrategyHelper()
                 .isDelegatedClientAuthorizedForAuthentication(authn, resolvedService))
             .orElse(Boolean.FALSE);
+        val strategy = configContext.getSingleSignOnParticipationStrategy();
+        return authorized && strategy.supports(requestContext) && strategy.isParticipating(requestContext);
     }
 
     /**
@@ -389,5 +369,27 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         }
         LOGGER.trace("Ticket-granting ticket found in the webflow context is invalid or has expired");
         return false;
+    }
+
+    private Service resolveServiceFromRequestContext(final RequestContext context) {
+        val service = WebUtils.getService(context);
+        return configContext.getAuthenticationRequestServiceSelectionStrategies().resolveService(service);
+    }
+
+    private Optional<Authentication> getSingleSignOnAuthenticationFrom(final RequestContext requestContext) {
+        val tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
+        if (StringUtils.isBlank(tgtId)) {
+            LOGGER.trace("No ticket-granting ticket could be located in the webflow context");
+            return Optional.empty();
+        }
+        val ticket = configContext.getCentralAuthenticationService().getTicket(tgtId, TicketGrantingTicket.class);
+        LOGGER.trace("Located a valid ticket-granting ticket");
+        return Optional.of(ticket.getAuthentication());
+    }
+
+    private boolean isDelegatedClientAuthorizedForService(final Client client,
+                                                          final Service service) {
+        return configContext.getDelegatedAuthenticationAccessStrategyHelper()
+            .isDelegatedClientAuthorizedForService(client, service);
     }
 }

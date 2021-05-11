@@ -88,10 +88,7 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
             return false;
         }
         val authenticationPolicy = registeredService.getAuthenticationPolicy();
-        if (authenticationPolicy == null || authenticationPolicy.getCriteria() == null) {
-            return false;
-        }
-        return true;
+        return authenticationPolicy != null && authenticationPolicy.getCriteria() != null;
     }
 
     @Override
