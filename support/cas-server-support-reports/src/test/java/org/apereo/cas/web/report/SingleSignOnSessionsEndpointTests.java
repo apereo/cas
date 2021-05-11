@@ -65,6 +65,7 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
         centralAuthenticationService.createTicketGrantingTicket(authResult);
         results = singleSignOnSessionsEndpoint.destroySsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType(), null);
         assertFalse(results.isEmpty());
+        assertNotNull(singleSignOnSessionsEndpoint.toString());
     }
 
     @Test

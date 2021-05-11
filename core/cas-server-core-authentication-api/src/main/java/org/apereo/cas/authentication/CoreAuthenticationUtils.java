@@ -168,6 +168,27 @@ public class CoreAuthenticationUtils {
     }
 
     /**
+     * Is remember me recorded in authentication.
+     *
+     * @param authentication the authentication
+     * @return the boolean
+     */
+    public static Boolean isRememberMeAuthentication(final Authentication authentication) {
+        if (authentication == null) {
+            return Boolean.FALSE;
+        }
+        val attributes = authentication.getAttributes();
+        LOGGER.trace("Located authentication attributes [{}]", attributes);
+
+        if (attributes.containsKey(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME)) {
+            val rememberMeValue = attributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+            LOGGER.debug("Located remember-me authentication attribute [{}]", rememberMeValue);
+            return rememberMeValue.contains(Boolean.TRUE);
+        }
+        return Boolean.FALSE;
+    }
+
+    /**
      * Merge attributes map.
      *
      * @param currentAttributes the current attributes
@@ -324,7 +345,7 @@ public class CoreAuthenticationUtils {
         return newPersonDirectoryPrincipalResolver(principalFactory, attributeRepository,
             attributeMerger, PersonDirectoryPrincipalResolver.class, personDirectory);
     }
-    
+
     /**
      * New person directory principal resolver.
      *
@@ -368,7 +389,7 @@ public class CoreAuthenticationUtils {
         return ctor.newInstance(context);
     }
 
-    
+
     /**
      * New authentication policy collection.
      *
@@ -448,10 +469,13 @@ public class CoreAuthenticationUtils {
      * @param properties the properties
      * @return the principal election strategy conflict resolver
      */
-    public static PrincipalElectionStrategyConflictResolver newPrincipalElectionStrategyConflictResolver(final PersonDirectoryPrincipalResolverProperties properties) {
+    public static PrincipalElectionStrategyConflictResolver newPrincipalElectionStrategyConflictResolver(
+        final PersonDirectoryPrincipalResolverProperties properties) {
         if (StringUtils.equalsIgnoreCase(properties.getPrincipalResolutionConflictStrategy(), "first")) {
             return PrincipalElectionStrategyConflictResolver.first();
         }
         return PrincipalElectionStrategyConflictResolver.last();
     }
+
+    
 }
