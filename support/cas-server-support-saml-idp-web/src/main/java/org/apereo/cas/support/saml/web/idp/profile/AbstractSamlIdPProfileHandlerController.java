@@ -22,6 +22,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
@@ -145,6 +146,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @return the authn request
      * @throws Exception the exception
      */
+    @Synchronized
     protected AuthnRequest retrieveSamlAuthenticationRequestFromHttpRequest(final HttpServletRequest request,
                                                                             final HttpServletResponse response) throws Exception {
         LOGGER.debug("Retrieving authentication request from scope");
@@ -222,6 +224,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param response the response
      * @throws Exception the exception
      */
+    @Synchronized
     protected void issueAuthenticationRequestRedirect(final Pair<? extends SignableSAMLObject, MessageContext> pair,
                                                       final HttpServletRequest request,
                                                       final HttpServletResponse response) throws Exception {
@@ -318,7 +321,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
 
             LOGGER.trace("Built service callback url [{}]", url);
             return CommonUtils.constructServiceUrl(request, response,
-                url, samlProfileHandlerConfigurationContext.getCasProperties().getServer().getName(),
+                url,
+                samlProfileHandlerConfigurationContext.getCasProperties().getServer().getName(),
                 CasProtocolConstants.PARAMETER_SERVICE,
                 CasProtocolConstants.PARAMETER_TICKET, false);
         }

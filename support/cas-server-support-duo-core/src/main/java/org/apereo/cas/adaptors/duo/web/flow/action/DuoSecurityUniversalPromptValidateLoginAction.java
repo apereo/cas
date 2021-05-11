@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationPro
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityUniversalPromptCredential;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.services.RegisteredService;
@@ -37,12 +38,16 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
     private final MultifactorAuthenticationProviderBean<
         DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> duoProviderBean;
 
+    private final AuthenticationSystemSupport authenticationSystemSupport;
+
     public DuoSecurityUniversalPromptValidateLoginAction(final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,
-        final CentralAuthenticationService centralAuthenticationService,
-        final MultifactorAuthenticationProviderBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> duoProviderBean) {
+                                                         final CentralAuthenticationService centralAuthenticationService,
+                                                         final MultifactorAuthenticationProviderBean duoProviderBean,
+                                                         final AuthenticationSystemSupport authenticationSystemSupport) {
         super(duoAuthenticationWebflowEventResolver);
         this.centralAuthenticationService = centralAuthenticationService;
         this.duoProviderBean = duoProviderBean;
+        this.authenticationSystemSupport = authenticationSystemSupport;
     }
 
     @Override
@@ -68,6 +73,10 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
                 val authenticationResultBuilder = (AuthenticationResultBuilder) properties.get("authenticationResultBuilder");
                 WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
+                WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
+                val authenticationResult = authenticationResultBuilder.build(authenticationSystemSupport.getPrincipalElectionStrategy());
+                WebUtils.putAuthenticationResult(authenticationResult, requestContext);
+                WebUtils.putAuthentication(authenticationResult.getAuthentication(), requestContext);
                 WebUtils.putRegisteredService(requestContext, registeredService);
                 WebUtils.putServiceIntoFlowScope(requestContext, ticket.getService());
                 return super.doExecute(requestContext);

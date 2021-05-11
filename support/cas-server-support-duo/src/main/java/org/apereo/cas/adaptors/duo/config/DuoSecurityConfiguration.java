@@ -146,7 +146,8 @@ public class DuoSecurityConfiguration {
         return new DuoSecurityUniversalPromptValidateLoginAction(
             duoAuthenticationWebflowEventResolver(),
             centralAuthenticationService.getObject(),
-            duoProviderBean.getObject());
+            duoProviderBean.getObject(),
+            authenticationSystemSupport.getObject());
     }
 
     @ConditionalOnMissingBean(name = "duoAuthenticationWebflowEventResolver")

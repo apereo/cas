@@ -206,7 +206,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
             val contextPath = context.getExternalContext().getContextPath();
             val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
-            
+
             val path = configContext.getCookieGenerator().getCookiePath();
             if (StringUtils.isBlank(path)) {
                 LOGGER.debug("Setting path for cookies for distributed session cookie generator to: [{}]", cookiePath);
@@ -308,7 +308,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         requestContext.getFlashScope().put("rootCauseException", e);
         return new Event(this, CasWebflowConstants.TRANSITION_ID_STOP, new LocalAttributeMap<>("error", e));
     }
-    
+
     /**
      * Restore authentication request in context service (return null for a logout call).
      *
@@ -346,10 +346,13 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     protected boolean singleSignOnSessionAuthorizedForService(final RequestContext context) {
         val resolvedService = resolveServiceFromRequestContext(context);
         val authentication = getSingleSignOnAuthenticationFrom(context);
-        return authentication
+        val authorized = authentication
             .map(authn -> configContext.getDelegatedAuthenticationAccessStrategyHelper()
                 .isDelegatedClientAuthorizedForAuthentication(authn, resolvedService))
             .orElse(Boolean.FALSE);
+        val strategy = configContext.getSingleSignOnParticipationStrategy();
+        return authorized && strategy.supports(context) && strategy.isParticipating(context);
+
     }
 
     /**
