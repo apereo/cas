@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support.gen;
 
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -74,30 +75,14 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
             LOGGER.debug("This request is from a remember-me authentication event");
             return Boolean.TRUE;
         }
-        if (isRememberMeRecordedInAuthentication(requestContext)) {
+        val authn = WebUtils.getAuthentication(requestContext);
+        if (CoreAuthenticationUtils.isRememberMeAuthentication(authn)) {
             LOGGER.debug("The recorded authentication is from a remember-me request");
             return Boolean.TRUE;
         }
         return Boolean.FALSE;
     }
-
-    private static Boolean isRememberMeRecordedInAuthentication(final RequestContext requestContext) {
-        LOGGER.debug("Request does not indicate a remember-me authentication. Locating authentication from the request context...");
-        val auth = WebUtils.getAuthentication(requestContext);
-        if (auth == null) {
-            return Boolean.FALSE;
-        }
-        val attributes = auth.getAttributes();
-        LOGGER.trace("Located authentication attributes [{}]", attributes);
-
-        if (attributes.containsKey(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME)) {
-            val rememberMeValue = attributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
-            LOGGER.debug("Located remember-me authentication attribute [{}]", rememberMeValue);
-            return rememberMeValue.contains(Boolean.TRUE);
-        }
-        return Boolean.FALSE;
-    }
-
+    
     private static boolean isRememberMeProvidedInRequest(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val value = request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME);
