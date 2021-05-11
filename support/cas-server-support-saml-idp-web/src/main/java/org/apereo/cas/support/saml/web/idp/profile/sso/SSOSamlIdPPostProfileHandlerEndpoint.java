@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.sso;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -9,7 +10,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -56,8 +56,6 @@ import java.util.Objects;
 @Slf4j
 @RestControllerEndpoint(id = "samlPostProfileResponse", enableByDefault = false)
 public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoint {
-
-    private static final RegisteredServiceJsonSerializer JSON_SERIALIZER = new RegisteredServiceJsonSerializer();
 
     private final ServicesManager servicesManager;
 
@@ -143,7 +141,7 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
             val registeredService = this.servicesManager.findServiceBy(selectedService, SamlRegisteredService.class);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
-            val loadedService = (SamlRegisteredService) JSON_SERIALIZER.from(JSON_SERIALIZER.toString(registeredService));
+            val loadedService = (SamlRegisteredService) BeanUtils.cloneBean(registeredService);
             loadedService.setEncryptAssertions(encrypt);
             loadedService.setEncryptAttributes(encrypt);
 
