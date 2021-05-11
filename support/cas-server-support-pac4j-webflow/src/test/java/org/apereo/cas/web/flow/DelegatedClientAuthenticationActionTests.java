@@ -7,7 +7,9 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -255,6 +257,38 @@ public class DelegatedClientAuthenticationActionTests {
         assertEquals(CasWebflowConstants.TRANSITION_ID_STOP, delegatedAuthenticationAction.execute(mockRequestContext).getId());
     }
 
+    @Test
+    public void verifySsoAuthenticationWithUnauthorizedSso() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+
+        val client = builtClients.findClient("FacebookClient").get();
+        val webContext = new JEEContext(request, new MockHttpServletResponse());
+        
+        request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
+        val service = CoreAuthenticationTestUtils.getService("https://delegated2-authn-policy.example.org");
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
+        val authenticationPolicy = new DefaultRegisteredServiceAuthenticationPolicy();
+        authenticationPolicy.setRequiredAuthenticationHandlers(Set.of("MyCustomHandler"));
+        authenticationPolicy.setCriteria(new AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria());
+        registeredService.setAuthenticationPolicy(authenticationPolicy);
+        servicesManager.save(registeredService);
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+        val ticket = delegatedClientAuthenticationWebflowManager.store(webContext, client);
+        request.addParameter(DefaultDelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
+        
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        setRequestContext(context);
+        setExternalContext(context.getExternalContext());
+
+        val tgt = new MockTicketGrantingTicket("casuser");
+        centralAuthenticationService.addTicket(tgt);
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, delegatedAuthenticationAction.execute(context).getId());
+        assertThrows(InvalidTicketException.class, () -> centralAuthenticationService.getTicket(tgt.getId()));
+    }
+    
     @Test
     public void verifySsoAuthentication() throws Exception {
         val context = new MockRequestContext();
