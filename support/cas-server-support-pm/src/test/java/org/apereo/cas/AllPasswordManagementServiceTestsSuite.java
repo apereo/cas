@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.pm.DefaultPasswordValidationServiceTests;
+import org.apereo.cas.pm.PasswordManagementQueryTests;
 import org.apereo.cas.pm.PasswordManagementServiceTests;
 import org.apereo.cas.pm.history.AmnesiacPasswordHistoryServiceTests;
 import org.apereo.cas.pm.history.GroovyPasswordHistoryServiceTests;
@@ -22,6 +23,7 @@ import org.junit.runner.RunWith;
 @SelectClasses({
     JsonResourcePasswordManagementServiceTests.class,
     PasswordManagementServiceTests.class,
+    PasswordManagementQueryTests.class,
     AmnesiacPasswordHistoryServiceTests.class,
     NoOpPasswordManagementServiceTests.class,
     GroovyResourcePasswordManagementServiceTests.class,

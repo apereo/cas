@@ -19,9 +19,6 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -45,18 +42,6 @@ public class BasePasswordManagementService implements PasswordManagementService 
     private final String issuer;
 
     private final PasswordHistoryService passwordHistoryService;
-
-    /**
-     * Orders security questions consistently.
-     *
-     * @param questionMap A map of question/answer key/value pairs
-     * @return A list of questions in a consistent order
-     */
-    public static List<String> canonicalizeSecurityQuestions(final Map<String, String> questionMap) {
-        val keys = new ArrayList<>(questionMap.keySet());
-        keys.sort(String.CASE_INSENSITIVE_ORDER);
-        return keys;
-    }
 
     @Override
     public String parseToken(final String token) {

@@ -2,7 +2,6 @@ package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
@@ -13,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -26,7 +24,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class VerifyPasswordResetRequestAction extends AbstractAction {
+public class VerifyPasswordResetRequestAction extends BasePasswordManagementAction {
     /**
      * Event id to signal security questions are disabled.
      */
@@ -58,8 +56,7 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
             PasswordManagementWebflowUtils.putPasswordResetToken(requestContext, token);
             val pm = casProperties.getAuthn().getPm();
             if (pm.getReset().isSecurityQuestionsEnabled()) {
-                val questions = BasePasswordManagementService
-                    .canonicalizeSecurityQuestions(passwordManagementService.getSecurityQuestions(query));
+                val questions = canonicalizeSecurityQuestions(passwordManagementService.getSecurityQuestions(query));
                 if (questions.isEmpty()) {
                     LOGGER.warn("No security questions could be found for [{}]", username);
                     return error();

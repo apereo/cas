@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,6 +28,12 @@ public class PasswordManagementServiceTests {
         assertNull(service.createToken(PasswordManagementQuery.builder().username("user").build()));
         assertNull(service.parseToken("user"));
         assertNotNull(service.getSecurityQuestions(PasswordManagementQuery.builder().username("user").build()));
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                service.updateSecurityQuestions(PasswordManagementQuery.builder().username("user").build());
+            }
+        });
     }
 
 }

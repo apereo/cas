@@ -91,6 +91,13 @@ public interface PasswordManagementService {
     }
 
     /**
+     * Update security questions.
+     *
+     * @param query the query
+     */
+    default void updateSecurityQuestions(final PasswordManagementQuery query) {}
+    
+    /**
      * Checks a security questions answer.
      *
      * @param query    the query

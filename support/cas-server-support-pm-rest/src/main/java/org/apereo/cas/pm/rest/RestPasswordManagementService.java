@@ -45,7 +45,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
     @Override
     public boolean changeInternal(final Credential c, final PasswordChangeRequest bean) {
         val rest = properties.getRest();
-        
+
         if (StringUtils.isBlank(rest.getEndpointUrlChange())) {
             return false;
         }
@@ -140,5 +140,17 @@ public class RestPasswordManagementService extends BasePasswordManagementService
             return result.getBody();
         }
         return null;
+    }
+
+    @Override
+    public void updateSecurityQuestions(final PasswordManagementQuery query) {
+        val rest = properties.getRest();
+        if (StringUtils.isNotBlank(rest.getEndpointUrlSecurityQuestions())) {
+            val headers = new HttpHeaders();
+            headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+            headers.put("username", CollectionUtils.wrap(query.getUsername()));
+            val entity = new HttpEntity<>(query.getSecurityQuestions(), headers);
+            restTemplate.exchange(rest.getEndpointUrlSecurityQuestions(), HttpMethod.POST, entity, Integer.class);
+        }
     }
 }
