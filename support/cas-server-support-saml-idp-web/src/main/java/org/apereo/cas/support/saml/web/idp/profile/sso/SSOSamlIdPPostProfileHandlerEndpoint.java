@@ -22,6 +22,7 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.beanutils.BeanUtils;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
@@ -35,6 +36,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,6 +56,7 @@ import java.util.Objects;
 @Slf4j
 @RestControllerEndpoint(id = "samlPostProfileResponse", enableByDefault = false)
 public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoint {
+
     private final ServicesManager servicesManager;
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
@@ -95,22 +99,57 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
      */
     @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> produce(final HttpServletRequest request, final HttpServletResponse response) {
+    public ResponseEntity<Object> produceGet(final HttpServletRequest request, final HttpServletResponse response) {
+
+        val username = request.getParameter("username");
+        val password = request.getParameter("password");
+        val entityId = request.getParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID);
+        val encrypt = Boolean.parseBoolean(request.getParameter("encrypt"));
+        return produce(request, response, username, password, entityId, encrypt);
+    }
+
+    /**
+     * Produce response entity.
+     *
+     * @param request  the request
+     * @param response the response
+     * @param map      the RequestBody
+     * @return the response entity
+     */
+    @PostMapping(produces = MediaType.APPLICATION_XML_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> producePost(final HttpServletRequest request,
+                                              final HttpServletResponse response,
+                                              final @RequestBody Map<String, String> map) {
+
+        val username = map.get("username");
+        val password = map.get("password");
+        val entityId = map.get(SamlProtocolConstants.PARAMETER_ENTITY_ID);
+        val encrypt = Boolean.parseBoolean(map.get("encrypt"));
+        return produce(request, response, username, password, entityId, encrypt);
+    }
+
+    private ResponseEntity<Object> produce(final HttpServletRequest request,
+                                           final HttpServletResponse response,
+                                           final String username,
+                                           final String password,
+                                           final String entityId,
+                                           final boolean encrypt) {
 
         try {
-            val username = request.getParameter("username");
-            val password = request.getParameter("password");
-            val entityId = request.getParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID);
-            
             val selectedService = this.serviceFactory.createService(entityId);
             val registeredService = this.servicesManager.findServiceBy(selectedService, SamlRegisteredService.class);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
+
+            val loadedService = (SamlRegisteredService) BeanUtils.cloneBean(registeredService);
+            loadedService.setEncryptAssertions(encrypt);
+            loadedService.setEncryptAttributes(encrypt);
 
             val authnRequest = new AuthnRequestBuilder().buildObject();
             authnRequest.setIssuer(saml20ObjectBuilder.newIssuer(entityId));
 
             val adaptorResult = SamlRegisteredServiceServiceProviderMetadataFacade.get(
-                defaultSamlRegisteredServiceCachingMetadataResolver, registeredService, entityId);
+                defaultSamlRegisteredServiceCachingMetadataResolver, loadedService, entityId);
             if (adaptorResult.isPresent()) {
                 val adaptor = adaptorResult.get();
                 val messageContext = new MessageContext();
@@ -119,8 +158,8 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
                 map.put(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.FALSE);
                 val assertion = getAssertion(username, password, entityId);
                 val object = this.responseBuilder.build(authnRequest, request, response, assertion,
-                    registeredService, adaptor, SAMLConstants.SAML2_POST_BINDING_URI, messageContext);
-                val encoded = SamlUtils.transformSamlObject(saml20ObjectBuilder.getOpenSamlConfigBean(), object).toString();
+                    loadedService, adaptor, SAMLConstants.SAML2_POST_BINDING_URI, messageContext);
+                val encoded = SamlUtils.transformSamlObject(saml20ObjectBuilder.getOpenSamlConfigBean(), object, true).toString();
                 return new ResponseEntity<>(encoded, HttpStatus.OK);
             }
         } catch (final Exception e) {
