@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.sso;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -113,7 +114,7 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
      *
      * @param request  the request
      * @param response the response
-     * @param map      the RequestBody
+     * @param map the RequestBody
      * @return the response entity
      */
     @PostMapping(produces = MediaType.APPLICATION_XML_VALUE)
