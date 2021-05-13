@@ -165,6 +165,7 @@ public class JsonResourcePasswordManagementServiceTests {
             @Override
             public void execute() throws Throwable {
                 query.securityQuestion("Q1", "A1");
+                query.securityQuestion("Q2", "A2");
                 passwordChangeService.updateSecurityQuestions(query);
             }
         });

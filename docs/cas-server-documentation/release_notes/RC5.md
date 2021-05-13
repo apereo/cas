@@ -53,7 +53,19 @@ The following items are new improvements and enhancements presented in this rele
 
 
 ## Other Stuff
-
+       
+- [SSO Sessions endpoint](../authentication/Configuring-SSO.html) now indicates the expiration 
+  policy and remember-me flags for authenticated sessions.
+- Password management APIs are updated to allow updating security questions.
+- Supported [registered service properties](../services/Configuring-Service-Custom-Properties.html) are 
+  now automatically included in the documentation.
 
 ## Library Upgrades
+
+- Spring
+- Spring Boot
+- MariaDb Driver
+- Mockito
+- Amazon SDK
+- Micrometer
 
