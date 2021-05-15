@@ -22,6 +22,7 @@ import org.apereo.cas.adaptors.x509.authentication.revocation.policy.AllowRevoca
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.DenyRevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
+import org.apereo.cas.adaptors.x509.util.X509AuthenticationUtils;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
@@ -29,7 +30,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.x509.SubjectDnPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
@@ -54,7 +54,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 
-import javax.security.auth.x500.X500Principal;
 import java.net.URI;
 import java.time.Duration;
 import java.util.stream.Collectors;
@@ -85,19 +84,6 @@ public class X509AuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    private static String getSubjectDnFormat(final SubjectDnPrincipalResolverProperties.SubjectDnFormat format) {
-        switch (format) {
-            case RFC1779:
-                return X500Principal.RFC1779;
-            case RFC2253:
-                return X500Principal.RFC2253;
-            case CANONICAL:
-                return X500Principal.CANONICAL;
-            default:
-                return null;
-        }
-    }
 
     @Bean
     @RefreshScope
@@ -254,7 +240,7 @@ public class X509AuthenticationConfiguration {
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
             X509SubjectDNPrincipalResolver.class,
             principal, personDirectory);
-        resolver.setSubjectDnFormat(getSubjectDnFormat(subjectDn.getFormat()));
+        resolver.setSubjectDnFormat(X509AuthenticationUtils.getSubjectDnFormat(subjectDn.getFormat()));
         resolver.setX509AttributeExtractor(x509AttributeExtractor());
         return resolver;
     }
@@ -391,6 +377,7 @@ public class X509AuthenticationConfiguration {
         }
         return x509SubjectDNPrincipalResolver();
     }
+
     private X509SerialNumberPrincipalResolver getX509SerialNumberPrincipalResolver(final X509Properties x509) {
         val serialNoProperties = x509.getSerialNo();
         val personDirectory = casProperties.getPersonDirectory();
@@ -429,12 +416,12 @@ public class X509AuthenticationConfiguration {
     private RevocationPolicy getRevocationPolicy(final String policy) {
         switch (policy.trim().toLowerCase()) {
             case "allow":
-                return new AllowRevocationPolicy();
+                return allowRevocationPolicy();
             case "threshold":
                 return thresholdExpiredCRLRevocationPolicy();
             case "deny":
             default:
-                return new DenyRevocationPolicy();
+                return denyRevocationPolicy();
         }
     }
 }

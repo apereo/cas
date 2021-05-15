@@ -18,6 +18,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.profile.CommonProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -36,6 +37,12 @@ import static org.mockito.Mockito.*;
  */
 @Tag("OAuth")
 public class OAuth20UtilsTests {
+    @Test
+    public void verifyRequestHeaderBad() {
+        assertNull(OAuth20Utils.getServiceRequestHeaderIfAny(null));
+        assertNull(OAuth20Utils.getClientIdFromAuthenticatedProfile(new CommonProfile()));
+    }
+    
     @Test
     public void verifyNoClientId() {
         assertNull(OAuth20Utils.getRegisteredOAuthServiceByClientId(mock(ServicesManager.class), null));

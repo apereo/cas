@@ -17,6 +17,7 @@ import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpReques
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.Builder;
@@ -82,4 +83,6 @@ public class SamlProfileHandlerConfigurationContext {
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
 
     private final SessionStore sessionStore;
+
+    private final TicketRegistrySupport ticketRegistrySupport;
 }

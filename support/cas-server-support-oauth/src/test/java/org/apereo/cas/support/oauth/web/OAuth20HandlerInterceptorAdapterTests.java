@@ -50,6 +50,20 @@ public class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests 
     }
 
     @Test
+    public void verifyRevocationNeedsAuthn() throws Exception {
+        var request = new MockHttpServletRequest();
+        var response = new MockHttpServletResponse();
+        request.setRequestURI('/' + OAuth20Constants.REVOCATION_URL);
+        assertFalse(oauthHandlerInterceptorAdapter.preHandle(request, response, new Object()));
+
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+        request.setRequestURI('/' + OAuth20Constants.REVOCATION_URL);
+        request.setParameter(OAuth20Constants.CLIENT_ID, "unknown123456");
+        assertFalse(oauthHandlerInterceptorAdapter.preHandle(request, response, new Object()));
+    }
+
+    @Test
     public void verifyRevocationAuth() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
