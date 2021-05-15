@@ -3,7 +3,6 @@ package org.apereo.cas.support.saml.web.idp.profile.sso;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPCoreProperties;
 import org.apereo.cas.support.saml.SamlIdPConstants;
-import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 import org.apereo.cas.web.BrowserSessionStorage;
@@ -16,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.pac4j.core.context.JEEContext;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -87,7 +85,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
 
 
     private ModelAndView handleProfileRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
-        final AuthnRequest authnRequest = retrieveAuthenticationRequest(response, request);
+        val authnRequest = retrieveAuthenticationRequest(response, request);
 
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
         if (StringUtils.isBlank(ticket)) {
