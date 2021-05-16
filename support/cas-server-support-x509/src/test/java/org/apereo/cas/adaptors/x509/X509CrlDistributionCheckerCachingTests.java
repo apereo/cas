@@ -34,9 +34,6 @@ public class X509CrlDistributionCheckerCachingTests {
     @Qualifier("crlDistributionPointRevocationChecker")
     private RevocationChecker crlDistributionPointRevocationChecker;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Test
     public void verifyOperation() {
         assertNotNull(crlDistributionPointRevocationChecker);
