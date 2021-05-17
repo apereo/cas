@@ -652,11 +652,6 @@ public interface CasWebflowConstants {
      */
 
     /**
-     * The view state 'casInterruptView'.
-     */
-    String VIEW_ID_INTERRUPT_VIEW = "casInterruptView";
-
-    /**
      * The view state 'error'.
      */
     String VIEW_ID_ERROR = "error";
@@ -764,12 +759,13 @@ public interface CasWebflowConstants {
     /**
      * View id 'casDelegatedAuthnErrorView'.
      */
-    String VIEW_ID_DELEGATED_AUTHN_ERROR_VIEW = "casDelegatedAuthnErrorView";
+    String VIEW_ID_DELEGATED_AUTHN_ERROR_VIEW = "delegated-authn/casDelegatedAuthnErrorView";
 
     /**
      * The view state 'casPac4jStopWebflow'.
      */
-    String VIEW_ID_PAC4J_STOP_WEBFLOW = "casPac4jStopWebflow";
+    String VIEW_ID_PAC4J_STOP_WEBFLOW = "delegated-authn/casDelegatedAuthnStopWebflow";
+
     /**
      * The view state 'casSessionStorageWriteView'.
      */
