@@ -82,7 +82,7 @@ public class SamlIdentityProviderDiscoveryFeedController {
         model.put("entityIds", entityIds);
 
         model.put("casServerPrefix", casProperties.getServer().getPrefix());
-        return new ModelAndView("casSamlIdPDiscoveryView", model);
+        return new ModelAndView("saml2-discovery/casSamlIdPDiscoveryView", model);
     }
 
     /**

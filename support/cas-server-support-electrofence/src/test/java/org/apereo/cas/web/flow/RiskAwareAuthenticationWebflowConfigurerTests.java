@@ -37,7 +37,7 @@ public class RiskAwareAuthenticationWebflowConfigurerTests extends BaseWebflowCo
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
 
-        var state = (TransitionableState) flow.getState(RiskAwareAuthenticationWebflowConfigurer.VIEW_ID_BLOCKED_AUTHN);
+        var state = (TransitionableState) flow.getState(RiskAwareAuthenticationWebflowConfigurer.STATE_ID_BLOCKED_AUTHN);
         assertNotNull(state);
     }
 }

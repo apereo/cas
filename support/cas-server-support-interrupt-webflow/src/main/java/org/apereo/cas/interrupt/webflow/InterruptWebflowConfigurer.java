@@ -82,7 +82,7 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void createInterruptView(final Flow flow) {
-        val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_INTERRUPT_VIEW, CasWebflowConstants.VIEW_ID_INTERRUPT_VIEW);
+        val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_INTERRUPT_VIEW, "interrupt/casInterruptView");
         viewState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_PREPARE_INTERRUPT_VIEW));
         createStateDefaultTransition(viewState, CasWebflowConstants.STATE_ID_FINALIZE_INTERRUPT_ACTION);
 
