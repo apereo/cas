@@ -645,6 +645,61 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY = "delegatedAuthenticationClientRetry";
 
+    /**
+     * View id 'casBadWorkstationView'.
+     */
+    String STATE_ID_INVALID_WORKSTATION = "casBadWorkstationView";
+
+    /**
+     * View id 'casAccountDisabledView'.
+     */
+    String STATE_ID_ACCOUNT_DISABLED = "casAccountDisabledView";
+
+    /**
+     * View id 'casAccountLockedView'.
+     */
+    String STATE_ID_ACCOUNT_LOCKED = "casAccountLockedView";
+
+    /**
+     * View id 'casBadHoursView'.
+     */
+    String STATE_ID_INVALID_AUTHENTICATION_HOURS = "casBadHoursView";
+
+    /**
+     * View id 'casAuthenticationBlockedView'.
+     */
+    String STATE_ID_AUTHENTICATION_BLOCKED = "casAuthenticationBlockedView";
+
+    /**
+     * View id 'casMustChangePassView'.
+     */
+    String STATE_ID_MUST_CHANGE_PASSWORD = "casMustChangePassView";
+
+    /**
+     * View id 'casExpiredPassView'.
+     */
+    String STATE_ID_EXPIRED_PASSWORD = "casExpiredPassView";
+
+    /**
+     * View id 'casForgotUsernameSendInfoView'.
+     */
+    String STATE_ID_FORGOT_USERNAME_ACCT_INFO = "casForgotUsernameSendInfoView";
+
+    /**
+     * View id 'casResetPasswordSentInstructions'.
+     */
+    String STATE_ID_SENT_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSentInstructionsView";
+
+    /**
+     * View id 'casResetPasswordSendInstructions'.
+     */
+    String STATE_ID_SEND_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSendInstructionsView";
+
+    /**
+     * View id 'casForgotUsernameSentInfoView'.
+     */
+    String STATE_ID_SENT_FORGOT_USERNAME_ACCT_INFO = "casForgotUsernameSentInfoView";
+
     /*
      ****************************************
      * Views.
@@ -657,94 +712,14 @@ public interface CasWebflowConstants {
     String VIEW_ID_ERROR = "error";
 
     /**
-     * View id when MFA provider has been detected as unavailable and failureMode is closed.
-     */
-    String VIEW_ID_MFA_UNAVAILABLE = "casMfaUnavailableView";
-
-    /**
-     * View id when MFA provider has denied access to a user because of account lockout.
-     */
-    String VIEW_ID_MFA_DENIED = "casMfaDeniedView";
-
-    /**
      * The view id 'casPostResponseView'.
      */
     String VIEW_ID_POST_RESPONSE = "casPostResponseView";
 
     /**
-     * The view id 'casGenericSuccessView'.
-     */
-    String VIEW_ID_GENERIC_SUCCESS = "casGenericSuccessView";
-
-    /**
-     * The view id 'casConfirmView'.
-     */
-    String VIEW_ID_CONFIRM = "casConfirmView";
-
-    /**
      * The view id 'casServiceErrorView'.
      */
     String VIEW_ID_SERVICE_ERROR = "error/casServiceErrorView";
-
-    /**
-     * View id 'casResetPasswordSendInstructions'.
-     */
-    String VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSendInstructionsView";
-
-    /**
-     * View id 'casForgotUsernameSentInfoView'.
-     */
-    String VIEW_ID_SENT_FORGOT_USERNAME_ACCT_INFO = "casForgotUsernameSentInfoView";
-
-    /**
-     * View id 'casForgotUsernameSendInfoView'.
-     */
-    String VIEW_ID_FORGOT_USERNAME_ACCT_INFO = "casForgotUsernameSendInfoView";
-
-    /**
-     * View id 'casBadHoursView'.
-     */
-    String VIEW_ID_INVALID_AUTHENTICATION_HOURS = "casBadHoursView";
-
-    /**
-     * View id 'casAuthenticationBlockedView'.
-     */
-    String VIEW_ID_AUTHENTICATION_BLOCKED = "casAuthenticationBlockedView";
-
-    /**
-     * View id 'casResetPasswordErrorView'.
-     */
-    String VIEW_ID_PASSWORD_RESET_ERROR = "casResetPasswordErrorView";
-
-    /**
-     * View id 'casBadWorkstationView'.
-     */
-    String VIEW_ID_INVALID_WORKSTATION = "casBadWorkstationView";
-
-    /**
-     * View id 'casAccountDisabledView'.
-     */
-    String VIEW_ID_ACCOUNT_DISABLED = "casAccountDisabledView";
-
-    /**
-     * View id 'casAccountLockedView'.
-     */
-    String VIEW_ID_ACCOUNT_LOCKED = "casAccountLockedView";
-
-    /**
-     * View id 'casMustChangePassView'.
-     */
-    String VIEW_ID_MUST_CHANGE_PASSWORD = "casMustChangePassView";
-
-    /**
-     * View id 'casExpiredPassView'.
-     */
-    String VIEW_ID_EXPIRED_PASSWORD = "casExpiredPassView";
-
-    /**
-     * View id 'casResetPasswordSentInstructions'.
-     */
-    String VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSentInstructionsView";
 
     /**
      * View name used for form-login into admin/actuator endpoints.
@@ -765,6 +740,7 @@ public interface CasWebflowConstants {
      * The view state 'casSessionStorageWriteView'.
      */
     String VIEW_ID_SESSION_STORAGE_WRITE = "storage/casSessionStorageWriteView";
+    
     /**
      * The view state 'casSessionStorageReadView'.
      */

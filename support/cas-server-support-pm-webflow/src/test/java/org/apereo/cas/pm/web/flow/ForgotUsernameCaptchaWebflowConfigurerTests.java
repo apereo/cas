@@ -72,7 +72,7 @@ public class ForgotUsernameCaptchaWebflowConfigurerTests extends BaseWebflowConf
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         val state = (TransitionableState) flow.getState(STATE_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS);
-        assertEquals(VIEW_ID_FORGOT_USERNAME_ACCT_INFO,
+        assertEquals(STATE_ID_FORGOT_USERNAME_ACCT_INFO,
             state.getTransition(TRANSITION_ID_CAPTCHA_ERROR).getTargetStateId());
     }
 }

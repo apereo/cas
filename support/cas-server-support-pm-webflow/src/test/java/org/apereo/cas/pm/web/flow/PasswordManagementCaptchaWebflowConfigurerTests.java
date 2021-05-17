@@ -69,7 +69,7 @@ public class PasswordManagementCaptchaWebflowConfigurerTests extends BaseWebflow
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         val state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS);
-        assertEquals(CasWebflowConstants.VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO,
+        assertEquals(CasWebflowConstants.STATE_ID_SEND_RESET_PASSWORD_ACCT_INFO,
             state.getTransition(CasWebflowConstants.TRANSITION_ID_CAPTCHA_ERROR).getTargetStateId());
     }
 }

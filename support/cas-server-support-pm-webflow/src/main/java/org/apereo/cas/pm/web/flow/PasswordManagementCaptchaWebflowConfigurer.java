@@ -35,7 +35,7 @@ public class PasswordManagementCaptchaWebflowConfigurer extends AbstractCasWebfl
                 CasWebflowConstants.STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS,
                 CasWebflowConstants.ACTION_ID_PASSWORD_RESET_VALIDATE_CAPTCHA);
             createTransitionForState(flow, CasWebflowConstants.STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS,
-                CasWebflowConstants.TRANSITION_ID_CAPTCHA_ERROR, CasWebflowConstants.VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO);
+                CasWebflowConstants.TRANSITION_ID_CAPTCHA_ERROR, CasWebflowConstants.STATE_ID_SEND_RESET_PASSWORD_ACCT_INFO);
         }
     }
 }

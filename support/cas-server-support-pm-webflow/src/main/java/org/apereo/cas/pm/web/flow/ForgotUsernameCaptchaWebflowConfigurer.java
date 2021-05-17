@@ -35,7 +35,7 @@ public class ForgotUsernameCaptchaWebflowConfigurer extends AbstractCasWebflowCo
                 CasWebflowConstants.STATE_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS,
                 CasWebflowConstants.ACTION_ID_FORGOT_USERNAME_VALIDATE_CAPTCHA);
             createTransitionForState(flow, CasWebflowConstants.STATE_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS,
-                CasWebflowConstants.TRANSITION_ID_CAPTCHA_ERROR, CasWebflowConstants.VIEW_ID_FORGOT_USERNAME_ACCT_INFO);
+                CasWebflowConstants.TRANSITION_ID_CAPTCHA_ERROR, CasWebflowConstants.STATE_ID_FORGOT_USERNAME_ACCT_INFO);
         }
     }
 }

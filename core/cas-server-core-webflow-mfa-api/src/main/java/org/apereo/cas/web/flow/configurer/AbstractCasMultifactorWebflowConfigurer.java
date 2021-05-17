@@ -252,12 +252,12 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
             createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE);
             createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_BYPASS, CasWebflowConstants.TRANSITION_ID_SUCCESS);
 
-            LOGGER.trace("Adding end state [{}] with transition to [{}] to flow [{}] for MFA",
-                CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, CasWebflowConstants.VIEW_ID_MFA_UNAVAILABLE, flow.getId());
+            LOGGER.trace("Adding end state [{}] with transition to flow [{}] for MFA",
+                CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, flow.getId());
             createEndState(flow, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, "mfa/casMfaUnavailableView");
 
-            LOGGER.trace("Adding end state [{}] with transition to [{}] to flow [{}] for MFA",
-                CasWebflowConstants.STATE_ID_MFA_DENIED, CasWebflowConstants.VIEW_ID_MFA_DENIED, flow.getId());
+            LOGGER.trace("Adding end state [{}] with transition flow [{}] for MFA",
+                CasWebflowConstants.STATE_ID_MFA_DENIED, flow.getId());
             createEndState(flow, CasWebflowConstants.STATE_ID_MFA_DENIED, "mfa/casMfaDeniedView");
         }
     }

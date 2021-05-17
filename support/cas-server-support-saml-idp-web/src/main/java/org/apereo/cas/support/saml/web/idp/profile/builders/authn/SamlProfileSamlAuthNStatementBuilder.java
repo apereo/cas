@@ -69,13 +69,15 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
      * @param authnRequest the authn request
      * @param adaptor      the adaptor
      * @param binding      the binding
+     * @param service      the service
      * @return the subject locality
      * @throws SamlException the saml exception
      */
     protected SubjectLocality buildSubjectLocality(final Assertion assertion,
                                                    final RequestAbstractType authnRequest,
                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                   final String binding) throws SamlException {
+                                                   final String binding,
+                                                   final SamlRegisteredService service) throws SamlException {
         val subjectLocality = SamlUtils.newSamlObject(SubjectLocality.class);
         val hostAddress = InetAddressUtils.getCasServerHostAddress(casProperties.getServer().getName());
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
@@ -119,7 +121,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
                 : casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance();
             statement.setSessionNotOnOrAfter(dt.plusSeconds(skewAllowance).toInstant());
         }
-        val subjectLocality = buildSubjectLocality(assertion, authnRequest, adaptor, binding);
+        val subjectLocality = buildSubjectLocality(assertion, authnRequest, adaptor, binding, service);
         statement.setSubjectLocality(subjectLocality);
         return statement;
     }
