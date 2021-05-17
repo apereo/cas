@@ -72,13 +72,13 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasMultifactorW
 
             val setPrincipalAction = createSetAction("viewScope.principal", "conversationScope.authentication.principal");
 
-            val viewRegState = createViewState(flow, "viewRegistration", "casYubiKeyRegistrationView");
+            val viewRegState = createViewState(flow, "viewRegistration", "yubikey/casYubiKeyRegistrationView");
             viewRegState.getEntryActionList().addAll(setPrincipalAction);
             createTransitionForState(viewRegState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "saveRegistration");
 
             val loginProperties = CollectionUtils.wrapList("token");
             val loginBinder = createStateBinderConfiguration(loginProperties);
-            val viewLoginFormState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, "casYubiKeyLoginView", loginBinder);
+            val viewLoginFormState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, "yubikey/casYubiKeyLoginView", loginBinder);
             createStateModelBinding(viewLoginFormState, CasWebflowConstants.VAR_ID_CREDENTIAL, YubiKeyCredential.class);
             viewLoginFormState.getEntryActionList().addAll(setPrincipalAction);
 
