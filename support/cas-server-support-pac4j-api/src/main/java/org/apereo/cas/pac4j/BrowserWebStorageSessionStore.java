@@ -32,7 +32,7 @@ public class BrowserWebStorageSessionStore extends JEESessionStore {
         val attributes = new LinkedHashMap<String, Object>();
         currentSession
             .map(HttpSession.class::cast)
-            .map(session -> {
+            .ifPresent(session -> {
                 val names = session.getAttributeNames();
                 while (names.hasMoreElements()) {
                     val name = names.nextElement();
@@ -41,7 +41,6 @@ public class BrowserWebStorageSessionStore extends JEESessionStore {
                         attributes.put(name, value);
                     }
                 }
-                return attributes;
             });
         val encoded = SerializationUtils.serializeAndEncodeObject(this.webflowCipherExecutor, attributes);
         val trackableSession = new String(encoded, StandardCharsets.UTF_8);

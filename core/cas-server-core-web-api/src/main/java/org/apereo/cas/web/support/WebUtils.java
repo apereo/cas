@@ -1431,6 +1431,7 @@ public class WebUtils {
      * @deprecated Since 6.2.0
      */
     @Deprecated(since = "6.2.0")
+    @SuppressWarnings("InlineMeSuggester")
     public static String getOpenIdLocalUserId(final RequestContext context) {
         return context.getFlowScope().get("openIdLocalId", String.class);
     }
