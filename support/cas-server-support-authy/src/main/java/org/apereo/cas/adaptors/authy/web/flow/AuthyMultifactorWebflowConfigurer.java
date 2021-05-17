@@ -66,7 +66,7 @@ public class AuthyMultifactorWebflowConfigurer extends AbstractCasMultifactorWeb
 
             val loginProperties = CollectionUtils.wrapList("token");
             val loginBinder = createStateBinderConfiguration(loginProperties);
-            val viewLoginFormState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, "casAuthyLoginView", loginBinder);
+            val viewLoginFormState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, "authy/casAuthyLoginView", loginBinder);
             createStateModelBinding(viewLoginFormState, CasWebflowConstants.VAR_ID_CREDENTIAL, AuthyTokenCredential.class);
             viewLoginFormState.getEntryActionList().addAll(setPrincipalAction);
             createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_SUBMIT,

@@ -621,11 +621,6 @@ public interface CasWebflowConstants {
     String STATE_ID_EVALUATE_SPNEGO_CLIENT = "evaluateClientRequest";
 
     /**
-     * The view state 'casWsFedStopWebflow'.
-     */
-    String STATE_ID_WSFED_STOP_WEBFLOW = "casWsFedStopWebflow";
-
-    /**
      * The view state 'sendPasswordResetInstructions'.
      */
     String STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS = "sendPasswordResetInstructions";

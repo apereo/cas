@@ -63,7 +63,7 @@ public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifacto
             val propertiesToBind = CollectionUtils.wrapList("token");
             val binder = createStateBinderConfiguration(propertiesToBind);
             val viewLoginFormState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM,
-                "casSimpleMfaLoginView", binder);
+                "simple-mfa/casSimpleMfaLoginView", binder);
             createStateModelBinding(viewLoginFormState, CasWebflowConstants.VAR_ID_CREDENTIAL, CasSimpleMultifactorTokenCredential.class);
             viewLoginFormState.getEntryActionList().add(setPrincipalAction);
 

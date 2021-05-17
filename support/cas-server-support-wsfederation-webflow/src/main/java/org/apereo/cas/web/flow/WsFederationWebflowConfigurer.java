@@ -51,6 +51,6 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
     }
 
     private void createStopWebflowViewState(final Flow flow) {
-        createViewState(flow, CasWebflowConstants.STATE_ID_STOP_WEBFLOW, CasWebflowConstants.STATE_ID_WSFED_STOP_WEBFLOW);
+        createViewState(flow, CasWebflowConstants.STATE_ID_STOP_WEBFLOW, "wsfed/casWsFedStopWebflow");
     }
 }

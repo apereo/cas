@@ -63,7 +63,7 @@ public class RadiusMultifactorWebflowConfigurer extends AbstractCasMultifactorWe
             val loginProperties = CollectionUtils.wrapList("token");
             val loginBinder = createStateBinderConfiguration(loginProperties);
             val viewLoginFormState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM,
-                "casRadiusLoginView", loginBinder);
+                "radius/casRadiusLoginView", loginBinder);
             createStateModelBinding(viewLoginFormState, CasWebflowConstants.VAR_ID_CREDENTIAL, RadiusTokenCredential.class);
             val setPrincipalAction = createSetAction("viewScope.principal", "conversationScope.authentication.principal");
             viewLoginFormState.getEntryActionList().addAll(setPrincipalAction);
