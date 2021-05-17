@@ -62,7 +62,7 @@ rm -Rf $PWD/gh-pages/_data/"$branchVersion" > /dev/null
 ./gradlew :docs:cas-server-documentation-processor:build --no-daemon -x check -x test -x javadoc --configure-on-demand
 docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
 chmod +x ${docgen}
-${docgen} "$PWD/gh-pages/_data" "$branchVersion"
+${docgen} "$PWD/gh-pages/_data" "$branchVersion" "$PWD"
 rm -Rf docs/cas-server-documentation-processor/build
 echo -e "Generated documentation data at $PWD/gh-pages/_data/$branchVersion...\n"
 
