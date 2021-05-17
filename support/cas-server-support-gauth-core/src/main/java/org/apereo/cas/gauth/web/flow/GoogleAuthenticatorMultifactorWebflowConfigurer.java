@@ -77,7 +77,7 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
             val propertiesToBind = CollectionUtils.wrapList("token", "accountId");
             val binder = createStateBinderConfiguration(propertiesToBind);
             val viewLoginFormState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM,
-                "casGoogleAuthenticatorLoginView", binder);
+                "gauth/casGoogleAuthenticatorLoginView", binder);
             createStateModelBinding(viewLoginFormState, CasWebflowConstants.VAR_ID_CREDENTIAL, GoogleAuthenticatorTokenCredential.class);
             viewLoginFormState.getEntryActionList().add(setPrincipalAction);
 
@@ -88,11 +88,11 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
             createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_SELECT, "viewConfirmRegistration",
                 Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
 
-            val regViewState = createViewState(flow, "viewRegistration", "casGoogleAuthenticatorRegistrationView");
+            val regViewState = createViewState(flow, "viewRegistration", "gauth/casGoogleAuthenticatorRegistrationView");
             regViewState.getEntryActionList().addAll(setPrincipalAction, createEvaluateAction("googleAccountCreateRegistrationAction"));
             createTransitionForState(regViewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "saveRegistration");
 
-            val confirmRegViewState = createViewState(flow, "viewConfirmRegistration", "casGoogleAuthenticatorConfirmRegistrationView");
+            val confirmRegViewState = createViewState(flow, "viewConfirmRegistration", "gauth/casGoogleAuthenticatorConfirmRegistrationView");
             confirmRegViewState.getEntryActionList().add(setPrincipalAction);
             createTransitionForState(confirmRegViewState, CasWebflowConstants.TRANSITION_ID_REGISTER, "viewRegistration");
             createTransitionForState(confirmRegViewState, CasWebflowConstants.TRANSITION_ID_SELECT,

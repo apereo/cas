@@ -224,7 +224,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
 
     private static void createDuoLoginViewState(final List<AbstractStateModel> states) {
         val viewState = new ViewStateModel(STATE_ID_VIEW_LOGIN_FORM_DUO);
-        viewState.setView("casDuoLoginView");
+        viewState.setView("duo-security/casDuoLoginView");
         viewState.setModel(CasWebflowConstants.VAR_ID_CREDENTIAL);
         val bm = new BinderModel();
         val bindings = new LinkedList<BindingModel>();

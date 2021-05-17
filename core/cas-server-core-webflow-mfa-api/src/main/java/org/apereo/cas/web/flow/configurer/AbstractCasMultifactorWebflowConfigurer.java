@@ -254,11 +254,11 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
 
             LOGGER.trace("Adding end state [{}] with transition to [{}] to flow [{}] for MFA",
                 CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, CasWebflowConstants.VIEW_ID_MFA_UNAVAILABLE, flow.getId());
-            createEndState(flow, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, CasWebflowConstants.VIEW_ID_MFA_UNAVAILABLE);
+            createEndState(flow, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, "mfa/casMfaUnavailableView");
 
             LOGGER.trace("Adding end state [{}] with transition to [{}] to flow [{}] for MFA",
                 CasWebflowConstants.STATE_ID_MFA_DENIED, CasWebflowConstants.VIEW_ID_MFA_DENIED, flow.getId());
-            createEndState(flow, CasWebflowConstants.STATE_ID_MFA_DENIED, CasWebflowConstants.VIEW_ID_MFA_DENIED);
+            createEndState(flow, CasWebflowConstants.STATE_ID_MFA_DENIED, "mfa/casMfaDeniedView");
         }
     }
 

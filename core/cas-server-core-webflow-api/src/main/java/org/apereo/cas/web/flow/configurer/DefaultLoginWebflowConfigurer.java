@@ -110,7 +110,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
                 binder.addBinding(new BinderConfiguration.Binding(fieldName, props.getConverter(), props.isRequired()));
             });
 
-        val state = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, "casLoginView", binder);
+        val state = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, "login/casLoginView", binder);
         state.getRenderActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_RENDER_LOGIN_FORM));
         createStateModelBinding(state, CasWebflowConstants.VAR_ID_CREDENTIAL, UsernamePasswordCredential.class);
 
@@ -127,7 +127,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      * @param flow the flow
      */
     protected void createAuthenticationWarningMessagesView(final Flow flow) {
-        val state = createViewState(flow, CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS, "casLoginMessageView");
+        val state = createViewState(flow, CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS, "login/casLoginMessageView");
 
         val setAction = createSetAction("requestScope.messages", "messageContext.allMessages");
         state.getEntryActionList().add(setAction);
@@ -444,7 +444,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      * @param flow the flow
      */
     protected void createGenericLoginSuccessEndState(final Flow flow) {
-        val state = createEndState(flow, CasWebflowConstants.STATE_ID_VIEW_GENERIC_LOGIN_SUCCESS, CasWebflowConstants.VIEW_ID_GENERIC_SUCCESS);
+        val state = createEndState(flow, CasWebflowConstants.STATE_ID_VIEW_GENERIC_LOGIN_SUCCESS, "login/casGenericSuccessView");
         state.getEntryActionList().add(createEvaluateAction("genericSuccessViewAction"));
     }
 

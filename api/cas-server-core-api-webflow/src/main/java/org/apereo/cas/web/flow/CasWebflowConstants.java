@@ -684,7 +684,7 @@ public interface CasWebflowConstants {
     /**
      * The view id 'casServiceErrorView'.
      */
-    String VIEW_ID_SERVICE_ERROR = "casServiceErrorView";
+    String VIEW_ID_SERVICE_ERROR = "error/casServiceErrorView";
 
     /**
      * View id 'casResetPasswordSendInstructions'.
@@ -705,11 +705,6 @@ public interface CasWebflowConstants {
      * View id 'casBadHoursView'.
      */
     String VIEW_ID_INVALID_AUTHENTICATION_HOURS = "casBadHoursView";
-
-    /**
-     * View id 'casPasswordUpdateSuccessView'.
-     */
-    String VIEW_ID_PASSWORD_UPDATE_SUCCESS = "casPasswordUpdateSuccessView";
 
     /**
      * View id 'casAuthenticationBlockedView'.
@@ -754,7 +749,7 @@ public interface CasWebflowConstants {
     /**
      * View name used for form-login into admin/actuator endpoints.
      */
-    String VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW = "casAdminLoginView";
+    String VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW = "admin/casAdminLoginView";
 
     /**
      * View id 'casDelegatedAuthnErrorView'.
