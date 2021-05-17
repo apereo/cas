@@ -50,7 +50,21 @@ cas.version=6.4.0-RC5
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
+        
+### SAML2 Identity Provider
 
+CAS acting as a [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) is now able to provide basic support
+for browser's local storage as a means to track authentication requests. Furthermore, the handling of SAML2 authentication requests is 
+now slightly modified to recognize the presence of a single sign-on sessions to produce a SAML2 response directly off of the existing
+session without having to redirect to CAS itself for a ticket.
+                                               
+### Thymeleaf User Interface Pages
+
+The collection of thymeleaf user interface template pages are no longer found in the context root of the web application resources.
+Instead, they are organized and grouped into logical folders for each feature category. For example, the pages that deal with 
+login or logout functionality can now be found inside `login` or `logout` directories. The page names themselves remain unchecked.
+You should always cross-check the template locations with the [CAS WAR Overlay](../installation/WAR-Overlay-Installation.html) and 
+use the tooling provided by the build to locate or fetch the templates from the CAS web application context.
 
 ## Other Stuff
        
