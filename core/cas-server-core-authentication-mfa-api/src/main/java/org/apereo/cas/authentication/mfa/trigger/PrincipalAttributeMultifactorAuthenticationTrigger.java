@@ -53,7 +53,8 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
-                                                                   final HttpServletRequest httpServletRequest, final Service service) {
+                                                                   final HttpServletRequest httpServletRequest,
+                                                                   final Service service) {
         if (authentication == null) {
             LOGGER.debug("No authentication is available to determine event for principal");
             return Optional.empty();
