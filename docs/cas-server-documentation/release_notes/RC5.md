@@ -82,4 +82,7 @@ use the tooling provided by the build to locate or fetch the templates from the 
 - Mockito
 - Amazon SDK
 - Micrometer
+- Apache Tomcat
+- Spring Security
+- DropWizard
 
