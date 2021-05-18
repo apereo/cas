@@ -83,4 +83,19 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
         assertThrows(UnauthorizedServiceException.class, () -> extractor.extract(request, response));
     }
 
+    @Test
+    public void verifyNoClientIdOrRedirectUri() {
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
+
+        val service = getRegisteredService(REDIRECT_URI, CLIENT_ID, CLIENT_SECRET);
+        val principal = RegisteredServiceTestUtils.getPrincipal();
+        val code = addCode(principal, service);
+        request.addParameter(OAuth20Constants.CODE, code.getId());
+
+        val response = new MockHttpServletResponse();
+        val extractor = new AccessTokenAuthorizationCodeGrantRequestExtractor(oauth20ConfigurationContext);
+        assertThrows(UnauthorizedServiceException.class, () -> extractor.extract(request, response));
+    }
+
 }
