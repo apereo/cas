@@ -21,9 +21,8 @@ import org.apereo.cas.uma.web.controllers.resource.UmaFindResourceSetRegistratio
 import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointControllerTests;
 import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpointControllerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link UmaTestsSuite}.
@@ -53,6 +52,6 @@ import org.junit.runner.RunWith;
     UmaRequestingPartyClaimsCollectionEndpointControllerTests.class,
     UmaAuthorizationRequestEndpointControllerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class UmaTestsSuite {
 }

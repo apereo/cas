@@ -66,9 +66,8 @@ import org.apereo.cas.web.flow.SamlIdPConsentableAttributeBuilderTests;
 import org.apereo.cas.web.flow.SamlIdPMetadataUIActionTests;
 import org.apereo.cas.web.flow.SamlIdPWebflowConfigurerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Test suite to run all SAML tests.
@@ -143,7 +142,7 @@ import org.junit.runner.RunWith;
     EduPersonTargetedIdAttributeReleasePolicyTests.class,
     SamlProfileSaml2ResponseBuilderTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllSamlIdPTestsSuite {
 }
 

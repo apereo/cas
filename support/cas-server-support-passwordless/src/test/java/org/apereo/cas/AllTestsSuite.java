@@ -8,9 +8,8 @@ import org.apereo.cas.impl.account.SimplePasswordlessUserAccountStoreTests;
 import org.apereo.cas.impl.token.InMemoryPasswordlessTokenRepositoryTests;
 import org.apereo.cas.impl.token.RestfulPasswordlessTokenRepositoryTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -27,6 +26,6 @@ import org.junit.runner.RunWith;
     InMemoryPasswordlessTokenRepositoryTests.class,
     PasswordlessTokenAuthenticationHandlerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

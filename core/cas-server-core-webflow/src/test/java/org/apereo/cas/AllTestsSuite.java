@@ -21,9 +21,8 @@ import org.apereo.cas.web.flow.configurer.GroovyWebflowConfigurerTests;
 import org.apereo.cas.web.flow.executor.ClientFlowExecutionKeyTests;
 import org.apereo.cas.web.flow.executor.WebflowCipherBeanTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -53,6 +52,6 @@ import org.junit.runner.RunWith;
     ChainingSingleSignOnParticipationStrategyTests.class,
     AuthenticationExceptionHandlerActionTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

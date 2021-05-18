@@ -6,9 +6,8 @@ import org.apereo.cas.support.saml.idp.metadata.RestfulSamlIdPMetadataGeneratorW
 import org.apereo.cas.support.saml.idp.metadata.RestfulSamlIdPMetadataLocatorTests;
 import org.apereo.cas.support.saml.metadata.resolver.RestfulSamlRegisteredServiceMetadataResolverTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link RestfulSamlTestsSuite}.
@@ -24,6 +23,6 @@ import org.junit.runner.RunWith;
     RestfulSamlIdPMetadataGeneratorWithArtifactsTests.class,
     RestfulSamlIdPMetadataLocatorTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class RestfulSamlTestsSuite {
 }

@@ -11,9 +11,8 @@ import org.apereo.cas.ticket.registry.support.JpaLockingStrategyTests;
 import org.apereo.cas.ticket.registry.support.OracleJpaLockingStrategyTests;
 import org.apereo.cas.ticket.registry.support.PostgresJpaLockingStrategyTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -33,6 +32,6 @@ import org.junit.runner.RunWith;
     OracleJpaTicketRegistryTests.class,
     OracleJpaLockingStrategyTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

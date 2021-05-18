@@ -10,9 +10,8 @@ import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaMapSerializerTest
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaSetSerializerTests;
 import org.apereo.cas.memcached.kryo.serial.URLSerializerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link MemcachedCoreTestsSuite}.
@@ -31,6 +30,6 @@ import org.junit.runner.RunWith;
     MemcachedPooledClientConnectionFactoryTests.class,
     ZonedDateTimeSerializerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class MemcachedCoreTestsSuite {
 }

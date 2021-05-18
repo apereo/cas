@@ -1,8 +1,7 @@
 package org.apereo.cas.logging;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link CasLoggingApiAllTestsSuite}.
@@ -14,6 +13,6 @@ import org.junit.runner.RunWith;
     CasAppenderTests.class,
     ExceptionOnlyFilterTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class CasLoggingApiAllTestsSuite {
 }

@@ -13,9 +13,8 @@ import org.apereo.cas.authentication.LdapPasswordSynchronizationAuthenticationPo
 import org.apereo.cas.authentication.OpenLdapAuthenticationHandlerTests;
 import org.apereo.cas.config.LdapPasswordSynchronizationConfigurationTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Test suite to run all LDAP tests.
@@ -37,6 +36,6 @@ import org.junit.runner.RunWith;
     CustomPasswordPolicyLdapAuthenticationHandlerTests.class,
     LdapPasswordSynchronizationAuthenticationPostProcessorTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllLdapTestsSuite {
 }

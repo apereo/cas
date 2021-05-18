@@ -17,9 +17,8 @@ import org.apereo.cas.web.flow.resolver.impl.RankedMultifactorAuthenticationProv
 import org.apereo.cas.web.flow.resolver.impl.SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests;
 import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolverTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -52,6 +51,6 @@ import org.junit.runner.RunWith;
     RequestSessionAttributeMultifactorAuthenticationPolicyEventResolverTests.class,
     TimedMultifactorAuthenticationPolicyEventResolverTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

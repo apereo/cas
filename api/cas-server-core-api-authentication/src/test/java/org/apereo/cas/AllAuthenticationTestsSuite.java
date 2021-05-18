@@ -12,9 +12,8 @@ import org.apereo.cas.authentication.principal.PersistentIdGeneratorTests;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategyTests;
 import org.apereo.cas.authentication.principal.ServiceTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllAuthenticationTestsSuite}.
@@ -35,6 +34,6 @@ import org.junit.runner.RunWith;
     AuthenticationPreProcessorTests.class,
     AuthenticationPostProcessorTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllAuthenticationTestsSuite {
 }

@@ -12,9 +12,8 @@ import org.apereo.cas.web.flow.DelegatedClientAuthenticationActionTests;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducerTests;
 import org.apereo.cas.web.saml2.DelegatedSaml2ClientMetadataControllerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link DelegatedAuthenticationTestsSuite}.
@@ -35,6 +34,6 @@ import org.junit.runner.RunWith;
     DelegatedAuthenticationWebflowConfigurerTests.class,
     DelegatedSaml2ClientMetadataControllerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class DelegatedAuthenticationTestsSuite {
 }

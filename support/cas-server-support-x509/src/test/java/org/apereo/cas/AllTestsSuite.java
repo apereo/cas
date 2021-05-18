@@ -7,9 +7,8 @@ import org.apereo.cas.adaptors.x509.authentication.ldap.LdaptiveResourceCRLFetch
 import org.apereo.cas.adaptors.x509.config.DefaultX509ConfigTests;
 import org.apereo.cas.adaptors.x509.config.EDIPIX509AttributeExtractorConfigTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -24,6 +23,6 @@ import org.junit.runner.RunWith;
     RequestHeaderX509CertificateExtractorTests.class,
     X509SubjectDNPrincipalResolverAggregateTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

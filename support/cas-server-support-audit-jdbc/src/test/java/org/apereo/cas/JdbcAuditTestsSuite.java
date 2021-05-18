@@ -6,9 +6,8 @@ import org.apereo.cas.audit.CasSupportMySQLJdbcAuditConfigurationTests;
 import org.apereo.cas.audit.CasSupportOracleJdbcAuditConfigurationTests;
 import org.apereo.cas.audit.CasSupportPostgresJdbcAuditConfigurationTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link JdbcAuditTestsSuite}.
@@ -23,6 +22,6 @@ import org.junit.runner.RunWith;
     CasSupportMySQLJdbcAuditConfigurationTests.class,
     CasSupportPostgresJdbcAuditConfigurationTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class JdbcAuditTestsSuite {
 }

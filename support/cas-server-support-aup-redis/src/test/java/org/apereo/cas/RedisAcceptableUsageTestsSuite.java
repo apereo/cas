@@ -2,9 +2,9 @@ package org.apereo.cas;
 
 import org.apereo.cas.aup.ConditionalOnExpressionNegativeTests;
 import org.apereo.cas.aup.RedisAcceptableUsagePolicyRepositoryTests;
-import org.junit.platform.runner.JUnitPlatform;
+
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link RedisAcceptableUsageTestsSuite}.
@@ -16,6 +16,6 @@ import org.junit.runner.RunWith;
     ConditionalOnExpressionNegativeTests.class,
     RedisAcceptableUsagePolicyRepositoryTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class RedisAcceptableUsageTestsSuite {
 }

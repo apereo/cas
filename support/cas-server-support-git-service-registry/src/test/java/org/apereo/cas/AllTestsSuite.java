@@ -4,9 +4,8 @@ import org.apereo.cas.locator.DefaultGitRepositoryRegisteredServiceLocatorTests;
 import org.apereo.cas.locator.TypeAwareGitRepositoryRegisteredServiceLocatorTests;
 import org.apereo.cas.services.GitServiceRegistryTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -19,6 +18,6 @@ import org.junit.runner.RunWith;
     TypeAwareGitRepositoryRegisteredServiceLocatorTests.class,
     DefaultGitRepositoryRegisteredServiceLocatorTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

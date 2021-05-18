@@ -9,9 +9,8 @@ import org.apereo.cas.web.flow.executor.ClientFlowExecutionRepositoryTests;
 import org.apereo.cas.web.flow.executor.EncryptedTranscoderTests;
 import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfoTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -29,6 +28,6 @@ import org.junit.runner.RunWith;
     StaticEventExecutionActionTests.class,
     EncryptedTranscoderTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

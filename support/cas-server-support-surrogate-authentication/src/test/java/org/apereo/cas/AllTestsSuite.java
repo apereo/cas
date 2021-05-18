@@ -18,9 +18,8 @@ import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationServ
 import org.apereo.cas.ticket.expiration.SurrogateSessionExpirationPolicyJsonSerializerTests;
 import org.apereo.cas.ticket.expiration.SurrogateSessionExpirationPolicyTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -46,6 +45,6 @@ import org.junit.runner.RunWith;
     SurrogatePrincipalElectionStrategyTests.class,
     SurrogateSessionExpirationPolicyJsonSerializerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

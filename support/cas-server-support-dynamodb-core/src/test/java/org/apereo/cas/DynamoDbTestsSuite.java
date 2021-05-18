@@ -3,9 +3,8 @@ package org.apereo.cas;
 import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactoryTests;
 import org.apereo.cas.dynamodb.DynamoDbTableUtilsTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link DynamoDbTestsSuite}.
@@ -17,6 +16,6 @@ import org.junit.runner.RunWith;
     AmazonDynamoDbClientFactoryTests.class,
     DynamoDbTableUtilsTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class DynamoDbTestsSuite {
 }

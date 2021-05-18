@@ -5,9 +5,8 @@ import org.apereo.cas.config.CasPersonDirectoryConfigurationCachingAttributeRepo
 import org.apereo.cas.config.CasPersonDirectoryConfigurationCascadeAggregationTests;
 import org.apereo.cas.config.CasPersonDirectoryConfigurationMergeAggregationTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -35,6 +34,6 @@ import org.junit.runner.RunWith;
     DefaultAttributeDefinitionStoreTests.class,
     JdbcSingleRowAttributeRepositoryPostgresTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

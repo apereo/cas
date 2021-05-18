@@ -16,9 +16,8 @@ import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationPrepareTrustDevi
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustActionTests;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustActionTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link TrustedDevicesMultifactorTestsSuite}.
@@ -43,6 +42,6 @@ import org.junit.runner.RunWith;
     GeoLocationDeviceFingerprintComponentExtractorTests.class,
     MultifactorAuthenticationTrustStorageCleanerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class TrustedDevicesMultifactorTestsSuite {
 }

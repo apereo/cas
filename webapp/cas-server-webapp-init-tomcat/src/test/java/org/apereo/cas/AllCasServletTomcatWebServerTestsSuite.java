@@ -6,9 +6,8 @@ import org.apereo.cas.tomcat.CasTomcatServletWebServerFactoryClusterTests;
 import org.apereo.cas.tomcat.CasTomcatServletWebServerFactoryCustomizerTests;
 import org.apereo.cas.tomcat.CasTomcatServletWebServerFactoryTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllCasServletTomcatWebServerTestsSuite}.
@@ -23,6 +22,6 @@ import org.junit.runner.RunWith;
     CasEmbeddedContainerTomcatFiltersConfigurationTests.class,
     CasTomcatServletWebServerFactoryTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllCasServletTomcatWebServerTestsSuite {
 }

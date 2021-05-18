@@ -4,9 +4,8 @@ import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIParserActionTests
 import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIParserDynamicActionTests;
 import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIWebflowConfigurerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Test suite to run all SAML tests.
@@ -19,6 +18,6 @@ import org.junit.runner.RunWith;
     SamlMetadataUIWebflowConfigurerTests.class,
     SamlMetadataUIParserDynamicActionTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

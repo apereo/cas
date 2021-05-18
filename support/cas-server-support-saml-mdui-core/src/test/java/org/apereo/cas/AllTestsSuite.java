@@ -5,9 +5,8 @@ import org.apereo.cas.support.saml.mdui.MetadataUIUtilsTests;
 import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfoTests;
 import org.apereo.cas.support.saml.mdui.StaticMetadataResolverAdapterTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Test suite to run all SAML tests.
@@ -21,6 +20,6 @@ import org.junit.runner.RunWith;
     MetadataUIUtilsTests.class,
     SamlMetadataUIInfoTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

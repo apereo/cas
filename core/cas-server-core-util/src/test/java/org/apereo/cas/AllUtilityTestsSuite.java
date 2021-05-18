@@ -27,9 +27,8 @@ import org.apereo.cas.util.gen.RandomStringGeneratorTests;
 import org.apereo.cas.util.http.HttpMessageTests;
 import org.apereo.cas.util.http.SimpleHttpClientTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllUtilityTestsSuite}.
@@ -65,6 +64,6 @@ import org.junit.runner.RunWith;
     SystemUtilsTests.class,
     JsonUtilsTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllUtilityTestsSuite {
 }

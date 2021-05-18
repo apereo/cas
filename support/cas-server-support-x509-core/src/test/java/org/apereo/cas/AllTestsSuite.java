@@ -20,9 +20,8 @@ import org.apereo.cas.adaptors.x509.authentication.principal.X509UPNExtractorUti
 import org.apereo.cas.adaptors.x509.util.X509AuthenticationUtilsTests;
 import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonSerializerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * The {@link AllTestsSuite} is responsible for
@@ -52,6 +51,6 @@ import org.junit.runner.RunWith;
     X509CredentialsAuthenticationHandlerTests.class,
     CRLDistributionPointRevocationCheckerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

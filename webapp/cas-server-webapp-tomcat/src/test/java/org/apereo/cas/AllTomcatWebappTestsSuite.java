@@ -2,9 +2,8 @@ package org.apereo.cas;
 
 import org.apereo.cas.web.CasWebApplicationServletInitializerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTomcatWebappTestsSuite}.
@@ -16,6 +15,6 @@ import org.junit.runner.RunWith;
     CasWebApplicationServletInitializerTests.class,
     CasTomcatBannerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTomcatWebappTestsSuite {
 }

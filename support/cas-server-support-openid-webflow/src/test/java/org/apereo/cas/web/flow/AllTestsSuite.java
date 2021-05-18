@@ -1,8 +1,7 @@
 package org.apereo.cas.web.flow;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * The {@link AllTestsSuite} is responsible for
@@ -17,6 +16,6 @@ import org.junit.runner.RunWith;
     OpenIdWebflowConfigurerTests.class,
     DefaultOpenIdUserNameExtractorTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }
