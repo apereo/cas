@@ -53,6 +53,7 @@ The following fields are available for SAML services:
 | `logoutResponseEnabled` | Control whether SAML2 logout responses should be generated and sent for this SAML2 service provider.
 | `issuerEntityId` | If defined, will override the issue value with the given identity provider entity id. This may be useful in cases where CAS needs to maintain multiple identity provider entity ids.
 | `assertionAudiences` | Comma-separated list of audience urls to include in the assertion, in the addition to the entity id.
+| `subjectLocality` | If defined, will overwrite the `SubjectLocality` attribute of the SAML2 authentication statement.
 | `serviceProviderNameIdQualifier` | If defined, will overwrite the `SPNameQualifier` attribute of the produced subject's name id.
 | `skipGeneratingAssertionNameId` | Whether generation of a name identifier should be skipped for assertions. Default is `false`.
 | `skipGeneratingTransientNameId` | Whether transient name identifier generation should be skipped. Default is `false`.

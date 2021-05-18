@@ -63,6 +63,8 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     private boolean requireSignedRoot = true;
 
+    private String subjectLocality;
+
     private String serviceProviderNameIdQualifier;
 
     private String nameIdQualifier;

@@ -73,6 +73,7 @@ use the tooling provided by the build to locate or fetch the templates from the 
 - Password management APIs are updated to allow updating security questions.
 - Supported [registered service properties](../services/Configuring-Service-Custom-Properties.html) are 
   now automatically included in the documentation.
+- SAML2 authentication statements can now customize the `SubjectLocality` field on a per-application basis.
 
 ## Library Upgrades
 
