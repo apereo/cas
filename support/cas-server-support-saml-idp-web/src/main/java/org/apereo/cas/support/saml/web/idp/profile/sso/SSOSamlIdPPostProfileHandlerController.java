@@ -40,7 +40,7 @@ public class SSOSamlIdPPostProfileHandlerController extends AbstractSamlIdPProfi
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_REDIRECT)
     public void handleSaml2ProfileSsoRedirectRequest(final HttpServletResponse response,
                                                      final HttpServletRequest request) throws Exception {
-        val decoder = getSamlProfileHandlerConfigurationContext().getSamlMessageDecoders().getInstance(HttpMethod.GET);
+        val decoder = getConfigurationContext().getSamlMessageDecoders().getInstance(HttpMethod.GET);
         handleSsoPostProfileRequest(response, request, decoder);
     }
 
@@ -67,7 +67,7 @@ public class SSOSamlIdPPostProfileHandlerController extends AbstractSamlIdPProfi
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST)
     public void handleSaml2ProfileSsoPostRequest(final HttpServletResponse response,
                                                  final HttpServletRequest request) throws Exception {
-        val decoder = getSamlProfileHandlerConfigurationContext().getSamlMessageDecoders().getInstance(HttpMethod.POST);
+        val decoder = getConfigurationContext().getSamlMessageDecoders().getInstance(HttpMethod.POST);
         handleSsoPostProfileRequest(response, request, decoder);
     }
 
@@ -82,7 +82,7 @@ public class SSOSamlIdPPostProfileHandlerController extends AbstractSamlIdPProfi
     protected void handleSsoPostProfileRequest(final HttpServletResponse response,
                                                final HttpServletRequest request,
                                                final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
-        val result = getSamlProfileHandlerConfigurationContext().getSamlHttpRequestExtractor()
+        val result = getConfigurationContext().getSamlHttpRequestExtractor()
             .extract(request, decoder, AuthnRequest.class);
         if (result.isPresent()) {
             initiateAuthenticationRequest(result.get(), response, request);

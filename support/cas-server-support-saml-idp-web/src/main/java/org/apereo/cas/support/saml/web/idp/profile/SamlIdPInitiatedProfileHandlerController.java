@@ -88,19 +88,19 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
 
         val time = request.getParameter(SamlIdPConstants.TIME);
 
-        val builder = (SAMLObjectBuilder) getSamlProfileHandlerConfigurationContext()
+        val builder = (SAMLObjectBuilder) getConfigurationContext()
             .getOpenSamlConfigBean().getBuilderFactory().getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
         val authnRequest = (AuthnRequest) builder.buildObject();
         authnRequest.setAssertionConsumerServiceURL(shire);
 
-        val isBuilder = (SAMLObjectBuilder) getSamlProfileHandlerConfigurationContext()
+        val isBuilder = (SAMLObjectBuilder) getConfigurationContext()
             .getOpenSamlConfigBean().getBuilderFactory().getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
         val issuer = (Issuer) isBuilder.buildObject();
         issuer.setValue(providerId);
         authnRequest.setIssuer(issuer);
 
         authnRequest.setProtocolBinding(SAMLConstants.SAML2_POST_BINDING_URI);
-        val pBuilder = (SAMLObjectBuilder) getSamlProfileHandlerConfigurationContext()
+        val pBuilder = (SAMLObjectBuilder) getConfigurationContext()
             .getOpenSamlConfigBean().getBuilderFactory().getBuilder(NameIDPolicy.DEFAULT_ELEMENT_NAME);
         val nameIDPolicy = (NameIDPolicy) pBuilder.buildObject();
         nameIDPolicy.setAllowCreate(Boolean.TRUE);
@@ -118,7 +118,7 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
 
         val ctx = new MessageContext();
         if (facade.isAuthnRequestsSigned() || registeredService.isSignUnsolicitedAuthnRequest()) {
-            getSamlProfileHandlerConfigurationContext().getSamlObjectSigner().encode(authnRequest, registeredService,
+            getConfigurationContext().getSamlObjectSigner().encode(authnRequest, registeredService,
                 facade, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest);
         }
         ctx.setMessage(authnRequest);

@@ -2,7 +2,6 @@ package org.apereo.cas.support.saml.web.idp.profile.sso;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.support.saml.SamlIdPConstants;
-import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 
@@ -12,10 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.saml.common.binding.SAMLBindingSupport;
-import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.pac4j.core.context.JEEContext;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,44 +29,6 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
 
     public SSOSamlIdPProfileCallbackHandlerController(final SamlProfileHandlerConfigurationContext ctx) {
         super(ctx);
-    }
-
-    private MessageContext bindRelayStateParameter(final HttpServletRequest request,
-                                                   final HttpServletResponse response) {
-        val messageContext = new MessageContext();
-        val context = new JEEContext(request, response);
-        val relayState = samlProfileHandlerConfigurationContext.getSessionStore()
-            .get(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE).orElse(StringUtils.EMPTY).toString();
-        LOGGER.trace("Relay state is [{}]", relayState);
-        SAMLBindingSupport.setRelayState(messageContext, relayState);
-        return messageContext;
-    }
-
-    private Assertion validateRequestAndBuildCasAssertion(final HttpServletResponse response,
-                                                          final HttpServletRequest request,
-                                                          final Pair<AuthnRequest, MessageContext> pair) throws Exception {
-        val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
-        val validator = getSamlProfileHandlerConfigurationContext().getTicketValidator();
-        val serviceUrl = constructServiceUrl(request, response, pair);
-        LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
-        val assertion = validator.validate(ticket, serviceUrl);
-        logCasValidationAssertion(assertion);
-        return assertion;
-    }
-
-    /**
-     * Build authentication context pair pair.
-     *
-     * @param request      the request
-     * @param response     the response
-     * @param authnRequest the authn request
-     * @return the pair
-     */
-    protected Pair<AuthnRequest, MessageContext> buildAuthenticationContextPair(final HttpServletRequest request,
-                                                                                final HttpServletResponse response,
-                                                                                final AuthnRequest authnRequest) {
-        val messageContext = bindRelayStateParameter(request, response);
-        return Pair.of(authnRequest, messageContext);
     }
 
     /**
@@ -108,32 +66,15 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         }
     }
 
-    /**
-     * Determine profile binding.
-     *
-     * @param authenticationContext the authentication context
-     * @param assertion             the assertion
-     * @return the string
-     */
-    protected String determineProfileBinding(final Pair<AuthnRequest, MessageContext> authenticationContext,
-                                             final Assertion assertion) {
-
-        val authnRequest = authenticationContext.getKey();
-        val pair = getRegisteredServiceAndFacade(authnRequest);
-        val facade = pair.getValue();
-
-        val binding = StringUtils.defaultIfBlank(authnRequest.getProtocolBinding(), SAMLConstants.SAML2_POST_BINDING_URI);
-        LOGGER.debug("Determined authentication request binding is [{}], issued by [{}]",
-            binding, authnRequest.getIssuer().getValue());
-
-        val entityId = facade.getEntityId();
-        LOGGER.debug("Checking metadata for [{}] to see if binding [{}] is supported", entityId, binding);
-        val svc = facade.getAssertionConsumerService(binding);
-        if (svc != null) {
-            LOGGER.debug("Binding [{}] is supported by [{}]", svc.getBinding(), entityId);
-            return binding;
-        }
-        LOGGER.warn("Checking determine profile binding for [{}]", entityId);
-        return null;
+    private Assertion validateRequestAndBuildCasAssertion(final HttpServletResponse response,
+                                                          final HttpServletRequest request,
+                                                          final Pair<AuthnRequest, MessageContext> pair) throws Exception {
+        val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
+        val validator = getConfigurationContext().getTicketValidator();
+        val serviceUrl = constructServiceUrl(request, response, pair);
+        LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
+        val assertion = validator.validate(ticket, serviceUrl);
+        logCasValidationAssertion(assertion);
+        return assertion;
     }
 }

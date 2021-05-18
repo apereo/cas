@@ -47,6 +47,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.http.HttpClient;
@@ -93,7 +94,11 @@ import java.util.List;
 public class SamlIdPEndpointsConfiguration {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-    
+
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
+
     @Autowired
     @Qualifier("singleLogoutServiceLogoutUrlBuilder")
     private ObjectProvider<SingleLogoutServiceLogoutUrlBuilder> singleLogoutServiceLogoutUrlBuilder;
@@ -461,6 +466,7 @@ public class SamlIdPEndpointsConfiguration {
             .responseBuilder(samlProfileSamlResponseBuilder.getObject())
             .ticketValidator(samlIdPTicketValidator())
             .ticketRegistry(ticketRegistry.getObject())
+            .ticketRegistrySupport(ticketRegistrySupport.getObject())
             .sessionStore(samlIdPDistributedSessionStore())
             .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getObject())
             .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory.getObject())

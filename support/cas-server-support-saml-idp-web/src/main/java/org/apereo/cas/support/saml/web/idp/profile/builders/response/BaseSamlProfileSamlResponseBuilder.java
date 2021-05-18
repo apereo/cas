@@ -17,6 +17,7 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.ScratchContext;
 import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
@@ -98,7 +99,9 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
         if (encodeResponse) {
             val context = new JEEContext(request, response);
             val relayState = samlResponseBuilderConfigurationContext.getSessionStore()
-                .get(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE).orElse(StringUtils.EMPTY).toString();
+                .get(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE)
+                .map(Object::toString)
+                .orElse(SAMLBindingSupport.getRelayState(messageContext));
             LOGGER.trace("RelayState is [{}]", relayState);
             return encode(service, finalResponse, response, request, adaptor, relayState, binding, authnRequest, assertion);
         }
