@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.sso;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
