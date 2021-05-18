@@ -169,18 +169,19 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                 .code(DEFAULT_MESSAGE_BUNDLE_PREFIX.concat(e.getClass().getSimpleName()))
                 .build());
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            return CollectionUtils.wrapSet(getAuthenticationFailureErrorEvent(context));
+            return CollectionUtils.wrapSet(getAuthenticationFailureErrorEvent(context, e));
         }
     }
 
     /**
      * Gets authentication failure error event.
      *
-     * @param context the context
+     * @param context   the context
+     * @param exception the exception
      * @return the authentication failure error event
      */
-    protected Event getAuthenticationFailureErrorEvent(final RequestContext context) {
-        return new EventFactorySupport().error(this);
+    protected Event getAuthenticationFailureErrorEvent(final RequestContext context, final Exception exception) {
+        return new EventFactorySupport().error(this, exception);
     }
 
 }
