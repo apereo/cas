@@ -9,9 +9,8 @@ import org.apereo.cas.support.saml.metadata.resolver.JpaSamlRegisteredServiceMet
 import org.apereo.cas.support.saml.metadata.resolver.MySQLJpaSamlRegisteredServiceMetadataResolverTests;
 import org.apereo.cas.support.saml.metadata.resolver.OracleJpaSamlRegisteredServiceMetadataResolverTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link JpaSamlTestsSuite}.
@@ -29,6 +28,6 @@ import org.junit.runner.RunWith;
     OracleJpaSamlIdPMetadataGeneratorTests.class,
     MicrosoftSQLServerJpaSamlIdPMetadataGeneratorTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class JpaSamlTestsSuite {
 }

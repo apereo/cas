@@ -7,9 +7,8 @@ import org.apereo.cas.configuration.support.CasFeatureModuleTests;
 import org.apereo.cas.configuration.support.JasyptEncryptionParametersTests;
 import org.apereo.cas.configuration.support.RelaxedPropertyNamesTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * The {@link AllTestsSuite} is responsible for
@@ -26,6 +25,6 @@ import org.junit.runner.RunWith;
     SyncopeAuthenticationPropertiesTests.class,
     RelaxedPropertyNamesTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

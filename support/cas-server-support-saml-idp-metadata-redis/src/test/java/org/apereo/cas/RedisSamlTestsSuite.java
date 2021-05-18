@@ -6,9 +6,8 @@ import org.apereo.cas.support.saml.idp.metadata.RedisSamlIdPMetadataGeneratorTes
 import org.apereo.cas.support.saml.idp.metadata.RedisSamlIdPMetadataLocatorTests;
 import org.apereo.cas.support.saml.metadata.resolver.RedisSamlRegisteredServiceMetadataResolverTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link RedisSamlTestsSuite}.
@@ -23,6 +22,6 @@ import org.junit.runner.RunWith;
     ConditionalOnExpressionPositiveTests.class,
     ConditionalOnExpressionNegativeTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class RedisSamlTestsSuite {
 }

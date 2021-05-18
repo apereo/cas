@@ -3,9 +3,8 @@ package org.apereo.cas.ws.idp;
 import org.apereo.cas.ws.idp.services.CustomNamespaceWSFederationClaimsReleasePolicyTests;
 import org.apereo.cas.ws.idp.services.WSFederationClaimsReleasePolicyTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * The {@link org.apereo.cas.AllTestsSuite} is responsible for
@@ -18,7 +17,7 @@ import org.junit.runner.RunWith;
     CustomNamespaceWSFederationClaimsReleasePolicyTests.class,
     WSFederationClaimsReleasePolicyTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }
 

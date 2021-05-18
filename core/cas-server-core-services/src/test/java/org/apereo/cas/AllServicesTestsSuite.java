@@ -58,9 +58,8 @@ import org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilterT
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializerTests;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllServicesTestsSuite}.
@@ -130,6 +129,6 @@ import org.junit.runner.RunWith;
     DomainServicesManagerConfigurationTests.class,
     RegisteredServiceJsonSerializerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllServicesTestsSuite {
 }

@@ -10,9 +10,8 @@ import org.apereo.cas.web.view.RestfulUrlTemplateResolverTests;
 import org.apereo.cas.web.view.ThemeClassLoaderTemplateResolverTests;
 import org.apereo.cas.web.view.ThemeFileTemplateResolverTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -31,6 +30,6 @@ import org.junit.runner.RunWith;
     RestfulUrlTemplateResolverTests.class,
     CasThymeleafConfigurationTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

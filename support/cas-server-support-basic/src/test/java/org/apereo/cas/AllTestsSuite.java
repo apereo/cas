@@ -4,9 +4,8 @@ import org.apereo.cas.web.flow.BasicAuthenticationActionTests;
 import org.apereo.cas.web.flow.BasicAuthenticationCasMultifactorWebflowCustomizerTests;
 import org.apereo.cas.web.flow.BasicAuthenticationWebflowConfigurerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -19,6 +18,6 @@ import org.junit.runner.RunWith;
     BasicAuthenticationCasMultifactorWebflowCustomizerTests.class,
     BasicAuthenticationActionTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

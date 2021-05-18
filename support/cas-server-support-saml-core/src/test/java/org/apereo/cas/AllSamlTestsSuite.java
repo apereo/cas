@@ -7,9 +7,8 @@ import org.apereo.cas.support.saml.util.NonInflatingSaml20ObjectBuilderTests;
 import org.apereo.cas.support.saml.util.credential.BasicResourceCredentialFactoryBeanTests;
 import org.apereo.cas.support.saml.util.credential.BasicX509CredentialFactoryBeanTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllSamlTestsSuite}.
@@ -25,6 +24,6 @@ import org.junit.runner.RunWith;
     BasicResourceCredentialFactoryBeanTests.class,
     BasicX509CredentialFactoryBeanTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllSamlTestsSuite {
 }

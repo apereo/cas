@@ -3,9 +3,8 @@ package org.apereo.cas;
 import org.apereo.cas.impl.token.JpaPasswordlessTokenRepositoryTests;
 import org.apereo.cas.impl.token.MySQLJpaPasswordlessTokenRepositoryTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -17,6 +16,6 @@ import org.junit.runner.RunWith;
     JpaPasswordlessTokenRepositoryTests.class,
     MySQLJpaPasswordlessTokenRepositoryTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

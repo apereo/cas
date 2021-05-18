@@ -6,9 +6,8 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationServiceTests;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityPingEndpointTests;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityUserAccountStatusEndpointTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link DuoSecurityAllTestsSuite}.
@@ -23,6 +22,6 @@ import org.junit.runner.RunWith;
     DuoSecurityAuthenticationHandlerTests.class,
     DuoSecurityUserAccountStatusEndpointTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class DuoSecurityAllTestsSuite {
 }

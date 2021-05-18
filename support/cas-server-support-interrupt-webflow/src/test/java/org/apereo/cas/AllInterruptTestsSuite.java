@@ -7,9 +7,8 @@ import org.apereo.cas.interrupt.webflow.actions.FinalizeInterruptFlowActionTests
 import org.apereo.cas.interrupt.webflow.actions.InquireInterruptActionTests;
 import org.apereo.cas.interrupt.webflow.actions.PrepareInterruptViewActionTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllInterruptTestsSuite}.
@@ -25,6 +24,6 @@ import org.junit.runner.RunWith;
     InterruptWebflowConfigurerTests.class,
     FinalizeInterruptFlowActionTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllInterruptTestsSuite {
 }

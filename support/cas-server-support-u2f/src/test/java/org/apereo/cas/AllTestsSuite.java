@@ -14,9 +14,8 @@ import org.apereo.cas.adaptors.u2f.web.flow.U2FMultifactorWebflowConfigurerTests
 import org.apereo.cas.adaptors.u2f.web.flow.U2FStartAuthenticationActionTests;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FStartRegistrationActionTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -38,6 +37,6 @@ import org.junit.runner.RunWith;
     U2FInMemoryDeviceRepositoryTests.class,
     U2FAuthenticationHandlerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

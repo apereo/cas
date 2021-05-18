@@ -11,9 +11,8 @@ import org.apereo.cas.web.security.authentication.EndpointLdapAuthenticationProv
 import org.apereo.cas.webflow.CasWebflowClientSessionContextConfigurationTests;
 import org.apereo.cas.webflow.CasWebflowServerSessionContextConfigurationTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllWebappTestsSuite}.
@@ -33,6 +32,6 @@ import org.junit.runner.RunWith;
     EndpointLdapAuthenticationProviderRolesBasedTests.class,
     EndpointLdapAuthenticationProviderGroupsBasedTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllWebappTestsSuite {
 }

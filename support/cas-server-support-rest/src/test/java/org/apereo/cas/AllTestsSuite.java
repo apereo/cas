@@ -7,9 +7,8 @@ import org.apereo.cas.support.rest.TicketGrantingTicketResourceTests;
 import org.apereo.cas.support.rest.TicketStatusResourceTests;
 import org.apereo.cas.support.rest.UserAuthenticationResourceTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -25,6 +24,6 @@ import org.junit.runner.RunWith;
     TicketStatusResourceTests.class,
     UserAuthenticationResourceTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

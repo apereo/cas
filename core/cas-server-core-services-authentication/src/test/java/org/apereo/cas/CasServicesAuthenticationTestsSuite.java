@@ -6,9 +6,9 @@ import org.apereo.cas.authentication.principal.DefaultServiceMatchingStrategyTes
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoderTests;
 import org.apereo.cas.authentication.support.ProtocolAttributeEncoderTests;
 import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutorTests;
-import org.junit.platform.runner.JUnitPlatform;
+
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link CasServicesAuthenticationTestsSuite}.
@@ -24,6 +24,6 @@ import org.junit.runner.RunWith;
     RegisteredServicePublicKeyCipherExecutorTests.class,
     WebApplicationServiceResponseBuilderTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class CasServicesAuthenticationTestsSuite {
 }

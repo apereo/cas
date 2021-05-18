@@ -2,9 +2,9 @@ package org.apereo.cas;
 
 import org.apereo.cas.ticket.registry.EhCache3TerracottaTicketRegistryTests;
 import org.apereo.cas.ticket.registry.EhCache3TicketRegistryTests;
-import org.junit.platform.runner.JUnitPlatform;
+
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 
 /**
@@ -17,6 +17,6 @@ import org.junit.runner.RunWith;
     EhCache3TicketRegistryTests.class,
     EhCache3TerracottaTicketRegistryTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

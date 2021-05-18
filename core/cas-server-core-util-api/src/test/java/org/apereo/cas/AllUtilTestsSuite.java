@@ -33,9 +33,8 @@ import org.apereo.cas.util.ssl.CompositeX509TrustManagerTests;
 import org.apereo.cas.util.transforms.GroovyPrincipalNameTransformerTests;
 import org.apereo.cas.util.transforms.RegexPrincipalNameTransformerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllUtilTestsSuite}.
@@ -77,6 +76,6 @@ import org.junit.runner.RunWith;
     RegexPrincipalNameTransformerTests.class,
     GroovyPrincipalNameTransformerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllUtilTestsSuite {
 }

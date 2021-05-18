@@ -9,9 +9,8 @@ import org.apereo.cas.gauth.token.MariaDbGoogleAuthenticatorJpaTokenRepositoryTe
 import org.apereo.cas.gauth.token.MySQLGoogleAuthenticatorJpaTokenRepositoryTests;
 import org.apereo.cas.gauth.token.OracleGoogleAuthenticatorJpaTokenRepositoryTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link GoogleAuthenticatorJpaTestsSuite}.
@@ -29,6 +28,6 @@ import org.junit.runner.RunWith;
     MySQLGoogleAuthenticatorJpaTokenRepositoryTests.class,
     OracleGoogleAuthenticatorJpaTokenRepositoryTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class GoogleAuthenticatorJpaTestsSuite {
 }

@@ -2,9 +2,8 @@ package org.apereo.cas.logging;
 
 import org.apereo.cas.logging.web.ThreadContextMDCServletFilterTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link CasLoggingTestsSuite}.
@@ -15,6 +14,6 @@ import org.junit.runner.RunWith;
 @SelectClasses(
     ThreadContextMDCServletFilterTests.class
 )
-@RunWith(JUnitPlatform.class)
+@Suite
 public class CasLoggingTestsSuite {
 }

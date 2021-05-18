@@ -3,9 +3,8 @@ package org.apereo.cas;
 import org.apereo.cas.consent.CouchDbConsentDecisionTests;
 import org.apereo.cas.consent.CouchDbConsentRepositoryTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -17,6 +16,6 @@ import org.junit.runner.RunWith;
     CouchDbConsentDecisionTests.class,
     CouchDbConsentRepositoryTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

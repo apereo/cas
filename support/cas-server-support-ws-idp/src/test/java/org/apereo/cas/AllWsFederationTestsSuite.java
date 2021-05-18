@@ -14,9 +14,8 @@ import org.apereo.cas.ws.idp.web.WSFederationValidateRequestControllerTests;
 import org.apereo.cas.ws.idp.web.flow.WSFederationIdentityProviderWebflowConfigurerTests;
 import org.apereo.cas.ws.idp.web.flow.WSFederationMetadataUIActionTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllWsFederationTestsSuite}.
@@ -39,6 +38,6 @@ import org.junit.runner.RunWith;
     WSFederationMetadataUIActionTests.class,
     DefaultSecurityTokenServiceTokenFetcherTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllWsFederationTestsSuite {
 }

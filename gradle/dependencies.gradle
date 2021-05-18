@@ -1497,6 +1497,8 @@ ext.libraries = [
                 },
                 dependencies.create("org.junit.platform:junit-platform-suite-api:$junitPlatformVersion") {
                 },
+                dependencies.create("org.junit.platform:junit-platform-suite-engine:$junitPlatformVersion") {
+                },
                 dependencies.create("org.junit.platform:junit-platform-launcher:$junitPlatformVersion") {
                 },
                 dependencies.create("org.junit.platform:junit-platform-runner:$junitPlatformVersion") {

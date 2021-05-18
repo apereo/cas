@@ -5,9 +5,8 @@ import org.apereo.cas.config.CasPersonDirectoryGrouperConfigurationTests;
 import org.apereo.cas.grouper.services.GrouperRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.web.flow.GrouperMultifactorAuthenticationPolicyEventResolverTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -20,6 +19,6 @@ import org.junit.runner.RunWith;
     CasPersonDirectoryGrouperConfigurationTests.class,
     GrouperRegisteredServiceAccessStrategyTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

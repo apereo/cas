@@ -7,9 +7,8 @@ import org.apereo.cas.adaptors.swivel.web.flow.SwivelMultifactorWebflowConfigure
 import org.apereo.cas.adaptors.swivel.web.flow.rest.SwivelTuringImageGeneratorControllerTests;
 import org.apereo.cas.config.SwivelAuthenticationMultifactorProviderBypassConfigurationTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllSwivelTestsSuite}.
@@ -25,6 +24,6 @@ import org.junit.runner.RunWith;
     SwivelTuringImageGeneratorControllerTests.class,
     SwivelMultifactorWebflowConfigurerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllSwivelTestsSuite {
 }

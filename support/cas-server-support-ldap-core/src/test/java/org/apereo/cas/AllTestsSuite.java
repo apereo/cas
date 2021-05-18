@@ -8,9 +8,8 @@ import org.apereo.cas.authentication.support.RejectResultCodeLdapPasswordPolicyH
 import org.apereo.cas.authorization.LdapUserAttributesToRolesAuthorizationGeneratorTests;
 import org.apereo.cas.authorization.LdapUserGroupsToRolesAuthorizationGeneratorTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -27,6 +26,6 @@ import org.junit.runner.RunWith;
     OptionalWarningLdapAccountStateHandlerTests.class,
     RejectResultCodeLdapPasswordPolicyHandlingStrategyTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

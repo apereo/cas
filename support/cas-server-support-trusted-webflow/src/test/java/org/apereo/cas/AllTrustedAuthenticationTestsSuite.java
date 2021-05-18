@@ -3,9 +3,8 @@ package org.apereo.cas;
 
 import org.apereo.cas.web.flow.TrustedAuthenticationWebflowConfigurerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTrustedAuthenticationTestsSuite}.
@@ -14,6 +13,6 @@ import org.junit.runner.RunWith;
  * @since 6.0.0-RC3
  */
 @SelectClasses(TrustedAuthenticationWebflowConfigurerTests.class)
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTrustedAuthenticationTestsSuite {
 }

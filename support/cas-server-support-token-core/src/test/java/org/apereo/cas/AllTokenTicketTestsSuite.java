@@ -7,9 +7,8 @@ import org.apereo.cas.token.JwtTokenTicketBuilderWithoutEncryptionTests;
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutorTests;
 import org.apereo.cas.token.cipher.RegisteredServiceJwtTicketCipherExecutorTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTokenTicketTestsSuite}.
@@ -25,6 +24,6 @@ import org.junit.runner.RunWith;
     JwtTokenTicketBuilderWithoutCryptoTests.class,
     JwtTokenTicketBuilderWithoutEncryptionTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTokenTicketTestsSuite {
 }

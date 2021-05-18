@@ -64,9 +64,8 @@ import org.apereo.cas.oidc.web.flow.OidcMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIActionTests;
 import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link OidcTestsSuite}.
@@ -139,6 +138,6 @@ import org.junit.runner.RunWith;
     OidcSingleLogoutMessageCreatorTests.class,
     OidcSingleLogoutServiceMessageHandlerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class OidcTestsSuite {
 }

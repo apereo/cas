@@ -6,9 +6,8 @@ import org.apereo.cas.support.pac4j.authentication.DefaultDelegatedClientFactory
 import org.apereo.cas.support.pac4j.authentication.RestfulDelegatedClientFactoryTests;
 import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationHandlerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -24,6 +23,6 @@ import org.junit.runner.RunWith;
     ClientAuthenticationMetaDataPopulatorTests.class,
     DefaultDelegatedClientFactoryTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

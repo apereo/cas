@@ -10,9 +10,8 @@ import org.apereo.cas.authentication.bypass.PrincipalMultifactorAuthenticationPr
 import org.apereo.cas.authentication.bypass.RegisteredServiceMultifactorAuthenticationProviderBypassEvaluatorTests;
 import org.apereo.cas.authentication.bypass.RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluatorTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -31,6 +30,6 @@ import org.junit.runner.RunWith;
     PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests.class,
     RegisteredServiceMultifactorAuthenticationProviderBypassEvaluatorTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

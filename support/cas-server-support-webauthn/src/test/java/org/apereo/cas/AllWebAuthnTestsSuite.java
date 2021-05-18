@@ -12,9 +12,8 @@ import org.apereo.cas.webauthn.web.flow.WebAuthnStartAuthenticationActionTests;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartRegistrationActionTests;
 import org.apereo.cas.webauthn.web.flow.WebAuthnValidateSessionCredentialTokenActionTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllWebAuthnTestsSuite}.
@@ -35,6 +34,6 @@ import org.junit.runner.RunWith;
     WebAuthnAuthenticationWebflowActionTests.class,
     WebAuthnStartRegistrationActionTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllWebAuthnTestsSuite {
 }

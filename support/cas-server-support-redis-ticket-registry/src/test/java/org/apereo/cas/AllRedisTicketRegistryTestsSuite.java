@@ -3,9 +3,8 @@ package org.apereo.cas;
 import org.apereo.cas.ticket.registry.RedisSentinelServerTicketRegistryTests;
 import org.apereo.cas.ticket.registry.RedisServerTicketRegistryTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllRedisTicketRegistryTestsSuite}.
@@ -17,6 +16,6 @@ import org.junit.runner.RunWith;
     RedisServerTicketRegistryTests.class,
     RedisSentinelServerTicketRegistryTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllRedisTicketRegistryTestsSuite {
 }

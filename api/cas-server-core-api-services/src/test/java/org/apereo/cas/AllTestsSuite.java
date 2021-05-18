@@ -11,9 +11,8 @@ import org.apereo.cas.services.ServiceRegistryListenerTests;
 import org.apereo.cas.services.ServiceRegistryTests;
 import org.apereo.cas.services.ServicesManagerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * The {@link AllTestsSuite} is responsible for
@@ -34,6 +33,6 @@ import org.junit.runner.RunWith;
     RegisteredServiceAccessStrategyTests.class,
     ServiceRegistryListenerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

@@ -8,9 +8,8 @@ import org.apereo.cas.web.flow.DisplayUserGraphicsBeforeAuthenticationActionTest
 import org.apereo.cas.web.flow.GraphicalUserAuthenticationWebflowConfigurerTests;
 import org.apereo.cas.web.flow.PrepareForGraphicalAuthenticationActionTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -26,6 +25,6 @@ import org.junit.runner.RunWith;
     GraphicalUserAuthenticationWebflowConfigurerTests.class,
     DisplayUserGraphicsBeforeAuthenticationActionTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

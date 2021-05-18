@@ -2,9 +2,8 @@ package org.apereo.cas;
 
 import org.apereo.cas.web.support.RedisThrottledSubmissionHandlerInterceptorAdapterTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link RedisThrottledAllTestsSuite}.
@@ -13,6 +12,6 @@ import org.junit.runner.RunWith;
  * @since 6.1.0
  */
 @SelectClasses(RedisThrottledSubmissionHandlerInterceptorAdapterTests.class)
-@RunWith(JUnitPlatform.class)
+@Suite
 public class RedisThrottledAllTestsSuite {
 }

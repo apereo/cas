@@ -7,9 +7,8 @@ import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationUniqueTicketI
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorSendTokenActionTests;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorWebflowConfigurerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllCasSimpleMultifactorTestsSuite}.
@@ -25,6 +24,6 @@ import org.junit.runner.RunWith;
     CasSimpleMultifactorAuthenticationTicketFactoryTests.class,
     CasSimpleMultifactorWebflowConfigurerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllCasSimpleMultifactorTestsSuite {
 }

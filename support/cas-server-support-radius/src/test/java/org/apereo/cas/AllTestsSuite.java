@@ -5,9 +5,8 @@ import org.apereo.cas.adaptors.radius.authentication.handler.support.RadiusAuthe
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAccessChallengedMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.config.RadiusConfigurationTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -20,6 +19,6 @@ import org.junit.runner.RunWith;
     RadiusAccessChallengedMultifactorAuthenticationTriggerTests.class,
     RadiusAuthenticationHandlerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

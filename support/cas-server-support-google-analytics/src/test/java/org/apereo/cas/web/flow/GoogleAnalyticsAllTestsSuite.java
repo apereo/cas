@@ -1,8 +1,7 @@
 package org.apereo.cas.web.flow;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link GoogleAnalyticsAllTestsSuite}.
@@ -16,6 +15,6 @@ import org.junit.runner.RunWith;
     RemoveGoogleAnalyticsCookieActionTests.class,
     CasGoogleAnalyticsWebflowConfigurerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class GoogleAnalyticsAllTestsSuite {
 }
