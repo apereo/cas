@@ -10,6 +10,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -44,17 +46,17 @@ import static org.mockito.Mockito.*;
         "cas.authn.mfa.authy.api-url=http://localhost:8080/authy"
     })
 public class AuthyAuthenticationWebflowEventResolverTests {
+    private final RequestContext context = mock(RequestContext.class);
+
     @Autowired
     @Qualifier("authyAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver resolver;
 
-    @Test
-    public void verifyOperation() {
-
+    @BeforeEach
+    public void beforeAll() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
-        val context = mock(RequestContext.class);
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
@@ -65,8 +67,11 @@ public class AuthyAuthenticationWebflowEventResolverTests {
 
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
-
         WebUtils.putCredential(context, new AuthyTokenCredential("token"));
+    }
+
+    @Test
+    public void verifyOperation() {
         val authn = RegisteredServiceTestUtils.getAuthentication("casuser");
         val builder = mock(AuthenticationResultBuilder.class);
         when(builder.getInitialAuthentication()).thenReturn(Optional.of(authn));
@@ -74,9 +79,11 @@ public class AuthyAuthenticationWebflowEventResolverTests {
 
         WebUtils.putAuthenticationResultBuilder(builder, context);
         WebUtils.putAuthentication(authn, context);
-        
+
         val event = resolver.resolveSingle(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
+        val support = new EventFactorySupport();
+        assertTrue(event.getAttributes().contains(support.getExceptionAttributeName()));
     }
 
 }

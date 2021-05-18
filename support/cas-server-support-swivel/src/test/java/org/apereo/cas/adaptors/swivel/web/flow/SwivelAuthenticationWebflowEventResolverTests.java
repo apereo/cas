@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -75,6 +76,9 @@ public class SwivelAuthenticationWebflowEventResolverTests {
         WebUtils.putAuthenticationResultBuilder(builder, context);
         WebUtils.putAuthentication(authn, context);
         WebUtils.putCredential(context, new SwivelTokenCredential("token"));
-        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, resolver.resolveSingle(context).getId());
+        val event = resolver.resolveSingle(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
+        val support = new EventFactorySupport();
+        assertTrue(event.getAttributes().contains(support.getExceptionAttributeName()));
     }
 }
