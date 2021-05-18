@@ -82,7 +82,7 @@ public class CasDocumentationApplication {
             .sorted()
             .forEach(file -> {
                 var map = new LinkedHashMap<String, Object>();
-                val path = StringUtils.remove(file.getAbsolutePath(), root.getAbsolutePath());
+                var path = StringUtils.remove(file.getAbsolutePath(), root.getAbsolutePath());
                 map.put("name", path);
                 properties.add(map);
             });
