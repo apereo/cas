@@ -166,7 +166,7 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
      * @param flow the flow
      */
     protected void createStateGetUserIdentifier(final Flow flow) {
-        val viewState = createViewState(flow, STATE_ID_PASSWORDLESS_GET_USERID, "casPasswordlessGetUserIdView");
+        val viewState = createViewState(flow, STATE_ID_PASSWORDLESS_GET_USERID, "passwordless/casPasswordlessGetUserIdView");
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT);
     }
 }
