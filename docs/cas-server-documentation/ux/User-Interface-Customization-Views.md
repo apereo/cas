@@ -13,7 +13,11 @@ templates folder. Add any views that require customization to the `src/main/reso
 Any files found in that module can be overridden by putting them in the same location under
 `src/main/resources` in the CAS overlay project. The Gradle build script for the overlay has tasks that help get resources 
 from the CAS web application to the correct location in the CAS overlay. 
-  
+
+## Templates
+
+{% include userinterface-templates.html  %}
+
 ## Configuration
 
 {% include casproperties.html properties="cas.view.template-" %}
