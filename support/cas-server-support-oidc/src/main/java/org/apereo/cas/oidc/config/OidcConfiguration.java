@@ -436,7 +436,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @Bean
     @RefreshScope
-    @ConditionalOnMissingBean(name = "oidcAttributeToScopeClaimMapper")
+    @ConditionalOnMissingBean(name = OidcAttributeToScopeClaimMapper.DEFAULT_BEAN_NAME)
     public OidcAttributeToScopeClaimMapper oidcAttributeToScopeClaimMapper() {
         val mappings = casProperties.getAuthn().getOidc().getCore().getClaimsMap();
         return new OidcDefaultAttributeToScopeClaimMapper(mappings);
