@@ -253,7 +253,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
             : sloService.getResponseLocation();
         LOGGER.trace("Creating logout response for binding [{}] with issuer [{}], location [{}] and service provider [{}]",
             sloService.getBinding(), issuer, location, adaptor.getEntityId());
-        val logoutResponse = builder.newLogoutResponse(id, location, issuer, status, adaptor.getEntityId());
+        val logoutResponse = builder.newLogoutResponse(id, location, issuer, status, logoutRequest.getID());
 
         if (configurationContext.getCasProperties().getAuthn().getSamlIdp().getLogout().isSignLogoutResponse()) {
             LOGGER.trace("Signing logout request for service provider [{}]", adaptor.getEntityId());
