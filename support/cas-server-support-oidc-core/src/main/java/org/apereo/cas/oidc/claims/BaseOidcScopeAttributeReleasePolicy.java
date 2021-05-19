@@ -106,6 +106,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
 
     @Override
     public List<String> determineRequestedAttributeDefinitions() {
-        return getAllowedAttributes();
+        val attributes = getAllowedAttributes();
+        return attributes != null ? attributes : new ArrayList<>();
     }
 }
