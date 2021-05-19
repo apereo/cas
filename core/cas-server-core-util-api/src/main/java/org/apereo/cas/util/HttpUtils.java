@@ -28,6 +28,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -176,7 +177,7 @@ public class HttpUtils {
         if ("post".equalsIgnoreCase(method)) {
             val request = new HttpPost(uri);
             if (StringUtils.isNotBlank(entity)) {
-                val stringEntity = new StringEntity(entity);
+                val stringEntity = new StringEntity(entity, StandardCharsets.UTF_8);
                 request.setEntity(stringEntity);
             }
             return request;
