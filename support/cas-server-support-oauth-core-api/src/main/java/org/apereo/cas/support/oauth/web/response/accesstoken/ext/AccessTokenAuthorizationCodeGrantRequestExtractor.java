@@ -177,7 +177,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * @return the registered service
      */
     protected OAuthRegisteredService getOAuthRegisteredServiceBy(final JEEContext context) {
-        val clientId = OAuth20Utils.getClientIdAndClientSecret(context).getLeft();
+        val clientId = OAuth20Utils.getClientIdAndClientSecret(context, getOAuthConfigurationContext().getSessionStore()).getLeft();
         val redirectUri = getRegisteredServiceIdentifierFromRequest(context);
         val registeredService = StringUtils.isNotBlank(clientId)
                 ? OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId)
