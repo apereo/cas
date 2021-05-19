@@ -104,6 +104,6 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
 
     @Override
     public List<String> getRequestedDefinitions() {
-        return allowedAttributes;
+        return allowedAttributes != null ? allowedAttributes : new ArrayList<>();
     }
 }
