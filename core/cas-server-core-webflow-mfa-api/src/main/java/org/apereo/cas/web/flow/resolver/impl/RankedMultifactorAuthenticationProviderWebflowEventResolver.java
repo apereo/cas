@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -83,7 +84,10 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         WebUtils.putAuthenticationResultBuilder(builder, context);
         WebUtils.putAuthentication(authentication, context);
 
-        if (this.renewalStrategy.supports(context) && !renewalStrategy.isParticipating(context)) {
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .requestContext(context)
+            .build();
+        if (renewalStrategy.supports(ssoRequest) && !renewalStrategy.isParticipating(ssoRequest)) {
             LOGGER.debug("Cannot proceed with existing authenticated session for [{}] since the single sign-on participation "
                 + "strategy for this request could now allow participation in the current session.", authentication);
             return resumeFlow();

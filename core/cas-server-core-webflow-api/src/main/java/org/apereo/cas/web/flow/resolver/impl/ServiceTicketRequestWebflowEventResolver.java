@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.SneakyThrows;
@@ -45,7 +46,12 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
         if (authentication != null) {
             val configContext = getWebflowEventResolutionConfigurationContext();
             val ssoStrategy = configContext.getSingleSignOnParticipationStrategy();
-            if (ssoStrategy.supports(requestContext) && !ssoStrategy.isParticipating(requestContext)) {
+
+            val ssoRequest = SingleSignOnParticipationRequest.builder()
+                .requestContext(requestContext)
+                .build();
+
+            if (ssoStrategy.supports(ssoRequest) && !ssoStrategy.isParticipating(ssoRequest)) {
                 LOGGER.debug("Single sign-on strategy does not allow reusing the authentication attempt [{}]", authentication);
                 return false;
             }

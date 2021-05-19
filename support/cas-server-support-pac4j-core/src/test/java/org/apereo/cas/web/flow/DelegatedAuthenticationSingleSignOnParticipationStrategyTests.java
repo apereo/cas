@@ -63,17 +63,22 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
         val ticketRegistry = new DefaultTicketRegistry();
         
         val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
-        assertFalse(strategy.supports(context));
-        assertTrue(strategy.isParticipating(context));
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(request)
+            .requestContext(context)
+            .build();
+
+        assertFalse(strategy.supports(ssoRequest));
+        assertTrue(strategy.isParticipating(ssoRequest));
 
         WebUtils.putRegisteredService(context, svc);
         assertEquals(0, strategy.getOrder());
-        assertTrue(strategy.supports(context));
-        assertTrue(strategy.isParticipating(context));
+        assertTrue(strategy.supports(ssoRequest));
+        assertTrue(strategy.isParticipating(ssoRequest));
 
         policy.setDelegatedAuthenticationPolicy(null);
-        assertFalse(strategy.supports(context));
-        assertTrue(strategy.isParticipating(context));
+        assertFalse(strategy.supports(ssoRequest));
+        assertTrue(strategy.isParticipating(ssoRequest));
     }
 
     @Test
@@ -103,8 +108,13 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
         val tgt = new MockTicketGrantingTicket(authentication);
         ticketRegistry.addTicket(tgt);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        assertTrue(strategy.supports(context));
-        assertFalse(strategy.isParticipating(context));
+
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(request)
+            .requestContext(context)
+            .build();
+        assertTrue(strategy.supports(ssoRequest));
+        assertFalse(strategy.isParticipating(ssoRequest));
     }
 
     @Test
@@ -135,8 +145,13 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
         val tgt = new MockTicketGrantingTicket(authentication);
         ticketRegistry.addTicket(tgt);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        assertTrue(strategy.supports(context));
-        assertFalse(strategy.isParticipating(context));
+
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(request)
+            .requestContext(context)
+            .build();
+        assertTrue(strategy.supports(ssoRequest));
+        assertFalse(strategy.isParticipating(ssoRequest));
     }
 
 

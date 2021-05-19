@@ -56,6 +56,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.ProtocolEndpointConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -100,7 +101,11 @@ public class SamlIdPEndpointsConfiguration {
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
-    
+
+    @Autowired
+    @Qualifier("singleSignOnParticipationStrategy")
+    private ObjectProvider<SingleSignOnParticipationStrategy> singleSignOnParticipationStrategy;
+
     @Autowired
     @Qualifier("webflowCipherExecutor")
     private ObjectProvider<CipherExecutor> webflowCipherExecutor;
@@ -481,6 +486,7 @@ public class SamlIdPEndpointsConfiguration {
             .openSamlConfigBean(openSamlConfigBean.getObject())
             .casProperties(casProperties)
             .ticketRegistrySupport(ticketRegistrySupport.getObject())
+            .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy.getObject())
             .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder())
             .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder.getObject())
             .artifactTicketFactory(samlArtifactTicketFactory.getObject())

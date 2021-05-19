@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This is {@link DelegatedAuthenticationSingleSignOnParticipationStrategy}.
@@ -31,8 +30,8 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategy implements
     private final TicketRegistrySupport ticketRegistrySupport;
 
     @Override
-    public boolean isParticipating(final RequestContext requestContext) {
-        val registeredService = determineRegisteredService(requestContext);
+    public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) {
+        val registeredService = determineRegisteredService(ssoRequest);
         if (registeredService == null) {
             return true;
         }
@@ -41,6 +40,7 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategy implements
             return true;
         }
 
+        val requestContext = ssoRequest.getRequestContext().orElseThrow();
         val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(requestContext);
         if (StringUtils.isBlank(ticketGrantingTicketId)) {
             return true;
@@ -69,8 +69,8 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategy implements
     }
 
     @Override
-    public boolean supports(final RequestContext requestContext) {
-        val registeredService = determineRegisteredService(requestContext);
+    public boolean supports(final SingleSignOnParticipationRequest ssoRequest) {
+        val registeredService = determineRegisteredService(ssoRequest);
         if (registeredService == null) {
             return false;
         }
@@ -86,16 +86,15 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategy implements
         return 0;
     }
 
-    private RegisteredService determineRegisteredService(final RequestContext requestContext) {
-        val registeredService = WebUtils.getRegisteredService(requestContext);
-        if (registeredService != null) {
-            return registeredService;
-        }
-        val service = WebUtils.getService(requestContext);
-        val serviceToUse = serviceSelectionStrategy.resolveService(service);
-        if (serviceToUse != null) {
-            return this.servicesManager.findServiceBy(serviceToUse);
-        }
-        return null;
+    /**
+     * Determine registered service.
+     *
+     * @param ssoRequest the sso request
+     * @return the registered service
+     */
+    protected RegisteredService determineRegisteredService(final SingleSignOnParticipationRequest ssoRequest) {
+        return ssoRequest.getRequestContext()
+            .map(requestContext -> WebUtils.resolveRegisteredService(requestContext, servicesManager, serviceSelectionStrategy))
+            .orElse(null);
     }
 }

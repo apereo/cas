@@ -16,7 +16,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.Ordered;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This is {@link DefaultSingleSignOnParticipationStrategy}.
@@ -40,14 +39,15 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
-    public boolean isParticipating(final RequestContext requestContext) {
+    public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) {
+        val requestContext = ssoRequest.getRequestContext().orElseThrow();
         if (properties.isRenewAuthnEnabled() && requestContext.getRequestParameters().contains(CasProtocolConstants.PARAMETER_RENEW)) {
-            LOGGER.debug("[{}] is specified for the request. The authentication session will be considered renewed.",
+            LOGGER.debug("[{}] is specified for the request. The authentication session is considered renewed.",
                 CasProtocolConstants.PARAMETER_RENEW);
             return false;
         }
 
-        val registeredService = determineRegisteredService(requestContext);
+        val registeredService = determineRegisteredService(ssoRequest);
         if (registeredService == null) {
             return properties.isSsoEnabled();
         }
@@ -80,7 +80,7 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
                 val ticketState = ticketRegistrySupport.getTicketState(tgtId);
                 return tgtPolicy.toExpirationPolicy().map(policy -> !policy.isExpired(ticketState)).orElse(Boolean.TRUE);
             }
-            
+
         } finally {
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(ca);
         }
@@ -88,7 +88,7 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
     }
 
     @Override
-    public TriStateBoolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
+    public TriStateBoolean isCreateCookieOnRenewedAuthentication(final SingleSignOnParticipationRequest context) {
         val registeredService = determineRegisteredService(context);
         if (registeredService != null) {
             val ssoPolicy = registeredService.getSingleSignOnParticipationPolicy();
@@ -99,16 +99,15 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
         return TriStateBoolean.fromBoolean(properties.isCreateSsoCookieOnRenewAuthn());
     }
 
-    private RegisteredService determineRegisteredService(final RequestContext requestContext) {
-        val registeredService = WebUtils.getRegisteredService(requestContext);
-        if (registeredService != null) {
-            return registeredService;
-        }
-        val service = WebUtils.getService(requestContext);
-        val serviceToUse = serviceSelectionStrategy.resolveService(service);
-        if (serviceToUse != null) {
-            return this.servicesManager.findServiceBy(serviceToUse);
-        }
-        return null;
+    /**
+     * Determine registered service.
+     *
+     * @param ssoRequest the sso request
+     * @return the registered service
+     */
+    protected RegisteredService determineRegisteredService(final SingleSignOnParticipationRequest ssoRequest) {
+        return ssoRequest.getRequestContext()
+            .map(requestContext -> WebUtils.resolveRegisteredService(requestContext, servicesManager, serviceSelectionStrategy))
+            .orElse(null);
     }
 }
