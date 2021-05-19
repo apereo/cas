@@ -93,4 +93,16 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests extends BaseOAuth20Au
         request.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
         assertTrue(authenticator.canAuthenticate(ctx));
     }
+
+    @Test
+    public void verifyAuthenticationWithAttributesMapping() {
+        val credentials = new UsernamePasswordCredentials("serviceWithAttributesMapping", "secret");
+        val request = new MockHttpServletRequest();
+        val ctx = new JEEContext(request, new MockHttpServletResponse());
+        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        assertNotNull(credentials.getUserProfile());
+        assertEquals("servicewithattributesmapping", credentials.getUserProfile().getId());
+        assertNotNull(credentials.getUserProfile().getAttribute("eduPersonAffiliation"));
+        assertNull(credentials.getUserProfile().getAttribute("groupMembership"));
+    }
 }
