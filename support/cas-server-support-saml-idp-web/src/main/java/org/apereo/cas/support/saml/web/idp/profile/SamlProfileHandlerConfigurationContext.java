@@ -19,6 +19,7 @@ import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -85,4 +86,6 @@ public class SamlProfileHandlerConfigurationContext {
     private final SessionStore sessionStore;
 
     private final TicketRegistrySupport ticketRegistrySupport;
+
+    private final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
 }

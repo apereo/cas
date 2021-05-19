@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.login;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
@@ -43,11 +44,14 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
             return success();
         }
 
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .requestContext(context)
+            .build();
         if (WebUtils.isAuthenticatingAtPublicWorkstation(context)) {
-            LOGGER.info("Authentication is at a public workstation. SSO cookie will not be generated. Requests will be challenged for authentication.");
-        } else if (this.singleSignOnParticipationStrategy.supports(context)) {
-            val createCookie = singleSignOnParticipationStrategy.isCreateCookieOnRenewedAuthentication(context) == TriStateBoolean.TRUE
-                || this.singleSignOnParticipationStrategy.isParticipating(context);
+            LOGGER.info("Authentication is at a public workstation. SSO cookie will not be generated");
+        } else if (this.singleSignOnParticipationStrategy.supports(ssoRequest)) {
+            val createCookie = singleSignOnParticipationStrategy.isCreateCookieOnRenewedAuthentication(ssoRequest) == TriStateBoolean.TRUE
+                || this.singleSignOnParticipationStrategy.isParticipating(ssoRequest);
             if (createCookie) {
                 LOGGER.debug("Setting ticket-granting cookie for current session linked to [{}].", ticketGrantingTicketId);
                 val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);

@@ -4,7 +4,6 @@ import org.apereo.cas.util.model.TriStateBoolean;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.webflow.execution.RequestContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +38,7 @@ public class ChainingSingleSignOnParticipationStrategy implements SingleSignOnPa
     }
 
     @Override
-    public boolean isParticipating(final RequestContext context) {
+    public boolean isParticipating(final SingleSignOnParticipationRequest context) {
         val supporters = getSupportingSingleSignOnParticipationStrategies(context);
         if (supporters.isEmpty()) {
             return SingleSignOnParticipationStrategy.alwaysParticipating().isParticipating(context);
@@ -48,12 +47,12 @@ public class ChainingSingleSignOnParticipationStrategy implements SingleSignOnPa
     }
 
     @Override
-    public boolean supports(final RequestContext context) {
+    public boolean supports(final SingleSignOnParticipationRequest context) {
         return providers.stream().anyMatch(p -> p.supports(context));
     }
 
     @Override
-    public TriStateBoolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
+    public TriStateBoolean isCreateCookieOnRenewedAuthentication(final SingleSignOnParticipationRequest context) {
         val supporters = getSupportingSingleSignOnParticipationStrategies(context);
         val result = supporters.stream().allMatch(p -> {
             val createCookieOnRenewedAuthentication = p.isCreateCookieOnRenewedAuthentication(context);
@@ -62,7 +61,8 @@ public class ChainingSingleSignOnParticipationStrategy implements SingleSignOnPa
         return TriStateBoolean.fromBoolean(result);
     }
 
-    private List<SingleSignOnParticipationStrategy> getSupportingSingleSignOnParticipationStrategies(final RequestContext context) {
+    private List<SingleSignOnParticipationStrategy> getSupportingSingleSignOnParticipationStrategies(
+        final SingleSignOnParticipationRequest context) {
         return providers.stream()
             .filter(p -> p.supports(context))
             .collect(Collectors.toList());

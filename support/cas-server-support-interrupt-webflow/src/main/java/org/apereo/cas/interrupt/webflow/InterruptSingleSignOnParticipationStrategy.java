@@ -1,10 +1,11 @@
 package org.apereo.cas.interrupt.webflow;
 
+import org.apereo.cas.interrupt.InterruptResponse;
 import org.apereo.cas.util.model.TriStateBoolean;
+import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 
-import lombok.val;
-import org.springframework.webflow.execution.RequestContext;
+import java.util.Objects;
 
 /**
  * This is {@link InterruptSingleSignOnParticipationStrategy}.
@@ -15,19 +16,22 @@ import org.springframework.webflow.execution.RequestContext;
 public class InterruptSingleSignOnParticipationStrategy implements SingleSignOnParticipationStrategy {
 
     @Override
-    public boolean supports(final RequestContext context) {
-        val response = InterruptUtils.getInterruptFrom(context);
-        return response != null;
+    public boolean supports(final SingleSignOnParticipationRequest context) {
+        return context.getRequestContext().stream()
+            .map(InterruptUtils::getInterruptFrom)
+            .anyMatch(Objects::nonNull);
     }
 
     @Override
-    public boolean isParticipating(final RequestContext ctx) {
-        val response = InterruptUtils.getInterruptFrom(ctx);
-        return response != null && response.isSsoEnabled();
+    public boolean isParticipating(final SingleSignOnParticipationRequest context) {
+        return context.getRequestContext().stream()
+            .map(InterruptUtils::getInterruptFrom)
+            .filter(Objects::nonNull)
+            .allMatch(InterruptResponse::isSsoEnabled);
     }
 
     @Override
-    public TriStateBoolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
+    public TriStateBoolean isCreateCookieOnRenewedAuthentication(final SingleSignOnParticipationRequest context) {
         return TriStateBoolean.FALSE;
     }
 }

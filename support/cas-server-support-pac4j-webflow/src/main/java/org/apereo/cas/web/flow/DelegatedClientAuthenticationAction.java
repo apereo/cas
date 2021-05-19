@@ -340,7 +340,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 .isDelegatedClientAuthorizedForAuthentication(authn, resolvedService))
             .orElse(Boolean.FALSE);
         val strategy = configContext.getSingleSignOnParticipationStrategy();
-        return authorized && strategy.supports(requestContext) && strategy.isParticipating(requestContext);
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .requestContext(requestContext)
+            .build();
+        return authorized && strategy.supports(ssoRequest) && strategy.isParticipating(ssoRequest);
     }
 
     /**
@@ -360,9 +363,11 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 LOGGER.trace("Recording and tracking initial authentication results in the request context");
                 WebUtils.putAuthenticationResultBuilder(builder, requestContext);
                 WebUtils.putAuthentication(authentication, requestContext);
-
                 val strategy = configContext.getSingleSignOnParticipationStrategy();
-                return strategy.supports(requestContext) && strategy.isParticipating(requestContext);
+                val ssoRequest = SingleSignOnParticipationRequest.builder()
+                    .requestContext(requestContext)
+                    .build();
+                return strategy.supports(ssoRequest) && strategy.isParticipating(ssoRequest);
             }
         } catch (final AbstractTicketException e) {
             LOGGER.trace("Could not retrieve ticket id [{}] from registry.", e.getMessage());

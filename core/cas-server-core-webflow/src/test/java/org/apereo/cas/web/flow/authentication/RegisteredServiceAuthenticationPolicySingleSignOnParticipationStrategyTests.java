@@ -16,6 +16,7 @@ import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -58,14 +59,19 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
         when(svc.getAuthenticationPolicy()).thenReturn(policy);
         val ticketRegistry = new DefaultTicketRegistry();
         val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
-        assertTrue(strategy.isParticipating(context));
+
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(request)
+            .requestContext(context)
+            .build();
+        assertTrue(strategy.isParticipating(ssoRequest));
         
         WebUtils.putRegisteredService(context, svc);
         assertEquals(0, strategy.getOrder());
-        assertFalse(strategy.supports(context));
+        assertFalse(strategy.supports(ssoRequest));
 
         when(svc.getAuthenticationPolicy()).thenReturn(null);
-        assertTrue(strategy.isParticipating(context));
+        assertTrue(strategy.isParticipating(ssoRequest));
     }
 
     @Test
@@ -79,9 +85,13 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
         val ticketRegistry = new DefaultTicketRegistry();
         val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
 
-        assertFalse(strategy.supports(context));
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(request)
+            .requestContext(context)
+            .build();
+        assertFalse(strategy.supports(ssoRequest));
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService("serviceid1"));
-        assertFalse(strategy.supports(context));
+        assertFalse(strategy.supports(ssoRequest));
     }
 
     @Test
@@ -108,8 +118,13 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        assertTrue(strategy.supports(context));
-        assertFalse(strategy.isParticipating(context));
+
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(request)
+            .requestContext(context)
+            .build();
+        assertTrue(strategy.supports(ssoRequest));
+        assertFalse(strategy.isParticipating(ssoRequest));
     }
 
     @Test
@@ -136,8 +151,13 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        assertTrue(strategy.supports(context));
-        assertTrue(strategy.isParticipating(context));
+
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(request)
+            .requestContext(context)
+            .build();
+        assertTrue(strategy.supports(ssoRequest));
+        assertTrue(strategy.isParticipating(ssoRequest));
     }
 
     @Test
@@ -165,8 +185,13 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        assertTrue(strategy.supports(context));
-        assertFalse(strategy.isParticipating(context));
+
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(request)
+            .requestContext(context)
+            .build();
+        assertTrue(strategy.supports(ssoRequest));
+        assertFalse(strategy.isParticipating(ssoRequest));
     }
 
     private static SingleSignOnParticipationStrategy getSingleSignOnStrategy(final RegisteredService svc,
