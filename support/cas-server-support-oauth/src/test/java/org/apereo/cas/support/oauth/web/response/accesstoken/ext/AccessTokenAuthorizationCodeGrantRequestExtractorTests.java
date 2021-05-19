@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.InvalidTicketException;
 
@@ -42,6 +43,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
 
         val response = new MockHttpServletResponse();
         val extractor = new AccessTokenAuthorizationCodeGrantRequestExtractor(oauth20ConfigurationContext);
+        assertEquals(extractor.getResponseType(), OAuth20ResponseTypes.NONE);
         assertThrows(InvalidTicketException.class, () -> extractor.extract(request, response));
     }
 
