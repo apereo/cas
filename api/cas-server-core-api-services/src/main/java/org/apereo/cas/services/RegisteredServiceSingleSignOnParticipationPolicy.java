@@ -48,7 +48,7 @@ public interface RegisteredServiceSingleSignOnParticipationPolicy extends Serial
      *
      * @return true/false
      */
-    default TriStateBoolean isCreateCookieOnRenewedAuthentication() {
+    default TriStateBoolean getCreateCookieOnRenewedAuthentication() {
         return TriStateBoolean.UNDEFINED;
     }
 }

@@ -124,6 +124,34 @@ public class DefaultSingleSignOnParticipationStrategyTests {
     }
 
     @Test
+    public void verifyCookieCreationByService() {
+        val mgr = mock(ServicesManager.class);
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        val policy = new DefaultRegisteredServiceSingleSignOnParticipationPolicy();
+        policy.setCreateCookieOnRenewedAuthentication(TriStateBoolean.FALSE);
+        when(registeredService.getSingleSignOnParticipationPolicy()).thenReturn(policy);
+        when(mgr.findServiceBy(any(Service.class))).thenReturn(registeredService);
+
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
+        val plan = new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy());
+        val sso = new SingleSignOnProperties().setCreateSsoCookieOnRenewAuthn(false).setRenewAuthnEnabled(true);
+        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, sso, mock(TicketRegistrySupport.class), plan);
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("casuser"), context);
+
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(request)
+            .requestContext(context)
+            .build();
+        val create = strategy.isCreateCookieOnRenewedAuthentication(ssoRequest);
+        assertTrue(create.isFalse());
+    }
+
+    @Test
     public void verifyRegisteredServiceFromContextEvaluatedBeforeService() {
         val mgr = mock(ServicesManager.class);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();

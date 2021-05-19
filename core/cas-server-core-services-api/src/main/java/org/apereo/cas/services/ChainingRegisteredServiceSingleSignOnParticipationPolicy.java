@@ -66,7 +66,7 @@ public class ChainingRegisteredServiceSingleSignOnParticipationPolicy implements
 
     @JsonIgnore
     @Override
-    public TriStateBoolean isCreateCookieOnRenewedAuthentication() {
+    public TriStateBoolean getCreateCookieOnRenewedAuthentication() {
         return TriStateBoolean.UNDEFINED;
     }
 

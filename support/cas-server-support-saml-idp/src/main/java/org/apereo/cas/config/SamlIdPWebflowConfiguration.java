@@ -9,8 +9,12 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.flow.SamlIdPMetadataUIAction;
 import org.apereo.cas.support.saml.web.flow.SamlIdPWebflowConfigurer;
 import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlIdPAttributeDefinition;
+import org.apereo.cas.support.saml.web.idp.web.SamlIdPSingleSignOnParticipationStrategy;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
 import org.apereo.cas.web.flow.login.SessionStoreTicketGrantingTicketAction;
 
 import lombok.val;
@@ -59,6 +63,10 @@ public class SamlIdPWebflowConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
+
+    @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> selectionStrategies;
 
@@ -105,6 +113,23 @@ public class SamlIdPWebflowConfiguration {
     public CasWebflowExecutionPlanConfigurer samlIdPCasWebflowExecutionPlanConfigurer() {
         return plan -> plan.registerWebflowConfigurer(samlIdPWebConfigurer());
     }
+
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "samlIdPSingleSignOnParticipationStrategy")
+    public SingleSignOnParticipationStrategy samlIdPSingleSignOnParticipationStrategy() {
+        return new SamlIdPSingleSignOnParticipationStrategy(servicesManager.getObject(),
+            ticketRegistrySupport.getObject(), selectionStrategies.getObject());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "samlIdPSingleSignOnParticipationStrategyConfigurer")
+    @RefreshScope
+    public SingleSignOnParticipationStrategyConfigurer samlIdPSingleSignOnParticipationStrategyConfigurer() {
+        return chain -> chain.addStrategy(samlIdPSingleSignOnParticipationStrategy());
+    }
+
 
     @Configuration(value = "SamlIdPConsentWebflowConfiguration", proxyBeanMethods = false)
     @ConditionalOnClass(value = ConsentableAttributeBuilder.class)

@@ -46,6 +46,29 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Webflow")
 public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTests {
+    private static SingleSignOnParticipationStrategy getSingleSignOnStrategy(final RegisteredService svc,
+                                                                             final TicketRegistry ticketRegistry) {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(new InMemoryServiceRegistry(appCtx, List.of(svc), List.of()))
+            .applicationContext(appCtx)
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().build())
+            .build();
+        val servicesManager = new DefaultServicesManager(context);
+        servicesManager.load();
+
+        val authenticationExecutionPlan = new DefaultAuthenticationEventExecutionPlan();
+        authenticationExecutionPlan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler());
+
+        return new RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategy(servicesManager,
+            new DefaultTicketRegistrySupport(ticketRegistry),
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
+            authenticationExecutionPlan, appCtx);
+    }
+
     @Test
     public void verifyNoServiceOrPolicy() {
         val context = new MockRequestContext();
@@ -65,7 +88,7 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
             .requestContext(context)
             .build();
         assertTrue(strategy.isParticipating(ssoRequest));
-        
+
         WebUtils.putRegisteredService(context, svc);
         assertEquals(0, strategy.getOrder());
         assertFalse(strategy.supports(ssoRequest));
@@ -192,29 +215,5 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
             .build();
         assertTrue(strategy.supports(ssoRequest));
         assertFalse(strategy.isParticipating(ssoRequest));
-    }
-
-    private static SingleSignOnParticipationStrategy getSingleSignOnStrategy(final RegisteredService svc,
-        final TicketRegistry ticketRegistry) {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-
-        val context = ServicesManagerConfigurationContext.builder()
-            .serviceRegistry(new InMemoryServiceRegistry(appCtx, List.of(svc), List.of()))
-            .applicationContext(appCtx)
-            .environments(new HashSet<>(0))
-            .servicesCache(Caffeine.newBuilder().build())
-            .build();
-        val servicesManager = new DefaultServicesManager(context);
-        servicesManager.load();
-
-        val authenticationExecutionPlan = new DefaultAuthenticationEventExecutionPlan();
-        authenticationExecutionPlan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler());
-
-        val strategy = new RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategy(servicesManager,
-            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
-            new DefaultTicketRegistrySupport(ticketRegistry),
-            authenticationExecutionPlan, appCtx);
-        return strategy;
     }
 }

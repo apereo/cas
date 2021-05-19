@@ -24,7 +24,7 @@ public class OidcOpenIdScopeAttributeReleasePolicyTests extends AbstractOidcTest
         val policy = new OidcOpenIdScopeAttributeReleasePolicy();
         assertEquals(OidcConstants.StandardScopes.OPENID.getScope(), policy.getScopeType());
         assertTrue(policy.getAllowedAttributes().isEmpty());
-        assertTrue(policy.getRequestedDefinitions().isEmpty());
+        assertTrue(policy.determineRequestedAttributeDefinitions().isEmpty());
     }
 
     @Test

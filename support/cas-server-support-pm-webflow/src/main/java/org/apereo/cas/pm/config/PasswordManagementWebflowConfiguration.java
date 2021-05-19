@@ -1,6 +1,7 @@
 package org.apereo.cas.pm.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
@@ -17,8 +18,10 @@ import org.apereo.cas.pm.web.flow.actions.SendPasswordResetInstructionsAction;
 import org.apereo.cas.pm.web.flow.actions.ValidatePasswordResetTokenAction;
 import org.apereo.cas.pm.web.flow.actions.VerifyPasswordResetRequestAction;
 import org.apereo.cas.pm.web.flow.actions.VerifySecurityQuestionsAction;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -63,6 +66,19 @@ import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class PasswordManagementWebflowConfiguration {
+
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ObjectProvider<ServicesManager> servicesManager;
+
+    @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
+
     @Autowired
     @Qualifier("defaultPrincipalResolver")
     private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
@@ -112,7 +128,11 @@ public class PasswordManagementWebflowConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "passwordManagementSingleSignOnParticipationStrategy")
     public SingleSignOnParticipationStrategy passwordManagementSingleSignOnParticipationStrategy() {
-        return new PasswordManagementSingleSignOnParticipationStrategy(centralAuthenticationService.getObject());
+        return new PasswordManagementSingleSignOnParticipationStrategy(
+            servicesManager.getObject(),
+            ticketRegistrySupport.getObject(),
+            authenticationServiceSelectionPlan.getObject(),
+            centralAuthenticationService.getObject());
     }
 
     @Bean
