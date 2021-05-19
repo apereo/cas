@@ -8,6 +8,11 @@ package org.apereo.cas.oidc.claims.mapping;
  */
 public interface OidcAttributeToScopeClaimMapper {
     /**
+     * The bean name of the default implementation.
+     */
+    String DEFAULT_BEAN_NAME = "oidcAttributeToScopeClaimMapper";
+
+    /**
      * Gets mapped attribute.
      *
      * @param claim the claim

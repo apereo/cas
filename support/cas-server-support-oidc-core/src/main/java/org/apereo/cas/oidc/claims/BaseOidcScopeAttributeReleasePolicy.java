@@ -86,7 +86,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
     private static Pair<String, Object> mapClaimToAttribute(final String claim, final Map<String, List<Object>> resolvedAttributes) {
         val applicationContext = ApplicationContextProvider.getApplicationContext();
         val attributeToScopeClaimMapper =
-            applicationContext.getBean("oidcAttributeToScopeClaimMapper", OidcAttributeToScopeClaimMapper.class);
+            applicationContext.getBean(OidcAttributeToScopeClaimMapper.DEFAULT_BEAN_NAME, OidcAttributeToScopeClaimMapper.class);
         LOGGER.debug("Attempting to process claim [{}]", claim);
         if (attributeToScopeClaimMapper.containsMappedAttribute(claim)) {
             val mappedAttr = attributeToScopeClaimMapper.getMappedAttribute(claim);
