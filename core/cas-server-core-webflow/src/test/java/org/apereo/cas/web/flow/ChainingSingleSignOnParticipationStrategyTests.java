@@ -82,12 +82,12 @@ public class ChainingSingleSignOnParticipationStrategyTests {
         val chain = new ChainingSingleSignOnParticipationStrategy();
         chain.addStrategy(new SingleSignOnParticipationStrategy() {
             @Override
-            public boolean isParticipating(final SingleSignOnParticipationRequest context) {
+            public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) {
                 return true;
             }
 
             @Override
-            public boolean supports(final SingleSignOnParticipationRequest context) {
+            public boolean supports(final SingleSignOnParticipationRequest ssoRequest) {
                 return false;
             }
         });

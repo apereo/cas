@@ -1,9 +1,11 @@
 package org.apereo.cas.interrupt.webflow;
 
-import org.apereo.cas.interrupt.InterruptResponse;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.model.TriStateBoolean;
+import org.apereo.cas.web.flow.BaseSingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
-import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 
 import java.util.Objects;
 
@@ -13,21 +15,28 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class InterruptSingleSignOnParticipationStrategy implements SingleSignOnParticipationStrategy {
+public class InterruptSingleSignOnParticipationStrategy extends BaseSingleSignOnParticipationStrategy {
+
+    public InterruptSingleSignOnParticipationStrategy(final ServicesManager servicesManager,
+                                                      final TicketRegistrySupport ticketRegistrySupport,
+                                                      final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
+        super(servicesManager, ticketRegistrySupport, serviceSelectionStrategy);
+    }
 
     @Override
-    public boolean supports(final SingleSignOnParticipationRequest context) {
-        return context.getRequestContext().stream()
+    public boolean supports(final SingleSignOnParticipationRequest ssoRequest) {
+        return ssoRequest.getRequestContext()
+            .stream()
             .map(InterruptUtils::getInterruptFrom)
             .anyMatch(Objects::nonNull);
     }
 
     @Override
-    public boolean isParticipating(final SingleSignOnParticipationRequest context) {
-        return context.getRequestContext().stream()
+    public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) {
+        return ssoRequest.getRequestContext()
+            .stream()
             .map(InterruptUtils::getInterruptFrom)
-            .filter(Objects::nonNull)
-            .allMatch(InterruptResponse::isSsoEnabled);
+            .allMatch(response -> response != null && response.isSsoEnabled());
     }
 
     @Override

@@ -38,17 +38,17 @@ public class ChainingSingleSignOnParticipationStrategy implements SingleSignOnPa
     }
 
     @Override
-    public boolean isParticipating(final SingleSignOnParticipationRequest context) {
-        val supporters = getSupportingSingleSignOnParticipationStrategies(context);
+    public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) {
+        val supporters = getSupportingSingleSignOnParticipationStrategies(ssoRequest);
         if (supporters.isEmpty()) {
-            return SingleSignOnParticipationStrategy.alwaysParticipating().isParticipating(context);
+            return SingleSignOnParticipationStrategy.alwaysParticipating().isParticipating(ssoRequest);
         }
-        return supporters.stream().allMatch(p -> p.isParticipating(context));
+        return supporters.stream().allMatch(p -> p.isParticipating(ssoRequest));
     }
 
     @Override
-    public boolean supports(final SingleSignOnParticipationRequest context) {
-        return providers.stream().anyMatch(p -> p.supports(context));
+    public boolean supports(final SingleSignOnParticipationRequest ssoRequest) {
+        return providers.stream().anyMatch(p -> p.supports(ssoRequest));
     }
 
     @Override

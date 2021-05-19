@@ -34,5 +34,4 @@ public class SingleSignOnParticipationStrategyTests {
             .build();
         assertEquals(TriStateBoolean.UNDEFINED, input.isCreateCookieOnRenewedAuthentication(ssoRequest));
     }
-
 }

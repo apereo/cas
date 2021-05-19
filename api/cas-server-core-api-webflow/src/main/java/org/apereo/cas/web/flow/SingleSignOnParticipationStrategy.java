@@ -37,19 +37,19 @@ public interface SingleSignOnParticipationStrategy extends Ordered {
      * or per request parameters. Various internal processes in CAS
      * also try to determine whether SSO should be honored for this request.
      *
-     * @param context the request
+     * @param ssoRequest the request
      * @return true if authn is renewed
      */
-    boolean isParticipating(SingleSignOnParticipationRequest context);
+    boolean isParticipating(SingleSignOnParticipationRequest ssoRequest);
 
     /**
      * Does strategy support this request or not?
      *
-     * @param context the context
+     * @param ssoRequest the context
      * @return true/false
      */
-    default boolean supports(final SingleSignOnParticipationRequest context) {
-        return context.getRequestContext().isPresent();
+    default boolean supports(final SingleSignOnParticipationRequest ssoRequest) {
+        return ssoRequest.getRequestContext().isPresent() || ssoRequest.getHttpServletRequest().isPresent();
     }
 
     @Override

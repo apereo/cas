@@ -3,16 +3,13 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.ClientCredential;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.support.WebUtils;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * This is {@link DelegatedAuthenticationSingleSignOnParticipationStrategy}.
@@ -20,18 +17,17 @@ import org.apache.commons.lang3.StringUtils;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@RequiredArgsConstructor
 @Slf4j
-public class DelegatedAuthenticationSingleSignOnParticipationStrategy implements SingleSignOnParticipationStrategy {
-    private final ServicesManager servicesManager;
-
-    private final AuthenticationServiceSelectionPlan serviceSelectionStrategy;
-
-    private final TicketRegistrySupport ticketRegistrySupport;
+public class DelegatedAuthenticationSingleSignOnParticipationStrategy extends BaseSingleSignOnParticipationStrategy {
+    public DelegatedAuthenticationSingleSignOnParticipationStrategy(final ServicesManager servicesManager,
+                                                                    final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
+                                                                    final TicketRegistrySupport ticketRegistrySupport) {
+        super(servicesManager, ticketRegistrySupport, serviceSelectionStrategy);
+    }
 
     @Override
     public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) {
-        val registeredService = determineRegisteredService(ssoRequest);
+        val registeredService = getRegisteredService(ssoRequest);
         if (registeredService == null) {
             return true;
         }
@@ -40,14 +36,14 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategy implements
             return true;
         }
 
-        val requestContext = ssoRequest.getRequestContext().orElseThrow();
-        val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(requestContext);
-        if (StringUtils.isBlank(ticketGrantingTicketId)) {
+        val ticketGrantingTicketId = getTicketGrantingTicketId(ssoRequest);
+        if (ticketGrantingTicketId.isEmpty()) {
             return true;
         }
+
         val ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
         try {
-            val authentication = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);
+            val authentication = getTicketState(ssoRequest).map(TicketState::getAuthentication).orElseThrow();
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
             val policy = accessStrategy.getDelegatedAuthenticationPolicy();
             val attributes = authentication.getAttributes();
@@ -70,31 +66,16 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategy implements
 
     @Override
     public boolean supports(final SingleSignOnParticipationRequest ssoRequest) {
-        val registeredService = determineRegisteredService(ssoRequest);
+        val registeredService = getRegisteredService(ssoRequest);
         if (registeredService == null) {
             return false;
         }
         val accessStrategy = registeredService.getAccessStrategy();
-        if (accessStrategy == null || accessStrategy.getDelegatedAuthenticationPolicy() == null) {
-            return false;
-        }
-        return true;
+        return accessStrategy != null && accessStrategy.getDelegatedAuthenticationPolicy() != null;
     }
 
     @Override
     public int getOrder() {
         return 0;
-    }
-
-    /**
-     * Determine registered service.
-     *
-     * @param ssoRequest the sso request
-     * @return the registered service
-     */
-    protected RegisteredService determineRegisteredService(final SingleSignOnParticipationRequest ssoRequest) {
-        return ssoRequest.getRequestContext()
-            .map(requestContext -> WebUtils.resolveRegisteredService(requestContext, servicesManager, serviceSelectionStrategy))
-            .orElse(null);
     }
 }
