@@ -74,6 +74,11 @@ use the tooling provided by the build to locate or fetch the templates from the 
 - Supported [registered service properties](../services/Configuring-Service-Custom-Properties.html) are 
   now automatically included in the documentation.
 - SAML2 authentication statements can now customize the `SubjectLocality` field on a per-application basis.
+- HTTP request entities used for `POST` methods in REST API interactions are set to use the `UTF-8` encoding.
+- Generating access tokens for the OAuth authorization grants is set to use client id first and then 
+  redirect URIs to locate the service definition.
+- 
+
 
 ## Library Upgrades
 
