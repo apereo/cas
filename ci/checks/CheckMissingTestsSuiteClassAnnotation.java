@@ -37,8 +37,12 @@ public class CheckMissingTestsSuiteClassAnnotation {
                 && file.toFile().getName().endsWith("TestsSuite.java"))
             .forEach(file -> {
                 var text = readFile(file);
-                if (!text.contains("@RunWith")) {
-                    print("%s contains a suite of tests that is missing the @RunWith annotation", file);
+                if (text.contains("@RunWith")) {
+                    print("%s contains a suite of tests that are tagged with @RunWith annotation", file);
+                    failBuild.set(true);
+                }
+                if (!text.contains("@Suite")) {
+                    print("%s contains a suite of tests that is missing the @Suite annotation", file);
                     failBuild.set(true);
                 }
             });
