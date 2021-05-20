@@ -523,6 +523,8 @@ subprojects {
         }
         testImplementation libraries.tests
         testImplementation libraries.log4j
+
+        testRuntimeOnly "org.junit.platform:junit-platform-suite-api:$junitPlatformVersion"
         compileOnlyApi  libraries.spotbugsannotations
     }
 }
