@@ -1487,18 +1487,12 @@ ext.libraries = [
                 },
                 dependencies.create("org.junit.jupiter:junit-jupiter-api:$junitVersion") {
                 },
-                dependencies.create("org.junit.jupiter:junit-jupiter-engine:$junitVersion") {
-                },
                 dependencies.create("org.junit.jupiter:junit-jupiter-params:$junitVersion") {
                 },
-//                dependencies.create("org.junit.vintage:junit-vintage-engine:$junitVersion") {
-//                },
                 dependencies.create("org.junit.platform:junit-platform-engine:$junitPlatformVersion") {
                 },
-                dependencies.create("org.junit.platform:junit-platform-suite-api:$junitPlatformVersion") {
+                dependencies.create("org.junit.platform:junit-platform-suite:$junitPlatformVersion") {
                 },
-//                dependencies.create("org.junit.platform:junit-platform-suite-engine:$junitPlatformVersion") {
-//                },
                 dependencies.create("org.junit.platform:junit-platform-launcher:$junitPlatformVersion") {
                 },
                 dependencies.create("org.junit.platform:junit-platform-runner:$junitPlatformVersion") {
