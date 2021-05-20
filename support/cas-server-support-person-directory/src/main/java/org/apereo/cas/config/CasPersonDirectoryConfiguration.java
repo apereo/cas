@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.persondir.DefaultPersonDirectoryAttributeRepositoryPlan;
+import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryCustomizer;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 
@@ -105,7 +106,12 @@ public class CasPersonDirectoryConfiguration {
         val configurers = applicationContext
             .getBeansOfType(PersonDirectoryAttributeRepositoryPlanConfigurer.class, false, true)
             .values();
-        val plan = new DefaultPersonDirectoryAttributeRepositoryPlan();
+
+        val customizers = new ArrayList<>(applicationContext
+            .getBeansOfType(PersonDirectoryAttributeRepositoryCustomizer.class, false, true)
+            .values());
+
+        val plan = new DefaultPersonDirectoryAttributeRepositoryPlan(customizers);
         configurers.forEach(c -> c.configureAttributeRepositoryPlan(plan));
         plan.registerAttributeRepositories(stubAttributeRepositories());
         AnnotationAwareOrderComparator.sort(plan.getAttributeRepositories());

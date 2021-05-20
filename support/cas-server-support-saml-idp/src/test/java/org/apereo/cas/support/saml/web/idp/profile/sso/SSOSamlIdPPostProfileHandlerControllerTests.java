@@ -127,7 +127,6 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
         assertEquals(HttpStatus.FOUND, mv.getStatus());
     }
 
-
     @Test
     @Order(4)
     public void verifyPostRequestWithSso() throws Exception {
@@ -144,7 +143,8 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
         samlIdPDistributedSessionStore.set(new JEEContext(request, response),
             SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "relay-state");
         val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
-        assertEquals(HttpStatus.FOUND, mv.getStatus());
+        assertNull(mv);
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
         assertNotNull(response.getContentAsString());
     }
 
