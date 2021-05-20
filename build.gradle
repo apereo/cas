@@ -524,7 +524,9 @@ subprojects {
         testImplementation libraries.tests
         testImplementation libraries.log4j
 
-        testRuntimeOnly "org.junit.platform:junit-platform-suite-engine:$junitPlatformVersion"
+        if (!ci) {
+            testRuntimeOnly "org.junit.platform:junit-platform-suite-engine:$junitPlatformVersion"
+        }
         compileOnlyApi  libraries.spotbugsannotations
     }
 }
