@@ -6,6 +6,7 @@ import org.apereo.cas.logout.slo.ChainingSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
+import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.web.SimpleUrlValidator;
@@ -55,6 +56,7 @@ public class ChainingSingleLogoutServiceLogoutUrlBuilderTests {
         val service = CoreAuthenticationTestUtils.getWebApplicationService();
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService(service.getId());
         when(registeredService.matches(any(Service.class))).thenReturn(Boolean.TRUE);
+        when(registeredService.getFriendlyName()).thenReturn(RegexRegisteredService.FRIENDLY_NAME);
         when(registeredService.matches(anyString())).thenReturn(Boolean.TRUE);
         when(registeredService.getLogoutUrl()).thenReturn("https://somewhere.org");
         servicesManager.save(registeredService);
