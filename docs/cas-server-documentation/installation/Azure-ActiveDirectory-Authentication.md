@@ -21,7 +21,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#microsoft-azure-active-directory-authentication).
+To see the relevant list of CAS properties, 
+please [review this guide](../configuration/Configuration-Properties.html#microsoft-azure-active-directory).
 
 ## Principal Attributes
 
