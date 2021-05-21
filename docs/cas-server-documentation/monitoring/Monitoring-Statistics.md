@@ -12,7 +12,7 @@ exposed over the endpoint `/actuator`.
 ## Spring Boot Endpoints
 
 The following endpoints are secured and available by 
-[Spring Boot actuators](http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html):
+[Spring Boot actuators](https://docs.spring.io/spring-boot/docs/current/reference/html):
 
 | Endpoint                  | Description
 |---------------------------|-------------------------------------------------------------------------------------

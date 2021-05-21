@@ -6,7 +6,7 @@ category: Configuration
 
 # Extending CAS Configuration
 
-Being a [Spring Boot](https://github.com/spring-projects/spring-boot) application at its core, designing and extending CAS configuration components very much comes down to [the following guide](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-auto-configuration.html) some aspects of which are briefly highlighted in this document.
+Being a [Spring Boot](https://github.com/spring-projects/spring-boot) application at its core, designing and extending CAS configuration components very much comes down to [the following guide](https://https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features) some aspects of which are briefly highlighted in this document.
 
 ## Configuration Components
 
@@ -46,7 +46,7 @@ public class SomethingConfiguration {
 
 ### Register
 
-How are `@Configuration` components picked up? Each CAS module declares its set of configuration components as such, per guidelines [laid out by Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-auto-configuration.html):
+How are `@Configuration` components picked up? Each CAS module declares its set of configuration components as such, per guidelines [laid out by Spring Boot](https://https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features):
 
 - Create a `src/main/resources/META-INF/spring.factories` file
 - Add the following into the file:

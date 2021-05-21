@@ -286,7 +286,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
      *
      * @param service the service
      */
-    protected void loadInternal(RegisteredService service) {
+    protected void loadInternal(final RegisteredService service) {
     }
 
     private void evaluateExpiredServiceDefinitions() {
