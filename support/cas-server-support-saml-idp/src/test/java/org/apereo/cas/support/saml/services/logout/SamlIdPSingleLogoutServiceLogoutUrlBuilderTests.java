@@ -1,15 +1,20 @@
 package org.apereo.cas.support.saml.services.logout;
 
+import org.apereo.cas.logout.slo.ChainingSingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.web.SimpleUrlValidator;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,6 +48,23 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilderTests extends BaseSamlIdP
         val results = builder.determineLogoutUrl(samlRegisteredService, service);
         assertFalse(results.isEmpty());
         assertEquals("https://httpbin.org/get", results.iterator().next().getUrl());
+    }
+
+    @Test
+    public void verifyChainOperation() {
+        val samlBuilder = new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager,
+            defaultSamlRegisteredServiceCachingMetadataResolver);
+        val defaultBuilder = new DefaultSingleLogoutServiceLogoutUrlBuilder(servicesManager, SimpleUrlValidator.getInstance());
+        val chain = new ChainingSingleLogoutServiceLogoutUrlBuilder(List.of(samlBuilder, defaultBuilder));
+
+        val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
+        samlRegisteredService.setLogoutType(RegisteredServiceLogoutType.FRONT_CHANNEL);
+        val service = RegisteredServiceTestUtils.getService("https://mocky.io");
+        val results = chain.determineLogoutUrl(samlRegisteredService, service);
+        assertEquals(1, results.size());
+        val res = results.iterator().next();
+        assertTrue(res.getProperties().containsKey(
+            SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING));
     }
 
     @Test

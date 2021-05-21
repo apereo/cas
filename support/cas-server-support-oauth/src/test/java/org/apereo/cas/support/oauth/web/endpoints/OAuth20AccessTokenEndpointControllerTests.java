@@ -66,6 +66,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
     @BeforeEach
     public void initialize() {
         clearAllServices();
+        ticketRegistry.deleteAll();
     }
 
     @ParameterizedTest

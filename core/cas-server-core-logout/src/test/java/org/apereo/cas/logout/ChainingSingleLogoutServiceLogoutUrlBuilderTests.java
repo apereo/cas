@@ -62,7 +62,6 @@ public class ChainingSingleLogoutServiceLogoutUrlBuilderTests {
         assertTrue(builder.supports(registeredService, service, Optional.empty()));
         assertTrue(builder.isServiceAuthorized(service, Optional.empty()));
         assertFalse(builder.determineLogoutUrl(registeredService, service, Optional.empty()).isEmpty());
-
     }
 
 }

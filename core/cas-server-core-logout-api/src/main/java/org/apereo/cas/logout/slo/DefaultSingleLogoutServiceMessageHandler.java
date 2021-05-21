@@ -13,7 +13,6 @@ import org.apereo.cas.util.http.HttpClient;
  */
 public class DefaultSingleLogoutServiceMessageHandler extends BaseSingleLogoutServiceMessageHandler {
 
-
     public DefaultSingleLogoutServiceMessageHandler(final HttpClient httpClient,
                                                     final SingleLogoutMessageCreator logoutMessageBuilder,
                                                     final ServicesManager servicesManager,
