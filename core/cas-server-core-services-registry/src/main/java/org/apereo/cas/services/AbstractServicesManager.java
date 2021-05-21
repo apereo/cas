@@ -264,6 +264,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         configurationContext.getServicesCache().invalidateAll();
         configurationContext.getServicesCache().putAll(configurationContext.getServiceRegistry().load()
             .stream()
+            .peek(this::loadInternal)
             .collect(Collectors.toMap(r -> {
                 LOGGER.trace("Adding registered service [{}] with name [{}] and internal identifier [{}]",
                     r.getServiceId(), r.getName(), r.getId());
@@ -312,11 +313,18 @@ public abstract class AbstractServicesManager implements ServicesManager {
     protected void loadInternal() {
     }
 
+    /**
+     * Load internal.
+     *
+     * @param service the service
+     */
+    protected void loadInternal(final RegisteredService service) {
+    }
+
     private void evaluateExpiredServiceDefinitions() {
         configurationContext.getServicesCache().asMap().values()
             .stream()
             .filter(RegisteredServiceAccessStrategyUtils.getRegisteredServiceExpirationPolicyPredicate().negate())
-            .filter(Objects::nonNull)
             .forEach(this::processExpiredRegisteredService);
     }
 

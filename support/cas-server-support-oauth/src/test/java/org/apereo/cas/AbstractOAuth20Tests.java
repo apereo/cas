@@ -487,7 +487,8 @@ public abstract class AbstractOAuth20Tests {
     }
 
     protected OAuthRegisteredService addRegisteredService(final boolean generateRefreshToken,
-                                                          final Set<OAuth20GrantTypes> grantTypes, final String clientSecret) {
+                                                          final Set<OAuth20GrantTypes> grantTypes,
+                                                          final String clientSecret) {
         val registeredService = getRegisteredService(REDIRECT_URI, clientSecret, grantTypes);
         registeredService.setGenerateRefreshToken(generateRefreshToken);
         servicesManager.save(registeredService);

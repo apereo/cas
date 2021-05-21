@@ -1,12 +1,12 @@
 package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.UrlValidator;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.StringUtils;
@@ -34,7 +34,14 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilder extends BaseSingleLogout
     }
 
     @Override
-    @SneakyThrows
+    public boolean supports(final RegisteredService registeredService,
+                            final WebApplicationService singleLogoutService,
+                            final Optional<HttpServletRequest> httpRequest) {
+        return super.supports(registeredService, singleLogoutService, httpRequest)
+            && registeredService.getFriendlyName().equalsIgnoreCase(RegexRegisteredService.FRIENDLY_NAME);
+    }
+
+    @Override
     public Collection<SingleLogoutUrl> determineLogoutUrl(final RegisteredService registeredService,
                                                           final WebApplicationService singleLogoutService,
                                                           final Optional<HttpServletRequest> httpRequest) {
