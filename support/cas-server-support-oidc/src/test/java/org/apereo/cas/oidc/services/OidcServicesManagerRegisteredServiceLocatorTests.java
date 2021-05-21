@@ -2,7 +2,6 @@ package org.apereo.cas.oidc.services;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.services.OidcRegisteredService;
-import org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
@@ -42,12 +41,47 @@ public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOi
     public void verifyOperation() {
         assertNotNull(oidcServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.HIGHEST_PRECEDENCE, oidcServicesManagerRegisteredServiceLocator.getOrder());
-        val service = getOidcRegisteredService(UUID.randomUUID().toString());
-        service.setMatchingStrategy(new PartialRegexRegisteredServiceMatchingStrategy());
+        val oidcClientId = UUID.randomUUID().toString();
+        val service = getOidcRegisteredService(oidcClientId);
         val svc = webApplicationServiceFactory.createService(
-            String.format("https://oauth.example.org/whatever?%s=clientid", OAuth20Constants.CLIENT_ID));
+            String.format("https://oauth.example.org/whatever?%s=%s", OAuth20Constants.CLIENT_ID, oidcClientId));
         val result = oidcServicesManagerRegisteredServiceLocator.locate(List.of(service), svc);
         assertNotNull(result);
+    }
+
+    @Test
+    public void verifyNoMatch() {
+        assertNotNull(oidcServicesManagerRegisteredServiceLocator);
+        assertEquals(Ordered.HIGHEST_PRECEDENCE, oidcServicesManagerRegisteredServiceLocator.getOrder());
+        val oidcClientId = UUID.randomUUID().toString();
+        val service = getOidcRegisteredService(oidcClientId);
+        val svc = webApplicationServiceFactory.createService(
+                String.format("https://oauth.example.org/whatever?%s=%s", OAuth20Constants.CLIENT_ID, "nomatch"));
+        val result = oidcServicesManagerRegisteredServiceLocator.locate(List.of(service), svc);
+        assertNull(result);
+    }
+
+    @Test
+    public void verifyNoClientId() {
+        assertNotNull(oidcServicesManagerRegisteredServiceLocator);
+        assertEquals(Ordered.HIGHEST_PRECEDENCE, oidcServicesManagerRegisteredServiceLocator.getOrder());
+        val oidcClientId = UUID.randomUUID().toString();
+        val service = getOidcRegisteredService(oidcClientId);
+        val svc = webApplicationServiceFactory.createService("https://oauth.example.org/whatever");
+        val result = oidcServicesManagerRegisteredServiceLocator.locate(List.of(service), svc);
+        assertNull(result);
+    }
+
+    @Test
+    public void verifyNoOidcCandidate() {
+        assertNotNull(oidcServicesManagerRegisteredServiceLocator);
+        assertEquals(Ordered.HIGHEST_PRECEDENCE, oidcServicesManagerRegisteredServiceLocator.getOrder());
+        val oidcClientId = UUID.randomUUID().toString();
+        val service = RegisteredServiceTestUtils.getRegisteredService("https://notooidc.example.org/whatever");
+        val svc = webApplicationServiceFactory.createService(
+                String.format("https://oauth.example.org/whatever?%s=%s", OAuth20Constants.CLIENT_ID, oidcClientId));
+        val result = oidcServicesManagerRegisteredServiceLocator.locate(List.of(service), svc);
+        assertNull(result);
     }
 
     @Test
@@ -66,7 +100,7 @@ public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOi
         servicesManager.save(service1, service2, service3);
 
         var svc = webApplicationServiceFactory.createService(
-            String.format("https://app.example.org/whatever?%s=clientid", OAuth20Constants.CLIENT_ID));
+            String.format("https://app.example.org/whatever?%s=%s", OAuth20Constants.CLIENT_ID, oidcClientId));
         var result = servicesManager.findServiceBy(svc);
         assertTrue(result instanceof OidcRegisteredService);
 

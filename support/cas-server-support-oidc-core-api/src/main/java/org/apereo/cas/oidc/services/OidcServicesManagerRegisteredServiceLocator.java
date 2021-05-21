@@ -1,10 +1,6 @@
 package org.apereo.cas.oidc.services;
 
-import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
-import org.apereo.cas.services.OidcRegisteredService;
-import org.apereo.cas.support.oauth.OAuth20Constants;
-
-import org.springframework.core.Ordered;
+import org.apereo.cas.support.oauth.services.OAuth20ServicesManagerRegisteredServiceLocator;
 
 /**
  * This is {@link OidcServicesManagerRegisteredServiceLocator}.
@@ -12,12 +8,6 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-public class OidcServicesManagerRegisteredServiceLocator extends DefaultServicesManagerRegisteredServiceLocator {
-    public OidcServicesManagerRegisteredServiceLocator() {
-        setOrder(Ordered.HIGHEST_PRECEDENCE);
-        setRegisteredServiceFilter((registeredService, service) -> service.getAttributes().containsKey(OAuth20Constants.CLIENT_ID)
-            && registeredService.getClass().equals(OidcRegisteredService.class)
-            && registeredService.matches(service.getId()));
-    }
+public class OidcServicesManagerRegisteredServiceLocator extends OAuth20ServicesManagerRegisteredServiceLocator {
 }
 
