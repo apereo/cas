@@ -63,11 +63,11 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
     public RegisteredService save(final RegisteredService registeredService) {
         val isNew = registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE;
         invokeServiceRegistryListenerPreSave(registeredService);
-        val r = this.entityManager.merge(registeredService);
-        if (!isNew) {
-            this.entityManager.persist(r);
+        if (isNew) {
+            entityManager.persist(registeredService);
+            return registeredService;
         }
-        return r;
+        return entityManager.merge(registeredService);
     }
 
     @Override
