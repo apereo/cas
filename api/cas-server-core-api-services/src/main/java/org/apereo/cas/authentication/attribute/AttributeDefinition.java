@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link AttributeDefinition}.
@@ -80,7 +81,10 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
      * @param attributeValues   the attribute values
      * @param scope             the scope
      * @param registeredService the registered service
+     * @param attributes        the attributes
      * @return the list
      */
-    List<Object> resolveAttributeValues(List<Object> attributeValues, String scope, RegisteredService registeredService);
+    List<Object> resolveAttributeValues(List<Object> attributeValues, String scope,
+                                        RegisteredService registeredService,
+                                        Map<String, List<Object>> attributes);
 }

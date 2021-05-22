@@ -108,10 +108,12 @@ public interface AttributeDefinitionStore {
      * @param key               the key
      * @param values            the values
      * @param registeredService the registered service
+     * @param attributes        the attributes
      * @return the attribute values
      */
     Optional<Pair<AttributeDefinition, List<Object>>> resolveAttributeValues(String key, List<Object> values,
-                                                                             RegisteredService registeredService);
+                                                                             RegisteredService registeredService,
+                                                                             Map<String, List<Object>> attributes);
 
     /**
      * Gets attribute values.
@@ -129,7 +131,7 @@ public interface AttributeDefinitionStore {
                 locateAttributeDefinition(entry.getKey()).ifPresentOrElse(definition -> {
                     val attributeValues = determineValuesForAttributeDefinition(attributes, entry, definition);
                     LOGGER.trace("Resolving attribute [{}] from attribute definition store with values [{}]", entry.getKey(), attributeValues);
-                    val result = resolveAttributeValues(entry.getKey(), attributeValues, registeredService);
+                    val result = resolveAttributeValues(entry.getKey(), attributeValues, registeredService, attributes);
                     if (result.isPresent()) {
                         val resolvedValues = result.get().getValue();
                         if (!resolvedValues.isEmpty()) {
