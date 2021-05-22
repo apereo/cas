@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.web.UrlValidator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -42,8 +43,9 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends BaseSingleLogout
     protected final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
     public SamlIdPSingleLogoutServiceLogoutUrlBuilder(final ServicesManager servicesManager,
-                                                      final SamlRegisteredServiceCachingMetadataResolver resolver) {
-        super(servicesManager);
+                                                      final SamlRegisteredServiceCachingMetadataResolver resolver,
+                                                      final UrlValidator urlValidator) {
+        super(servicesManager, urlValidator);
         this.samlRegisteredServiceCachingMetadataResolver = resolver;
     }
 

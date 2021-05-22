@@ -628,7 +628,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     @RefreshScope
     public SingleLogoutServiceLogoutUrlBuilderConfigurer oidcSingleLogoutServiceLogoutUrlBuilderConfigurer() {
-        return () -> new OidcSingleLogoutServiceLogoutUrlBuilder(servicesManager.getObject());
+        return () -> new OidcSingleLogoutServiceLogoutUrlBuilder(servicesManager.getObject(), urlValidator.getObject());
     }
 
     @Bean
