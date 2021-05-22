@@ -149,14 +149,17 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     }
 
     @Override
-    public Optional<Pair<AttributeDefinition, List<Object>>> resolveAttributeValues(final String key, final List<Object> attributeValues,
-                                                                                    final RegisteredService registeredService) {
+    public Optional<Pair<AttributeDefinition, List<Object>>> resolveAttributeValues(final String key,
+                                                                                    final List<Object> attributeValues,
+                                                                                    final RegisteredService registeredService,
+                                                                                    final Map<String, List<Object>> attributes) {
         val result = locateAttributeDefinition(key);
         if (result.isEmpty()) {
             return Optional.empty();
         }
         val definition = result.get();
-        val currentValues = definition.resolveAttributeValues(attributeValues, this.scope, registeredService);
+        val currentValues = definition.resolveAttributeValues(attributeValues, this.scope,
+            registeredService, attributes);
         return Optional.of(Pair.of(definition, currentValues));
     }
 
