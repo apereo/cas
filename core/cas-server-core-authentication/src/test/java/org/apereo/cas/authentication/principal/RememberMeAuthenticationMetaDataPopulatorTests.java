@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.2.1
  */
-@Tag("Authentication")
+@Tag("AuthenticationMetadata")
 public class RememberMeAuthenticationMetaDataPopulatorTests {
 
     @Test

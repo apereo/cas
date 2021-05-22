@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
  * @author yudhi.k.surtan
  * @since 5.2.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 public class FortressAuthenticationHandlerTests {
     @Mock
     private AccessMgr accessManager;

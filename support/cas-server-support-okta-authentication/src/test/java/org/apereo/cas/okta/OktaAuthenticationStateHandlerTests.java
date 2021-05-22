@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.okta.proxy-password=password",
         "cas.authn.okta.organization-url=https://dev-159539.oktapreview.com"
     })
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 public class OktaAuthenticationStateHandlerTests {
     @Autowired
     private CasConfigurationProperties casProperties;

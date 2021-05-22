@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class)
 public class QRAuthenticationTokenAuthenticationHandlerTests {
     @Autowired

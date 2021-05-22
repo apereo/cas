@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationMetadata")
 public class SurrogateAuthenticationMetaDataPopulatorTests {
     @Test
     public void verifyAction() {
