@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseRemoteAddressTests.SharedTestConfiguration.class,
     properties = "cas.authn.remote-address.ip-address-range=192.168.1.0/255.255.255.0")
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 public class RemoteAddressAuthenticationHandlerTests {
     @Autowired
     @Qualifier("remoteAddressAuthenticationHandler")

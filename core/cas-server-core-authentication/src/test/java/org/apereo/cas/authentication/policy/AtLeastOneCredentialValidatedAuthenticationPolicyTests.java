@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationPolicy")
 public class AtLeastOneCredentialValidatedAuthenticationPolicyTests {
     @Test
     public void verifyOperationPrevented() throws Exception {

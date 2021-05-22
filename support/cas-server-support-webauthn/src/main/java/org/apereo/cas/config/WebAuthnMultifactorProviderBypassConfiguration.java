@@ -29,6 +29,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("webAuthnMultifactorProviderBypassConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnWebAuthnEnabled
 public class WebAuthnMultifactorProviderBypassConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

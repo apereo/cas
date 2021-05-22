@@ -72,6 +72,12 @@ public class WebAuthnMultifactorAuthenticationCoreProperties implements Serializ
     private String relyingPartyId;
 
     /**
+     * Whether WebAuthn functionality
+     * should be activated and enabled.
+     */
+    private boolean enabled = true;
+
+    /**
      * Expire and forget device registration records after this period.
      */
     private long expireDevices = 30;

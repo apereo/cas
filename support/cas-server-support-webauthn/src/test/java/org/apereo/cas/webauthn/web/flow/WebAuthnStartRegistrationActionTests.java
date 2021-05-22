@@ -2,6 +2,7 @@ package org.apereo.cas.webauthn.web.flow;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -10,9 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
@@ -29,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowMfaActions")
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class)
+@DirtiesContext
 public class WebAuthnStartRegistrationActionTests {
     @Autowired
     @Qualifier("webAuthnStartRegistrationAction")
@@ -38,8 +42,15 @@ public class WebAuthnStartRegistrationActionTests {
     @Qualifier("webAuthnMultifactorAuthenticationProvider")
     private MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     public void verifyOperation() throws Exception {
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            this.webAuthnMultifactorAuthenticationProvider, "webAuthnMultifactorAuthenticationProvider");
+
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

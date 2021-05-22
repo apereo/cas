@@ -86,7 +86,7 @@ import static org.mockito.Mockito.*;
     CasCoreServicesConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 })
-@Tag("Authentication")
+@Tag("AuthenticationPolicy")
 public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     @Autowired
     @Qualifier("servicesManager")

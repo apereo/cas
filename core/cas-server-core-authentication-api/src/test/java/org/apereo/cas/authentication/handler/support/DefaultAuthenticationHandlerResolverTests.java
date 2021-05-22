@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 public class DefaultAuthenticationHandlerResolverTests {
     @Test
     public void verifyOperation() {

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 public class SuccessfulHandlerMetaDataPopulatorTests {
     @Test
     public void verifyOperation() {

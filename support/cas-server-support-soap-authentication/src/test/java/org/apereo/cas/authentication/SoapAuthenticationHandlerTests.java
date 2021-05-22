@@ -57,7 +57,7 @@ import static org.mockito.Mockito.*;
     },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 public class SoapAuthenticationHandlerTests {
     @Autowired
     @Qualifier("servicesManager")

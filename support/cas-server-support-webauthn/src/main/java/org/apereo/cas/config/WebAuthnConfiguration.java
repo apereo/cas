@@ -74,6 +74,7 @@ import java.util.LinkedHashSet;
 @Configuration("webAuthnConfiguration")
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnWebAuthnEnabled
 public class WebAuthnConfiguration {
     private static final int CACHE_MAX_SIZE = 10_000;
 
