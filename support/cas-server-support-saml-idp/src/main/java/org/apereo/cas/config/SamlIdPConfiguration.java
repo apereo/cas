@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilderConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -47,6 +48,7 @@ import org.apereo.cas.ticket.query.DefaultSamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketExpirationPolicyBuilder;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.val;
@@ -138,12 +140,24 @@ public class SamlIdPConfiguration {
     @Qualifier(AttributeDefinitionStore.BEAN_NAME)
     private ObjectProvider<AttributeDefinitionStore> attributeDefinitionStore;
 
+    @Autowired
+    @Qualifier("urlValidator")
+    private ObjectProvider<UrlValidator> urlValidator;
+
+    @ConditionalOnMissingBean(name = "samlSingleLogoutServiceLogoutUrlBuilder")
+    @Bean
+    @RefreshScope
+    public SingleLogoutServiceLogoutUrlBuilder samlSingleLogoutServiceLogoutUrlBuilder() {
+        return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager.getObject(),
+            defaultSamlRegisteredServiceCachingMetadataResolver.getObject(),
+            urlValidator.getObject());
+    }
+
     @ConditionalOnMissingBean(name = "samlSingleLogoutServiceLogoutUrlBuilderConfigurer")
     @Bean
     @RefreshScope
     public SingleLogoutServiceLogoutUrlBuilderConfigurer samlSingleLogoutServiceLogoutUrlBuilderConfigurer() {
-        return () -> new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager.getObject(),
-            defaultSamlRegisteredServiceCachingMetadataResolver.getObject());
+        return this::samlSingleLogoutServiceLogoutUrlBuilder;
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlResponseBuilder")
@@ -218,8 +232,7 @@ public class SamlIdPConfiguration {
             .build();
         return new SamlProfileSamlSoap11ResponseBuilder(context);
     }
-
-
+    
     @ConditionalOnMissingBean(name = "samlProfileSamlArtifactFaultResponseBuilder")
     @Bean
     @RefreshScope
