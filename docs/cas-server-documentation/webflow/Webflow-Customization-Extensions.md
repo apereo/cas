@@ -125,7 +125,7 @@ Configuration classes need to be registered with CAS inside a `src/main/resource
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.example.something.SomethingConfiguration
 ```
 
-See [this guide](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-auto-configuration.html) for more info.
+See [this guide](ttps://docs.spring.io/spring-boot/docs/current/reference/html/) for more info.
 
 ### Groovy
 
