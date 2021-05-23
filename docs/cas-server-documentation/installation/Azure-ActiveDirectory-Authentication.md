@@ -27,4 +27,4 @@ please [review this guide](../configuration/Configuration-Properties.html#micros
 ## Principal Attributes
 
 The above dependency may also be used, in the event that principal attributes need to be fetched from Azure Active Directory without 
-necessarily authenticating credentials . To see the relevant list of CAS properties, please [review this guide](..configuration/Configuration-Properties.html#microsoft-azure-active-directory).
+necessarily authenticating credentials . To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#microsoft-azure-active-directory).
