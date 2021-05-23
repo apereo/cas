@@ -215,7 +215,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
                 cacheMgr.put(cacheKey, executableScript);
                 LOGGER.trace("Cached inline groovy script for key [{}]", cacheKey);
             }
-            return fetchAttributeValueFromScript(executableScript, attributeName, currentValues);
+            return fetchAttributeValueFromScript(executableScript, attributeName, currentValues, registeredService, attributes);
         }
         LOGGER.warn("No groovy script cache manager is available to execute attribute mappings");
         return new ArrayList<>(0);
