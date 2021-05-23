@@ -68,6 +68,13 @@ echo -e "Running ${scriptPath}\n"
 node --unhandled-rejections=strict ${scriptPath} ${config}
 echo -e "*************************************\n"
 
+exitScript=$(cat "${config}" | jq -j '.exitScript // empty')
+exitScript="${exitScript//\$\{PWD\}/${PWD}}"
+[ -n "${exitScript}" ] && \
+  echo "Exit script: ${exitScript}" && \
+  chmod +x "${exitScript}" && \
+  eval "${exitScript}"
+
 docker container stop $(docker container ls -aq) >/dev/null 2>&1 || true
 docker container rm $(docker container ls -aq) >/dev/null 2>&1 || true
 
