@@ -16,7 +16,7 @@ const path = require('path');
     await page.waitForTimeout(1000)
     
     await page.goto("https://samltest.id/upload.php");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(2000)
 
     const fileElement = await page.$("input[type=file]");
     let metadata = path.join(__dirname, '/saml-md/sp-metadata.xml');
@@ -25,17 +25,17 @@ const path = require('path');
     await fileElement.uploadFile(metadata);
     await click(page, "input[name='submit']")
     await page.waitForNavigation();
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(3000)
 
     await page.goto("https://localhost:8443/cas/login");
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(3000);
     await page.type('#username', "casuser");
     await page.type('#password', "Mellon");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
     await page.goto("https://localhost:8443/cas/login?service=https://github.com");
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(3000);
 
     let loginProviders = await page.$('#loginProviders');
     assert(await loginProviders.boundingBox() != null);
@@ -55,7 +55,7 @@ const path = require('path');
     await page.type('#password', "panic");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(3000)
 
     await click(page, "input[name='_eventId_proceed']")
     await page.waitForTimeout(5000)
