@@ -32,7 +32,7 @@ const cas = require('../../cas.js');
     await page.type('#password', "Mellon");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(5000)
 
     let metadataDir = path.join(__dirname, '/saml-md');
     fs.rmdirSync(metadataDir, { recursive: true });
