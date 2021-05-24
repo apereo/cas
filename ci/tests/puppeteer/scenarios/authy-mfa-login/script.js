@@ -4,7 +4,7 @@ const assert = require('assert');
 (async () => {
     const browser = await puppeteer.launch({
         ignoreHTTPSErrors: true,
-        headless: true,
+        headless: false,
         defaultViewport: null,
         args: ['--start-maximized']
     });
@@ -15,7 +15,7 @@ const assert = require('assert');
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
-    // await page.waitForTimeout(5000)
+    await page.waitForTimeout(50000)
 
     let element = await page.$('#token');
     assert(await element.boundingBox() != null);
