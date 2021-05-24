@@ -1,12 +1,32 @@
 #!/bin/bash
 
+scenario="$1"
+if [[ -z "$scenario" ]] ; then
+  echo Usage: ./ci/tests/puppeteer/run.sh ${PWD}/ci/tests/puppeteer/scenarios/[scenario folder]
+  exit 1
+fi
+if [[ ! -d "${scenario}" ]]; then
+  echo "${scenario} doesn't exist."
+  exit -1
+fi
+
+# note if debugging you might need to call
+# await page.setDefaultNavigationTimeout(0);
+DEBUG=${2:-debug}
+DEBUG_PORT=${3:-5000}
+DEBUG_SUSPEND=${4:-n}
+
 #echo "Installing jq"
 #sudo apt-get install jq
 
 random=$(openssl rand -hex 8)
 
-echo "Installing Puppeteer"
-npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer jsonwebtoken axios
+if [[ ! -d "$PWD"/ci/tests/puppeteer/node_modules/puppeteer ]] ; then
+  echo "Installing Puppeteer"
+  npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer jsonwebtoken axios
+else
+  echo "Using existing Puppeteer modules"
+fi
 
 echo "Creating overlay work directory"
 rm -Rf "$TMPDIR/cas" "$PWD"/ci/tests/puppeteer/overlay
@@ -20,8 +40,6 @@ echo -e "\nGenerating keystore ${keystore} for CAS with DN=${dname}, SAN=${subje
 keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
   -keystore "${keystore}" -dname "${dname}" -ext SAN="${subjectAltName}"
 [ -f "${keystore}" ] && echo "Created ${keystore}"
-
-scenario="$1"
 
 echo -e "******************************************************"
 echo -e "Scenario: ${scenario}"
@@ -50,9 +68,14 @@ runArgs="${runArgs//\$\{PWD\}/${PWD}}"
 properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
 properties="${properties//\$\{PWD\}/${PWD}}"
 properties="${properties//\%\{random\}/${random}}"
+if [[ "$DEBUG" == "debug" ]]; then
+  debugArgs=-Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND
+else
+  debugArgs=
+fi
 
 echo -e "\nLaunching CAS with properties [${properties}] and dependencies [${dependencies}]"
-java ${runArgs} -jar "$PWD"/cas.war ${properties} \
+java ${runArgs} ${debugArgs} -jar "$PWD"/cas.war ${properties} \
   --spring.profiles.active=none --server.ssl.key-store="$keystore" &
 pid=$!
 echo -e "\nWaiting for CAS under process id ${pid}"
@@ -79,8 +102,14 @@ exitScript="${exitScript//\$\{PWD\}/${PWD}}"
   chmod +x "${exitScript}" && \
   eval "${exitScript}"
 
-docker container stop $(docker container ls -aq) >/dev/null 2>&1 || true
-docker container rm $(docker container ls -aq) >/dev/null 2>&1 || true
+if [[ "${CI}" == "true" ]]; then  
+  docker container stop $(docker container ls -aq) >/dev/null 2>&1 || true
+  docker container rm $(docker container ls -aq) >/dev/null 2>&1 || true
+fi
+
+if [[ "${CI}" != "true" ]]; then
+  read -p "Hit enter to cleanup scenario ${scenario} that ended with exit code $RC"
+fi
 
 echo -e "\nKilling process ${pid} ..."
 kill -9 $pid
