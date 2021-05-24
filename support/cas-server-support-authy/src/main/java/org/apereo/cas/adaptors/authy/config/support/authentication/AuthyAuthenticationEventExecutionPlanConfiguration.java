@@ -66,9 +66,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
         if (StringUtils.isBlank(authy.getApiKey())) {
             throw new IllegalArgumentException("Authy API key must be defined");
         }
-        return new AuthyClientInstance(authy.getApiKey(), authy.getApiUrl(),
-            authy.getMailAttribute(), authy.getPhoneAttribute(),
-            authy.getCountryCode());
+        return new AuthyClientInstance(authy);
     }
 
     @ConditionalOnMissingBean(name = "authyAuthenticationHandler")
