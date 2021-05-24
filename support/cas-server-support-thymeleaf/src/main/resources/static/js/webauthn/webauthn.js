@@ -422,7 +422,7 @@ function finishCeremony(response) {
 }
 
 function register(username, displayName, credentialNickname, requireResidentKey = false, getRequest = getRegisterRequest) {
-    var request;
+    let request;
     return performCeremony({
         getWebAuthnUrls,
         getRequest: urls => getRequest(urls, username, displayName, credentialNickname, requireResidentKey),

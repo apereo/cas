@@ -11,7 +11,7 @@ const url = require('url');
     
     await page.goto("https://localhost:8443/cas/login");
 
-    var pswd = await page.$('#password');
+    let pswd = await page.$('#password');
     assert(pswd == null);
 
     let uid = await page.$('#username');

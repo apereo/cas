@@ -8,7 +8,7 @@ const assert = require('assert');
     const page = await browser.newPage();
     await page.goto("https://localhost:8443/cas/actuator/sso");
 
-    var header = await page.$eval('#content h2', el => el.innerText)
+    let header = await page.$eval('#content h2', el => el.innerText)
     console.log(header)
     assert(header === "Login")
 

@@ -30,10 +30,10 @@ const path = require('path');
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(1000);
 
-    var loginProviders = await page.$('#loginProviders');
+    let loginProviders = await page.$('#loginProviders');
     assert(await loginProviders.boundingBox() != null);
 
-    var client = await page.$('li #SAML2Client');
+    let client = await page.$('li #SAML2Client');
     assert(await client.boundingBox() != null);
     
     await click(page, "li #SAML2Client")

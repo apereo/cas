@@ -20,14 +20,14 @@ const assert = require('assert');
     console.log(header)
     assert(header === "Login with FIDO2-enabled Device")
 
-    var errorPanel = await page.$('#errorPanel');
+    let errorPanel = await page.$('#errorPanel');
     assert(await errorPanel == null);
 
-    var messages = await page.$('#messages');
+    let messages = await page.$('#messages');
     assert(await messages.boundingBox() != null);
-    var deviceTable = await page.$('#deviceTable');
+    let deviceTable = await page.$('#deviceTable');
     assert(await deviceTable.boundingBox() == null);
-    var authnButton = await page.$('#authnButton');
+    let authnButton = await page.$('#authnButton');
     assert(await authnButton.boundingBox() != null);
 
     const endpoints = ["health", "webAuthnDevices/casuser"];

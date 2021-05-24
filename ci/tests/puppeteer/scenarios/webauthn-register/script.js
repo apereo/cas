@@ -20,24 +20,24 @@ const assert = require('assert');
     console.log(header)
     assert(header === "Register Device")
 
-    var messages = await page.$('#messages');
+    let messages = await page.$('#messages');
     assert(await messages.boundingBox() != null);
     
-    var dInfo = await page.$('#device-info');
+    let dInfo = await page.$('#device-info');
     assert(await dInfo.boundingBox() == null);
-    var dIcon = await page.$('#device-icon');
+    let dIcon = await page.$('#device-icon');
     assert(await dIcon.boundingBox() == null);
-    var dName = await page.$('#device-name');
+    let dName = await page.$('#device-name');
     assert(await dName.boundingBox() == null);
 
-    var credentialNickname = await page.$('#credentialNickname');
+    let credentialNickname = await page.$('#credentialNickname');
     assert(await credentialNickname.boundingBox() != null);
-    var registerButton = await page.$('#registerButton');
+    let registerButton = await page.$('#registerButton');
     assert(await registerButton.boundingBox() != null);
     
-    var residentKeysPanel = await page.$('#residentKeysPanel');
+    let residentKeysPanel = await page.$('#residentKeysPanel');
     assert(await residentKeysPanel.boundingBox() != null);
-    var registerResident = await page.$('#registerDiscoverableCredentialButton');
+    let registerResident = await page.$('#registerDiscoverableCredentialButton');
     assert(await registerResident.boundingBox() != null);
 
     await browser.close();
