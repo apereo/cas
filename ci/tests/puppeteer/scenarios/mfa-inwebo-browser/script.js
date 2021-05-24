@@ -18,20 +18,22 @@ const cas = require('../../cas.js');
 
     // Asking for the PIN code
     await page.$eval('button[name=browser]', button => button.click());
-    await page.waitForTimeout(4000);
+    await page.waitForTimeout(2000);
+    console.log("Checking for PIN code...")
     let element = await page.$('main h2');
     let header = await page.evaluate(element => element.innerText.trim(), element);
     console.log(header)
     assert(header === "Fill in your PIN code:")
+    const enrollForm = await page.$('#enrollForm');
+    assert(enrollForm != null);
 
     // Let's wait for Inwebo javascript to execute
     // And redirect to error/registration
+    console.log("Checking for error/registration")
     await page.waitForTimeout(5000);
     const header2 = await page.$eval('main h2', el => el.innerText.trim())
     console.log(header2)
     assert(header2 === "An error has occurred.")
-    const enrollForm = await page.$('#enrollForm');
-    assert(enrollForm != null);
 
     await browser.close();
 })();
