@@ -8,7 +8,9 @@
     "--cas.authn.pac4j.saml[0].keystore-path=${PWD}/ci/tests/puppeteer/scenarios/pac4j-delegated-saml-login/saml-md/samlKeystore.jks",
     "--cas.authn.pac4j.saml[0].identity-provider-metadata-path=https://samltest.id/saml/idp",
     "--cas.authn.pac4j.saml[0].destination-binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST",
-    "--cas.authn.pac4j.saml[0].client-name=SAML2Client"
+    "--cas.authn.pac4j.saml[0].client-name=SAML2Client",
+
+    "--logging.level.org.apereo.cas=debug"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/pac4j-delegated-saml-login/init.sh"
 }

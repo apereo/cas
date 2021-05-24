@@ -44,7 +44,7 @@ const path = require('path');
     await page.waitForTimeout(3000)
 
     await cas.click(page, "input[name='_eventId_proceed']")
-    await page.waitForTimeout(3000)
+    await page.waitForTimeout(5000)
 
     const tgc = (await page.cookies()).filter(value => value.name === "TGC")
     assert(tgc.length !== 0);

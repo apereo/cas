@@ -10,6 +10,8 @@
     "--cas.authn.pac4j.saml[0].destination-binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST",
     "--cas.authn.pac4j.saml[0].client-name=SAML2Client",
 
+    "--logging.level.org.apereo.cas=debug",
+    
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/pac4j-delegated-saml-login-with-sso/services"
   ],

@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
     await page.type('#password', "password");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(1000);
     const startBrowserForm = await page.$('#startBrowserForm');
     assert(startBrowserForm != null);
     const startPushForm = await page.$('#startPushForm');
@@ -18,6 +18,7 @@ const cas = require('../../cas.js');
 
     // Asking for the PIN code
     await page.$eval('button[name=browser]', button => button.click());
+    await page.waitForTimeout(2000);
     const header = await page.$eval('main h2', el => el.innerText)
     assert(header === "Fill in your PIN code:")
 
