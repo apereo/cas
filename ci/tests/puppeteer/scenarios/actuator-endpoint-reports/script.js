@@ -43,7 +43,7 @@ const assert = require('assert');
         "ssoSessions",
         "sso",
         "casModules",
-        "ticketExpirationPolicies?service=10000001",
+        "ticketExpirationPolicies?serviceId=10000001",
         "springWebflow",
         "statistics",
         "resolveAttributes/casuser",
