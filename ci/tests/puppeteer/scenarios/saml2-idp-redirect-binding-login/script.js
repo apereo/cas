@@ -15,12 +15,11 @@ const cas = require('../../cas.js');
     console.log("Metadata file: " + metadata);
 
     await fileElement.uploadFile(metadata);
-    // await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000)
 
     await cas.click(page, "input[name='submit']")
     await page.waitForNavigation();
-
-    // await page.waitForTimeout(1000)
+    await page.waitForTimeout(2000)
 
     await page.goto("https://samltest.id/start-idp-test/");
     await page.type('input[name=\'entityID\']', "https://cas.apereo.org/saml/idp");
@@ -28,13 +27,13 @@ const cas = require('../../cas.js');
     await cas.click(page, "input[type='submit']")
     await page.waitForNavigation();
 
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(2000)
 
     await page.type('#username', "casuser");
     await page.type('#password', "Mellon");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(5000)
 
     let metadataDir = path.join(__dirname, '/saml-md');
     fs.rmdirSync(metadataDir, { recursive: true });
