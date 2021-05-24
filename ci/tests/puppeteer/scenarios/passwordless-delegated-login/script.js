@@ -13,7 +13,7 @@ const url = require('url');
 
     // await page.waitForTimeout(5000)
 
-    var pswd = await page.$('#password');
+    let pswd = await page.$('#password');
     assert(pswd == null);
 
     await page.type('#username', "casuser");

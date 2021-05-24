@@ -16,7 +16,7 @@ const url = require('url');
     await page.waitForNavigation();
 
     console.log(page.url());
-    var result = new URL(page.url());
+    let result = new URL(page.url());
     console.log(result.searchParams.get("ticket"));
     assert(result.searchParams.has("ticket"));
 

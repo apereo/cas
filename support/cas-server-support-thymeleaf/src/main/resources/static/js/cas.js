@@ -1,13 +1,13 @@
 (function (material, $) {
-    var cas = {
+    let cas = {
         init: function () {
             cas.attachFields();
             material.autoInit();
         },
         attachFields: function () {
-            var divs = document.querySelectorAll('.mdc-text-field'),
+            let divs = document.querySelectorAll('.mdc-text-field'),
                 field;
-            var div;
+            let div;
             for (i = 0; i < divs.length; ++i) {
                 div = divs[i];
                 field = material.textField.MDCTextField.attachTo(div);
@@ -25,7 +25,7 @@
             }
         },
         checkCaps: function (ev) {
-            var s = String.fromCharCode(ev.which);
+            let s = String.fromCharCode(ev.which);
             if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
                 ev.target.parentElement.classList.add('caps-on');
             } else {
@@ -116,20 +116,20 @@ function showGeoPosition(position) {
 
 function preserveAnchorTagOnForm() {
     $('#fm1').submit(function () {
-        var location = self.document.location;
-        var hash = decodeURIComponent(location.hash);
+        let location = self.document.location;
+        let hash = decodeURIComponent(location.hash);
 
         if (hash != undefined && hash != '' && hash.indexOf('#') === -1) {
             hash = '#' + hash;
         }
 
-        var action = $('#fm1').attr('action');
+        let action = $('#fm1').attr('action');
         if (action == undefined) {
             action = location.href;
         } else {
-            var qidx = location.href.indexOf('?');
+            let qidx = location.href.indexOf('?');
             if (qidx != -1) {
-                var queryParams = location.href.substring(qidx);
+                let queryParams = location.href.substring(qidx);
                 action += queryParams;
             }
         }
@@ -142,7 +142,7 @@ function preserveAnchorTagOnForm() {
 function preventFormResubmission() {
     $('form').submit(function () {
         $(':submit').attr('disabled', true);
-        var altText = $(':submit').attr('data-processing-text');
+        let altText = $(':submit').attr('data-processing-text');
         if (altText) {
             $(':submit').attr('value', altText);
         }

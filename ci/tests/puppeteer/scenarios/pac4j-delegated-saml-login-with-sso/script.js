@@ -37,13 +37,13 @@ const path = require('path');
     await page.goto("https://localhost:8443/cas/login?service=https://github.com");
     await page.waitForTimeout(1000);
 
-    var loginProviders = await page.$('#loginProviders');
+    let loginProviders = await page.$('#loginProviders');
     assert(await loginProviders.boundingBox() != null);
 
-    var existingSsoMsg = await page.$('#existingSsoMsg');
+    let existingSsoMsg = await page.$('#existingSsoMsg');
     assert(await existingSsoMsg.boundingBox() != null);
     
-    var client = await page.$('li #SAML2Client');
+    let client = await page.$('li #SAML2Client');
     assert(await client.boundingBox() != null);
 
     await click(page, "li #SAML2Client")

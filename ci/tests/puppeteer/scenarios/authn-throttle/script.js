@@ -8,7 +8,7 @@ const assert = require('assert');
     const page = await browser.newPage();
     await submitLoginFailure(page);
 
-    var header = await page.$eval('#content div.banner p', el => el.innerText)
+    let header = await page.$eval('#content div.banner p', el => el.innerText)
     console.log(header)
     assert(header.startsWith("Authentication attempt has failed"))
     

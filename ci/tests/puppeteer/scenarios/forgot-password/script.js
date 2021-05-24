@@ -20,7 +20,7 @@ const assert = require('assert');
     await page.waitForTimeout(1000)
 
     element = await page.$('#reset #fm1 h3');
-    var header = await page.evaluate(element => element.textContent, element);
+    let header = await page.evaluate(element => element.textContent, element);
     console.log(header)
     assert(header === "Reset your password")
     

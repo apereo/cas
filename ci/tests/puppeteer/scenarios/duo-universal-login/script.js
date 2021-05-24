@@ -4,7 +4,7 @@ const url = require('url');
 const fs = require('fs');
 
 (async () => {
-    var args = process.argv.slice(2);
+    let args = process.argv.slice(2);
     let config = JSON.parse(fs.readFileSync(args[0]));
     assert(config != null)
     
@@ -18,7 +18,7 @@ const fs = require('fs');
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
-    var result = new URL(page.url());
+    let result = new URL(page.url());
     assert(result.host === "api-d2e616a0.duosecurity.com");
     await browser.close();
 })();

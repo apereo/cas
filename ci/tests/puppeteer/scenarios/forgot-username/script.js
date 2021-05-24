@@ -11,7 +11,7 @@ const assert = require('assert');
 
     // await page.waitForTimeout(1000)
 
-    var element = await page.$('#forgotUsernameLink');
+    let element = await page.$('#forgotUsernameLink');
     const link = await page.evaluate(element => element.textContent, element);
     console.log(link)
     assert(link === "Forgot your username?")
@@ -24,7 +24,7 @@ const assert = require('assert');
     await page.waitForTimeout(1000)
 
     element = await page.$('#reset #fm1 h3');
-    var header = await page.evaluate(element => element.textContent, element);
+    let header = await page.evaluate(element => element.textContent, element);
     console.log(header)
     assert(header === "Forgot your username?")
 

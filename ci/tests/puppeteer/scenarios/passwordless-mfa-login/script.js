@@ -12,7 +12,7 @@ const assert = require('assert');
 
     // await page.waitForTimeout(2000)
 
-    var pswd = await page.$('#password');
+    let pswd = await page.$('#password');
     assert(pswd == null);
 
     await page.type('#username', "casuser");

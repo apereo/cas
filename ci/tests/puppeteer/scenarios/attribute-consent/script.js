@@ -14,8 +14,8 @@ const assert = require('assert');
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
     
-    var element = await page.$('#content h2');
-    var header = await page.evaluate(element => element.textContent, element);
+    let element = await page.$('#content h2');
+    let header = await page.evaluate(element => element.textContent, element);
     console.log(header)
     assert(header === "Attribute Consent")
 
@@ -57,7 +57,7 @@ const assert = require('assert');
     await click(page,"#optionsButton");
     await page.waitForTimeout(1000)
 
-    var opt = await page.$('#optionAlways');
+    let opt = await page.$('#optionAlways');
     assert(await opt != null);
     opt = await page.$('#optionAttributeName');
     assert(await opt != null);
