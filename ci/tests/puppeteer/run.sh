@@ -5,6 +5,10 @@ if [[ -z "$scenario" ]] ; then
   echo Usage: ./ci/tests/puppeteer/run.sh ${PWD}/ci/tests/puppeteer/scenarios/[scenario folder]
   exit 1
 fi
+if [[ ! -d "${scenario}" ]]; then
+  echo "${scenario} doesn't exist."
+  exit -1
+fi
 
 # note if debugging you might need to call
 # await page.setDefaultNavigationTimeout(0);
@@ -17,8 +21,12 @@ DEBUG_SUSPEND=${4:-n}
 
 random=$(openssl rand -hex 8)
 
-echo "Installing Puppeteer"
-npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer jsonwebtoken axios
+if [[ ! -d "$PWD"/ci/tests/puppeteer/node_modules/puppeteer ]] ; then
+  echo "Installing Puppeteer"
+  npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer jsonwebtoken axios
+else
+  echo "Using existing Puppeteer modules"
+fi
 
 echo "Creating overlay work directory"
 rm -Rf "$TMPDIR/cas" "$PWD"/ci/tests/puppeteer/overlay
