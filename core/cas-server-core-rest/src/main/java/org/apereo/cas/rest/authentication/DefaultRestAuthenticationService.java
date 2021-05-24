@@ -48,7 +48,7 @@ public class DefaultRestAuthenticationService implements RestAuthenticationServi
                                                        final HttpServletRequest request) {
         val credentials = this.credentialFactory.fromRequest(request, requestBody);
         if (credentials == null || credentials.isEmpty()) {
-            throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
+            throw new BadRestRequestException("No credentials can be extracted to authenticate the REST request");
         }
         val service = this.serviceFactory.createService(request);
         val registeredService = servicesManager.findServiceBy(service);

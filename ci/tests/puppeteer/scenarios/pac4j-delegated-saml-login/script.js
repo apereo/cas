@@ -21,10 +21,10 @@ const path = require('path');
     await fileElement.uploadFile(metadata);
     await cas.click(page, "input[name='submit']")
     await page.waitForNavigation();
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(2000)
 
     await page.goto("https://localhost:8443/cas/login");
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
 
     let loginProviders = await page.$('#loginProviders');
     assert(await loginProviders.boundingBox() != null);

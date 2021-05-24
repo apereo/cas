@@ -79,7 +79,6 @@ public class InweboCheckUserActionTests extends BaseActionTests {
         val event = action.doExecute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
         assertTrue((Boolean) requestContext.getFlowScope().get(WebflowConstants.MUST_ENROLL));
-        assertTrue(requestContext.getFlowScope().contains(WebflowConstants.INWEBO_ERROR_MESSAGE));
     }
 
     @Test
@@ -91,7 +90,6 @@ public class InweboCheckUserActionTests extends BaseActionTests {
         val event = action.doExecute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
         assertFalse(requestContext.getFlowScope().contains(WebflowConstants.MUST_ENROLL));
-        assertFalse(requestContext.getFlowScope().contains(WebflowConstants.INWEBO_ERROR_MESSAGE));
     }
 
     @Test
@@ -101,7 +99,6 @@ public class InweboCheckUserActionTests extends BaseActionTests {
         val event = action.doExecute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
         assertFalse(requestContext.getFlowScope().contains(WebflowConstants.MUST_ENROLL));
-        assertFalse(requestContext.getFlowScope().contains(WebflowConstants.INWEBO_ERROR_MESSAGE));
     }
 
     @Test
@@ -111,7 +108,6 @@ public class InweboCheckUserActionTests extends BaseActionTests {
         val event = action.doExecute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
         assertFalse(requestContext.getFlowScope().contains(WebflowConstants.MUST_ENROLL));
-        assertFalse(requestContext.getFlowScope().contains(WebflowConstants.INWEBO_ERROR_MESSAGE));
     }
 
     @Test
@@ -121,6 +117,5 @@ public class InweboCheckUserActionTests extends BaseActionTests {
         val event = action.doExecute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
         assertFalse(requestContext.getFlowScope().contains(WebflowConstants.MUST_ENROLL));
-        assertFalse(requestContext.getFlowScope().contains(WebflowConstants.INWEBO_ERROR_MESSAGE));
     }
 }

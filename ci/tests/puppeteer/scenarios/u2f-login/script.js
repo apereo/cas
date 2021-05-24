@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
-    // await page.waitForTimeout(10000)
+    await page.waitForTimeout(3000)
     
     let element = await page.$('#login h3');
     let header = await page.evaluate(element => element.textContent.trim(), element);

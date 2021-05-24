@@ -78,7 +78,6 @@ public class InweboCheckAuthenticationActionTests extends BaseActionTests {
 
         val event = action.doExecute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
-        assertTrue(requestContext.getFlowScope().contains(WebflowConstants.INWEBO_ERROR_MESSAGE));
         assertNoMfa();
     }
 
@@ -89,7 +88,6 @@ public class InweboCheckAuthenticationActionTests extends BaseActionTests {
 
         val event = action.doExecute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
-        assertFalse(requestContext.getFlowScope().contains(WebflowConstants.INWEBO_ERROR_MESSAGE));
         assertNoMfa();
     }
 }

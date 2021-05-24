@@ -27,6 +27,6 @@ const cas = require('../../cas.js');
         })
         .catch(error => {
             assert(error.response.status === 401)
-            assert(error.response.data.toString().includes("Authentication context validation failed"));
+            assert(error.response.data.toString().includes("Authentication failed"));
         })
 })();
