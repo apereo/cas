@@ -66,6 +66,10 @@ scriptPath="${scenario}/script.js"
 echo -e "*************************************"
 echo -e "Running ${scriptPath}\n"
 node --unhandled-rejections=strict ${scriptPath} ${config}
+RC=$?
+if [[ $RC -ne 0 ]]; then
+  echo "Script: ${scriptPath} with config: ${config} failed with return code ${RC}"
+fi
 echo -e "*************************************\n"
 
 exitScript=$(cat "${config}" | jq -j '.exitScript // empty')
@@ -83,3 +87,4 @@ kill -9 $pid
 rm "$PWD"/cas.war
 rm "$PWD"/ci/tests/puppeteer/overlay/thekeystore
 rm -Rf "$PWD"/ci/tests/puppeteer/overlay
+exit $RC
