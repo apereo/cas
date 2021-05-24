@@ -1,6 +1,7 @@
 package org.apereo.cas.pm;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
@@ -16,7 +17,8 @@ import java.io.Serializable;
  */
 @SuperBuilder
 @Getter
-@ToString(exclude = "record")
+@ToString(exclude = {"record", "securityQuestions"})
+@EqualsAndHashCode(of = "username")
 public class PasswordManagementQuery implements Serializable {
     private static final long serialVersionUID = -769463174930246283L;
 
@@ -25,6 +27,9 @@ public class PasswordManagementQuery implements Serializable {
     private final String username;
 
     private final String phoneNumber;
+
+    @Builder.Default
+    private final LinkedMultiValueMap<String, String> securityQuestions = new LinkedMultiValueMap<>();
 
     @Builder.Default
     private final LinkedMultiValueMap<String, Object> record = new LinkedMultiValueMap<>();
@@ -48,10 +53,20 @@ public class PasswordManagementQuery implements Serializable {
      * @param value         the value
      * @return the user record context
      */
-    public PasswordManagementQuery add(final String attributeName, final Object value) {
+    public PasswordManagementQuery attribute(final String attributeName, final Object value) {
         record.add(attributeName, value);
         return this;
     }
 
-
+    /**
+     * Security question.
+     *
+     * @param question the question
+     * @param answer   the answer
+     * @return the password management query
+     */
+    public PasswordManagementQuery securityQuestion(final String question, final String answer) {
+        this.securityQuestions.add(question, answer);
+        return this;
+    }
 }

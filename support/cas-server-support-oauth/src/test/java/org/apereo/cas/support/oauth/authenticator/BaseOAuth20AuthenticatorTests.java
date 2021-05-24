@@ -31,8 +31,10 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
+import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -43,6 +45,7 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 
 import lombok.val;
+import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -56,6 +59,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.Arrays;
 
 import static org.mockito.Mockito.*;
 
@@ -98,6 +103,8 @@ public abstract class BaseOAuth20AuthenticatorTests {
 
     protected OAuthRegisteredService serviceWithoutSecret2;
 
+    protected OAuthRegisteredService serviceWithAttributesMapping;
+
     @Autowired
     @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
@@ -134,7 +141,18 @@ public abstract class BaseOAuth20AuthenticatorTests {
         serviceJwtAccessToken.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         serviceJwtAccessToken.setJwtAccessToken(true);
 
-        servicesManager.save(service, serviceWithoutSecret, serviceWithoutSecret2, serviceJwtAccessToken);
+        serviceWithAttributesMapping = new OAuthRegisteredService();
+        serviceWithAttributesMapping.setName("OAuth5");
+        serviceWithAttributesMapping.setId(5);
+        serviceWithAttributesMapping.setServiceId("https://www.example5.org");
+        serviceWithAttributesMapping.setClientSecret("secret");
+        serviceWithAttributesMapping.setClientId("serviceWithAttributesMapping");
+        serviceWithAttributesMapping.setUsernameAttributeProvider(
+            new DefaultRegisteredServiceUsernameProvider(CaseCanonicalizationMode.LOWER.name()));
+        serviceWithAttributesMapping.setAttributeReleasePolicy(
+            new ReturnAllowedAttributeReleasePolicy(Arrays.asList(new String[]{"eduPersonAffiliation"})));
+
+        servicesManager.save(service, serviceWithoutSecret, serviceWithoutSecret2, serviceJwtAccessToken, serviceWithAttributesMapping);
     }
 
     @ImportAutoConfiguration({

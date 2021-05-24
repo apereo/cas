@@ -4,9 +4,8 @@ import org.apereo.cas.logout.LogoutExecutionPlanTests;
 import org.apereo.cas.logout.LogoutPostProcessorTests;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandlerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * The {@link AllTestsSuite} is responsible for
@@ -20,6 +19,6 @@ import org.junit.runner.RunWith;
     LogoutPostProcessorTests.class,
     SingleLogoutServiceMessageHandlerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

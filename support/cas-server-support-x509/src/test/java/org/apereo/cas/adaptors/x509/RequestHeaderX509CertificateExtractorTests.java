@@ -47,6 +47,30 @@ public class RequestHeaderX509CertificateExtractorTests {
     }
 
     @Test
+    public void verifyBadHeaderLength2() {
+        val cert = RequestHeaderX509CertificateExtractor.X509_HEADER;
+        val request = new MockHttpServletRequest();
+        request.addHeader(casProperties.getAuthn().getX509().getSslHeaderName(), cert);
+        assertNull(x509CertificateExtractor.extract(request));
+    }
+
+    @Test
+    public void verifyBadHeaderLength3() {
+        val cert = RequestHeaderX509CertificateExtractor.X509_HEADER + RequestHeaderX509CertificateExtractor.X509_FOOTER;
+        val request = new MockHttpServletRequest();
+        request.addHeader(casProperties.getAuthn().getX509().getSslHeaderName(), cert);
+        assertNull(x509CertificateExtractor.extract(request));
+    }
+
+    @Test
+    public void verifyBadHeaderLength4() {
+        val cert = RequestHeaderX509CertificateExtractor.X509_HEADER + " " + RequestHeaderX509CertificateExtractor.X509_FOOTER;
+        val request = new MockHttpServletRequest();
+        request.addHeader(casProperties.getAuthn().getX509().getSslHeaderName(), cert);
+        assertNull(x509CertificateExtractor.extract(request));
+    }
+
+    @Test
     public void verifyBadHeader() {
         val cert = RequestHeaderX509CertificateExtractor.X509_HEADER + "\nwhatever\n" + RequestHeaderX509CertificateExtractor.X509_FOOTER;
         val request = new MockHttpServletRequest();

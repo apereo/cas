@@ -34,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -165,7 +166,7 @@ public class DefaultAttributeDefinitionStoreTests {
             .build();
         store.registerAttributeDefinition(defn);
         var values = (Optional<Pair<AttributeDefinition, List<Object>>>) store.resolveAttributeValues("whatever",
-            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), service);
+            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), service, Map.of());
         assertTrue(values.isEmpty());
     }
 
@@ -201,7 +202,7 @@ public class DefaultAttributeDefinitionStoreTests {
             .build();
         store.registerAttributeDefinition(defn);
         var values = store.resolveAttributeValues("eduPersonPrincipalName",
-            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), service);
+            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), service, Map.of());
         assertTrue(values.isPresent());
         assertTrue(values.get().getValue().contains("test@example.org"));
     }
@@ -219,7 +220,7 @@ public class DefaultAttributeDefinitionStoreTests {
             .build();
         store.registerAttributeDefinition(defn);
         var values = store.resolveAttributeValues("eduPersonPrincipalName",
-            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), service);
+            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), service, Map.of());
         assertTrue(values.isPresent());
         assertTrue(values.get().getValue().contains("hello@example.org"));
         assertTrue(values.get().getValue().contains("world@example.org"));
@@ -238,7 +239,7 @@ public class DefaultAttributeDefinitionStoreTests {
             .build();
         store.registerAttributeDefinition(defn);
         var values = store.resolveAttributeValues("eduPersonPrincipalName",
-            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), service);
+            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), service, Map.of());
         assertTrue(values.isPresent());
         assertTrue(values.get().getValue().contains("casuser@system.org"));
         assertTrue(values.get().getValue().contains("groovy@system.org"));
@@ -257,7 +258,7 @@ public class DefaultAttributeDefinitionStoreTests {
             .build();
         store.registerAttributeDefinition(defn);
         var values = store.resolveAttributeValues("eduPersonPrincipalName",
-            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), service);
+            CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), service, Map.of());
         assertTrue(values.isPresent());
         assertTrue(values.get().getValue().contains("hello,test@example.org"));
     }
@@ -324,12 +325,12 @@ public class DefaultAttributeDefinitionStoreTests {
         store.setScope("example.org");
 
         val service = CoreAuthenticationTestUtils.getRegisteredService();
-        var results = store.resolveAttributeValues("cn", List.of("common-name"), service);
+        var results = store.resolveAttributeValues("cn", List.of("common-name"), service, Map.of());
         assertFalse(results.isEmpty());
         assertTrue(results.get().getValue().isEmpty());
 
         when(service.getPublicKey()).thenReturn(mock(RegisteredServicePublicKey.class));
-        results = store.resolveAttributeValues("cn", List.of("common-name"), service);
+        results = store.resolveAttributeValues("cn", List.of("common-name"), service, Map.of());
         assertTrue(results.get().getValue().isEmpty());
     }
 

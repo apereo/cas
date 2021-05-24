@@ -35,8 +35,6 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     static final String STATE_ID_SELECT_SURROGATE = "selectSurrogate";
 
-    private static final String VIEW_ID_CAS_SURROGATE_AUTHN_LIST_VIEW = "casSurrogateAuthnListView";
-
     private static final String ACTION_ID_LOAD_SURROGATES_LIST_ACTION = "loadSurrogatesListAction";
 
     private static final String ACTION_ID_SELECT_SURROGATE_ACTION = "selectSurrogateAction";
@@ -87,8 +85,13 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
         createTransitionForState(selectSurrogate, CasWebflowConstants.TRANSITION_ID_ERROR, STATE_ID_SURROGATE_VIEW);
     }
 
-    private void createSurrogateListViewState(final Flow flow) {
-        val viewState = createViewState(flow, STATE_ID_SURROGATE_VIEW, VIEW_ID_CAS_SURROGATE_AUTHN_LIST_VIEW);
+    /**
+     * Create surrogate list view state.
+     *
+     * @param flow the flow
+     */
+    protected void createSurrogateListViewState(final Flow flow) {
+        val viewState = createViewState(flow, STATE_ID_SURROGATE_VIEW, "surrogate/casSurrogateAuthnListView");
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "selectSurrogate");
     }
 }

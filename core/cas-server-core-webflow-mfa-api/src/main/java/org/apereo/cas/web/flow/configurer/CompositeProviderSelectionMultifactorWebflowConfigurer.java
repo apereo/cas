@@ -41,7 +41,7 @@ public class CompositeProviderSelectionMultifactorWebflowConfigurer extends Abst
             val realSubmit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
             createTransitionForState(realSubmit, MFA_COMPOSITE_EVENT_ID, MFA_COMPOSITE_EVENT_ID);
 
-            val viewState = createViewState(flow, MFA_COMPOSITE_EVENT_ID, "casCompositeMfaProviderSelectionView");
+            val viewState = createViewState(flow, MFA_COMPOSITE_EVENT_ID, "mfa/casCompositeMfaProviderSelectionView");
             viewState.getEntryActionList().add(createEvaluateAction(ACTION_ID_PREPARE_MULTIFACTOR_PROVIDER_SELECTION));
 
             createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT,

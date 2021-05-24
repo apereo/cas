@@ -9,9 +9,6 @@
     <title layout:title-pattern="$LAYOUT_TITLE"
         th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS - Central Authentication Service')}" />
     </title>
-    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css"
-        th:href="@{${#themes.code('webjars.bootstrap.css')}}" />
-    <link rel="stylesheet" type="text/css" href="../static/css/fontawesome.min.css" th:href="@{${#themes.code('webjars.fontawesome.css')}}" />
     <link rel="stylesheet" type="text/css" href="../static/css/cas.css" th:href="@{${#themes.code('cas.standard.css.file')}}" />
 
     <link rel="shortcut icon"

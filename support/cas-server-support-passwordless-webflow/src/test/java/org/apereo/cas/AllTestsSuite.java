@@ -8,9 +8,8 @@ import org.apereo.cas.web.flow.PasswordlessAuthenticationWebflowConfigurerTests;
 import org.apereo.cas.web.flow.PrepareForPasswordlessAuthenticationActionTests;
 import org.apereo.cas.web.flow.VerifyPasswordlessAccountAuthenticationActionTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -27,6 +26,6 @@ import org.junit.runner.RunWith;
     AcceptPasswordlessAuthenticationActionTests.class,
     PrepareForPasswordlessAuthenticationActionTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

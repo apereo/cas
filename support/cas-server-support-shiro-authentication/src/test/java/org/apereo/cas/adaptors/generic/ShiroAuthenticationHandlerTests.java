@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 public class ShiroAuthenticationHandlerTests {
 
     @SneakyThrows

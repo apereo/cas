@@ -13,10 +13,10 @@ const assert = require('assert');
     console.log(header)
     assert(header === "Login with QR Code");
 
-    var image = await page.$('#qrlogin .card-text img');
+    let image = await page.$('#qrlogin .card-text img');
     assert(await image.boundingBox() != null);
 
-    var channel = await page.$('#qrchannel');
+    let channel = await page.$('#qrchannel');
     assert(await channel.boundingBox() != null);
 
     await browser.close();

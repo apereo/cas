@@ -25,7 +25,6 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
 
     private static final long serialVersionUID = -5198990160347131821L;
 
-
     /**
      * The type of search entry handler to choose.
      */
@@ -70,7 +69,11 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
      * The enum Search entry handler types.
      */
     public enum SearchEntryHandlerTypes {
-
+        /**
+         * Process the entry results fetched from active directory and
+         * check for account status controls for disabled/expired accounts, etc.
+         */
+        ACTIVE_DIRECTORY,
         /**
          * Object guid search entry handler.
          * Handles the {@code objectGUID} attribute fetching and conversion.

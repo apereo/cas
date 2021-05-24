@@ -11,6 +11,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
@@ -136,7 +137,10 @@ public class InitialFlowSetupAction extends AbstractAction {
     }
 
     private void configureWebflowForSsoParticipation(final RequestContext context, final String ticketGrantingTicketId) {
-        val ssoParticipation = this.renewalStrategy.supports(context) && this.renewalStrategy.isParticipating(context);
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .requestContext(context)
+            .build();
+        val ssoParticipation = renewalStrategy.supports(ssoRequest) && renewalStrategy.isParticipating(ssoRequest);
         if (!ssoParticipation && StringUtils.isNotBlank(ticketGrantingTicketId)) {
             val auth = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);
             WebUtils.putExistingSingleSignOnSessionAvailable(context, auth != null);

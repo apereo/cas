@@ -45,17 +45,6 @@ public class DefaultDomainAwareServicesManager extends AbstractServicesManager {
         return this.domains.containsKey(domain) ? this.domains.get(domain) : new ArrayList<>(0);
     }
 
-    private void addToDomain(final RegisteredService r, final Map<String, TreeSet<RegisteredService>> map) {
-        val domain = registeredServiceDomainExtractor.extract(r.getServiceId());
-        val services = map.containsKey(domain)
-            ? map.get(domain)
-            : new TreeSet<RegisteredService>();
-        LOGGER.debug("Added service [{}] mapped to domain definition [{}]", r, domain);
-        services.removeIf(s -> s.getId() == r.getId());
-        services.add(r);
-        map.put(domain, services);
-    }
-
     @Override
     protected void deleteInternal(final RegisteredService service) {
         val domain = registeredServiceDomainExtractor.extract(service.getServiceId());
@@ -84,14 +73,35 @@ public class DefaultDomainAwareServicesManager extends AbstractServicesManager {
 
     @Override
     protected void saveInternal(final RegisteredService service) {
-        addToDomain(service, this.domains);
+        this.domains
+            .entrySet()
+            .stream()
+            .filter(entry -> entry.getValue().stream().anyMatch(s -> s.getId() == service.getId()))
+            .map(Map.Entry::getKey)
+            .findFirst()
+            .ifPresent(key -> {
+                val servicesForDomain = domains.get(key);
+                servicesForDomain.removeIf(s -> s.getId() == service.getId());
+                if (servicesForDomain.isEmpty()) {
+                    domains.remove(key);
+                }
+            });
+        addToDomain(service);
     }
 
     @Override
-    protected void loadInternal() {
-        val localDomains = new ConcurrentHashMap<String, TreeSet<RegisteredService>>();
-        getAllServices().forEach(r -> addToDomain(r, localDomains));
-        this.domains.clear();
-        this.domains.putAll(localDomains);
+    protected void loadInternal(final RegisteredService service) {
+        addToDomain(service);
+    }
+
+    private void addToDomain(final RegisteredService service) {
+        val domain = registeredServiceDomainExtractor.extract(service.getServiceId());
+        val services = domains.containsKey(domain)
+            ? domains.get(domain)
+            : new TreeSet<RegisteredService>();
+        LOGGER.debug("Added service [{}] mapped to domain definition [{}]", service, domain);
+        services.removeIf(s -> s.getId() == service.getId());
+        services.add(service);
+        domains.put(domain, services);
     }
 }

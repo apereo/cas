@@ -336,7 +336,7 @@ public class CasCoreWebflowConfiguration {
     @ConditionalOnMissingBean(name = "requiredAuthenticationHandlersSingleSignOnParticipationStrategy")
     public SingleSignOnParticipationStrategy requiredAuthenticationHandlersSingleSignOnParticipationStrategy() {
         return new RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategy(servicesManager.getObject(),
-            authenticationServiceSelectionPlan.getObject(), ticketRegistrySupport.getObject(),
+            ticketRegistrySupport.getObject(), authenticationServiceSelectionPlan.getObject(),
             authenticationEventExecutionPlan.getObject(), applicationContext);
     }
 

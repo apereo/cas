@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 public class OktaAuthenticationStateHandlerAdapterTests {
     @Test
     public void handleSuccessWithoutToken() {

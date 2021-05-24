@@ -8,9 +8,8 @@ import org.apereo.cas.digest.util.DigestAuthenticationUtilsTests;
 import org.apereo.cas.digest.web.flow.DigestAuthenticationActionTests;
 import org.apereo.cas.digest.web.flow.DigestAuthenticationWebflowConfigurerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -26,6 +25,6 @@ import org.junit.runner.RunWith;
     DigestAuthenticationConfigurationTests.class,
     DigestAuthenticationWebflowConfigurerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

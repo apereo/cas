@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-@Tag("Authentication")
+@Tag("CasConfiguration")
 public class ShiroAuthenticationConfigurationTests {
     @Autowired
     @Qualifier("shiroAuthenticationHandler")

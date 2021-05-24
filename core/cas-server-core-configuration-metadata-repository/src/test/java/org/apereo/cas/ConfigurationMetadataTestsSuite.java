@@ -4,9 +4,8 @@ import org.apereo.cas.metadata.CasConfigurationMetadataRepositoryTests;
 import org.apereo.cas.metadata.rest.CasConfigurationMetadataServerEndpointTests;
 import org.apereo.cas.metadata.rest.ConfigurationMetadataSearchResultTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link ConfigurationMetadataTestsSuite}.
@@ -19,6 +18,6 @@ import org.junit.runner.RunWith;
     CasConfigurationMetadataServerEndpointTests.class,
     ConfigurationMetadataSearchResultTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class ConfigurationMetadataTestsSuite {
 }

@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationMetadata")
 public class AuthenticationDateAttributeMetaDataPopulatorTests {
     private final AuthenticationDateAttributeMetaDataPopulator populator =
         new AuthenticationDateAttributeMetaDataPopulator();

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
@@ -15,6 +16,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -1431,6 +1433,7 @@ public class WebUtils {
      * @deprecated Since 6.2.0
      */
     @Deprecated(since = "6.2.0")
+    @SuppressWarnings("InlineMeSuggester")
     public static String getOpenIdLocalUserId(final RequestContext context) {
         return context.getFlowScope().get("openIdLocalId", String.class);
     }
@@ -1668,5 +1671,28 @@ public class WebUtils {
     public static <T extends Ticket> T getSimpleMultifactorAuthenticationToken(final RequestContext requestContext,
                                                                                final Class<T> clazz) {
         return requestContext.getFlowScope().get("simpleMultifactorAuthenticationToken", clazz);
+    }
+
+    /**
+     * Resolve registered service.
+     *
+     * @param requestContext           the request context
+     * @param servicesManager          the services manager
+     * @param serviceSelectionStrategy the service selection strategy
+     * @return the service
+     */
+    public static RegisteredService resolveRegisteredService(final RequestContext requestContext,
+                                                             final ServicesManager servicesManager,
+                                                             final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
+        val registeredService = getRegisteredService(requestContext);
+        if (registeredService != null) {
+            return registeredService;
+        }
+        val service = WebUtils.getService(requestContext);
+        val serviceToUse = serviceSelectionStrategy.resolveService(service);
+        if (serviceToUse != null) {
+            return servicesManager.findServiceBy(serviceToUse);
+        }
+        return null;
     }
 }

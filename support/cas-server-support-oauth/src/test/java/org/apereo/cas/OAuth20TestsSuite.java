@@ -55,6 +55,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenPass
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractorTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRefreshTokenGrantRequestExtractorTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutorTests;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20RegisteredServiceJwtAccessTokenCipherExecutorTests;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilderTests;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20InvalidAuthorizationResponseBuilderTests;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResourceOwnerCredentialsResponseBuilderTests;
@@ -77,9 +78,8 @@ import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenExpirationPolicyTes
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenSovereignExpirationPolicyTests;
 import org.apereo.cas.util.InternalTicketValidatorTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * OAuth test suite that runs all test in a batch.
@@ -163,8 +163,9 @@ import org.junit.runner.RunWith;
     OAuth20RegisteredServiceCipherExecutorTests.class,
     OAuth20TokenAuthorizationResponseBuilderTests.class,
     OAuth20InvalidAuthorizationResponseBuilderTests.class,
+    OAuth20RegisteredServiceJwtAccessTokenCipherExecutorTests.class,
     CSRFCookieTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class OAuth20TestsSuite {
 }

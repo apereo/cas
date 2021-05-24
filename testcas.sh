@@ -96,12 +96,23 @@ while (( "$#" )); do
         category="$2"
         for item in $(echo "$category" | sed "s/,/ /g")
         do
-            case "${item}" in
+            categoryItem=$(echo "${item}" | awk '{print tolower($0)}')
+            
+            case "${categoryItem}" in
             test|simple|run|basic|unit|unittests)
                 task+="testSimple "
                 ;;
             webapp)
                 task+="testWebApp "
+                ;;
+            authnhandler|authenticationhandler)
+                task+="testAuthenticationHandler "
+                ;;
+            authnmetadata|authenticationmetadata)
+                task+="testAuthenticationMetadata "
+                ;;
+            authnpolicy|authenticationpolicy)
+                task+="testAuthenticationPolicy "
                 ;;
             auth|authn|authentication)
                 task+="testAuthentication "

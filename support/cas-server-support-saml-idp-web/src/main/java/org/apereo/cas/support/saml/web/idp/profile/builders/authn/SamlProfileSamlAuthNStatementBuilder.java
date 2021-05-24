@@ -69,17 +69,21 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
      * @param authnRequest the authn request
      * @param adaptor      the adaptor
      * @param binding      the binding
+     * @param service      the service
      * @return the subject locality
      * @throws SamlException the saml exception
      */
     protected SubjectLocality buildSubjectLocality(final Assertion assertion,
                                                    final RequestAbstractType authnRequest,
                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                   final String binding) throws SamlException {
+                                                   final String binding,
+                                                   final SamlRegisteredService service) throws SamlException {
         val subjectLocality = SamlUtils.newSamlObject(SubjectLocality.class);
-        val hostAddress = InetAddressUtils.getCasServerHostAddress(casProperties.getServer().getName());
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
-        LOGGER.debug("Built subject locality address [{}] for the saml authentication statement prepped for [{}]", hostAddress, issuer);
+        val hostAddress = StringUtils.defaultString(service.getSubjectLocality(),
+            InetAddressUtils.getCasServerHostAddress(casProperties.getServer().getName()));
+
+        LOGGER.debug("Built SAML2 subject locality address [{}] for [{}]", hostAddress, issuer);
         subjectLocality.setAddress(hostAddress);
         return subjectLocality;
     }
@@ -107,7 +111,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
         val authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
         var id = request != null ? CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET) : StringUtils.EMPTY;
         if (StringUtils.isBlank(id)) {
-            LOGGER.warn("Unable to locate service ticket as the session index; Generating random identifier instead...");
+            LOGGER.info("Unable to locate service ticket as the session index; Generating random identifier instead...");
             id = '_' + String.valueOf(RandomUtils.nextLong());
         }
         val statement = newAuthnStatement(authenticationMethod, DateTimeUtils.zonedDateTimeOf(assertion.getAuthenticationDate()), id);
@@ -119,7 +123,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
                 : casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance();
             statement.setSessionNotOnOrAfter(dt.plusSeconds(skewAllowance).toInstant());
         }
-        val subjectLocality = buildSubjectLocality(assertion, authnRequest, adaptor, binding);
+        val subjectLocality = buildSubjectLocality(assertion, authnRequest, adaptor, binding, service);
         statement.setSubjectLocality(subjectLocality);
         return statement;
     }

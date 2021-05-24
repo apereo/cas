@@ -8,9 +8,8 @@ import org.apereo.cas.adaptors.x509.web.flow.X509CertificateCredentialsRequestHe
 import org.apereo.cas.adaptors.x509.web.flow.X509TomcatServletFactoryInitialActionTests;
 import org.apereo.cas.adaptors.x509.web.flow.X509WebflowConfigurerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -26,6 +25,6 @@ import org.junit.runner.RunWith;
     X509CertificateCredentialsNonInteractiveActionTests.class,
     X509CertificateCredentialsRequestHeaderActionTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

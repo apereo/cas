@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -45,8 +44,7 @@ public class LdapPasswordManagementServiceTests extends BaseLdapPasswordManageme
     private static final int LDAP_PORT = 10389;
 
     @BeforeAll
-    @SneakyThrows
-    public static void bootstrap() {
+    public static void bootstrap() throws Exception {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
         val localhost = new LDAPConnection("localhost", LDAP_PORT,
             "cn=Directory Manager", "password");
@@ -103,5 +101,14 @@ public class LdapPasswordManagementServiceTests extends BaseLdapPasswordManageme
         assertEquals("666", questions.get("RegisteredAddressQuestion"));
         assertTrue(questions.containsKey("PostalCodeQuestion"));
         assertEquals("1776", questions.get("PostalCodeQuestion"));
+    }
+
+    @Test
+    public void verifySecurityQuestions() {
+        val query = PasswordManagementQuery.builder().username("caspm").build();
+        query.securityQuestion("Q1", "A1");
+        query.securityQuestion("Q2", "A2");
+        passwordChangeService.updateSecurityQuestions(query);
+        assertFalse(passwordChangeService.getSecurityQuestions(query).isEmpty());
     }
 }

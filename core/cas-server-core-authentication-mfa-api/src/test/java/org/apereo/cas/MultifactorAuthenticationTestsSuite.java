@@ -24,9 +24,8 @@ import org.apereo.cas.authentication.mfa.trigger.RestEndpointMultifactorAuthenti
 import org.apereo.cas.authentication.mfa.trigger.ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.authentication.mfa.trigger.TimedMultifactorAuthenticationTriggerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link MultifactorAuthenticationTestsSuite}.
@@ -59,6 +58,6 @@ import org.junit.runner.RunWith;
     DefaultChainingMultifactorAuthenticationBypassProviderTests.class,
     DefaultChainingMultifactorAuthenticationProviderTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class MultifactorAuthenticationTestsSuite {
 }

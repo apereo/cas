@@ -85,7 +85,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreConfiguration.class,
     TokenAuthenticationConfiguration.class
 })
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 public class TokenAuthenticationHandlerTests {
     private static final RandomStringGenerator RANDOM_STRING_GENERATOR = new DefaultRandomStringGenerator();
 

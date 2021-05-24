@@ -62,4 +62,9 @@ public class GroovyResourcePasswordManagementService extends BasePasswordManagem
     public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) {
         return watchableScript.execute("getSecurityQuestions", Map.class, new Object[]{query, LOGGER});
     }
+
+    @Override
+    public void updateSecurityQuestions(final PasswordManagementQuery query) {
+        watchableScript.execute("updateSecurityQuestions", Map.class, new Object[]{query, LOGGER});
+    }
 }

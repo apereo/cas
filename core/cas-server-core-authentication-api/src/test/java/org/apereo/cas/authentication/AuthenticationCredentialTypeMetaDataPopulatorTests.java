@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationMetadata")
 public class AuthenticationCredentialTypeMetaDataPopulatorTests {
     private final AuthenticationCredentialTypeMetaDataPopulator populator =
         new AuthenticationCredentialTypeMetaDataPopulator();

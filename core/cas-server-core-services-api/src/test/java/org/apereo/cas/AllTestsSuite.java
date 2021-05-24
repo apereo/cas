@@ -7,9 +7,8 @@ import org.apereo.cas.services.NeverRegisteredServiceSingleSignOnParticipationPo
 import org.apereo.cas.services.util.RegisteredServiceAccessStrategyAuditableEnforcerTests;
 import org.apereo.cas.services.util.RegisteredServiceNoOpCipherExecutorTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -25,6 +24,6 @@ import org.junit.runner.RunWith;
     NeverRegisteredServiceSingleSignOnParticipationPolicyTests.class,
     RegisteredServiceNoOpCipherExecutorTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

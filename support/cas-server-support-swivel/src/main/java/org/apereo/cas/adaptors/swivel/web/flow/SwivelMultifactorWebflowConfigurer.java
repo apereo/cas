@@ -57,7 +57,7 @@ public class SwivelMultifactorWebflowConfigurer extends AbstractCasMultifactorWe
             val setPrincipalAction = createSetAction("viewScope.principal", "conversationScope.authentication.principal");
             val loginProperties = CollectionUtils.wrapList("token");
             val loginBinder = createStateBinderConfiguration(loginProperties);
-            val viewLoginFormState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, "casSwivelLoginView", loginBinder);
+            val viewLoginFormState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, "swivel/casSwivelLoginView", loginBinder);
             createStateModelBinding(viewLoginFormState, CasWebflowConstants.VAR_ID_CREDENTIAL, SwivelTokenCredential.class);
             viewLoginFormState.getEntryActionList().addAll(setPrincipalAction);
             createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_SUBMIT,

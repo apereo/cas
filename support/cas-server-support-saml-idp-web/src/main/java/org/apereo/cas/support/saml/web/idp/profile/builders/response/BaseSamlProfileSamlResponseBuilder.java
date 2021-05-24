@@ -14,16 +14,15 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.ScratchContext;
 import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
-import org.pac4j.core.context.JEEContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -99,11 +98,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
         val encodeResponse = (Boolean) map.getOrDefault(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.TRUE);
 
         if (encodeResponse) {
-            val sessionStore = samlResponseBuilderConfigurationContext.getSessionStore();
-            val context = new JEEContext(request, response);
-            val relayState = sessionStore.get(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE)
-                .orElse(StringUtils.EMPTY)
-                .toString();
+            var relayState = SAMLBindingSupport.getRelayState(messageContext);
             LOGGER.trace("RelayState is [{}]", relayState);
             return encode(service, finalResponse, response, request,
                 adaptor, relayState, binding, authnRequest, assertion);

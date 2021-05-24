@@ -7,9 +7,8 @@ import org.apereo.cas.monitor.PoolHealthIndicatorTests;
 import org.apereo.cas.monitor.SessionHealthIndicatorTests;
 import org.apereo.cas.monitor.TicketRegistryHealthIndicatorTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -25,6 +24,6 @@ import org.junit.runner.RunWith;
     SessionHealthIndicatorTests.class,
     CacheHealthIndicatorTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

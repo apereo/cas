@@ -12,6 +12,7 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.DigestUtils;
@@ -19,6 +20,7 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.AccessLevel;
@@ -41,8 +43,10 @@ import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.BindingDescriptor;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.pac4j.core.context.JEEContext;
 import org.springframework.http.HttpStatus;
@@ -93,6 +97,23 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         LOGGER.debug("CAS Assertion ValidUntil Date: [{}]", assertion.getValidUntilDate());
         LOGGER.debug("CAS Assertion Attributes: [{}]", assertion.getAttributes());
         LOGGER.debug("CAS Assertion Principal Attributes: [{}]", assertion.getPrincipal().getAttributes());
+    }
+
+    /**
+     * Bind relay state parameter.
+     *
+     * @param request    the request
+     * @param response   the response
+     * @param relayState the relay state
+     * @return the message context
+     */
+    protected static MessageContext bindRelayStateParameter(final HttpServletRequest request,
+                                                            final HttpServletResponse response,
+                                                            final String relayState) {
+        val messageContext = new MessageContext();
+        LOGGER.trace("Relay state is [{}]", relayState);
+        SAMLBindingSupport.setRelayState(messageContext, relayState);
+        return messageContext;
     }
 
     /**
@@ -265,20 +286,18 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         }
 
         val mappings = getAuthenticationContextMappings();
-        val p =
-            authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs()
-                .stream()
-                .filter(ref -> {
-                    val clazz = ref.getURI();
-                    return mappings.containsKey(clazz);
-                })
-                .findFirst();
-        if (p.isPresent()) {
-            val mappedClazz = mappings.get(p.get().getURI());
+        val mappedClassRef = authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs()
+            .stream()
+            .filter(ref -> {
+                val clazz = ref.getURI();
+                return mappings.containsKey(clazz);
+            })
+            .findFirst();
+        if (mappedClassRef.isPresent()) {
+            val mappedClazz = mappings.get(mappedClassRef.get().getURI());
             return initialUrl + '&' + configurationContext.getCasProperties()
                 .getAuthn().getMfa().getTriggers().getHttp().getRequestParameter() + '=' + mappedClazz;
         }
-
         return initialUrl;
     }
 
@@ -325,7 +344,107 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                                                          final HttpServletRequest request) throws Exception {
         autoConfigureCookiePath(request);
         verifySamlAuthenticationRequest(pair, request);
-        return issueAuthenticationRequestRedirect(pair, request, response);
+        val sso = singleSignOnSessionExists(pair, request, response);
+        if (sso.isEmpty()) {
+            return issueAuthenticationRequestRedirect(pair, request, response);
+        }
+        buildResponseBasedSingleSignOnSession(pair, sso.get(), request, response);
+        return null;
+    }
+
+    /**
+     * Build response based single sign on session.
+     * The http response before encoding the SAML response is reset
+     * to ensure a clean slate from previous attempts, specially
+     * when requests/responses are produced rapidly.
+     *
+     * @param pair           the pair
+     * @param authentication the authentication
+     * @param request        the request
+     * @param response       the response
+     */
+    protected void buildResponseBasedSingleSignOnSession(final Pair<? extends SignableSAMLObject, MessageContext> pair,
+                                                         final Authentication authentication,
+                                                         final HttpServletRequest request,
+                                                         final HttpServletResponse response) {
+        val authnRequest = (AuthnRequest) pair.getLeft();
+        val id = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
+        val service = configurationContext.getWebApplicationServiceFactory().createService(id);
+        val registeredService = configurationContext.getServicesManager().findServiceBy(service);
+
+        val assertion = buildCasAssertion(authentication, service, registeredService, Map.of());
+        val authenticationContext = buildAuthenticationContextPair(request, response, authnRequest);
+        val binding = determineProfileBinding(authenticationContext, assertion);
+
+        val messageContext = authenticationContext.getRight();
+        val relayState = SAMLBindingSupport.getRelayState(messageContext);
+        SAMLBindingSupport.setRelayState(authenticationContext.getRight(), relayState);
+        response.reset();
+        buildSamlResponse(response, request, authenticationContext, assertion, binding);
+    }
+
+    /**
+     * Build authentication context pair pair.
+     *
+     * @param request      the request
+     * @param response     the response
+     * @param authnRequest the authn request
+     * @return the pair
+     */
+    protected Pair<AuthnRequest, MessageContext> buildAuthenticationContextPair(final HttpServletRequest request,
+                                                                                final HttpServletResponse response,
+                                                                                final AuthnRequest authnRequest) {
+        val context = new JEEContext(request, response);
+        val relayState = configurationContext.getSessionStore()
+            .get(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE)
+            .orElseGet(() -> request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));
+        val messageContext = bindRelayStateParameter(request, response, (String) relayState);
+        return Pair.of(authnRequest, messageContext);
+    }
+
+    /**
+     * Single sign on session exists.
+     *
+     * @param pair     the pair
+     * @param request  the request
+     * @param response the response
+     * @return the boolean
+     */
+    protected Optional<Authentication> singleSignOnSessionExists(final Pair<? extends SignableSAMLObject, MessageContext> pair,
+                                                                 final HttpServletRequest request, final HttpServletResponse response) {
+        val authnRequest = AuthnRequest.class.cast(pair.getLeft());
+        if (authnRequest.isForceAuthn()) {
+            LOGGER.trace("Authentication request asks for forced authn. Ignoring existing single sign-on session, if any");
+            return Optional.empty();
+        }
+        val cookie = configurationContext.getTicketGrantingTicketCookieGenerator().retrieveCookieValue(request);
+        if (StringUtils.isBlank(cookie)) {
+            LOGGER.trace("Single sign-on session cannot be found or determined. Ignoring single sign-on session");
+            return Optional.empty();
+        }
+
+        val authn = configurationContext.getTicketRegistrySupport().getAuthenticationFrom(cookie);
+        if (authn == null) {
+            LOGGER.debug("Authentication transaction linked to single sign-on session cannot determined.");
+            return Optional.empty();
+        }
+
+        LOGGER.debug("Located single sign-on authentication for principal [{}]", authn.getPrincipal());
+        val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
+        val service = configurationContext.getWebApplicationServiceFactory().createService(issuer);
+        val registeredService = configurationContext.getServicesManager().findServiceBy(service);
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(request)
+            .build()
+            .attribute(RegisteredService.class.getName(), registeredService)
+            .attribute(Issuer.class.getName(), issuer)
+            .attribute(Authentication.class.getName(), authn)
+            .attribute(TicketGrantingTicket.class.getName(), cookie)
+            .attribute(AuthnRequest.class.getName(), authnRequest);
+        val ssoStrategy = configurationContext.getSingleSignOnParticipationStrategy();
+        LOGGER.debug("Checking for single sign-on participation for issuer [{}]", issuer);
+        val ssoAvailable = ssoStrategy.supports(ssoRequest) && ssoStrategy.isParticipating(ssoRequest);
+        return ssoAvailable ? Optional.of(authn) : Optional.empty();
     }
 
     /**
@@ -561,6 +680,35 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             sessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
             sessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, SAMLBindingSupport.getRelayState(messageContext));
         }
+    }
+
+    /**
+     * Determine profile binding.
+     *
+     * @param authenticationContext the authentication context
+     * @param assertion             the assertion
+     * @return the string
+     */
+    protected String determineProfileBinding(final Pair<AuthnRequest, MessageContext> authenticationContext,
+                                             final Assertion assertion) {
+
+        val authnRequest = authenticationContext.getKey();
+        val pair = getRegisteredServiceAndFacade(authnRequest);
+        val facade = pair.getValue();
+
+        val binding = StringUtils.defaultIfBlank(authnRequest.getProtocolBinding(), SAMLConstants.SAML2_POST_BINDING_URI);
+        LOGGER.debug("Determined authentication request binding is [{}], issued by [{}]",
+            binding, authnRequest.getIssuer().getValue());
+
+        val entityId = facade.getEntityId();
+        LOGGER.debug("Checking metadata for [{}] to see if binding [{}] is supported", entityId, binding);
+        val svc = facade.getAssertionConsumerService(binding);
+        if (svc != null) {
+            LOGGER.debug("Binding [{}] is supported by [{}]", svc.getBinding(), entityId);
+            return binding;
+        }
+        LOGGER.warn("Checking determine profile binding for [{}]", entityId);
+        return null;
     }
 }
 

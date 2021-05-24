@@ -191,39 +191,53 @@
                                         </span>
                                         <span class="mdc-notched-outline__trailing"></span>
                                     </span>
-                                </label>
-                            </div>
-                        </section>
+                            </label>
+                        </div>
+                    </section>
 
-                        <section class="cas-field form-group"
-                            th:if="${passwordManagementEnabled != null && passwordManagementEnabled && param.doChangePassword != null}">
-                            <p>
-                                <input type="checkbox" name="doChangePassword" id="doChangePassword" value="true"
-                                    th:checked="${param.doChangePassword != null}" />
-                                <label for="doChangePassword" th:text="#{screen.button.changePassword}">Change
-                                    Password</label>
-                            </p>
-                        </section>
+                    <section class="cas-field form-group"
+                             th:if="${passwordManagementEnabled != null && passwordManagementEnabled && param.doChangePassword != null}">
+                        <p>
+                            <input type="checkbox" name="doChangePassword" id="doChangePassword"
+                                   value="true" th:checked="${param.doChangePassword != null}"/>
+                            <label for="doChangePassword" th:text="#{screen.button.changePassword}">Change Password</label>
+                        </p>
+                    </section>
 
-                        <section class="cas-field form-group" th:if="${rememberMeAuthenticationEnabled}">
-                            <p>
-                                <input type="checkbox" name="rememberMe" id="rememberMe" value="true" />
-                                <label for="rememberMe" th:text="#{screen.rememberme.checkbox.title}">Remember
-                                    Me</label>
-                            </p>
-                        </section>
+                    <section class="cas-field form-check" th:if="${rememberMeAuthenticationEnabled}">
+                        <div class="mdc-form-field ">
+                            <div class="mdc-checkbox">
+                                <input type="checkbox"
+                                       class="mdc-checkbox__native-control form-check-input"
+                                       name="rememberMe"
+                                       id="rememberMe"/>
+                                <div class="mdc-checkbox__background">
+                                  <svg class="mdc-checkbox__checkmark"
+                                       viewBox="0 0 24 24">
+                                    <path class="mdc-checkbox__checkmark-path"
+                                          fill="none"
+                                          d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+                                  </svg>
+                                  <div class="mdc-checkbox__mixedmark"></div>
+                                </div>
+                                <div class="mdc-checkbox__ripple"></div>
+                              </div>
+                            <label class="form-check-label" for="rememberMe" th:text="#{screen.rememberme.checkbox.title}">Remember Me</label>
+                        </div>
+                        <p/>
+                    </section>
 
-                        <section class="cas-field form-group">
+                    <section class="cas-field">
 
-                            <span th:if="${recaptchaLoginEnabled}">
-                                <div th:replace="fragments/recaptcha :: recaptchaToken" />
-                            </span>
+                        <span th:if="${recaptchaLoginEnabled}">
+                            <div th:replace="fragments/recaptcha :: recaptchaToken"/>
+                        </span>
 
-                            <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
-                            <input type="hidden" name="_eventId" value="submit" />
-                            <input type="hidden" name="geolocation" />
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                        <input type="hidden" name="_eventId" value="submit"/>
+                        <input type="hidden" name="geolocation"/>
 
-                            <p th:if="${#request.getMethod().equalsIgnoreCase('POST')}">
+                        <p th:if="${#request.getMethod().equalsIgnoreCase('POST')}">
                                 <span th:each="entry : ${httpRequestInitialPostParameters}" th:remove="tag">
                                     <span th:each="entryValue : ${entry.value}" th:remove="tag">
                                         <input type="hidden" th:name="${entry.key}" th:value="${entryValue}" />

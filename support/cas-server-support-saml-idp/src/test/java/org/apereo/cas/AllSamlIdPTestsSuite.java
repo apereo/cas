@@ -62,13 +62,13 @@ import org.apereo.cas.support.saml.web.idp.profile.sso.request.DefaultSSOSamlHtt
 import org.apereo.cas.support.saml.web.velocity.SamlTemplatesVelocityEngineTests;
 import org.apereo.cas.ticket.artifact.DefaultSamlArtifactTicketFactoryTests;
 import org.apereo.cas.ticket.query.DefaultSamlAttributeQueryTicketFactoryTests;
+import org.apereo.cas.web.SamlIdPSingleSignOnParticipationStrategyTests;
 import org.apereo.cas.web.flow.SamlIdPConsentableAttributeBuilderTests;
 import org.apereo.cas.web.flow.SamlIdPMetadataUIActionTests;
 import org.apereo.cas.web.flow.SamlIdPWebflowConfigurerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Test suite to run all SAML tests.
@@ -122,6 +122,7 @@ import org.junit.runner.RunWith;
     SamlIdPObjectSignerTests.class,
     AuthnRequestRequestedAttributesAttributeReleasePolicyTests.class,
     SamlIdPObjectEncrypterTests.class,
+    SamlIdPSingleSignOnParticipationStrategyTests.class,
     SamlProfileSamlAttributeStatementBuilderTests.class,
     SamlProfileSamlConditionsBuilderTests.class,
     SamlProfileSamlSubjectBuilderTests.class,
@@ -143,7 +144,7 @@ import org.junit.runner.RunWith;
     EduPersonTargetedIdAttributeReleasePolicyTests.class,
     SamlProfileSaml2ResponseBuilderTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllSamlIdPTestsSuite {
 }
 

@@ -18,7 +18,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 public class RiskAwareAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    static final String VIEW_ID_BLOCKED_AUTHN = "casRiskAuthenticationBlockedView";
+    static final String STATE_ID_BLOCKED_AUTHN = "riskyAuthenticationBlocked";
 
     public RiskAwareAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                     final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -32,8 +32,8 @@ public class RiskAwareAuthenticationWebflowConfigurer extends AbstractCasWebflow
         val flow = getLoginFlow();
         if (flow != null) {
             val submit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
-            createTransitionForState(submit, BlockAuthenticationContingencyPlan.EVENT_ID_BLOCK_AUTHN, VIEW_ID_BLOCKED_AUTHN);
-            createViewState(flow, VIEW_ID_BLOCKED_AUTHN, VIEW_ID_BLOCKED_AUTHN);
+            createTransitionForState(submit, BlockAuthenticationContingencyPlan.EVENT_ID_BLOCK_AUTHN, STATE_ID_BLOCKED_AUTHN);
+            createViewState(flow, STATE_ID_BLOCKED_AUTHN, "adaptive-authn/casRiskAuthenticationBlockedView");
         }
     }
 }

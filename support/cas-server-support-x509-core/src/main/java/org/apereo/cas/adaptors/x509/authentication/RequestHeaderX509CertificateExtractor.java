@@ -79,7 +79,7 @@ public class RequestHeaderX509CertificateExtractor implements X509CertificateExt
             return null;
         }
 
-        if (Objects.requireNonNull(certHeaderValue).length() < X509_HEADER.length()) {
+        if (Objects.requireNonNull(certHeaderValue).length() - X509_FOOTER.length() < X509_HEADER.length()) {
             LOGGER.debug("Header [{}] found but it is too short to parse. Header value: [{}]", sslClientCertHeader, certHeaderValue);
             return null;
         }
@@ -93,6 +93,7 @@ public class RequestHeaderX509CertificateExtractor implements X509CertificateExt
             LOGGER.debug("Certificate extracted from header [{}] with subject: [{}]", sslClientCertHeader, cert.getSubjectDN());
             return new X509Certificate[]{cert};
         } catch (final Exception e) {
+            LOGGER.debug("Could not parse certificate from header: [{}] with sanitized value: [{}]", sslClientCertHeader, body);
             LoggingUtils.warn(LOGGER, e);
         }
         return null;

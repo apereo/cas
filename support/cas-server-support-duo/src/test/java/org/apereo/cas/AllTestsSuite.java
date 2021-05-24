@@ -12,9 +12,8 @@ import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityPrepareWebLoginFor
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityUniversalPromptPrepareLoginActionTests;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityUniversalPromptValidateLoginActionTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link org.apereo.cas.AllTestsSuite}.
@@ -35,6 +34,6 @@ import org.junit.runner.RunWith;
     DuoSecurityAuthenticationWebflowActionTests.class,
     DuoSecurityDetermineUserAccountActionTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

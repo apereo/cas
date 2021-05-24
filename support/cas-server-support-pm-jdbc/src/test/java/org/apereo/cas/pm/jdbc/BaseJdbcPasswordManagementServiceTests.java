@@ -73,7 +73,10 @@ import javax.sql.DataSource;
     "cas.authn.pm.enabled=true",
     "cas.authn.pm.history.core.enabled=true",
     "cas.authn.pm.jdbc.auto-commit=false",
-    "cas.authn.pm.jdbc.sql-security-questions=SELECT question, answer FROM pm_table_questions WHERE userid=?",
+
+    "cas.authn.pm.jdbc.sql-get-security-questions=SELECT question, answer FROM pm_table_questions WHERE userid=?",
+    "cas.authn.pm.jdbc.sql-delete-security-questions=DELETE FROM pm_table_questions WHERE userid=?",
+    "cas.authn.pm.jdbc.sql-update-security-questions=INSERT INTO pm_table_questions(userid, question, answer) VALUES (?,?,?);",
     "cas.authn.pm.jdbc.sql-find-email=SELECT email FROM pm_table_accounts WHERE userid=?",
     "cas.authn.pm.jdbc.sql-find-user=SELECT userid FROM pm_table_accounts WHERE email=?",
     "cas.authn.pm.jdbc.sql-find-phone=SELECT phone FROM pm_table_accounts WHERE userid=?",

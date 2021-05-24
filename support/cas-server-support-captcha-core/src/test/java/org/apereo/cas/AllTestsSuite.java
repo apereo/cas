@@ -5,9 +5,8 @@ import org.apereo.cas.web.GoogleCaptchaV2ValidatorTests;
 import org.apereo.cas.web.GoogleCaptchaV3ValidatorTests;
 import org.apereo.cas.web.HCaptchaValidatorTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -21,6 +20,6 @@ import org.junit.runner.RunWith;
     GoogleCaptchaV2ValidatorTests.class,
     GoogleCaptchaV3ValidatorTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

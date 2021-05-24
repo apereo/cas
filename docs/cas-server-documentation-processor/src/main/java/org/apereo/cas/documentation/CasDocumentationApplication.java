@@ -5,7 +5,6 @@ import org.apereo.cas.metadata.CasReferenceProperty;
 import org.apereo.cas.metadata.ConfigurationMetadataCatalogQuery;
 import org.apereo.cas.services.RegisteredServiceProperty;
 
-import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -45,6 +44,8 @@ public class CasDocumentationApplication {
             });
         var dataDirectory = args[0];
         var projectVersion = args[1];
+        var projectRootDirectory = args[2];
+
         var dataPath = new File(dataDirectory, projectVersion);
         if (dataPath.exists()) {
             FileUtils.deleteQuietly(dataPath);
@@ -59,6 +60,32 @@ public class CasDocumentationApplication {
 
         exportThirdPartyConfiguration(dataPath);
         exportRegisteredServiceProperties(dataPath);
+        exportTemplateViews(projectRootDirectory, dataPath);
+    }
+
+    private static void exportTemplateViews(final String projectRootDirectory, final File dataPath) {
+        var serviceProps = new File(dataPath, "userinterface-templates");
+        if (serviceProps.exists()) {
+            FileUtils.deleteQuietly(serviceProps);
+        }
+        serviceProps.mkdirs();
+        var uiFile = new File(serviceProps, "config.yml");
+        var properties = new ArrayList<Map<?, ?>>();
+
+        var root = new File(projectRootDirectory, "support/cas-server-support-thymeleaf");
+        var parent = new File(root, "src/main/resources/templates");
+
+        var files = FileUtils.listFiles(parent, new String[]{"html"}, true);
+        files
+            .stream()
+            .sorted()
+            .forEach(file -> {
+                var map = new LinkedHashMap<String, Object>();
+                var path = StringUtils.remove(file.getAbsolutePath(), root.getAbsolutePath());
+                map.put("name", path);
+                properties.add(map);
+            });
+        CasConfigurationMetadataCatalog.export(uiFile, properties);
     }
 
     private static void exportRegisteredServiceProperties(final File dataPath) {
