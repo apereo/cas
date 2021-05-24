@@ -34,7 +34,7 @@ public class AuthyClientInstance {
         this.properties = settings;
         val authyUrl = StringUtils.defaultIfBlank(properties.getApiUrl(), AuthyApiClient.DEFAULT_API_URI);
         val url = new URL(authyUrl);
-        val testFlag = properties.isTestFlag() || url.getProtocol().equalsIgnoreCase("http");
+        val testFlag = url.getProtocol().equalsIgnoreCase("http");
         val authyClient = new AuthyApiClient(properties.getApiKey(), authyUrl, testFlag);
         this.authyUsers = authyClient.getUsers();
         this.authyTokens = authyClient.getTokens();

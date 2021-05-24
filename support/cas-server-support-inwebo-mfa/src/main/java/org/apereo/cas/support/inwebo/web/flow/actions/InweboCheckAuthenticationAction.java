@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.binding.message.DefaultMessageContext;
-import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.binding.message.MessageBuilder;
+import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -30,9 +30,19 @@ public class InweboCheckAuthenticationAction extends AbstractAction {
 
     private final CasWebflowEventResolver casWebflowEventResolver;
 
+    /**
+     * Add error message to context.
+     *
+     * @param messageContext the message context
+     * @param code           the code
+     */
+    protected static void addErrorMessageToContext(final MessageContext messageContext, final String code) {
+        val message = new MessageBuilder().error().code(code).build();
+        messageContext.addMessage(message);
+    }
+
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        val messageSource = ((DefaultMessageContext) requestContext.getMessageContext()).getMessageSource();
         val authentication = WebUtils.getInProgressAuthentication();
         val login = authentication.getPrincipal().getId();
         LOGGER.trace("Login: [{}]", login);
@@ -62,11 +72,11 @@ public class InweboCheckAuthenticationAction extends AbstractAction {
             } else {
                 LOGGER.debug("Validation fails: [{}]", result);
                 if (result == InweboResult.REFUSED || result == InweboResult.TIMEOUT) {
-                    flowScope.put(WebflowConstants.INWEBO_ERROR_MESSAGE,
-                            messageSource.getMessage("cas.inwebo.error.userrefusedortoolate", null, LocaleContextHolder.getLocale()));
+                    addErrorMessageToContext(requestContext.getMessageContext(), "cas.inwebo.error.userrefusedortoolate");
                 }
             }
         }
         return error();
     }
+
 }

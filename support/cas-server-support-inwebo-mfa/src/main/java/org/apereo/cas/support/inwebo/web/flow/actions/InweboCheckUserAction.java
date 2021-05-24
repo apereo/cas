@@ -8,8 +8,8 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.binding.message.DefaultMessageContext;
-import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.binding.message.MessageBuilder;
+import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -28,9 +28,19 @@ public class InweboCheckUserAction extends AbstractAction {
 
     private final CasConfigurationProperties casProperties;
 
+    /**
+     * Add error message to context.
+     *
+     * @param messageContext the message context
+     * @param code           the code
+     */
+    protected static void addErrorMessageToContext(final MessageContext messageContext, final String code) {
+        val message = new MessageBuilder().error().code(code).build();
+        messageContext.addMessage(message);
+    }
+
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        val messageSource = ((DefaultMessageContext) requestContext.getMessageContext()).getMessageSource();
         val authentication = WebUtils.getInProgressAuthentication();
         val login = authentication.getPrincipal().getId();
         LOGGER.trace("Login: [{}]", login);
@@ -54,7 +64,7 @@ public class InweboCheckUserAction extends AbstractAction {
                 if (activationStatus == 0) {
                     LOGGER.debug("User is not registered: [{}]", login);
                     flowScope.put(WebflowConstants.MUST_ENROLL, true);
-                    flowScope.put(WebflowConstants.INWEBO_ERROR_MESSAGE, messageSource.getMessage("cas.inwebo.error.usernotregistered", null, LocaleContextHolder.getLocale()));
+                    addErrorMessageToContext(requestContext.getMessageContext(), "cas.inwebo.error.usernotregistered");
                 } else if (activationStatus == 1) {
                     LOGGER.debug("User can only handle push notifications: [{}]", login);
                     return getEventFactorySupport().event(this, WebflowConstants.PUSH);
