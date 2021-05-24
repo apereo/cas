@@ -6,6 +6,9 @@ const assert = require('assert');
         ignoreHTTPSErrors: true
     });
     const page = await browser.newPage();
+
+    // Configure the navigation timeout to infinite if debugging
+    // await page.setDefaultNavigationTimeout(0);
     await page.goto("https://localhost:8443/cas/login");
 
     await page.type('#username', "mustchangepassword");
@@ -15,20 +18,14 @@ const assert = require('assert');
 
     // await page.waitForTimeout(5000)
 
-    const title = await page.title();
-    console.log(title)
-    assert(title === "You must change your password.")
+    const header = await page.$eval('#pwdmain h3', el => el.innerText)
+    console.log(header)
+    assert(header === "You must change your password.")
 
-//    let element = await page.$('#main-content #login #fm1 h3');
-//    const header = await page.evaluate(element => element.textContent, element);
-//    console.log(header)
-//    assert(header === "You must change your password.")
-//
-//    let accept = await page.$('button[name=submit]');
-//    assert(await accept.boundingBox() != null);
-//
-//    let cancel = await page.$('button[name=cancel]');
-//    assert(await cancel.boundingBox() != null);
+    await page.type('#password', "Jv!e0mKD&dCNl^Q");
+    await page.type('#confirmedPassword', "Jv!e0mKD&dCNl^Q");
+    await page.keyboard.press('Enter');
+    await page.waitForNavigation();
 
     await browser.close();
 })();

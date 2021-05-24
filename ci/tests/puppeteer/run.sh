@@ -87,8 +87,14 @@ if [[ $RC -ne 0 ]]; then
 fi
 echo -e "*************************************\n"
 
-docker container stop $(docker container ls -aq) >/dev/null 2>&1 || true
-docker container rm $(docker container ls -aq) >/dev/null 2>&1 || true
+if [[ "${CI}" == "true" ]]; then
+  docker container stop $(docker container ls -aq) >/dev/null 2>&1 || true
+  docker container rm $(docker container ls -aq) >/dev/null 2>&1 || true
+fi
+
+if [[ "${CI}" != "true" ]]; then
+  read -p "Hit enter to cleanup scenario ${scenario} that ended with exit code $RC"
+fi
 
 echo -e "\nKilling process ${pid} ..."
 kill -9 $pid
