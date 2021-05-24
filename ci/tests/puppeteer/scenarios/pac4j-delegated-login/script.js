@@ -1,8 +1,6 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
-const fs = require('fs');
 const cas = require('../../cas.js');
-const path = require('path');
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -17,8 +15,8 @@ const path = require('path');
     let twitter = await page.$('li #TwitterClient');
     assert(await twitter.boundingBox() != null);
 
-    let cas = await page.$('li #CasClient');
-    assert(await cas.boundingBox() != null);
+    let casClient = await page.$('li #CasClient');
+    assert(await casClient.boundingBox() != null);
 
     let github = await page.$('li #GitHubClient');
     assert(await github.boundingBox() != null);

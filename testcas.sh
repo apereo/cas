@@ -105,6 +105,9 @@ while (( "$#" )); do
             webapp)
                 task+="testWebApp "
                 ;;
+            throttling|bucket4j|authenticationthrottling)
+                task+="testAuthenticationThrottling "
+                ;;
             authnhandler|authenticationhandler)
                 task+="testAuthenticationHandler "
                 ;;
