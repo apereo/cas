@@ -18,8 +18,10 @@ const cas = require('../../cas.js');
 
     // Asking for the PIN code
     await page.$eval('button[name=browser]', button => button.click());
-    await page.waitForTimeout(2000);
-    const header = await page.$eval('main h2', el => el.innerText.trim())
+    await page.waitForTimeout(4000);
+    let element = await page.$('main h2');
+    let header = await page.evaluate(element => element.innerText.trim(), element);
+    console.log(header)
     assert(header === "Fill in your PIN code:")
 
     // Let's wait for Inwebo javascript to execute
