@@ -1,13 +1,9 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true,
-        defaultViewport: null,
-        args: ['--start-maximized']
-    });
+    const browser = await puppeteer.launch(cas.browserOptions());
     const page = await browser.newPage();
     await page.goto("https://localhost:8443/cas/login?authn_method=mfa-simple");
     await page.type('#username', "casuser");

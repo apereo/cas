@@ -1,6 +1,7 @@
 const assert = require('assert');
 const https = require('https');
 const axios = require('axios');
+const cas = require('../../cas.js');
 
 (async () => {
     const instance = axios.create({

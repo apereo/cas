@@ -1,15 +1,11 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
 const fs = require('fs');
+const cas = require('../../cas.js');
 const path = require('path');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: false,
-        defaultViewport: null,
-        args: ['--start-maximized']
-    });
+    const browser = await puppeteer.launch(cas.browserOptions());
     const page = await browser.newPage();
 
     await page.goto("https://localhost:8443/cas/login");
@@ -23,7 +19,7 @@ const path = require('path');
     console.log("Metadata file: " + metadata);
 
     await fileElement.uploadFile(metadata);
-    await click(page, "input[name='submit']")
+    await cas.click(page, "input[name='submit']")
     await page.waitForNavigation();
     await page.waitForTimeout(1000)
 
@@ -36,7 +32,7 @@ const path = require('path');
     let client = await page.$('li #SAML2Client');
     assert(await client.boundingBox() != null);
     
-    await click(page, "li #SAML2Client")
+    await cas.click(page, "li #SAML2Client")
     await page.waitForNavigation();
 
     await page.waitForTimeout(5000)
@@ -47,7 +43,7 @@ const path = require('path');
     await page.waitForNavigation();
     await page.waitForTimeout(3000)
 
-    await click(page, "input[name='_eventId_proceed']")
+    await cas.click(page, "input[name='_eventId_proceed']")
     await page.waitForTimeout(3000)
 
     const tgc = (await page.cookies()).filter(value => value.name === "TGC")
@@ -67,8 +63,4 @@ const path = require('path');
     await browser.close();
 })();
 
-async function click(page, button) {
-    await page.evaluate((button) => {
-        document.querySelector(button).click();
-    }, button);
-}
+

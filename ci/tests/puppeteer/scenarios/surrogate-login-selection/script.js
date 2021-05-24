@@ -1,13 +1,10 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
 const url = require('url');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true,
-        devtools: true
-    });
+    const browser = await puppeteer.launch(cas.browserOptions());
     const page = await browser.newPage();
     await page.goto("https://localhost:8443/cas/login?service=https://example.org");
 

@@ -2,15 +2,14 @@ const puppeteer = require('puppeteer');
 const assert = require('assert');
 const url = require('url');
 const fs = require('fs');
+const cas = require('../../cas.js');
 
 (async () => {
     let args = process.argv.slice(2);
     let config = JSON.parse(fs.readFileSync(args[0]));
     assert(config != null)
     
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true
-    });
+    const browser = await puppeteer.launch(cas.browserOptions());
     const page = await browser.newPage();
     await page.goto("https://localhost:8443/cas/login?authn_method=mfa-duo");
     await page.type('#username', "casuser");

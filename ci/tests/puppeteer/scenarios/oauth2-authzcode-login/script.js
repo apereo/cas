@@ -2,14 +2,10 @@ const puppeteer = require('puppeteer');
 const https = require('https');
 const assert = require('assert');
 const axios = require('axios');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true,
-        defaultViewport: null,
-        args: ['--start-maximized']
-    });
+    const browser = await puppeteer.launch(cas.browserOptions());
     const page = await browser.newPage();
     const url = "http://localhost:8080";
     await page.goto(url);
@@ -18,7 +14,7 @@ const axios = require('axios');
     await page.type('#authorization-endpoint-input', "https://localhost:8443/cas/oauth2.0/authorize");
     await page.type('#client-id-input', "f28ace49");
     await page.type('#scope-input', "profile");
-    await click(page, "form button")
+    await cas.clickLast(page, "form button")
     await page.waitForTimeout(3000)
 
     await page.type('#username', "casuser");
@@ -29,7 +25,7 @@ const axios = require('axios');
     await page.waitForTimeout(3000)
     await page.type('#token-endpoint-input', "https://localhost:8443/cas/oauth2.0/token");
     await page.type('#client-secret-input', "8f278d1b975f");
-    await click(page, "form button")
+    await cas.clickLast(page, "form button")
     await page.waitForTimeout(3000)
 
     let element = await page.$('#access-token-input');
@@ -61,10 +57,3 @@ const axios = require('axios');
     
     await browser.close();
 })();
-
-async function click(page, button) {
-    await page.evaluate((button) => {
-        let buttons = document.querySelectorAll(button);
-        buttons[buttons.length - 1].click();
-    }, button);
-}
