@@ -213,7 +213,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
                 casProperties.getAuthn().getPm().getCore().isEnabled())));
     }
 
-    private void configurePasswordResetFlow(final Flow flow, final String id, String viewId) {
+    private void configurePasswordResetFlow(final Flow flow, final String id, final String viewId) {
         createFlowVariable(flow, FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);
 
         val binder = createStateBinderConfiguration(CollectionUtils.wrapList(FLOW_VAR_ID_PASSWORD, "confirmedPassword"));

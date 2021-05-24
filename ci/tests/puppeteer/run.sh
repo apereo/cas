@@ -7,7 +7,7 @@ if [[ -z "$scenario" ]] ; then
 fi
 if [[ ! -d "${scenario}" ]]; then
   echo "${scenario} doesn't exist."
-  exit -1
+  exit 1;
 fi
 
 # note if debugging you might need to call
@@ -25,7 +25,7 @@ if [[ ! -d "$PWD"/ci/tests/puppeteer/node_modules/puppeteer ]] ; then
   echo "Installing Puppeteer"
   npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer jsonwebtoken axios
 else
-  echo "Using existing Puppeteer modules"
+  echo "Using existing Puppeteer modules..."
 fi
 
 echo "Creating overlay work directory"
@@ -69,13 +69,11 @@ properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
 properties="${properties//\$\{PWD\}/${PWD}}"
 properties="${properties//\%\{random\}/${random}}"
 if [[ "$DEBUG" == "debug" ]]; then
-  debugArgs=-Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND
-else
-  debugArgs=
+  runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
 fi
 
-echo -e "\nLaunching CAS with properties [${properties}] and dependencies [${dependencies}]"
-java ${runArgs} ${debugArgs} -jar "$PWD"/cas.war ${properties} \
+echo -e "\nLaunching CAS with properties [${properties}], JVM arguments [${jvmArgs}] and dependencies [${dependencies}]"
+java ${runArgs} -jar "$PWD"/cas.war ${properties} \
   --spring.profiles.active=none --server.ssl.key-store="$keystore" &
 pid=$!
 echo -e "\nWaiting for CAS under process id ${pid}"
@@ -108,7 +106,7 @@ if [[ "${CI}" == "true" ]]; then
 fi
 
 if [[ "${CI}" != "true" ]]; then
-  read -p "Hit enter to cleanup scenario ${scenario} that ended with exit code $RC"
+  read -r -p "Hit enter to cleanup scenario ${scenario} that ended with exit code $RC"
 fi
 
 echo -e "\nKilling process ${pid} ..."
