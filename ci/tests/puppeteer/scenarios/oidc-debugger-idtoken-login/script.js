@@ -1,11 +1,9 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true
-    });
+    const browser = await puppeteer.launch(cas.browserOptions());
     const page = await browser.newPage();
     const url = "https://localhost:8443/cas/oidc/authorize?" +
         "client_id=client&" +
@@ -22,7 +20,7 @@ const assert = require('assert');
     await page.waitForNavigation();
     await page.waitForTimeout(5000)
 
-    await click(page, "#allow");
+    await cas.click(page, "#allow");
     await page.waitForNavigation();
     await page.waitForTimeout(5000)
 
@@ -34,8 +32,4 @@ const assert = require('assert');
     await browser.close();
 })();
 
-async function click(page, button) {
-    await page.evaluate((button) => {
-        document.querySelector(button).click();
-    }, button);
-}
+

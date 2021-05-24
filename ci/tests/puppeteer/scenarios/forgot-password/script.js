@@ -1,11 +1,9 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true
-    });
+    const browser = await puppeteer.launch(cas.browserOptions());
     const page = await browser.newPage();
     await page.goto("https://localhost:8443/cas/login");
 
@@ -16,7 +14,7 @@ const assert = require('assert');
     console.log(link)
     assert(link === "Reset your password")
 
-    await click(page, "#forgotPasswordLink")
+    await cas.click(page, "#forgotPasswordLink")
     await page.waitForTimeout(1000)
 
     element = await page.$('#reset #fm1 h3');
@@ -49,7 +47,7 @@ const assert = require('assert');
 
     await page.goto("http://localhost:8282");
     await page.waitForTimeout(1000)
-    await click(page, "table tbody td a")
+    await cas.click(page, "table tbody td a")
     await page.waitForTimeout(1000)
 
     element = await page.$('div[name=bodyPlainText] .well');
@@ -93,11 +91,6 @@ const assert = require('assert');
     await browser.close();
 })();
 
-async function click(page, button) {
-    await page.evaluate((button) => {
-        document.querySelector(button).click();
-    }, button);
-}
 
 async function typePassword(page, pswd, confirm) {
     await page.$eval('#password', el => el.value = '');

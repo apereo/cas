@@ -2,11 +2,10 @@ const puppeteer = require('puppeteer');
 const assert = require('assert');
 const url = require('url');
 const https = require('https');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true
-    });
+    const browser = await puppeteer.launch(cas.browserOptions());
     const page = await browser.newPage();
     const service = "https://example.com";
 

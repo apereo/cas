@@ -1,11 +1,9 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true
-    });
+    const browser = await puppeteer.launch(cas.browserOptions());
     const page = await browser.newPage();
     const context = browser.defaultBrowserContext()
     await context.overridePermissions("https://localhost:8443/cas/login", ['geolocation'])

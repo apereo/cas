@@ -1,11 +1,10 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
 const url = require('url');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true
-    });
+    const browser = await puppeteer.launch(cas.browserOptions());
     const page = await browser.newPage();
 
     console.log("Generating service ticket without SSO")

@@ -1,12 +1,9 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true,
-        devtools: true
-    });
+    const browser = await puppeteer.launch(cas.browserOptions());
     const page = await browser.newPage();
     await page.goto("https://localhost:8443/cas/login");
 
@@ -84,11 +81,6 @@ const assert = require('assert');
     await browser.close();
 })();
 
-async function click(page, button) {
-    await page.evaluate((button) => {
-        document.querySelector(button).click();
-    }, button);
-}
 
 async function typePassword(page, pswd, confirm) {
     await page.$eval('#password', el => el.value = '');

@@ -2,14 +2,10 @@ const puppeteer = require('puppeteer');
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true,
-        defaultViewport: null,
-        args: ['--start-maximized']
-    });
+    const browser = await puppeteer.launch(cas.browserOptions());
 
     const page = await browser.newPage();
 
@@ -30,7 +26,7 @@ const path = require('path');
     await fileElement.uploadFile(metadata);
     // await page.waitForTimeout(1000)
 
-    await click(page, "input[name='submit']")
+    await cas.click(page, "input[name='submit']")
     await page.waitForNavigation();
 
     await page.waitForTimeout(1000)
@@ -38,7 +34,7 @@ const path = require('path');
     await page.goto("https://samltest.id/start-idp-test/");
     await page.type('input[name=\'entityID\']', "https://cas.apereo.org/saml/idp");
     // await page.waitForTimeout(1000)
-    await click(page, "input[type='submit']")
+    await cas.click(page, "input[type='submit']")
     await page.waitForNavigation();
 
     await page.waitForTimeout(5000)
@@ -56,8 +52,3 @@ const path = require('path');
     await browser.close();
 })();
 
-async function click(page, button) {
-    await page.evaluate((button) => {
-        document.querySelector(button).click();
-    }, button);
-}
