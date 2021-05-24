@@ -18,7 +18,7 @@ const cas = require('../../cas.js');
 
     // Asking for the PIN code
     await page.$eval('button[name=browser]', button => button.click());
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(1000);
     console.log("Checking for PIN code...")
     let element = await page.$('main h2');
     let header = await page.evaluate(element => element.innerText.trim(), element);
