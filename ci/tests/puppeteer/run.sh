@@ -29,7 +29,7 @@ else
 fi
 
 echo "Creating overlay work directory"
-rm -Rf "$TMPDIR/cas" "$PWD"/ci/tests/puppeteer/overlay
+rm -Rf "$PWD"/ci/tests/puppeteer/overlay
 mkdir "$PWD"/ci/tests/puppeteer/overlay
 
 dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
@@ -69,6 +69,7 @@ properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
 properties="${properties//\$\{PWD\}/${PWD}}"
 properties="${properties//\%\{random\}/${random}}"
 if [[ "$DEBUG" == "debug" ]]; then
+  echo -e "Enabling debugger on port $DEBUG_PORT"
   runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
 fi
 
@@ -106,7 +107,8 @@ if [[ "${CI}" == "true" ]]; then
 fi
 
 if [[ "${CI}" != "true" ]]; then
-  read -r -p "Hit enter to cleanup scenario ${scenario} that ended with exit code $RC"
+  echo -e "Hit enter to cleanup scenario ${scenario} that ended with exit code $RC \n"
+  read -r
 fi
 
 echo -e "\nKilling process ${pid} ..."
