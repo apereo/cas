@@ -40,6 +40,7 @@ import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngin
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -54,22 +55,22 @@ public class SamlObjectSignatureValidator {
     /**
      * The Override signature reference digest methods.
      */
-    protected final List overrideSignatureReferenceDigestMethods;
+    protected final List<String> overrideSignatureReferenceDigestMethods;
 
     /**
      * The Override signature algorithms.
      */
-    protected final List overrideSignatureAlgorithms;
+    protected final List<String> overrideSignatureAlgorithms;
 
     /**
      * The Override black listed signature algorithms.
      */
-    protected final List overrideBlockedSignatureAlgorithms;
+    protected final List<String> overrideBlockedSignatureAlgorithms;
 
     /**
      * The Override allowed signature signing algorithms.
      */
-    protected final List overrideAllowedAlgorithms;
+    protected final List<String> overrideAllowedAlgorithms;
 
     /**
      * CAS settings.
@@ -141,7 +142,7 @@ public class SamlObjectSignatureValidator {
         val peer = context.getSubcontext(SAMLPeerEntityContext.class, true);
         peer.setEntityId(SamlIdPUtils.getIssuerFromSamlObject(profileRequest));
 
-        val peerEntityId = peer.getEntityId();
+        val peerEntityId = Objects.requireNonNull(peer.getEntityId());
         LOGGER.debug("Validating request signature for [{}]...", peerEntityId);
 
         val roleDescriptor = roleDescriptorResolver.resolveSingle(
@@ -156,12 +157,12 @@ public class SamlObjectSignatureValidator {
         val validationParams = new SignatureValidationParameters();
 
         if (overrideBlockedSignatureAlgorithms != null && !overrideBlockedSignatureAlgorithms.isEmpty()) {
-            validationParams.setBlacklistedAlgorithms(this.overrideBlockedSignatureAlgorithms);
+            validationParams.setExcludedAlgorithms(this.overrideBlockedSignatureAlgorithms);
             LOGGER.debug("Validation override blocked algorithms are [{}]", this.overrideAllowedAlgorithms);
         }
 
         if (overrideAllowedAlgorithms != null && !overrideAllowedAlgorithms.isEmpty()) {
-            validationParams.setWhitelistedAlgorithms(this.overrideAllowedAlgorithms);
+            validationParams.setIncludedAlgorithms(this.overrideAllowedAlgorithms);
             LOGGER.debug("Validation override allowed algorithms are [{}]", this.overrideAllowedAlgorithms);
         }
 
@@ -279,17 +280,17 @@ public class SamlObjectSignatureValidator {
 
         if (this.overrideBlockedSignatureAlgorithms != null
             && !samlIdp.getAlgs().getOverrideBlockedSignatureSigningAlgorithms().isEmpty()) {
-            config.setBlacklistedAlgorithms(this.overrideBlockedSignatureAlgorithms);
-            config.setWhitelistMerge(true);
+            config.setExcludedAlgorithms(this.overrideBlockedSignatureAlgorithms);
+            config.setExcludeMerge(true);
         }
 
         if (this.overrideAllowedAlgorithms != null && !this.overrideAllowedAlgorithms.isEmpty()) {
-            config.setWhitelistedAlgorithms(this.overrideAllowedAlgorithms);
-            config.setBlacklistMerge(true);
+            config.setIncludedAlgorithms(this.overrideAllowedAlgorithms);
+            config.setIncludeMerge(true);
         }
 
-        LOGGER.debug("Signature validation blocked algorithms: [{}]", config.getBlacklistedAlgorithms());
-        LOGGER.debug("Signature validation allowed algorithms: [{}]", config.getWhitelistedAlgorithms());
+        LOGGER.debug("Signature validation blocked algorithms: [{}]", config.getExcludedAlgorithms());
+        LOGGER.debug("Signature validation allowed algorithms: [{}]", config.getIncludedAlgorithms());
 
         return config;
     }

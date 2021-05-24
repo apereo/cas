@@ -6,7 +6,7 @@ const path = require('path');
 (async () => {
     const browser = await puppeteer.launch({
         ignoreHTTPSErrors: true,
-        headless: true,
+        headless: false,
         defaultViewport: null,
         args: ['--start-maximized']
     });
@@ -39,16 +39,16 @@ const path = require('path');
     await click(page, "li #SAML2Client")
     await page.waitForNavigation();
 
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(5000)
 
     await page.type('#username', "morty");
     await page.type('#password', "panic");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(3000)
 
     await click(page, "input[name='_eventId_proceed']")
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(3000)
 
     const tgc = (await page.cookies()).filter(value => value.name === "TGC")
     assert(tgc.length !== 0);

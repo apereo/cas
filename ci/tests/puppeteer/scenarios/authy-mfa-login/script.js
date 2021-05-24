@@ -15,7 +15,7 @@ const assert = require('assert');
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
-    await page.waitForTimeout(50000)
+    await page.waitForTimeout(1000)
 
     let element = await page.$('#token');
     assert(await element.boundingBox() != null);
