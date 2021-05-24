@@ -151,6 +151,28 @@ function preventFormResubmission() {
     });
 }
 
+function writeToSessionStorage(value) {
+    if (typeof(Storage) !== "undefined") {
+        window.sessionStorage.removeItem("sessionStorage");
+        window.sessionStorage.setItem('sessionStorage', value);
+        console.log(`Stored ${value} in session storage`);
+    } else {
+        console.log("Browser does not support session storage for write-ops");
+    }
+}
+
+function readFromSessionStorage() {
+    if (typeof(Storage) !== "undefined") {
+        let sessionStorage = window.sessionStorage.getItem("sessionStorage");
+        console.log(`Read ${sessionStorage} in session storage`);
+        window.localStorage.removeItem("sessionStorage");
+        return sessionStorage;
+    } else {
+        console.log("Browser does not support session storage for read-ops");
+    }
+    return null;
+}
+
 function resourceLoadedSuccessfully() {
 
     $(document).ready(function () {

@@ -69,7 +69,7 @@ public class JpaWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepos
     }
 
     @Override
-    public Stream<CredentialRegistration> load() {
+    public Stream<CredentialRegistration> stream() {
         val records = entityManager.createQuery(SELECT_QUERY, JpaWebAuthnCredentialRegistration.class).getResultList();
         return records.stream()
             .map(record -> getCipherExecutor().decode(record.getRecords()))

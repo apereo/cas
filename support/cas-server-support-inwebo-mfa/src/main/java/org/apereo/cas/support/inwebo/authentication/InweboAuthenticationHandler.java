@@ -2,6 +2,7 @@ package org.apereo.cas.support.inwebo.authentication;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorAuthenticationProperties;
@@ -22,7 +23,7 @@ import java.security.GeneralSecurityException;
  * @since 6.4.0
  */
 @Slf4j
-public class InweboAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+public class InweboAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler implements MultifactorAuthenticationHandler {
 
     private final InweboService service;
 

@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -48,7 +49,7 @@ public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegis
         val ticket = secondRegistry.getTicket(ticketGrantingTicketId);
         assertNull(ticket);
         assertTrue(secondRegistry.getTickets().isEmpty());
-        assertEquals(0, getNewTicketRegistry().getTicketsStream().count());
+        assertEquals(0, getNewTicketRegistry().stream().count());
     }
 
     @RepeatedTest(1)
@@ -62,7 +63,7 @@ public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegis
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() {
-                getNewTicketRegistry().addTicket(null);
+                getNewTicketRegistry().addTicket((Ticket) null);
                 getNewTicketRegistry().updateTicket(null);
             }
         });

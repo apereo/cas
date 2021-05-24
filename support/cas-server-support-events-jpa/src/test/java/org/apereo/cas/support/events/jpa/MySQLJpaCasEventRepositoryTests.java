@@ -20,7 +20,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.events.jpa.password=password",
     "cas.events.jpa.driver-class=com.mysql.cj.jdbc.Driver",
     "cas.events.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
-    "cas.events.jpa.dialect=org.hibernate.dialect.MySQL57InnoDBDialect"
+    "cas.events.jpa.dialect=org.hibernate.dialect.MySQL8Dialect"
 })
 public class MySQLJpaCasEventRepositoryTests extends JpaCasEventRepositoryTests {
 }

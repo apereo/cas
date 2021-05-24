@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CouchbaseTicketRegistryConfiguration;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
@@ -70,7 +71,7 @@ public class CouchbaseTicketRegistryTests extends BaseTicketRegistryTests {
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() {
-                newTicketRegistry.addTicket(null);
+                newTicketRegistry.addTicket((Ticket) null);
             }
         });
     }

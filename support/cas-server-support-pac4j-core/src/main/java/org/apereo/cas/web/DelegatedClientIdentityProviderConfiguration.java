@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 
@@ -17,6 +18,7 @@ import java.io.Serializable;
 @Getter
 @ToString
 @Setter
+@SuperBuilder
 public class DelegatedClientIdentityProviderConfiguration implements Serializable {
     private static final long serialVersionUID = 6216882278086699364L;
 
@@ -29,4 +31,6 @@ public class DelegatedClientIdentityProviderConfiguration implements Serializabl
     private final String cssClass;
 
     private boolean autoRedirect;
+
+    private final String title;
 }

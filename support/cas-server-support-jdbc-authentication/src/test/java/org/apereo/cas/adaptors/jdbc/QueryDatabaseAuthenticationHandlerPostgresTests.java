@@ -3,12 +3,12 @@ package org.apereo.cas.adaptors.jdbc;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthenticationProperties;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +27,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.sql.DataSource;
-
 import java.util.List;
 import java.util.Set;
 
@@ -45,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "database.driver-class=org.postgresql.Driver",
     "database.name=postgres",
     "database.url=jdbc:postgresql://localhost:5432/",
-    "database.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
+    "database.dialect=org.hibernate.dialect.PostgreSQL10Dialect"
 })
 @EnabledIfPortOpen(port = 5432)
 @Tag("Postgres")
@@ -60,8 +59,7 @@ public class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabas
     private DataSource dataSource;
 
     @BeforeEach
-    @SneakyThrows
-    public void initialize() {
+    public void initialize() throws Exception {
         try (val c = this.dataSource.getConnection()) {
             c.setAutoCommit(true);
             try (val pstmt = c.prepareStatement("insert into caspgusers (username, password, locations) values(?,?,?);")) {
@@ -75,8 +73,7 @@ public class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabas
     }
 
     @AfterEach
-    @SneakyThrows
-    public void afterEachTest() {
+    public void afterEachTest() throws Exception {
         try (val c = this.dataSource.getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);
@@ -85,15 +82,13 @@ public class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabas
         }
     }
 
-
     @Test
-    @SneakyThrows
-    public void verifySuccess() {
+    public void verifySuccess() throws Exception {
         val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("locations"));
-        val q = new QueryDatabaseAuthenticationHandler("DbHandler", null,
-            PrincipalFactoryUtils.newPrincipalFactory(), 0,
-            this.dataSource, SQL, PASSWORD_FIELD,
-            null, null, CollectionUtils.wrap(map));
+        val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD);
+        properties.setName("DbHandler");
+        val q = new QueryDatabaseAuthenticationHandler(properties, null,
+            PrincipalFactoryUtils.newPrincipalFactory(), this.dataSource, CollectionUtils.wrap(map));
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         val result = q.authenticate(c);
         assertNotNull(result);
@@ -109,7 +104,7 @@ public class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabas
             return new JpaPersistenceProviderContext().setIncludeEntityClasses(Set.of(QueryDatabaseAuthenticationHandlerPostgresTests.UsersTable.class.getName()));
         }
     }
-    
+
     @SuppressWarnings("unused")
     @Entity(name = "caspgusers")
     public static class UsersTable {

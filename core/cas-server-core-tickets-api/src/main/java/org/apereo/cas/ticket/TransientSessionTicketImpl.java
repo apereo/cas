@@ -11,12 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,33 +29,30 @@ import java.util.Map;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
-@Entity
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@Table(name = "TRANSIENTSESSIONTICKET")
-@DiscriminatorColumn(name = "TYPE")
-@DiscriminatorValue(TransientSessionTicket.PREFIX)
 public class TransientSessionTicketImpl extends AbstractTicket implements TransientSessionTicket {
     private static final long serialVersionUID = 7839186396717950243L;
 
     /**
      * The Service.
      */
-    @Lob
-    @Column(name = "SERVICE", length = Integer.MAX_VALUE)
     private Service service;
 
     /**
      * The Properties.
      */
-    @Lob
-    @Column(name = "PROPERTIES", length = Integer.MAX_VALUE, nullable = false)
-    private HashMap<String, Object> properties = new HashMap<>(0);
+    private Map<String, Object> properties = new HashMap<>(0);
 
     public TransientSessionTicketImpl(final String id, final ExpirationPolicy expirationPolicy,
                                       final Service service, final Map<String, Serializable> properties) {
         super(id, expirationPolicy);
         this.service = service;
         this.properties = new HashMap<>(properties);
+    }
+
+    @Override
+    public <T> T getProperty(final String key, final Class<T> clazz) {
+        return clazz.cast(properties.get(key));
     }
 
     @Override

@@ -3,12 +3,17 @@ package org.apereo.cas.documentation;
 import org.apereo.cas.metadata.CasConfigurationMetadataCatalog;
 import org.apereo.cas.metadata.CasReferenceProperty;
 import org.apereo.cas.metadata.ConfigurationMetadataCatalogQuery;
+import org.apereo.cas.services.RegisteredServiceProperty;
 
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -52,7 +57,31 @@ public class CasDocumentationApplication {
             CasConfigurationMetadataCatalog.export(configFile, value);
         });
 
-        results = CasConfigurationMetadataCatalog.query(
+        exportThirdPartyConfiguration(dataPath);
+        exportRegisteredServiceProperties(dataPath);
+    }
+
+    private static void exportRegisteredServiceProperties(final File dataPath) {
+        var serviceProps = new File(dataPath, "registered-service-properties");
+        if (serviceProps.exists()) {
+            FileUtils.deleteQuietly(serviceProps);
+        }
+        serviceProps.mkdirs();
+        var servicePropsFile = new File(serviceProps, "config.yml");
+        var properties = new ArrayList<Map<?, ?>>();
+        for (var property : RegisteredServiceProperty.RegisteredServiceProperties.values()) {
+            var map = new LinkedHashMap<String, Object>();
+            map.put("name", property.getPropertyName());
+            map.put("defaultValue", property.getDefaultValue());
+            map.put("type", property.getType().name());
+            map.put("group", property.getGroup().name());
+            properties.add(map);
+        }
+        CasConfigurationMetadataCatalog.export(servicePropsFile, properties);
+    }
+
+    private static void exportThirdPartyConfiguration(final File dataPath) {
+        var results = CasConfigurationMetadataCatalog.query(
             ConfigurationMetadataCatalogQuery.builder()
                 .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.THIRD_PARTY)
                 .build());
@@ -61,7 +90,6 @@ public class CasDocumentationApplication {
             FileUtils.deleteQuietly(destination);
         }
         destination.mkdirs();
-        assert results.properties() != null;
         var configFile = new File(destination, "config.yml");
         CasConfigurationMetadataCatalog.export(configFile, results.properties());
     }

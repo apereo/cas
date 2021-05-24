@@ -37,7 +37,7 @@ public class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
     @RepeatedTest(1)
     public void verifyCountsUnknown() {
         val registry = mock(DefaultTicketRegistry.class);
-        when(registry.getTicketsStream()).thenThrow(IllegalArgumentException.class);
+        when(registry.stream()).thenThrow(IllegalArgumentException.class);
         when(registry.sessionCount()).thenCallRealMethod();
         when(registry.serviceTicketCount()).thenCallRealMethod();
         assertEquals(Long.MIN_VALUE, registry.sessionCount());

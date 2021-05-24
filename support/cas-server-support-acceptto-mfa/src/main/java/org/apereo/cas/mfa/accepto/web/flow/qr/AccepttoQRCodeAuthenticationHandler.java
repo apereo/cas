@@ -2,6 +2,7 @@ package org.apereo.cas.mfa.accepto.web.flow.qr;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
@@ -18,7 +19,7 @@ import org.apache.commons.lang3.StringUtils;
  * @since 6.0.0
  */
 @Slf4j
-public class AccepttoQRCodeAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+public class AccepttoQRCodeAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler implements MultifactorAuthenticationHandler {
 
     public AccepttoQRCodeAuthenticationHandler(final ServicesManager servicesManager,
                                                final PrincipalFactory principalFactory) {

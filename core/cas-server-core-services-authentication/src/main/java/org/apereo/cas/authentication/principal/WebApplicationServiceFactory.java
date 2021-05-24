@@ -31,26 +31,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class WebApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
     private static final List<String> IGNORED_ATTRIBUTES_PARAMS = List.of(
+        CasProtocolConstants.PARAMETER_PASSWORD,
         CasProtocolConstants.PARAMETER_SERVICE,
         CasProtocolConstants.PARAMETER_TARGET_SERVICE,
         CasProtocolConstants.PARAMETER_TICKET,
         CasProtocolConstants.PARAMETER_FORMAT);
-
-    @Override
-    public WebApplicationService createService(final HttpServletRequest request) {
-        val serviceToUse = getRequestedService(request);
-        if (StringUtils.isBlank(serviceToUse)) {
-            LOGGER.trace("No service is specified in the request. Skipping service creation");
-            return null;
-        }
-        return newWebApplicationService(request, serviceToUse);
-    }
-
-    @Override
-    public WebApplicationService createService(final String id) {
-        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-        return newWebApplicationService(request, id);
-    }
 
     /**
      * Build new web application service simple web application service.
@@ -74,32 +59,6 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
             populateAttributes(newService, request);
         }
         return newService;
-    }
-
-    /**
-     * Gets requested service.
-     *
-     * @param request the request
-     * @return the requested service
-     */
-    protected String getRequestedService(final HttpServletRequest request) {
-        val targetService = request.getParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE);
-        val service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
-        val serviceAttribute = request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
-
-        if (StringUtils.isNotBlank(targetService)) {
-            return targetService;
-        }
-        if (StringUtils.isNotBlank(service)) {
-            return service;
-        }
-        if (serviceAttribute != null) {
-            if (serviceAttribute instanceof Service) {
-                return ((Service) serviceAttribute).getId();
-            }
-            return serviceAttribute.toString();
-        }
-        return null;
     }
 
     @SneakyThrows
@@ -130,7 +89,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
      * @return the service itself.
      */
     private static AbstractWebApplicationService determineWebApplicationFormat(final HttpServletRequest request,
-        final AbstractWebApplicationService webApplicationService) {
+                                                                               final AbstractWebApplicationService webApplicationService) {
         val format = Optional.ofNullable(request)
             .map(httpServletRequest -> httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_FORMAT))
             .orElse(StringUtils.EMPTY);
@@ -143,5 +102,47 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
             LOGGER.error("Format specified in the request [{}] is not recognized", format);
         }
         return webApplicationService;
+    }
+
+    @Override
+    public WebApplicationService createService(final HttpServletRequest request) {
+        val serviceToUse = getRequestedService(request);
+        if (StringUtils.isBlank(serviceToUse)) {
+            LOGGER.trace("No service is specified in the request. Skipping service creation");
+            return null;
+        }
+        return newWebApplicationService(request, serviceToUse);
+    }
+
+    @Override
+    public WebApplicationService createService(final String id) {
+        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+        return newWebApplicationService(request, id);
+    }
+
+    /**
+     * Gets requested service.
+     *
+     * @param request the request
+     * @return the requested service
+     */
+    protected String getRequestedService(final HttpServletRequest request) {
+        val targetService = request.getParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE);
+        val service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
+        val serviceAttribute = request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
+
+        if (StringUtils.isNotBlank(targetService)) {
+            return targetService;
+        }
+        if (StringUtils.isNotBlank(service)) {
+            return service;
+        }
+        if (serviceAttribute != null) {
+            if (serviceAttribute instanceof Service) {
+                return ((Service) serviceAttribute).getId();
+            }
+            return serviceAttribute.toString();
+        }
+        return null;
     }
 }

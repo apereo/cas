@@ -74,6 +74,7 @@ public class OktaAuthenticationConfiguration {
             oktaPrincipalFactory(),
             okta,
             oktaAuthenticationClient());
+        handler.setState(okta.getState());
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(okta.getPrincipalTransformation()));
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(okta.getPasswordEncoder(), applicationContext));
         handler.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(okta.getCredentialCriteria()));

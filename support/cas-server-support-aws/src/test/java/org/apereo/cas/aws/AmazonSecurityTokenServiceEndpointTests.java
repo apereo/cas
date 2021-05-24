@@ -54,7 +54,8 @@ public class AmazonSecurityTokenServiceEndpointTests {
     @Tag("AmazonWebServices")
     @TestPropertySource(properties = {
         "cas.amazon-sts.principal-attribute-name=groupMembership",
-        "cas.amazon-sts.principal-attribute-value=^un[A-Z]known.*"
+        "cas.amazon-sts.principal-attribute-value=^un[A-Z]known.*",
+        "cas.authn.attribute-repository.stub.attributes.groupMembership=some-value"
     })
     @SuppressWarnings("ClassCanBeStatic")
     public class WithMissingAuthorizationAttributeValues extends BaseAmazonSecurityTokenServiceEndpointTests {
@@ -77,7 +78,8 @@ public class AmazonSecurityTokenServiceEndpointTests {
             val body = new LinkedMultiValueMap<String, String>();
             body.put("username", List.of("casuser"));
             body.put("password", List.of("resusac"));
-            val status = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null, null, null, body, request);
+            val status = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null,
+                null, null, null, body, request);
             assertEquals(HttpStatus.UNAUTHORIZED, status.getStatusCode());
         }
     }
@@ -106,7 +108,8 @@ public class AmazonSecurityTokenServiceEndpointTests {
             val body = new LinkedMultiValueMap<String, String>();
             body.put("username", List.of("casuser"));
             body.put("password", List.of("resusac"));
-            val status = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null, null, null, body, request);
+            val status = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null, null,
+                null, null, body, request);
             assertEquals(HttpStatus.UNAUTHORIZED, status.getStatusCode());
         }
     }
@@ -140,8 +143,9 @@ public class AmazonSecurityTokenServiceEndpointTests {
             body.put("username", List.of("casuser"));
             body.put("password", List.of("resusac"));
 
-            val credentials = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null, null, null, body, request);
-            assertNotNull(credentials);
+            val credentials = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null, null,
+                null, null, body, request);
+            assertEquals(HttpStatus.OK, credentials.getStatusCode());
         }
 
         @Test
@@ -152,15 +156,17 @@ public class AmazonSecurityTokenServiceEndpointTests {
             body.put("username", List.of("test1234"));
             body.put("password", List.of("4321tset"));
 
-            val credentials = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null, null, null, body, request);
-            assertNotNull(credentials);
+            val status = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null,
+                null, null, null, body, request);
+            assertEquals(HttpStatus.UNAUTHORIZED, status.getStatusCode());
         }
 
         @Test
         public void verifyNoCredentials() {
             val request = new MockHttpServletRequest();
             val body = new LinkedMultiValueMap<String, String>();
-            val status = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null, null, null, body, request);
+            val status = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null,
+                null, null, null, body, request);
             assertEquals(HttpStatus.UNAUTHORIZED, status.getStatusCode());
         }
 
@@ -172,8 +178,91 @@ public class AmazonSecurityTokenServiceEndpointTests {
             body.put("username", List.of("casuser"));
             body.put("password", List.of("bad-password"));
 
-            val status = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null, null, null, body, request);
+            val status = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null,
+                null, null, null, body, request);
             assertEquals(HttpStatus.UNAUTHORIZED, status.getStatusCode());
         }
     }
+    
+    @Nested
+    @Tag("AmazonWebServices")
+    @SuppressWarnings("ClassCanBeStatic")
+    @TestPropertySource(properties = {
+        "cas.amazon-sts.principal-attribute-name=awsroles",
+        "cas.amazon-sts.principal-attribute-value=.+",
+        "cas.amazon-sts.rbac-enabled=true",
+        "cas.authn.attribute-repository.stub.attributes.awsroles=arn:aws:iam::223873472255:role/adminuser-iam-role"
+    })
+    public class WithRoleRequest extends BaseAmazonSecurityTokenServiceEndpointTests {
+        @Autowired
+        @Qualifier("awsSecurityTokenServiceEndpoint")
+        private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
+
+        @Autowired
+        private ConfigurableApplicationContext applicationContext;
+
+        @BeforeEach
+        public void beforeEach() {
+            ApplicationContextProvider.holdApplicationContext(applicationContext);
+            TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        }
+
+        @Test
+        public void verifyOperation() {
+            val request = new MockHttpServletRequest();
+            val body = new LinkedMultiValueMap<String, String>();
+            body.put("username", List.of("casuser"));
+            body.put("password", List.of("resusac"));
+            val credentials = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null,
+                null, null, null, body, request);
+            assertEquals(HttpStatus.OK, credentials.getStatusCode());
+        }
+    }
+
+    @Nested
+    @Tag("AmazonWebServices")
+    @SuppressWarnings("ClassCanBeStatic")
+    @TestPropertySource(properties = {
+        "cas.amazon-sts.principal-attribute-name=awsroles",
+        "cas.amazon-sts.principal-attribute-value=arn.+",
+        "cas.amazon-sts.rbac-enabled=true",
+        "cas.authn.attribute-repository.stub.attributes.awsroles=arn:aws:iam::223873472255:role/adminuser-iam-role,arn:aws:iam::123873472251:role/superuser-iam-role"
+    })
+    public class WithMultipleRolesRequest extends BaseAmazonSecurityTokenServiceEndpointTests {
+        @Autowired
+        @Qualifier("awsSecurityTokenServiceEndpoint")
+        private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
+
+        @Autowired
+        private ConfigurableApplicationContext applicationContext;
+
+        @BeforeEach
+        public void beforeEach() {
+            ApplicationContextProvider.holdApplicationContext(applicationContext);
+            TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        }
+
+        @Test
+        public void verifyOperation() {
+            val request = new MockHttpServletRequest();
+            val body = new LinkedMultiValueMap<String, String>();
+            body.put("username", List.of("casuser"));
+            body.put("password", List.of("resusac"));
+            val credentials = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null,
+                null, null, null, body, request);
+            assertEquals(HttpStatus.UNAUTHORIZED, credentials.getStatusCode());
+        }
+
+        @Test
+        public void verifySpecificUnknownRoleOperation() {
+            val request = new MockHttpServletRequest();
+            val body = new LinkedMultiValueMap<String, String>();
+            body.put("username", List.of("casuser"));
+            body.put("password", List.of("resusac"));
+            val credentials = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null,
+                null, null, "this-is-unknown-role", body, request);
+            assertEquals(HttpStatus.UNAUTHORIZED, credentials.getStatusCode());
+        }
+    }
+    
 }

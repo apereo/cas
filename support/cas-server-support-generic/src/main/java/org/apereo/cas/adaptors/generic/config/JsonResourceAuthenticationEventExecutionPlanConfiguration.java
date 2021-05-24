@@ -66,6 +66,7 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
             h.setPasswordPolicyConfiguration(new PasswordPolicyContext(jsonProps.getPasswordPolicy()));
         }
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(jsonProps.getPrincipalTransformation()));
+        h.setState(jsonProps.getState());
         return h;
     }
 

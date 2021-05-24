@@ -81,6 +81,12 @@ credentials from AWS STS.
 Multifactor authentication with [Duo Security](../mfa/DuoSecurity-Authentication.html) is now given the ability to support passcodes as
 credentials, mainly for CLI or REST-based authentication requests.
 
+### Authentication Handler States
+
+Most (but not all) authentication handlers are given the ability to remain in `STANDBY` mode, which puts 
+them in a semi-enabled state. A handler in `STANDBY` is ready to be invoked with specifically called upon, but 
+will not be auto-included in the list of eligible authentication handlers globally and by default.
+
 ### Multifactor Authentication via REST Protocol
 
 <div class="alert alert-info">
@@ -98,7 +104,7 @@ configured [multifactor authentication triggers](../mfa/Configuring-Multifactor-
 JPA data models and mapping relationships for registered services have changed to improve performance of
 the [JPA service registry](../services/JPA-Service-Management.html). Previous releases struggled this area to load
 `1000` registered service definitions in under `3` minutes. Changes to the data models have significantly improved
-performance and allow CAS to load and/or store `10,000` registered service definitions `5` seconds or less.
+performance and allow CAS to load and/or store `10,000` registered service definitions in `5` seconds or less.
 
 <div class="alert alert-warning">
   <strong>WATCH OUT!</strong><br />This is a breaking change. The underlying data models and repository implementations that manage 
@@ -107,6 +113,12 @@ been altered. If you are managing application records in a database, you should 
 CAS to export services from the existing database and import them back into the table structures.
 </div>
 
+### JPA Ticket Registry Performance
+
+Similar to the above entry, JPA data models and mapping relationships for CAS tickets have changed to improve performance of
+the [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html). The main change in the underlying data model is the removal
+of binary objects and blobs in favor of JSON serialization.
+
 ## Other Stuff
 
 - CAS CI builds are updated to ensure all web application types can be deployed successfully via external servlet containers.
@@ -114,6 +126,7 @@ CAS to export services from the existing database and import them back into the 
 - Puppeteer tests to ensure authentication interrupts do function correctly with or without authentication warnings.
 - The `authenticationHandlers` actuator endpoint is corrected to respond with the collection of registered authentication handlers.
 - The `xml-apis` module dependency is now removed from the CAS dependency graph.
+- CAS themes are now able to turn off core Javascript/CSS libraries with a dedicated setting.
 - Minor improvements to SAML2 SLO responses to handle and recognize `Asynchronous` logout requests.
 - Puppeteer tests to ensure actuator endpoints can produce the expected output for `GET/READ` operations.
 - Puppeteer tests to password reset flows with security questions.
@@ -123,6 +136,13 @@ CAS to export services from the existing database and import them back into the 
   relationships associated with registered services are now marked as lazy to improve query performance for load operations.
 - A new `casModules` [actuator endpoint](../configuration/Configuration-Metadata-Repository.html) to output the collection of CAS modules
   activated and included at runtime.
+- Various actuator endpoints such as those that manage YubiKey, Consent or Google Authenticator accounts are 
+  given export/import options to facilitate data management and upgrades. Also existing import/export actuator endpoints for
+  registered services are now merged back into the `registeredServices` endpoint with dedicated paths.
+- Registered classes with [Kryo](../ticketing/Memcached-Ticket-Registry.html) are now sorted by name to force a registration order explicitly.
+- Authentication handlers for [Duo Security](../mfa/DuoSecurity-Authentication.html) are now registered 
+  using their name and not the multifactor provider id. Application registration records may need slight adjustments if 
+  Duo Security is specified as a required authentication handler in a service definition body.
 
 ## Library Upgrades
 

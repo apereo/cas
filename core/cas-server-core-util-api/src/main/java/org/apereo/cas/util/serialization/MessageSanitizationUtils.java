@@ -11,17 +11,20 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.regex.Pattern;
 
 /**
- * This is {@link TicketIdSanitizationUtils} which attempts to remove
+ * This is {@link MessageSanitizationUtils} which attempts to remove
  * sensitive ticket ids from a given String.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @UtilityClass
-public class TicketIdSanitizationUtils {
+public class MessageSanitizationUtils {
     private static final Pattern TICKET_ID_PATTERN = Pattern.compile("(?:(?:" + TicketGrantingTicket.PREFIX + '|'
         + ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + '|' + ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
         + ")-\\d+-)([\\w.-]+)");
+
+    private static final Pattern SENSITIVE_TEXT_PATTERN =
+        Pattern.compile("(password|token|credential|secret)\\s*=\\s*(['\"]*\\S+['\"]*)");
 
     /**
      * Specifies the ending tail length of the ticket id that would still be visible in the output
@@ -56,8 +59,14 @@ public class TicketIdSanitizationUtils {
                     replaceLength = length;
                 }
                 val newId = match.replace(group.substring(0, replaceLength), "*".repeat(OBFUSCATION_LENGTH));
-                modifiedMessage = modifiedMessage.replaceAll(match, newId);
+                modifiedMessage = modifiedMessage.replace(match, newId);
             }
+        }
+
+        val matcher = SENSITIVE_TEXT_PATTERN.matcher(msg);
+        while (matcher.find()) {
+            val group = matcher.group(2);
+            modifiedMessage = modifiedMessage.replace(group, "*".repeat(OBFUSCATION_LENGTH));
         }
         return modifiedMessage;
     }

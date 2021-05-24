@@ -28,6 +28,7 @@ import org.apereo.cas.authentication.credential.CredentialTests;
 import org.apereo.cas.authentication.exceptions.UniquePrincipalRequiredExceptionTests;
 import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHandlerResolverTests;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolverTests;
+import org.apereo.cas.authentication.handler.support.DefaultAuthenticationHandlerResolverTests;
 import org.apereo.cas.authentication.metadata.SuccessfulHandlerMetaDataPopulatorTests;
 import org.apereo.cas.authentication.policy.ExcludedAuthenticationHandlerAuthenticationPolicyTests;
 import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicyTests;
@@ -80,6 +81,7 @@ import org.junit.runner.RunWith;
     EchoingPrincipalResolverTests.class,
     DefaultAuthenticationHandlerExecutionResultTests.class,
     OneTimeTokenTests.class,
+    DefaultAuthenticationHandlerResolverTests.class,
     SuccessfulHandlerMetaDataPopulatorTests.class,
     UniquePrincipalRequiredExceptionTests.class,
     DefaultAuthenticationServiceSelectionPlanTests.class,

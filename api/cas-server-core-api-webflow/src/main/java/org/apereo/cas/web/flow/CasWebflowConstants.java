@@ -775,6 +775,14 @@ public interface CasWebflowConstants {
      * The view state 'casPac4jStopWebflow'.
      */
     String VIEW_ID_PAC4J_STOP_WEBFLOW = "casPac4jStopWebflow";
+    /**
+     * The view state 'casSessionStorageWriteView'.
+     */
+    String VIEW_ID_SESSION_STORAGE_WRITE = "storage/casSessionStorageWriteView";
+    /**
+     * The view state 'casSessionStorageReadView'.
+     */
+    String VIEW_ID_SESSION_STORAGE_READ = "storage/casSessionStorageReadView";
 
     /*
      ****************************************

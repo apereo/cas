@@ -54,6 +54,13 @@ public class Pac4jBaseClientProperties implements Serializable {
     private String cssClass;
 
     /**
+     * Indicate the title or display name of the client
+     * for decoration and client presentation purposes.
+     * If left blank, the client original name would be used by default.
+     */
+    private String displayName;
+
+    /**
      * Determine how the callback url should be resolved.
      * Default is {@link CallbackUrlTypes#QUERY_PARAMETER}.
      */
@@ -69,7 +76,7 @@ public class Pac4jBaseClientProperties implements Serializable {
      * will be used as the basis of the final callback url.
      */
     private String callbackUrl;
-    
+
     /**
      * The callback url types.
      */

@@ -77,7 +77,17 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
 
         val autoRedirect = (Boolean) client.getCustomProperties()
             .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, Boolean.FALSE);
-        val p = new DelegatedClientIdentityProviderConfiguration(name, redirectUrl, type, getCssClass(client), autoRedirect);
+        val title = (String) client.getCustomProperties()
+            .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_DISPLAY_NAME, name);
+
+        val p = DelegatedClientIdentityProviderConfiguration.builder()
+            .name(name)
+            .autoRedirect(autoRedirect)
+            .redirectUrl(redirectUrl)
+            .type(type)
+            .title(title)
+            .cssClass(getCssClass(client))
+            .build();
         return Optional.of(p);
     }
 

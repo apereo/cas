@@ -41,6 +41,14 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         this.redisTemplate = mongoTemplate;
     }
 
+    private static String getPatternYubiKeyDevices() {
+        return CAS_YUBIKEY_PREFIX + '*';
+    }
+
+    private static String getYubiKeyDeviceRedisKey(final String id) {
+        return CAS_YUBIKEY_PREFIX + id;
+    }
+
     @Override
     public Collection<? extends YubiKeyAccount> getAccountsInternal() {
         return getYubiKeyDevicesStream()
@@ -88,11 +96,16 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     @Override
     public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request,
                                final YubiKeyRegisteredDevice... device) {
-        val redisKey = getYubiKeyDeviceRedisKey(request.getUsername());
         val account = YubiKeyAccount.builder()
             .username(request.getUsername())
             .devices(Arrays.stream(device).collect(Collectors.toList()))
             .build();
+        return save(account);
+    }
+
+    @Override
+    public YubiKeyAccount save(final YubiKeyAccount account) {
+        val redisKey = getYubiKeyDeviceRedisKey(account.getUsername());
         this.redisTemplate.boundValueOps(redisKey).set(account);
         return account;
     }
@@ -102,14 +115,6 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         val redisKey = getYubiKeyDeviceRedisKey(account.getUsername());
         this.redisTemplate.boundValueOps(redisKey).set(account);
         return true;
-    }
-
-    private static String getPatternYubiKeyDevices() {
-        return CAS_YUBIKEY_PREFIX + '*';
-    }
-
-    private static String getYubiKeyDeviceRedisKey(final String id) {
-        return CAS_YUBIKEY_PREFIX + id;
     }
 
     private Stream<String> getYubiKeyDevicesStream() {

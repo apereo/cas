@@ -26,6 +26,15 @@ public interface TicketRegistry {
     void addTicket(Ticket ticket);
 
     /**
+     * Save.
+     *
+     * @param toSave the to save
+     */
+    default void addTicket(final Stream<? extends Ticket> toSave) {
+        toSave.forEach(this::addTicket);
+    }
+
+    /**
      * Retrieve a ticket from the registry. If the ticket retrieved does not
      * match the expected class, an InvalidTicketException is thrown.
      *
@@ -95,7 +104,7 @@ public interface TicketRegistry {
      * @return the tickets
      */
     default Stream<? extends Ticket> getTickets(final Predicate<Ticket> predicate) {
-        return getTicketsStream().filter(predicate);
+        return stream().filter(predicate);
     }
 
     /**
@@ -128,7 +137,7 @@ public interface TicketRegistry {
      *
      * @return the tickets stream
      */
-    default Stream<? extends Ticket> getTicketsStream() {
+    default Stream<? extends Ticket> stream() {
         return getTickets().stream();
     }
 

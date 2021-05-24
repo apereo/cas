@@ -73,7 +73,7 @@ public interface SamlIdPConstants {
     /**
      * The SAML2 callback profile endpoint.
      */
-    String ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK = BASE_ENDPOINT_SAML2 + "/Callback";
+    String ENDPOINT_SAML2_SSO_PROFILE_CALLBACK = BASE_ENDPOINT_SAML2 + "/Callback";
 
     /**
      * The shire constant.

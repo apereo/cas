@@ -52,9 +52,11 @@ public class GroovyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationHandler groovyResourceAuthenticationHandler() {
         val groovy = casProperties.getAuthn().getGroovy();
-        return new GroovyAuthenticationHandler(groovy.getName(),
+        val handler = new GroovyAuthenticationHandler(groovy.getName(),
             servicesManager.getObject(), groovyPrincipalFactory(),
             groovy.getLocation(), groovy.getOrder());
+        handler.setState(groovy.getState());
+        return handler;
     }
 
     @ConditionalOnMissingBean(name = "groovyResourceAuthenticationEventExecutionPlanConfigurer")

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.cognito;
 
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.aws.BaseAmazonWebServicesProperties;
@@ -67,4 +68,10 @@ public class AmazonCognitoAuthenticationProperties extends BaseAmazonWebServices
      * use for virtual renames.
      */
     private Map<String, String> mappedAttributes = new LinkedHashMap<>();
+
+    /**
+     * Define the scope and state of this authentication handler
+     * and the lifecycle in which it can be invoked or activated.
+     */
+    private AuthenticationHandlerStates state = AuthenticationHandlerStates.ACTIVE;
 }
