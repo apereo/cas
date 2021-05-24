@@ -12,7 +12,4 @@ dependencies {
 
     implementation project(":support:cas-server-support-themes-core")
     implementation project(":support:cas-server-support-themes")
-
-    implementation 'org.webjars:bootstrap:4.6.0'
-    implementation 'org.webjars:font-awesome:5.15.2'
 }
