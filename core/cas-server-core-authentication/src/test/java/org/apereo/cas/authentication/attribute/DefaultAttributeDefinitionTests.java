@@ -12,6 +12,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,7 +37,7 @@ public class DefaultAttributeDefinitionTests {
             .script("groovy { return ['hello world'] }")
             .build();
         val values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
-            CoreAuthenticationTestUtils.getRegisteredService());
+            CoreAuthenticationTestUtils.getRegisteredService(), Map.of());
         assertTrue(values.isEmpty());
     }
 
@@ -51,7 +52,7 @@ public class DefaultAttributeDefinitionTests {
             .script("badformat ()")
             .build();
         val values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
-            CoreAuthenticationTestUtils.getRegisteredService());
+            CoreAuthenticationTestUtils.getRegisteredService(), Map.of());
         assertTrue(values.isEmpty());
     }
 
@@ -67,10 +68,10 @@ public class DefaultAttributeDefinitionTests {
             .script("groovy { return ['hello world'] }")
             .build();
         var values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
-            CoreAuthenticationTestUtils.getRegisteredService());
+            CoreAuthenticationTestUtils.getRegisteredService(), Map.of());
         assertFalse(values.isEmpty());
         values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
-            CoreAuthenticationTestUtils.getRegisteredService());
+            CoreAuthenticationTestUtils.getRegisteredService(), Map.of());
         assertFalse(values.isEmpty());
     }
 
@@ -85,7 +86,7 @@ public class DefaultAttributeDefinitionTests {
             .script("classpath:ComputedAttributeDefinition.groovy")
             .build();
         val values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
-            CoreAuthenticationTestUtils.getRegisteredService());
+            CoreAuthenticationTestUtils.getRegisteredService(), Map.of());
         assertTrue(values.isEmpty());
     }
 
@@ -101,10 +102,10 @@ public class DefaultAttributeDefinitionTests {
             .script("classpath:ComputedAttributeDefinition.groovy")
             .build();
         var values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
-            CoreAuthenticationTestUtils.getRegisteredService());
+            CoreAuthenticationTestUtils.getRegisteredService(), Map.of());
         assertFalse(values.isEmpty());
         values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
-            CoreAuthenticationTestUtils.getRegisteredService());
+            CoreAuthenticationTestUtils.getRegisteredService(), Map.of());
         assertFalse(values.isEmpty());
     }
 
@@ -120,7 +121,7 @@ public class DefaultAttributeDefinitionTests {
             .script("classpath:BadScript.groovy")
             .build();
         val values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
-            CoreAuthenticationTestUtils.getRegisteredService());
+            CoreAuthenticationTestUtils.getRegisteredService(), Map.of());
         assertTrue(values.isEmpty());
     }
 
@@ -136,7 +137,7 @@ public class DefaultAttributeDefinitionTests {
             .script("groovy {xyz}")
             .build();
         val values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
-            CoreAuthenticationTestUtils.getRegisteredService());
+            CoreAuthenticationTestUtils.getRegisteredService(), Map.of());
         assertNull(values);
     }
 

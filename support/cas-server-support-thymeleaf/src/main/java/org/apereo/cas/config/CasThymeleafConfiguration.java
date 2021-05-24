@@ -42,6 +42,7 @@ import org.thymeleaf.dialect.IPostProcessorDialect;
 import org.thymeleaf.postprocessor.IPostProcessor;
 import org.thymeleaf.postprocessor.PostProcessor;
 import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring5.view.AbstractThymeleafView;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
@@ -159,6 +160,12 @@ public class CasThymeleafConfiguration {
                 thymeleafViewResolver.addStaticVariable("cas", casProperties);
                 thymeleafViewResolver.addStaticVariable("casProperties", casProperties);
             }
+
+            @Override
+            public void configureThymeleafView(final AbstractThymeleafView thymeleafView) {
+                thymeleafView.addStaticVariable("cas", casProperties);
+                thymeleafView.addStaticVariable("casProperties", casProperties);
+            }
         };
     }
 
@@ -184,7 +191,8 @@ public class CasThymeleafConfiguration {
     @RefreshScope
     public ThemeViewResolverFactory themeViewResolverFactory() {
         val factory = new ThemeViewResolver.Factory(thymeleafViewResolver(),
-            thymeleafProperties.getObject(), casProperties);
+            thymeleafProperties.getObject(), casProperties,
+            thymeleafViewResolverConfigurers.getObject());
         factory.setApplicationContext(applicationContext);
         return factory;
     }
@@ -236,7 +244,6 @@ public class CasThymeleafConfiguration {
         thymeleafViewResolverConfigurers.getObject().stream()
             .sorted(OrderComparator.INSTANCE)
             .forEach(configurer -> configurer.configureThymeleafViewResolver(resolver));
-
         return resolver;
     }
 
