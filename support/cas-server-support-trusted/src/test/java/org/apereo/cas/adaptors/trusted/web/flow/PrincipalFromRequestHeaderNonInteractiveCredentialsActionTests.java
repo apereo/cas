@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.binding.message.DefaultMessageContext;
+import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -39,9 +41,10 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests exte
 
     @Test
     public void verifyRemoteUserExists() throws Exception {
-
-        val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
+        val messageContext = (DefaultMessageContext) context.getMessageContext();
+        messageContext.setMessageSource(mock(MessageSource.class));
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         val principal = mock(Principal.class);
@@ -59,8 +62,11 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests exte
 
     @Test
     public void verifyError() throws Exception {
-        val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
+        val messageContext = (DefaultMessageContext) context.getMessageContext();
+        messageContext.setMessageSource(mock(MessageSource.class));
+
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.setRemoteUser("xyz");
         request.addParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), "mfa-whatever");
@@ -70,8 +76,11 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests exte
 
     @Test
     public void verifyAdaptiveError() throws Exception {
-        val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
+        val messageContext = (DefaultMessageContext) context.getMessageContext();
+        messageContext.setMessageSource(mock(MessageSource.class));
+
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.setRemoteUser("xyz");
         request.setRemoteAddr("1.2.3.4");

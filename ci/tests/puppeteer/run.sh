@@ -12,7 +12,12 @@ fi
 
 # note if debugging you might need to call
 # await page.setDefaultNavigationTimeout(0);
-DEBUG=${2:-debug}
+if [[ "${CI}" == "true" ]]; then
+  DEBUG=${2}
+else
+  DEBUG=${2:-debug}
+fi
+
 DEBUG_PORT=${3:-5000}
 DEBUG_SUSPEND=${4:-n}
 
