@@ -85,10 +85,8 @@ a remote REST endpoint whose responsibility is to produce the following payload 
 ```
 
 The syntax and collection of available `properties` in the above 
-payload is controlled by [Pac4j]((https://pac4j.org/docs/index.html). 
-The response that is returned must be accompanied by a 200 status code.
-
-{% include casproperties.html properties="cas.authn.pac4j.rest" %}
+payload is controlled by the [pac4j library](https://pac4j.org/docs/index.html). 
+The response that is returned must be accompanied by a `200` status code.
 
 ## Profile Attributes
 
