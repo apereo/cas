@@ -22,7 +22,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -132,11 +131,7 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
      * @return the event
      */
     protected Event getErrorEvent(final String code, final String defaultMessage, final RequestContext requestContext) {
-        val messages = requestContext.getMessageContext();
-        messages.addMessage(new MessageBuilder()
-            .error()
-            .code("screen.pm.forgotusername." + code)
-            .build());
+        WebUtils.addErrorMessageToContext(requestContext, "screen.pm.forgotusername." + code, defaultMessage);
         LOGGER.error(defaultMessage);
         return new EventFactorySupport().event(this, CasWebflowConstants.VIEW_ID_ERROR);
     }

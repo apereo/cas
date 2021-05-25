@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.binding.message.MessageBuilder;
-import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -30,16 +28,6 @@ public class InweboCheckAuthenticationAction extends AbstractAction {
 
     private final CasWebflowEventResolver casWebflowEventResolver;
 
-    /**
-     * Add error message to context.
-     *
-     * @param messageContext the message context
-     * @param code           the code
-     */
-    protected static void addErrorMessageToContext(final MessageContext messageContext, final String code) {
-        val message = new MessageBuilder().error().code(code).build();
-        messageContext.addMessage(message);
-    }
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
@@ -72,7 +60,7 @@ public class InweboCheckAuthenticationAction extends AbstractAction {
             } else {
                 LOGGER.debug("Validation fails: [{}]", result);
                 if (result == InweboResult.REFUSED || result == InweboResult.TIMEOUT) {
-                    addErrorMessageToContext(requestContext.getMessageContext(), "cas.inwebo.error.userrefusedortoolate");
+                    WebUtils.addErrorMessageToContext(requestContext, "cas.inwebo.error.userrefusedortoolate");
                 }
             }
         }

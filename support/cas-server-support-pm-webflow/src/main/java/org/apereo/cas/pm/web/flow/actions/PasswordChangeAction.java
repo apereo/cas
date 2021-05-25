@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -43,9 +42,17 @@ public class PasswordChangeAction extends AbstractAction {
 
     private final PasswordValidationService passwordValidationService;
 
-    private Event getErrorEvent(final RequestContext ctx, final String code, final String message, final Object... params) {
-        ctx.getMessageContext().addMessage(new MessageBuilder().error().code(code).defaultText(message).args(params).build());
-        return error();
+    /**
+     * Gets password change request.
+     *
+     * @param requestContext the request context
+     * @param c              the c
+     * @return the password change request
+     */
+    protected static PasswordChangeRequest getPasswordChangeRequest(final RequestContext requestContext, final UsernamePasswordCredential c) {
+        val bean = requestContext.getFlowScope().get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);
+        bean.setUsername(c.getUsername());
+        return bean;
     }
 
     @Override
@@ -89,16 +96,8 @@ public class PasswordChangeAction extends AbstractAction {
                 new LocalAttributeMap<>("passwordChangeRequest", bean));
     }
 
-    /**
-     * Gets password change request.
-     *
-     * @param requestContext the request context
-     * @param c              the c
-     * @return the password change request
-     */
-    protected static PasswordChangeRequest getPasswordChangeRequest(final RequestContext requestContext, final UsernamePasswordCredential c) {
-        val bean = requestContext.getFlowScope().get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);
-        bean.setUsername(c.getUsername());
-        return bean;
+    private Event getErrorEvent(final RequestContext ctx, final String code, final String message, final Object... params) {
+        WebUtils.addErrorMessageToContext(ctx, code, message, params);
+        return error();
     }
 }

@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -59,11 +58,7 @@ public class YubiKeyAccountSaveRegistrationAction extends AbstractMultifactorAut
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
-        val messageContext = requestContext.getMessageContext();
-        messageContext.addMessage(new MessageBuilder()
-            .error()
-            .code(CODE_FAILURE)
-            .build());
+        WebUtils.addErrorMessageToContext(requestContext, CODE_FAILURE);
         return error();
     }
 }

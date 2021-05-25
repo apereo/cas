@@ -52,11 +52,36 @@ public abstract class BaseDelegatedAuthenticationController {
     private final DelegatedClientAuthenticationConfigurationContext configurationContext;
 
     /**
+     * Gets redirection action.
+     *
+     * @param client     the client
+     * @param webContext the web context
+     * @param ticket     the ticket
+     * @return the redirection action
+     */
+    protected Optional<RedirectionAction> getRedirectionAction(final IndirectClient client, final WebContext webContext,
+                                                            final TransientSessionTicket ticket) {
+        val properties = ticket.getProperties();
+        if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN)) {
+            webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, true);
+        }
+        if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_PASSIVE)) {
+            webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_PASSIVE, true);
+        }
+
+        if (ticket.getService() != null) {
+            configureWebContextForRegisteredService(webContext, ticket);
+        }
+        return client.getRedirectionActionBuilder()
+            .getRedirectionAction(webContext, configurationContext.getSessionStore());
+    }
+
+    /**
      * Configure web context for service overrides.
      *
-     * @param registeredService     the registered service
-     * @param webContext            the web context
-     * @param properties            the properties
+     * @param registeredService the registered service
+     * @param webContext        the web context
+     * @param properties        the properties
      */
     protected void configureWebContextForRegisteredServiceProperties(final RegisteredService registeredService,
                                                                      final WebContext webContext,
@@ -119,31 +144,6 @@ public abstract class BaseDelegatedAuthenticationController {
     }
 
     /**
-     * Gets redirection action.
-     *
-     * @param client     the client
-     * @param webContext the web context
-     * @param ticket     the ticket
-     * @return the redirection action
-     */
-    protected Optional<RedirectionAction> getRedirectionAction(final IndirectClient client, final WebContext webContext,
-                                                               final TransientSessionTicket ticket) {
-        val properties = ticket.getProperties();
-        if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN)) {
-            webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, true);
-        }
-        if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_PASSIVE)) {
-            webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_PASSIVE, true);
-        }
-
-        if (ticket.getService() != null) {
-            configureWebContextForRegisteredService(webContext, ticket);
-        }
-        return client.getRedirectionActionBuilder()
-            .getRedirectionAction(webContext, configurationContext.getSessionStore());
-    }
-
-    /**
      * Configure web context for registered service.
      *
      * @param webContext the web context
@@ -159,17 +159,20 @@ public abstract class BaseDelegatedAuthenticationController {
         result.throwExceptionIfNeeded();
 
         if (!registeredService.getProperties().isEmpty()) {
+            val delegatedAuthnProperties = Arrays.stream(RegisteredServiceProperties.values())
+                .filter(prop -> prop.isMemberOf(RegisteredServicePropertyGroups.DELEGATED_AUTHN))
+                .collect(Collectors.toList());
+            configureWebContextForRegisteredServiceProperties(registeredService, webContext, delegatedAuthnProperties);
+
             val saml2ServiceProperties = Arrays.stream(RegisteredServiceProperties.values())
                 .filter(prop -> prop.isMemberOf(RegisteredServicePropertyGroups.DELEGATED_AUTHN_SAML2))
                 .collect(Collectors.toList());
-            configureWebContextForRegisteredServiceProperties(registeredService, webContext,
-                saml2ServiceProperties);
+            configureWebContextForRegisteredServiceProperties(registeredService, webContext, saml2ServiceProperties);
 
             val oidcProperties = Arrays.stream(RegisteredServiceProperties.values())
                 .filter(prop -> prop.isMemberOf(RegisteredServicePropertyGroups.DELEGATED_AUTHN_OIDC))
                 .collect(Collectors.toList());
-            configureWebContextForRegisteredServiceProperties(registeredService, webContext,
-                oidcProperties);
+            configureWebContextForRegisteredServiceProperties(registeredService, webContext, oidcProperties);
         }
     }
 }

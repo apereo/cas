@@ -14,7 +14,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.binding.message.MessageBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.AttributeMap;
@@ -163,11 +162,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             return CollectionUtils.wrapSet(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
-            val messageContext = context.getMessageContext();
-            messageContext.addMessage(new MessageBuilder()
-                .error()
-                .code(DEFAULT_MESSAGE_BUNDLE_PREFIX.concat(e.getClass().getSimpleName()))
-                .build());
+            WebUtils.addErrorMessageToContext(context, DEFAULT_MESSAGE_BUNDLE_PREFIX.concat(e.getClass().getSimpleName()));
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return CollectionUtils.wrapSet(getAuthenticationFailureErrorEvent(context, e));
         }

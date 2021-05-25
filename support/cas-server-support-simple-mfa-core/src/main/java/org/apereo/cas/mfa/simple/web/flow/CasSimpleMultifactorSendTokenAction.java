@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -107,13 +106,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
             ticketRegistry.addTicket(token);
             LOGGER.debug("Successfully submitted token via strategy option [{}] to [{}]", strategy, principal.getId());
 
-            val resolver = new MessageBuilder()
-                .info()
-                .code(MESSAGE_MFA_TOKEN_SENT)
-                .defaultText(MESSAGE_MFA_TOKEN_SENT)
-                .build();
-            requestContext.getMessageContext().addMessage(resolver);
-
+            WebUtils.addInfoMessageToContext(requestContext, MESSAGE_MFA_TOKEN_SENT);
             val attributes = new LocalAttributeMap<Object>("token", token.getId());
             WebUtils.putSimpleMultifactorAuthenticationToken(requestContext, token);
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS, attributes);

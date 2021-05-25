@@ -6,8 +6,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.binding.message.MessageBuilder;
-import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -25,16 +23,15 @@ public class VerifyPasswordlessAccountAuthenticationAction extends AbstractActio
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        val messageContext = requestContext.getMessageContext();
         val username = requestContext.getRequestParameters().getRequired("username");
         val account = passwordlessUserAccountStore.findUser(username);
         if (account.isEmpty()) {
-            addErrorMessageToContext(messageContext, "passwordless.error.unknown.user");
+            WebUtils.addErrorMessageToContext(requestContext, "passwordless.error.unknown.user");
             return error();
         }
         val user = account.get();
         if (StringUtils.isBlank(user.getPhone()) && StringUtils.isBlank(user.getEmail())) {
-            addErrorMessageToContext(messageContext, "passwordless.error.invalid.user");
+            WebUtils.addErrorMessageToContext(requestContext, "passwordless.error.invalid.user");
             return error();
         }
         WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
@@ -42,16 +39,5 @@ public class VerifyPasswordlessAccountAuthenticationAction extends AbstractActio
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROMPT);
         }
         return success();
-    }
-
-    /**
-     * Add error message to context.
-     *
-     * @param messageContext the message context
-     * @param code           the code
-     */
-    protected static void addErrorMessageToContext(final MessageContext messageContext, final String code) {
-        val message = new MessageBuilder().error().code(code).build();
-        messageContext.addMessage(message);
     }
 }
