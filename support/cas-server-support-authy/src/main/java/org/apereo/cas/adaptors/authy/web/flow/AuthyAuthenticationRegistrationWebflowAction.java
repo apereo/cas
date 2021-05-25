@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -55,12 +54,7 @@ public class AuthyAuthenticationRegistrationWebflowAction extends AbstractAction
      */
     protected void addErrorMessage(final RequestContext requestContext,
                                    final Exception exception) {
-        val resolver = new MessageBuilder()
-            .error()
-            .code(MESSAGE_CODE_ERROR)
-            .defaultText(exception.getMessage())
-            .build();
-        requestContext.getMessageContext().addMessage(resolver);
+        WebUtils.addErrorMessageToContext(requestContext, MESSAGE_CODE_ERROR, exception.getMessage());
     }
 
     @SneakyThrows

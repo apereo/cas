@@ -32,9 +32,12 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.binding.message.MessageBuilder;
+import org.springframework.binding.message.MessageContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
@@ -1694,5 +1697,73 @@ public class WebUtils {
             return servicesManager.findServiceBy(serviceToUse);
         }
         return null;
+    }
+
+    /**
+     * Add error message to context.
+     *
+     * @param requestContext the request context
+     * @param code           the code
+     * @param defaultText    the default text
+     * @param args           the args
+     */
+    public static void addErrorMessageToContext(final RequestContext requestContext, final String code,
+                                                final String defaultText, final Object[] args) {
+        addErrorMessageToContext(requestContext.getMessageContext(), code, defaultText, args);
+    }
+
+    /**
+     * Add error message to context.
+     *
+     * @param requestContext the request context
+     * @param code           the code
+     * @param defaultText    the default text
+     */
+    public static void addErrorMessageToContext(final RequestContext requestContext, final String code,
+                                                final String defaultText) {
+        addErrorMessageToContext(requestContext.getMessageContext(), code, defaultText, ArrayUtils.EMPTY_OBJECT_ARRAY);
+    }
+
+    /**
+     * Add error message to context.
+     *
+     * @param requestContext the request context
+     * @param code           the code
+     */
+    public static void addErrorMessageToContext(final RequestContext requestContext, final String code) {
+        addErrorMessageToContext(requestContext.getMessageContext(), code, null, null);
+    }
+
+    /**
+     * Add error message to context.
+     *
+     * @param messageContext the message context
+     * @param code           the code
+     * @param defaultText    the default text
+     * @param args           the args
+     */
+    public static void addErrorMessageToContext(final MessageContext messageContext, final String code,
+                                                final String defaultText, final Object[] args) {
+        val msg = new MessageBuilder()
+            .error()
+            .code(code)
+            .args(args)
+            .defaultText(defaultText)
+            .build();
+        messageContext.addMessage(msg);
+    }
+
+    /**
+     * Add info message to context.
+     *
+     * @param requestContext the request context
+     * @param code           the code
+     */
+    public static void addInfoMessageToContext(final RequestContext requestContext, final String code) {
+        val msg = new MessageBuilder()
+            .info()
+            .code(code)
+            .build();
+        requestContext.getMessageContext().addMessage(msg);
     }
 }

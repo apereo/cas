@@ -84,6 +84,7 @@ public interface RegisteredServiceProperty extends Serializable {
     @RequiredArgsConstructor
     enum RegisteredServicePropertyGroups {
         CORS,
+        DELEGATED_AUTHN,
         DELEGATED_AUTHN_SAML2,
         DELEGATED_AUTHN_WSFED,
         DELEGATED_AUTHN_OIDC,
@@ -280,6 +281,16 @@ public interface RegisteredServiceProperty extends Serializable {
          */
         CORS_EXPOSED_HEADERS("corsExposedHeaders", StringUtils.EMPTY,
             RegisteredServicePropertyGroups.CORS, RegisteredServicePropertyTypes.STRING),
+        /**
+         * Indicate binding type, when using delegated authentication to saml2 identity providers.
+         */
+        DELEGATED_AUTHN_FORCE_AUTHN("forceAuthn", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.DELEGATED_AUTHN, RegisteredServicePropertyTypes.BOOLEAN),
+        /**
+         * Indicate binding type, when using delegated authentication to saml2 identity providers.
+         */
+        DELEGATED_AUTHN_PASSIVE_AUTHN("passiveAuthn", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.DELEGATED_AUTHN, RegisteredServicePropertyTypes.BOOLEAN),
         /**
          * Indicate binding type, when using delegated authentication to saml2 identity providers.
          */

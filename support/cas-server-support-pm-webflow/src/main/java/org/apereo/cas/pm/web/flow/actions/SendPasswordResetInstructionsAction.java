@@ -30,7 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.binding.message.MessageBuilder;
 import org.springframework.web.util.UriUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -243,12 +242,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      */
     protected Event getErrorEvent(final String code, final String defaultMessage,
                                   final RequestContext requestContext) {
-        val messages = requestContext.getMessageContext();
-        messages.addMessage(new MessageBuilder()
-            .error()
-            .code("screen.pm.reset." + code)
-            .defaultText(defaultMessage)
-            .build());
+        WebUtils.addErrorMessageToContext(requestContext, "screen.pm.reset." + code, defaultMessage);
         LOGGER.error(defaultMessage);
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
     }
