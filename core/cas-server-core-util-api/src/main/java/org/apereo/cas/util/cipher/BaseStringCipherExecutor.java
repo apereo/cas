@@ -50,19 +50,6 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
     private int signingKeySize = CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE;
 
-    /**
-     * Instantiates a new cipher.
-     * <p>Note that in order to customize the encryption algorithms,
-     * you will need to download and install the JCE Unlimited Strength Jurisdiction
-     * Policy File into your Java installation.</p>
-     *
-     * @param secretKeyEncryption the secret key encryption; must be represented as a octet sequence JSON Web Key (JWK)
-     * @param secretKeySigning    the secret key signing; must be represented as a octet sequence JSON Web Key (JWK)
-     * @param encryptionEnabled   the enable encryption
-     * @param signingEnabled      the signing enabled
-     * @param signingKeySize      the signing key size
-     * @param encryptionKeySize   the encryption key size
-     */
     protected BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
                                        final boolean encryptionEnabled, final boolean signingEnabled,
                                        final int signingKeySize, final int encryptionKeySize) {
