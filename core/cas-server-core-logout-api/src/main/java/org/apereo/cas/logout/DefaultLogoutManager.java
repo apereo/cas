@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -80,6 +83,12 @@ public class DefaultLogoutManager implements LogoutManager {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList()))
             .flatMap(Collection::stream)
+            .filter(distinctByKey(request -> request.getService()))
             .collect(Collectors.toList());
+    }
+
+    private static <T> Predicate<T> distinctByKey(final Function<? super T, Object> keyExtractor) {
+        val seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 }
