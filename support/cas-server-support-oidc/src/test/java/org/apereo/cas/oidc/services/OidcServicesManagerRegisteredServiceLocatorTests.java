@@ -52,7 +52,7 @@ public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOi
     @Test
     public void verifyNoMatch() {
         assertNotNull(oidcServicesManagerRegisteredServiceLocator);
-        assertEquals(Ordered.HIGHEST_PRECEDENCE, oidcServicesManagerRegisteredServiceLocator.getOrder());
+        assertEquals(Ordered.HIGHEST_PRECEDENCE + 1, oidcServicesManagerRegisteredServiceLocator.getOrder());
         val oidcClientId = UUID.randomUUID().toString();
         val service = getOidcRegisteredService(oidcClientId);
         val svc = webApplicationServiceFactory.createService(
