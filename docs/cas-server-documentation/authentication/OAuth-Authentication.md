@@ -182,14 +182,9 @@ also the option to generate JWTs as access tokens on a per-service basis:
 }
 ```
 
-The following cipher strategy types are available:
-
-| Type                | Description
-|---------------------|---------------------------------------------------
-| `ENCRYPT_AND_SIGN`  | Default strategy; encrypt values, and then sign.
-| `SIGN_AND_ENCRYPT`  | Sign values, and then encrypt.
-
 Signing and encryption keys may also be defined on a per-service basis, or globally via CAS settings.
+
+{% include registeredserviceproperties.html groups="JWT_ACCESS_TOKENS" "%}
 
 ## OAuth User Profile Structure
 
