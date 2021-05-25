@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
@@ -94,6 +95,10 @@ import java.util.List;
 public class SamlIdPEndpointsConfiguration {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
@@ -451,6 +456,8 @@ public class SamlIdPEndpointsConfiguration {
 
     private SamlProfileHandlerConfigurationContext.SamlProfileHandlerConfigurationContextBuilder getSamlProfileHandlerConfigurationContextBuilder() {
         return SamlProfileHandlerConfigurationContext.builder()
+            .applicationContext(applicationContext)
+            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
             .samlObjectSigner(samlObjectSigner.getObject())
             .authenticationSystemSupport(authenticationSystemSupport.getObject())
             .servicesManager(servicesManager.getObject())

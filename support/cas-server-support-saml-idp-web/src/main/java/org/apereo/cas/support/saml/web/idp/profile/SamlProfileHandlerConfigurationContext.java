@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -28,6 +29,7 @@ import org.jasig.cas.client.validation.TicketValidator;
 import org.opensaml.saml.common.SAMLObject;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * This is {@link SamlProfileHandlerConfigurationContext}.
@@ -84,4 +86,9 @@ public class SamlProfileHandlerConfigurationContext {
     private final SessionStore<JEEContext> sessionStore;
 
     private final TicketRegistrySupport ticketRegistrySupport;
+
+    private final ConfigurableApplicationContext applicationContext;
+
+    private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
+
 }

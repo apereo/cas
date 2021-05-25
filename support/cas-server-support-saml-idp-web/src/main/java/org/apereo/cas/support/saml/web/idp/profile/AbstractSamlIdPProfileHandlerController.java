@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -57,7 +58,9 @@ import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * A parent controller to handle SAML requests.
@@ -274,6 +277,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val p =
             authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs()
                 .stream()
+                .filter(Objects::nonNull)
+                .filter(ref -> StringUtils.isNotBlank(ref.getURI()))
                 .filter(ref -> {
                     val clazz = ref.getURI();
                     return mappings.containsKey(clazz);
@@ -345,25 +350,58 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val cookie = configurationContext.getTicketGrantingTicketCookieGenerator().retrieveCookieValue(request);
         val authnRequest = (AuthnRequest) pair.getLeft();
         if (StringUtils.isNotBlank(cookie) && !authnRequest.isForceAuthn()) {
-            var authn = configurationContext.getTicketRegistrySupport().getAuthenticationFrom(cookie);
-            if (authn != null) {
-                LOGGER.debug("Found single sign-on authentication attempt for [{}]", authn.getPrincipal());
+            var authentication = configurationContext.getTicketRegistrySupport().getAuthenticationFrom(cookie);
+            if (authentication != null) {
+                LOGGER.debug("Found single sign-on authentication attempt for [{}]", authentication.getPrincipal());
                 val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
                 val service = configurationContext.getWebApplicationServiceFactory().createService(issuer);
                 val registeredService = configurationContext.getServicesManager().findServiceBy(service);
-                val assertion = buildCasAssertion(authn, service, registeredService, Map.of());
-                LOGGER.debug("Building CAS assertion [{}] for issuer [{}]", assertion, issuer);
-                val authenticationContext = buildAuthenticationContextPair(request, response, authnRequest);
-                val binding = determineProfileBinding(authenticationContext, assertion);
-                LOGGER.debug("Using profile binding [{}] for service [{}]", binding, registeredService.getName());
-                val messageContext = pair.getRight();
-                val relayState = SAMLBindingSupport.getRelayState(messageContext);
-                LOGGER.debug("Using relay-state value [{}]", relayState);
-                SAMLBindingSupport.setRelayState(authenticationContext.getRight(), relayState);
 
-                response.reset();
-                buildSamlResponse(response, request, authenticationContext, assertion, binding);
-                return;
+                var buildResponseFromSso = true;
+                if (registeredService.getSingleSignOnParticipationPolicy() != null) {
+                    val policy = registeredService.getSingleSignOnParticipationPolicy();
+                    val ticketState = configurationContext.getTicketRegistrySupport().getTicketState(cookie);
+                    if (!policy.shouldParticipateInSso(ticketState)) {
+                        LOGGER.debug("Single sign-on policy for [{}] does not allow for SSO participation for [{}]", issuer, authentication.getPrincipal());
+                        buildResponseFromSso = false;
+                    }
+                }
+
+                if (buildResponseFromSso && registeredService.getAuthenticationPolicy() != null) {
+                    val authenticationPolicy = registeredService.getAuthenticationPolicy();
+                    val successfulHandlerNames = CollectionUtils.toCollection(authentication.getAttributes()
+                        .get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
+                    val assertedHandlers = configurationContext.getAuthenticationEventExecutionPlan().getAuthenticationHandlers()
+                        .stream()
+                        .filter(handler -> successfulHandlerNames.contains(handler.getName()))
+                        .collect(Collectors.toSet());
+                    val criteria = authenticationPolicy.getCriteria();
+                    if (criteria != null) {
+                        val policy = criteria.toAuthenticationPolicy(registeredService);
+                        if (!policy.isSatisfiedBy(authentication, assertedHandlers,
+                            configurationContext.getApplicationContext(), Optional.empty())) {
+                            LOGGER.debug("Authentication policy for [{}] does not allow for SSO participation for [{}]",
+                                issuer, authentication.getPrincipal());
+                            buildResponseFromSso = false;
+                        }
+                    }
+                }
+
+                if (buildResponseFromSso) {
+                    val assertion = buildCasAssertion(authentication, service, registeredService, Map.of());
+                    LOGGER.debug("Building CAS assertion [{}] for issuer [{}]", assertion, issuer);
+                    val authenticationContext = buildAuthenticationContextPair(request, response, authnRequest);
+                    val binding = determineProfileBinding(authenticationContext, assertion);
+                    LOGGER.debug("Using profile binding [{}] for service [{}]", binding, registeredService.getName());
+                    val messageContext = pair.getRight();
+                    val relayState = SAMLBindingSupport.getRelayState(messageContext);
+                    LOGGER.debug("Using relay-state value [{}]", relayState);
+                    SAMLBindingSupport.setRelayState(authenticationContext.getRight(), relayState);
+
+                    response.reset();
+                    buildSamlResponse(response, request, authenticationContext, assertion, binding);
+                    return;
+                }
             }
         }
 
