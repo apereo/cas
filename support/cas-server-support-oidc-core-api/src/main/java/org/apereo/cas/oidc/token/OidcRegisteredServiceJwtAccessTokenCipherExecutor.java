@@ -137,11 +137,14 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
                     val jwks = defaultJsonWebKeystoreCache.get(
                             OidcRegisteredServiceJwtAccessTokenCipherExecutor.this.issuer);
                     if (Objects.requireNonNull(jwks).isPresent()) {
-                        val kid = jwks.get().getKeyId();
+                        val jws = jwks.get();
+                        val kid = jws.getKeyId();
                         if (StringUtils.isNotBlank(kid)) {
                             getCustomHeaders().put(JsonWebKey.KEY_ID_PARAMETER, kid);
                         }
-                        return signWith(value, jwks.get().getAlgorithm());
+                        val alg = StringUtils.defaultIfBlank(jws.getAlgorithm(), getSigningAlgorithmFor(jws.getPrivateKey()));
+                        getCustomHeaders().put(JsonWebKey.ALGORITHM_PARAMETER, alg);
+                        return signWith(value, alg);
                     }
                 }
                 return super.sign(value);
