@@ -102,6 +102,7 @@ public class CasDocumentationApplication {
             map.put("defaultValue", property.getDefaultValue());
             map.put("type", property.getType().name());
             map.put("group", property.getGroup().name());
+            map.put("description", property.getDescription());
             properties.add(map);
         }
         CasConfigurationMetadataCatalog.export(servicePropsFile, properties);
