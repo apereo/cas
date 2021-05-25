@@ -7,6 +7,8 @@ import org.apereo.cas.web.flow.X509CertificateCredentialsNonInteractiveAction;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.binding.message.DefaultMessageContext;
+import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -16,6 +18,7 @@ import org.springframework.webflow.test.MockRequestContext;
 import java.security.cert.X509Certificate;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Marvin S. Addison
@@ -37,6 +40,8 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends BaseCer
     @Test
     public void verifyBadCertificateError() throws Exception {
         val context = new MockRequestContext();
+        val messageContext = (DefaultMessageContext) context.getMessageContext();
+        messageContext.setMessageSource(mock(MessageSource.class));
         val request = new MockHttpServletRequest();
         request.setAttribute(X509CertificateCredentialsNonInteractiveAction.REQUEST_ATTRIBUTE_X509_CERTIFICATE,
             new X509Certificate[]{new CasX509Certificate(false)});

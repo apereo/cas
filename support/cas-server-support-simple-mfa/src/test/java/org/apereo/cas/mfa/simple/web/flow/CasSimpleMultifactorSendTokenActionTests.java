@@ -22,9 +22,11 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.binding.message.DefaultMessageContext;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -40,6 +42,7 @@ import javax.security.auth.login.FailedLoginException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CasSimpleMultifactorSendTokenActionTests}.
@@ -107,6 +110,9 @@ public class CasSimpleMultifactorSendTokenActionTests {
 
     private MockRequestContext buildRequestContextFor(final String user) {
         val context = new MockRequestContext();
+        val messageContext = (DefaultMessageContext) context.getMessageContext();
+        messageContext.setMessageSource(mock(MessageSource.class));
+        
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
