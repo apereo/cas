@@ -65,7 +65,7 @@ dependencies {
                 project.name.matches(pattern)
             }
 
-            ansi.green("Adding CAS module(s): ${projectsToAdd}")
+            ansi.green("Including CAS module(s): ${projectsToAdd}")
             projectsToAdd.each {
                 implementation it
             }

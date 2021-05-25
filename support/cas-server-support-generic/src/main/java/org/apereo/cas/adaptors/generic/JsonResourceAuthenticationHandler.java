@@ -59,16 +59,16 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
     private final Resource resource;
 
     public JsonResourceAuthenticationHandler(final String name, final ServicesManager servicesManager,
-        final PrincipalFactory principalFactory,
-        final Integer order, final Resource resource) {
+                                             final PrincipalFactory principalFactory,
+                                             final Integer order, final Resource resource) {
         super(name, servicesManager, principalFactory, order);
         this.resource = resource;
     }
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-        final String originalPassword) throws GeneralSecurityException, PreventedException {
-        
+                                                                                        final String originalPassword) throws GeneralSecurityException, PreventedException {
+
         val map = readAccountsFromResource();
         val username = credential.getUsername();
         val password = credential.getPassword();

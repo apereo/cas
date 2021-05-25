@@ -464,12 +464,16 @@ public class WebUtils {
      */
     public static Credential getCredential(final RequestContext context) {
         val cFromRequest = (Credential) context.getRequestScope().get(PARAMETER_CREDENTIAL);
+        val cFromFlashScope = (Credential) context.getFlashScope().get(PARAMETER_CREDENTIAL);
         val cFromFlow = (Credential) context.getFlowScope().get(PARAMETER_CREDENTIAL);
         val cFromConversation = (Credential) context.getConversationScope().get(PARAMETER_CREDENTIAL);
 
         var credential = cFromRequest;
         if (credential == null || StringUtils.isBlank(credential.getId())) {
             credential = cFromFlow;
+        }
+        if (credential == null || StringUtils.isBlank(credential.getId())) {
+            credential = cFromFlashScope;
         }
         if (credential == null || StringUtils.isBlank(credential.getId())) {
             credential = cFromConversation;
@@ -491,19 +495,29 @@ public class WebUtils {
     /**
      * Puts credential into the context.
      *
-     * @param context the context
-     * @param c       the c
+     * @param context    the context
+     * @param credential the credential
      */
-    public static void putCredential(final RequestContext context, final Credential c) {
-        if (c == null) {
+    public static void putCredential(final RequestContext context, final Credential credential) {
+        if (credential == null) {
             context.getRequestScope().remove(PARAMETER_CREDENTIAL);
             context.getFlowScope().remove(PARAMETER_CREDENTIAL);
             context.getConversationScope().remove(PARAMETER_CREDENTIAL);
         } else {
-            context.getRequestScope().put(PARAMETER_CREDENTIAL, c);
-            context.getFlowScope().put(PARAMETER_CREDENTIAL, c);
-            context.getConversationScope().put(PARAMETER_CREDENTIAL, c);
+            putCredentialIntoScope(context.getRequestScope(), credential);
+            putCredentialIntoScope(context.getFlowScope(), credential);
+            putCredentialIntoScope(context.getConversationScope(), credential);
         }
+    }
+
+    /**
+     * Put credential into scope.
+     *
+     * @param scope      the scope
+     * @param credential the credential
+     */
+    public static void putCredentialIntoScope(final MutableAttributeMap<Object> scope, final Credential credential) {
+        scope.put(PARAMETER_CREDENTIAL, credential);
     }
 
     /**

@@ -1,11 +1,6 @@
 {
   "dependencies": "ldap,pm-ldap,pm-webflow",
   "properties": [
-    "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
-    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
-    "--cas.authn.attribute-repository.stub.attributes.givenName=Apereo",
-    "--cas.authn.attribute-repository.stub.attributes.sn=CAS",
-
     "--cas.authn.ldap[0].type=AUTHENTICATED",
     "--cas.authn.ldap[0].bind-dn=Administrator@cas.example.org",
     "--cas.authn.ldap[0].bind-credential=M3110nM3110n#1",
@@ -29,13 +24,7 @@
     
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
-    "--cas.server.scope=example.net",
-
-    "--cas.authn.accept.enabled=false",
-    
-    "--logging.level.org.apereo.cas=debug",
-    "--logging.level.org.apereo.cas.web.flow=debug",
-    "--logging.level.org.ldaptive=debug"
+    "--cas.server.scope=example.net"
   ],
   "initScript": "${PWD}/ci/tests/ldap/run-ad-server.sh"
 }

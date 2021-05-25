@@ -5,9 +5,6 @@ const cas = require('../../cas.js');
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await browser.newPage();
-
-    // Configure the navigation timeout to infinite if debugging
-    // await page.setDefaultNavigationTimeout(0);
     await page.goto("https://localhost:8443/cas/login");
 
     await page.type('#username', "mustchangepassword");
