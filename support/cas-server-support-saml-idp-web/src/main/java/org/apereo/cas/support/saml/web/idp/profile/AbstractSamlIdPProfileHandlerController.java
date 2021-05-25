@@ -288,6 +288,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val mappings = getAuthenticationContextMappings();
         val mappedClassRef = authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs()
             .stream()
+            .filter(Objects::nonNull)
+            .filter(ref -> StringUtils.isNotBlank(ref.getURI()))
             .filter(ref -> {
                 val clazz = ref.getURI();
                 return mappings.containsKey(clazz);

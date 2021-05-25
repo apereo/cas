@@ -41,7 +41,9 @@ public class ClearWebflowCredentialAction extends AbstractAction {
             || current.equalsIgnoreCase(CasWebflowConstants.TRANSITION_ID_ERROR)) {
             LOGGER.trace("Current event signaled a failure. Recreating credentials instance from the context");
             WebUtils.createCredential(requestContext);
-            WebUtils.putCredentialIntoScope(requestContext.getFlashScope(), credential);
+            if (credential != null) {
+                WebUtils.putCredentialIntoScope(requestContext.getFlashScope(), credential);
+            }
         }
         return null;
     }
