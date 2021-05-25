@@ -8,7 +8,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
-import org.apereo.cas.web.DefaultDelegatedAuthenticationNavigationController;
 import org.apereo.cas.web.DefaultDelegatedClientAuthenticationWebflowManager;
 
 import lombok.val;
@@ -70,10 +69,6 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = "cas.authn.pac4j.cookie.enabled=true")
 @Tag("Webflow")
 public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
-    @Autowired
-    @Qualifier("delegatedClientNavigationController")
-    private DefaultDelegatedAuthenticationNavigationController controller;
-
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
