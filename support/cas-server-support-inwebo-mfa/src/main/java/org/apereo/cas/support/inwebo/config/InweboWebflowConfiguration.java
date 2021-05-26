@@ -9,6 +9,7 @@ import org.apereo.cas.support.inwebo.web.flow.actions.InweboCheckAuthenticationA
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboCheckUserAction;
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboMustEnrollAction;
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboPushAuthenticateAction;
+import org.apereo.cas.trusted.config.ConditionalOnMultifactorTrustedDevicesEnabled;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -23,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -149,7 +149,7 @@ public class InweboWebflowConfiguration {
      * The Inwebo multifactor trust configuration.
      */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.inwebo", name = "trusted-device-enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.inwebo")
     @Configuration("inweboMultifactorTrustConfiguration")
     public class InweboMultifactorTrustConfiguration {
 

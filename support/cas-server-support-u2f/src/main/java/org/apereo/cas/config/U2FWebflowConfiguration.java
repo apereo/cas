@@ -11,6 +11,7 @@ import org.apereo.cas.adaptors.u2f.web.flow.U2FMultifactorWebflowConfigurer;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FStartAuthenticationAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FStartRegistrationAction;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.trusted.config.ConditionalOnMultifactorTrustedDevicesEnabled;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -26,7 +27,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -160,7 +160,7 @@ public class U2FWebflowConfiguration {
      * The u2f authenticator multifactor trust configuration.
      */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.u2f", name = "trusted-device-enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.u2f")
     @Configuration("u2fMultifactorTrustConfiguration")
     public class U2FMultifactorTrustConfiguration {
 

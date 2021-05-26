@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationWebflowEventRes
 import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorWebflowConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.trusted.config.ConditionalOnMultifactorTrustedDevicesEnabled;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -18,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -105,7 +105,7 @@ public class AuthyConfiguration {
      * The Authy multifactor trust configuration.
      */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.authy", name = "trusted-device-enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.authy")
     @Configuration("authyMultifactorTrustConfiguration")
     public class AuthyMultifactorTrustConfiguration {
 

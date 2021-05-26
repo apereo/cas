@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.swivel.web.flow.SwivelMultifactorTrustedDeviceWeb
 import org.apereo.cas.adaptors.swivel.web.flow.SwivelMultifactorWebflowConfigurer;
 import org.apereo.cas.adaptors.swivel.web.flow.rest.SwivelTuringImageGeneratorController;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.trusted.config.ConditionalOnMultifactorTrustedDevicesEnabled;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -19,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -114,7 +114,7 @@ public class SwivelConfiguration {
      * The swivel multifactor trust configuration.
      */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.swivel", name = "trusted-device-enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.swivel")
     @Configuration("swivelMultifactorTrustConfiguration")
     public class SwivelMultifactorTrustConfiguration {
 
