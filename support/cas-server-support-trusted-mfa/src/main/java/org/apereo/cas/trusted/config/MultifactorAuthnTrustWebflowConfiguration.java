@@ -21,8 +21,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
 
-import static org.apereo.cas.trusted.BeanNames.BEAN_DEVICE_FINGERPRINT_STRATEGY;
-
 /**
  * This is {@link MultifactorAuthnTrustWebflowConfiguration}.
  *
@@ -34,7 +32,7 @@ import static org.apereo.cas.trusted.BeanNames.BEAN_DEVICE_FINGERPRINT_STRATEGY;
 public class MultifactorAuthnTrustWebflowConfiguration {
 
     @Autowired
-    @Qualifier(BEAN_DEVICE_FINGERPRINT_STRATEGY)
+    @Qualifier(DeviceFingerprintStrategy.DEFAULT_BEAN_NAME)
     private ObjectProvider<DeviceFingerprintStrategy> deviceFingerprintStrategy;
 
     @Autowired

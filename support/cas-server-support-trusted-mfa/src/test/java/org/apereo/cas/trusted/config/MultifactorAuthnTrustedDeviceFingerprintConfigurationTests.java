@@ -1,7 +1,7 @@
 package org.apereo.cas.trusted.config;
 
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
-import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintComponentExtractor;
+import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintComponentManager;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
 
 import org.junit.jupiter.api.Tag;
@@ -33,20 +33,20 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("MFA")
 public class MultifactorAuthnTrustedDeviceFingerprintConfigurationTests {
     @Autowired
-    @Qualifier("deviceFingerprintStrategy")
+    @Qualifier(DeviceFingerprintStrategy.DEFAULT_BEAN_NAME)
     private DeviceFingerprintStrategy deviceFingerprintStrategy;
 
     @Autowired
     @Qualifier("deviceFingerprintClientIpComponentExtractor")
-    private DeviceFingerprintComponentExtractor deviceFingerprintClientIpComponentExtractor;
+    private DeviceFingerprintComponentManager deviceFingerprintClientIpComponentExtractor;
 
     @Autowired
     @Qualifier("deviceFingerprintGeoLocationComponentExtractor")
-    private DeviceFingerprintComponentExtractor deviceFingerprintGeoLocationComponentExtractor;
+    private DeviceFingerprintComponentManager deviceFingerprintGeoLocationComponentExtractor;
 
     @Autowired
     @Qualifier("deviceFingerprintUserAgentComponentExtractor")
-    private DeviceFingerprintComponentExtractor deviceFingerprintUserAgentComponentExtractor;
+    private DeviceFingerprintComponentManager deviceFingerprintUserAgentComponentExtractor;
 
     @Test
     public void verifyOperation() {
@@ -54,6 +54,6 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfigurationTests {
         assertNotNull(deviceFingerprintGeoLocationComponentExtractor);
         assertNotNull(deviceFingerprintUserAgentComponentExtractor);
         
-        assertEquals(4, deviceFingerprintStrategy.getDeviceFingerprintComponentExtractors().size());
+        assertEquals(4, deviceFingerprintStrategy.getDeviceFingerprintComponentManagers().size());
     }
 }

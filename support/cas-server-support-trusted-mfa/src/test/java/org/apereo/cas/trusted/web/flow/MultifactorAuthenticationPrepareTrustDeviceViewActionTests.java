@@ -6,6 +6,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -18,9 +19,11 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -39,12 +42,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
 @Getter
 @Tag("WebflowMfaActions")
+@DirtiesContext
 public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     private MockRequestContext context;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @BeforeEach
     public void beforeEach() {
@@ -63,7 +70,7 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests extends 
 
         val record = getMultifactorAuthenticationTrustRecord();
         record.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(5));
-        val deviceFingerprint = deviceFingerprintStrategy.determineFingerprint(record.getPrincipal(), context, true);
+        val deviceFingerprint = deviceFingerprintStrategy.determineFingerprintComponent(record.getPrincipal(), context);
         record.setDeviceFingerprint(deviceFingerprint);
         mfaTrustEngine.save(record);
 
@@ -73,6 +80,8 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests extends 
 
         val authn = RegisteredServiceTestUtils.getAuthentication(record.getPrincipal());
         WebUtils.putAuthentication(authn, context);
+
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
     }
 
     @Test

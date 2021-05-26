@@ -84,7 +84,7 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
 
         val record = getMultifactorAuthenticationTrustRecord();
         record.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(5));
-        val deviceFingerprint = deviceFingerprintStrategy.determineFingerprint(record.getPrincipal(), context, true);
+        val deviceFingerprint = deviceFingerprintStrategy.determineFingerprintComponent(record.getPrincipal(), context);
         record.setDeviceFingerprint(deviceFingerprint);
         mfaTrustEngine.save(record);
 

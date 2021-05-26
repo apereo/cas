@@ -1,6 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage.fingerprint;
 
-import org.apereo.cas.trusted.web.flow.fingerprint.ClientIpDeviceFingerprintComponentExtractor;
+import org.apereo.cas.trusted.web.flow.fingerprint.ClientIpDeviceFingerprintComponentManager;
 
 import lombok.NoArgsConstructor;
 import lombok.val;
@@ -14,20 +14,20 @@ import org.springframework.webflow.test.MockRequestContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link ClientIpDeviceFingerprintComponentExtractorTests}.
+ * This is {@link ClientIpDeviceFingerprintComponentManagerTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @NoArgsConstructor
 @Tag("Simple")
-public class ClientIpDeviceFingerprintComponentExtractorTests {
+public class ClientIpDeviceFingerprintComponentManagerTests {
 
     @Test
     public void verifyClientIpFingerprintNotFound() {
         ClientInfoHolder.setClientInfo(null);
-        val ex = new ClientIpDeviceFingerprintComponentExtractor();
-        assertFalse(ex.extractComponent("casuser", new MockRequestContext(), false).isPresent());
+        val ex = new ClientIpDeviceFingerprintComponentManager();
+        assertFalse(ex.extractComponent("casuser", new MockRequestContext()).isPresent());
     }
 
     @Test
@@ -36,7 +36,7 @@ public class ClientIpDeviceFingerprintComponentExtractorTests {
         request.setRemoteAddr("1.2.3.4");
         val clientInfo = new ClientInfo(request);
         ClientInfoHolder.setClientInfo(clientInfo);
-        val ex = new ClientIpDeviceFingerprintComponentExtractor();
-        assertTrue(ex.extractComponent("casuser", new MockRequestContext(), false).isPresent());
+        val ex = new ClientIpDeviceFingerprintComponentManager();
+        assertTrue(ex.extractComponent("casuser", new MockRequestContext()).isPresent());
     }
 }

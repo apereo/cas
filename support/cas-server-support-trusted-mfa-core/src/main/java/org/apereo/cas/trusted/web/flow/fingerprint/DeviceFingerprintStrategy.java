@@ -12,19 +12,23 @@ import java.util.List;
  */
 public interface DeviceFingerprintStrategy {
     /**
+     * Default implementation bean name.
+     */
+    String DEFAULT_BEAN_NAME = "deviceFingerprintStrategy";
+
+    /**
      * Determine a unique browser/device fingerprint for the provided request.
      *
      * @param principal The principal uid we are generating a fingerprint for.
      * @param context   the request to generate the device fingerprint from.
-     * @param isNew     a boolean indicating if we are currently recording a new trusted device
      * @return The generated fingerprint
      */
-    String determineFingerprint(String principal, RequestContext context, boolean isNew);
+    String determineFingerprintComponent(String principal, RequestContext context);
 
     /**
      * Gets device fingerprint component extractors.
      *
      * @return the device fingerprint component extractors
      */
-    List<DeviceFingerprintComponentExtractor> getDeviceFingerprintComponentExtractors();
+    List<DeviceFingerprintComponentManager> getDeviceFingerprintComponentManagers();
 }

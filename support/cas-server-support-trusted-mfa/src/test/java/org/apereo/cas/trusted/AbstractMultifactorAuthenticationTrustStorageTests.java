@@ -33,7 +33,6 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-import static org.apereo.cas.trusted.BeanNames.BEAN_DEVICE_FINGERPRINT_STRATEGY;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -67,7 +66,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     protected Action mfaPrepareTrustDeviceViewAction;
 
     @Autowired
-    @Qualifier(BEAN_DEVICE_FINGERPRINT_STRATEGY)
+    @Qualifier(DeviceFingerprintStrategy.DEFAULT_BEAN_NAME)
     protected DeviceFingerprintStrategy deviceFingerprintStrategy;
     
     protected static MultifactorAuthenticationTrustRecord getMultifactorAuthenticationTrustRecord() {

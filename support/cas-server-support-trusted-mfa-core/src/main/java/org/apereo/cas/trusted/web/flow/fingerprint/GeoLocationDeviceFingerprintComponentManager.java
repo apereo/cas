@@ -24,15 +24,14 @@ import java.util.Optional;
 @Setter
 @Slf4j
 @RequiredArgsConstructor
-public class GeoLocationDeviceFingerprintComponentExtractor implements DeviceFingerprintComponentExtractor {
+public class GeoLocationDeviceFingerprintComponentManager implements DeviceFingerprintComponentManager {
     private final GeoLocationService geoLocationService;
 
     private int order = LOWEST_PRECEDENCE;
 
     @Override
     public Optional<String> extractComponent(final String principal,
-                                             final RequestContext context,
-                                             final boolean isNew) {
+                                             final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val loc = WebUtils.getHttpServletRequestGeoLocation(request);
 

@@ -1,6 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage.fingerprint;
 
-import org.apereo.cas.trusted.web.flow.fingerprint.UserAgentDeviceFingerprintComponentExtractor;
+import org.apereo.cas.trusted.web.flow.fingerprint.UserAgentDeviceFingerprintComponentManager;
 import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.val;
@@ -16,20 +16,20 @@ import org.springframework.webflow.test.MockRequestContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link UserAgentDeviceFingerprintComponentExtractorTests}.
+ * This is {@link UserAgentDeviceFingerprintComponentManagerTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @Tag("Simple")
-public class UserAgentDeviceFingerprintComponentExtractorTests {
+public class UserAgentDeviceFingerprintComponentManagerTests {
     @Test
     public void verifyAgentFingerprintNotFound() {
         ClientInfoHolder.setClientInfo(null);
-        val ex = new UserAgentDeviceFingerprintComponentExtractor();
+        val ex = new UserAgentDeviceFingerprintComponentManager();
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
-        assertFalse(ex.extractComponent("casuser", context, false).isPresent());
+        assertFalse(ex.extractComponent("casuser", context).isPresent());
     }
 
     @Test
@@ -37,10 +37,10 @@ public class UserAgentDeviceFingerprintComponentExtractorTests {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("1.2.3.4");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "TestAgent");
-        val ex = new UserAgentDeviceFingerprintComponentExtractor();
+        val ex = new UserAgentDeviceFingerprintComponentManager();
 
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        assertTrue(ex.extractComponent("casuser", context, false).isPresent());
+        assertTrue(ex.extractComponent("casuser", context).isPresent());
     }
 }

@@ -17,12 +17,11 @@ import java.util.Optional;
  */
 @Getter
 @Setter
-public class UserAgentDeviceFingerprintComponentExtractor implements DeviceFingerprintComponentExtractor {
+public class UserAgentDeviceFingerprintComponentManager implements DeviceFingerprintComponentManager {
     private int order = LOWEST_PRECEDENCE;
 
     @Override
-    public Optional<String> extractComponent(final String principal, final RequestContext context,
-                                             final boolean isNew) {
+    public Optional<String> extractComponent(final String principal, final RequestContext context) {
         return Optional.ofNullable(WebUtils.getHttpServletRequestFromExternalWebflowContext(context))
             .map(HttpRequestUtils::getHttpServletRequestUserAgent);
     }
