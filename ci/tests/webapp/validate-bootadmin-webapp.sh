@@ -4,7 +4,7 @@
   -DskipNestedConfigMetadataGen=true -x check -x javadoc \
   --no-daemon --build-cache --configure-on-demand --parallel
   
-mv webapp/cas-server-webapp-bootadmin-server/build/libs/cas-server-webapp-bootadmin-server-*.war \
+mv webapp/cas-server-webapp-bootadmin-server/build/libs/cas-server-webapp-bootadmin-server-*-SNAPSHOT.war \
   webapp/cas-server-webapp-bootadmin-server/build/libs/admin.war
 
 dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"

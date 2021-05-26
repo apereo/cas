@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("SAML")
+@Tag("SAMLMetadata")
 public class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     private static File METADATA_FILE;
 

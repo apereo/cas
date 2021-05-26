@@ -39,7 +39,6 @@ import static org.mockito.Mockito.*;
  */
 @Tag("SAML")
 @Import(SSOSamlIdPProfileCallbackHandlerControllerTests.SamlIdPTestConfiguration.class)
-@Tag("SAML")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.core.authentication-context-class-mappings=context1->mfa-dummy",

@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "spring.main.allow-bean-definition-overriding=true",
     "cas.saml-metadata-ui.resources=http://mdq-beta.incommon.org/global/entities/::"
 })
-@Tag("SAML")
+@Tag("SAMLMetadata")
 public class SamlMetadataUIParserDynamicActionTests extends AbstractOpenSamlTests {
     @Autowired
     @Qualifier("samlMetadataUIParserAction")

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
+@Tag("SAMLMetadata")
 @TestPropertySource(properties = {
     "management.endpoints.web.exposure.include=*",
     "management.endpoint.samlIdPRegisteredServiceMetadataCache.enabled=true"

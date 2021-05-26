@@ -10,8 +10,7 @@
                 <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
             </PatternLayout>
             <Policies>
-                <TimeBasedTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="1 KB"/>
+                <SizeBasedTriggeringPolicy size="90 MB"/>
             </Policies>
         </RollingRandomAccessFile>
 
@@ -36,14 +35,16 @@
                 <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
             </PatternLayout>
             <Policies>
-                <TimeBasedTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="1 KB"/>
+                <SizeBasedTriggeringPolicy size="90 MB"/>
             </Policies>
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="error"  />
+        <Logger name="org.apereo" level="error"   />
         <Logger name="org.springframework.data" level="error" />
+        <Logger name="org.springframework.web" level="error" />
+        <Logger name="org.springframework.boot" level="error" />
+        <Logger name="org.springframework.security" level="error" />
         <Root level="off">
             <AppenderRef ref="console"/>
             <AppenderRef ref="rolling-random"/>

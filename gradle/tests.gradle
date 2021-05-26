@@ -47,6 +47,8 @@ enum TestCategories {
     RegisteredService,
     RestfulApi,
     SAML,
+    SAMLMetadata,
+    SAMLServiceProvider,
     SHELL,
     Simple,
     SMS,

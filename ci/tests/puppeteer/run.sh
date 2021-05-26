@@ -57,7 +57,11 @@ dependencies=$(cat "${config}" | jq -j '.dependencies')
 echo -e "\nBuilding CAS found in $PWD for dependencies [${dependencies}]"
 ./gradlew :webapp:cas-server-webapp-tomcat:build -DskipNestedConfigMetadataGen=true -x check -x javadoc \
   --no-daemon --build-cache --configure-on-demand --parallel -PcasModules="${dependencies}"
-mv "$PWD"/webapp/cas-server-webapp-tomcat/build/libs/cas-server-webapp-tomcat-*.war "$PWD"/cas.war
+mv "$PWD"/webapp/cas-server-webapp-tomcat/build/libs/cas-server-webapp-tomcat-*-SNAPSHOT.war "$PWD"/cas.war
+if [ $? -eq 1 ]; then
+  echo "Unable to build or locate the CAS web application file. Aborting test..."
+  exit 1
+fi
 
 initScript=$(cat "${config}" | jq -j '.initScript // empty')
 initScript="${initScript//\$\{PWD\}/${PWD}}"
@@ -68,7 +72,7 @@ initScript="${initScript//\$\{PWD\}/${PWD}}"
 
 runArgs=$(cat "${config}" | jq -j '.jvmArgs // empty')
 runArgs="${runArgs//\$\{PWD\}/${PWD}}"
-[ -n "${runArgs}" ] && echo -e "\JVM runtime arguments: [${runArgs}]"
+[ -n "${runArgs}" ] && echo -e "JVM runtime arguments: [${runArgs}]"
 
 properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
 properties="${properties//\$\{PWD\}/${PWD}}"
@@ -78,7 +82,7 @@ if [[ "$DEBUG" == "debug" ]]; then
   runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
 fi
 
-echo -e "\nLaunching CAS with properties [${properties}], JVM arguments [${jvmArgs}] and dependencies [${dependencies}]"
+echo -e "\nLaunching CAS with properties [${properties}], run arguments [${runArgs}] and dependencies [${dependencies}]"
 java ${runArgs} -jar "$PWD"/cas.war ${properties} \
   --spring.profiles.active=none --server.ssl.key-store="$keystore" &
 pid=$!
