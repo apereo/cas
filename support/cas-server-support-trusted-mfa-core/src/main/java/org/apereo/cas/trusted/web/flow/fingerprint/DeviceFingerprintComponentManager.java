@@ -1,8 +1,9 @@
 package org.apereo.cas.trusted.web.flow.fingerprint;
 
 import org.springframework.core.Ordered;
-import org.springframework.webflow.execution.RequestContext;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 /**
@@ -19,7 +20,7 @@ public interface DeviceFingerprintComponentManager extends Ordered {
      * @return a no-op DeviceFingerprintComponent.
      */
     static DeviceFingerprintComponentManager noOp() {
-        return (principal, context) -> Optional.empty();
+        return (principal, request, response) -> Optional.empty();
     }
 
     @Override
@@ -31,8 +32,9 @@ public interface DeviceFingerprintComponentManager extends Ordered {
      * Determine a unique browser/device fingerprint component for the provided request.
      *
      * @param principal The principal uid we are generating a fingerprint for.
-     * @param context   the request to generate the device fingerprint from.
+     * @param request   the request
+     * @param response  the response
      * @return The fingerprint component
      */
-    Optional<String> extractComponent(String principal, RequestContext context);
+    Optional<String> extractComponent(String principal, HttpServletRequest request, HttpServletResponse response);
 }

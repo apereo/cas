@@ -9,7 +9,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.webflow.test.MockRequestContext;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,18 +25,21 @@ public class ClientIpDeviceFingerprintComponentManagerTests {
 
     @Test
     public void verifyClientIpFingerprintNotFound() {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
         ClientInfoHolder.setClientInfo(null);
         val ex = new ClientIpDeviceFingerprintComponentManager();
-        assertFalse(ex.extractComponent("casuser", new MockRequestContext()).isPresent());
+        assertFalse(ex.extractComponent("casuser", request, response).isPresent());
     }
 
     @Test
     public void verifyClientIpFingerprintFound() {
         val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
         request.setRemoteAddr("1.2.3.4");
         val clientInfo = new ClientInfo(request);
         ClientInfoHolder.setClientInfo(clientInfo);
         val ex = new ClientIpDeviceFingerprintComponentManager();
-        assertTrue(ex.extractComponent("casuser", new MockRequestContext()).isPresent());
+        assertTrue(ex.extractComponent("casuser", request, response).isPresent());
     }
 }

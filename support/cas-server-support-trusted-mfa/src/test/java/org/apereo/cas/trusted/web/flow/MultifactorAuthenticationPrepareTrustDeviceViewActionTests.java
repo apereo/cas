@@ -70,7 +70,7 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests extends 
 
         val record = getMultifactorAuthenticationTrustRecord();
         record.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(5));
-        val deviceFingerprint = deviceFingerprintStrategy.determineFingerprintComponent(record.getPrincipal(), context);
+        val deviceFingerprint = deviceFingerprintStrategy.determineFingerprintComponent(record.getPrincipal(), request, response);
         record.setDeviceFingerprint(deviceFingerprint);
         mfaTrustEngine.save(record);
 
