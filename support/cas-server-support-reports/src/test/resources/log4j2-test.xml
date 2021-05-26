@@ -4,40 +4,40 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
         </Console>
-<!--        <RollingRandomAccessFile name="rolling-random" fileName="/tmp/cas-rolling-rand.log"-->
-<!--                                 filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">-->
-<!--            <PatternLayout>-->
-<!--                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>-->
-<!--            </PatternLayout>-->
-<!--            <Policies>-->
-<!--                <SizeBasedTriggeringPolicy size="90 MB"/>-->
-<!--            </Policies>-->
-<!--        </RollingRandomAccessFile>-->
+        <RollingRandomAccessFile name="rolling-random" fileName="/tmp/cas-rolling-rand.log"
+                                 filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="90 MB"/>
+            </Policies>
+        </RollingRandomAccessFile>
 
-<!--        <File name="file" fileName="/tmp/cas.log">-->
-<!--            <PatternLayout>-->
-<!--                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>-->
-<!--            </PatternLayout>-->
-<!--        </File>-->
-<!--        <RandomAccessFile name="random" fileName="/tmp/cas-random.log">-->
-<!--            <PatternLayout>-->
-<!--                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>-->
-<!--            </PatternLayout>-->
-<!--        </RandomAccessFile>-->
-<!--        <MemoryMappedFile name="memory" fileName="/tmp/cas-mem.log">-->
-<!--            <PatternLayout>-->
-<!--                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>-->
-<!--            </PatternLayout>-->
-<!--        </MemoryMappedFile>-->
-<!--        <RollingFile name="rolling" fileName="/tmp/cas-rolling.log"-->
-<!--                     filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">-->
-<!--            <PatternLayout>-->
-<!--                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>-->
-<!--            </PatternLayout>-->
-<!--            <Policies>-->
-<!--                <SizeBasedTriggeringPolicy size="90 MB"/>-->
-<!--            </Policies>-->
-<!--        </RollingFile>-->
+        <File name="file" fileName="/tmp/cas.log">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+            </PatternLayout>
+        </File>
+        <RandomAccessFile name="random" fileName="/tmp/cas-random.log">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+            </PatternLayout>
+        </RandomAccessFile>
+        <MemoryMappedFile name="memory" fileName="/tmp/cas-mem.log">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+            </PatternLayout>
+        </MemoryMappedFile>
+        <RollingFile name="rolling" fileName="/tmp/cas-rolling.log"
+                     filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="90 MB"/>
+            </Policies>
+        </RollingFile>
     </Appenders>
     <Loggers>
         <Logger name="org.apereo" level="error"   />

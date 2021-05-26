@@ -115,8 +115,8 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-#      - name: Setup tmate session
-#        uses: mxschmitt/action-tmate@v3
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
       - name: Run Tests
         run: ./testcas.sh --no-retry --no-watch --with-coverage --category ${{ matrix.category }}
       - name: "Upload to Codecov"
