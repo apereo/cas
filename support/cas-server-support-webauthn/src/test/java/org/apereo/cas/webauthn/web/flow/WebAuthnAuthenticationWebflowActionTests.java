@@ -64,9 +64,6 @@ public class WebAuthnAuthenticationWebflowActionTests {
         messageContext.setMessageSource(mock(MessageSource.class));
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-
-        val response = new MockHttpServletResponse();
-        when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
         return context;
     }
 
@@ -89,7 +86,7 @@ public class WebAuthnAuthenticationWebflowActionTests {
         val authn = RegisteredServiceTestUtils.getAuthentication("casuser");
         WebUtils.putAuthentication(authn, context);
         WebUtils.putCredential(context, new WebAuthnCredential(EncodingUtils.encodeBase64(RandomUtils.randomAlphabetic(8))));
-        var result = webAuthnAuthenticationWebflowAction.execute(context);
+        val result = webAuthnAuthenticationWebflowAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, result.getId());
     }
 
