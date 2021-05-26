@@ -94,7 +94,7 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
                                                     final MultifactorAuthenticationTrustBean deviceRecord) {
         val principal = authentication.getPrincipal().getId();
         LOGGER.debug("Attempting to store trusted authentication record for [{}] as device [{}]", principal, deviceRecord.getDeviceName());
-        val fingerprint = deviceFingerprintStrategy.determineFingerprint(principal, requestContext, true);
+        val fingerprint = deviceFingerprintStrategy.determineFingerprintComponent(principal, requestContext);
         val record = MultifactorAuthenticationTrustRecord.newInstance(principal,
             MultifactorAuthenticationTrustUtils.generateGeography(), fingerprint);
         record.setName(deviceRecord.getDeviceName());

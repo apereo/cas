@@ -16,13 +16,12 @@ import java.util.Optional;
  */
 @Getter
 @Setter
-public class ClientIpDeviceFingerprintComponentExtractor implements DeviceFingerprintComponentExtractor {
+public class ClientIpDeviceFingerprintComponentManager implements DeviceFingerprintComponentManager {
     private int order = LOWEST_PRECEDENCE;
 
     @Override
     public Optional<String> extractComponent(final String principal,
-                                             final RequestContext context,
-                                             final boolean isNew) {
+                                             final RequestContext context) {
         return Optional.ofNullable(ClientInfoHolder.getClientInfo()).map(ClientInfo::getClientIpAddress);
     }
 }
