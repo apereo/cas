@@ -66,7 +66,12 @@ public class InitialFlowSetupAction extends AbstractAction {
 
     private final TicketRegistrySupport ticketRegistrySupport;
 
-    private static void configureWebflowForPostParameters(final RequestContext context) {
+    /**
+     * Configure the POST parameters in webflow.
+     *
+     * @param context the webflow context
+     */
+    protected static void configureWebflowForPostParameters(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         if (request.getMethod().equalsIgnoreCase(HttpMethod.POST.name())) {
             WebUtils.putInitialHttpRequestPostParameters(context);
@@ -88,7 +93,13 @@ public class InitialFlowSetupAction extends AbstractAction {
         return success();
     }
 
-    private String configureWebflowForTicketGrantingTicket(final RequestContext context) {
+    /**
+     * Configure the ticket granting ticket in webflow.
+     *
+     * @param context the webflow context
+     * @return the TGT identifier or {@code null}
+     */
+    protected String configureWebflowForTicketGrantingTicket(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val ticketGrantingTicketId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
@@ -102,11 +113,21 @@ public class InitialFlowSetupAction extends AbstractAction {
         return null;
     }
 
-    private void configureWebflowForCustomFields(final RequestContext context) {
+    /**
+     * Configure the custom fields in webflow.
+     *
+     * @param context the webflow context
+     */
+    protected void configureWebflowForCustomFields(final RequestContext context) {
         WebUtils.putCustomLoginFormFields(context, casProperties.getView().getCustomLoginFormFields());
     }
 
-    private void configureWebflowForServices(final RequestContext context) {
+    /**
+     * Configure the services in webflow.
+     *
+     * @param context the webflow context
+     */
+    protected void configureWebflowForServices(final RequestContext context) {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         if (HttpStatus.valueOf(response.getStatus()).isError()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
@@ -136,7 +157,13 @@ public class InitialFlowSetupAction extends AbstractAction {
         WebUtils.putServiceIntoFlowScope(context, service);
     }
 
-    private void configureWebflowForSsoParticipation(final RequestContext context, final String ticketGrantingTicketId) {
+    /**
+     * Configure the SSO participation in webflow.
+     *
+     * @param context the webflow context
+     * @param ticketGrantingTicketId the TGT identifier
+     */
+    protected void configureWebflowForSsoParticipation(final RequestContext context, final String ticketGrantingTicketId) {
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .requestContext(context)
             .build();
@@ -149,7 +176,12 @@ public class InitialFlowSetupAction extends AbstractAction {
         }
     }
 
-    private void configureWebflowContext(final RequestContext context) {
+    /**
+     * Configure the webflow.
+     *
+     * @param context the webflow context
+     */
+    protected void configureWebflowContext(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         WebUtils.putWarningCookie(context, Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
 
@@ -173,7 +205,12 @@ public class InitialFlowSetupAction extends AbstractAction {
         }
     }
 
-    private void configureCookieGenerators(final RequestContext context) {
+    /**
+     * Configure the cookie generators in webflow.
+     *
+     * @param context the webflow context
+     */
+    protected void configureCookieGenerators(final RequestContext context) {
         val contextPath = context.getExternalContext().getContextPath();
         val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
 
