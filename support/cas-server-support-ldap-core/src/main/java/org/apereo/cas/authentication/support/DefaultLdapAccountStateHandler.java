@@ -71,7 +71,7 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
         this.errorMap.put(ActiveDirectoryAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
         this.errorMap.put(ActiveDirectoryAccountState.Error.ACCOUNT_EXPIRED, new AccountExpiredException());
         this.errorMap.put(ActiveDirectoryAccountState.Error.LOGON_FAILURE, new FailedLoginException());
-        
+
         this.errorMap.put(EDirectoryAccountState.Error.ACCOUNT_EXPIRED, new AccountExpiredException());
         this.errorMap.put(EDirectoryAccountState.Error.FAILED_AUTHENTICATION, new FailedLoginException());
         this.errorMap.put(EDirectoryAccountState.Error.LOGIN_LOCKOUT, new AccountLockedException());
@@ -97,7 +97,7 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
 
     @Override
     public List<MessageDescriptor> handle(final AuthenticationResponse response,
-        final PasswordPolicyContext configuration) throws LoginException {
+                                          final PasswordPolicyContext configuration) throws LoginException {
         LOGGER.debug("Attempting to handle LDAP account state for [{}]", response);
         if (!this.attributesToErrorMap.isEmpty() && response.isSuccess()) {
             LOGGER.debug("Handling policy based on pre-defined attributes");
@@ -105,6 +105,10 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
         }
 
         val state = response.getAccountState();
+        if (state == null && !response.isSuccess()) {
+            handleFailingResponse(response, configuration);
+        }
+
         if (state == null) {
             LOGGER.debug("Account state not defined. Returning empty list of messages.");
             return new ArrayList<>(0);
@@ -114,6 +118,19 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
         handleWarning(state.getWarning(), response, configuration, messages);
 
         return messages;
+    }
+
+    /**
+     * Handle failing response.
+     *
+     * @param response      the response
+     * @param configuration the configuration
+     * @throws LoginException the login exception
+     */
+    protected void handleFailingResponse(final AuthenticationResponse response,
+                                         final PasswordPolicyContext configuration) throws LoginException {
+        val error = ActiveDirectoryAccountState.Error.parse(response.getDiagnosticMessage());
+        handleError(error, response, configuration, new ArrayList<>());
     }
 
     /**
@@ -131,7 +148,7 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
                                final PasswordPolicyContext configuration, final List<MessageDescriptor> messages) throws LoginException {
 
         LOGGER.debug("Handling LDAP account state error [{}]", error);
-        if (errorMap.containsKey(error)) {
+        if (error != null && errorMap.containsKey(error)) {
             throw errorMap.get(error);
         }
         LOGGER.debug("No LDAP error mapping defined for [{}]", error);
