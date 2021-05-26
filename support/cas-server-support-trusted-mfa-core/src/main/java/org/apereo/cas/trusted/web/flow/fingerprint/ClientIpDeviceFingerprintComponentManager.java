@@ -4,8 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.springframework.webflow.execution.RequestContext;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 /**
@@ -21,7 +22,8 @@ public class ClientIpDeviceFingerprintComponentManager implements DeviceFingerpr
 
     @Override
     public Optional<String> extractComponent(final String principal,
-                                             final RequestContext context) {
+                                             final HttpServletRequest request,
+                                             final HttpServletResponse response) {
         return Optional.ofNullable(ClientInfoHolder.getClientInfo()).map(ClientInfo::getClientIpAddress);
     }
 }

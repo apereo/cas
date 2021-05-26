@@ -1,7 +1,7 @@
 package org.apereo.cas.trusted.web.flow.fingerprint;
 
-import org.springframework.webflow.execution.RequestContext;
-
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -20,10 +20,13 @@ public interface DeviceFingerprintStrategy {
      * Determine a unique browser/device fingerprint for the provided request.
      *
      * @param principal The principal uid we are generating a fingerprint for.
-     * @param context   the request to generate the device fingerprint from.
+     * @param request   the request
+     * @param response  the response
      * @return The generated fingerprint
      */
-    String determineFingerprintComponent(String principal, RequestContext context);
+    String determineFingerprintComponent(String principal,
+                                         HttpServletRequest request,
+                                         HttpServletResponse response);
 
     /**
      * Gets device fingerprint component extractors.

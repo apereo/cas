@@ -28,6 +28,7 @@ import static org.mockito.Mockito.*;
 public class GeoLocationDeviceFingerprintComponentManagerTests {
     @Test
     public void verifyGeoLocationDevice() {
+        val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("1.2.3.4");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "TestAgent");
@@ -41,12 +42,13 @@ public class GeoLocationDeviceFingerprintComponentManagerTests {
         val ex = new GeoLocationDeviceFingerprintComponentManager(geoLocationService);
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        val result = ex.extractComponent("casuser", context);
+        val result = ex.extractComponent("casuser", request, response);
         assertTrue(result.isPresent());
     }
 
     @Test
     public void verifyNoGeoLocationDevice() {
+        val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         val geoResp = new GeoLocationResponse();
         val geoLocationService = mock(GeoLocationService.class);
@@ -55,7 +57,7 @@ public class GeoLocationDeviceFingerprintComponentManagerTests {
         val ex = new GeoLocationDeviceFingerprintComponentManager(geoLocationService);
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        val result = ex.extractComponent("casuser", context);
+        val result = ex.extractComponent("casuser", request, response);
         assertFalse(result.isPresent());
     }
 

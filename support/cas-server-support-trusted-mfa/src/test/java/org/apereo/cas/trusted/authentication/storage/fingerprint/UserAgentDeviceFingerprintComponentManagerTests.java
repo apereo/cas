@@ -25,22 +25,25 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserAgentDeviceFingerprintComponentManagerTests {
     @Test
     public void verifyAgentFingerprintNotFound() {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
         ClientInfoHolder.setClientInfo(null);
         val ex = new UserAgentDeviceFingerprintComponentManager();
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
-        assertFalse(ex.extractComponent("casuser", context).isPresent());
+        assertFalse(ex.extractComponent("casuser", request, response).isPresent());
     }
 
     @Test
     public void verifyAgentFingerprintFound() {
         val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
         request.setRemoteAddr("1.2.3.4");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "TestAgent");
         val ex = new UserAgentDeviceFingerprintComponentManager();
 
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        assertTrue(ex.extractComponent("casuser", context).isPresent());
+        assertTrue(ex.extractComponent("casuser", request, response).isPresent());
     }
 }

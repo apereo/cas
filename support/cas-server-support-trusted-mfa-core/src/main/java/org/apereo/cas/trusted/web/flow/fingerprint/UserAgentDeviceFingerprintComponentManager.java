@@ -1,12 +1,12 @@
 package org.apereo.cas.trusted.web.flow.fingerprint;
 
 import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.webflow.execution.RequestContext;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 /**
@@ -21,8 +21,9 @@ public class UserAgentDeviceFingerprintComponentManager implements DeviceFingerp
     private int order = LOWEST_PRECEDENCE;
 
     @Override
-    public Optional<String> extractComponent(final String principal, final RequestContext context) {
-        return Optional.ofNullable(WebUtils.getHttpServletRequestFromExternalWebflowContext(context))
-            .map(HttpRequestUtils::getHttpServletRequestUserAgent);
+    public Optional<String> extractComponent(final String principal,
+                                             final HttpServletRequest request,
+                                             final HttpServletResponse response) {
+        return Optional.ofNullable(HttpRequestUtils.getHttpServletRequestUserAgent(request));
     }
 }

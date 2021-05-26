@@ -6,7 +6,8 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.Ordered;
-import org.springframework.webflow.test.MockRequestContext;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,9 +22,11 @@ public class DeviceFingerprintComponentManagerTests {
 
     @Test
     public void verifyOperation() {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
         val noOp = DeviceFingerprintComponentManager.noOp();
         assertEquals(Ordered.LOWEST_PRECEDENCE, noOp.getOrder());
-        assertTrue(noOp.extractComponent("user", new MockRequestContext()).isEmpty());
+        assertTrue(noOp.extractComponent("user", request, response).isEmpty());
     }
 
 }

@@ -10,8 +10,9 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.execution.RequestContext;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 /**
@@ -31,14 +32,14 @@ public class GeoLocationDeviceFingerprintComponentManager implements DeviceFinge
 
     @Override
     public Optional<String> extractComponent(final String principal,
-                                             final RequestContext context) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+                                             final HttpServletRequest request,
+                                             final HttpServletResponse response) {
         val loc = WebUtils.getHttpServletRequestGeoLocation(request);
 
         if (loc != null && loc.isValid()) {
             LOGGER.trace("Attempting to geolocate [{}]", loc);
-            val response = this.geoLocationService.locate(loc);
-            val address = response.build();
+            val geoResponse = this.geoLocationService.locate(loc);
+            val address = geoResponse.build();
             if (StringUtils.isBlank(address)) {
                 return getDefaultGeoLocation(loc);
             }
