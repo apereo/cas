@@ -192,6 +192,12 @@ while (( "$#" )); do
             mfa|duo|gauth|webauthn|authy|fido|u2f|swivel|acceptto)
                 task+="testMFA "
                 ;;
+            saml2sp|samlsp|samlserviceprovider)
+                task+="testSAMLServiceProvider "
+                ;;
+            metadata|md|samlmetadata)
+                task+="testSAMLMetadata "
+                ;;
             saml|saml2)
                 task+="testSAML "
                 ;;

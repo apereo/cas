@@ -61,7 +61,7 @@ rm -Rf ${CATALINA_HOME}/webapps/examples ${CATALINA_HOME}/webapps/docs \
   ${CATALINA_HOME}/webapps/manager ${CATALINA_HOME}/webapps/host-manager
 
 echo -e "Preparing web application ${project} for deployment..."
-mv webapp/${project}/build/libs/*.war ${CATALINA_HOME}/webapps/cas.war
+mv webapp/${project}/build/libs/*-SNAPSHOT.war ${CATALINA_HOME}/webapps/cas.war
 chmod +x ${CATALINA_HOME}/bin/*.sh
 touch ${CATALINA_HOME}/logs/catalina.out ; tail -F ${CATALINA_HOME}/logs/catalina.out &
 
