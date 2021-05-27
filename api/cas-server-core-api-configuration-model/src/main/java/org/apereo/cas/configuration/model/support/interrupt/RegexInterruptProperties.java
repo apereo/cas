@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.interrupt;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -27,11 +28,13 @@ public class RegexInterruptProperties implements Serializable {
      * A regex pattern on the attribute name that if matches will successfully
      * complete the first condition for the interrupt notifications trigger.
      */
+    @RequiredProperty
     private String attributeName;
 
     /**
      * A regex pattern on the attribute value that if matches will successfully
      * complete the first condition for the interrupt notifications trigger.
      */
+    @RequiredProperty
     private String attributeValue;
 }
