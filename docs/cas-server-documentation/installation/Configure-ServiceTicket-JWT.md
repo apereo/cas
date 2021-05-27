@@ -126,7 +126,7 @@ The following cipher strategy types are available:
 | `SIGN_AND_ENCRYPT`  | Sign values, and then encrypt.
 
 
-{% include registeredserviceproperties.html groups="JWT_SERVICE_TICKETS" "%}
+{% include registeredserviceproperties.html groups="JWT_SERVICE_TICKETS" %}
 
 ## JWT Validation - AES
 

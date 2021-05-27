@@ -129,7 +129,7 @@ registry to match the following:
 }
 ```
 
-{% include registeredserviceproperties.html groups="DELEGATED_AUTHN_WSFED" "%}
+{% include registeredserviceproperties.html groups="DELEGATED_AUTHN_WSFED" %}
 
 ## Troubleshooting
 

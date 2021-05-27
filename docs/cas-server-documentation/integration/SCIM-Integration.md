@@ -34,7 +34,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 SCIM relevant settings can be specified per application in form of service properties. 
 
-{% include registeredserviceproperties.html groups="SCIM" "%}
+{% include registeredserviceproperties.html groups="SCIM" %}
  
 A sample JSON file follows:
 

@@ -184,7 +184,7 @@ also the option to generate JWTs as access tokens on a per-service basis:
 
 Signing and encryption keys may also be defined on a per-service basis, or globally via CAS settings.
 
-{% include registeredserviceproperties.html groups="JWT_ACCESS_TOKENS" "%}
+{% include registeredserviceproperties.html groups="JWT_ACCESS_TOKENS"%}
 
 ## OAuth User Profile Structure
 
