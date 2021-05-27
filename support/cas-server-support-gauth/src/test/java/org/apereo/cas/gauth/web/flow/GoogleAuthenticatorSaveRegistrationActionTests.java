@@ -79,7 +79,7 @@ public class GoogleAuthenticatorSaveRegistrationActionTests {
         googleAuthenticatorAccountRegistry.save(acct);
 
         context.getFlowScope().put(OneTimeTokenAccountCreateRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT, acct);
-        casProperties.getAuthn().getMfa().getGauth().setMultipleDeviceRegistrationEnabled(false);
+        casProperties.getAuthn().getMfa().getGauth().getCore().setMultipleDeviceRegistrationEnabled(false);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, googleSaveAccountRegistrationAction.execute(context).getId());
     }
 

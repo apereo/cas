@@ -77,6 +77,6 @@ public class GoogleAuthenticatorRedisConfiguration {
     @Bean
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
         return new GoogleAuthenticatorRedisTokenRepository(redisGoogleAuthenticatorTemplate(),
-            casProperties.getAuthn().getMfa().getGauth().getTimeStepSize());
+            casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize());
     }
 }

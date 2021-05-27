@@ -1,7 +1,7 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
-import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -42,10 +42,10 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).singleValueAsArray(true).build().toObjectMapper();
 
-    private final GoogleAuthenticatorMultifactorAuthenticationProperties gauth;
+    private final GoogleAuthenticatorMultifactorProperties gauth;
 
     public RestGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
-        final GoogleAuthenticatorMultifactorAuthenticationProperties gauth,
+        final GoogleAuthenticatorMultifactorProperties gauth,
         final CipherExecutor<String, String> tokenCredentialCipher) {
         super(tokenCredentialCipher, googleAuthenticator);
         this.gauth = gauth;

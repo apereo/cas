@@ -87,7 +87,7 @@ public class GoogleAuthenticatorConfiguration {
      * The google authenticator multifactor trust configuration.
      */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.gauth")
+    @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.gauth.core")
     @Configuration("gauthMultifactorTrustConfiguration")
     public class GoogleAuthenticatorMultifactorTrustConfiguration {
 

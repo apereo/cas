@@ -79,6 +79,6 @@ public class GoogleAuthenticatorMongoDbConfiguration {
         val mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
         return new GoogleAuthenticatorMongoDbTokenRepository(mongoDbGoogleAuthenticatorTemplate(),
             mongo.getTokenCollection(),
-            casProperties.getAuthn().getMfa().getGauth().getTimeStepSize());
+            casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize());
     }
 }

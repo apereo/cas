@@ -22,7 +22,7 @@ Support is enabled by including the following module in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-gauth" %}
 
-{% include casproperties.html properties="cas.authn.mfa.gauth" %}
+{% include casproperties.html properties="cas.authn.mfa.gauth.core" %}
 
 A background *cleaner* process is also automatically scheduled to scan the
 repository periodically and remove expired device registration records
