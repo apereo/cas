@@ -43,6 +43,9 @@ In the `gradle.properties` of the [CAS WAR Overlay](../installation/WAR-Overlay-
 cas.version=6.4.0-RC5
 ```
 
+Alternatively and for new deployments, [CAS Initializr](../installation/WAR-Overlay-Initializr.html) has been updated and can also be used
+to generate an overlay project template for this release.
+
 <div class="alert alert-info">
   <strong>System Requirements</strong><br/>There are no changes to the minimum system/platform requirements for this release.
 </div>
@@ -50,7 +53,13 @@ cas.version=6.4.0-RC5
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
-        
+           
+### Spring Boot 2.5
+
+CAS is now based on the Spring Boot `2.5.x` series which by extension also requires CAS to 
+upgrade its dependency on related projects such as Spring and Spring Cloud frameworks. While this 
+is a significant framework upgrade, the change should remain largely invisible to CAS users and adopters.
+
 ### SAML2 Identity Provider
 
 CAS acting as a [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) is now able to provide basic support
@@ -77,8 +86,8 @@ use the tooling provided by the build to locate or fetch the templates from the 
 - HTTP request entities used for `POST` methods in REST API interactions are set to use the `UTF-8` encoding.
 - Generating access tokens for the OAuth authorization grants is set to use client id first and then 
   redirect URIs to locate the service definition.
-- 
-
+- Additional [Puppeteer tests](../developer/Test-Process.html) to cover scenarios for 
+  password management, delegated authentication and OAuth protocol.
 
 ## Library Upgrades
 
