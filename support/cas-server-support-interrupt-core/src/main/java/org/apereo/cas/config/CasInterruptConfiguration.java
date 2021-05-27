@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.interrupt.DefaultInterruptInquiryExecutionPlan;
+import org.apereo.cas.interrupt.GroovyScriptInterruptInquirer;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlan;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlanConfigurer;
 import org.apereo.cas.interrupt.JsonResourceInterruptInquirer;
@@ -59,7 +60,7 @@ public class CasInterruptConfiguration {
     @ConditionalOnMissingBean(name = "groovyInterruptInquiryExecutionPlanConfigurer")
     @ConditionalOnProperty(name = "cas.interrupt.groovy.location")
     public InterruptInquiryExecutionPlanConfigurer groovyInterruptInquiryExecutionPlanConfigurer() {
-        return plan -> plan.registerInterruptInquirer(new JsonResourceInterruptInquirer(casProperties.getInterrupt().getGroovy().getLocation()));
+        return plan -> plan.registerInterruptInquirer(new GroovyScriptInterruptInquirer(casProperties.getInterrupt().getGroovy().getLocation()));
     }
 
     @Bean
