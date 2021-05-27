@@ -50,7 +50,9 @@ public class DefaultLdapAccountStateHandlerTests {
         assertThrows(AccountLockedException.class, () -> handler.handle(response, new PasswordPolicyContext()));
 
         when(response.getDiagnosticMessage()).thenReturn("error unknown");
-        assertThrows(AccountLockedException.class, () -> handler.handle(response, new PasswordPolicyContext()));
+        assertDoesNotThrow(() -> {
+            handler.handle(response, new PasswordPolicyContext());
+        });
     }
 
     @Test

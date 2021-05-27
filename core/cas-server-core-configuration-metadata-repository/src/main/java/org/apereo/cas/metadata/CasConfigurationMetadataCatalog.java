@@ -152,7 +152,6 @@ public class CasConfigurationMetadataCatalog {
         builder.shortDescription(property.getShortDescription());
         builder.name(property.getId());
         builder.defaultValue(ObjectUtils.defaultIfNull(property.getDefaultValue(), StringUtils.EMPTY));
-
         if (property.isDeprecated()) {
             val deprecation = property.getDeprecation();
             builder.deprecationLevel(deprecation.getLevel().toString());
