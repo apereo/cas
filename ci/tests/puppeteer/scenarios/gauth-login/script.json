@@ -2,6 +2,6 @@
   "dependencies": "gauth",
   "properties": [
     "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/gauth-login/accounts.json",
-    "--cas.authn.mfa.gauth.multiple-device-registration-enabled=true"
+    "--cas.authn.mfa.gauth.core.multiple-device-registration-enabled=true"
   ]
 }

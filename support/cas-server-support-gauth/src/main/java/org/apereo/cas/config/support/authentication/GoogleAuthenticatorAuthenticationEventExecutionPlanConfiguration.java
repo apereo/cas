@@ -100,7 +100,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "googleAuthenticatorInstance")
     public IGoogleAuthenticator googleAuthenticatorInstance() {
-        val gauth = casProperties.getAuthn().getMfa().getGauth();
+        val gauth = casProperties.getAuthn().getMfa().getGauth().getCore();
         val bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
         bldr.setCodeDigits(gauth.getCodeDigits());
         bldr.setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(gauth.getTimeStepSize()));
@@ -183,7 +183,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "googleAccountCreateRegistrationAction")
     public Action googleAccountCreateRegistrationAction() {
-        val gauth = casProperties.getAuthn().getMfa().getGauth();
+        val gauth = casProperties.getAuthn().getMfa().getGauth().getCore();
         return new OneTimeTokenAccountCreateRegistrationAction(googleAuthenticatorAccountRegistry.getObject(),
             gauth.getLabel(), gauth.getIssuer());
     }
@@ -201,7 +201,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry() {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         if (gauth.getJson().getLocation() != null) {
-            return new JsonGoogleAuthenticatorTokenCredentialRepository(gauth.getJson().getLocation(), googleAuthenticatorInstance(),
+            return new JsonGoogleAuthenticatorTokenCredentialRepository(
+                gauth.getJson().getLocation(), googleAuthenticatorInstance(),
                 googleAuthenticatorAccountCipherExecutor());
         }
         if (StringUtils.isNotBlank(gauth.getRest().getUrl())) {
@@ -255,7 +256,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer googleAuthenticatorAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGauth().getIssuer())) {
+            if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGauth().getCore().getIssuer())) {
                 plan.registerAuthenticationHandler(googleAuthenticatorAuthenticationHandler());
                 plan.registerAuthenticationMetadataPopulator(googleAuthenticatorAuthenticationMetaDataPopulator());
                 plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(GoogleAuthenticatorTokenCredential.class));

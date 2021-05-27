@@ -22,7 +22,7 @@ public class GoogleAuthenticatorPrepareLoginAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         WebUtils.putGoogleAuthenticatorMultipleDeviceRegistrationEnabled(requestContext,
-            casProperties.getAuthn().getMfa().getGauth().isMultipleDeviceRegistrationEnabled());
+            casProperties.getAuthn().getMfa().getGauth().getCore().isMultipleDeviceRegistrationEnabled());
         return null;
     }
 }
