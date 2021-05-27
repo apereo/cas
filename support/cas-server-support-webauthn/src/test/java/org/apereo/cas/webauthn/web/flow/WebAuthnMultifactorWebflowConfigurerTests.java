@@ -23,7 +23,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
         "cas.authn.mfa.web-authn.core.relying-party-id=example.org",
         "cas.authn.mfa.web-authn.core.allow-primary-authentication=true"
     })
-@Tag("WebflowConfig")
+@Tag("WebflowMfaConfig")
 @Getter
 public class WebAuthnMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired

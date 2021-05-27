@@ -28,7 +28,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
         "cas.authn.mfa.trusted.core.device-registration-enabled=true"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("WebflowConfig")
+@Tag("WebflowMfaConfig")
 public class DuoSecurityMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

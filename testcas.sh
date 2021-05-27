@@ -219,6 +219,9 @@ while (( "$#" )); do
             webflowconfig|swfcfg|webflowcfg|webflow-config)
                 task+="testWebflowConfig "
                 ;;
+            webflowmfaconfig)
+                task+="testWebflowMfaConfig "
+                ;;
             webflow|swf)
                 task+="testWebflow "
                 ;;

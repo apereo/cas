@@ -16,7 +16,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
  * @author Hayden Sartoris
  * @since 6.4.0
  */
-@Tag("WebflowConfig")
+@Tag("WebflowMfaConfig")
 @SpringBootTest(classes = BaseInweboConfiguration.SharedTestConfiguration.class,
     properties = {
         "cas.authn.mfa.inwebo.client-certificate.certificate.location=classpath:clientcert.p12",
