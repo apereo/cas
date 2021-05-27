@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.email;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -56,6 +57,7 @@ public class EmailProperties implements Serializable {
      * Email subject line.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String subject;
 
     /**
@@ -91,5 +93,14 @@ public class EmailProperties implements Serializable {
      */
     public boolean isUndefined() {
         return StringUtils.isBlank(text) || StringUtils.isBlank(from) || StringUtils.isBlank(subject);
+    }
+
+    /**
+     * Is text/from/subject defined.
+     *
+     * @return true/false
+     */
+    public boolean isDefined() {
+        return !isUndefined();
     }
 }

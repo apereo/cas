@@ -6,6 +6,7 @@ import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -99,7 +100,10 @@ public class CommunicationsManager {
             val helper = new MimeMessageHelper(message);
             helper.setTo(to);
             helper.setText(body, emailProperties.isHtml());
-            helper.setSubject(emailProperties.getSubject());
+
+            val subject = SpringExpressionLanguageValueResolver.getInstance().resolve(emailProperties.getSubject());
+            helper.setSubject(subject);
+
             helper.setFrom(emailProperties.getFrom());
             if (StringUtils.isNotBlank(emailProperties.getReplyTo())) {
                 helper.setReplyTo(emailProperties.getReplyTo());

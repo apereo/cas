@@ -26,7 +26,6 @@ import org.apereo.cas.support.events.CasEventRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.springframework.beans.factory.ObjectProvider;
@@ -174,18 +173,6 @@ public class ElectronicFenceConfiguration {
         return new DefaultAuthenticationRiskEvaluator(calculators);
     }
 
-    private void configureContingencyPlan(final BaseAuthenticationRiskContingencyPlan b) {
-        val mail = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getMail();
-        if (StringUtils.isNotBlank(mail.getText()) && StringUtils.isNotBlank(mail.getFrom()) && StringUtils.isNotBlank(mail.getSubject())) {
-            b.getNotifiers().add(authenticationRiskEmailNotifier());
-        }
-
-        val sms = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getSms();
-        if (StringUtils.isNotBlank(sms.getText()) && StringUtils.isNotBlank(sms.getFrom())) {
-            b.getNotifiers().add(authenticationRiskSmsNotifier());
-        }
-    }
-
     @Bean
     @ConditionalOnMissingBean(name = "casElectrofenceAuditTrailRecordResolutionPlanConfigurer")
     public AuditTrailRecordResolutionPlanConfigurer casElectrofenceAuditTrailRecordResolutionPlanConfigurer() {
@@ -195,6 +182,19 @@ public class ElectronicFenceConfiguration {
             plan.registerAuditResourceResolver(AuditResourceResolvers.ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER,
                 returnValueResourceResolver.getObject());
         };
+    }
+
+    private void configureContingencyPlan(final BaseAuthenticationRiskContingencyPlan b) {
+        val response = casProperties.getAuthn().getAdaptive().getRisk().getResponse();
+        val mail = response.getMail();
+        if (mail.isDefined()) {
+            b.getNotifiers().add(authenticationRiskEmailNotifier());
+        }
+
+        val sms = response.getSms();
+        if (sms.isDefined()) {
+            b.getNotifiers().add(authenticationRiskSmsNotifier());
+        }
     }
 
 }
