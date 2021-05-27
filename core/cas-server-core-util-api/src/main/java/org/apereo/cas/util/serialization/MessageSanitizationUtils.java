@@ -24,7 +24,9 @@ public class MessageSanitizationUtils {
         + ")-\\d+-)([\\w.-]+)");
 
     private static final Pattern SENSITIVE_TEXT_PATTERN =
-        Pattern.compile("(password|token|credential|secret)\\s*=\\s*(['\"]*\\S+['\"]*)");
+        Pattern.compile("(password|token|credential|secret)\\s*=\\s*(['\"]*\\S+\\b['\"]*)");
+
+    private static final Boolean CAS_TICKET_ID_SANITIZE_SKIP = Boolean.getBoolean("CAS_TICKET_ID_SANITIZE_SKIP");
 
     /**
      * Specifies the ending tail length of the ticket id that would still be visible in the output
@@ -33,6 +35,11 @@ public class MessageSanitizationUtils {
     private static final int VISIBLE_TAIL_LENGTH = 10;
 
     private static final int OBFUSCATION_LENGTH = 5;
+
+    /**
+     * The obfuscated text that would be the replacement for sensitive text.
+     */
+    public static final String OBFUSCATED_STRING = "*".repeat(OBFUSCATION_LENGTH);
 
     /**
      * Gets the default suffix used when the default ticket id generator is used so the proper
@@ -48,7 +55,7 @@ public class MessageSanitizationUtils {
      */
     public static String sanitize(final String msg) {
         var modifiedMessage = msg;
-        if (StringUtils.isNotBlank(msg) && !Boolean.getBoolean("CAS_TICKET_ID_SANITIZE_SKIP")) {
+        if (StringUtils.isNotBlank(msg) && !CAS_TICKET_ID_SANITIZE_SKIP) {
             val matcher = TICKET_ID_PATTERN.matcher(msg);
             while (matcher.find()) {
                 val match = matcher.group();
@@ -58,7 +65,7 @@ public class MessageSanitizationUtils {
                 if (replaceLength <= 0) {
                     replaceLength = length;
                 }
-                val newId = match.replace(group.substring(0, replaceLength), "*".repeat(OBFUSCATION_LENGTH));
+                val newId = match.replace(group.substring(0, replaceLength), OBFUSCATED_STRING);
                 modifiedMessage = modifiedMessage.replace(match, newId);
             }
         }
@@ -66,7 +73,7 @@ public class MessageSanitizationUtils {
         val matcher = SENSITIVE_TEXT_PATTERN.matcher(msg);
         while (matcher.find()) {
             val group = matcher.group(2);
-            modifiedMessage = modifiedMessage.replace(group, "*".repeat(OBFUSCATION_LENGTH));
+            modifiedMessage = modifiedMessage.replace(group, OBFUSCATED_STRING);
         }
         return modifiedMessage;
     }
