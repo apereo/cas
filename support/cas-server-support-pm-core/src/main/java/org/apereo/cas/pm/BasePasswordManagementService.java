@@ -140,12 +140,13 @@ public class BasePasswordManagementService implements PasswordManagementService 
     /**
      * Change password internally, by the impl.
      *
-     * @param c    the credential
+     * @param credential the credential
      * @param bean the bean
      * @return true/false
      * @throws InvalidPasswordException if new password fails downstream validation
      */
-    public boolean changeInternal(final Credential c, final PasswordChangeRequest bean) throws InvalidPasswordException {
+    public boolean changeInternal(final Credential credential, final PasswordChangeRequest bean) throws InvalidPasswordException {
+        LOGGER.warn("Using no-op password change impl. Appropriate password management service is not configured.");
         return false;
     }
 }
