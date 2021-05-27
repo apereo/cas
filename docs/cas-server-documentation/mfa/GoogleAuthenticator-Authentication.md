@@ -24,6 +24,8 @@ Support is enabled by including the following module in the overlay:
 
 {% include casproperties.html properties="cas.authn.mfa.gauth.core" %}
 
+## Repository Cleaner
+
 A background *cleaner* process is also automatically scheduled to scan the
 repository periodically and remove expired device registration records
 based on configured parameters. In the default setting, devices
