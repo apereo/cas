@@ -21,5 +21,9 @@ const cas = require('../../cas.js');
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
+    const success = await page.$eval('#content h2', el => el.innerText.trim())
+    console.log(success)
+    assert(success === "Password Change Successful")
+
     await browser.close();
 })();
