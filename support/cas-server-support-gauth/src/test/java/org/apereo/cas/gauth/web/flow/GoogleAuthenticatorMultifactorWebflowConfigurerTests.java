@@ -22,7 +22,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
         "cas.authn.mfa.gauth.core.trusted-device-enabled=true",
         "cas.authn.mfa.trusted.core.device-registration-enabled=true"
     })
-@Tag("WebflowConfig")
+@Tag("WebflowMfaConfig")
 @Getter
 public class GoogleAuthenticatorMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired

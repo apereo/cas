@@ -61,6 +61,7 @@ enum TestCategories {
     Webflow,
     WebflowActions,
     WebflowConfig,
+    WebflowMfaConfig,
     WebflowEvents,
     WebflowMfaActions,
     WSFederation,
