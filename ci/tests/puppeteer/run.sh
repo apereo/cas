@@ -57,7 +57,7 @@ dependencies=$(cat "${config}" | jq -j '.dependencies')
 echo -e "\nBuilding CAS found in $PWD for dependencies [${dependencies}]"
 ./gradlew :webapp:cas-server-webapp-tomcat:build -DskipNestedConfigMetadataGen=true -x check -x javadoc \
   --no-daemon --build-cache --configure-on-demand --parallel -PcasModules="${dependencies}"
-mv "$PWD"/webapp/cas-server-webapp-tomcat/build/libs/cas-server-webapp-tomcat-*-SNAPSHOT.war "$PWD"/cas.war
+cp "$PWD"/webapp/cas-server-webapp-tomcat/build/libs/cas-server-webapp-tomcat-*-SNAPSHOT.war "$PWD"/cas.war
 if [ $? -eq 1 ]; then
   echo "Unable to build or locate the CAS web application file. Aborting test..."
   exit 1

@@ -105,7 +105,7 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
             .filter(ac -> isCredentialAssignedToAccount(tokenCredential, ac) && ac.getScratchCodes().contains(otp))
             .map(GoogleAuthenticatorAccount.class::cast)
             .peek(acct -> {
-                LOGGER.warn("Using scratch code [{}] to authenticate user [{}]. Scratch code will be removed", otp, uid);
+                LOGGER.info("Using scratch code [{}] to authenticate user [{}]. Scratch code will be removed", otp, uid);
                 acct.getScratchCodes().removeIf(token -> token == otp);
                 credentialRepository.update(acct);
             })
