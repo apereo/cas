@@ -23,6 +23,8 @@ enabled/included by the relevant modules using the following module:
 You need not explicitly include this module in WAR Overlay configurations, except 
 when there is a need to access components and APIs at compile-time. 
 
+## Email Server Settings
+
 {% include {{ version }}/email-notifications-configuration.md %}
             
 ## Email Message Body
