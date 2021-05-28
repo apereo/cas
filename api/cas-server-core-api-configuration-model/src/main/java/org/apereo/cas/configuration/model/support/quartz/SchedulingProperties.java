@@ -26,7 +26,7 @@ public class SchedulingProperties implements Serializable {
     private static final long serialVersionUID = -1522227059439367394L;
 
     /**
-     * Whether scheduler is should schedule the job to run.
+     * Whether scheduler should be enabled to schedule the job to run.
      */
     private boolean enabled = true;
 

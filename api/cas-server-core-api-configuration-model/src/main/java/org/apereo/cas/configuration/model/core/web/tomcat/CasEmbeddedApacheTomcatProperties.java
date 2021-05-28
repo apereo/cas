@@ -25,7 +25,7 @@ public class CasEmbeddedApacheTomcatProperties implements Serializable {
     private static final long serialVersionUID = -99143821503580896L;
 
     /**
-     * Controls the 'server' attribute of the tomcat connector.
+     * Controls the {@code server} attribute of the tomcat connector.
      */
     private String serverName = "Apereo CAS";
 
