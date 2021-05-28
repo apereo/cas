@@ -28,7 +28,7 @@ random=$(openssl rand -hex 8)
 
 if [[ ! -d "$PWD"/ci/tests/puppeteer/node_modules/puppeteer ]] ; then
   echo "Installing Puppeteer"
-  npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer jsonwebtoken axios
+  npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer jsonwebtoken axios request
 else
   echo "Using existing Puppeteer modules..."
 fi
@@ -96,6 +96,7 @@ echo -e "\n\nReady!"
 scriptPath="${scenario}/script.js"
 echo -e "*************************************"
 echo -e "Running ${scriptPath}\n"
+export NODE_TLS_REJECT_UNAUTHORIZED=0
 node --unhandled-rejections=strict ${scriptPath} ${config}
 RC=$?
 if [[ $RC -ne 0 ]]; then
