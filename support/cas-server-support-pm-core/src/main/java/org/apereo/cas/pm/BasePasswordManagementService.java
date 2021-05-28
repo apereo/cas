@@ -30,7 +30,7 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public class BasePasswordManagementService implements PasswordManagementService {
+public abstract class BasePasswordManagementService implements PasswordManagementService {
 
     /**
      * Password management settings.
@@ -140,12 +140,10 @@ public class BasePasswordManagementService implements PasswordManagementService 
     /**
      * Change password internally, by the impl.
      *
-     * @param c    the credential
+     * @param credential the credential
      * @param bean the bean
      * @return true/false
      * @throws InvalidPasswordException if new password fails downstream validation
      */
-    public boolean changeInternal(final Credential c, final PasswordChangeRequest bean) throws InvalidPasswordException {
-        return false;
-    }
+    public abstract boolean changeInternal(Credential credential, PasswordChangeRequest bean) throws InvalidPasswordException;
 }
