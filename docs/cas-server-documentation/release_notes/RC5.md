@@ -75,19 +75,31 @@ login or logout functionality can now be found inside `login` or `logout` direct
 You should always cross-check the template locations with the [CAS WAR Overlay](../installation/WAR-Overlay-Installation.html) and 
 use the tooling provided by the build to locate or fetch the templates from the CAS web application context.
 
+### CAS Documentation
+
+A number of improvements are now implemented for a better use experience while browsing the CAS documentation:
+
+- Pagination is now available for listed CAS properties.
+- Additional details on properties that support the [Expression Language](../configuration/Configuration-Spring-Expressions.html) 
+  are now displayed as tooltips.
+- The setting owner is now listed, where available, for each listed property.
+- Supported [registered service properties](../services/Configuring-Service-Custom-Properties.html) are
+  now automatically included in the documentation. Relevant properties are also filtered 
+  by group and listed for each appropriate delegated identity provider.
+
 ## Other Stuff
        
 - [SSO Sessions endpoint](../authentication/Configuring-SSO.html) now indicates the expiration 
   policy and remember-me flags for authenticated sessions.
 - Password management APIs are updated to allow updating security questions.
-- Supported [registered service properties](../services/Configuring-Service-Custom-Properties.html) are 
-  now automatically included in the documentation.
 - SAML2 authentication statements can now customize the `SubjectLocality` field on a per-application basis.
 - HTTP request entities used for `POST` methods in REST API interactions are set to use the `UTF-8` encoding.
 - Generating access tokens for the OAuth authorization grants is set to use client id first and then 
   redirect URIs to locate the service definition.
 - Additional [Puppeteer tests](../developer/Test-Process.html) to cover scenarios for 
   password management, delegated authentication and OAuth protocol.
+- [Groovy Interrupts](../webflow/Webflow-Customization-Interrupt-Groovy.html) are now correctly 
+  initialized to recognize the script location.
 
 ## Library Upgrades
 
@@ -96,6 +108,7 @@ use the tooling provided by the build to locate or fetch the templates from the 
 - MariaDb Driver
 - Mockito
 - Amazon SDK
+- OpenSAML
 - Micrometer
 - Apache Tomcat
 - Spring Security
