@@ -354,9 +354,6 @@ public class X509AuthenticationConfiguration {
 
     private PrincipalResolver getPrincipalResolver() {
         val type = casProperties.getAuthn().getX509().getPrincipalType();
-        if (type == null) {
-            return null;
-        }
         if (type == X509Properties.PrincipalTypes.SERIAL_NO) {
             return x509SerialNumberPrincipalResolver();
         }
