@@ -66,5 +66,6 @@ The following parameters are passed to the script:
 |------------------|--------------------------------------------------------------------------------------------
 | `parameters`       | `Map<String, ?>` of parameters passed by CAS, depending on feature and/or context.
 | `logger`           | The object responsible for issuing log messages such as `logger.info(...)`.
+| `locale`           | The object representing the available `Locale`, if any.
 
 The outcome of the script should be message body text.

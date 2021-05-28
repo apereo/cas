@@ -383,7 +383,7 @@ layout: null
 * [User Interface](#user_interface)
     *   [Overview](/cas/{{ version }}/ux/User-Interface-Customization.html)
     *   [CSS & JavaScript](/cas/{{ version }}/ux/User-Interface-Customization-CSSJS.html)
-    *   [Views](/cas/{{ version }}/ux/User-Interface-Customization-Views.html)
+    *   [Views & Templates](/cas/{{ version }}/ux/User-Interface-Customization-Views.html)
     *   [Localization](/cas/{{ version }}/ux/User-Interface-Customization-Localization.html)
     *   [Dynamic Themes](/cas/{{ version }}/ux/User-Interface-Customization-Themes.html)
     *   [Dynamic Decorations](/cas/{{ version }}/webflow/Webflow-Customization-Decorators.html)
