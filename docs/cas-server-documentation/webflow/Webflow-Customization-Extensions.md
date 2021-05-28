@@ -27,7 +27,6 @@ these flows dynamically depending on the CAS configuration and presence of featu
 note that each feature module itself may dynamically present other opinionated subflow 
 configuration files that are automagically picked up at runtime.
 
-
 ## Modifying Webflow
 
 In modest trivial cases, you may be able to [overlay and modify](../installation/WAR-Overlay-Installation.html) the core 
@@ -38,7 +37,10 @@ project itself so you can just take advantage of its configuration and *NOT* its
 
 To learn how to introduce new actions and state into a Spring Webflow, please [see this guide](http://projects.spring.io/spring-webflow/).
 
-<div class="alert alert-info"><strong>Speak Up</strong><p>If you find something that is broken where the webflow auto-configuration strategy fails to deliver as advertised, discuss that with the project community and submit a patch that corrects the bug or adds the desired behavior as a modest enhancement. Avoid one-off changes and make the change where the change belongs.</p></div>
+<div class="alert alert-info"><strong>Speak Up</strong><p>If you find something that is broken where the 
+webflow auto-configuration strategy fails to deliver as advertised, discuss that with the project community 
+and submit a patch that corrects the bug or adds the desired behavior as a modest enhancement. 
+Avoid one-off changes and make the change where the change belongs.</p></div>
 
 In more advanced cases where you may need to take a deep dive and alter core 
 CAS behavior conditionally, you would need to take advantage of the CAS APIs to 
@@ -109,7 +111,7 @@ public class SomethingConfiguration implements CasWebflowExecutionPlanConfigurer
     @Bean
     public CasWebflowConfigurer somethingWebflowConfigurer() {
         return new SomethingWebflowConfigurer(flowBuilderServices,
-                    loginFlowDefinitionRegistry, applicationContext, casProperties);
+            loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Override
@@ -124,6 +126,11 @@ Configuration classes need to be registered with CAS inside a `src/main/resource
 ```properties
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.example.something.SomethingConfiguration
 ```
+
+<div class="alert alert-info"><strong>To Build & Beyond</strong><p>Note that compiling configuration classes and any other
+piece of Java code that is put into the CAS Overlay may require additional CAS modules and dependencies on the classpath. You will need
+to study the CAS codebase and find the correct modules that contain the components you need, such 
+as <code>CasWebflowConfigurer</code> and others.</p></div>
 
 See [this guide](ttps://docs.spring.io/spring-boot/docs/current/reference/html/) for more info.
 
