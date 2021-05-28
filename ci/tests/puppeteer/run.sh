@@ -110,11 +110,6 @@ exitScript="${exitScript//\$\{PWD\}/${PWD}}"
   chmod +x "${exitScript}" && \
   eval "${exitScript}"
 
-if [[ "${CI}" == "true" ]]; then  
-  docker container stop $(docker container ls -aq) >/dev/null 2>&1 || true
-  docker container rm $(docker container ls -aq) >/dev/null 2>&1 || true
-fi
-
 if [[ "${CI}" != "true" ]]; then
   echo -e "Hit enter to cleanup scenario ${scenario} that ended with exit code $RC \n"
   read -r
@@ -125,4 +120,10 @@ kill -9 $pid
 rm "$PWD"/cas.war
 rm "$PWD"/ci/tests/puppeteer/overlay/thekeystore
 rm -Rf "$PWD"/ci/tests/puppeteer/overlay
+
+if [[ "${CI}" == "true" ]]; then
+  docker container stop $(docker container ls -aq) >/dev/null 2>&1 || true
+  docker container rm $(docker container ls -aq) >/dev/null 2>&1 || true
+fi
+
 exit $RC
