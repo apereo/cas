@@ -8,7 +8,8 @@ category: Developer
 
 # Test Process
 
-This page documents the steps that a CAS developer/contributor should take for testing a CAS server deployment during development. For additional
+This page documents the steps that a CAS developer/contributor should take for testing a CAS 
+server deployment during development. For additional
 instructions and guidance on the general build process, please [see this page](Build-Process.html).
 
 <div class="alert alert-info"><strong>Contributions</strong><p>Patches submitted to the CAS codebase 
@@ -26,22 +27,10 @@ To test the functionality provided by a given CAS module, execute the following 
 implementation project(":support:cas-server-support-modulename")
 ```
 
-- Alternatively, set a `casModules` property in the root project's `gradle.properties` or `~/.gradle/gradle.properties` to a 
-comma separated list of modules without the `cas-server-` prefix:
-
-For example:
-
-```properties
-casModules=monitor,\
-    ldap,\
-    x509,\
-    bootadmin-client
-```
-
-Or set the property on the command-line:
+Alternatively, pass the required modules automatically: 
 
 ```bash
-bc -PcasModules=ldap,x509
+bc ldap,x509
 ```
 
 ...where `bc` is an [alias for building CAS](Build-Process.html#sample-build-aliases).
@@ -96,7 +85,11 @@ specific functionality such as successful logins, generation of tickets, etc.
 All functional and browser tests are executed by the [continuous integration system](Test-Process.html#continuous-integration). If you 
 are adding a new batch of tests, make sure the scenario (i.e. test) name is included in the CI configuration.
   
-To install Puppeteer once, please refer to [this reference guide](https://www.npmjs.com/package/puppeteer).
+To install Puppeteer once:
+
+```bash
+npm i -g puppeteer
+```
 
 To help simplify the testing process, you may use the following bash function in your `~/.profile`:
 
@@ -113,8 +106,15 @@ function pupcas() {
 ```bash
 pupcas <scenario-name>
 ```
- 
-To successfully run tests, you need to make sure [jq](https://stedolan.github.io/jq/) is installed.
+                                 
+To see the list of available test scenarios:
+
+```bash
+./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios
+```
+
+Remote debugging is available on port `5000`. To successfully run tests, 
+you need to make sure [jq](https://stedolan.github.io/jq/) is installed.
 
 ## Continuous Integration
 
