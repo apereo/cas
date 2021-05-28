@@ -27,6 +27,8 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Optional;
+
 /**
  * This is {@link SendForgotUsernameInstructionsAction}.
  *
@@ -99,7 +101,7 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
         if (StringUtils.isBlank(username)) {
             return getErrorEvent("username.missing", "No username could be located for the given email address", requestContext);
         }
-        if (sendForgotUsernameEmailToAccount(query)) {
+        if (sendForgotUsernameEmailToAccount(query, requestContext)) {
             return success();
         }
         return getErrorEvent("username.failed", "Failed to send the username to the given email address", requestContext);
@@ -108,17 +110,22 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
     /**
      * Send forgot username email to account.
      *
-     * @param query the query
+     * @param query          the query
+     * @param requestContext the request context
      * @return the boolean
      */
-    protected boolean sendForgotUsernameEmailToAccount(final PasswordManagementQuery query) {
+    protected boolean sendForgotUsernameEmailToAccount(final PasswordManagementQuery query,
+                                                       final RequestContext requestContext) {
         val parameters = CollectionUtils.<String, Object>wrap("email", query.getEmail());
         val credential = new BasicIdentifiableCredential();
         credential.setId(query.getUsername());
         val person = principalResolver.resolve(credential);
         FunctionUtils.doIfNotNull(person, principal -> parameters.put("principal", principal));
         val reset = casProperties.getAuthn().getPm().getForgotUsername().getMail();
-        val body = EmailMessageBodyBuilder.builder().properties(reset).parameters(parameters).build().produce();
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val body = EmailMessageBodyBuilder.builder().properties(reset)
+            .locale(Optional.ofNullable(request.getLocale()))
+            .parameters(parameters).build().produce();
         return this.communicationsManager.email(reset, query.getEmail(), body);
     }
 
