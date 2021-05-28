@@ -50,10 +50,10 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
     private MergeAttributesSearchEntryHandlersProperties mergeAttribute = new MergeAttributesSearchEntryHandlersProperties();
 
     /**
-     * Constructs the primary group SID and then searches for that group and puts it's DN in the 'memberOf' attribute of the
-     * original search entry. This handler requires that entries contain both the 'objectSid' and 'primaryGroupID'
+     * Constructs the primary group SID and then searches for that group and puts it's DN in the {@code memberOf} attribute of the
+     * original search entry. This handler requires that entries contain both the {@code objectSid/primaryGroupID}
      * attributes. If those attributes are not found this handler is a no-op. This handler should be used in conjunction
-     * with the {@code ObjectSidHandler} to ensure the 'objectSid' attribute is in the proper form. See
+     * with the {@code ObjectSidHandler} to ensure the {@code objectSid} attribute is in the proper form. See
      * http://support2.microsoft.com/kb/297951
      */
     @NestedConfigurationProperty
@@ -103,7 +103,7 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
         /**
          * Primary group search handler.
          * Constructs the primary group SID and then searches for
-         * that group and puts it's DN in the 'memberOf' attribute of the original search entry.
+         * that group and puts it's DN in the {@code memberOf} attribute of the original search entry.
          */
         PRIMARY_GROUP,
         /**
