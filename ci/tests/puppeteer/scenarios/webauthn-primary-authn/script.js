@@ -9,10 +9,9 @@ const cas = require('../../cas.js');
 
     await page.waitForTimeout(1000)
 
-    let element = await page.$('#webauthnLoginPanel div h2#status');
-    assert(await element.boundingBox() != null);
-    const header = await page.evaluate(element => element.textContent, element);
-    console.log(header)
+    await cas.assertVisibility(page, '#webauthnLoginPanel div h2#status')
+
+    const header = await cas.textContent(page, "#webauthnLoginPanel div h2#status");
     assert(header === "Login with FIDO2-enabled Device");
 
     await browser.close();

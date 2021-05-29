@@ -147,7 +147,7 @@ curl https://casinit.herokuapp.com/dependencies
 ```
 
 Typically, dependency identifiers match CAS server dependency/module artifact names without
-the `cas-server-` prefix. Furthermore, certain dependencies can are assigned aliases as
+the `cas-server-` prefix. Furthermore, certain dependencies are assigned aliases as
 shortcuts to simplify requests. To see the full list of dependencies and their aliases, you may use:
 
 ```bash

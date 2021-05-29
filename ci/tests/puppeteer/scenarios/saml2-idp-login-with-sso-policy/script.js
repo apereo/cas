@@ -11,10 +11,7 @@ const cas = require('../../cas.js');
 
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(1000);
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
     
     await page.goto("https://samltest.id/upload.php");
     await page.waitForTimeout(1000)
@@ -42,10 +39,8 @@ const cas = require('../../cas.js');
     let metadataDir = path.join(__dirname, '/saml-md');
     fs.rmdirSync(metadataDir, { recursive: true });
 
-    let uid = await page.$('#username');
-    assert(await uid.boundingBox() != null);
-    let pswd = await page.$('#password');
-    assert(await pswd.boundingBox() != null);
+    await cas.assertVisibility(page, '#username')
+    await cas.assertVisibility(page, '#password')
 
     await browser.close();
 })();

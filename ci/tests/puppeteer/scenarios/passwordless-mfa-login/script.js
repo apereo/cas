@@ -19,8 +19,8 @@ const cas = require('../../cas.js');
 
     // await page.waitForTimeout(5000)
 
-    const header = await page.$eval('#login h3', el => el.innerText)
-    console.log(header)
+    const header = await cas.innerText(page, '#login h3');
+
     assert(header === "Use your registered YubiKey device(s) to authenticate.")
 
     await browser.close();

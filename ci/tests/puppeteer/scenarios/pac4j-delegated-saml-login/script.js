@@ -26,21 +26,16 @@ const path = require('path');
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(2000);
 
-    let loginProviders = await page.$('#loginProviders');
-    assert(await loginProviders.boundingBox() != null);
+    await cas.assertVisibility(page, '#loginProviders')
 
-    let client = await page.$('li #SAML2Client');
-    assert(await client.boundingBox() != null);
+    await cas.assertVisibility(page, 'li #SAML2Client')
     
     await cas.click(page, "li #SAML2Client")
     await page.waitForNavigation();
 
     await page.waitForTimeout(5000)
 
-    await page.type('#username', "morty");
-    await page.type('#password', "panic");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "morty", "panic");
     await page.waitForTimeout(3000)
 
     await cas.click(page, "input[name='_eventId_proceed']")
@@ -53,8 +48,8 @@ const path = require('path');
     console.log(title)
     assert(title === "CAS - Central Authentication Service")
 
-    const header = await page.$eval('#content div h2', el => el.innerText.trim())
-    console.log(header)
+    const header = await cas.innerText(page, '#content div h2');
+
     assert(header === "Log In Successful")
     
     let metadataDir = path.join(__dirname, '/saml-md');

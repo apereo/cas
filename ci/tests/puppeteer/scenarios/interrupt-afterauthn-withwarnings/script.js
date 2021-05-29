@@ -8,34 +8,29 @@ const cas = require('../../cas.js');
     const page = await browser.newPage();
     await page.goto("https://localhost:8443/cas/login");
 
-    await page.type('#username', "testuser");
-    await page.type('#password', "testuser");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
-    
+    await cas.loginWith(page, "testuser", "testuser");
+
     // await page.waitForTimeout(2000)
 
-    let element = await page.$('#content h1');
-    let header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
+    let header = await cas.textContent(page, "#content h1");
+
     assert(header === "Authentication Interrupt")
 
-    await page.$eval('#fm1', form => form.submit());
+    await cas.innerText(page, '#fm1');
     await page.waitForTimeout(1000)
     
-    element = await page.$('#content h1');
-    header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
+    header = await cas.textContent(page, "#content h1");
+
     assert(header === "Authentication Succeeded with Warnings")
     
-    await page.$eval('#form', form => form.submit());
+    await cas.innerText(page, '#form');
     await page.waitForTimeout(1000)
 
     let tgc = (await page.cookies()).filter(value => value.name === "TGC")
     assert(tgc.length !== 0);
 
-    header = await page.$eval('#content div h2', el => el.innerText.trim())
-    console.log(header)
+    header = await cas.innerText(page, '#content div h2');
+
     assert(header === "Log In Successful")
 
     await browser.close();

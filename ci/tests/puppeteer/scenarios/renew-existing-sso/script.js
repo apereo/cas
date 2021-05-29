@@ -8,10 +8,7 @@ const cas = require('../../cas.js');
     const page = await browser.newPage();
     
     await page.goto("https://localhost:8443/cas/login?service=https://example.com");
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
 
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(1000)
@@ -21,8 +18,7 @@ const cas = require('../../cas.js');
     await page.goto("https://localhost:8443/cas/login?service=https://example.com&renew=true");
     await page.waitForTimeout(1000)
 
-    let span = await page.$('#existingSsoMsg');
-    assert(await span.boundingBox() != null);
+    await cas.assertVisibility(page, '#existingSsoMsg')
 
     await browser.close();
 })();

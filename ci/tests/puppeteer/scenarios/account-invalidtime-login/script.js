@@ -6,16 +6,12 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await browser.newPage();
     await page.goto("https://localhost:8443/cas/login");
-
-    await page.type('#username', "invalidtime");
-    await page.type('#password', "invalidtime");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "invalidtime", "invalidtime");
 
     // await page.waitForTimeout(5000)
 
-    const header = await page.$eval('#content h2', el => el.innerText)
-    console.log(header)
+    const header = await cas.innerText(page, '#content h2');
+
     assert(header === "Your account is forbidden to login at this time.")
     
     await browser.close();

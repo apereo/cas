@@ -7,16 +7,12 @@ const cas = require('../../cas.js');
     const page = await browser.newPage();
     await page.goto("https://localhost:8443/cas/login");
 
-    let element = await page.$('#qrlogin .card-title span');
-    const header = await page.evaluate(element => element.textContent, element);
-    console.log(header)
+    const header = await cas.textContent(page, "#qrlogin .card-title span");
     assert(header === "Login with QR Code");
 
-    let image = await page.$('#qrlogin .card-text img');
-    assert(await image.boundingBox() != null);
+    await cas.assertVisibility(page, '#qrlogin .card-text img')
 
-    let channel = await page.$('#qrchannel');
-    assert(await channel.boundingBox() != null);
+    await cas.assertVisibility(page, '#qrchannel')
 
     await browser.close();
 })();

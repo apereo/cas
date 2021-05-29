@@ -23,16 +23,15 @@ const cas = require('../../cas.js');
 
     // await page.waitForTimeout(10000)
 
-    const header = await page.$eval('#login h3', el => el.innerText)
-    console.log(header)
+    const header = await cas.innerText(page, '#login h3');
+
     assert(header === "Provide Token")
 
-    const sub = await page.$eval('#login p', el => el.innerText)
+    const sub = await cas.innerText(page, '#login p');
     console.log(sub)
     assert(sub.startsWith("Please provide the security token sent to you"));
 
-    let span = await page.$('#token');
-    assert(await span.boundingBox() != null);
+    await cas.assertVisibility(page, '#token')
     
     await browser.close();
 })();

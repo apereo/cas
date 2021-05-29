@@ -25,32 +25,23 @@ const cas = require('../../cas.js');
 
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(3000);
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
 
     await page.goto("https://localhost:8443/cas/login?service=https://github.com");
     await page.waitForTimeout(3000);
 
-    let loginProviders = await page.$('#loginProviders');
-    assert(await loginProviders.boundingBox() != null);
+    await cas.assertVisibility(page, '#loginProviders')
 
-    let existingSsoMsg = await page.$('#existingSsoMsg');
-    assert(await existingSsoMsg.boundingBox() != null);
+    await cas.assertVisibility(page, '#existingSsoMsg')
     
-    let client = await page.$('li #SAML2Client');
-    assert(await client.boundingBox() != null);
+    await cas.assertVisibility(page, 'li #SAML2Client')
 
     await cas.click(page, "li #SAML2Client")
     await page.waitForNavigation();
 
     await page.waitForTimeout(2000)
 
-    await page.type('#username', "morty");
-    await page.type('#password', "panic");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "morty", "panic");
     await page.waitForTimeout(3000)
 
     await cas.click(page, "input[name='_eventId_proceed']")

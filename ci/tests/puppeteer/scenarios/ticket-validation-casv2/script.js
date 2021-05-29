@@ -10,10 +10,7 @@ const cas = require('../../cas.js');
     const service = "https://example.com";
 
     await page.goto("https://localhost:8443/cas/login?service=" + service);
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
 
     let result = new URL(page.url());
     let ticket = result.searchParams.get("ticket");

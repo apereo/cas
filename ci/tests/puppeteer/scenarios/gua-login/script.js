@@ -20,20 +20,17 @@ const cas = require('../../cas.js');
     
     // await page.waitForTimeout(2000)
     
-    let element = await page.$('#login h2');
-    let header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
+    let header = await cas.textContent(page, "#login h2");
+
     assert(header === "casuser")
 
-    element = await page.$('#guaInfo');
-    header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
+    header = await cas.textContent(page, "#guaInfo");
+
     assert(header === "If you do not recognize this image as yours, do NOT continue.")
 
-    let guaImage = await page.$('#guaImage');
-    assert(await guaImage.boundingBox() != null);
+    await cas.assertVisibility(page, '#guaImage')
 
-    await page.$eval('#fm1', form => form.submit());
+    await cas.innerText(page, '#fm1');
     await page.waitForTimeout(1000)
 
     await page.type('#password', "Mellon");

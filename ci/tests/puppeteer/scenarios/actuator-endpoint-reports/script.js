@@ -7,10 +7,7 @@ const cas = require('../../cas.js');
     const page = await browser.newPage();
 
     await page.goto("https://localhost:8443/cas/login");
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
 
     let tgc = (await page.cookies()).filter(value => value.name === "TGC")
     assert(tgc.length !== 0);

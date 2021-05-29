@@ -14,19 +14,14 @@ const cas = require('../../cas.js');
         "nonce=vn4qulthnx";
     await page.goto(url);
 
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(1000)
 
     await cas.click(page, "#allow");
     await page.waitForNavigation();
     await page.waitForTimeout(1000)
 
-    let element = await page.$('h1.green-text');
-    let header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
+    let header = await cas.textContent(page, "h1.green-text");
     assert(header === "Success!")
 
     await browser.close();

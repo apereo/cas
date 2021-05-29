@@ -8,36 +8,25 @@ const cas = require('../../cas.js');
     const url = "https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=openid%20MyCustomScope&redirect_uri=http://localhost:8080/oidclogin&nonce=3d3a7457f9ad3&state=1735fd6c43c14&claims=%7B%22userinfo%22%3A%20%7B%20%22name%22%3A%20%7B%22essential%22%3A%20true%7D%2C%22phone_number%22%3A%20%7B%22essential%22%3A%20true%7D%7D%7D";
     await page.goto(url);
 
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
 
     await page.waitForTimeout(2000)
 
-    let userInfoClaims = await page.$('#userInfoClaims');
-    assert(await userInfoClaims.boundingBox() != null);
+    await cas.assertVisibility(page, '#userInfoClaims')
 
-    let scopes = await page.$('#scopes');
-    assert(await scopes.boundingBox() != null);
+    await cas.assertVisibility(page, '#scopes')
 
-    let customScope = await page.$('#MyCustomScope');
-    assert(await customScope.boundingBox() != null);
+    await cas.assertVisibility(page, '#MyCustomScope')
 
-    let openid = await page.$('#openid');
-    assert(await openid.boundingBox() != null);
+    await cas.assertVisibility(page, '#openid')
 
-    let infoUrl = await page.$('#informationUrl');
-    assert(await infoUrl.boundingBox() != null);
+    await cas.assertVisibility(page, '#informationUrl')
 
-    let privacyUrl = await page.$('#privacyUrl');
-    assert(await privacyUrl.boundingBox() != null);
+    await cas.assertVisibility(page, '#privacyUrl')
 
-    let claimName = await page.$('#name');
-    assert(await claimName.boundingBox() != null);
+    await cas.assertVisibility(page, '#name')
 
-    let phoneNumber = await page.$('#phone_number');
-    assert(await phoneNumber.boundingBox() != null);
+    await cas.assertVisibility(page, '#phone_number')
 
     await browser.close();
 })();

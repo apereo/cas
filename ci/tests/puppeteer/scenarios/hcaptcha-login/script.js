@@ -8,8 +8,7 @@ const cas = require('../../cas.js');
     await page.goto("https://localhost:8443/cas/login");
     // await page.waitForTimeout(60000)
 
-    let hcaptchaSection = await page.$('#hcaptchaSection');
-    assert(await hcaptchaSection.boundingBox() != null);
+    await cas.assertVisibility(page, '#hcaptchaSection')
 
     await browser.close();
 })();

@@ -9,39 +9,29 @@ const cas = require('../../cas.js');
 
     // await page.waitForTimeout(1000)
     
-    let loginProviders = await page.$('#loginProviders');
-    assert(await loginProviders.boundingBox() != null);
+    await cas.assertVisibility(page, '#loginProviders')
 
-    let twitter = await page.$('li #TwitterClient');
-    assert(await twitter.boundingBox() != null);
+    await cas.assertVisibility(page, 'li #TwitterClient')
 
-    let casClient = await page.$('li #CasClient');
-    assert(await casClient.boundingBox() != null);
+    await cas.assertVisibility(page, 'li #CasClient')
 
-    let github = await page.$('li #GitHubClient');
-    assert(await github.boundingBox() != null);
+    await cas.assertVisibility(page, 'li #GitHubClient')
 
     await page.goto("https://localhost:8443/cas/login?error=Fail&error_description=Error&error_code=400&error_reason=Reason");
     await page.waitForTimeout(1000);
 
-    let element = await page.$('#content div h2');
-    let header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
-    assert(header === "Unauthorized Access")
+    let header = await cas.textContent(page, "#content div h2");
 
-    element = await page.$('#content div p');
-    header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
+    assert(header === "Unauthorized Access")
+    header = await cas.textContent(page, "#content div p");
+
     assert(header.startsWith("Either the authentication request was rejected/cancelled"));
 
-    let errorTable = await page.$('#errorTable');
-    assert(await errorTable.boundingBox() != null);
+    await cas.assertVisibility(page, '#errorTable')
 
-    let loginLink = await page.$('#loginLink');
-    assert(await loginLink.boundingBox() != null);
+    await cas.assertVisibility(page, '#loginLink')
 
-    let appLink = await page.$('#appLink');
-    assert(await appLink.boundingBox() != null);
+    await cas.assertVisibility(page, '#appLink')
 
     await browser.close();
 })();

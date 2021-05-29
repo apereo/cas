@@ -9,21 +9,17 @@ const cas = require('../../cas.js');
 
     await page.waitForTimeout(2000)
 
-    let element = await page.$('#forgotPasswordLink');
-    let link = await page.evaluate(element => element.textContent, element);
-    console.log(link)
+    let link = await cas.textContent(page, "#forgotPasswordLink");
     assert(link === "Reset your password")
 
     await cas.click(page, "#forgotPasswordLink")
     await page.waitForTimeout(1000)
 
-    element = await page.$('#reset #fm1 h3');
-    let header = await page.evaluate(element => element.textContent, element);
-    console.log(header)
+    let header = await cas.textContent(page, "#reset #fm1 h3");
+
     assert(header === "Reset your password")
-    
-    let uid = await page.$('#username');
-    assert(await uid.boundingBox() != null);
+
+    await cas.assertVisibility(page, '#username')
 
     assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")))
     assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")))
@@ -35,14 +31,10 @@ const cas = require('../../cas.js');
 
     await page.waitForTimeout(1000)
 
-    element = await page.$('#content h2');
-    header = await page.evaluate(element => element.textContent, element);
-    console.log(header)
+    header = await cas.textContent(page, "#content h2");
     assert(header === "Password Reset Instructions Sent Successfully.")
-    
-    element = await page.$('#content p');
-    header = await page.evaluate(element => element.textContent, element);
-    console.log(header)
+
+    header = await cas.textContent(page, "#content p");
     assert(header.startsWith("You should shortly receive a message"))
 
     await page.goto("http://localhost:8282");
@@ -50,16 +42,11 @@ const cas = require('../../cas.js');
     await cas.click(page, "table tbody td a")
     await page.waitForTimeout(1000)
 
-    element = await page.$('div[name=bodyPlainText] .well');
-    link = await page.evaluate(element => element.textContent, element);
-    console.log(link)
-
+    link = await cas.textContent(page, "div[name=bodyPlainText] .well");
     await page.goto(link);
     await page.waitForTimeout(1000)
 
-    element = await page.$('#content h2');
-    header = await page.evaluate(element => element.textContent, element);
-    console.log(header)
+    header = await cas.textContent(page, "#content h2");
     assert(header === "Answer Security Questions")
 
     await page.type('#q0', "answer1");
@@ -70,24 +57,18 @@ const cas = require('../../cas.js');
 
     await typePassword(page, "EaP8R&iX$eK4nb8eAI", "EaP8R&iX$eK4nb8eAI")
     await page.waitForTimeout(1000)
-    button = await page.$('#password-confirm-mismatch-msg');
-    assert(await button.boundingBox() == null);
-    button = await page.$('#password-policy-violation-msg');
-    assert(await button.boundingBox() == null);
+    await cas.assertInvisibility(page, '#password-confirm-mismatch-msg');
+    await cas.assertInvisibility(page, '#password-policy-violation-msg');
 
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
-    element = await page.$('#content h2');
-    header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
+    header = await cas.textContent(page, "#content h2");
     assert(header === "Password Change Successful")
 
-    element = await page.$('#content p');
-    header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
+    header = await cas.textContent(page, "#content p");
     assert(header === "Your account password is successfully updated.")
-    
+
     await browser.close();
 })();
 

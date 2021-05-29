@@ -20,11 +20,8 @@ const cas = require('../../cas.js');
 
     // await page.waitForTimeout(8000)
 
-    let username = await page.$('#username');
-    assert(await username.boundingBox() == null);
-
-    pswd = await page.$('#password');
-    assert(await pswd.boundingBox() != null);
+    await cas.assertInvisibility(page, '#username')
+    await cas.assertInvisibility(page, '#password');
 
     await page.type('#password', "Mellon");
     await page.keyboard.press('Enter');

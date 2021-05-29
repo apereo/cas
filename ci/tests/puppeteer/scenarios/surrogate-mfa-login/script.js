@@ -8,15 +8,11 @@ const cas = require('../../cas.js');
     const page = await browser.newPage();
     await page.goto("https://localhost:8443/cas/login");
 
-    await page.type('#username', "user3+casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "user3+casuser", "Mellon");
     
     // await page.waitForTimeout(2000)
 
-    let element = await page.$('#token');
-    assert(await element.boundingBox() != null);
+    await cas.assertVisibility(page, '#token')
 
     await browser.close();
 })();

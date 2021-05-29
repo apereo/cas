@@ -10,8 +10,7 @@ const cas = require('../../cas.js');
 
     // await page.waitForTimeout(20000)
 
-    let source = await page.$('#phone-customField');
-    assert(await source.boundingBox() != null);
+    await cas.assertVisibility(page, '#phone-customField')
 
     await browser.close();
 })();

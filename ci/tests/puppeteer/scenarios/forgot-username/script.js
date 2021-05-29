@@ -9,25 +9,20 @@ const cas = require('../../cas.js');
 
     // await page.waitForTimeout(1000)
 
-    let element = await page.$('#forgotUsernameLink');
-    const link = await page.evaluate(element => element.textContent, element);
-    console.log(link)
+    let link = await cas.textContent(page, "#forgotUsernameLink");
     assert(link === "Forgot your username?")
 
     await cas.click(page, "#forgotUsernameLink")
-    
+
     // await page.click('#forgotUsernameLink');
     // await page.waitForNavigation();
-    
+
     await page.waitForTimeout(1000)
 
-    element = await page.$('#reset #fm1 h3');
-    let header = await page.evaluate(element => element.textContent, element);
-    console.log(header)
+    let header = await cas.textContent(page, "#reset #fm1 h3");
     assert(header === "Forgot your username?")
 
-    let uid = await page.$('#email');
-    assert(await uid.boundingBox() != null);
+    await cas.assertVisibility(page, '#email')
 
     await page.type('#email', "casuser@example.org");
     await page.keyboard.press('Enter');
@@ -35,14 +30,9 @@ const cas = require('../../cas.js');
 
     // await page.waitForTimeout(3000)
 
-    element = await page.$('#content h2');
-    header = await page.evaluate(element => element.textContent, element);
-    console.log(header)
+    header = await cas.textContent(page, "#content h2");
     assert(header === "Instructions Sent Successfully.")
-
-    element = await page.$('#content p');
-    header = await page.evaluate(element => element.textContent, element);
-    console.log(header)
+    header = await cas.textContent(page, "#content p");
     assert(header.startsWith("You should shortly receive a message"))
 
     await browser.close();
