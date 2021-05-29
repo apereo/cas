@@ -27,7 +27,7 @@ const cas = require('../../cas.js');
 
     await typePassword(page, "123456", "123456")
     await page.waitForTimeout(1000)
-    await cas.assertInvisibility(page, '#password-policy-violation-msg');
+    await cas.assertVisibility(page, '#password-policy-violation-msg');
 
     await typePassword(page, "123456", "123")
     await page.waitForTimeout(1000)
@@ -35,8 +35,8 @@ const cas = require('../../cas.js');
 
     await typePassword(page, "Testing1234", "Testing1234")
     await page.waitForTimeout(1000)
-    await cas.assertInvisibility(page, '#password-strength-msg');
-    await cas.assertInvisibility(page, '#password-strength-notes');
+    await cas.assertVisibility(page, '#password-strength-msg');
+    await cas.assertVisibility(page, '#password-strength-notes');
 
     await typePassword(page, "EaP8R&iX$eK4nb8eAI", "EaP8R&iX$eK4nb8eAI")
     await page.waitForTimeout(1000)

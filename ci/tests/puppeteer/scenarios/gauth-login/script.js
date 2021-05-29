@@ -32,7 +32,7 @@ const cas = require('../../cas.js');
 
     await cas.assertVisibility(page, '#cancel')
 
-    await cas.assertInvisibility(page, '#register');
+    await cas.assertVisibility(page, '#register');
 
     await cas.assertVisibility(page, '#selectDeviceButton')
 
