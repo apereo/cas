@@ -52,7 +52,7 @@ const cas = require('../../cas.js');
     header = await cas.textContent(page, "#content p");
     assert(header === "Your account password is successfully updated.")
 
-    await cas.innerText(page, '#form');
+    await page.$eval('#form', form => form.submit());
     await page.waitForTimeout(1000)
 
     let element = await cas.innerText(page, '#content div h2');
@@ -67,9 +67,9 @@ const cas = require('../../cas.js');
 
 
 async function typePassword(page, pswd, confirm) {
-    await cas.innerText(page, '#password');
+    await page.$eval('#password', el => el.value = '');
     await page.type('#password', pswd);
 
-    await cas.innerText(page, '#confirmedPassword');
+    await page.$eval('#confirmedPassword', el => el.value = '');
     await page.type('#confirmedPassword', confirm);
 }
