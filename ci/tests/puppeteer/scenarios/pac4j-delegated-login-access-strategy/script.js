@@ -16,8 +16,9 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(1000);
 
     await cas.assertVisibility(page, 'li #CASServerOne')
-
-    await cas.assertInvisibility(page, 'li #CASServerTwo');
+    await cas.assertVisibility(page, 'li #CASServerTwo');
+    assert(await page.$('#username') == null);
+    assert(await page.$('#password') == null);
 
     await browser.close();
 })();

@@ -16,8 +16,9 @@ const cas = require('../../cas.js');
     assert(startPushForm != null);
 
     // Asking for the PIN code
-    await cas.innerText(page, 'button[name=browser]');
+    await page.$eval('button[name=browser]', button => button.click());
     await page.waitForTimeout(1000);
+
     console.log("Checking for PIN code...")
     let header = await cas.innerText(page, "main h2");
     assert(header === "Fill in your PIN code:")
