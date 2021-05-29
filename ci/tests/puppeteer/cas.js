@@ -30,7 +30,7 @@ exports.clickLast = async (page, button) => {
 }
 
 exports.innerText = async (page, selector) => {
-    let text = page.$eval(selector, el => el.innerText.trim());
+    let text = await page.$eval(selector, el => el.innerText.trim());
     console.log(`Text for selector [${selector}] is: [${text}]`);
     return text;
 }
