@@ -16,7 +16,7 @@ const cas = require('../../cas.js');
 
     assert(header === "Authentication Interrupt")
 
-    await cas.innerText(page, '#fm1');
+    await page.$eval('#fm1', form => form.submit());
     await page.waitForTimeout(1000)
     
     header = await cas.textContent(page, "#content h1");
