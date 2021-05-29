@@ -20,7 +20,7 @@ const cas = require('../../cas.js');
     assert(header === "Reset your password")
 
     await cas.assertVisibility(page, '#username')
-
+    let uid = await page.$('#username');
     assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")))
     assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")))
     assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")))

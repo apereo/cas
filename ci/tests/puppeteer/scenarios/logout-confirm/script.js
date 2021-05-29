@@ -28,7 +28,7 @@ const cas = require('../../cas.js');
 
     await cas.assertVisibility(page, '#servicesTable')
 
-    await cas.innerText(page, '#fm1');
+    await page.$eval('#fm1', form => form.submit());
     // await page.waitForNavigation();
     await page.waitForTimeout(1000)
 

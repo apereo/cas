@@ -40,7 +40,7 @@ const cas = require('../../cas.js');
     let cancel = await page.$('#cancel');
     assert(cancel == null);
 
-    await cas.innerText(page, '#fm1');
+    await page.$eval('#fm1', form => form.submit());
     await page.waitForTimeout(2000)
 
     tgc = (await page.cookies()).filter(value => value.name === "TGC")
