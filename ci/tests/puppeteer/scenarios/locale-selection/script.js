@@ -11,8 +11,8 @@ const cas = require('../../cas.js');
     await page.goto("https://localhost:8443/cas/login");
 
     await page.waitForTimeout(1000)
-    const header = await page.$eval('#content #fm1 button[name=submit]', el => el.innerText)
-    console.log(header)
+    const header = await cas.innerText(page, '#content #fm1 button[name=submit]');
+
     assert(header === "ANMELDEN")
     await browser.close();
 })();

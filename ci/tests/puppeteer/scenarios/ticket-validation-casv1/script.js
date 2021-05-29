@@ -16,10 +16,7 @@ const cas = require('../../cas.js');
     assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")))
     assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")))
     
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
 
     let result = new URL(page.url());
     let ticket = result.searchParams.get("ticket");

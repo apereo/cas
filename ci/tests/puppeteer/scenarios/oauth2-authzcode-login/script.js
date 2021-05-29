@@ -17,10 +17,7 @@ const cas = require('../../cas.js');
     await cas.clickLast(page, "form button")
     await page.waitForTimeout(3000)
 
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
 
     await page.waitForTimeout(3000)
     await page.type('#token-endpoint-input', "https://localhost:8443/cas/oauth2.0/token");
@@ -28,10 +25,8 @@ const cas = require('../../cas.js');
     await cas.clickLast(page, "form button")
     await page.waitForTimeout(3000)
 
-    let element = await page.$('#access-token-input');
-    const token = await page.evaluate(element => element.value, element);
+    const token = await cas.inputValue(page, "#access-token-input");
     assert(token != null)
-
 
     const instance = axios.create({
         httpsAgent: new https.Agent({

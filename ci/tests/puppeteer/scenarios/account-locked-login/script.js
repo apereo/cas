@@ -7,13 +7,10 @@ const cas = require('../../cas.js');
     const page = await browser.newPage();
     await page.goto("https://localhost:8443/cas/login");
 
-    await page.type('#username', "locked");
-    await page.type('#password', "locked");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "locked", "locked");
     
-    const header = await page.$eval('#content h2', el => el.innerText)
-    console.log(header)
+    const header = await cas.innerText(page, '#content h2');
+
     assert(header === "This account has been locked.")
     
     await browser.close();

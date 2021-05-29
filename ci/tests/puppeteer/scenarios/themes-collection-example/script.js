@@ -10,11 +10,9 @@ const cas = require('../../cas.js');
 
     // await page.waitForTimeout(20000)
 
-    let element = await page.$('#twitter-link');
-    assert(await element.boundingBox() != null);
+    await cas.assertVisibility(page, '#twitter-link')
 
-    element = await page.$('#youtube-link');
-    assert(await element.boundingBox() != null);
+    await cas.assertVisibility(page, '#youtube-link')
 
     const imgs = await page.$$eval('#cas-logo',
         imgs => imgs.map(img => img.getAttribute('src')));

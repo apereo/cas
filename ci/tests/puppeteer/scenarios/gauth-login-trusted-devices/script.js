@@ -8,31 +8,26 @@ const cas = require('../../cas.js');
     const page = await browser.newPage();
     await page.setDefaultNavigationTimeout(0);
     await page.goto("https://localhost:8443/cas/login?authn_method=mfa-gauth");
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(1000)
 
     console.log("Using scratch code to login...");
     await page.type('#token', "83766843");
-    await page.$eval('#fm1', form => form.submit());
+    await cas.innerText(page, '#fm1');
     await page.waitForTimeout(1000)
 
-    await page.$eval('#deviceName', el => el.value = '');
+    await cas.innerText(page, '#deviceName');
     await page.type('#deviceName', "My Trusted Device");
     
-    let expiration = await page.$('#expiration');
-    assert(await expiration.boundingBox() == null);
+    await cas.assertInvisibility(page, '#expiration')
 
-    let timeUnit = await page.$('#timeUnit');
-    assert(await timeUnit.boundingBox() != null);
+    await cas.assertVisibility(page, '#timeUnit')
 
-    await page.$eval('#registerform', form => form.submit());
+    await cas.innerText(page, '#registerform');
     await page.waitForTimeout(1000)
 
-    const header = await page.$eval('#content div h2', el => el.innerText.trim())
-    console.log(header)
+    const header = await cas.innerText(page, '#content div h2');
+
     assert(header === "Log In Successful")
 
     await browser.close();

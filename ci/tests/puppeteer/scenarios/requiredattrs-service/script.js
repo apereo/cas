@@ -18,14 +18,11 @@ const cas = require('../../cas.js');
 })();
 
 async function submitLogin(page) {
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
 }
 
 async function assertFailure(page) {
-    let header = await page.$eval('#loginErrorsPanel p', el => el.innerText)
-    console.log(header)
+    let header = await cas.innerText(page, '#loginErrorsPanel p');
+
     assert(header === "Service access denied due to missing privileges.")
 }

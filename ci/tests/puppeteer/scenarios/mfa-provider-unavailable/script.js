@@ -7,17 +7,13 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await browser.newPage();
     await page.goto("https://localhost:8443/cas/login");
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
     
-    const header = await page.$eval('#content h2', el => el.innerText)
-    console.log(header)
+    const header = await cas.innerText(page, '#content h2');
+
     assert(header === "MFA Provider Unavailable")
 
-    const sub = await page.$eval('#content p', el => el.innerText)
-    console.log(sub)
+    const sub = await cas.innerText(page, '#content p');
     assert(sub.startsWith("CAS was unable to reach your configured MFA provider at this time."))
 
 

@@ -8,8 +8,7 @@ const cas = require('../../cas.js');
     await page.goto("https://localhost:8443/cas/login");
     // await page.waitForTimeout(60000)
 
-    let recaptchaV3Section = await page.$('#recaptchaV3Section');
-    assert(await recaptchaV3Section.boundingBox() != null);
+    await cas.assertVisibility(page, '#recaptchaV3Section')
 
     let grecaptcha = await page.$('#g-recaptcha-token');
     assert(await grecaptcha != null);

@@ -7,15 +7,11 @@ const cas = require('../../cas.js');
     const page = await browser.newPage();
     await page.goto("https://localhost:8443/cas/login");
 
-    await page.type('#username', "invalidlocation");
-    await page.type('#password', "invalidlocation");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "invalidlocation", "invalidlocation");
 
     // await page.waitForTimeout(5000)
 
-    const header = await page.$eval('#content h2', el => el.innerText)
-    console.log(header)
+    const header = await cas.innerText(page, "#content h2");
     assert(header === "You cannot login from this workstation.")
     
     await browser.close();

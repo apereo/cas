@@ -7,16 +7,11 @@ const cas = require('../../cas.js');
     const page = await browser.newPage();
     await page.goto("https://localhost:8443/cas/login?service=https://example.com");
 
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
 
-    let gauth = await page.$('#mfa-gauth');
-    assert(await gauth.boundingBox() != null);
+    await cas.assertVisibility(page, '#mfa-gauth')
 
-    let yb = await page.$('#mfa-yubikey');
-    assert(await yb.boundingBox() != null);
+    await cas.assertVisibility(page, '#mfa-yubikey')
 
     await browser.close();
 })();

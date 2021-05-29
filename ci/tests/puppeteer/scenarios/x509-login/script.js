@@ -29,7 +29,7 @@ const request = require('request');
             key: key
         };
 
-        request(options, function(err, resp, body) {
+        request(options, function (err, resp, body) {
             if (err) {
                 console.error(`Unable to call ${options.uri}`, err);
                 return interceptedRequest.abort('connectionrefused');
@@ -48,12 +48,10 @@ const request = require('request');
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(5000)
 
-    const header = await page.$eval('#content div h2', el => el.innerText.trim())
-    console.log(header)
+    const header = await cas.innerText(page, "#content div h2");
     assert(header === "Log In Successful")
 
-    const body = await page.$eval('#content div p', el => el.innerText.trim())
-    console.log(body)
+    const body = await cas.innerText(page, '#content div p');
     assert(body.includes("CN=mmoayyed, OU=dev, O=bft, L=mt, C=world"))
 
     await browser.close();

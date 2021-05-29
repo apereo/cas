@@ -28,18 +28,13 @@ const cas = require('../../cas.js');
 
     await page.waitForTimeout(1000)
 
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(5000)
 
     let metadataDir = path.join(__dirname, '/saml-md');
     fs.rmdirSync(metadataDir, { recursive: true });
 
-    let element = await page.$('div.entry-content p');
-    const header = await page.evaluate(element => element.textContent, element);
-    console.log(header)
+    const header = await cas.textContent(page, "div.entry-content p");
     assert(header.startsWith("Your browser has completed the full SAML 2.0 round-trip"));
     
     await browser.close();

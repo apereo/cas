@@ -7,8 +7,7 @@ const cas = require('../../cas.js');
     const page = await browser.newPage();
     await page.goto("https://localhost:8443/cas/login");
 
-    let footer = await page.$('#externalFooter');
-    assert(await footer.boundingBox() != null);
+    await cas.assertVisibility(page, '#externalFooter')
 
     await browser.close();
 })();

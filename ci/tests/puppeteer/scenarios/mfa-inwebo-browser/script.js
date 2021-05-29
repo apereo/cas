@@ -6,10 +6,9 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await browser.newPage();
     await page.goto("https://127.0.0.1:8443/cas/login?authn_method=mfa-inwebo");
-    await page.type('#username', "testcas");
-    await page.type('#password', "password");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+
+    await cas.loginWith(page, "testcas", "password");
+
     await page.waitForTimeout(1000);
     const startBrowserForm = await page.$('#startBrowserForm');
     assert(startBrowserForm != null);
@@ -17,12 +16,10 @@ const cas = require('../../cas.js');
     assert(startPushForm != null);
 
     // Asking for the PIN code
-    await page.$eval('button[name=browser]', button => button.click());
+    await cas.innerText(page, 'button[name=browser]');
     await page.waitForTimeout(1000);
     console.log("Checking for PIN code...")
-    let element = await page.$('main h2');
-    let header = await page.evaluate(element => element.innerText.trim(), element);
-    console.log(header)
+    let header = await cas.innerText(page, "main h2");
     assert(header === "Fill in your PIN code:")
     const enrollForm = await page.$('#enrollForm');
     assert(enrollForm != null);
@@ -31,8 +28,7 @@ const cas = require('../../cas.js');
     // And redirect to error/registration
     console.log("Checking for error/registration")
     await page.waitForTimeout(5000);
-    const header2 = await page.$eval('main h2', el => el.innerText.trim())
-    console.log(header2)
+    const header2 = await cas.innerText(page, 'main h2');
     assert(header2 === "An error has occurred.")
 
     await browser.close();

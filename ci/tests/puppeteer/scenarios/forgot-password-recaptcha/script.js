@@ -9,21 +9,16 @@ const cas = require('../../cas.js');
 
     await page.waitForTimeout(2000)
 
-    let element = await page.$('#forgotPasswordLink');
-    const link = await page.evaluate(element => element.textContent, element);
-    console.log(link)
+    let link = await cas.textContent(page, "#forgotPasswordLink");
     assert(link === "Reset your password")
 
     await cas.click(page, "#forgotPasswordLink")
     await page.waitForTimeout(1000)
 
-    element = await page.$('#reset #fm1 h3');
-    let header = await page.evaluate(element => element.textContent, element);
-    console.log(header)
+    let header = await cas.textContent(page, "#reset #fm1 h3");
     assert(header === "Reset your password")
     
-    let uid = await page.$('#username');
-    assert(await uid.boundingBox() != null);
+    await cas.assertVisibility(page, '#username')
 
     await page.type('#username', "casuser");
     await page.keyboard.press('Enter');
@@ -31,9 +26,7 @@ const cas = require('../../cas.js');
 
     await page.waitForTimeout(1000)
 
-    element = await page.$('div .banner-danger p');
-    header = await page.evaluate(element => element.textContent, element);
-    console.log(header)
+    header = await cas.textContent(page, "div .banner-danger p");
     assert(header === "reCAPTCHA validation failed.")
 
     await browser.close();
