@@ -17,7 +17,8 @@ const cas = require('../../cas.js');
 
     await cas.assertVisibility(page, '#changePassword')
 
-    await cas.innerText(page, '#changePasswordForm');
+    await page.$eval('#changePasswordForm', form => form.submit());
+
     await page.waitForTimeout(1000)
 
     header = await cas.textContent(page, "#pwdmain h3");

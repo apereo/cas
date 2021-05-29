@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * This is {@link PasswordChangeRequest}.
@@ -24,6 +26,10 @@ public class PasswordChangeRequest implements Serializable {
     private static final long serialVersionUID = 8885460875620586503L;
 
     private String username;
+
+    private String currentPassword;
+
+    private Map<String, Object> customFields = new LinkedHashMap<>();
     
     private @Size(min = 1, message = "required.password") String password;
 

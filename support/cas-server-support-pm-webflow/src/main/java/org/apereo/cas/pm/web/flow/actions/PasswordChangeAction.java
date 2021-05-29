@@ -46,12 +46,14 @@ public class PasswordChangeAction extends AbstractAction {
      * Gets password change request.
      *
      * @param requestContext the request context
-     * @param c              the c
      * @return the password change request
      */
-    protected static PasswordChangeRequest getPasswordChangeRequest(final RequestContext requestContext, final UsernamePasswordCredential c) {
+    protected static PasswordChangeRequest getPasswordChangeRequest(final RequestContext requestContext) {
+        val credential = Objects.requireNonNull(WebUtils.getCredential(requestContext, UsernamePasswordCredential.class));
         val bean = requestContext.getFlowScope().get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);
-        bean.setUsername(c.getUsername());
+        bean.setUsername(credential.getUsername());
+        bean.setCurrentPassword(credential.getPassword());
+        bean.setCustomFields(credential.getCustomFields());
         return bean;
     }
 
@@ -59,7 +61,7 @@ public class PasswordChangeAction extends AbstractAction {
     protected Event doExecute(final RequestContext requestContext) {
         try {
             val creds = Objects.requireNonNull(WebUtils.getCredential(requestContext, UsernamePasswordCredential.class));
-            val bean = getPasswordChangeRequest(requestContext, creds);
+            val bean = getPasswordChangeRequest(requestContext);
 
             LOGGER.debug("Attempting to validate the password change bean for username [{}]", creds.getUsername());
             if (!passwordValidationService.isValid(creds, bean)) {
@@ -69,7 +71,7 @@ public class PasswordChangeAction extends AbstractAction {
             if (passwordManagementService.change(creds, bean)) {
                 WebUtils.putCredential(requestContext, new UsernamePasswordCredential(creds.getUsername(), bean.getPassword()));
                 LOGGER.info("Password successfully changed for [{}]", bean.getUsername());
-                return getSuccessEvent(requestContext, creds, bean);
+                return getSuccessEvent(requestContext, bean);
             }
         } catch (final InvalidPasswordException e) {
             return getErrorEvent(requestContext,
@@ -86,11 +88,11 @@ public class PasswordChangeAction extends AbstractAction {
      * Finalize password change success.
      *
      * @param requestContext the request context
-     * @param credential     the credential
      * @param bean           the bean
      * @return the event
      */
-    protected Event getSuccessEvent(final RequestContext requestContext, final UsernamePasswordCredential credential, final PasswordChangeRequest bean) {
+    protected Event getSuccessEvent(final RequestContext requestContext,
+                                    final PasswordChangeRequest bean) {
         return new EventFactorySupport()
             .event(this, CasWebflowConstants.TRANSITION_ID_PASSWORD_UPDATE_SUCCESS,
                 new LocalAttributeMap<>("passwordChangeRequest", bean));

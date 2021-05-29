@@ -23,7 +23,7 @@ const cas = require('../../cas.js');
 
     assert(header === "Authentication Succeeded with Warnings")
     
-    await cas.innerText(page, '#form');
+    await page.$eval('#form', form => form.submit());
     await page.waitForTimeout(1000)
 
     let tgc = (await page.cookies()).filter(value => value.name === "TGC")

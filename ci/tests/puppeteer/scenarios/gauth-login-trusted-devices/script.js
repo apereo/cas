@@ -23,7 +23,7 @@ const cas = require('../../cas.js');
 
     await cas.assertVisibility(page, '#timeUnit')
 
-    await cas.innerText(page, '#registerform');
+    await page.$eval('#registerform', form => form.submit());
     await page.waitForTimeout(1000)
 
     const header = await cas.innerText(page, '#content div h2');
