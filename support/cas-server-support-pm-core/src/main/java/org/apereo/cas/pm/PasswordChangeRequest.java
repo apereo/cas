@@ -27,8 +27,6 @@ public class PasswordChangeRequest implements Serializable {
 
     private String username;
 
-    private Map<String, Object> customFields = new LinkedHashMap<>();
-    
     private @Size(min = 1, message = "required.password") String password;
 
     private @Size(min = 1, message = "required.confirmedPassword") String confirmedPassword;
