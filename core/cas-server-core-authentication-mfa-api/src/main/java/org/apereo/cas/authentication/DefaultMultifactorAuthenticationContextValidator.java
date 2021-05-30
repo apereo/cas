@@ -61,19 +61,27 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
         LOGGER.trace("Attempting to match requested authentication context [{}] against [{}]", requestedContext, contexts);
         val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         LOGGER.trace("Available MFA providers are [{}]", providerMap.values());
-        val requestedProvider = locateRequestedProvider(providerMap.values(), requestedContext);
+        
+        String requestedContextTmp=requestedContext;
+        if ("mfa-composite".equals(requestedContext)){
+            requestedContextTmp=CollectionUtils.firstElement(contexts).get().toString();
+            LOGGER.trace("MFA-Composite detected: set requested Context from Authentication Context [{}]", requestedContextTmp);
+        }
+        final String requestedContextFinal=requestedContextTmp;
+        
+        val requestedProvider = locateRequestedProvider(providerMap.values(), requestedContextFinal);
         if (requestedProvider.isEmpty()) {
             LOGGER.debug("Requested authentication provider cannot be recognized.");
             return MultifactorAuthenticationContextValidationResult.builder().success(false).build();
         }
-        LOGGER.debug("Requested context is [{}] and available contexts are [{}]", requestedContext, contexts);
-        if (contexts.stream().anyMatch(ctx -> ctx.toString().equals(requestedContext))) {
-            LOGGER.debug("Requested authentication context [{}] is satisfied", requestedContext);
+        LOGGER.debug("Requested context is [{}] and available contexts are [{}]", requestedContextFinal, contexts);
+        if (contexts.stream().anyMatch(ctx -> ctx.toString().equals(requestedContextFinal))) {
+            LOGGER.debug("Requested authentication context [{}] is satisfied", requestedContextFinal);
             return MultifactorAuthenticationContextValidationResult.builder()
                 .success(true).provider(requestedProvider).build();
         }
         if (StringUtils.isNotBlank(this.mfaTrustedAuthnAttributeName) && attributes.containsKey(this.mfaTrustedAuthnAttributeName)) {
-            LOGGER.debug("Requested authentication context [{}] is satisfied since device is already trusted", requestedContext);
+            LOGGER.debug("Requested authentication context [{}] is satisfied since device is already trusted", requestedContextFinal);
             return MultifactorAuthenticationContextValidationResult.builder()
                 .success(true).provider(requestedProvider).build();
         }
