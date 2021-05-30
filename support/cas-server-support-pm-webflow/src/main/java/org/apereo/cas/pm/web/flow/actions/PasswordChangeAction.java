@@ -52,7 +52,6 @@ public class PasswordChangeAction extends AbstractAction {
         val credential = Objects.requireNonNull(WebUtils.getCredential(requestContext, UsernamePasswordCredential.class));
         val bean = requestContext.getFlowScope().get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);
         bean.setUsername(credential.getUsername());
-        bean.setCustomFields(credential.getCustomFields());
         return bean;
     }
 
