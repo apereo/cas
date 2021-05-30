@@ -171,7 +171,7 @@ Same use case as above, except the attribute value be additional processed by an
       "name" : "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
       "friendlyName" : "eduPersonPrincipalName",
       "scoped" : true,
-      "script": " groovy { logger.info(\" name: ${attributeName}, values: ${attributeValues} \"); return ['hello', 'world'] } "
+      "script": "groovy { logger.info(\" name: ${attributeName}, values: ${attributeValues} \"); return ['Hi', attributes['firstname']] }"
     }
 }
 ```  
@@ -207,8 +207,9 @@ def run(Object[] args) {
     def logger = args[2]
     def registeredService = args[3]
     def attributes = args[4]
-    logger.info("name: ${attributeName}, values: ${attributeValues}")
-    return ["casuser", "groovy"]
+    
+    logger.info("name: ${attributeName}, values: ${attributeValues}, attributes: ${attributes}")
+    return ["Hello " + attributes['givenName']]
 }
 ```
 
