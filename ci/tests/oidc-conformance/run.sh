@@ -17,7 +17,12 @@ keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass ch
 echo -e "\Building CAS with support for OpenID Connect..."
 ./gradlew :webapp:cas-server-webapp-tomcat:build -DskipNestedConfigMetadataGen=true -x check -x javadoc \
   --no-daemon --build-cache --configure-on-demand --parallel -PcasModules="oidc"
-mv "$PWD"/webapp/cas-server-webapp-tomcat/build/libs/cas-server-webapp-tomcat-*.war "$PWD"/cas.war
+mv "$PWD"/webapp/cas-server-webapp-tomcat/build/libs/cas-server-webapp-tomcat-*-SNAPSHOT.war "$PWD"/cas.war
+
+if [ $? -eq 1 ]; then
+  echo "Unable to build or locate the CAS web application file. Aborting test..."
+  exit 1
+fi
 
 echo -e "\nLaunching CAS..."
 java -jar "$PWD"/cas.war \
@@ -37,8 +42,8 @@ java -jar "$PWD"/cas.war \
 pid=$!
 echo -e "\nWaiting for CAS under process id ${pid}"
 until curl -k -L --output /dev/null --silent --fail https://localhost:8446/cas/login; do
-    echo -n '.'
-    sleep 5
+  echo -n '.'
+  sleep 5
 done
 echo -e "\n\nReady!"
 
@@ -54,15 +59,15 @@ docker-compose -f "$PWD"/ci/tests/oidc-conformance/conformance-suite/docker-comp
 
 echo -e "\nWaiting for OIDC conformance test suite"
 until curl -k -L --output /dev/null --silent --fail https://localhost:8443; do
-    echo -n '.'
-    sleep 1
+  echo -n '.'
+  sleep 1
 done
 echo -e "\n\nReady!"
 
 echo -e "\nKilling process ${pid} ..."
 kill -9 $pid
 docker-compose -f "$PWD"/ci/tests/oidc-conformance/conformance-suite/docker-compose-dev.yml down
-docker container stop $(docker container ls -aq) && docker container rm $(docker container ls -aq) 
+docker container stop $(docker container ls -aq) && docker container rm $(docker container ls -aq)
 rm "$PWD"/cas.war
 [ -f "${keystore}" ] && rm "${keystore}"
 rm -Rf "$PWD"/ci/tests/oidc-conformance/overlay || true

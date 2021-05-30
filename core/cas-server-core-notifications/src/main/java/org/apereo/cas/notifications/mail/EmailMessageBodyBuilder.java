@@ -80,7 +80,9 @@ public class EmailMessageBodyBuilder {
             val contents = FileUtils.readFileToString(templateFile, StandardCharsets.UTF_8);
             if (templateFile.getName().endsWith(".gtemplate")) {
                 val engine = new GStringTemplateEngine();
-                val template = engine.createTemplate(contents).make(this.parameters);
+                val templateParams = new LinkedHashMap<>(this.parameters);
+                locale.ifPresent(l -> templateParams.put("locale", l));
+                val template = engine.createTemplate(contents).make(templateParams);
                 return template.toString();
             }
 
