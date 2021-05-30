@@ -16,6 +16,8 @@ import org.jose4j.jwt.JwtClaims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpMethod;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.LinkedHashSet;
@@ -43,6 +45,22 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         clearAllServices();
     }
 
+    @Test
+    public void verifyRequestedClaims() throws Exception {
+        val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());
+        servicesManager.save(registeredService);
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        val claims = "\"userinfo\": {\"given_name\": {\"essential\": true}}";
+        mockRequest.addParameter(OAuth20Constants.CLAIMS, claims);
+        val mv = generateAccessTokenResponseAndGetModelAndView(registeredService,
+            RegisteredServiceTestUtils.getAuthentication("casuser"),
+            OAuth20GrantTypes.AUTHORIZATION_CODE, mockRequest);
+        assertNotNull(mv);
+        val id = mv.getModel().get("access_token").toString();
+        val at = ticketRegistry.getTicket(id, OAuth20AccessToken.class);
+        assertTrue(at.getAuthentication().getAttributes().containsKey("given_name"));
+    }
+    
     @Test
     public void verifyAccessTokenAsJwt() throws Exception {
         val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());
