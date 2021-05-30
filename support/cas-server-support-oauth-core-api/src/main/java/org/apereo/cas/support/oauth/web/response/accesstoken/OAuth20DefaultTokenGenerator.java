@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 
 /**
@@ -150,19 +151,21 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     protected Pair<OAuth20AccessToken, OAuth20RefreshToken> generateAccessTokenOAuthGrantTypes(final AccessTokenRequestDataHolder holder) {
         LOGGER.debug("Creating access token for [{}]", holder.getService());
         val clientId = holder.getRegisteredService().getClientId();
-        val authn = DefaultAuthenticationBuilder
+        val authnBuilder = DefaultAuthenticationBuilder
             .newInstance(holder.getAuthentication())
             .setAuthenticationDate(ZonedDateTime.now(ZoneOffset.UTC))
             .addAttribute(OAuth20Constants.GRANT_TYPE, holder.getGrantType().toString())
             .addAttribute(OAuth20Constants.SCOPE, holder.getScopes())
-            .addAttribute(OAuth20Constants.CLIENT_ID, clientId)
-            .addAttribute(OAuth20Constants.CLAIMS, holder.getClaims())
-            .build();
+            .addAttribute(OAuth20Constants.CLIENT_ID, clientId);
+
+        val requestedClaims = holder.getClaims().getOrDefault(OAuth20Constants.CLAIMS_USERINFO, new HashMap<>());
+        requestedClaims.forEach(authnBuilder::addAttribute);
+        val authentication = authnBuilder.build();
 
         LOGGER.debug("Creating access token for [{}]", holder);
         val ticketGrantingTicket = holder.getTicketGrantingTicket();
         val accessToken = this.accessTokenFactory.create(holder.getService(),
-            authn, ticketGrantingTicket, holder.getScopes(),
+            authentication, ticketGrantingTicket, holder.getScopes(),
             clientId, holder.getClaims());
 
         LOGGER.debug("Created access token [{}]", accessToken);
