@@ -9,7 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * This is {@link U2FCouchDbMultifactorProperties}.
+ * This is {@link U2FCouchDbMultifactorAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
@@ -18,12 +18,12 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("U2FCouchDbMultifactorProperties")
-public class U2FCouchDbMultifactorProperties extends BaseAsynchronousCouchDbProperties {
+@JsonFilter("U2FCouchDbMultifactorAuthenticationProperties")
+public class U2FCouchDbMultifactorAuthenticationProperties extends BaseAsynchronousCouchDbProperties {
 
     private static final long serialVersionUID = 2751957521987245445L;
 
-    public U2FCouchDbMultifactorProperties() {
+    public U2FCouchDbMultifactorAuthenticationProperties() {
         setDbName("u2f_multifactor");
     }
 }

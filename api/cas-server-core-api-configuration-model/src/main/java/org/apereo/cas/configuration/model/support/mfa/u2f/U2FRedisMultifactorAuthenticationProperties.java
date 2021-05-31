@@ -9,7 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * This is {@link U2FRedisMultifactorProperties}.
+ * This is {@link U2FRedisMultifactorAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("U2FRedisMultifactorProperties")
-public class U2FRedisMultifactorProperties extends BaseRedisProperties {
+@JsonFilter("U2FRedisMultifactorAuthenticationProperties")
+public class U2FRedisMultifactorAuthenticationProperties extends BaseRedisProperties {
     private static final long serialVersionUID = -1261683393319585262L;
 }

@@ -12,8 +12,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * This is {@link U2FMultifactorAuthenticationProperties}.
  *
@@ -24,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("U2FMultifactorProperties")
+@JsonFilter("U2FMultifactorAuthenticationProperties")
 public class U2FMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
 
     /**
@@ -35,77 +33,58 @@ public class U2FMultifactorAuthenticationProperties extends BaseMultifactorAuthe
     private static final long serialVersionUID = 6151350313777066398L;
 
     /**
+     * Core/common U2F settings.
+     */
+    @NestedConfigurationProperty
+    private U2FCoreMultifactorAuthenticationProperties core = new U2FCoreMultifactorAuthenticationProperties();
+
+    /**
      * Store device registration records inside a JDBC resource.
      */
     @NestedConfigurationProperty
-    private U2FJpaMultifactorProperties jpa = new U2FJpaMultifactorProperties();
-
-    /**
-     * Expire and forget device registration requests after this period.
-     */
-    private long expireRegistrations = 30;
-
-    /**
-     * Device registration requests expiration time unit.
-     */
-    private TimeUnit expireRegistrationsTimeUnit = TimeUnit.SECONDS;
-
-    /**
-     * Expire and forget device registration records after this period.
-     */
-    private long expireDevices = 30;
-
-    /**
-     * Device registration record expiration time unit.
-     */
-    private TimeUnit expireDevicesTimeUnit = TimeUnit.DAYS;
+    private U2FJpaMultifactorAuthenticationProperties jpa = new U2FJpaMultifactorAuthenticationProperties();
 
     /**
      * Store device registration records inside a MongoDb resource.
      */
     @NestedConfigurationProperty
-    private U2FMongoDbMultifactorProperties mongo = new U2FMongoDbMultifactorProperties();
+    private U2FMongoDbMultifactorAuthenticationProperties mongo = new U2FMongoDbMultifactorAuthenticationProperties();
 
     /**
      * Store device registration records inside a redis resource.
      */
     @NestedConfigurationProperty
-    private U2FRedisMultifactorProperties redis = new U2FRedisMultifactorProperties();
+    private U2FRedisMultifactorAuthenticationProperties redis = new U2FRedisMultifactorAuthenticationProperties();
 
     /**
      * Store device registration records inside a dynamodb database resource.
      */
     @NestedConfigurationProperty
-    private U2FDynamoDbMultifactorProperties dynamoDb = new U2FDynamoDbMultifactorProperties();
+    private U2FDynamoDbMultifactorAuthenticationProperties dynamoDb = new U2FDynamoDbMultifactorAuthenticationProperties();
 
     /**
      * Store device registration records inside a static JSON resource.
      */
     @NestedConfigurationProperty
-    private U2FJsonMultifactorProperties json = new U2FJsonMultifactorProperties();
+    private U2FJsonMultifactorAuthenticationProperties json = new U2FJsonMultifactorAuthenticationProperties();
 
     /**
      * Store device registration records via a Groovy script.
      */
     @NestedConfigurationProperty
-    private U2FGroovyMultifactorProperties groovy = new U2FGroovyMultifactorProperties();
+    private U2FGroovyMultifactorAuthenticationProperties groovy = new U2FGroovyMultifactorAuthenticationProperties();
 
     /**
      * Store device registration records via REST APIs.
      */
     @NestedConfigurationProperty
-    private U2FRestfulMultifactorProperties rest = new U2FRestfulMultifactorProperties();
-
-    /**
-     * Indicates whether this provider should support trusted devices.
-     */
-    private boolean trustedDeviceEnabled;
+    private U2FRestfulMultifactorAuthenticationProperties rest = new U2FRestfulMultifactorAuthenticationProperties();
 
     /**
      * Store device registration records via CouchDb.
      */
     @NestedConfigurationProperty
-    private U2FCouchDbMultifactorProperties couchDb = new U2FCouchDbMultifactorProperties();
+    private U2FCouchDbMultifactorAuthenticationProperties couchDb = new U2FCouchDbMultifactorAuthenticationProperties();
 
     /**
      * Clean up expired records via a background cleaner process.

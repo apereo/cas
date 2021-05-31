@@ -22,7 +22,7 @@ Support is enabled by including the following module in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f" %}
 
-{% include casproperties.html properties="cas.authn.mfa.u2f" %}
+{% include casproperties.html properties="cas.authn.mfa.u2f.core" %}
 
 
 ## Registration
