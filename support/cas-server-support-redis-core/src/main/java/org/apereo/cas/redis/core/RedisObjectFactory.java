@@ -192,7 +192,6 @@ public class RedisObjectFactory {
 
     private static ClientOptions.Builder initializeClientOptionsBuilder(final BaseRedisProperties redis, final boolean cluster) {
         if (cluster) {
-            ClusterClientOptions.Builder clusterClientOptionsBuilder = ClusterClientOptions.builder();
             ClusterTopologyRefreshOptions.Builder refreshBuilder = ClusterTopologyRefreshOptions.builder()
                 .dynamicRefreshSources(redis.isDynamicRefreshSources());
             if (StringUtils.hasText(redis.getTopologyRefreshPeriod())) {
@@ -201,6 +200,7 @@ public class RedisObjectFactory {
             if (redis.isAdaptiveTopologyRefresh()) {
                 refreshBuilder.enableAllAdaptiveRefreshTriggers();
             }
+            ClusterClientOptions.Builder clusterClientOptionsBuilder = ClusterClientOptions.builder();
             return clusterClientOptionsBuilder.topologyRefreshOptions(refreshBuilder.build());
         }
         return ClientOptions.builder();
