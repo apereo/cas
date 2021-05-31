@@ -37,6 +37,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
      * The default keystore for OIDC tokens.
      */
     protected final LoadingCache<String, Optional<PublicJsonWebKey>> defaultJsonWebKeystoreCache;
+
     /**
      * The service keystore for OIDC tokens.
      */
@@ -95,27 +96,6 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
         return result;
     }
 
-    private Key getEncryptionKeyForDecryption(final RegisteredService registeredService) {
-        val svc = (OAuthRegisteredService) registeredService;
-        if (svc instanceof OidcRegisteredService) {
-            val jwks = this.serviceJsonWebKeystoreCache.get(svc);
-            if (jwks.isEmpty()) {
-                LOGGER.warn("Service " + svc.getServiceId()
-                    + " with client id " + svc.getClientId()
-                    + " is configured to encrypt tokens, yet no JSON web key is available");
-                return null;
-            }
-            val jsonWebKey = jwks.get();
-            LOGGER.debug("Found JSON web key to encrypt the token: [{}]", jsonWebKey);
-            if (jsonWebKey.getPrivateKey() == null) {
-                LOGGER.warn("JSON web key used to sign the token has no associated private key");
-                return null;
-            }
-            return jsonWebKey.getPrivateKey();
-        }
-        return null;
-    }
-
     @Override
     protected JwtTicketCipherExecutor createCipherExecutorInstance(final String encryptionKey, final String signingKey,
                                                                    final RegisteredService registeredService,
@@ -126,7 +106,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
             public String decode(final Serializable value, final Object[] parameters) {
                 if (parameters.length > 0) {
                     val registeredService = (RegisteredService) parameters[0];
-                    setSecretKeyEncryptionKey(getEncryptionKeyForDecryption(registeredService));
+                    setEncryptionKey(getEncryptionKeyForDecryption(registeredService));
                 }
                 return super.decode(value, parameters);
             }
@@ -135,7 +115,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
             protected byte[] sign(final byte[] value) {
                 if (EncodingUtils.isJsonWebKey(signingKey)) {
                     val jwks = defaultJsonWebKeystoreCache.get(
-                            OidcRegisteredServiceJwtAccessTokenCipherExecutor.this.issuer);
+                        OidcRegisteredServiceJwtAccessTokenCipherExecutor.this.issuer);
                     if (Objects.requireNonNull(jwks).isPresent()) {
                         val jws = jwks.get();
                         val kid = jws.getKeyId();
@@ -156,5 +136,26 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
         cipher.setCustomHeaders(CollectionUtils.wrap(CUSTOM_HEADER_REGISTERED_SERVICE_ID, registeredService.getId()));
         cipher.setStrategyType(type);
         return cipher;
+    }
+
+    private Key getEncryptionKeyForDecryption(final RegisteredService registeredService) {
+        val svc = (OAuthRegisteredService) registeredService;
+        if (svc instanceof OidcRegisteredService) {
+            val jwks = this.serviceJsonWebKeystoreCache.get(svc);
+            if (jwks.isEmpty()) {
+                LOGGER.warn("Service " + svc.getServiceId()
+                    + " with client id " + svc.getClientId()
+                    + " is configured to encrypt tokens, yet no JSON web key is available");
+                return null;
+            }
+            val jsonWebKey = jwks.get();
+            LOGGER.debug("Found JSON web key to encrypt the token: [{}]", jsonWebKey);
+            if (jsonWebKey.getPrivateKey() == null) {
+                LOGGER.warn("JSON web key used to sign the token has no associated private key");
+                return null;
+            }
+            return jsonWebKey.getPrivateKey();
+        }
+        return null;
     }
 }

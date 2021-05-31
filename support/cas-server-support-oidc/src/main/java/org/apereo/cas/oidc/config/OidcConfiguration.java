@@ -51,6 +51,7 @@ import org.apereo.cas.oidc.slo.OidcSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.oidc.slo.OidcSingleLogoutServiceMessageHandler;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionService;
+import org.apereo.cas.oidc.token.OidcJwtAccessTokenCipherExecutor;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutor;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
 import org.apereo.cas.oidc.web.OidcAccessTokenResponseGenerator;
@@ -167,6 +168,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
@@ -327,10 +329,6 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
-
-    @Autowired
-    @Qualifier("oauthAccessTokenJwtCipherExecutor")
-    private ObjectProvider<CipherExecutor> oauthAccessTokenJwtCipherExecutor;
 
     @Autowired
     @Qualifier("accessTokenIdGenerator")
@@ -813,11 +811,21 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public RegisteredServiceCipherExecutor oauthRegisteredServiceJwtAccessTokenCipherExecutor() {
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcRegisteredServiceJwtAccessTokenCipherExecutor")
+    public RegisteredServiceCipherExecutor oidcRegisteredServiceJwtAccessTokenCipherExecutor() {
         val oidc = casProperties.getAuthn().getOidc();
         return new OidcRegisteredServiceJwtAccessTokenCipherExecutor(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),
             oidc.getCore().getIssuer());
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcAccessTokenJwtCipherExecutor")
+    public CipherExecutor<Serializable, String> oidcAccessTokenJwtCipherExecutor() {
+        val oidc = casProperties.getAuthn().getOidc();
+        return new OidcJwtAccessTokenCipherExecutor(oidcDefaultJsonWebKeystoreCache(), oidc.getCore().getIssuer());
     }
 
     @Bean
@@ -929,9 +937,9 @@ public class OidcConfiguration implements WebMvcConfigurer {
         val oidc = casProperties.getAuthn().getOidc();
         return new OAuth20JwtBuilder(
             oidc.getCore().getIssuer(),
-            oauthAccessTokenJwtCipherExecutor.getObject(),
+            oidcAccessTokenJwtCipherExecutor(),
             servicesManager.getObject(),
-            oauthRegisteredServiceJwtAccessTokenCipherExecutor());
+            oidcRegisteredServiceJwtAccessTokenCipherExecutor());
     }
 
     @Bean
