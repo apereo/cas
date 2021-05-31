@@ -20,8 +20,7 @@ const cas = require('../../cas.js');
     
     await cas.assertVisibility(page, '#register')
 
-    await page.$eval('#form-1', form => form.submit());
-    await page.waitForTimeout(1000)
+    await cas.submitForm(page, "#form-1");
 
     const header = await cas.textContent(page, "#login p");
     assert(header.startsWith("Your selected device for multifactor authentication is"))
