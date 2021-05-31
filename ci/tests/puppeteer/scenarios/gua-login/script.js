@@ -30,8 +30,7 @@ const cas = require('../../cas.js');
 
     await cas.assertVisibility(page, '#guaImage')
 
-    await page.$eval('#fm1', form => form.submit());
-    await page.waitForTimeout(1000)
+    await cas.submitForm(page, "#fm1");
 
     await page.type('#password', "Mellon");
     await page.keyboard.press('Enter');
