@@ -87,14 +87,13 @@ public class BaseRedisProperties implements Serializable {
     private boolean dynamicRefreshSources = true;
 
     /**
-     * Cluster topology refresh period.
+     * Enables periodic refresh of cluster topology and sets the refresh period.
      */
     @DurationCapable
     private String topologyRefreshPeriod;
 
     /**
-     * Whether adaptive topology refreshing using all available refresh
-     * triggers should be used.
+     * Whether adaptive topology refreshing using all available refresh triggers should be used.
      */
     private boolean adaptiveTopologyRefresh;
 
