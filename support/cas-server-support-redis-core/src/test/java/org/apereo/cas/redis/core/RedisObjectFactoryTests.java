@@ -93,8 +93,8 @@ public class RedisObjectFactoryTests {
 
         props.setTimeout("PT10S");
         props.setConnectTimeout("PT5S");
-        props.setAdaptiveTopologyRefresh(true);
-        props.setDynamicRefreshSources(true);
+        props.getCluster().setAdaptiveTopologyRefresh(true);
+        props.getCluster().setDynamicRefreshSources(true);
         props.getCluster().setMaxRedirects(3);
         val connection = RedisObjectFactory.newRedisConnectionFactory(props, true);
         assertNotNull(connection);

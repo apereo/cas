@@ -79,23 +79,6 @@ public class BaseRedisProperties implements Serializable {
     @NestedConfigurationProperty
     private RedisClusterProperties cluster = new RedisClusterProperties();
 
-    /**
-     * Whether to discover and query all cluster nodes for obtaining the
-     * cluster topology. When set to false, only the initial seed nodes are
-     * used as sources for topology discovery.
-     */
-    private boolean dynamicRefreshSources = true;
-
-    /**
-     * Enables periodic refresh of cluster topology and sets the refresh period.
-     */
-    @DurationCapable
-    private String topologyRefreshPeriod;
-
-    /**
-     * Whether adaptive topology refreshing using all available refresh triggers should be used.
-     */
-    private boolean adaptiveTopologyRefresh;
 
     /**
      * Whether or not to use SSL for connection factory.
