@@ -71,5 +71,5 @@ exports.assertInvisibility = async(page, selector) => {
 
 exports.submitForm = async(page, selector) => {
     await page.$eval(selector, form => form.submit());
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2500)
 }
