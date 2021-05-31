@@ -110,6 +110,7 @@ A number of improvements are now implemented for a better use experience while b
 - Amazon SDK
 - OpenSAML
 - Micrometer
+- Pac4j
 - Apache Tomcat
 - Spring Security
 - DropWizard
