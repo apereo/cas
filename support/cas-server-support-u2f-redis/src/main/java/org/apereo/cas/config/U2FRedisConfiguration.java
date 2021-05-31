@@ -60,9 +60,9 @@ public class U2FRedisConfiguration {
     public U2FDeviceRepository u2fDeviceRepository() {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
         final LoadingCache<String, String> requestStorage = Caffeine.newBuilder()
-            .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
+            .expireAfterWrite(u2f.getCore().getExpireRegistrations(), u2f.getCore().getExpireRegistrationsTimeUnit())
             .build(key -> StringUtils.EMPTY);
-        return new U2FRedisDeviceRepository(requestStorage, u2fRedisTemplate(), u2f.getExpireDevices(),
-            u2f.getExpireDevicesTimeUnit(), u2fRegistrationRecordCipherExecutor.getObject());
+        return new U2FRedisDeviceRepository(requestStorage, u2fRedisTemplate(), u2f.getCore().getExpireDevices(),
+            u2f.getCore().getExpireDevicesTimeUnit(), u2fRegistrationRecordCipherExecutor.getObject());
     }
 }

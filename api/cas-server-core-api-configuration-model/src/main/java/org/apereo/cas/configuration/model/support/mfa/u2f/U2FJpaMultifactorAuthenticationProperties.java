@@ -9,7 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * This is {@link U2FJpaMultifactorProperties}.
+ * This is {@link U2FJpaMultifactorAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
@@ -18,8 +18,8 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("U2FJpaMultifactorProperties")
-public class U2FJpaMultifactorProperties extends AbstractJpaProperties {
+@JsonFilter("U2FJpaMultifactorAuthenticationProperties")
+public class U2FJpaMultifactorAuthenticationProperties extends AbstractJpaProperties {
 
     private static final long serialVersionUID = -4334840263678287815L;
 }

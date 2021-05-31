@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa.u2f;
 
-import org.apereo.cas.configuration.model.RestEndpointProperties;
+import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * This is {@link U2FRestfulMultifactorProperties}.
+ * This is {@link U2FJsonMultifactorAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
@@ -18,8 +18,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("U2FRestfulMultifactorProperties")
-public class U2FRestfulMultifactorProperties extends RestEndpointProperties {
-
-    private static final long serialVersionUID = -8102345678378393382L;
+@JsonFilter("U2FJsonMultifactorAuthenticationProperties")
+public class U2FJsonMultifactorAuthenticationProperties extends SpringResourceProperties {
+    private static final long serialVersionUID = -6883660787308509919L;
 }

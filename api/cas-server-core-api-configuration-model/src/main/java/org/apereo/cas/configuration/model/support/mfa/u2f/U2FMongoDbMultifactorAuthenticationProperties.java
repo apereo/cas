@@ -9,7 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * This is {@link U2FMongoDbMultifactorProperties}.
+ * This is {@link U2FMongoDbMultifactorAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
@@ -18,12 +18,12 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("U2FMongoDbMultifactorProperties")
-public class U2FMongoDbMultifactorProperties extends SingleCollectionMongoDbProperties {
+@JsonFilter("U2FMongoDbMultifactorAuthenticationProperties")
+public class U2FMongoDbMultifactorAuthenticationProperties extends SingleCollectionMongoDbProperties {
 
     private static final long serialVersionUID = -7963843335569634144L;
 
-    public U2FMongoDbMultifactorProperties() {
+    public U2FMongoDbMultifactorAuthenticationProperties() {
         setCollection("CasMongoDbU2FRepository");
     }
 }
