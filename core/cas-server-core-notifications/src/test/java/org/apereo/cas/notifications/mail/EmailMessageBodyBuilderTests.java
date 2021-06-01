@@ -38,7 +38,7 @@ public class EmailMessageBodyBuilderTests {
 
     @Test
     public void verifyLocalizedFileFound() {
-        val props = new EmailProperties().setText("classpath:EmailTemplate.html");
+        val props = new EmailProperties().setText("classpath:/EmailTemplate.html");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
             .locale(Optional.of(Locale.GERMAN))
@@ -51,7 +51,7 @@ public class EmailMessageBodyBuilderTests {
 
     @Test
     public void verifyLocalizedFileNotFound() {
-        val props = new EmailProperties().setText("classpath:EmailTemplate.html");
+        val props = new EmailProperties().setText("classpath:/EmailTemplate.html");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
             .locale(Optional.of(Locale.JAPAN))
@@ -77,7 +77,7 @@ public class EmailMessageBodyBuilderTests {
 
     @Test
     public void verifyTemplateOperation() {
-        val props = new EmailProperties().setText("classpath:GroovyEmailTemplate.gtemplate");
+        val props = new EmailProperties().setText("classpath:/GroovyEmailTemplate.gtemplate");
 
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -100,7 +100,7 @@ public class EmailMessageBodyBuilderTests {
         ApplicationContextProvider.registerBeanIntoApplicationContext(appCtx, cacheMgr, ScriptResourceCacheManager.BEAN_NAME);
 
         ApplicationContextProvider.holdApplicationContext(appCtx);
-        val props = new EmailProperties().setText("classpath:GroovyMessageBody.groovy");
+        val props = new EmailProperties().setText("classpath:/GroovyMessageBody.groovy");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
             .locale(Optional.of(Locale.CANADA))
