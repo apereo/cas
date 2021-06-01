@@ -28,9 +28,7 @@ const cas = require('../../cas.js');
 
     await cas.assertVisibility(page, '#servicesTable')
 
-    await page.$eval('#fm1', form => form.submit());
-    // await page.waitForNavigation();
-    await page.waitForTimeout(1000)
+    await cas.submitForm(page, "#fm1");
 
     const url = await page.url()
     console.log(`Page url: ${url}`)

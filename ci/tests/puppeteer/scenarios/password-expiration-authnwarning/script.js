@@ -17,9 +17,7 @@ const cas = require('../../cas.js');
 
     await cas.assertVisibility(page, '#changePassword')
 
-    await page.$eval('#changePasswordForm', form => form.submit());
-
-    await page.waitForTimeout(1000)
+    await cas.submitForm(page, "#changePasswordForm");
 
     header = await cas.textContent(page, "#pwdmain h3");
 
@@ -52,8 +50,7 @@ const cas = require('../../cas.js');
     header = await cas.textContent(page, "#content p");
     assert(header === "Your account password is successfully updated.")
 
-    await page.$eval('#form', form => form.submit());
-    await page.waitForTimeout(1000)
+    await cas.submitForm(page, "#form");
 
     let element = await cas.innerText(page, '#content div h2');
     assert(element === "Log In Successful")
