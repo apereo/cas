@@ -13,8 +13,7 @@ const cas = require('../../cas.js');
 
     console.log("Using scratch code to login...");
     await page.type('#token', "83766843");
-    await page.$eval('#fm1', form => form.submit());
-    await page.waitForTimeout(1000)
+    await cas.submitForm(page, "#fm1");
 
     await cas.innerText(page, '#deviceName');
     await page.type('#deviceName', "My Trusted Device");
@@ -23,8 +22,7 @@ const cas = require('../../cas.js');
 
     await cas.assertVisibility(page, '#timeUnit')
 
-    await page.$eval('#registerform', form => form.submit());
-    await page.waitForTimeout(1000)
+    await cas.submitForm(page, "#registerform");
 
     const header = await cas.innerText(page, '#content div h2');
 

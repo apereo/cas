@@ -16,15 +16,13 @@ const cas = require('../../cas.js');
 
     assert(header === "Authentication Interrupt")
 
-    await page.$eval('#fm1', form => form.submit());
-    await page.waitForTimeout(1000)
+    await cas.submitForm(page, "#fm1");
     
     header = await cas.textContent(page, "#content h1");
 
     assert(header === "Authentication Succeeded with Warnings")
-    
-    await page.$eval('#form', form => form.submit());
-    await page.waitForTimeout(1000)
+
+    await cas.submitForm(page, "#form");
 
     let tgc = (await page.cookies()).filter(value => value.name === "TGC")
     assert(tgc.length !== 0);
