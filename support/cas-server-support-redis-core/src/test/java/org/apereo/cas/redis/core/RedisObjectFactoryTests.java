@@ -91,8 +91,8 @@ public class RedisObjectFactoryTests {
             .setName("redis-slave2")
             .setReplicaOf("redis_server_master"));
 
-        props.setTimeout("PT10S");
-        props.setConnectTimeout("PT5S");
+        props.setTimeout("");
+        props.setConnectTimeout("");
         props.getCluster().setAdaptiveTopologyRefresh(true);
         props.getCluster().setDynamicRefreshSources(true);
         props.getCluster().setMaxRedirects(3);

@@ -56,10 +56,10 @@ public class BaseRedisProperties implements Serializable {
     private int port = 6379;
 
     /**
-     * Command timeout, default from Lettuce is 60s.
+     * Command timeout.
      */
     @DurationCapable
-    private String timeout;
+    private String timeout = "PT60S";
 
     /**
      * Redis connection pool settings.
@@ -89,7 +89,7 @@ public class BaseRedisProperties implements Serializable {
      * Connection timeout.
      */
     @DurationCapable
-    private String connectTimeout;
+    private String connectTimeout = "PT10S";
 
     /**
      * Setting that describes how Lettuce routes read operations to replica nodes.
