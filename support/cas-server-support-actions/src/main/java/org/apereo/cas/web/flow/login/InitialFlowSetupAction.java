@@ -191,7 +191,7 @@ public class InitialFlowSetupAction extends AbstractAction {
 
         val serviceParameterProvided = !StringUtils.isEmpty(request.getParameter(CasProtocolConstants.PARAMETER_SERVICE));
         if (!serviceParameterProvided && casProperties.getView().isDisableLoginFormWhenServiceParamMissing()) {
-            LOGGER.error("Setting casLoginFormViewable to: [{}]", false);
+            LOGGER.debug("Setting casLoginFormViewable to: [{}]", false);
             WebUtils.putCasLoginFormViewable(context, false);
         }
 
