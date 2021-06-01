@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.login;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -187,6 +188,12 @@ public class InitialFlowSetupAction extends AbstractAction {
 
         WebUtils.putGeoLocationTrackingIntoFlowScope(context, casProperties.getEvents().getCore().isTrackGeolocation());
         WebUtils.putRememberMeAuthenticationEnabled(context, casProperties.getTicket().getTgt().getRememberMe().isEnabled());
+
+        val serviceParameterProvided = !StringUtils.isEmpty(request.getParameter(CasProtocolConstants.PARAMETER_SERVICE));
+        if (!serviceParameterProvided && casProperties.getView().isDisableLoginFormWhenServiceParamMissing()) {
+            LOGGER.error("Setting casLoginFormViewable to: [{}]", false);
+            WebUtils.putCasLoginFormViewable(context, false);
+        }
 
         val staticAuthEnabled = (casProperties.getAuthn().getAccept().isEnabled()
             && StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers()))

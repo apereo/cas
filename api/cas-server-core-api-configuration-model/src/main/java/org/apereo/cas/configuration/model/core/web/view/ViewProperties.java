@@ -44,6 +44,12 @@ public class ViewProperties implements Serializable {
     private String defaultRedirectUrl;
 
     /**
+     * When set to {@code true} and no service parameter is provided in a login request, the loginView will not provide
+     * a login form, leaving only delegated authentication via other identity providers as an option.
+     */
+    private boolean disableLoginFormWhenServiceParamMissing;
+
+    /**
      * Additional custom fields that should be displayed
      * on the login form and would be bound to the authentication
      * credential during form-authentication
