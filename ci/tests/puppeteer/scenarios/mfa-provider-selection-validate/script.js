@@ -58,7 +58,7 @@ const httpGet = (options) => {
     let ticket = result.searchParams.get("ticket");
     assert(ticket != null);
     
-    console.log("Validating ticket " + ticket +" with service " + service);
+    console.log("Validating ticket " + ticket + " with service " + service);
     let options2 = {
         protocol: "https:",
         hostname: "localhost",
