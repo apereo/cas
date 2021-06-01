@@ -77,6 +77,7 @@ public class SamlIdPSingleLogoutRedirectionStrategyRedirectBindingTests extends 
 
         samlIdPSingleLogoutRedirectionStrategy.handle(context);
         assertNotNull(WebUtils.getLogoutRedirectUrl(request, String.class));
+        assertNull(WebUtils.getLogoutPostUrl(context));
+        assertNull(WebUtils.getLogoutPostData(context));
     }
-
 }
