@@ -1,17 +1,17 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const url = require('url');
-const cas = require('../../cas.js');
-const https = require('https');
+const puppeteer = require("puppeteer");
+const assert = require("assert");
+const url = require("url");
+const cas = require("../../cas.js");
+const https = require("https");
 
-const httpGet = options => {
+const httpGet = (options) => {
         return new Promise((resolve, reject) => {
             https.get(options, res => {
-                res.setEncoding('utf8');
+                res.setEncoding("utf8");
                 const body = [];
-                res.on('data', chunk => body.push(chunk));
-                res.on('end', () => resolve(body.join('')));
-            }).on('error', reject);
+                res.on("data", chunk => body.push(chunk));
+                res.on("end", () => resolve(body.join("")));
+            }).on("error", reject);
         });
     };
 
@@ -20,14 +20,14 @@ const httpGet = options => {
     const browser = await puppeteer.launch(cas.browserOptions());
     
     
-    console.log("Fetching Scratch codes from /cas/actuator...")
+    console.log("Fetching Scratch codes from /cas/actuator...");
     
     let options1 = {
-        protocol: 'https:',
-        hostname: 'localhost',
+        protocol: "https:",
+        hostname: "localhost",
         port: 8443,
-        path: '/cas/actuator/gauthCredentialRepository/casuser',
-        method: 'GET',
+        path: "/cas/actuator/gauthCredentialRepository/casuser",
+        method: "GET",
         rejectUnauthorized: false,
     };
     const response = await httpGet(options1);
@@ -60,26 +60,26 @@ const httpGet = options => {
     
     console.log("Validating ticket " + ticket +" with service " + service);
     let options2 = {
-        protocol: 'https:',
-        hostname: 'localhost',
+        protocol: "https:",
+        hostname: "localhost",
         port: 8443,
-        path: '/cas/p3/serviceValidate?service=' + service + "&ticket=" + ticket,
-        method: 'GET',
+        path: "/cas/p3/serviceValidate?service=" + service + "&ticket=" + ticket,
+        method: "GET",
         rejectUnauthorized: false,
     };
     const body = await httpGet(options2);
 
     console.log(body);
-    assert(body.includes('<cas:serviceResponse xmlns:cas=\'http://www.yale.edu/tp/cas\'>'))
-    assert(body.includes('<cas:authenticationSuccess>'))
-    assert(body.includes('<cas:user>casuser</cas:user>'))
-    assert(body.includes('<cas:isFromNewLogin>true</cas:isFromNewLogin>'))
+    assert(body.includes("<cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>"))
+    assert(body.includes("<cas:authenticationSuccess>"))
+    assert(body.includes("<cas:user>casuser</cas:user>"))
+    assert(body.includes("<cas:isFromNewLogin>true</cas:isFromNewLogin>"))
 
-    assert(body.includes('<cas:credentialType>GoogleAuthenticatorTokenCredential</cas:credentialType>'))
-    assert(body.includes('<cas:authenticationMethod>GoogleAuthenticatorAuthenticationHandler</cas:authenticationMethod>'))
-    assert(body.includes('<cas:successfulAuthenticationHandlers>GoogleAuthenticatorAuthenticationHandler</cas:successfulAuthenticationHandlers>'))
+    assert(body.includes("<cas:credentialType>GoogleAuthenticatorTokenCredential</cas:credentialType>"))
+    assert(body.includes("<cas:authenticationMethod>GoogleAuthenticatorAuthenticationHandler</cas:authenticationMethod>"))
+    assert(body.includes("<cas:successfulAuthenticationHandlers>GoogleAuthenticatorAuthenticationHandler</cas:successfulAuthenticationHandlers>"))
 
-    assert(body.includes('<cas:longTermAuthenticationRequestTokenUsed>false</cas:longTermAuthenticationRequestTokenUsed>'))
+    assert(body.includes("<cas:longTermAuthenticationRequestTokenUsed>false</cas:longTermAuthenticationRequestTokenUsed>"))
 
     await browser.close();
 })();
