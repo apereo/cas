@@ -1,11 +1,17 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.NullPrincipal;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutor;
 
 import lombok.val;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -16,6 +22,8 @@ import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -96,6 +104,7 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests extends BaseOAuth20Au
 
     @Test
     public void verifyAuthenticationWithAttributesMapping() {
+
         val credentials = new UsernamePasswordCredentials("serviceWithAttributesMapping", "secret");
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
@@ -105,4 +114,42 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests extends BaseOAuth20Au
         assertNotNull(credentials.getUserProfile().getAttribute("eduPersonAffiliation"));
         assertNull(credentials.getUserProfile().getAttribute("groupMembership"));
     }
+
+
+    @Test
+    public void verifyAuthenticationWithoutResolvedPrincipal() {
+
+        val id = "serviceWithAttributesMapping";
+
+        val nullPrincipalAuthenticator = new OAuth20ClientIdClientSecretAuthenticator(servicesManager,
+                serviceFactory,
+                new RegisteredServiceAccessStrategyAuditableEnforcer(),
+                new OAuth20RegisteredServiceCipherExecutor(),
+                ticketRegistry,
+                new PrincipalResolver() {
+                    @Override
+                    public Principal resolve(Credential credential, Optional<Principal> principal, Optional<AuthenticationHandler> handler) {
+                        return new NullPrincipal();
+                    }
+
+                    @Override
+                    public boolean supports(Credential credential) {
+                        return true;
+                    }
+
+                    @Override
+                    public IPersonAttributeDao getAttributeRepository() {
+                        return null;
+                    }
+                });
+
+        val credentials = new UsernamePasswordCredentials(id, "secret");
+        val request = new MockHttpServletRequest();
+        val ctx = new JEEContext(request, new MockHttpServletResponse());
+        nullPrincipalAuthenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        assertNotNull(credentials.getUserProfile());
+        assertEquals(id, credentials.getUserProfile().getId());
+    }
+
+
 }

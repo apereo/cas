@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.authenticator;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -83,9 +84,15 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
 
             val profile = new CommonProfile();
             val username = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
+
+            if (principal instanceof NullPrincipal) {
+                LOGGER.debug("No principal was resolved. Falling back to the username [{}] from the credentials.", id);
+                profile.setId(id);
+            } else {
+                profile.setId(username);
+            }
             LOGGER.debug("Created profile id [{}]", username);
 
-            profile.setId(username);
             profile.addAttributes((Map) attributes);
             LOGGER.debug("Authenticated user profile [{}]", profile);
             credentials.setUserProfile(profile);
