@@ -64,6 +64,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         assertNotNull(servicesManager.findServiceByName(TEST));
         assertNotNull(servicesManager.findServiceByName(TEST, RegexRegisteredService.class));
         assertTrue(servicesManager.count() > 0);
+        assertTrue(servicesManager.getAllServicesOfType(RegexRegisteredService.class).size() > 0);
     }
 
     @Test

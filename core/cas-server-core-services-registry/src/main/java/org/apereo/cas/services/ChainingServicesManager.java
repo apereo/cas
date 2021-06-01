@@ -138,6 +138,14 @@ public class ChainingServicesManager implements ServicesManager {
     }
 
     @Override
+    public <T extends RegisteredService> Collection<T> getAllServicesOfType(final Class<T> clazz) {
+        return serviceManagers.stream()
+                .filter(s -> s.supports(clazz))
+                .flatMap(s -> s.getAllServicesOfType(clazz).stream())
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Collection<RegisteredService> load() {
         return serviceManagers.stream()
             .flatMap(s -> s.load().stream())
