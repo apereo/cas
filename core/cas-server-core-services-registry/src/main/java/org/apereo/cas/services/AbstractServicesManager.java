@@ -252,6 +252,21 @@ public abstract class AbstractServicesManager implements ServicesManager {
     }
 
     @Override
+    public Collection<RegisteredService> getAllServicesOfType(final Class clazz) {
+        if (supports(clazz)) {
+            return configurationContext.getServicesCache().asMap().values()
+                .stream()
+                .filter(s -> clazz.isAssignableFrom(s.getClass()))
+                .filter(this::validateAndFilterServiceByEnvironment)
+                .filter(getRegisteredServicesFilteringPredicate())
+                .sorted()
+                .peek(RegisteredService::initialize)
+                .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
     public Stream<? extends RegisteredService> stream() {
         return configurationContext.getServiceRegistry().getServicesStream();
     }
@@ -262,6 +277,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         configurationContext.getServicesCache().invalidateAll();
         configurationContext.getServicesCache().putAll(configurationContext.getServiceRegistry().load()
             .stream()
+            .filter(this::supports)
             .peek(this::loadInternal)
             .collect(Collectors.toMap(r -> {
                 LOGGER.trace("Adding registered service [{}] with name [{}] and internal identifier [{}]",
