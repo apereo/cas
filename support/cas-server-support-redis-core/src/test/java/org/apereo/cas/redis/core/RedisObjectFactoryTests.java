@@ -66,6 +66,42 @@ public class RedisObjectFactoryTests {
     }
 
     @Test
+    public void verifyNonDefaultClientConnectionOptions() {
+        val props = new BaseRedisProperties();
+        props.getCluster().getNodes().add(new RedisClusterNodeProperties()
+            .setType("master")
+            .setPort(6379)
+            .setId(UUID.randomUUID().toString())
+            .setName("redis-master")
+            .setHost("localhost"));
+
+        props.getCluster().getNodes().add(new RedisClusterNodeProperties()
+            .setType("slave")
+            .setPort(6380)
+            .setHost("localhost")
+            .setId(UUID.randomUUID().toString())
+            .setName("redis-slave1")
+            .setReplicaOf("redis_server_master"));
+
+        props.getCluster().getNodes().add(new RedisClusterNodeProperties()
+            .setType("slave")
+            .setPort(6381)
+            .setHost("localhost")
+            .setId(UUID.randomUUID().toString())
+            .setName("redis-slave2")
+            .setReplicaOf("redis_server_master"));
+
+        props.setTimeout("");
+        props.setConnectTimeout("");
+        props.getCluster().setAdaptiveTopologyRefresh(true);
+        props.getCluster().setDynamicRefreshSources(true);
+        props.getCluster().setMaxRedirects(3);
+        val connection = RedisObjectFactory.newRedisConnectionFactory(props, true);
+        assertNotNull(connection);
+    }
+
+
+    @Test
     public void validateRedisReadFromValues() {
         Stream.of(BaseRedisProperties.RedisReadFromTypes.values()).map(Enum::name).forEach(ReadFrom::valueOf);
     }
