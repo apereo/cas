@@ -26,6 +26,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * This is {@link OAuth20ClientIdClientSecretAuthenticatorTests}.
@@ -104,7 +107,6 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests extends BaseOAuth20Au
 
     @Test
     public void verifyAuthenticationWithAttributesMapping() {
-
         val credentials = new UsernamePasswordCredentials("serviceWithAttributesMapping", "secret");
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
@@ -115,41 +117,24 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests extends BaseOAuth20Au
         assertNull(credentials.getUserProfile().getAttribute("groupMembership"));
     }
 
-
     @Test
     public void verifyAuthenticationWithoutResolvedPrincipal() {
-
         val id = "serviceWithAttributesMapping";
+        val credentials = new UsernamePasswordCredentials(id, "secret");
+        PrincipalResolver mockPrincipalResolver = mock(PrincipalResolver.class);
+        when(mockPrincipalResolver.resolve(any())).thenReturn(new NullPrincipal());
 
         val nullPrincipalAuthenticator = new OAuth20ClientIdClientSecretAuthenticator(servicesManager,
                 serviceFactory,
                 new RegisteredServiceAccessStrategyAuditableEnforcer(),
                 new OAuth20RegisteredServiceCipherExecutor(),
                 ticketRegistry,
-                new PrincipalResolver() {
-                    @Override
-                    public Principal resolve(Credential credential, Optional<Principal> principal, Optional<AuthenticationHandler> handler) {
-                        return new NullPrincipal();
-                    }
+                mockPrincipalResolver);
 
-                    @Override
-                    public boolean supports(Credential credential) {
-                        return true;
-                    }
-
-                    @Override
-                    public IPersonAttributeDao getAttributeRepository() {
-                        return null;
-                    }
-                });
-
-        val credentials = new UsernamePasswordCredentials(id, "secret");
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         nullPrincipalAuthenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNotNull(credentials.getUserProfile());
         assertEquals(id, credentials.getUserProfile().getId());
     }
-
-
 }
