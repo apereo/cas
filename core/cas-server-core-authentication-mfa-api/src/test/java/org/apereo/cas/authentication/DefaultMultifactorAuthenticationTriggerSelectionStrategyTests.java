@@ -22,16 +22,47 @@ import static org.mockito.Mockito.*;
  */
 @Tag("MFA")
 public class DefaultMultifactorAuthenticationTriggerSelectionStrategyTests {
-    @Test
-    public void verifyOperation() {
+    private static MultifactorAuthenticationTrigger getMultifactorAuthenticationTrigger() {
         val trigger = mock(MultifactorAuthenticationTrigger.class);
+        when(trigger.supports(any(), any(), any(), any())).thenReturn(true);
         when(trigger.isActivated(any(), any(), any(), any()))
             .thenReturn(Optional.of(new TestMultifactorAuthenticationProvider()));
+        return trigger;
+    }
 
+    @Test
+    public void verifyOperation() {
+        val trigger = getMultifactorAuthenticationTrigger();
         val strategy = new DefaultMultifactorAuthenticationTriggerSelectionStrategy(List.of(trigger));
         val result = strategy.resolve(new MockHttpServletRequest(), MultifactorAuthenticationTestUtils.getRegisteredService(),
             MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
             MultifactorAuthenticationTestUtils.getService("https://www.example.org"));
-        assertNotNull(result);
+        assertTrue(result.isPresent());
+    }
+
+    @Test
+    public void verifyNotSupportingTrigger() {
+        val trigger = getMultifactorAuthenticationTrigger();
+        when(trigger.supports(any(), any(), any(), any())).thenReturn(false);
+        val strategy = new DefaultMultifactorAuthenticationTriggerSelectionStrategy(List.of(trigger));
+        assertFalse(strategy.getMultifactorAuthenticationTriggers().isEmpty());
+        val registeredService = MultifactorAuthenticationTestUtils.getRegisteredService();
+        when(registeredService.getMultifactorPolicy().isIgnoreExecution()).thenReturn(true);
+        val result = strategy.resolve(new MockHttpServletRequest(), registeredService,
+            MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
+            MultifactorAuthenticationTestUtils.getService("https://www.example.org"));
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void verifyOperationIgnoringExecution() {
+        val trigger = getMultifactorAuthenticationTrigger();
+        val strategy = new DefaultMultifactorAuthenticationTriggerSelectionStrategy(List.of(trigger));
+        val registeredService = MultifactorAuthenticationTestUtils.getRegisteredService();
+        when(registeredService.getMultifactorPolicy().isIgnoreExecution()).thenReturn(true);
+        val result = strategy.resolve(new MockHttpServletRequest(), registeredService,
+            MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
+            MultifactorAuthenticationTestUtils.getService("https://www.example.org"));
+        assertTrue(result.isEmpty());
     }
 }
