@@ -170,7 +170,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
             builder.append(String.format(" Domain=%s;", cookie.getDomain()));
         }
         val path = StringUtils.removeEndIgnoreCase(StringUtils.defaultIfBlank(cookie.getPath(), DEFAULT_COOKIE_PATH), "/");
-        builder.append(String.format(" Path=%s;", path));
+        builder.append(String.format(" Path=%s;", StringUtils.defaultIfBlank(path, "/")));
 
         val sameSitePolicy = cookieGenerationContext.getSameSitePolicy().toLowerCase();
         switch (sameSitePolicy) {
