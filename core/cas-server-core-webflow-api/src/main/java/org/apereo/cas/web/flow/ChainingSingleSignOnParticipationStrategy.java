@@ -57,7 +57,7 @@ public class ChainingSingleSignOnParticipationStrategy implements SingleSignOnPa
         val supporters = getSupportingSingleSignOnParticipationStrategies(context);
         val result = supporters.stream().allMatch(p -> {
             val createCookieOnRenewedAuthentication = p.isCreateCookieOnRenewedAuthentication(context);
-            return createCookieOnRenewedAuthentication.equals(TriStateBoolean.TRUE);
+            return createCookieOnRenewedAuthentication.isTrue() || createCookieOnRenewedAuthentication.isUndefined();
         });
         return TriStateBoolean.fromBoolean(result);
     }
