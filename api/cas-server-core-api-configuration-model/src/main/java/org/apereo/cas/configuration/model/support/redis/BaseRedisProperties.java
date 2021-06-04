@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.redis;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -55,9 +56,10 @@ public class BaseRedisProperties implements Serializable {
     private int port = 6379;
 
     /**
-     * Connection timeout in milliseconds.
+     * Command timeout.
      */
-    private int timeout = 2000;
+    @DurationCapable
+    private String timeout = "PT60S";
 
     /**
      * Redis connection pool settings.
@@ -77,10 +79,17 @@ public class BaseRedisProperties implements Serializable {
     @NestedConfigurationProperty
     private RedisClusterProperties cluster = new RedisClusterProperties();
 
+
     /**
      * Whether or not to use SSL for connection factory.
      */
     private boolean useSsl;
+
+    /**
+     * Connection timeout.
+     */
+    @DurationCapable
+    private String connectTimeout = "PT10S";
 
     /**
      * Setting that describes how Lettuce routes read operations to replica nodes.
