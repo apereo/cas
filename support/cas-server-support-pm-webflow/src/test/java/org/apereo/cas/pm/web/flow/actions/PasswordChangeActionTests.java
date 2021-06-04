@@ -79,7 +79,7 @@ public class PasswordChangeActionTests extends BasePasswordManagementActionTests
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
         WebUtils.putCredential(context,
-            RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "P@ssword"));
+            RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Th!$isT3$t"));
 
         val changeReq = new PasswordChangeRequest();
         changeReq.setUsername("casuser");
