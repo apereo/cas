@@ -75,6 +75,7 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
         createTransitionForState(loadSurrogatesAction, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetSuccessId);
         createTransitionForState(loadSurrogatesAction, TRANSITION_ID_SURROGATE_VIEW, STATE_ID_SURROGATE_VIEW);
         createTransitionForState(loadSurrogatesAction, TRANSITION_ID_SKIP_SURROGATE, targetSuccessId);
+        createTransitionForState(loadSurrogatesAction, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, loadSurrogatesAction.getId(), true);
 
     }
