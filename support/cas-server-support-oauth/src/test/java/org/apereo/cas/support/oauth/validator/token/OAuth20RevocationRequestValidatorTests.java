@@ -53,6 +53,7 @@ public class OAuth20RevocationRequestValidatorTests {
             RequestValidatorTestUtils.SHARED_SECRET,
             CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN));
         when(servicesManager.getAllServices()).thenReturn(CollectionUtils.wrapList(supportingService));
+        when(servicesManager.getAllServicesOfType(any())).thenReturn(CollectionUtils.wrapList(supportingService));
 
         this.ticketRegistry = mock(TicketRegistry.class);
 
