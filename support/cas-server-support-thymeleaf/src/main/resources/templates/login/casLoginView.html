@@ -13,9 +13,11 @@
 <body class="login mdc-typography">
 <div layout:fragment="content" class="d-flex justify-content-center">
 
-    <div class="d-flex justify-content-center flex-md-row flex-column mdc-card mdc-card-content w-lg-25">
+    <div class="d-flex justify-content-center flex-md-row flex-column mdc-card mdc-card-content w-lg-25"
+         th:with="loginFormEnabled=${#strings.defaultString(#themes.code('cas.login-form.enabled'), 'true') == 'true'},
+                  loginFormViewable=${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
         <section id="loginForm"
-                 th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}"
+                 th:if="${loginFormViewable and loginFormEnabled}"
                  class="login-section login-form">
             <div th:replace="fragments/loginform :: loginform">
                 <a href="fragments/loginform.html">Login Form goes here</a>
