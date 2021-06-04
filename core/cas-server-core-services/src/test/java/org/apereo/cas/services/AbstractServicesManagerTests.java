@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link AbstractServicesManagerTests}.
@@ -65,6 +66,10 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         assertNotNull(servicesManager.findServiceByName(TEST));
         assertNotNull(servicesManager.findServiceByName(TEST, RegexRegisteredService.class));
         assertTrue(servicesManager.count() > 0);
+        assertTrue(!servicesManager.getAllServicesOfType(RegexRegisteredService.class).isEmpty());
+
+        val mockSvc = mock(RegisteredService.class);
+        assertTrue(servicesManager.getAllServicesOfType(mockSvc.getClass()).isEmpty());
     }
 
     @Test

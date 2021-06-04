@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("SuppressWarningsDeprecated")
 public class GroovyRegisteredServiceMultifactorPolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "GroovyRegisteredServiceMultifactorPolicyTests.json");
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -41,6 +42,7 @@ public class GroovyRegisteredServiceMultifactorPolicyTests {
         assertTrue(authz.getMultifactorAuthenticationProviders().contains("mfa-something"));
         assertTrue(authz.isBypassEnabled());
         assertFalse(authz.isForceExecution());
+        assertFalse(authz.isIgnoreExecution());
         assertTrue(authz.isBypassTrustedDeviceEnabled());
         assertNull(authz.getBypassPrincipalAttributeName());
         assertNull(authz.getBypassPrincipalAttributeValue());
