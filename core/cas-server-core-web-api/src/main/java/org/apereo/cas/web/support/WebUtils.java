@@ -1780,4 +1780,44 @@ public class WebUtils {
             .build();
         requestContext.getMessageContext().addMessage(msg);
     }
+
+    /**
+     * Put the logout POST url in the flow scope.
+     *
+     * @param requestContext the flow context
+     * @param postUrl the POST url
+     */
+    public static void putLogoutPostUrl(final RequestContext requestContext, final String postUrl) {
+        requestContext.getFlowScope().put("logoutPostUrl", postUrl);
+    }
+
+    /**
+     * Put the logout POST data in the flow scope.
+     *
+     * @param requestContext the flow context
+     * @param postData the POST data
+     */
+    public static void putLogoutPostData(final RequestContext requestContext, final Map<String, Object> postData) {
+        requestContext.getFlowScope().put("logoutPostData", postData);
+    }
+
+    /**
+     * Get the logout POST url from the flow scope.
+     *
+     * @param requestContext the flow context
+     * @return the POST url
+     */
+    public static String getLogoutPostUrl(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("logoutPostUrl", String.class);
+    }
+
+    /**
+     * Get the logout POST data from the flow scope.
+     *
+     * @param requestContext the flow context
+     * @return the POST data
+     */
+    public static Map<String, Object> getLogoutPostData(final RequestContext requestContext) {
+        return (Map<String, Object>) requestContext.getFlowScope().get("logoutPostData", Map.class);
+    }
 }
