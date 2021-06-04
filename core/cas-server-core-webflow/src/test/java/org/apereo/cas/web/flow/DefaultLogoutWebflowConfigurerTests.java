@@ -27,5 +27,6 @@ public class DefaultLogoutWebflowConfigurerTests extends BaseWebflowConfigurerTe
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_FRONT_LOGOUT));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_DO_LOGOUT));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_CONFIRM_LOGOUT_VIEW));
+        assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_POST_VIEW));
     }
 }
