@@ -14,6 +14,8 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.HashMap;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,6 +26,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowActions")
 public class FinishLogoutActionTests extends AbstractWebflowActionsTests {
+
+    private static final String URL = "https://ww.google.com";
+
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_FINISH_LOGOUT)
     private Action action;
@@ -42,8 +47,23 @@ public class FinishLogoutActionTests extends AbstractWebflowActionsTests {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(),
             new MockHttpServletRequest(), new MockHttpServletResponse()));
-        WebUtils.putLogoutRedirectUrl(context, "https://ww.google.com");
+        WebUtils.putLogoutRedirectUrl(context, URL);
         val result = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_REDIRECT, result.getId());
+    }
+
+    @Test
+    public void verifyLogoutPost() throws Exception {
+        val context = new MockRequestContext();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(),
+                new MockHttpServletRequest(), new MockHttpServletResponse()));
+        WebUtils.putLogoutPostUrl(context, URL);
+        val data = new HashMap<String, Object>();
+        data.put("SAMLResponse", "xyz");
+        WebUtils.putLogoutPostData(context, data);
+        val result = action.execute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_POST, result.getId());
+        assertEquals(URL, context.getFlowScope().get("originalUrl"));
+        assertEquals(data, context.getFlowScope().get("parameters"));
     }
 }

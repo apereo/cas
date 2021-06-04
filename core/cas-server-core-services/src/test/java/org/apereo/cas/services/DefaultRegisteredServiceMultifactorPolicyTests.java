@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DefaultRegisteredServiceMultifactorPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultRegisteredServiceMultifactorPolicy.json");
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -30,14 +31,13 @@ public class DefaultRegisteredServiceMultifactorPolicyTests {
         val policyWritten = new DefaultRegisteredServiceMultifactorPolicy();
         policyWritten.setPrincipalAttributeNameTrigger("trigger");
         policyWritten.setPrincipalAttributeValueToMatch("attribute");
+        policyWritten.setIgnoreExecution(true);
         val providers = new HashSet<String>();
         providers.add("providerOne");
         policyWritten.setMultifactorAuthenticationProviders(providers);
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
-
         val policyRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceMultifactorPolicy.class);
-
         assertEquals(policyWritten, policyRead);
     }
 }

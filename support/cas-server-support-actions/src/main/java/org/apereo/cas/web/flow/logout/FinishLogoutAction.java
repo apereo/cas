@@ -27,6 +27,14 @@ public class FinishLogoutAction extends AbstractLogoutAction {
         if (StringUtils.isNotBlank(logoutRedirect)) {
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REDIRECT);
         }
+        val logoutPostUrl = WebUtils.getLogoutPostUrl(context);
+        val logoutPostData = WebUtils.getLogoutPostData(context);
+        if (StringUtils.isNotBlank(logoutPostUrl) && logoutPostData != null) {
+            val flowScope = context.getFlowScope();
+            flowScope.put("originalUrl", logoutPostUrl);
+            flowScope.put("parameters", logoutPostData);
+            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_POST);
+        }
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINISH);
     }
 }

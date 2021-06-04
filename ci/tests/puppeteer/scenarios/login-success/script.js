@@ -16,7 +16,6 @@ const cas = require('../../cas.js');
     assert(title === "CAS - Central Authentication Service")
 
     const header = await cas.innerText(page, '#content div h2');
-
     assert(header === "Log In Successful")
 
     await browser.close();

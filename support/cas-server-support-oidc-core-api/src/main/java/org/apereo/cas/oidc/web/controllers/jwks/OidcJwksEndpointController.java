@@ -59,10 +59,8 @@ public class OidcJwksEndpointController extends BaseOAuth20Controller {
             val jsonWebKeySet = new JsonWebKeySet(jsonJwks);
 
             val servicesManager = getOAuthConfigurationContext().getServicesManager();
-            servicesManager.getAllServices()
+            servicesManager.getAllServicesOfType(OidcRegisteredService.class)
                 .stream()
-                .filter(s -> s instanceof OidcRegisteredService)
-                .map(s -> (OidcRegisteredService) s)
                 .filter(s -> StringUtils.isNotBlank(s.getJwks()))
                 .forEach(service -> {
                     val set = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service, getOAuthConfigurationContext().getApplicationContext());
