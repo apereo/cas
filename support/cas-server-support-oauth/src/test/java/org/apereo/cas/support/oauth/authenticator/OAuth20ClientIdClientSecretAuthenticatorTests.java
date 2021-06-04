@@ -1,25 +1,16 @@
 package org.apereo.cas.support.oauth.authenticator;
 
-import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.Credential;
+import lombok.val;
 import org.apereo.cas.authentication.principal.NullPrincipal;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
-import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutor;
-
-import lombok.val;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.RetryingTest;
-import org.mockito.Mock;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -27,18 +18,13 @@ import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.util.AopTestUtils;
-
-import java.util.Arrays;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -129,6 +115,7 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests extends BaseOAuth20Au
     @SuppressWarnings("ClassCanBeStatic")
     @Nested
     public class OAuth20ClientIdClientSecretAuthenticatorNullPrincipalTests {
+
         @Autowired
         private Authenticator oAuthClientAuthenticator;
 
