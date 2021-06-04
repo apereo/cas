@@ -47,7 +47,7 @@ public class DefaultMultifactorAuthenticationTriggerSelectionStrategyTests {
         val strategy = new DefaultMultifactorAuthenticationTriggerSelectionStrategy(List.of(trigger));
         assertFalse(strategy.getMultifactorAuthenticationTriggers().isEmpty());
         val registeredService = MultifactorAuthenticationTestUtils.getRegisteredService();
-        when(registeredService.getMultifactorPolicy().isIgnoreExecution()).thenReturn(true);
+        when(registeredService.getMultifactorPolicy().isBypassEnabled()).thenReturn(true);
         val result = strategy.resolve(new MockHttpServletRequest(), registeredService,
             MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
             MultifactorAuthenticationTestUtils.getService("https://www.example.org"));
@@ -59,7 +59,7 @@ public class DefaultMultifactorAuthenticationTriggerSelectionStrategyTests {
         val trigger = getMultifactorAuthenticationTrigger();
         val strategy = new DefaultMultifactorAuthenticationTriggerSelectionStrategy(List.of(trigger));
         val registeredService = MultifactorAuthenticationTestUtils.getRegisteredService();
-        when(registeredService.getMultifactorPolicy().isIgnoreExecution()).thenReturn(true);
+        when(registeredService.getMultifactorPolicy().isBypassEnabled()).thenReturn(true);
         val result = strategy.resolve(new MockHttpServletRequest(), registeredService,
             MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
             MultifactorAuthenticationTestUtils.getService("https://www.example.org"));

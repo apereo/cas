@@ -20,8 +20,7 @@ MFA can be triggered for a specific application registered inside the CAS servic
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
     "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ],
     "bypassEnabled": false,
-    "forceExecution": true,
-    "ignoreExecution": true
+    "forceExecution": true
   }
 }
 ```
@@ -32,6 +31,5 @@ The following fields are accepted by the policy definition
 |-----------------------|----------------------------------------------------------------------------
 | `multifactorAuthenticationProviders` | Set of multifactor provider ids that should trigger for this application.
 | `script`              | Path to a script, whether external or internal, to trigger multifactor authentication dynamically.
-| `ignoreExecution`     | Whether multifactor authentication should always be ignored for this application, ignoring the result of all other possible triggers.
 | `bypassEnabled`       | Whether multifactor authentication should be [bypassed](Configuring-Multifactor-Authentication-Bypass.html) for this service.
 | `forceExecution`      | Whether multifactor authentication should forcefully trigger, even if the existing authentication context can be satisfied without MFA.

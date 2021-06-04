@@ -5,6 +5,6 @@
   "name": "Sample",
   "multifactorPolicy": {
     "@class": "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
-    "ignoreExecution": true
+    "bypassEnabled": true
   }
 }
