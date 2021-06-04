@@ -43,7 +43,7 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolver extend
         val authentication = WebUtils.getAuthentication(context);
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
 
-        val result = registeredService != null && registeredService.getMultifactorPolicy().isIgnoreExecution()
+        val result = registeredService != null && registeredService.getMultifactorPolicy().isBypassEnabled()
             ? Optional.<MultifactorAuthenticationProvider>empty()
             : multifactorAuthenticationTrigger.isActivated(authentication, registeredService, request, service);
 
