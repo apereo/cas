@@ -1808,7 +1808,7 @@ public class WebUtils {
      * @return the POST url
      */
     public static String getLogoutPostUrl(final RequestContext requestContext) {
-        return (String) requestContext.getFlowScope().get("logoutPostUrl");
+        return requestContext.getFlowScope().get("logoutPostUrl", String.class);
     }
 
     /**
@@ -1818,6 +1818,6 @@ public class WebUtils {
      * @return the POST data
      */
     public static Map<String, Object> getLogoutPostData(final RequestContext requestContext) {
-        return (Map<String, Object>) requestContext.getFlowScope().get("logoutPostData");
+        return (Map<String, Object>) requestContext.getFlowScope().get("logoutPostData", Map.class);
     }
 }
