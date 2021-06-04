@@ -170,6 +170,18 @@ public interface ServicesManager extends Ordered {
     Collection<RegisteredService> getAllServices();
 
     /**
+     * Retrieve the collection of all registered services that are of the class type passed.
+     * Services that are returned are valid, non-expired, etc.
+     * Operation should perform no reloads, and must return a cached
+     * copy of services that are already loaded.
+     *
+     * @param <T>   the type parameter
+     * @param clazz type of registered service to return.
+     * @return the collection of all services that match the class type.
+     */
+    <T extends RegisteredService> Collection<T> getAllServicesOfType(Class<T> clazz);
+
+    /**
      * Gets services stream.
      * <p>
      * The returning stream may be bound to an IO channel (such as database connection),
