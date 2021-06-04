@@ -61,6 +61,14 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
     boolean isForceExecution();
 
     /**
+     * Whether multifactor authentication should never activate and trigger for this service,
+     * even if there are other triggers and conditions in the runtime that require
+     * and activate mfa.
+     * @return true/false
+     */
+    boolean isIgnoreExecution();
+
+    /**
      * Whether multifactor authentication should bypass trusted device registration,
      * and check for device records and/or skip prompt for registration.
      * @return true/false

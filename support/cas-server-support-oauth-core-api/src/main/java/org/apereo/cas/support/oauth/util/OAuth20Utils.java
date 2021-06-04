@@ -109,10 +109,8 @@ public class OAuth20Utils {
 
     private static OAuthRegisteredService getRegisteredOAuthServiceByPredicate(final ServicesManager servicesManager,
                                                                                final Predicate<OAuthRegisteredService> predicate) {
-        val services = servicesManager.getAllServices();
+        val services = servicesManager.getAllServicesOfType(OAuthRegisteredService.class);
         return services.stream()
-            .filter(OAuthRegisteredService.class::isInstance)
-            .map(OAuthRegisteredService.class::cast)
             .filter(predicate)
             .findFirst()
             .orElse(null);

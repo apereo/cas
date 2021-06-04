@@ -99,7 +99,7 @@ public class CasThemesConfiguration {
 
         val serviceThemeResolver = new RegisteredServiceThemeResolver(servicesManager.getObject(),
             authenticationRequestServiceSelectionStrategies.getObject(),
-            new CasConfigurationProperties(),
+            casProperties,
             serviceThemeResolverSupportedBrowsers.get().entrySet()
                 .stream()
                 .collect(Collectors.toMap(entry -> Pattern.compile(entry.getKey()), Map.Entry::getValue)));

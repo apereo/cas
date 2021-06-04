@@ -41,9 +41,9 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
 
     private final CasWebflowEventResolver selectiveResolver;
 
-    public DefaultCasDelegatingWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext,
+    public DefaultCasDelegatingWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext configurationContext,
                                                     final CasWebflowEventResolver selectiveResolver) {
-        super(webflowEventResolutionConfigurationContext);
+        super(configurationContext);
         this.selectiveResolver = selectiveResolver;
     }
 

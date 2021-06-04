@@ -22,6 +22,7 @@ import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,8 @@ import static org.mockito.Mockito.*;
 @Tag("Utility")
 public class WebUtilsTests {
 
+    private static final String URL = "https://logout.com";
+
     @Test
     public void verifyOperation() {
         val context = new MockRequestContext();
@@ -49,7 +52,7 @@ public class WebUtilsTests {
         val mockExecutionContext = new MockFlowExecutionContext(flowSession);
         context.setFlowExecutionContext(mockExecutionContext);
 
-        WebUtils.putLogoutRedirectUrl(context, "https://logout.com");
+        WebUtils.putLogoutRedirectUrl(context, URL);
         assertNotNull(WebUtils.getLogoutRedirectUrl(context, String.class));
         WebUtils.removeLogoutRedirectUrl(context);
         assertNull(WebUtils.getLogoutRedirectUrl(context, String.class));
@@ -112,5 +115,12 @@ public class WebUtilsTests {
         val ticketRegistrySupport = mock(TicketRegistrySupport.class);
         WebUtils.putTicketGrantingTicketInScopes(context, "TGT-XYZ123");
         assertNull(WebUtils.getPrincipalFromRequestContext(context, ticketRegistrySupport));
+
+        WebUtils.putLogoutPostUrl(context, URL);
+        assertEquals(URL, WebUtils.getLogoutPostUrl(context));
+        val data = new HashMap<String, Object>();
+        data.put("SAMLResponse", "xxx");
+        WebUtils.putLogoutPostData(context, data);
+        assertEquals(data, WebUtils.getLogoutPostData(context));
     }
 }
