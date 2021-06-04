@@ -162,7 +162,7 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_REDIRECT = "redirect";
 
     /**
-     * Transition id 'redirect' .
+     * Transition id 'post' .
      */
     String TRANSITION_ID_POST = "post";
 
