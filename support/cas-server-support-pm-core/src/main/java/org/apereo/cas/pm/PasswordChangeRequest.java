@@ -8,8 +8,6 @@ import lombok.Setter;
 
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link PasswordChangeRequest}.

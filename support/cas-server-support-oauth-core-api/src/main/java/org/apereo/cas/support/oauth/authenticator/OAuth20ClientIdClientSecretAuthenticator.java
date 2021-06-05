@@ -57,25 +57,20 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
     private final PrincipalResolver principalResolver;
 
     @Override
-    public void validate(final Credentials credentials, final WebContext context, final SessionStore sessionStore) throws CredentialsException {
+    public void validate(final Credentials credentials, final WebContext context,
+                         final SessionStore sessionStore) throws CredentialsException {
         LOGGER.debug("Authenticating credential [{}]", credentials);
-
         val upc = (UsernamePasswordCredentials) credentials;
         val id = upc.getUsername();
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
-        if (registeredService == null) {
-            LOGGER.debug("Unable to locate registered service for [{}]", id);
-            return;
-        }
-        if (canAuthenticate(context)) {
-            val service = this.webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
-            val audit = AuditableContext.builder()
-                .service(service)
-                .registeredService(registeredService)
-                .build();
-            val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
-            accessResult.throwExceptionIfNeeded();
+        val audit = AuditableContext.builder()
+            .registeredService(registeredService)
+            .build();
+        val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
+        accessResult.throwExceptionIfNeeded();
 
+        if (canAuthenticate(context)) {
+            val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
             validateCredentials(upc, registeredService, context, sessionStore);
 
             val credential = new UsernamePasswordCredential(upc.getUsername(), upc.getPassword());
@@ -83,16 +78,14 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
             val attributes = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
 
             val profile = new CommonProfile();
-            val username = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
-
             if (principal instanceof NullPrincipal) {
                 LOGGER.debug("No principal was resolved. Falling back to the username [{}] from the credentials.", id);
                 profile.setId(id);
             } else {
+                val username = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
                 profile.setId(username);
             }
-            LOGGER.debug("Created profile id [{}]", username);
-
+            LOGGER.debug("Created profile id [{}]", profile.getId());
             profile.addAttributes((Map) attributes);
             LOGGER.debug("Authenticated user profile [{}]", profile);
             credentials.setUserProfile(profile);
