@@ -154,7 +154,7 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
     }
 
-    @SuppressWarnings("NullPrincipalTestConfiguration")
+    @SuppressWarnings("ClassCanBeStatic")
     @Import(NullPrincipalTestConfiguration.class)
     @Nested
     public class NullPrincipalResolutionTests extends BaseOAuth20AuthenticatorTests {
