@@ -47,7 +47,7 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
     String getPrincipalAttributeValueToMatch();
 
     /**
-     * Indicates whether authentication should be skipped.
+     * Indicates whether multifactor authentication should be skipped.
      *
      * @return true/false
      */
@@ -59,14 +59,6 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
      * @return true/false
      */
     boolean isForceExecution();
-
-    /**
-     * Whether multifactor authentication should never activate and trigger for this service,
-     * even if there are other triggers and conditions in the runtime that require
-     * and activate mfa.
-     * @return true/false
-     */
-    boolean isIgnoreExecution();
 
     /**
      * Whether multifactor authentication should bypass trusted device registration,

@@ -9,12 +9,14 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 /**
  * This is {@link CasDocumentationApplication}.
@@ -23,7 +25,7 @@ import java.util.TreeSet;
  * @since 6.4.0
  */
 public class CasDocumentationApplication {
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws Exception {
         var results = CasConfigurationMetadataCatalog.query(
             ConfigurationMetadataCatalogQuery.builder()
                 .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.CAS)
@@ -61,6 +63,47 @@ public class CasDocumentationApplication {
         exportThirdPartyConfiguration(dataPath);
         exportRegisteredServiceProperties(dataPath);
         exportTemplateViews(projectRootDirectory, dataPath);
+        exportThemeProperties(projectRootDirectory, dataPath);
+    }
+
+    private static void exportThemeProperties(final String projectRootDirectory, final File dataPath) throws Exception {
+        var themeProps = new File(dataPath, "theme-properties");
+        if (themeProps.exists()) {
+            FileUtils.deleteQuietly(themeProps);
+        }
+        themeProps.mkdirs();
+        var uiFile = new File(themeProps, "config.yml");
+        var properties = new ArrayList<Map<?, ?>>();
+
+        var root = new File(projectRootDirectory, "support/cas-server-support-thymeleaf");
+        var file = new File(root, "src/main/resources/cas-theme-default.properties");
+        var lines = FileUtils.readLines(file, StandardCharsets.UTF_8);
+        var it = lines.iterator();
+        var comments = new StringBuilder();
+        var pattern = Pattern.compile("#*\\s*(cas.+)=(\\S+)*");
+
+        while (it.hasNext()) {
+            var ln = it.next();
+            var matcher = pattern.matcher(ln);
+            if (matcher.find()) {
+                var prop = matcher.group(1);
+                var value = StringUtils.defaultString(matcher.group(2));
+                var comm = comments.toString().stripLeading().trim();
+
+                var map = new LinkedHashMap<String, Object>();
+                map.put("name", prop);
+                map.put("value", value);
+                map.put("description", comm);
+                properties.add(map);
+
+                comments = new StringBuilder();
+            } else {
+                ln = ln.replace("# ", " ");
+                comments.append(ln);
+            }
+            it.remove();
+        }
+        CasConfigurationMetadataCatalog.export(uiFile, properties);
     }
 
     private static void exportTemplateViews(final String projectRootDirectory, final File dataPath) {

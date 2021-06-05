@@ -13,6 +13,7 @@ const cas = require('../../cas.js');
     assert(tgc.length !== 0);
     
     const title = await page.title();
+    console.log(title);
     assert(title === "CAS - Central Authentication Service")
 
     const header = await cas.innerText(page, '#content div h2');

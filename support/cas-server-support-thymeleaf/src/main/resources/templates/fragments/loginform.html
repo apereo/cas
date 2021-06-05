@@ -12,8 +12,11 @@
 
 <body>
 <main role="main" class="container mt-3 mb-3">
-    <!-- Login form template begins here -->
-    <div th:fragment="loginform" class="d-flex flex-column justify-content-between m-auto">
+    
+    <div th:fragment="loginform" class="d-flex flex-column justify-content-between m-auto"
+         th:with="loginFormEnabled=${#strings.defaultString(#themes.code('cas.login-form.enabled'), 'true') == 'true'},
+                  loginFormViewable=${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
+
         <div th:if="${delegatedAuthenticationProviderPrimary == null}">
             <div th:if="${!#strings.isEmpty(#themes.code('cas.hero-banner.file'))}">
                 <p>
@@ -28,16 +31,16 @@
         </div>
 
         <div class="form-wrapper">
-            <form method="post" id="fm1" th:object="${credential}" action="login">
 
-                <span id="login-form-controls" th:unless="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
+            <form method="post" id="fm1" th:object="${credential}" action="login">
+                <span id="login-form-controls" th:unless="${loginFormViewable or loginFormEnabled}">
                     <div id="loginErrorsPanel" class="banner banner-danger banner-dismissible" th:if="${#fields.hasErrors('*')}">
                         <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
                         <!--<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>-->
                     </div>
                 </span>
 
-                <span id="login-form-controls" th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
+                <span id="login-form-controls" th:if="${loginFormViewable and loginFormEnabled}">
                     <div th:if="${existingSingleSignOnSessionAvailable}">
                         <i class="mdi mdi-alert-decagram"></i>&nbsp;
                         <span id="existingSsoMsg" class="mdc-button__label"
@@ -276,7 +279,7 @@
             </form>
 
             <div id="x509Login" th:if="${x509ClientAuthLoginEndpointUrl}">
-                <span th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
+                <span th:if="${loginFormViewable and loginFormEnabled}">
                     <hr class="my-4"/>
                     <script th:inline="javascript">
                         /*<![CDATA[*/
@@ -294,7 +297,7 @@
                 </span>
             </div>
 
-            <hr th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}" class="my-4"/>
+            <hr th:if="${loginFormViewable and loginFormEnabled}" class="my-4"/>
 
             <span id="webauthnLoginPanel" th:if="${webAuthnPrimaryAuthenticationEnabled}">
                     <script type="text/javascript">
@@ -305,7 +308,7 @@
                     <hr class="my-4"/>
             </span>
 
-            <span th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
+            <span th:if="${loginFormViewable and loginFormEnabled}">
                 <div th:if="${'true' == #strings.defaultString(#themes.code('cas.pm-links.enabled'), 'true')}"
                      th:replace="fragments/pmlinks :: pmlinks"/>
             </span>
@@ -329,10 +332,10 @@
             </script>
 
         </div>
-        <span th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
+
+        <span th:if="${loginFormViewable and loginFormEnabled}">
             <div th:replace="fragments/loginsidebar :: loginsidebar"/>
         </span>
-        </div>
 
     </div>
 </main>

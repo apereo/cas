@@ -88,7 +88,7 @@ public class MultifactorAuthenticationTestUtils {
         when(access.isServiceAccessAllowed()).thenReturn(true);
         when(service.getAccessStrategy()).thenReturn(access);
         val mfaPolicy = mock(RegisteredServiceMultifactorPolicy.class);
-        when(mfaPolicy.isIgnoreExecution()).thenReturn(false);
+        when(mfaPolicy.isBypassEnabled()).thenReturn(false);
         when(mfaPolicy.getFailureMode())
             .thenReturn(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.valueOf(failureMode));
         when(service.getMultifactorPolicy()).thenReturn(mfaPolicy);
