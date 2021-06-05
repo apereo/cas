@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -29,7 +28,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -63,7 +62,7 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolverTests e
         WebUtils.putAuthentication(tgt.getAuthentication(), context);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
         val service = RegisteredServiceTestUtils.getRegisteredService(Map.of());
-        service.setMultifactorPolicy(new DefaultRegisteredServiceMultifactorPolicy().setIgnoreExecution(true));
+        service.setMultifactorPolicy(new DefaultRegisteredServiceMultifactorPolicy().setBypassEnabled(true));
         servicesManager.save(service);
         WebUtils.putRegisteredService(context, service);
 

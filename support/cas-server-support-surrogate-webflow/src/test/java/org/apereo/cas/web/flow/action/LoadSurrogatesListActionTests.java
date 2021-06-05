@@ -41,20 +41,16 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
     private Action loadSurrogatesListAction;
 
     @Test
-    public void verifyGetListView() {
-        try {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+    public void verifyGetListView() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-            WebUtils.putRequestSurrogateAuthentication(context, true);
-            WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+        WebUtils.putRequestSurrogateAuthentication(context, true);
+        WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
-            assertEquals(SurrogateWebflowConfigurer.TRANSITION_ID_SURROGATE_VIEW, loadSurrogatesListAction.execute(context).getId());
-            assertNotNull(WebUtils.getSurrogateAuthenticationAccounts(context));
-        } catch (final Exception e) {
-            throw new AssertionError(e);
-        }
+        assertEquals(SurrogateWebflowConfigurer.TRANSITION_ID_SURROGATE_VIEW, loadSurrogatesListAction.execute(context).getId());
+        assertNotNull(WebUtils.getSurrogateAuthenticationAccounts(context));
     }
 
     @Test
@@ -84,6 +80,35 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
 
         WebUtils.putAuthenticationResultBuilder(builder, context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, loadSurrogatesListAction.execute(context).getId());
+    }
+
+    @Test
+    public void verifyAuthenticateNotAuthorized() throws Exception {
+        val context = new MockRequestContext();
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
+
+        val attributes = new LinkedHashMap<String, List<Object>>();
+        attributes.put(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, List.of(true));
+        attributes.putAll(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap());
+
+        val p = CoreAuthenticationTestUtils.getPrincipal("casuser", attributes);
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(p), context);
+
+        val request = new MockHttpServletRequest();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+
+        val creds = new SurrogateUsernamePasswordCredential();
+        creds.setPassword("Mellon");
+        creds.setUsername("casuser");
+        creds.setSurrogateUsername("unknown-user");
+        WebUtils.putCredential(context, creds);
+
+        val builder = mock(AuthenticationResultBuilder.class);
+        when(builder.getInitialAuthentication()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getAuthentication("casuser")));
+        when(builder.collect(any(Authentication.class))).thenReturn(builder);
+
+        WebUtils.putAuthenticationResultBuilder(builder, context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, loadSurrogatesListAction.execute(context).getId());
     }
 
     @Test

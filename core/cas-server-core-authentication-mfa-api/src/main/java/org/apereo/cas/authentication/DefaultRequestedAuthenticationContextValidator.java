@@ -48,7 +48,7 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
                                                                                final RegisteredService registeredService,
                                                                                final Authentication authentication,
                                                                                final Service service) {
-        if (registeredService != null && registeredService.getMultifactorPolicy().isIgnoreExecution()) {
+        if (registeredService != null && registeredService.getMultifactorPolicy().isBypassEnabled()) {
             LOGGER.debug("Multifactor authentication execution is ignored for [{}]", registeredService.getName());
             return toSuccessfulResult();
         }

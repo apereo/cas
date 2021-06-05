@@ -64,7 +64,7 @@ is a significant framework upgrade, the change should remain largely invisible t
 
 CAS acting as a [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) is now able to provide basic support
 for browser's local storage as a means to track authentication requests. Furthermore, the handling of SAML2 authentication requests is 
-now slightly modified to recognize the presence of a single sign-on sessions to produce a SAML2 response directly off of the existing
+now slightly modified to recognize the presence of single sign-on sessions to produce a SAML2 response directly off of the existing
 session without having to redirect to CAS itself for a ticket.
                                                
 ### Thymeleaf User Interface Pages
@@ -83,6 +83,7 @@ A number of improvements are now implemented for a better use experience while b
 - Additional details on properties that support the [Expression Language](../configuration/Configuration-Spring-Expressions.html) 
   are now displayed as tooltips.
 - The setting owner is now listed, where available, for each listed property.
+- Settings that control the behavior of a CAS user interface theme are now automatically documented.
 - Supported [registered service properties](../services/Configuring-Service-Custom-Properties.html) are
   now automatically included in the documentation. Relevant properties are also filtered 
   by group and listed for each appropriate delegated identity provider.
@@ -109,6 +110,7 @@ A number of improvements are now implemented for a better use experience while b
 - Mockito
 - Amazon SDK
 - OpenSAML
+- Hibernate
 - Micrometer
 - Pac4j
 - Apache Tomcat
