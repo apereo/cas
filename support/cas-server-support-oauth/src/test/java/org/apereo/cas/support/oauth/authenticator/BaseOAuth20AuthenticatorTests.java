@@ -38,6 +38,7 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -47,6 +48,7 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import lombok.val;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.junit.jupiter.api.BeforeEach;
+import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -61,6 +63,7 @@ import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 
@@ -94,6 +97,10 @@ public abstract class BaseOAuth20AuthenticatorTests {
     @Autowired
     @Qualifier("defaultPrincipalResolver")
     protected PrincipalResolver defaultPrincipalResolver;
+
+    @Autowired
+    @Qualifier("oAuthClientAuthenticator")
+    protected Authenticator oAuthClientAuthenticator;
 
     protected OAuthRegisteredService service;
 
@@ -205,6 +212,18 @@ public abstract class BaseOAuth20AuthenticatorTests {
         when(accessToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
 
         return accessToken;
+    }
+
+    protected static OAuth20Code getCode() {
+        val tgt = new MockTicketGrantingTicket("casuser");
+        val service = RegisteredServiceTestUtils.getService();
+        val oauthCode = mock(OAuth20Code.class);
+        when(oauthCode.getId()).thenReturn(UUID.randomUUID().toString());
+        when(oauthCode.getTicketGrantingTicket()).thenReturn(tgt);
+        when(oauthCode.getAuthentication()).thenReturn(tgt.getAuthentication());
+        when(oauthCode.getService()).thenReturn(service);
+        when(oauthCode.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
+        return oauthCode;
     }
 
     protected static OAuth20RefreshToken getRefreshToken(final OAuthRegisteredService service) {

@@ -3,26 +3,10 @@ package org.apereo.cas.logging;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
-
-import org.apache.logging.log4j.message.SimpleMessage;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.springframework.test.context.TestPropertySource;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 import lombok.val;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.impl.Log4jLogEvent;
+import org.apache.logging.log4j.message.SimpleMessage;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -33,6 +17,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CloudWatchAppenderTests}.

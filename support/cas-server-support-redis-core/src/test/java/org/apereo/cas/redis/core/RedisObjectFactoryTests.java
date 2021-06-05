@@ -7,6 +7,7 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import io.lettuce.core.ReadFrom;
 import lombok.Getter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -91,8 +92,8 @@ public class RedisObjectFactoryTests {
             .setName("redis-slave2")
             .setReplicaOf("redis_server_master"));
 
-        props.setTimeout("");
-        props.setConnectTimeout("");
+        props.setTimeout(StringUtils.EMPTY);
+        props.setConnectTimeout(StringUtils.EMPTY);
         props.getCluster().setAdaptiveTopologyRefresh(true);
         props.getCluster().setDynamicRefreshSources(true);
         props.getCluster().setMaxRedirects(3);
