@@ -42,6 +42,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
         service.setServiceId("https://callback.example.org");
 
         when(serviceManager.getAllServices()).thenReturn((Collection) CollectionUtils.toCollection(service));
+        when(serviceManager.getAllServicesOfType(any())).thenReturn((Collection) CollectionUtils.toCollection(service));
         val v = new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(serviceManager, new WebApplicationServiceFactory(),
             new RegisteredServiceAccessStrategyAuditableEnforcer());
 

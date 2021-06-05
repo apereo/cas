@@ -4,6 +4,6 @@
     "--cas.view.customLoginFormFields.phone.messageBundleKey=customLoginFormField.phone",
     "--cas.view.customLoginFormFields.phone.required=true",
     
-    "--cas.message-bundle.base-names=file:${PWD}/ci/tests/puppeteer/scenarios/custom-fields-login/messages,classpath:messages"
+    "--cas.message-bundle.base-names=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/messages,classpath:messages"
   ]
 }

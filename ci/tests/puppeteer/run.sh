@@ -2,13 +2,15 @@
 
 scenario="$1"
 if [[ -z "$scenario" ]] ; then
-  echo Usage: ./ci/tests/puppeteer/run.sh ${PWD}/ci/tests/puppeteer/scenarios/[scenario folder]
+  echo "Usage: ./ci/tests/puppeteer/run.sh ${PWD}/ci/tests/puppeteer/scenarios/[scenario name]"
   exit 1
 fi
 if [[ ! -d "${scenario}" ]]; then
   echo "${scenario} doesn't exist."
   exit 1;
 fi
+
+scenarioName=${scenario##*/}
 
 # note if debugging you might need to call
 # await page.setDefaultNavigationTimeout(0);
@@ -65,6 +67,7 @@ fi
 
 initScript=$(cat "${config}" | jq -j '.initScript // empty')
 initScript="${initScript//\$\{PWD\}/${PWD}}"
+initScript="${initScript//\$\{SCENARIO\}/${scenarioName}}"
 [ -n "${initScript}" ] && \
   echo "Initialization script: ${initScript}" && \
   chmod +x "${initScript}" && \
@@ -76,6 +79,7 @@ runArgs="${runArgs//\$\{PWD\}/${PWD}}"
 
 properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
 properties="${properties//\$\{PWD\}/${PWD}}"
+properties="${properties//\$\{SCENARIO\}/${scenarioName}}"
 properties="${properties//\%\{random\}/${random}}"
 if [[ "$DEBUG" == "debug" ]]; then
   echo -e "Enabling debugger on port $DEBUG_PORT"
@@ -106,6 +110,8 @@ echo -e "*************************************\n"
 
 exitScript=$(cat "${config}" | jq -j '.exitScript // empty')
 exitScript="${exitScript//\$\{PWD\}/${PWD}}"
+exitScript="${exitScript//\$\{SCENARIO\}/${scenarioName}}"
+
 [ -n "${exitScript}" ] && \
   echo "Exit script: ${exitScript}" && \
   chmod +x "${exitScript}" && \

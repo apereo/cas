@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.resolver.impl.mfa;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.util.CollectionUtils;
@@ -29,9 +30,9 @@ import java.util.Set;
 public class DefaultMultifactorAuthenticationProviderWebflowEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
     private final MultifactorAuthenticationTrigger multifactorAuthenticationTrigger;
 
-    public DefaultMultifactorAuthenticationProviderWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext,
+    public DefaultMultifactorAuthenticationProviderWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext configurationContext,
                                                                         final MultifactorAuthenticationTrigger multifactorAuthenticationTrigger) {
-        super(webflowEventResolutionConfigurationContext);
+        super(configurationContext);
         this.multifactorAuthenticationTrigger = multifactorAuthenticationTrigger;
     }
 
@@ -42,7 +43,10 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolver extend
         val authentication = WebUtils.getAuthentication(context);
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
 
-        val result = multifactorAuthenticationTrigger.isActivated(authentication, registeredService, request, service);
+        val result = registeredService != null && registeredService.getMultifactorPolicy().isBypassEnabled()
+            ? Optional.<MultifactorAuthenticationProvider>empty()
+            : multifactorAuthenticationTrigger.isActivated(authentication, registeredService, request, service);
+
         return result
             .map(provider -> {
                 LOGGER.trace("Building event based on the authentication provider [{}] and service [{}]", provider, registeredService);

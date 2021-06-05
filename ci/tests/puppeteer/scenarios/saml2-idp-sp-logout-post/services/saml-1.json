@@ -1,0 +1,11 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "https://samltest.id/.+",
+  "name" : "SAML",
+  "id" : 1,
+  "evaluationOrder" : 1,
+  "metadataLocation" : "https://samltest.id/saml/sp",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}

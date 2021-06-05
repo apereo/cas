@@ -99,6 +99,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     protected Cookie createCookie(@NonNull final String cookieValue) {
         val c = super.createCookie(cookieValue);
         c.setComment(cookieGenerationContext.getComment());
+        c.setPath(cleanCookiePath(c.getPath()));
         return c;
     }
 
@@ -169,7 +170,8 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         if (StringUtils.isNotBlank(cookie.getDomain())) {
             builder.append(String.format(" Domain=%s;", cookie.getDomain()));
         }
-        builder.append(String.format(" Path=%s;", StringUtils.defaultIfBlank(cookie.getPath(), DEFAULT_COOKIE_PATH)));
+        val path = cleanCookiePath(cookie.getPath());
+        builder.append(String.format(" Path=%s;", path));
 
         val sameSitePolicy = cookieGenerationContext.getSameSitePolicy().toLowerCase();
         switch (sameSitePolicy) {
@@ -196,5 +198,10 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         LOGGER.trace("Adding cookie header as [{}]", value);
         response.addHeader("Set-Cookie", value);
         return cookie;
+    }
+
+    private static String cleanCookiePath(final String givenPath) {
+        val path = StringUtils.removeEndIgnoreCase(StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH), "/");
+        return StringUtils.defaultIfBlank(path, "/");
     }
 }

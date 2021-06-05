@@ -17,7 +17,7 @@
     "--logging.level.org.apereo.cas=debug",
     
     "--cas.service-registry.core.init-from-json=true",
-    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/pac4j-delegated-login-access-strategy/services"
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ]
 }
 

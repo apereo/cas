@@ -7,6 +7,7 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import io.lettuce.core.ReadFrom;
 import lombok.Getter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -64,6 +65,42 @@ public class RedisObjectFactoryTests {
         val connection = RedisObjectFactory.newRedisConnectionFactory(props, true);
         assertNotNull(connection);
     }
+
+    @Test
+    public void verifyNonDefaultClientConnectionOptions() {
+        val props = new BaseRedisProperties();
+        props.getCluster().getNodes().add(new RedisClusterNodeProperties()
+            .setType("master")
+            .setPort(6379)
+            .setId(UUID.randomUUID().toString())
+            .setName("redis-master")
+            .setHost("localhost"));
+
+        props.getCluster().getNodes().add(new RedisClusterNodeProperties()
+            .setType("slave")
+            .setPort(6380)
+            .setHost("localhost")
+            .setId(UUID.randomUUID().toString())
+            .setName("redis-slave1")
+            .setReplicaOf("redis_server_master"));
+
+        props.getCluster().getNodes().add(new RedisClusterNodeProperties()
+            .setType("slave")
+            .setPort(6381)
+            .setHost("localhost")
+            .setId(UUID.randomUUID().toString())
+            .setName("redis-slave2")
+            .setReplicaOf("redis_server_master"));
+
+        props.setTimeout(StringUtils.EMPTY);
+        props.setConnectTimeout(StringUtils.EMPTY);
+        props.getCluster().setAdaptiveTopologyRefresh(true);
+        props.getCluster().setDynamicRefreshSources(true);
+        props.getCluster().setMaxRedirects(3);
+        val connection = RedisObjectFactory.newRedisConnectionFactory(props, true);
+        assertNotNull(connection);
+    }
+
 
     @Test
     public void validateRedisReadFromValues() {

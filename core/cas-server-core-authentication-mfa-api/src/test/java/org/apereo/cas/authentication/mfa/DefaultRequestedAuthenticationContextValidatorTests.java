@@ -5,9 +5,12 @@ import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.bypass.AuthenticationMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
+import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.validation.Assertion;
@@ -48,13 +51,50 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
 
-        val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(Optional.empty(),
-            applicationContext, BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED.toString());
+        val servicesManager = mock(ServicesManager.class);
+        val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(servicesManager,
+            Optional.empty(), applicationContext,
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED.toString());
         val assertion = mock(Assertion.class);
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(CASUSER);
         when(assertion.getPrimaryAuthentication()).thenReturn(auth);
         val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest());
         assertTrue(result.isSuccess());
+    }
+
+    @Test
+    public void verifyExecutionIgnoredPerService() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
+
+        val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        val props = MultifactorAuthenticationTestUtils.getAuthenticationBypassProperties();
+        val bypass = new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId());
+        provider.setBypassEvaluator(bypass);
+        val servicesManager = mock(ServicesManager.class);
+        val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(servicesManager,
+            Optional.of(provider), applicationContext,
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED.toString());
+
+        val mfaPolicy = mock(RegisteredServiceMultifactorPolicy.class);
+        when(mfaPolicy.isBypassEnabled()).thenReturn(true);
+        val service = MultifactorAuthenticationTestUtils.getService(UUID.randomUUID().toString());
+        val registeredService = MultifactorAuthenticationTestUtils.getRegisteredService(service.getId(),
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED.toString());
+        when(registeredService.getMultifactorPolicy()).thenReturn(mfaPolicy);
+        when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
+
+        val assertion = mock(Assertion.class);
+        when(assertion.getService()).thenReturn(service);
+        val principal = MultifactorAuthenticationTestUtils.getPrincipal(CASUSER, CollectionUtils.wrap(CASUSER, AUTH_ATTRIBUTES));
+        val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, AUTH_ATTRIBUTES);
+        when(assertion.getPrimaryAuthentication()).thenReturn(auth);
+        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest());
+        assertTrue(result.isSuccess());
+        assertTrue(result.getContextId().isEmpty());
     }
 
     @Test
@@ -69,8 +109,10 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         val props = MultifactorAuthenticationTestUtils.getAuthenticationBypassProperties();
         val bypass = new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId());
         provider.setBypassEvaluator(bypass);
-        val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(Optional.of(provider),
-            applicationContext, BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED.toString());
+        val servicesManager = mock(ServicesManager.class);
+        val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(servicesManager,
+            Optional.of(provider), applicationContext,
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED.toString());
         val assertion = mock(Assertion.class);
         val principal = MultifactorAuthenticationTestUtils.getPrincipal(CASUSER, CollectionUtils.wrap(CASUSER, AUTH_ATTRIBUTES));
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, AUTH_ATTRIBUTES);
@@ -92,8 +134,10 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         props.setAuthenticationAttributeValue("Not Bypassed");
         val bypass = new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(props, TestMultifactorAuthenticationProvider.ID);
         provider.setBypassEvaluator(bypass);
-        val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(Optional.of(provider),
-            applicationContext, BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED.toString());
+        val servicesManager = mock(ServicesManager.class);
+        val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(servicesManager,
+            Optional.of(provider), applicationContext,
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED.toString());
         val assertion = mock(Assertion.class);
         val principal = MultifactorAuthenticationTestUtils.getPrincipal(CASUSER);
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, AUTH_ATTRIBUTES);
@@ -116,8 +160,10 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         props.setAuthenticationAttributeValue("Not Bypassed");
         val bypass = new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(props, TestMultifactorAuthenticationProvider.ID);
         provider.setBypassEvaluator(bypass);
-        val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(Optional.of(provider),
-            applicationContext, BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED.toString());
+        val servicesManager = mock(ServicesManager.class);
+        val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(servicesManager,
+            Optional.of(provider), applicationContext,
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED.toString());
         val assertion = mock(Assertion.class);
         val principal = MultifactorAuthenticationTestUtils.getPrincipal(CASUSER);
 
@@ -140,9 +186,11 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
 
-        val validator = MultifactorAuthenticationTestUtils
-            .mockRequestAuthnContextValidator(Optional.of(new TestMultifactorAuthenticationProvider()),
-                applicationContext, BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED.toString());
+        val servicesManager = mock(ServicesManager.class);
+        val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(servicesManager,
+            Optional.of(new TestMultifactorAuthenticationProvider()), applicationContext,
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED.toString());
+
         val assertion = mock(Assertion.class);
         val principal = MultifactorAuthenticationTestUtils.getPrincipal(CASUSER);
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, AUTH_ATTRIBUTES);
@@ -164,9 +212,12 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         casProperties.getAuthn().getMfa().getCore().setGlobalFailureMode(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.OPEN);
         val failureEvaluator = new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties);
         provider.setFailureModeEvaluator(failureEvaluator);
-        val validator = MultifactorAuthenticationTestUtils
-            .mockRequestAuthnContextValidator(Optional.of(provider),
-                applicationContext, BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED.toString());
+
+        val servicesManager = mock(ServicesManager.class);
+        val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(servicesManager,
+            Optional.of(provider), applicationContext,
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED.toString());
+
         val assertion = mock(Assertion.class);
         val principal = MultifactorAuthenticationTestUtils.getPrincipal(CASUSER);
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, AUTH_ATTRIBUTES);
@@ -187,12 +238,16 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         val provider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(TestUnavailableMultifactorAuthenticationProvider.ID,
             applicationContext);
         val casProperties = new CasConfigurationProperties();
-        casProperties.getAuthn().getMfa().getCore().setGlobalFailureMode(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.CLOSED);
+        casProperties.getAuthn().getMfa().getCore()
+            .setGlobalFailureMode(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.CLOSED);
         val failureEvaluator = new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties);
         ((TestUnavailableMultifactorAuthenticationProvider) provider.get()).setFailureModeEvaluator(failureEvaluator);
-        val validator = MultifactorAuthenticationTestUtils
-            .mockRequestAuthnContextValidator(Optional.of(new TestMultifactorAuthenticationProvider()),
-                applicationContext, BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED.toString());
+
+        val servicesManager = mock(ServicesManager.class);
+        val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(servicesManager,
+            Optional.of(new TestMultifactorAuthenticationProvider()), applicationContext,
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED.toString());
+
         val assertion = mock(Assertion.class);
         val principal = MultifactorAuthenticationTestUtils.getPrincipal(CASUSER);
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, AUTH_ATTRIBUTES);
@@ -215,9 +270,11 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
             .setGlobalFailureMode(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.CLOSED);
         val failureEvaluator = new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties);
         provider.setFailureModeEvaluator(failureEvaluator);
-        val validator = MultifactorAuthenticationTestUtils
-            .mockRequestAuthnContextValidator(Optional.of(provider),
-                applicationContext, BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.OPEN.toString());
+
+        val servicesManager = mock(ServicesManager.class);
+        val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(servicesManager,
+            Optional.of(provider), applicationContext,
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.OPEN.toString());
         val assertion = mock(Assertion.class);
         val service = MultifactorAuthenticationTestUtils.getService("service");
         when(assertion.getService()).thenReturn(service);
@@ -241,9 +298,11 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         casProperties.getAuthn().getMfa().getCore().setGlobalFailureMode(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.OPEN);
         val failureEvaluator = new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties);
         provider.setFailureModeEvaluator(failureEvaluator);
-        val validator = MultifactorAuthenticationTestUtils
-            .mockRequestAuthnContextValidator(Optional.of(provider), applicationContext,
-                BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.CLOSED.toString());
+
+        val servicesManager = mock(ServicesManager.class);
+        val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(servicesManager,
+            Optional.of(provider), applicationContext,
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.CLOSED.toString());
         val assertion = mock(Assertion.class);
         val service = MultifactorAuthenticationTestUtils.getService("service");
         when(assertion.getService()).thenReturn(service);
