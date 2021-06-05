@@ -13,8 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultRequestedAuthenticationContextValidator}.
@@ -109,7 +111,9 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
         val providers = providerResult
             .map(provider -> {
                 if (provider instanceof ChainingMultifactorAuthenticationProvider) {
-                    return ChainingMultifactorAuthenticationProvider.class.cast(provider).getMultifactorAuthenticationProviders();
+                    val chain = ChainingMultifactorAuthenticationProvider.class.cast(provider);
+                    return chain.getMultifactorAuthenticationProviders().stream()
+                        .filter(p -> p.equals(provider)).collect(Collectors.toList());
                 }
                 return List.of(provider);
             })
@@ -121,7 +125,9 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
             return toSuccessfulResult();
         }
 
+        LOGGER.debug("Multifactor providers eligible for validation are [{}]", providers);
         return providers.stream()
+            .sorted(Comparator.comparing(MultifactorAuthenticationProvider::getOrder))
             .map(provider -> authenticationContextValidator.validate(authentication,
                 provider.getId(),
                 Optional.ofNullable(registeredService)))

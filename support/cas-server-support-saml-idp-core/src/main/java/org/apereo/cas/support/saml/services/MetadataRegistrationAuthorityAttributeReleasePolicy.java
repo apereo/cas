@@ -10,7 +10,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.core.xml.ElementExtensibleXMLObject;
 import org.opensaml.saml.ext.saml2mdrpi.RegistrationInfo;
@@ -28,7 +27,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @ToString(callSuper = true)
 @Getter
 @Setter

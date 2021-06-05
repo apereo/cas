@@ -84,6 +84,8 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
         if (satisfiedProviders != null && !satisfiedProviders.isEmpty()) {
             val providers = satisfiedProviders.toArray(MultifactorAuthenticationProvider[]::new);
             OrderComparator.sortIfNecessary(providers);
+            LOGGER.debug("Satisfied authentication context(s) are [{}]", satisfiedProviders);
+
             val result = Arrays.stream(providers)
                 .filter(p -> p.equals(provider) || p.getOrder() >= provider.getOrder())
                 .findFirst();
@@ -101,6 +103,8 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
     private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(final Authentication authentication,
                                                                                               final Collection<MultifactorAuthenticationProvider> providers) {
         val contexts = CollectionUtils.toCollection(authentication.getAttributes().get(this.authenticationContextAttribute));
+        LOGGER.debug("Available authentication context(s) are [{}]", contexts);
+        
         return providers
             .stream()
             .map(p -> {
