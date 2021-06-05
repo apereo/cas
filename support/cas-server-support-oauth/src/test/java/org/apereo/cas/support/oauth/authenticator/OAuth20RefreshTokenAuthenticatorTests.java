@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutor;
@@ -42,8 +43,7 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
     public void verifyAuthentication() {
         val refreshToken = getRefreshToken(serviceWithoutSecret);
         ticketRegistry.addTicket(refreshToken);
-
-
+        
         val credentials = new UsernamePasswordCredentials("clientWithoutSecret", refreshToken.getId());
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name());
@@ -87,8 +87,7 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
         val unsupportedClientCtx = new JEEContext(unsupportedClientRequest, new MockHttpServletResponse());
         authenticator.validate(unsupportedClientCredentials, unsupportedClientCtx, JEESessionStore.INSTANCE);
         assertNull(unsupportedClientCredentials.getUserProfile());
-
-
+        
         val unknownClientCredentials = new UsernamePasswordCredentials("unknownclient", refreshToken.getId());
         val unknownclientRequest = new MockHttpServletRequest();
         unknownclientRequest.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name());
@@ -96,7 +95,7 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
         unknownclientRequest.addParameter(OAuth20Constants.CLIENT_ID, "unknownclient");
 
         val unknownclientCtx = new JEEContext(unknownclientRequest, new MockHttpServletResponse());
-        authenticator.validate(unknownClientCredentials, unknownclientCtx, JEESessionStore.INSTANCE);
+        assertThrows(UnauthorizedServiceException.class, () -> authenticator.validate(unknownClientCredentials, unknownclientCtx, JEESessionStore.INSTANCE));
         assertNull(unknownClientCredentials.getUserProfile());
     }
 }
