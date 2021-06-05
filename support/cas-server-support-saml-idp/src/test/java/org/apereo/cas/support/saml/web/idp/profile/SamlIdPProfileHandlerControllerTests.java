@@ -90,7 +90,7 @@ public class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         val context = new MessageContext();
         context.setMessage(authnRequest);
         assertThrows(SAMLException.class,
-            () -> controller.verifyAuthenticationContextSignature(context, request, authnRequest, adaptor));
+            () -> controller.verifyAuthenticationContextSignature(context, request, authnRequest, adaptor, service));
     }
 
 

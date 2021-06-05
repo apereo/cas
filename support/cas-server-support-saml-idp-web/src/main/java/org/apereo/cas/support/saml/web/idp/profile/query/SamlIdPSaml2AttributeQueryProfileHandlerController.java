@@ -46,15 +46,15 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
         val config = getConfigurationContext();
         try {
             val issuer = Objects.requireNonNull(query).getIssuer().getValue();
-            val service = verifySamlRegisteredService(issuer);
-            val adaptor = getSamlMetadataFacadeFor(service, query);
+            val registeredService = verifySamlRegisteredService(issuer);
+            val adaptor = getSamlMetadataFacadeFor(registeredService, query);
             if (adaptor.isEmpty()) {
                 throw new UnauthorizedServiceException(
                     UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer);
             }
 
             val facade = adaptor.get();
-            verifyAuthenticationContextSignature(ctx, request, query, facade);
+            verifyAuthenticationContextSignature(ctx, request, query, facade, registeredService);
 
             val availableAttributes = new LinkedHashMap<String, Object>();
             val finalAttributes = new LinkedHashMap<String, Object>();
@@ -77,9 +77,9 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
                 }
             });
             LOGGER.trace("Final attributes for attribute query are [{}]", finalAttributes);
-            val casAssertion = buildCasAssertion(issuer, service, finalAttributes);
+            val casAssertion = buildCasAssertion(issuer, registeredService, finalAttributes);
             config.getResponseBuilder().build(query, request, response, casAssertion,
-                service, facade, SAMLConstants.SAML2_SOAP11_BINDING_URI, ctx);
+                registeredService, facade, SAMLConstants.SAML2_SOAP11_BINDING_URI, ctx);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             request.setAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR,
