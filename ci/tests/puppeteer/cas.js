@@ -50,7 +50,7 @@ exports.inputValue = async(page, selector) => {
 }
 
 exports.loginWith = async(page, user, password) => {
-    console.log(`Logging in with ${user} and {$password}`);
+    console.log(`Logging in with ${user} and ${password}`);
     await page.type('#username', user);
     await page.type('#password', password);
     await page.keyboard.press('Enter');
