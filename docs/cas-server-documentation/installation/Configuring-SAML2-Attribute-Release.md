@@ -121,7 +121,8 @@ via CAS properties.
 
 Attribute friendly names can be specified per relying party in the service registry, as well as globally via CAS settings. 
 If there is no friendly name defined for the attribute, the 
-attribute name will be used instead in its place. Note that the name of the attribute is one that is designed to be released to the service provider,
+attribute name will be used instead in its place. Note that the name of the 
+attribute is one that is designed to be released to the service provider,
 specially if the original attribute is *mapped* to a different name.
 
 ```json
@@ -140,8 +141,10 @@ specially if the original attribute is *mapped* to a different name.
 
 ## InCommon Research and Scholarship
 
-A specific attribute release policy is available to release the [attribute bundles](https://spaces.internet2.edu/display/InCFederation/Research+and+Scholarship+Attribute+Bundle)
-needed for InCommon Research and Scholarship service providers using the entity attribute value `http://id.incommon.org/category/research-and-scholarship`:
+A specific attribute release policy is available to release 
+the [attribute bundles](https://spaces.internet2.edu/display/InCFederation/Research+and+Scholarship+Attribute+Bundle)
+needed for InCommon Research and Scholarship service providers using the entity 
+attribute value `http://id.incommon.org/category/research-and-scholarship`:
 
 ```json
 {
@@ -167,7 +170,8 @@ Attributes authorized for release are set to be `eduPersonPrincipalName`, `eduPe
 ## REFEDS Research and Scholarship
 
 A specific attribute release policy is available to release the [attribute bundles](https://refeds.org/category/research-and-scholarship)
-needed for REFEDS Research and Scholarship service providers using the entity attribute value `http://refeds.org/category/research-and-scholarship`:
+needed for REFEDS Research and Scholarship service providers using 
+the entity attribute value `http://refeds.org/category/research-and-scholarship`:
 
 ```json
 {
@@ -230,7 +234,8 @@ This policy allows a Groovy script to calculate the collection of released attri
 }
 ```
 
-The configuration of this component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
+The configuration of this component qualifies to use 
+the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
 
 The outline of the script may be designed as:
 
@@ -239,7 +244,7 @@ import java.util.*
 import org.apereo.cas.support.saml.services.*
 import org.apereo.cas.support.saml.*
 
-def Map<String, Object> run(final Object... args) {
+Map<String, Object> run(final Object... args) {
     def attributes = args[0]
     def service = args[1]
     def resolver = args[2]
@@ -311,7 +316,8 @@ policy may be used to release a collection of allowed attributes to entity ids g
 
 ## Entity Attributes Filter
 
-This attribute release policy authorizes the release of defined attributes, provided the accompanying metadata for the service provider contains attributes that match certain values.
+This attribute release policy authorizes the release of defined attributes, provided the accompanying 
+metadata for the service provider contains attributes that match certain values.
 
 ```json
 {
@@ -332,9 +338,10 @@ This attribute release policy authorizes the release of defined attributes, prov
 
 The specification of `entityAttributeFormat` is optional.
 
-## Metadata Requested Attributes Filter
+## Metadata Requested Attributes
 
-This attribute release policy authorizes the release of defined attributes, based on the accompanying metadata for the service provider having requested attributes as part of its `AttributeConsumingService` element.
+This attribute release policy authorizes the release of defined attributes, based on the accompanying 
+metadata for the service provider having requested attributes as part of its `AttributeConsumingService` element.
 
 ```json
 {
@@ -351,11 +358,35 @@ This attribute release policy authorizes the release of defined attributes, base
 ```
 
 The `useFriendlyName` allows the filter to compare the requested attribute's friendly name with the resolved attribute.
+
+## Metadata Registration Authority
+
+This attribute release policy authorizes the release of a subset of attributes requested as extensions of 
+the SAML2 authentication request. The intersection of requested attributes and those allowed by the 
+attribute release policy explicitly is evaluated for the final attribute release phase:
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicy",
+    "useFriendlyName" : false
+  }
+}
+```
+
+The `useFriendlyName` allows the filter to compare the requested attribute's friendly name with the resolved attribute.
+
 
 ## Authentication Request Requested Attributes Filter
 
-This attribute release policy authorizes the release of a subset of attributes requested as extensions of 
-the SAML2 authentication request. The intersection of requested attributes and those allowed by the attribute release policy explicitly is evaluated for the final attribute release phase:
+This attribute release policy authorizes the release of a subset of attributes requested as extensions of
+the SAML2 authentication request. The intersection of requested attributes and those allowed by 
+the attribute release policy explicitly is evaluated for the final attribute release phase:
 
 ```json
 {
@@ -366,9 +397,10 @@ the SAML2 authentication request. The intersection of requested attributes and t
   "metadataLocation": "path/to/metadata.xml",
   "attributeReleasePolicy": {
     "@class": "org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicy",
-    "useFriendlyName" : false
+    "registrationAuthority" : "regex-pattern-to-match",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ]
   }
 }
 ```
 
-The `useFriendlyName` allows the filter to compare the requested attribute's friendly name with the resolved attribute.
+The `registrationAuthority` accepts regular expression patterns to filter metadata registration authorities.

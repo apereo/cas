@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.services.AuthnRequestRequestedAttributesAttri
 import org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicyTests;
+import org.apereo.cas.support.saml.services.MetadataRegistrationAuthorityAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.RefedsRSAttributeReleasePolicyTests;
@@ -134,6 +135,7 @@ import org.junit.platform.suite.api.Suite;
     SamlRegisteredServiceMetadataHealthIndicatorTests.class,
     SamlTemplatesVelocityEngineTests.class,
     SamlProfileSamlAuthNStatementBuilderTests.class,
+    MetadataRegistrationAuthorityAttributeReleasePolicyTests.class,
     SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests.class,
     SSOSamlIdPPostProfileHandlerControllerWithBrowserStorageTests.class,
     SamlIdPProfileHandlerControllerTests.class,
