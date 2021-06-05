@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredService;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 @Getter
+@Slf4j
 public class DefaultMultifactorAuthenticationTriggerSelectionStrategy implements MultifactorAuthenticationTriggerSelectionStrategy {
     private final Collection<MultifactorAuthenticationTrigger> multifactorAuthenticationTriggers;
 
@@ -27,6 +29,11 @@ public class DefaultMultifactorAuthenticationTriggerSelectionStrategy implements
                                                                final RegisteredService registeredService,
                                                                final Authentication authentication,
                                                                final Service service) {
+        if (registeredService != null && registeredService.getMultifactorPolicy().isBypassEnabled()) {
+            LOGGER.debug("Multifactor authentication policy for [{}] will ignore trigger executions", registeredService.getName());
+            return Optional.empty();
+        }
+
         for (val trigger : multifactorAuthenticationTriggers) {
             if (!trigger.supports(request, registeredService, authentication, service)) {
                 continue;

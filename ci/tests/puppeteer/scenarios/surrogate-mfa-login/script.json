@@ -15,7 +15,7 @@
     "--cas.authn.mfa.simple.mail.text=CAS token is %s",
     "--cas.authn.mfa.simple.mail.attribute-name=email",
 
-    "--cas.authn.attribute-repository.json[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/surrogate-mfa-login/attribute-repository.json"
+    "--cas.authn.attribute-repository.json[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attribute-repository.json"
   ],
   "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
 }

@@ -8,7 +8,7 @@
 
     "--cas.service-registry.core.init-from-json=true",
     "--cas.authn.mfa.web-authn.crypto.enabled=false",
-    "--cas.authn.mfa.web-authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/webauthn-login/accounts.json",
+    "--cas.authn.mfa.web-authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=health,webAuthnDevices",

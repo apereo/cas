@@ -1,0 +1,11 @@
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "https://example.com",
+  "name" : "CAS",
+  "id" : 2,
+  "evaluationOrder" : 2,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  },
+  "logoutType": "FRONT_CHANNEL"
+}

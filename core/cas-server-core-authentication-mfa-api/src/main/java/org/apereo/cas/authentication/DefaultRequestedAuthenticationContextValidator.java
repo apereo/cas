@@ -48,12 +48,17 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
                                                                                final RegisteredService registeredService,
                                                                                final Authentication authentication,
                                                                                final Service service) {
-        val providerResult = multifactorTriggerSelectionStrategy.resolve(request, registeredService, authentication, service);
-        if (providerResult.isEmpty()) {
-            LOGGER.debug("No particular authentication context is required for this request");
+        if (registeredService != null && registeredService.getMultifactorPolicy().isBypassEnabled()) {
+            LOGGER.debug("Multifactor authentication execution is ignored for [{}]", registeredService.getName());
             return toSuccessfulResult();
         }
-        
+
+        val providerResult = multifactorTriggerSelectionStrategy.resolve(request, registeredService, authentication, service);
+        if (providerResult.isEmpty()) {
+            LOGGER.debug("No authentication context is required for this request");
+            return toSuccessfulResult();
+        }
+
         val provider = providerResult.get();
         if (provider.isAvailable(registeredService)) {
             val bypassEvaluator = provider.getBypassEvaluator();

@@ -57,7 +57,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'adopt'
       - id: print-categories
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios | jq
       - id: get-categories
         run: echo "::set-output name=scenarios::$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios)]}"
 

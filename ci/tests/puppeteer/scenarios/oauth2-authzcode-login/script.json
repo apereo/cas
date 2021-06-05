@@ -13,10 +13,10 @@
     "--cas.http-web-request.cors.allow-headers[0]=*",
     
     "--cas.service-registry.core.init-from-json=true",
-    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/oauth2-authzcode-login/services"
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],
-  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/oauth2-authzcode-login/init.sh",
-  "exitScript": "${PWD}/ci/tests/puppeteer/scenarios/oauth2-authzcode-login/exit.sh"
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "exitScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/exit.sh"
 }
 
 

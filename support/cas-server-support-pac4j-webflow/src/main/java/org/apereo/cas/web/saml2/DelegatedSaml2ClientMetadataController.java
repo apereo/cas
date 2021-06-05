@@ -63,6 +63,7 @@ public class DelegatedSaml2ClientMetadataController {
     /**
      * Gets first idp metadata.
      *
+     * @param force the force
      * @return the first service provider metadata
      */
     @GetMapping("/sp/idp/metadata")
@@ -92,6 +93,7 @@ public class DelegatedSaml2ClientMetadataController {
      * Gets idp metadata by name.
      *
      * @param client the client
+     * @param force  the force
      * @return the service provider metadata by name
      */
     @GetMapping("/sp/{client}/idp/metadata")
