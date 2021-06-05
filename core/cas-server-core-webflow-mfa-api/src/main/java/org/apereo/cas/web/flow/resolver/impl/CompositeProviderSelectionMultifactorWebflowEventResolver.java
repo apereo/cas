@@ -11,7 +11,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.webflow.execution.Event;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.Collection;
 
 /**
@@ -24,8 +23,8 @@ import java.util.Collection;
 public class CompositeProviderSelectionMultifactorWebflowEventResolver extends SelectiveMultifactorAuthenticationProviderWebflowEventResolver {
 
     public CompositeProviderSelectionMultifactorWebflowEventResolver(
-        final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext) {
-        super(webflowEventResolutionConfigurationContext);
+        final CasWebflowEventResolutionConfigurationContext configurationContext) {
+        super(configurationContext);
     }
 
     @Override

@@ -11,9 +11,9 @@ import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -31,8 +31,55 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
 
     private final MultifactorAuthenticationContextValidator authenticationContextValidator;
 
-    private static AuthenticationContextValidationResult toSuccessfulResult() {
+    /**
+     * To successful result.
+     *
+     * @return the authentication context validation result
+     */
+    protected static AuthenticationContextValidationResult toSuccessfulResult() {
         return AuthenticationContextValidationResult.builder().success(true).build();
+    }
+
+    /**
+     * Validate multifactor provider bypass.
+     *
+     * @param provider          the provider
+     * @param registeredService the registered service
+     * @param authentication    the authentication
+     * @param service           the service
+     * @param request           the request
+     * @return the authentication context validation result
+     */
+    protected static AuthenticationContextValidationResult validateMultifactorProviderBypass(final MultifactorAuthenticationProvider provider,
+                                                                                             final RegisteredService registeredService,
+                                                                                             final Authentication authentication,
+                                                                                             final Service service,
+                                                                                             final HttpServletRequest request) {
+        if (provider.isAvailable(registeredService)) {
+            val bypassEvaluator = provider.getBypassEvaluator();
+            if (bypassEvaluator != null) {
+                if (!bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request)) {
+                    LOGGER.debug("MFA provider [{}] should be bypassed for this service request [{}]", provider, service);
+                    bypassEvaluator.rememberBypass(authentication, provider);
+                    return toSuccessfulResult();
+                }
+                if (bypassEvaluator.isMultifactorAuthenticationBypassed(authentication, provider.getId())) {
+                    LOGGER.debug("Authentication attempt indicates that MFA is bypassed for this request for [{}]", provider);
+                    bypassEvaluator.rememberBypass(authentication, provider);
+                    return toSuccessfulResult();
+                }
+            }
+        } else {
+            val failure = provider.getFailureModeEvaluator().evaluate(registeredService, provider);
+            if (failure != BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.CLOSED) {
+                return toSuccessfulResult();
+            }
+        }
+        return toFailureResult();
+    }
+
+    private static AuthenticationContextValidationResult toFailureResult() {
+        return AuthenticationContextValidationResult.builder().success(false).build();
     }
 
     @Override
@@ -59,34 +106,32 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
             return toSuccessfulResult();
         }
 
-        val provider = providerResult.get();
-        if (provider.isAvailable(registeredService)) {
-            val bypassEvaluator = provider.getBypassEvaluator();
-            if (bypassEvaluator != null) {
-                if (!bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request)) {
-                    LOGGER.debug("MFA provider [{}] should be bypassed for this service request [{}]", provider, service);
-                    bypassEvaluator.rememberBypass(authentication, provider);
-                    return toSuccessfulResult();
+        val providers = providerResult
+            .map(provider -> {
+                if (provider instanceof ChainingMultifactorAuthenticationProvider) {
+                    return ChainingMultifactorAuthenticationProvider.class.cast(provider).getMultifactorAuthenticationProviders();
                 }
-                if (bypassEvaluator.isMultifactorAuthenticationBypassed(authentication, provider.getId())) {
-                    LOGGER.debug("Authentication attempt indicates that MFA is bypassed for this request for [{}]", provider);
-                    bypassEvaluator.rememberBypass(authentication, provider);
-                    return toSuccessfulResult();
-                }
-            }
-        } else {
-            val failure = provider.getFailureModeEvaluator().evaluate(registeredService, provider);
-            if (failure != BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.CLOSED) {
-                return toSuccessfulResult();
-            }
-        }
-        val result = authenticationContextValidator.validate(authentication,
-            providerResult.map(MultifactorAuthenticationProvider::getId).orElse(StringUtils.EMPTY),
-            Optional.ofNullable(registeredService));
+                return List.of(provider);
+            })
+            .orElse(List.of());
 
-        return AuthenticationContextValidationResult.builder()
-            .success(result.isSuccess())
-            .contextId(result.getProvider().map(MultifactorAuthenticationProvider::getId))
-            .build();
+        if (providers.stream()
+            .map(provider -> validateMultifactorProviderBypass(provider, registeredService, authentication, service, request))
+            .allMatch(AuthenticationContextValidationResult::isSuccess)) {
+            return toSuccessfulResult();
+        }
+
+        return providers.stream()
+            .map(provider -> authenticationContextValidator.validate(authentication,
+                provider.getId(),
+                Optional.ofNullable(registeredService)))
+            .filter(MultifactorAuthenticationContextValidationResult::isSuccess)
+            .findAny()
+            .map(result -> AuthenticationContextValidationResult.builder()
+                .success(result.isSuccess())
+                .contextId(result.getProvider().map(MultifactorAuthenticationProvider::getId))
+                .build())
+            .map(AuthenticationContextValidationResult.class::cast)
+            .orElseGet(DefaultRequestedAuthenticationContextValidator::toFailureResult);
     }
 }

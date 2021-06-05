@@ -13,7 +13,9 @@ import org.springframework.core.OrderComparator;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -53,8 +55,8 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
      */
     @Override
     public MultifactorAuthenticationContextValidationResult validate(final Authentication authentication,
-                                                                    final String requestedContext,
-                                                                    final Optional<RegisteredService> service) {
+                                                                     final String requestedContext,
+                                                                     final Optional<RegisteredService> service) {
         val attributes = authentication.getAttributes();
         val ctxAttr = attributes.get(this.authenticationContextAttribute);
         val contexts = CollectionUtils.toCollection(ctxAttr);
@@ -92,18 +94,23 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
                     .success(true).provider(requestedProvider).build();
             }
         }
-        LOGGER.debug("No multifactor providers could be located to satisfy the requested context for [{}]", provider);
+        LOGGER.warn("No multifactor providers could be located to satisfy the requested context for [{}]", provider);
         return MultifactorAuthenticationContextValidationResult.builder().success(false).provider(requestedProvider).build();
     }
 
     private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(final Authentication authentication,
                                                                                               final Collection<MultifactorAuthenticationProvider> providers) {
         val contexts = CollectionUtils.toCollection(authentication.getAttributes().get(this.authenticationContextAttribute));
-        if (contexts == null || contexts.isEmpty()) {
-            LOGGER.debug("No authentication context could be determined based on authentication attribute [{}]", this.authenticationContextAttribute);
-            return null;
-        }
-        return providers.stream()
+        return providers
+            .stream()
+            .map(p -> {
+                if (p instanceof ChainingMultifactorAuthenticationProvider) {
+                    return ((ChainingMultifactorAuthenticationProvider) p).getMultifactorAuthenticationProviders();
+                }
+                return List.of(p);
+            })
+            .flatMap(Collection::stream)
+            .sorted(Comparator.comparing(MultifactorAuthenticationProvider::getOrder))
             .filter(p -> contexts.contains(p.getId()))
             .collect(Collectors.toCollection(LinkedHashSet::new));
     }
