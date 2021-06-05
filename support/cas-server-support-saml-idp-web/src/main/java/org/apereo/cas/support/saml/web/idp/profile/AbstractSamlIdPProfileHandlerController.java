@@ -476,7 +476,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         }
 
         val facade = adaptor.get();
-        verifyAuthenticationContextSignature(authenticationContext, request, authnRequest, facade);
+        verifyAuthenticationContextSignature(authenticationContext, request, authnRequest, facade, registeredService);
         SamlUtils.logSamlObject(configurationContext.getOpenSamlConfigBean(), authnRequest);
         return Pair.of(registeredService, facade);
     }
@@ -488,36 +488,40 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param request               the request
      * @param authnRequest          the authn request
      * @param adaptor               the adaptor
+     * @param registeredService     the registered service
      * @throws Exception the exception
      */
     protected void verifyAuthenticationContextSignature(final Pair<? extends SignableSAMLObject, MessageContext> authenticationContext,
                                                         final HttpServletRequest request, final RequestAbstractType authnRequest,
-                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws Exception {
+                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                        final SamlRegisteredService registeredService) throws Exception {
         val ctx = authenticationContext.getValue();
-        verifyAuthenticationContextSignature(ctx, request, authnRequest, adaptor);
+        verifyAuthenticationContextSignature(ctx, request, authnRequest, adaptor, registeredService);
     }
 
     /**
      * Verify authentication context signature.
      *
-     * @param ctx          the authentication context
-     * @param request      the request
-     * @param authnRequest the authn request
-     * @param adaptor      the adaptor
+     * @param ctx               the authentication context
+     * @param request           the request
+     * @param authnRequest      the authn request
+     * @param adaptor           the adaptor
+     * @param registeredService the registered service
      * @throws Exception the exception
      */
     protected void verifyAuthenticationContextSignature(final MessageContext ctx,
                                                         final HttpServletRequest request,
                                                         final RequestAbstractType authnRequest,
-                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws Exception {
+                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                        final SamlRegisteredService registeredService) throws Exception {
         if (!SAMLBindingSupport.isMessageSigned(ctx)) {
             LOGGER.trace("The authentication context is not signed");
-            if (adaptor.isAuthnRequestsSigned()) {
+            if (adaptor.isAuthnRequestsSigned() && !registeredService.isSkipValidatingAuthnRequest()) {
                 LOGGER.error("Metadata for [{}] says authentication requests are signed, yet request is not", adaptor.getEntityId());
                 throw new SAMLException("Request is not signed but should be");
             }
-            LOGGER.trace("Request is not signed, so there is no need to verify its signature.");
-        } else {
+            LOGGER.trace("Request is not signed or validation is skipped, so there is no need to verify its signature.");
+        } else if (!registeredService.isSkipValidatingAuthnRequest()) {
             LOGGER.trace("The authentication context is signed; Proceeding to validate signatures...");
             configurationContext.getSamlObjectSignatureValidator().verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, ctx);
         }

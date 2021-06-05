@@ -97,6 +97,8 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     private boolean skipGeneratingTransientNameId;
 
+    private boolean skipValidatingAuthnRequest;
+
     private boolean signResponses = true;
 
     private boolean encryptAssertions;
