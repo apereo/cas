@@ -2,7 +2,7 @@
   "dependencies": "yubikey",
   "properties": [
     "--cas.service-registry.core.init-from-json=true",
-    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/mfa-ignored-byservice/services",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
     
     "--cas.authn.mfa.triggers.global.global-provider-id=mfa-yubikey",
     

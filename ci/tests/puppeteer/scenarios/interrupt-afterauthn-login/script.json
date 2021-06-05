@@ -1,6 +1,6 @@
 {
   "dependencies": "interrupt-webflow",
   "properties": [
-    "--cas.interrupt.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/interrupt-afterauthn-login/accounts.json"
+    "--cas.interrupt.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
   ]
 }
