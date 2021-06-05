@@ -85,6 +85,6 @@ public class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
         val chain = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
         chain.addPolicies(new LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 10, 0));
         assertFalse(chain.getPolicies().isEmpty());
-        assertEquals(TriStateBoolean.UNDEFINED, chain.getCreateCookieOnRenewedAuthentication());
+        assertEquals(TriStateBoolean.TRUE, chain.getCreateCookieOnRenewedAuthentication());
     }
 }

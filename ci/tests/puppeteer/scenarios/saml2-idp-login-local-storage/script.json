@@ -7,7 +7,7 @@
     "--cas.authn.attribute-repository.stub.attributes.sn=CAS",
 
     "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp/%{random}",
-    "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/saml2-idp-login-local-storage/saml-md",
+    "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
     "--cas.authn.saml-idp.core.session-storage-type=BROWSER_SESSION_STORAGE",
 
     "--cas.server.name=https://localhost:8443",
@@ -15,7 +15,7 @@
     "--cas.server.scope=example.net",
 
     "--cas.service-registry.core.init-from-json=true",
-    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/saml2-idp-login-local-storage/services"
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],
-  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/saml2-idp-login-local-storage/init.sh"
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }

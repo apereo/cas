@@ -5,6 +5,6 @@
     "--cas.authn.mfa.inwebo.service-id=7046",
     "--cas.authn.mfa.inwebo.site-alias=3cd94e791bef73bad0e25bce8d47f86a",
     "--cas.authn.mfa.inwebo.client-certificate.passphrase=itsmycert",
-    "--cas.authn.mfa.inwebo.client-certificate.certificate.location=file:${PWD}/ci/tests/puppeteer/scenarios/mfa-inwebo-push/castest.p12"
+    "--cas.authn.mfa.inwebo.client-certificate.certificate.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/castest.p12"
   ]
 }
