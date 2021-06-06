@@ -49,7 +49,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         WebUtils.putRequestSurrogateAuthentication(context, true);
         WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
-        assertEquals(SurrogateWebflowConfigurer.TRANSITION_ID_SURROGATE_VIEW, loadSurrogatesListAction.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SURROGATE_VIEW, loadSurrogatesListAction.execute(context).getId());
         assertNotNull(WebUtils.getSurrogateAuthenticationAccounts(context));
     }
 
@@ -138,6 +138,6 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         when(builder.collect(any(Authentication.class))).thenReturn(builder);
 
         WebUtils.putAuthenticationResultBuilder(builder, context);
-        assertEquals(SurrogateWebflowConfigurer.TRANSITION_ID_SKIP_SURROGATE, loadSurrogatesListAction.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SKIP_SURROGATE, loadSurrogatesListAction.execute(context).getId());
     }
 }

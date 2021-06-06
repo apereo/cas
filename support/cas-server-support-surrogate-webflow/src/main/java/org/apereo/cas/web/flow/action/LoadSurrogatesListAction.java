@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -66,9 +67,9 @@ public class LoadSurrogatesListAction extends AbstractAction {
                 WebUtils.removeRequestSurrogateAuthenticationRequest(requestContext);
                 LOGGER.trace("Attempting to load surrogates...");
                 if (loadSurrogates(requestContext)) {
-                    return new Event(this, SurrogateWebflowConfigurer.TRANSITION_ID_SURROGATE_VIEW);
+                    return new Event(this, CasWebflowConstants.TRANSITION_ID_SURROGATE_VIEW);
                 }
-                return new EventFactorySupport().event(this, SurrogateWebflowConfigurer.TRANSITION_ID_SKIP_SURROGATE);
+                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SKIP_SURROGATE);
             }
 
             val currentCredential = WebUtils.getCredential(requestContext);
