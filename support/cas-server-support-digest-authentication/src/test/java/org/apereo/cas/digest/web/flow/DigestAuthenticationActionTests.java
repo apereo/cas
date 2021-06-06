@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasMultifactorAuthenticationWebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 }, properties = "cas.authn.digest.users.casuser=1234567890")
-@Tag("WebflowActions")
+@Tag("WebflowAuthenticationActions")
 public class DigestAuthenticationActionTests {
     @Autowired
     @Qualifier("digestAuthenticationAction")

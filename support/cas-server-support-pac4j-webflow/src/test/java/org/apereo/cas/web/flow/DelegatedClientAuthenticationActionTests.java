@@ -73,7 +73,7 @@ import static org.springframework.webflow.execution.RequestContextHolder.*;
  * @since 3.5.2
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
-@Tag("WebflowActions")
+@Tag("WebflowAuthenticationActions")
 @Slf4j
 public class DelegatedClientAuthenticationActionTests {
     @Autowired

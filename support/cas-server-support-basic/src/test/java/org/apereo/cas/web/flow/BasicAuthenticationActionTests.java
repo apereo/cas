@@ -82,7 +82,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryTestConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class
 })
-@Tag("WebflowActions")
+@Tag("WebflowAuthenticationActions")
 public class BasicAuthenticationActionTests {
     @Autowired
     @Qualifier("basicAuthenticationAction")
