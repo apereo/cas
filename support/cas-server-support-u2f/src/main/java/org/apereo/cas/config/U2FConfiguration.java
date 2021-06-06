@@ -38,7 +38,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "u2fConfiguration", proxyBeanMethods = false)
+@Configuration(value = "u2fConfiguration", proxyBeanMethods = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class U2FConfiguration {
@@ -69,9 +69,7 @@ public class U2FConfiguration {
     @ConditionalOnMissingBean(name = "u2fDeviceRepository")
     @Bean
     @RefreshScope
-    @Autowired
-    public U2FDeviceRepository u2fDeviceRepository(
-        @Qualifier("u2fRegistrationRecordCipherExecutor") final CipherExecutor u2fRegistrationRecordCipherExecutor) {
+    public U2FDeviceRepository u2fDeviceRepository() {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
 
         val requestStorage = Caffeine.newBuilder()
@@ -82,26 +80,26 @@ public class U2FConfiguration {
             return new U2FJsonResourceDeviceRepository(requestStorage,
                 u2f.getJson().getLocation(),
                 u2f.getCore().getExpireDevices(),
-                u2f.getCore().getExpireDevicesTimeUnit(), u2fRegistrationRecordCipherExecutor);
+                u2f.getCore().getExpireDevicesTimeUnit(), u2fRegistrationRecordCipherExecutor());
         }
 
         if (u2f.getGroovy().getLocation() != null) {
             return new U2FGroovyResourceDeviceRepository(requestStorage,
                 u2f.getGroovy().getLocation(),
                 u2f.getCore().getExpireDevices(),
-                u2f.getCore().getExpireDevicesTimeUnit(), u2fRegistrationRecordCipherExecutor);
+                u2f.getCore().getExpireDevicesTimeUnit(), u2fRegistrationRecordCipherExecutor());
         }
 
         if (StringUtils.isNotBlank(u2f.getRest().getUrl())) {
             return new U2FRestResourceDeviceRepository(requestStorage,
                 u2f.getCore().getExpireDevices(), u2f.getCore().getExpireDevicesTimeUnit(),
-                u2f.getRest(), u2fRegistrationRecordCipherExecutor);
+                u2f.getRest(), u2fRegistrationRecordCipherExecutor());
         }
 
         val userStorage = Caffeine.newBuilder()
                 .expireAfterWrite(u2f.getCore().getExpireDevices(), u2f.getCore().getExpireDevicesTimeUnit())
                 .<String, List<U2FDeviceRegistration>>build(key -> new ArrayList<>(0));
-        return new U2FInMemoryDeviceRepository(userStorage, requestStorage, u2fRegistrationRecordCipherExecutor);
+        return new U2FInMemoryDeviceRepository(userStorage, requestStorage, u2fRegistrationRecordCipherExecutor());
     }
 
     @Bean
