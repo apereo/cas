@@ -67,9 +67,8 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
             .registeredService(registeredService)
             .build();
         val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
-        accessResult.throwExceptionIfNeeded();
 
-        if (canAuthenticate(context)) {
+        if (!accessResult.isExecutionFailure() && canAuthenticate(context)) {
             val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
             validateCredentials(upc, registeredService, context, sessionStore);
 

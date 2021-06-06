@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
-import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutor;
@@ -95,7 +94,7 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
         unknownclientRequest.addParameter(OAuth20Constants.CLIENT_ID, "unknownclient");
 
         val unknownclientCtx = new JEEContext(unknownclientRequest, new MockHttpServletResponse());
-        assertThrows(UnauthorizedServiceException.class, () -> authenticator.validate(unknownClientCredentials, unknownclientCtx, JEESessionStore.INSTANCE));
+        authenticator.validate(unknownClientCredentials, unknownclientCtx, JEESessionStore.INSTANCE);
         assertNull(unknownClientCredentials.getUserProfile());
     }
 }

@@ -62,7 +62,8 @@ public class OAuth20RevocationEndpointController extends BaseOAuth20Controller {
                 return OAuth20Utils.writeError(response, OAuth20Constants.ACCESS_DENIED);
             }
         } else {
-            val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getServiceId());
+            val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory()
+                .createService(registeredService.getServiceId());
             val audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)
