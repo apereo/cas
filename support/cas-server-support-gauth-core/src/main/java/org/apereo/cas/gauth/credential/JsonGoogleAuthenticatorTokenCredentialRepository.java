@@ -181,18 +181,20 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     @SneakyThrows
     private void writeAccountsToJsonRepository(final Map<String, List<OneTimeTokenAccount>> accounts) {
         LOGGER.debug("Saving [{}] google authenticator accounts to JSON file at [{}]", accounts.size(), location.getFile());
-        this.serializer.to(location.getFile(), accounts);
+        if (location.getFile() != null) {
+            serializer.to(location.getFile(), accounts);
+        }
     }
 
     @SneakyThrows
     private Map<String, List<OneTimeTokenAccount>> readAccountsFromJsonRepository() {
         val file = location.getFile();
         LOGGER.debug("Ensuring JSON repository file exists at [{}]", file);
-        val result = file.createNewFile();
+        val result = file != null && file.createNewFile();
         if (result) {
             LOGGER.debug("Created JSON repository file at [{}]", file);
         }
-        if (file.length() > 0) {
+        if (file != null && file.length() > 0) {
             LOGGER.debug("Reading JSON repository file at [{}]", file);
             val accounts = this.serializer.from(file);
             LOGGER.debug("Read [{}] accounts from JSON repository file at [{}]", accounts.size(), file);
