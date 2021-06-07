@@ -68,11 +68,9 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
                 val provider = duoProviderBean.getProvider(duoSecurityIdentifier);
                 credential.setProviderId(provider.getId());
                 WebUtils.putCredential(requestContext, credential);
-                val authenticationResultBuilder = ticket.getProperty("authenticationResultBuilder", AuthenticationResultBuilder.class);
-                WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
-                val authenticationResult = authenticationResultBuilder.build(authenticationSystemSupport.getPrincipalElectionStrategy());
-                WebUtils.putAuthenticationResult(authenticationResult, requestContext);
-                WebUtils.putAuthentication(authenticationResult.getAuthentication(), requestContext);
+
+                populateContextWithAuthentication(requestContext, ticket);
+
                 WebUtils.putRegisteredService(requestContext, registeredService);
                 WebUtils.putServiceIntoFlowScope(requestContext, ticket.getService());
                 return super.doExecute(requestContext);
@@ -84,5 +82,19 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
             }
         }
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SKIP);
+    }
+
+    /**
+     * Populate context with authentication.
+     *
+     * @param requestContext the request context
+     * @param ticket         the ticket
+     */
+    protected void populateContextWithAuthentication(final RequestContext requestContext, final TransientSessionTicket ticket) {
+        val authenticationResultBuilder = ticket.getProperty("authenticationResultBuilder", AuthenticationResultBuilder.class);
+        WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
+        val authenticationResult = authenticationResultBuilder.build(authenticationSystemSupport.getPrincipalElectionStrategy());
+        WebUtils.putAuthenticationResult(authenticationResult, requestContext);
+        WebUtils.putAuthentication(authenticationResult.getAuthentication(), requestContext);
     }
 }

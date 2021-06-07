@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowAuthenticationActions")
 public class AuthenticationExceptionHandlerActionTests {
 
     @Test
