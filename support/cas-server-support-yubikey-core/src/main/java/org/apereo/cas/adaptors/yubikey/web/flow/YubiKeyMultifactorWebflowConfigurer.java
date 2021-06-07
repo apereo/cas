@@ -57,7 +57,7 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasMultifactorW
 
             val acctRegCheckState = createActionState(flow, "accountRegistrationCheck",
                 createEvaluateAction("yubiKeyAccountRegistrationAction"));
-            createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_REGISTER, "viewRegistration");
+            createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION);
             createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
 
             val saveState = createActionState(flow, "saveRegistration",
@@ -72,7 +72,7 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasMultifactorW
 
             val setPrincipalAction = createSetAction("viewScope.principal", "conversationScope.authentication.principal");
 
-            val viewRegState = createViewState(flow, "viewRegistration", "yubikey/casYubiKeyRegistrationView");
+            val viewRegState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION, "yubikey/casYubiKeyRegistrationView");
             viewRegState.getEntryActionList().addAll(setPrincipalAction);
             createTransitionForState(viewRegState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "saveRegistration");
 
@@ -83,7 +83,7 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasMultifactorW
             viewLoginFormState.getEntryActionList().addAll(setPrincipalAction);
 
             if (yubiProps.isMultipleDeviceRegistrationEnabled()) {
-                createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_REGISTER, "viewRegistration",
+                createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION,
                     Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
             }
             

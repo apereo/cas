@@ -34,7 +34,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     private final StringSerializer<Map<String, List<OneTimeTokenAccount>>> serializer = new OneTimeAccountSerializer();
 
     public JsonGoogleAuthenticatorTokenCredentialRepository(final Resource location, final IGoogleAuthenticator googleAuthenticator,
-        final CipherExecutor<String, String> tokenCredentialCipher) {
+                                                            final CipherExecutor<String, String> tokenCredentialCipher) {
         super(tokenCredentialCipher, googleAuthenticator);
         this.location = location;
     }
@@ -145,35 +145,37 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
 
     @Override
     public void delete(final String username) {
-        try {
-            val accounts = readAccountsFromJsonRepository();
-            accounts.remove(username.trim().toLowerCase());
-            writeAccountsToJsonRepository(accounts);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
+        val accounts = readAccountsFromJsonRepository();
+        accounts.remove(username.trim().toLowerCase());
+        writeAccountsToJsonRepository(accounts);
+    }
+
+    @Override
+    public void delete(final long id) {
+        val accounts = readAccountsFromJsonRepository();
+        accounts.forEach((key, value) -> value.removeIf(d -> d.getId() == id));
+        writeAccountsToJsonRepository(accounts);
     }
 
     @Override
     public long count() {
-        try {
-            val accounts = readAccountsFromJsonRepository();
-            return accounts.size();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return 0;
+        val accounts = readAccountsFromJsonRepository();
+        return accounts.size();
     }
 
     @Override
     public long count(final String username) {
-        try {
-            val accounts = readAccountsFromJsonRepository();
-            return accounts.containsKey(username.trim().toLowerCase()) ? accounts.get(username.trim().toLowerCase()).size() : 0;
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+        val accounts = readAccountsFromJsonRepository();
+        return accounts.containsKey(username.trim().toLowerCase()) ? accounts.get(username.trim().toLowerCase()).size() : 0;
+    }
+
+    private static class OneTimeAccountSerializer extends AbstractJacksonBackedStringSerializer<Map<String, List<OneTimeTokenAccount>>> {
+        private static final long serialVersionUID = 1466569521275630254L;
+
+        @Override
+        public Class getTypeToSerialize() {
+            return HashMap.class;
         }
-        return 0;
     }
 
     @SneakyThrows
@@ -197,14 +199,5 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             return accounts;
         }
         return new HashMap<>(0);
-    }
-
-    private static class OneTimeAccountSerializer extends AbstractJacksonBackedStringSerializer<Map<String, List<OneTimeTokenAccount>>> {
-        private static final long serialVersionUID = 1466569521275630254L;
-
-        @Override
-        public Class getTypeToSerialize() {
-            return HashMap.class;
-        }
     }
 }
