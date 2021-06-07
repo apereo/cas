@@ -361,9 +361,8 @@ The `useFriendlyName` allows the filter to compare the requested attribute's fri
 
 ## Metadata Registration Authority
 
-This attribute release policy authorizes the release of a subset of attributes requested as extensions of 
-the SAML2 authentication request. The intersection of requested attributes and those allowed by the 
-attribute release policy explicitly is evaluated for the final attribute release phase:
+This attribute release policy authorizes the release of a subset of attributes if the registration authority
+specified as a metadata extension produces a successful match.
 
 ```json
 {
@@ -373,13 +372,15 @@ attribute release policy explicitly is evaluated for the final attribute release
   "id": 10,
   "metadataLocation": "path/to/metadata.xml",
   "attributeReleasePolicy": {
-    "@class": "org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicy",
-    "useFriendlyName" : false
+    "@class": "org.apereo.cas.support.saml.services.MetadataRegistrationAuthorityAttributeReleasePolicy",
+    "registrationAuthority" : "urn:example:.*",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ]
   }
 }
 ```
 
-The `useFriendlyName` allows the filter to compare the requested attribute's friendly name with the resolved attribute.
+The `registrationAuthority` is a regular expression that is matched against the registration authority of the 
+`RegistrationInfo` element to authorize release of allowed attributes.
 
 
 ## Authentication Request Requested Attributes Filter
