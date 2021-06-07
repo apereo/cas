@@ -741,10 +741,21 @@ public interface CasWebflowConstants {
      * State id 'casForgotUsernameSentInfoView'.
      */
     String STATE_ID_SENT_FORGOT_USERNAME_ACCT_INFO = "casForgotUsernameSentInfoView";
+
+    /**
+     * State id 'accountRegistrationCheck'.
+     */
+    String STATE_ID_CHECK_ACCOUNT_REGISTRATION = "accountRegistrationCheck";
+
     /**
      * State id 'viewRegistration'.
      */
     String STATE_ID_VIEW_REGISTRATION = "viewRegistration";
+
+    /**
+     * State id 'saveRegistration'.
+     */
+    String STATE_ID_SAVE_REGISTRATION = "saveRegistration";
 
     /*
      ****************************************

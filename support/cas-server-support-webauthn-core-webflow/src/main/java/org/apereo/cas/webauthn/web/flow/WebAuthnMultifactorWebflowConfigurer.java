@@ -52,10 +52,10 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
 
             val initLoginFormState = createActionState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM,
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION));
-            createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "accountRegistrationCheck");
+            createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CHECK_ACCOUNT_REGISTRATION);
             setStartState(flow, initLoginFormState);
 
-            val acctRegCheckState = createActionState(flow, "accountRegistrationCheck",
+            val acctRegCheckState = createActionState(flow, CasWebflowConstants.STATE_ID_CHECK_ACCOUNT_REGISTRATION,
                 createEvaluateAction("webAuthnCheckAccountRegistrationAction"));
             createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_REGISTER, "viewRegistrationWebAuthn");
             createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_SUCCESS,
@@ -65,10 +65,10 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
 
             val viewRegState = createViewState(flow, "viewRegistrationWebAuthn", "webauthn/casWebAuthnRegistrationView");
             viewRegState.getEntryActionList().addAll(createEvaluateAction("webAuthnStartRegistrationAction"), setPrincipalAction);
-            createTransitionForState(viewRegState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "saveRegistration");
+            createTransitionForState(viewRegState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_SAVE_REGISTRATION);
 
-            val saveState = createActionState(flow, "saveRegistration", "webAuthnSaveAccountRegistrationAction");
-            createTransitionForState(saveState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "accountRegistrationCheck");
+            val saveState = createActionState(flow, CasWebflowConstants.STATE_ID_SAVE_REGISTRATION, "webAuthnSaveAccountRegistrationAction");
+            createTransitionForState(saveState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CHECK_ACCOUNT_REGISTRATION);
             createTransitionForState(saveState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_STOP_WEBFLOW);
 
             val loginProperties = CollectionUtils.wrapList("token");
