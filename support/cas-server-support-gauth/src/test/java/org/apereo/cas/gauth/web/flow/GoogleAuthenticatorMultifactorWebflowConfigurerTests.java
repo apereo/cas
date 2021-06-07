@@ -33,5 +33,6 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurerTests extends BaseMu
     protected String getMultifactorEventId() {
         return GoogleAuthenticatorMultifactorWebflowConfigurer.MFA_GAUTH_EVENT_ID;
     }
+
 }
 

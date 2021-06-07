@@ -154,6 +154,10 @@ public interface CasWebflowConstants {
      * Transition id 'register'.
      */
     String TRANSITION_ID_REGISTER = "register";
+    /**
+     * Transition id 'store'.
+     */
+    String TRANSITION_ID_STORE = "store";
 
     /**
      * Transition id 'select'.
@@ -1070,4 +1074,19 @@ public interface CasWebflowConstants {
      * Action id 'duoUniversalPromptPrepareLoginAction .
      */
     String ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN = "duoUniversalPromptPrepareLoginAction";
+
+    /**
+     * Action id 'mfaVerifyTrustAction .
+     */
+    String ACTION_ID_MFA_VERIFY_TRUST_ACTION = "mfaVerifyTrustAction";
+
+    /**
+     * Action id 'mfaSetTrustAction .
+     */
+    String ACTION_ID_MFA_SET_TRUST_ACTION = "mfaSetTrustAction";
+
+    /**
+     * Action id 'duoUniversalPromptPrepareLoginAction .
+     */
+    String ACTION_ID_MFA_PREPARE_TRUST_DEVICE_VIEW_ACTION = "mfaPrepareTrustDeviceViewAction";
 }
