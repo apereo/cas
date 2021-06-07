@@ -52,7 +52,6 @@ public class DefaultDelegatedClientFactoryTests {
         configureIdentifiableClient(props.getLinkedIn());
         props.getLinkedIn().setScope("scope1");
 
-        configureIdentifiableClient(props.getOrcid());
         configureIdentifiableClient(props.getPaypal());
         configureIdentifiableClient(props.getTwitter());
         configureIdentifiableClient(props.getWindowsLive());

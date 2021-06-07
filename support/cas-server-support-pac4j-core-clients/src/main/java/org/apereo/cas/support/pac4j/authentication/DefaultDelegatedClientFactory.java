@@ -39,7 +39,6 @@ import org.pac4j.oauth.client.GitHubClient;
 import org.pac4j.oauth.client.Google2Client;
 import org.pac4j.oauth.client.HiOrgServerClient;
 import org.pac4j.oauth.client.LinkedIn2Client;
-import org.pac4j.oauth.client.OrcidClient;
 import org.pac4j.oauth.client.PayPalClient;
 import org.pac4j.oauth.client.TwitterClient;
 import org.pac4j.oauth.client.WindowsLiveClient;
@@ -108,7 +107,6 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
         configurePayPalClient(clients);
         configureWordPressClient(clients);
         configureBitBucketClient(clients);
-        configureOrcidClient(clients);
         configureHiOrgServerClient(clients);
 
         return clients;
@@ -153,23 +151,6 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
         if (db.isEnabled() && StringUtils.isNotBlank(db.getId()) && StringUtils.isNotBlank(db.getSecret())) {
             val client = new DropBoxClient(db.getId(), db.getSecret());
             configureClient(client, db);
-            LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
-            properties.add(client);
-        }
-    }
-
-    /**
-     * Configure orcid client.
-     *
-     * @param properties the properties
-     */
-    protected void configureOrcidClient(final Collection<IndirectClient> properties) {
-        val pac4jProperties = casProperties.getAuthn().getPac4j();
-        val db = pac4jProperties.getOrcid();
-        if (db.isEnabled() && StringUtils.isNotBlank(db.getId()) && StringUtils.isNotBlank(db.getSecret())) {
-            val client = new OrcidClient(db.getId(), db.getSecret());
-            configureClient(client, db);
-
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
