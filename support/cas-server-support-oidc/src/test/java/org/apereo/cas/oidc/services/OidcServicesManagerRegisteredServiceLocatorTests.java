@@ -64,7 +64,6 @@ public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOi
     @Test
     public void verifyNoClientId() {
         assertNotNull(oidcServicesManagerRegisteredServiceLocator);
-        assertEquals(Ordered.HIGHEST_PRECEDENCE, oidcServicesManagerRegisteredServiceLocator.getOrder());
         val oidcClientId = UUID.randomUUID().toString();
         val service = getOidcRegisteredService(oidcClientId);
         val svc = webApplicationServiceFactory.createService("https://oauth.example.org/whatever");
@@ -75,7 +74,6 @@ public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOi
     @Test
     public void verifyNoOidcCandidate() {
         assertNotNull(oidcServicesManagerRegisteredServiceLocator);
-        assertEquals(Ordered.HIGHEST_PRECEDENCE, oidcServicesManagerRegisteredServiceLocator.getOrder());
         val oidcClientId = UUID.randomUUID().toString();
         val service = RegisteredServiceTestUtils.getRegisteredService("https://notooidc.example.org/whatever");
         val svc = webApplicationServiceFactory.createService(

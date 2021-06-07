@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -16,8 +17,10 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
@@ -40,6 +43,7 @@ import static org.mockito.Mockito.*;
  * @since 4.1.0
  */
 @Tag("WebflowActions")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = "cas.view.authorized-services-on-successful-login=true")
 public class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {    
     @Autowired
@@ -87,8 +91,9 @@ public class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
 
-        casProperties.getView().setDefaultRedirectUrl(service.getId());
-        val action = new GenericSuccessViewAction(cas, servicesManager, serviceFactory, casProperties);
+        val props = new CasConfigurationProperties();
+        props.getView().setDefaultRedirectUrl(service.getId());
+        val action = new GenericSuccessViewAction(cas, servicesManager, serviceFactory, props);
         val context = new MockRequestContext();
         context.setExternalContext(new MockExternalContext());
         RequestContextHolder.setRequestContext(context);
