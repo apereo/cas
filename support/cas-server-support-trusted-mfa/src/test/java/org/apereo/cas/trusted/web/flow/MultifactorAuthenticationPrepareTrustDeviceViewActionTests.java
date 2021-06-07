@@ -1,6 +1,5 @@
 package org.apereo.cas.trusted.web.flow;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -50,9 +49,6 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
     @Tag("WebflowMfaActions")
     @SuppressWarnings("ClassCanBeStatic")
     public class AutoNamingStrategy extends AbstractMultifactorAuthenticationTrustStorageTests {
-        @Autowired
-        private CasConfigurationProperties casProperties;
-
         private MockRequestContext context;
 
         @Autowired
@@ -95,9 +91,6 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
     @Tag("WebflowMfaActions")
     @SuppressWarnings("ClassCanBeStatic")
     public class DefaultNamingStrategy extends AbstractMultifactorAuthenticationTrustStorageTests {
-        @Autowired
-        private CasConfigurationProperties casProperties;
-
         private MockRequestContext context;
 
         @Autowired

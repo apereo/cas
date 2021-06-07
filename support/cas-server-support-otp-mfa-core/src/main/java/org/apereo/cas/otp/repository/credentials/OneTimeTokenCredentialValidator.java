@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.OneTimeTokenCredential;
+import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 
 import java.security.GeneralSecurityException;
 
@@ -43,4 +44,18 @@ public interface OneTimeTokenCredentialValidator<C extends OneTimeTokenCredentia
      * @return true/false
      */
     boolean isTokenAuthorizedFor(int token, OneTimeTokenAccount account);
+
+    /**
+     * Gets token repository.
+     *
+     * @return the token repository
+     */
+    OneTimeTokenRepository getTokenRepository();
+
+    /**
+     * Gets credential repository.
+     *
+     * @return the credential repository
+     */
+    OneTimeTokenCredentialRepository getCredentialRepository();
 }
