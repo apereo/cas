@@ -43,7 +43,7 @@ to be defined in the CAS configuration as well.
 
 ### Default
 
-{% assign providers = "DropBox,Facebook,FourSquare,Google,HiOrgServer,Orcid,PayPal,Twitter,WindowsLive,Wordpress,Yahoo,CAS,LinkedIn,GitHub,OAuth20,Google-OpenID-Connect,Keycloak,Azure-AD,Apple,Generic-OpenID-Connect" | split: "," | sort %}
+{% assign providers = "DropBox,Facebook,FourSquare,Google,HiOrgServer,PayPal,Twitter,WindowsLive,Wordpress,Yahoo,CAS,LinkedIn,GitHub,OAuth20,Google-OpenID-Connect,Keycloak,Azure-AD,Apple,Generic-OpenID-Connect" | split: "," | sort %}
 
 Identity providers for delegated authentication can be registered with CAS using settings. 
 
