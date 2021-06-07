@@ -111,6 +111,10 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
 
     @Override
     public void delete(final long id) {
+        entityManager.createNativeQuery("DELETE FROM " + OneTimeTokenAccount.TABLE_NAME_SCRATCH_CODES + " r WHERE r.id = :id")
+            .setParameter("id", id)
+            .executeUpdate();
+
         entityManager.createQuery("DELETE FROM " + ENTITY_NAME + " r WHERE r.id = :id")
             .setParameter("id", id)
             .executeUpdate();

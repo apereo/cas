@@ -9,7 +9,6 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 
 /**
@@ -52,6 +51,4 @@ public interface MultifactorAuthenticationTrustedDeviceNamingStrategy {
                                Service service,
                                HttpServletRequest request,
                                Authentication authentication);
-
-    ;
 }
