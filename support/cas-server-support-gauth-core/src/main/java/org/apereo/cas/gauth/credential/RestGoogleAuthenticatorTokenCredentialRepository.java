@@ -265,7 +265,27 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         val rest = gauth.getRest();
         HttpResponse response = null;
         try {
-            val headers = CollectionUtils.<String, Object>wrap("Accept", MediaType.APPLICATION_JSON_VALUE, "username", username);
+            val headers = CollectionUtils.wrap("Accept", MediaType.APPLICATION_JSON_VALUE, "username", username);
+            headers.putAll(rest.getHeaders());
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(rest.getUrl())
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+    @Override
+    public void delete(final long id) {
+        val rest = gauth.getRest();
+        HttpResponse response = null;
+        try {
+            val headers = CollectionUtils.wrap("Accept", MediaType.APPLICATION_JSON_VALUE, "id", id);
             headers.putAll(rest.getHeaders());
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())

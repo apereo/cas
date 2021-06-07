@@ -91,6 +91,11 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
     }
 
     @Override
+    public void delete(final long id) {
+        accounts.forEach((key, value) -> value.removeIf(d -> d.getId() == id));
+    }
+
+    @Override
     public long count() {
         return this.accounts.size();
     }

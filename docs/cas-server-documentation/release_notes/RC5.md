@@ -100,6 +100,7 @@ A number of improvements are now implemented for a better use experience while b
 - Generating access tokens for the OAuth authorization grants is set to use client id first and then 
   redirect URIs to locate the service definition.
 - Settings and properties controlled by CAS themes are now automatically documented.
+- Google Authenticator repository implementations are allowed to remove records by id.
 - Minor fixes to impersonation allow the surrogate user to be correctly authorized even if attribute repositories produce no attributes.
 - Additional [Puppeteer tests](../developer/Test-Process.html) to cover scenarios for 
   password management, delegated authentication and OAuth protocol.

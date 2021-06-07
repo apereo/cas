@@ -155,6 +155,10 @@ public interface CasWebflowConstants {
      */
     String TRANSITION_ID_REGISTER = "register";
     /**
+     * Transition id 'delete'.
+     */
+    String TRANSITION_ID_DELETE = "delete";
+    /**
      * Transition id 'store'.
      */
     String TRANSITION_ID_STORE = "store";
@@ -659,12 +663,12 @@ public interface CasWebflowConstants {
     String STATE_ID_EVALUATE_SPNEGO_CLIENT = "evaluateClientRequest";
 
     /**
-     * The view state 'sendPasswordResetInstructions'.
+     * The state state 'sendPasswordResetInstructions'.
      */
     String STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS = "sendPasswordResetInstructions";
 
     /**
-     * The view state 'sendForgotUsernameInstructions'.
+     * The state state 'sendForgotUsernameInstructions'.
      */
     String STATE_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS = "sendForgotUsernameInstructions";
 
@@ -674,12 +678,12 @@ public interface CasWebflowConstants {
     String STATE_ID_PASSWORD_CHANGE_ACTION = "passwordChangeAction";
 
     /**
-     * The view state 'passwordResetErrorView'.
+     * The state 'passwordResetErrorView'.
      */
     String STATE_ID_PASSWORD_RESET_ERROR_VIEW = "passwordResetErrorView";
 
     /**
-     * Action id `delegatedAuthenticationClientRetry`.
+     * State id `delegatedAuthenticationClientRetry`.
      */
     String STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY = "delegatedAuthenticationClientRetry";
 
@@ -689,54 +693,58 @@ public interface CasWebflowConstants {
     String STATE_ID_INVALID_WORKSTATION = "casBadWorkstationView";
 
     /**
-     * View id 'casAccountDisabledView'.
+     * State id 'casAccountDisabledView'.
      */
     String STATE_ID_ACCOUNT_DISABLED = "casAccountDisabledView";
 
     /**
-     * View id 'casAccountLockedView'.
+     * State id 'casAccountLockedView'.
      */
     String STATE_ID_ACCOUNT_LOCKED = "casAccountLockedView";
 
     /**
-     * View id 'casBadHoursView'.
+     * State id 'casBadHoursView'.
      */
     String STATE_ID_INVALID_AUTHENTICATION_HOURS = "casBadHoursView";
 
     /**
-     * View id 'casAuthenticationBlockedView'.
+     * State id 'casAuthenticationBlockedView'.
      */
     String STATE_ID_AUTHENTICATION_BLOCKED = "casAuthenticationBlockedView";
 
     /**
-     * View id 'casMustChangePassView'.
+     * State id 'casMustChangePassView'.
      */
     String STATE_ID_MUST_CHANGE_PASSWORD = "casMustChangePassView";
 
     /**
-     * View id 'casExpiredPassView'.
+     * State id 'casExpiredPassView'.
      */
     String STATE_ID_EXPIRED_PASSWORD = "casExpiredPassView";
 
     /**
-     * View id 'casForgotUsernameSendInfoView'.
+     * State id 'casForgotUsernameSendInfoView'.
      */
     String STATE_ID_FORGOT_USERNAME_ACCT_INFO = "casForgotUsernameSendInfoView";
 
     /**
-     * View id 'casResetPasswordSentInstructions'.
+     * State id 'casResetPasswordSentInstructions'.
      */
     String STATE_ID_SENT_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSentInstructionsView";
 
     /**
-     * View id 'casResetPasswordSendInstructions'.
+     * State id 'casResetPasswordSendInstructions'.
      */
     String STATE_ID_SEND_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSendInstructionsView";
 
     /**
-     * View id 'casForgotUsernameSentInfoView'.
+     * State id 'casForgotUsernameSentInfoView'.
      */
     String STATE_ID_SENT_FORGOT_USERNAME_ACCT_INFO = "casForgotUsernameSentInfoView";
+    /**
+     * State id 'viewRegistration'.
+     */
+    String STATE_ID_VIEW_REGISTRATION = "viewRegistration";
 
     /*
      ****************************************
