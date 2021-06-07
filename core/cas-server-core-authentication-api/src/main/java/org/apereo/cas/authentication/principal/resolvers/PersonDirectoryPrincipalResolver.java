@@ -172,8 +172,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             if (attributes == null || attributes.isEmpty()) {
                 LOGGER.debug("Principal id [{}] did not specify any attributes", principalId);
                 if (!this.returnNullIfNoAttributes) {
-                    LOGGER.debug("Returning the principal with id [{}] without any attributes", principalId);
-                    return this.principalFactory.createPrincipal(principalId);
+                    val principal = buildResolvedPrincipal(principalId, new HashMap<>(0), credential, currentPrincipal, handler);
+                    LOGGER.debug("Returning the principal with id [{}] without any attributes", principal);
+                    return principal;
                 }
                 LOGGER.debug("[{}] is configured to return null if no attributes are found for [{}]", this.getClass().getName(), principalId);
                 return null;

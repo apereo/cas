@@ -93,7 +93,7 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
         if (registeredService != null) {
             val ssoPolicy = registeredService.getSingleSignOnParticipationPolicy();
             if (ssoPolicy != null) {
-                return ssoPolicy.isCreateCookieOnRenewedAuthentication();
+                return ssoPolicy.getCreateCookieOnRenewedAuthentication();
             }
         }
         return TriStateBoolean.fromBoolean(properties.isCreateSsoCookieOnRenewAuthn());
