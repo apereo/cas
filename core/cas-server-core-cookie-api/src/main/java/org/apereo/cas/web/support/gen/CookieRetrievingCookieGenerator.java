@@ -113,6 +113,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     protected Cookie createCookie(final String cookieValue) {
         val c = super.createCookie(cookieValue);
         c.setComment(cookieGenerationContext.getComment());
+        c.setPath(cleanCookiePath(c.getPath()));
         return c;
     }
 
@@ -173,7 +174,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         return null;
     }
 
-    private void addCookieHeaderToResponse(final Cookie cookie, final HttpServletResponse response) {
+    private Cookie addCookieHeaderToResponse(final Cookie cookie, final HttpServletResponse response) {
         val builder = new StringBuilder();
         builder.append(String.format("%s=%s;", cookie.getName(), cookie.getValue()));
 
@@ -183,7 +184,8 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         if (StringUtils.isNotBlank(cookie.getDomain())) {
             builder.append(String.format(" Domain=%s;", cookie.getDomain()));
         }
-        builder.append(String.format(" Path=%s;", StringUtils.defaultIfBlank(cookie.getPath(), DEFAULT_COOKIE_PATH)));
+        val path = cleanCookiePath(cookie.getPath());
+        builder.append(String.format(" Path=%s;", path));
 
         val sameSitePolicy = cookieGenerationContext.getSameSitePolicy().toLowerCase();
         switch (sameSitePolicy) {
@@ -200,12 +202,20 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         }
         if (cookie.getSecure() || StringUtils.equalsIgnoreCase(sameSitePolicy, "none")) {
             builder.append(" Secure;");
+            LOGGER.trace("Marked cookie [{}] as secure as indicated by cookie configuration or "
+                + "the configured same-site policy set to [{}]", cookie.getName(), sameSitePolicy);
         }
         if (cookie.isHttpOnly()) {
             builder.append(" HttpOnly;");
         }
         val value = StringUtils.removeEndIgnoreCase(builder.toString(), ";");
         LOGGER.trace("Adding cookie header as [{}]", value);
-        response.addHeader("Set-Cookie", value);
+        response.setHeader("Set-Cookie", value);
+        return cookie;
+    }
+
+    private static String cleanCookiePath(final String givenPath) {
+        val path = StringUtils.removeEndIgnoreCase(StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH), "/");
+        return StringUtils.defaultIfBlank(path, "/");
     }
 }
