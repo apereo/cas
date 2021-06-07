@@ -26,6 +26,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -60,11 +61,14 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolverTests e
         val tgt = new MockTicketGrantingTicket("casuser");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         WebUtils.putAuthentication(tgt.getAuthentication(), context);
-        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-        val service = RegisteredServiceTestUtils.getRegisteredService(Map.of());
-        service.setMultifactorPolicy(new DefaultRegisteredServiceMultifactorPolicy().setBypassEnabled(true));
-        servicesManager.save(service);
-        WebUtils.putRegisteredService(context, service);
+        val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+        WebUtils.putServiceIntoFlowScope(context, service);
+        
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(Map.of());
+        registeredService.setServiceId(service.getId());
+        registeredService.setMultifactorPolicy(new DefaultRegisteredServiceMultifactorPolicy().setBypassEnabled(true));
+        servicesManager.save(registeredService);
+        WebUtils.putRegisteredService(context, registeredService);
 
         val builder = mock(AuthenticationResultBuilder.class);
         when(builder.getInitialAuthentication()).thenReturn(Optional.of(tgt.getAuthentication()));

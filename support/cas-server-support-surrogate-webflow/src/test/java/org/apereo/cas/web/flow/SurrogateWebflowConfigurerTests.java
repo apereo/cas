@@ -36,11 +36,11 @@ public class SurrogateWebflowConfigurerTests extends BaseWebflowConfigurerTests 
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
-        var state = (TransitionableState) flow.getState(SurrogateWebflowConfigurer.STATE_ID_LOAD_SURROGATES_ACTION);
+        var state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_LOAD_SURROGATES_ACTION);
         assertNotNull(state);
-        state = (TransitionableState) flow.getState(SurrogateWebflowConfigurer.STATE_ID_SELECT_SURROGATE);
+        state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_SELECT_SURROGATE);
         assertNotNull(state);
-        state = (TransitionableState) flow.getState(SurrogateWebflowConfigurer.STATE_ID_SURROGATE_VIEW);
+        state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_SURROGATE_VIEW);
         assertNotNull(state);
     }
 }

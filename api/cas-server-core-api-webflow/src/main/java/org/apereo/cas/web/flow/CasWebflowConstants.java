@@ -45,6 +45,15 @@ public interface CasWebflowConstants {
      */
     String TRANSITION_ID_FINALIZE = "finalize";
 
+    /**
+     * The view id 'surrogateListView'.
+     */
+    String TRANSITION_ID_SURROGATE_VIEW = "surrogateListView";
+
+    /**
+     * Skip surrogate view if no surrogates can be found.
+     */
+    String TRANSITION_ID_SKIP_SURROGATE = "skipSurrogateView";
 
     /**
      * The transition state 'warn'.
@@ -349,6 +358,26 @@ public interface CasWebflowConstants {
      * The state 'cancel'.
      */
     String STATE_ID_CANCEL = "cancel";
+
+    /**
+     * The state 'surrogateListView'.
+     */
+    String STATE_ID_SURROGATE_VIEW = "surrogateListView";
+
+    /**
+     * The state 'loadSurrogatesAction'.
+     */
+    String STATE_ID_LOAD_SURROGATES_ACTION = "loadSurrogatesAction";
+
+    /**
+     * The state 'selectSurrogate'.
+     */
+    String STATE_ID_SELECT_SURROGATE = "selectSurrogate";
+
+    /**
+     * The state 'duoUniversalPromptPrepareValidate'.
+     */
+    String STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN = "duoUniversalPromptPrepareValidate";
 
     /**
      * The state 'viewLoginForm'.
@@ -1026,4 +1055,19 @@ public interface CasWebflowConstants {
      * Action id 'oneTimeTokenAuthenticationWebflowAction .
      */
     String ACTION_ID_OTP_AUTHENTICATION_ACTION = "oneTimeTokenAuthenticationWebflowAction";
+
+    /**
+     * Action id 'loadSurrogatesListAction .
+     */
+    String ACTION_ID_LOAD_SURROGATES_LIST_ACTION = "loadSurrogatesListAction";
+
+    /**
+     * Action id 'selectSurrogateAction .
+     */
+    String ACTION_ID_SELECT_SURROGATE_ACTION = "selectSurrogateAction";
+
+    /**
+     * Action id 'duoUniversalPromptPrepareLoginAction .
+     */
+    String ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN = "duoUniversalPromptPrepareLoginAction";
 }

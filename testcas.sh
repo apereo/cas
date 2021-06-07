@@ -210,6 +210,9 @@ while (( "$#" )); do
             webflow-mfa-actions|swf-mfa_actions|webflowmfaactions)
                 task+="testWebflowMfaActions "
                 ;;
+            webflowauthenticationactions|swfauthnactions|webflowauthnactions)
+                task+="testWebflowAuthenticationActions "
+                ;;
             webflowactions|swfactions|webflow-actions)
                 task+="testWebflowActions "
                 ;;
