@@ -82,7 +82,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         }
         return Boolean.FALSE;
     }
-    
+
     private static boolean isRememberMeProvidedInRequest(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val value = request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME);
@@ -90,17 +90,14 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         return StringUtils.isNotBlank(value) && WebUtils.isRememberMeAuthenticationEnabled(requestContext);
     }
 
-    @Override
-    public void setCookieDomain(final String cookieDomain) {
-        super.setCookieDomain(StringUtils.defaultIfEmpty(cookieDomain, null));
+    private static String cleanCookiePath(final String givenPath) {
+        val path = StringUtils.removeEndIgnoreCase(StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH), "/");
+        return StringUtils.defaultIfBlank(path, "/");
     }
 
     @Override
-    protected Cookie createCookie(@NonNull final String cookieValue) {
-        val c = super.createCookie(cookieValue);
-        c.setComment(cookieGenerationContext.getComment());
-        c.setPath(cleanCookiePath(c.getPath()));
-        return c;
+    public void setCookieDomain(final String cookieDomain) {
+        super.setCookieDomain(StringUtils.defaultIfEmpty(cookieDomain, null));
     }
 
     @Override
@@ -122,7 +119,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         cookie.setSecure(isCookieSecure());
         cookie.setHttpOnly(isCookieHttpOnly());
 
-        return addCookieHeaderToResponse(cookie, response);
+        return addCookieHeaderToResponse(cookie, request, response);
     }
 
     @Override
@@ -160,7 +157,17 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         return null;
     }
 
-    private Cookie addCookieHeaderToResponse(final Cookie cookie, final HttpServletResponse response) {
+    @Override
+    protected Cookie createCookie(@NonNull final String cookieValue) {
+        val c = super.createCookie(cookieValue);
+        c.setComment(cookieGenerationContext.getComment());
+        c.setPath(cleanCookiePath(c.getPath()));
+        return c;
+    }
+
+    private Cookie addCookieHeaderToResponse(final Cookie cookie,
+                                             final HttpServletRequest request,
+                                             final HttpServletResponse response) {
         val builder = new StringBuilder();
         builder.append(String.format("%s=%s;", cookie.getName(), cookie.getValue()));
 
@@ -196,12 +203,13 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         }
         val value = StringUtils.removeEndIgnoreCase(builder.toString(), ";");
         LOGGER.trace("Adding cookie header as [{}]", value);
-        response.setHeader("Set-Cookie", value);
-        return cookie;
-    }
 
-    private static String cleanCookiePath(final String givenPath) {
-        val path = StringUtils.removeEndIgnoreCase(StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH), "/");
-        return StringUtils.defaultIfBlank(path, "/");
+        val currentHeader = response.getHeader("Set-Cookie");
+        if (StringUtils.containsAnyIgnoreCase(currentHeader, cookie.getName().concat("="))) {
+            response.setHeader("Set-Cookie", value);
+        } else {
+            response.addHeader("Set-Cookie", value);
+        }
+        return cookie;
     }
 }

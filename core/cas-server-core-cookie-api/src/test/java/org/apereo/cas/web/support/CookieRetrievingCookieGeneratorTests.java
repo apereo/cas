@@ -28,6 +28,38 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 public class CookieRetrievingCookieGeneratorTests {
 
+    private static CookieGenerationContext getCookieGenerationContext() {
+        return CookieGenerationContext.builder()
+            .name("cas")
+            .path("/")
+            .maxAge(1000)
+            .comment("CAS Cookie")
+            .domain("example.org")
+            .secure(true)
+            .httpOnly(true)
+            .build();
+    }
+
+    @Test
+    public void verifyExistingCookieInResponse() {
+        val context = getCookieGenerationContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val gen = new CookieRetrievingCookieGenerator(context);
+
+        var cookie = gen.addCookie(request, response, "some-value");
+        assertNotNull(cookie);
+        var headers = response.getHeaders("Set-Cookie");
+        assertEquals(1, headers.size());
+        assertTrue(headers.get(0).contains(context.getName() + '=' + cookie.getValue()));
+
+        cookie = gen.addCookie(request, response, "updated-value");
+        assertNotNull(cookie);
+        headers = response.getHeaders("Set-Cookie");
+        assertEquals(1, headers.size());
+        assertTrue(headers.get(0).contains(context.getName() + '=' + cookie.getValue()));
+    }
+
     @Test
     public void verifyCookieValueMissing() {
         val context = getCookieGenerationContext();
@@ -56,7 +88,6 @@ public class CookieRetrievingCookieGeneratorTests {
         assertNotNull(cookie);
         assertEquals("Lax", cookie.getSameSite());
     }
-
 
     @Test
     public void verifyCookieValueByHeader() {
@@ -104,17 +135,5 @@ public class CookieRetrievingCookieGeneratorTests {
         val cookie = response.getCookie(ctx.getName());
         assertNotNull(cookie);
         assertEquals(ctx.getRememberMeMaxAge(), cookie.getMaxAge());
-    }
-
-    private static CookieGenerationContext getCookieGenerationContext() {
-        return CookieGenerationContext.builder()
-            .name("cas")
-            .path("/")
-            .maxAge(1000)
-            .comment("CAS Cookie")
-            .domain("example.org")
-            .secure(true)
-            .httpOnly(true)
-            .build();
     }
 }
