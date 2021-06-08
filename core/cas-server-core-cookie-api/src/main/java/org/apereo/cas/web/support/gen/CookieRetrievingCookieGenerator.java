@@ -119,7 +119,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         cookie.setSecure(isCookieSecure());
         cookie.setHttpOnly(isCookieHttpOnly());
 
-        return addCookieHeaderToResponse(cookie, request, response);
+        return addCookieHeaderToResponse(cookie, response);
     }
 
     @Override
