@@ -14,6 +14,7 @@ import org.apereo.cas.web.support.CookieUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -39,8 +40,8 @@ import java.time.ZonedDateTime;
 public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponseBuilder<Response> {
     private static final long serialVersionUID = 1488837627964481272L;
     
-    public SamlProfileSaml2ResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext) {
-        super(samlResponseBuilderConfigurationContext);
+    public SamlProfileSaml2ResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext configurationContext) {
+        super(configurationContext);
     }
 
     @Override
@@ -65,7 +66,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
             samlResponse.setIssuer(buildSamlResponseIssuer(service.getIssuerEntityId()));
         }
 
-        val acs = SamlIdPUtils.determineEndpointForRequest(authnRequest, adaptor, binding);
+        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, messageContext), adaptor, binding);
         val location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
         samlResponse.setDestination(location);
 
@@ -109,7 +110,8 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                               final String relayState,
                               final String binding,
                               final RequestAbstractType authnRequest,
-                              final Object assertion) throws SamlException {
+                              final Object assertion,
+                              final MessageContext messageContext) throws SamlException {
         LOGGER.trace("Constructing encoder based on binding [{}] for [{}]", binding, adaptor.getEntityId());
         val configContext = getSamlResponseBuilderConfigurationContext();
         if (binding.equalsIgnoreCase(SAMLConstants.SAML2_ARTIFACT_BINDING_URI)) {
@@ -117,17 +119,17 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                 configContext.getVelocityEngineFactory(),
                 adaptor, httpRequest, httpResponse,
                 configContext.getSamlArtifactMap());
-            return encoder.encode(authnRequest, samlResponse, relayState);
+            return encoder.encode(authnRequest, samlResponse, relayState, messageContext);
         }
 
         if (binding.equalsIgnoreCase(SAMLConstants.SAML2_POST_SIMPLE_SIGN_BINDING_URI)) {
             val encoder = new SamlResponsePostSimpleSignEncoder(configContext.getVelocityEngineFactory(),
                 adaptor, httpResponse, httpRequest);
-            return encoder.encode(authnRequest, samlResponse, relayState);
+            return encoder.encode(authnRequest, samlResponse, relayState, messageContext);
         }
 
         val encoder = new SamlResponsePostEncoder(configContext.getVelocityEngineFactory(), adaptor, httpResponse, httpRequest);
-        return encoder.encode(authnRequest, samlResponse, relayState);
+        return encoder.encode(authnRequest, samlResponse, relayState, messageContext);
     }
 
     private void storeAttributeQueryTicketInRegistry(final Assertion assertion, final HttpServletRequest request,

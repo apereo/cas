@@ -12,13 +12,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.saml.common.SAMLObjectBuilder;
-import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -126,7 +126,7 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
         Objects.requireNonNull(bindingContext).setHasBindingSignature(false);
         SAMLBindingSupport.setRelayState(ctx, target);
 
-        val pair = Pair.<SignableSAMLObject, MessageContext>of(authnRequest, ctx);
+        val pair = Pair.<RequestAbstractType, MessageContext>of(authnRequest, ctx);
         return initiateAuthenticationRequest(pair, response, request);
     }
 }
