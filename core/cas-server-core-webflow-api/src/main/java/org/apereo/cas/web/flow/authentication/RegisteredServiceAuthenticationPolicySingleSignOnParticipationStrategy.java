@@ -13,6 +13,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
  * @since 6.2.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategy
     implements SingleSignOnParticipationStrategy {
 
@@ -68,9 +70,11 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
                     .stream()
                     .filter(handler -> successfulHandlerNames.contains(handler.getName()))
                     .collect(Collectors.toSet());
+                LOGGER.debug("Asserted authentication handlers are [{}]", assertedHandlers);
                 val criteria = authenticationPolicy.getCriteria();
                 if (criteria != null) {
                     val policy = criteria.toAuthenticationPolicy(registeredService);
+                    LOGGER.debug("Authentication policy to satisfy is [{}]", policy);
                     return policy.isSatisfiedBy(authentication, assertedHandlers, applicationContext, Optional.empty());
                 }
             }
@@ -87,6 +91,7 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
             return false;
         }
         val authenticationPolicy = registeredService.getAuthenticationPolicy();
+        LOGGER.debug("Evaluating authentication policy [{}] for [{}]", authenticationPolicy, registeredService.getName());
         return authenticationPolicy != null && authenticationPolicy.getCriteria() != null;
     }
 
