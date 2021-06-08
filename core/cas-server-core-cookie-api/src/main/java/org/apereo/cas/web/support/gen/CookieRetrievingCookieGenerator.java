@@ -166,7 +166,6 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     }
 
     private Cookie addCookieHeaderToResponse(final Cookie cookie,
-                                             final HttpServletRequest request,
                                              final HttpServletResponse response) {
         val builder = new StringBuilder();
         builder.append(String.format("%s=%s;", cookie.getName(), cookie.getValue()));
