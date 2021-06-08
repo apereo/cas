@@ -98,10 +98,11 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
 
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
+        val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
         val response = aupProperties.getLdap()
             .stream()
             .sorted(Comparator.comparing(LdapAcceptableUsagePolicyProperties::getName))
-            .map(Unchecked.function(ldap -> searchLdapForId(ldap, credential.getId())))
+            .map(Unchecked.function(ldap -> searchLdapForId(ldap, principal.getId())))
             .filter(Optional::isPresent)
             .findFirst();
 
