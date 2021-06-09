@@ -46,9 +46,64 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
 
     private int order;
 
+    private static Set<AuthenticationHandler> filterExcludedAuthenticationHandlers(
+        final Set<AuthenticationHandler> candidateHandlers,
+        final Service service,
+        final RegisteredService registeredService) {
+
+        val authenticationPolicy = registeredService.getAuthenticationPolicy();
+        val excludedHandlers = authenticationPolicy.getExcludedAuthenticationHandlers();
+        LOGGER.debug("Authentication transaction excludes [{}] for service [{}]", excludedHandlers, service);
+
+        val handlerSet = new LinkedHashSet<>(candidateHandlers);
+        LOGGER.debug("Candidate authentication handlers examined for this transaction are [{}]", handlerSet);
+
+        if (!excludedHandlers.isEmpty()) {
+            val it = handlerSet.iterator();
+            while (it.hasNext()) {
+                val handler = it.next();
+                val handlerName = handler.getName();
+                if (excludedHandlers.contains(handlerName)) {
+                    LOGGER.debug("Authentication handler [{}] is excluded for this transaction and is removed", handlerName);
+                    it.remove();
+                }
+            }
+        }
+        LOGGER.info("Final authentication handlers after exclusion rules are [{}]", handlerSet);
+        return handlerSet;
+    }
+
+    private static Set<AuthenticationHandler> filterRequiredAuthenticationHandlers(
+        final Set<AuthenticationHandler> candidateHandlers,
+        final Service service, final RegisteredService registeredService) {
+
+        val authenticationPolicy = registeredService.getAuthenticationPolicy();
+        val requiredHandlers = authenticationPolicy.getRequiredAuthenticationHandlers();
+        LOGGER.debug("Authentication transaction requires [{}] for service [{}]", requiredHandlers, service);
+        val handlerSet = new LinkedHashSet<>(candidateHandlers);
+        LOGGER.debug("Candidate authentication handlers examined for this transaction are [{}]", handlerSet);
+
+        if (!requiredHandlers.isEmpty()) {
+            val it = handlerSet.iterator();
+            while (it.hasNext()) {
+                val handler = it.next();
+                val handlerName = handler.getName();
+                val removeHandler = !(handler instanceof MultifactorAuthenticationHandler)
+                    && !(handler instanceof HttpBasedServiceCredentialsAuthenticationHandler)
+                    && !requiredHandlers.contains(handlerName);
+                if (removeHandler) {
+                    it.remove();
+                    LOGGER.debug("Authentication handler [{}] is removed", handlerName);
+                }
+            }
+        }
+        LOGGER.info("Final authentication handlers after inclusion rules are [{}]", handlerSet);
+        return handlerSet;
+    }
+
     @Override
     public Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers,
-        final AuthenticationTransaction transaction) {
+                                              final AuthenticationTransaction transaction) {
         val service = authenticationServiceSelectionPlan.resolveService(transaction.getService());
         val registeredService = this.servicesManager.findServiceBy(service);
 
@@ -72,59 +127,5 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
         }
         return false;
     }
-
-    private static Set<AuthenticationHandler> filterExcludedAuthenticationHandlers(
-        final Set<AuthenticationHandler> candidateHandlers,
-        final Service service,
-        final RegisteredService registeredService) {
-
-        val authenticationPolicy = registeredService.getAuthenticationPolicy();
-        val requiredHandlers = authenticationPolicy.getRequiredAuthenticationHandlers();
-        LOGGER.debug("Authentication transaction requires [{}] for service [{}]", requiredHandlers, service);
-        val handlerSet = new LinkedHashSet<>(candidateHandlers);
-        LOGGER.debug("Candidate authentication handlers examined for this transaction are [{}]", handlerSet);
-
-
-        if (!requiredHandlers.isEmpty()) {
-            val it = handlerSet.iterator();
-            while (it.hasNext()) {
-                val handler = it.next();
-                val handlerName = handler.getName();
-                val removeHandler = !(handler instanceof MultifactorAuthenticationHandler)
-                    && !(handler instanceof HttpBasedServiceCredentialsAuthenticationHandler)
-                    && !requiredHandlers.contains(handlerName);
-                if (removeHandler) {
-                    it.remove();
-                    LOGGER.debug("Authentication handler [{}] is removed", handlerName);
-                }
-            }
-        }
-        LOGGER.info("Final authentication handlers after exclusion rules are [{}]", handlerSet);
-        return handlerSet;
-    }
-
-    private static Set<AuthenticationHandler> filterRequiredAuthenticationHandlers(
-        final Set<AuthenticationHandler> candidateHandlers,
-        final Service service, final RegisteredService registeredService) {
-
-        val authenticationPolicy = registeredService.getAuthenticationPolicy();
-        val requiredHandlers = authenticationPolicy.getRequiredAuthenticationHandlers();
-        LOGGER.debug("Authentication transaction requires [{}] for service [{}]", requiredHandlers, service);
-        val handlerSet = new LinkedHashSet<>(candidateHandlers);
-        LOGGER.debug("Candidate authentication handlers examined for this transaction are [{}]", handlerSet);
-
-        if (!requiredHandlers.isEmpty()) {
-            val it = handlerSet.iterator();
-            while (it.hasNext()) {
-                val handler = it.next();
-                val handlerName = handler.getName();
-                if (!(handler instanceof HttpBasedServiceCredentialsAuthenticationHandler) && !requiredHandlers.contains(handlerName)) {
-                    LOGGER.debug("Authentication handler [{}] is not required for this transaction and is removed", handlerName);
-                    it.remove();
-                }
-            }
-        }
-        LOGGER.info("Final authentication handlers after inclusion rules are [{}]", handlerSet);
-        return handlerSet;
-    }
 }
+
