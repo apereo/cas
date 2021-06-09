@@ -2,6 +2,7 @@ package org.apereo.cas.mfa.accepto;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.mfa.AccepttoMultifactorProperties;
@@ -38,7 +39,8 @@ import java.util.Map;
  * @since 6.0.0
  */
 @Slf4j
-public class AccepttoMultifactorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+public class AccepttoMultifactorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler
+    implements MultifactorAuthenticationHandler {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationTransaction;
+import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
@@ -78,20 +79,23 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
         final RegisteredService registeredService) {
 
         val authenticationPolicy = registeredService.getAuthenticationPolicy();
-        val excludedHandlers = authenticationPolicy.getExcludedAuthenticationHandlers();
-        LOGGER.debug("Authentication transaction excludes [{}] for service [{}]", excludedHandlers, service);
-
+        val requiredHandlers = authenticationPolicy.getRequiredAuthenticationHandlers();
+        LOGGER.debug("Authentication transaction requires [{}] for service [{}]", requiredHandlers, service);
         val handlerSet = new LinkedHashSet<>(candidateHandlers);
         LOGGER.debug("Candidate authentication handlers examined for this transaction are [{}]", handlerSet);
 
-        if (!excludedHandlers.isEmpty()) {
+
+        if (!requiredHandlers.isEmpty()) {
             val it = handlerSet.iterator();
             while (it.hasNext()) {
                 val handler = it.next();
                 val handlerName = handler.getName();
-                if (excludedHandlers.contains(handlerName)) {
-                    LOGGER.debug("Authentication handler [{}] is excluded for this transaction and is removed", handlerName);
+                val removeHandler = !(handler instanceof MultifactorAuthenticationHandler)
+                    && !(handler instanceof HttpBasedServiceCredentialsAuthenticationHandler)
+                    && !requiredHandlers.contains(handlerName);
+                if (removeHandler) {
                     it.remove();
+                    LOGGER.debug("Authentication handler [{}] is removed", handlerName);
                 }
             }
         }
