@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.mfa.accepto.AccepttoApiUtilsTests;
 import org.apereo.cas.mfa.accepto.AccepttoMultifactorAuthenticationHandlerTests;
+import org.apereo.cas.mfa.accepto.AccepttoMultifactorAuthenticationProviderTests;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorDetermineUserAccountStatusActionTests;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorFetchChannelActionTests;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoMultifactorValidateChannelActionTests;
@@ -22,6 +23,7 @@ import org.junit.platform.suite.api.Suite;
     AccepttoMultifactorAuthenticationHandlerTests.class,
     AccepttoQRCodeAuthenticationHandlerTests.class,
     AccepttoApiUtilsTests.class,
+    AccepttoMultifactorAuthenticationProviderTests.class,
     AccepttoQRCodeValidateWebSocketChannelActionTests.class,
     AccepttoMultifactorDetermineUserAccountStatusActionTests.class,
     AccepttoMultifactorValidateUserDeviceRegistrationActionTests.class,
