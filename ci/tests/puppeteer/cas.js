@@ -61,7 +61,7 @@ exports.loginWith = async(page, user, password) => {
 exports.assertVisibility = async(page, selector) => {
     let element = await page.$(selector);
     console.log(`Checking visibility for ${selector}`);
-    assert(await element != null && element.boundingBox() != null);
+    assert(element != null && await element.boundingBox() != null);
 }
 
 exports.assertInvisibility = async(page, selector) => {
