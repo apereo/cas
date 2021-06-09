@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
+import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContext;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -646,7 +647,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             val result = getConfigurationContext().getSamlHttpRequestExtractor()
                 .extract(request, decoder, AuthnRequest.class)
                 .orElseThrow(() -> new IllegalArgumentException("Unable to extract SAML request"));
-            return initiateAuthenticationRequest(result, response, request);
+            val context = Pair.of(AuthnRequest.class.cast(result.getLeft()), result.getRight());
+            return initiateAuthenticationRequest(context, response, request);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             return WebUtils.produceErrorView(e);
@@ -688,7 +690,9 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             val context = new JEEContext(request, response);
             sessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
             sessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, SAMLBindingSupport.getRelayState(messageContext));
-            sessionStore.set(context, MessageContext.class.getName(), pair.getValue());
+
+            val authnContext = SamlIdPAuthenticationContext.from(messageContext).encode();
+            sessionStore.set(context, MessageContext.class.getName(), authnContext);
         }
     }
 
