@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml;
 
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContext;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -68,13 +69,14 @@ public class SamlIdPUtils {
         val requestValue = sessionStore
             .get(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST)
             .map(String.class::cast)
-            .orElseThrow(() -> new IllegalArgumentException("SAML request could not be determined from the authentication request"));
+            .orElseThrow(() -> new IllegalArgumentException("SAML request could not be determined from session store"));
+        val authnRequest = retrieveSamlRequest(openSamlConfigBean, clazz, requestValue);
         val messageContext = sessionStore
             .get(context, MessageContext.class.getName())
-            .map(MessageContext.class::cast)
-            .orElseThrow(() -> new IllegalArgumentException("SAML message context could not be determined from the authentication request"));
+            .map(String.class::cast)
+            .map(result -> SamlIdPAuthenticationContext.decode(result).toMessageContext(authnRequest))
+            .orElseThrow(() -> new IllegalArgumentException("SAML message context could not be determined from from session store"));
 
-        val authnRequest = retrieveSamlRequest(openSamlConfigBean, clazz, requestValue);
         return Pair.of(authnRequest, messageContext);
     }
 

@@ -52,9 +52,10 @@ public abstract class BaseHttpServletAwareSamlObjectEncoder<T extends SAMLObject
     /**
      * Encode.
      *
-     * @param request    the request
-     * @param samlObject the saml response
-     * @param relayState the relay state
+     * @param request        the request
+     * @param samlObject     the saml response
+     * @param relayState     the relay state
+     * @param messageContext the message context
      * @return the response
      * @throws SamlException the saml exception
      */

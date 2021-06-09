@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.aup.LdapAcceptableUsagePolicyP
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -48,10 +49,11 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
     public AcceptableUsagePolicyStatus verify(final RequestContext requestContext, final Credential credential) {
         var status = super.verify(requestContext, credential);
         if (!status.isAccepted()) {
+            val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
             return aupProperties.getLdap()
                 .stream()
                 .sorted(Comparator.comparing(LdapAcceptableUsagePolicyProperties::getName))
-                .map(Unchecked.function(ldap -> searchLdapForId(ldap, credential.getId())))
+                .map(Unchecked.function(ldap -> searchLdapForId(ldap, principal.getId())))
                 .filter(Optional::isPresent)
                 .findFirst()
                 .filter(Optional::isPresent)
@@ -96,10 +98,11 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
 
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
+        val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
         val response = aupProperties.getLdap()
             .stream()
             .sorted(Comparator.comparing(LdapAcceptableUsagePolicyProperties::getName))
-            .map(Unchecked.function(ldap -> searchLdapForId(ldap, credential.getId())))
+            .map(Unchecked.function(ldap -> searchLdapForId(ldap, principal.getId())))
             .filter(Optional::isPresent)
             .findFirst();
 
