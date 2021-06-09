@@ -53,7 +53,7 @@ public class GroovyAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUs
 
         WebUtils.putAuthentication(tgt.getAuthentication(), context);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        assertTrue(acceptableUsagePolicyRepository.fetchPolicy(context, credential).isPresent());
+        assertTrue(acceptableUsagePolicyRepository.fetchPolicy(context).isPresent());
     }
 
     @Test
@@ -64,6 +64,6 @@ public class GroovyAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUs
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
         val tgt = new MockTicketGrantingTicket(credential.getId(), credential, Map.of());
         ticketRegistry.addTicket(tgt);
-        assertFalse(acceptableUsagePolicyRepository.fetchPolicy(context, credential).isPresent());
+        assertFalse(acceptableUsagePolicyRepository.fetchPolicy(context).isPresent());
     }
 }

@@ -1,6 +1,5 @@
 package org.apereo.cas.aup;
 
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -49,7 +48,7 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
     }
 
     @Override
-    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext, final Credential credential) {
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) {
         val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
 
         if (isUsagePolicyAcceptedBy(principal)) {
@@ -62,7 +61,7 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
     }
 
     @Override
-    public Optional<AcceptableUsagePolicyTerms> fetchPolicy(final RequestContext requestContext, final Credential credential) {
+    public Optional<AcceptableUsagePolicyTerms> fetchPolicy(final RequestContext requestContext) {
         val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
 
         val attributes = principal.getAttributes();

@@ -1,6 +1,5 @@
 package org.apereo.cas.aup;
 
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.configuration.model.support.aup.LdapAcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -46,8 +45,8 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
     }
 
     @Override
-    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext, final Credential credential) {
-        var status = super.verify(requestContext, credential);
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) {
+        var status = super.verify(requestContext);
         if (!status.isAccepted()) {
             val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
             return aupProperties.getLdap()
@@ -97,7 +96,7 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
     }
 
     @Override
-    public boolean submit(final RequestContext requestContext, final Credential credential) {
+    public boolean submit(final RequestContext requestContext) {
         val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
         val response = aupProperties.getLdap()
             .stream()

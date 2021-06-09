@@ -1,6 +1,5 @@
 package org.apereo.cas.aup;
 
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
@@ -45,15 +44,15 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
     }
 
     @Override
-    public boolean submit(final RequestContext requestContext, final Credential credential) {
+    public boolean submit(final RequestContext requestContext) {
         HttpResponse response = null;
         try {
             val rest = aupProperties.getRest();
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-
+            val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
             val service = WebUtils.getService(requestContext);
             val parameters = CollectionUtils.wrap(
-                "username", credential.getId(),
+                "username", principal.getId(),
                 "locale", request.getLocale().toString());
             if (service != null) {
                 parameters.put("service", service.getId());
@@ -74,17 +73,19 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
     }
 
     @Override
-    public Optional<AcceptableUsagePolicyTerms> fetchPolicy(final RequestContext requestContext, final Credential credential) {
+    public Optional<AcceptableUsagePolicyTerms> fetchPolicy(final RequestContext requestContext) {
         HttpResponse response = null;
         try {
             val rest = aupProperties.getRest();
             val url = StringUtils.appendIfMissing(rest.getUrl(), "/").concat("policy");
+            val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.valueOf(rest.getMethod().toUpperCase()))
                 .url(url)
-                .parameters(CollectionUtils.wrap("username", credential.getId()))
+                .parameters(CollectionUtils.wrap("username", principal.getId()))
                 .build();
             response = HttpUtils.execute(exec);
             val statusCode = response.getStatusLine().getStatusCode();

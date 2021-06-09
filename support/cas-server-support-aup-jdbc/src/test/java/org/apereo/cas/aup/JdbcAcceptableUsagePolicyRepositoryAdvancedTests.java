@@ -74,7 +74,7 @@ public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAc
         val c = getCredential("casuser");
         val context = getRequestContext("casuser", Map.of(), c);
         WebUtils.putAuthentication(null, context);
-        assertFalse(getAcceptableUsagePolicyRepository().submit(context, c));
+        assertFalse(getAcceptableUsagePolicyRepository().submit(context));
     }
 
     @Test

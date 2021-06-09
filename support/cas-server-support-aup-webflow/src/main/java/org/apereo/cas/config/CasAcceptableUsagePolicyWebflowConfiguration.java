@@ -11,13 +11,14 @@ import org.apereo.cas.aup.GroovyAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-import org.apereo.cas.web.flow.AcceptableUsagePolicyRenderAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicySubmitAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyVerifyAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyVerifyServiceAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -93,7 +94,11 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "acceptableUsagePolicyRenderAction")
     public Action acceptableUsagePolicyRenderAction() {
-        return new AcceptableUsagePolicyRenderAction(acceptableUsagePolicyRepository());
+        return new ConsumerExecutionAction(requestContext -> {
+            var repository = acceptableUsagePolicyRepository();
+            repository.fetchPolicy(requestContext)
+                .ifPresent(policy -> WebUtils.putAcceptableUsagePolicyTermsIntoFlowScope(requestContext, policy));
+        });
     }
 
     @Bean
