@@ -47,7 +47,7 @@ public class AccepttoWebflowUtils {
      * @param sessionStore the session store
      * @return the channel
      */
-    public static Object getChannel(final JEEContext webContext, final SessionStore sessionStore) {
+    public static Optional<Object> getChannel(final JEEContext webContext, final SessionStore sessionStore) {
         return sessionStore.get(webContext, SESSION_ATTRIBUTE_CHANNEL);
     }
 
