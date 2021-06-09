@@ -93,7 +93,6 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         final boolean expectPolicyFound) {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
-        val credential = getCredential("casuser");
         val context = mock(RequestContext.class);
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         when(context.getRequestParameters()).thenReturn(new MockParameterMap());
