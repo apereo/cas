@@ -67,7 +67,7 @@ exports.assertVisibility = async(page, selector) => {
 exports.assertInvisibility = async(page, selector) => {
     let element = await page.$(selector);
     console.log(`Checking invisibility for ${selector}`);
-    assert(await element == null || element.boundingBox() == null);
+    assert(element == null || await element.boundingBox() == null);
 }
 
 exports.submitForm = async(page, selector) => {
