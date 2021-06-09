@@ -163,7 +163,13 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
      */
     protected TransientSessionTicket storeDelegatedClientAuthenticationRequest(final JEEContext webContext) {
         val properties = buildTicketProperties(webContext);
-        val originalService = configContext.getArgumentExtractor().extractService(webContext.getNativeRequest());
+
+        // The call to webContext.getNativeRequest() inserts the original service url, but if the delegate
+        // authentication call is coming from an OAuth2/OIDC client, this overwrites the oauth2 callback url:
+        // [36m2021-06-09 11:54:07,063 DEBUG [org.apereo.cas.web.flow.login.InitialFlowSetupAction] - <Placing service in context scope: [https://myhost.tld/cas/oauth2.0/callbackAuthorize?client_id=myOidcClient&redirect_uri=https%3A%2F%2Fmyapphost.tld%2Ftestservice%2Flogin%2Foauth2%2Fcode%2Freg&response_type=code&client_name=CasOAuthClient]>
+        // Afterwards the ServiceTicket for the /oauth2.0/callbackAuthorize endpoint is directly released
+        // to the OIDC client, resulting in a protocol violation.
+        val originalService = configContext.getArgumentExtractor().extractService(webContext.getNativeRequest() /* <- This call causes the problem!*/);
         val service = configContext.getAuthenticationRequestServiceSelectionStrategies().resolveService(originalService);
         properties.put(CasProtocolConstants.PARAMETER_SERVICE, originalService);
         properties.put(CasProtocolConstants.PARAMETER_TARGET_SERVICE, service);
