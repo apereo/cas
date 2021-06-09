@@ -32,10 +32,11 @@
                                 </code>
                             </ul>
                         </h4>
-                        <button id="useButton" class="mdc-button mdc-button--raised" th:value="#{screen.authentication.gauth.selectdevice}">
+                        <button th:id="${'useButton-' + device.id}"
+                                class="mdc-button mdc-button--raised" th:value="#{screen.authentication.gauth.selectdevice}">
                             <span class="mdc-button__label" th:text="#{screen.authentication.gauth.selectdevice}">Use</span>
                         </button>
-                        <button id="delButton"
+                        <button th:id="${'delButton-' + device.id}"
                                 onclick="$(this).parent('form').find('input[name=_eventId]').val('delete'); $(this).parent('form').submit();"
                                 class="mdc-button mdc-button--raised" th:value="#{screen.authentication.gauth.deletedevice}">
                             <span class="mdc-button__label" th:text="#{screen.authentication.gauth.deletedevice}">Use</span>
