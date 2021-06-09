@@ -98,4 +98,36 @@ public class DelegatedClientIdentityProviderConfigurationFactoryTests {
         assertNotNull(redirectUrl);
         assertTrue(redirectUrl.contains(EncodingUtils.urlEncode(service.getOriginalUrl())));
     }
+
+    @Test
+    public void verifyDelegateAuthenticationDoesNotBreakOauth2() {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
+
+        val originalUrl="http://service.original.url.com?response_type=idtoken+token";
+        val service = RegisteredServiceTestUtils.getService("example");
+        service.setOriginalUrl(originalUrl);
+
+        val casOauthCallbackUrl = "http://cas.example.com/cas/oauth2.0/callbackAuthorize?client_id=myClientId&redirect_uri="+originalUrl;
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, casOauthCallbackUrl);
+
+        val client = new CasClient(new CasConfiguration());
+        val factory = DelegatedClientIdentityProviderConfigurationFactory.builder()
+                .casProperties(casProperties)
+                .client(client)
+                .service(service)
+                .webContext(context)
+                .build();
+
+        val actual = factory.resolve();
+        assertTrue(actual.isPresent());
+        assertEquals(client.getName(), actual.get().getName());
+        assertEquals("cas", actual.get().getType());
+        val redirectUrl = actual.get().getRedirectUrl();
+        assertNotNull(redirectUrl);
+
+        assertTrue(redirectUrl.startsWith("clientredirect?"));
+        assertTrue(redirectUrl.contains(EncodingUtils.urlEncode(casOauthCallbackUrl)));
+    }
 }

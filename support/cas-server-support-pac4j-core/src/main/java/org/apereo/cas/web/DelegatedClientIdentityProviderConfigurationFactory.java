@@ -60,7 +60,8 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
         LOGGER.debug("Request parameters are [{}]", webContext.getRequestParameters());
         if (service != null) {
             val sourceParam = service.getSource();
-            val serviceParam = service.getOriginalUrl();
+            val serviceParameterFromWebContext = webContext.getRequestParameter(CasProtocolConstants.PARAMETER_SERVICE);
+            val serviceParam = serviceParameterFromWebContext.orElseGet(service::getOriginalUrl);
             LOGGER.debug("Processing service parameter [{}] with value [{}]", sourceParam, serviceParam);
             if (StringUtils.isNotBlank(sourceParam) && StringUtils.isNotBlank(serviceParam)) {
                 uriBuilder.queryParam(sourceParam, "{service}");
