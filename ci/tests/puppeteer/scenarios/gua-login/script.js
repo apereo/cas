@@ -14,7 +14,7 @@ const cas = require('../../cas.js');
     
     // await page.waitForTimeout(2000)
     
-    await page.type('#username', "casuser");
+    await cas.type(page,'#username', "casuser");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
     
@@ -32,7 +32,7 @@ const cas = require('../../cas.js');
 
     await cas.submitForm(page, "#fm1");
 
-    await page.type('#password', "Mellon");
+    await cas.type(page,'#password', "Mellon");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 

@@ -24,7 +24,7 @@ const cas = require('../../cas.js');
 
     await cas.assertVisibility(page, '#email')
 
-    await page.type('#email', "casuser@example.org");
+    await cas.type(page,'#email', "casuser@example.org");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 

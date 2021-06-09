@@ -20,7 +20,7 @@ const cas = require('../../cas.js');
     
     await cas.assertVisibility(page, '#username')
 
-    await page.type('#username', "casuser");
+    await cas.type(page,'#username', "casuser");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
