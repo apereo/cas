@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.support.saml.SamlAttributeEncoderTests;
 import org.apereo.cas.support.saml.SamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContextTests;
 import org.apereo.cas.support.saml.authentication.SamlIdPServiceFactoryTests;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGeneratorTests;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocatorTests;
@@ -134,6 +135,7 @@ import org.junit.platform.suite.api.Suite;
     SamlIdPLogoutResponseObjectBuilderTests.class,
     SamlRegisteredServiceMetadataHealthIndicatorTests.class,
     SamlTemplatesVelocityEngineTests.class,
+    SamlIdPAuthenticationContextTests.class,
     SamlProfileSamlAuthNStatementBuilderTests.class,
     MetadataRegistrationAuthorityAttributeReleasePolicyTests.class,
     SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests.class,

@@ -12,5 +12,5 @@ def run(Object[] args) {
     return String.format("Hello %s with email %s, your affiliation is %s",
             CollectionUtils.firstElement(attributes.get("uid")).get().toString(),
             email,
-            CollectionUtils.firstElement(attributes.get("eduPersonAffiliation")).get().toString());
+            CollectionUtils.firstElement(attributes.get("eduPersonAffiliation")).get().toString())
 }

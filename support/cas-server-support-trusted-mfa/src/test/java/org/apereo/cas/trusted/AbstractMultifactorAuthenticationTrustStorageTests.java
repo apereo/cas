@@ -14,6 +14,7 @@ import org.apereo.cas.trusted.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.Getter;
 import lombok.val;
@@ -54,15 +55,15 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     protected MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy;
 
     @Autowired
-    @Qualifier("mfaVerifyTrustAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_MFA_VERIFY_TRUST_ACTION)
     protected Action mfaVerifyTrustAction;
 
     @Autowired
-    @Qualifier("mfaSetTrustAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_MFA_SET_TRUST_ACTION)
     protected Action mfaSetTrustAction;
 
     @Autowired
-    @Qualifier("mfaPrepareTrustDeviceViewAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_MFA_PREPARE_TRUST_DEVICE_VIEW_ACTION)
     protected Action mfaPrepareTrustDeviceViewAction;
 
     @Autowired

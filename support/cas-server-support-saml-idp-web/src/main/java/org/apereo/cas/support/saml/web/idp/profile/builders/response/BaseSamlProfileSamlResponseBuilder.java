@@ -101,7 +101,8 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
             var relayState = SAMLBindingSupport.getRelayState(messageContext);
             LOGGER.trace("RelayState is [{}]", relayState);
             return encode(service, finalResponse, response, request,
-                adaptor, relayState, binding, authnRequest, assertion);
+                adaptor, relayState, binding, authnRequest, assertion,
+                messageContext);
         }
         return finalResponse;
     }
@@ -171,15 +172,16 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
     /**
      * Encode the final result into the http response.
      *
-     * @param service      the service
-     * @param samlResponse the saml response
-     * @param httpResponse the http response; may be null to mute encoding.
-     * @param httpRequest  the http request
-     * @param adaptor      the adaptor
-     * @param relayState   the relay state
-     * @param binding      the binding
-     * @param authnRequest the authn request
-     * @param assertion    the assertion
+     * @param service        the service
+     * @param samlResponse   the saml response
+     * @param httpResponse   the http response; may be null to mute encoding.
+     * @param httpRequest    the http request
+     * @param adaptor        the adaptor
+     * @param relayState     the relay state
+     * @param binding        the binding
+     * @param authnRequest   the authn request
+     * @param assertion      the assertion
+     * @param messageContext the message context
      * @return the t
      * @throws SamlException the saml exception
      */
@@ -191,7 +193,8 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
                                 String relayState,
                                 String binding,
                                 RequestAbstractType authnRequest,
-                                Object assertion) throws SamlException;
+                                Object assertion,
+                                MessageContext messageContext) throws SamlException;
 
     /**
      * Encrypt assertion.

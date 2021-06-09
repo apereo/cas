@@ -8,6 +8,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorCoreProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
+import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDeviceNamingStrategy;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -74,6 +75,13 @@ public class MultifactorAuthnTrustConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @ConditionalOnMissingBean(name = "mfaTrustDeviceNamingStrategy")
+    @Bean
+    @RefreshScope
+    public MultifactorAuthenticationTrustedDeviceNamingStrategy mfaTrustDeviceNamingStrategy() {
+        return MultifactorAuthenticationTrustedDeviceNamingStrategy.random();
+    }
 
     @ConditionalOnMissingBean(name = "mfaTrustEngine")
     @Bean

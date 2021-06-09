@@ -58,12 +58,9 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
     public void verifyActionNoAuthentication() {
         val properties = new AcceptableUsagePolicyProperties();
         properties.getInMemory().setScope(InMemoryAcceptableUsagePolicyProperties.Scope.AUTHENTICATION);
-
         val context = getRequestContext();
-
         val repo = getRepositoryInstance(properties);
-        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casaup");
-        assertThrows(AuthenticationException.class, () -> repo.verify(context, c));
+        assertThrows(AuthenticationException.class, () -> repo.verify(context));
     }
 
     @Test
@@ -98,9 +95,9 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
         WebUtils.putTicketGrantingTicketInScopes(context, "TGT-12345");
 
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casaup");
-        assertFalse(repo.verify(context, c).isAccepted());
-        assertTrue(repo.submit(context, c));
-        assertTrue(repo.verify(context, c).isAccepted());
+        assertFalse(repo.verify(context).isAccepted());
+        assertTrue(repo.submit(context));
+        assertTrue(repo.verify(context).isAccepted());
     }
 
     private static MockRequestContext getRequestContext() {

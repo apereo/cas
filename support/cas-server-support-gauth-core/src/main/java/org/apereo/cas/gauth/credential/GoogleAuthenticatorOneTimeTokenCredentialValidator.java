@@ -9,6 +9,7 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialValidator
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,6 +29,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
     OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> {
     private final IGoogleAuthenticator googleAuthenticatorInstance;

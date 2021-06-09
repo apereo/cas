@@ -1,0 +1,19 @@
+{
+  "dependencies": "gauth",
+  "properties": [
+    "--cas.authn.mfa.gauth.crypto.enabled=false",
+    "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoint.health.show-details=always",
+    "--management.endpoints.enabled-by-default=true",
+
+    "--cas.authn.mfa.triggers.global.global-provider-id=mfa-gauth",
+
+    "--logging.level.org.apereo.cas=info"
+  ]
+}
+
+
+
