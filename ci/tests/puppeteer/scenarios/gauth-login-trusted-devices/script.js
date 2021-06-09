@@ -16,10 +16,13 @@ const cas = require('../../cas.js');
     await cas.submitForm(page, "#fm1");
 
     await cas.innerText(page, '#deviceName');
-    await page.type('#deviceName', "My Trusted Device");
-    
-    await cas.assertInvisibility(page, '#expiration')
 
+    await page.$eval('#deviceName', el => el.value = '');
+    await page.type('#deviceName', "My Trusted Device");
+
+    await page.waitForTimeout(10000)
+
+    await cas.assertVisibility(page, '#expiration')
     await cas.assertVisibility(page, '#timeUnit')
 
     await cas.submitForm(page, "#registerform");

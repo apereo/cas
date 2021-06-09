@@ -5,7 +5,7 @@ const BROWSER_OPTIONS = {
     headless: process.env.CI === "true",
     devtools: true,
     defaultViewport: null,
-    slowMo: process.env.CI === "true" ? 0 : 25,
+    slowMo: process.env.CI === "true" ? 0 : 10,
     args: ['--start-maximized']
 };
 
