@@ -12,13 +12,11 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(1000)
 
     console.log("Using scratch code to login...");
-    await page.type('#token', "83766843");
+    await cas.type(page,'#token', "83766843");
     await cas.submitForm(page, "#fm1");
 
     await cas.innerText(page, '#deviceName');
-
-    await page.$eval('#deviceName', el => el.value = '');
-    await page.type('#deviceName', "My Trusted Device");
+    await cas.type(page, "#deviceName", "My Trusted Device")
 
     await page.waitForTimeout(10000)
 

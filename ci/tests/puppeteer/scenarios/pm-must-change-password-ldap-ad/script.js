@@ -12,8 +12,8 @@ const cas = require('../../cas.js');
 
     assert(header === "You must change your password.")
 
-    await page.type('#password', "Jv!e0mKD&dCNl^Q");
-    await page.type('#confirmedPassword', "Jv!e0mKD&dCNl^Q");
+    await cas.type(page,'#password', "Jv!e0mKD&dCNl^Q");
+    await cas.type(page,'#confirmedPassword', "Jv!e0mKD&dCNl^Q");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 

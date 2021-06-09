@@ -14,7 +14,7 @@ const cas = require('../../cas.js');
     let pswd = await page.$('#password');
     assert(pswd == null);
 
-    await page.type('#username', "casuser");
+    await cas.type(page,'#username', "casuser");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 

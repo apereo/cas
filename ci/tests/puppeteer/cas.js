@@ -52,8 +52,8 @@ exports.inputValue = async(page, selector) => {
 
 exports.loginWith = async(page, user, password) => {
     console.log(`Logging in with ${user} and ${password}`);
-    await page.type('#username', user);
-    await page.type('#password', password);
+    await this.type(page, '#username', user);
+    await this.type(page, '#password', password);
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 }
@@ -73,4 +73,9 @@ exports.assertInvisibility = async(page, selector) => {
 exports.submitForm = async(page, selector) => {
     await page.$eval(selector, form => form.submit());
     await page.waitForTimeout(2500)
+}
+
+exports.type = async(page, selector, value) => {
+    await page.$eval(selector, el => el.value = '');
+    await page.type(selector, value);
 }

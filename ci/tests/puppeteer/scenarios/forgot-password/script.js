@@ -25,7 +25,7 @@ const cas = require('../../cas.js');
     assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")))
     assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")))
 
-    await page.type('#username', "casuser");
+    await cas.type(page,'#username', "casuser");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
@@ -49,8 +49,8 @@ const cas = require('../../cas.js');
     header = await cas.textContent(page, "#content h2");
     assert(header === "Answer Security Questions")
 
-    await page.type('#q0', "answer1");
-    await page.type('#q1', "answer2");
+    await cas.type(page,'#q0', "answer1");
+    await cas.type(page,'#q1', "answer2");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
     await page.waitForTimeout(1000)
@@ -74,9 +74,6 @@ const cas = require('../../cas.js');
 
 
 async function typePassword(page, pswd, confirm) {
-    await page.$eval('#password', el => el.value = '');
-    await page.type('#password', pswd);
-
-    await page.$eval('#confirmedPassword', el => el.value = '');
-    await page.type('#confirmedPassword', confirm);
+    await cas.type(page,'#password', pswd);
+    await cas.type(page,'#confirmedPassword', confirm);
 }

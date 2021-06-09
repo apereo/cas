@@ -14,7 +14,7 @@ const cas = require('../../cas.js');
     let pswd = await page.$('#password');
     assert(pswd == null);
 
-    await page.type('#username', "casuser");
+    await cas.type(page,'#username', "casuser");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
@@ -23,7 +23,7 @@ const cas = require('../../cas.js');
     await cas.assertInvisibility(page, '#username')
     await cas.assertVisibility(page, '#password');
 
-    await page.type('#password', "Mellon");
+    await cas.type(page,'#password', "Mellon");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 

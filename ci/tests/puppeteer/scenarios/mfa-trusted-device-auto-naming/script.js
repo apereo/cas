@@ -39,7 +39,7 @@ const httpGet = (options) => {
     await cas.loginWith(page, "casuser", "Mellon");
     
     console.log("Using scratch code " + scratch + " to login...");
-    await page.type('#token', scratch);
+    await cas.type(page,'#token', scratch);
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 

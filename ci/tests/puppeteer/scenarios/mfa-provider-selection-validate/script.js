@@ -50,7 +50,7 @@ const httpGet = (options) => {
     await page.waitForTimeout(1000);
 
     console.log("Using scratch code " + scratch + " to login...");
-    await page.type('#token', scratch);
+    await cas.type(page,'#token', scratch);
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
     await page.waitForTimeout(1000);
