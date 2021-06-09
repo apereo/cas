@@ -101,6 +101,14 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     }
 
     @Override
+    public void delete(final long id) {
+        val query = new Query();
+        query.addCriteria(Criteria.where("id").is(id))
+            .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
+        this.mongoTemplate.remove(query, GoogleAuthenticatorAccount.class, this.collectionName);
+    }
+
+    @Override
     public long count() {
         val query = new Query();
         query.addCriteria(Criteria.where("username").exists(true));

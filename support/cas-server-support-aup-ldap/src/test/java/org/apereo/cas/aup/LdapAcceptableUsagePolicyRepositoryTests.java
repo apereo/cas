@@ -81,7 +81,7 @@ public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsag
         val actualPrincipalId = UUID.randomUUID().toString();
         val c = getCredential(actualPrincipalId);
         val context = getRequestContext(actualPrincipalId, Map.of(), c);
-        assertFalse(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
+        assertFalse(getAcceptableUsagePolicyRepository().verify(context).isAccepted());
     }
 
     @Test

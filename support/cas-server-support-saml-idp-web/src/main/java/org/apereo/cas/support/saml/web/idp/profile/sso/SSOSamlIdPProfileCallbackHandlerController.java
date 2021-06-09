@@ -15,7 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.pac4j.core.context.JEEContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -85,7 +85,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
 
 
     private ModelAndView handleProfileRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
-        val authnRequest = retrieveAuthenticationRequest(response, request);
+        val authnContext = retrieveAuthenticationRequest(response, request);
 
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
         if (StringUtils.isBlank(ticket)) {
@@ -93,7 +93,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
             return WebUtils.produceErrorView(new IllegalArgumentException("Unable to handle SAML request"));
         }
 
-        val authenticationContext = buildAuthenticationContextPair(request, response, authnRequest);
+        val authenticationContext = buildAuthenticationContextPair(request, response, authnContext);
         val assertion = validateRequestAndBuildCasAssertion(response, request, authenticationContext);
         val binding = determineProfileBinding(authenticationContext, assertion);
         if (StringUtils.isBlank(binding)) {
@@ -106,10 +106,10 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
 
     private Assertion validateRequestAndBuildCasAssertion(final HttpServletResponse response,
                                                           final HttpServletRequest request,
-                                                          final Pair<AuthnRequest, MessageContext> pair) throws Exception {
+                                                          final Pair<? extends RequestAbstractType, MessageContext> authnContext) throws Exception {
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
         val validator = getConfigurationContext().getTicketValidator();
-        val serviceUrl = constructServiceUrl(request, response, pair);
+        val serviceUrl = constructServiceUrl(request, response, authnContext);
         LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
         val assertion = validator.validate(ticket, serviceUrl);
         logCasValidationAssertion(assertion);

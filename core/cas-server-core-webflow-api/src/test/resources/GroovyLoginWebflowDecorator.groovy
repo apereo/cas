@@ -3,5 +3,5 @@ def run(Object[] args) {
     def applicationContext = args[1]
     def logger = args[2]
     logger.info("Decorating the login view...")
-    requestContext.flowScope.put("decoration", "decoration-results");
+    requestContext.flowScope.put("decoration", "decoration-results")
 }

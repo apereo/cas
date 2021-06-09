@@ -1,7 +1,6 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.WebUtils;
@@ -35,8 +34,8 @@ public class DefaultAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
     }
 
     @Override
-    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext, final Credential credential) {
-        val storageInfo = getKeyAndMap(requestContext, credential);
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) {
+        val storageInfo = getKeyAndMap(requestContext);
         val key = storageInfo.getLeft();
         val map = storageInfo.getRight();
         val authentication = WebUtils.getAuthentication(requestContext);
@@ -52,22 +51,19 @@ public class DefaultAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
     }
 
     @Override
-    public boolean submit(final RequestContext requestContext, final Credential credential) {
-        val storageInfo = getKeyAndMap(requestContext, credential);
+    public boolean submit(final RequestContext requestContext) {
+        val storageInfo = getKeyAndMap(requestContext);
         val key = storageInfo.getLeft();
         val map = storageInfo.getRight();
         map.put(key, Boolean.TRUE);
         return map.containsKey(key);
     }
 
-    private Pair<String, Map> getKeyAndMap(final RequestContext requestContext, final Credential credential) {
+    private Pair<String, Map> getKeyAndMap(final RequestContext requestContext) {
         switch (aupProperties.getInMemory().getScope()) {
             case GLOBAL:
-                if (credential == null) {
-                    LOGGER.debug("Falling back to AUP scope AUTHENTICATION because credential is null");
-                    return Pair.of(AUP_ACCEPTED, requestContext.getFlowScope().asMap());
-                }
-                return Pair.of(credential.getId(), policyMap);
+                val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+                return Pair.of(principal.getId(), policyMap);
             case AUTHENTICATION:
             default:
                 return Pair.of(AUP_ACCEPTED, requestContext.getFlowScope().asMap());

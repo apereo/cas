@@ -7,6 +7,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.Response;
@@ -51,7 +52,7 @@ public class SamlResponseArtifactEncoderTests extends BaseSamlIdPConfigurationTe
 
         val samlResponse = mock(Response.class);
         when(samlResponse.getIssuer()).thenReturn(issuer);
-        assertNotNull(encoder.encode(authnRequest, samlResponse, "relay-state"));
+        assertNotNull(encoder.encode(authnRequest, samlResponse, "relay-state", new MessageContext()));
     }
 
 }

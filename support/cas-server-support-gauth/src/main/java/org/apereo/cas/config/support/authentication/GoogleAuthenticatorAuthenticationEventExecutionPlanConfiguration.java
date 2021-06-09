@@ -21,6 +21,7 @@ import org.apereo.cas.gauth.credential.InMemoryGoogleAuthenticatorTokenCredentia
 import org.apereo.cas.gauth.credential.JsonGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.credential.RestGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorToken;
+import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorDeleteAccountAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorPrepareLoginAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorSaveRegistrationAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorValidateSelectedRegistrationAction;
@@ -178,6 +179,12 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         return new OneTimeTokenAccountConfirmSelectionRegistrationAction(googleAuthenticatorAccountRegistry.getObject());
     }
 
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "googleAccountDeleteDeviceAction")
+    public Action googleAccountDeleteDeviceAction() {
+        return new GoogleAuthenticatorDeleteAccountAction(googleAuthenticatorAccountRegistry.getObject());
+    }
 
     @Bean
     @RefreshScope

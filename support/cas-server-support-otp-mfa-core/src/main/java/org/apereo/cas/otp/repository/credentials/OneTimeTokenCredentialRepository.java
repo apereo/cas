@@ -80,6 +80,13 @@ public interface OneTimeTokenCredentialRepository {
     void delete(String username);
 
     /**
+     * Delete by id.
+     *
+     * @param id device identifier
+     */
+    void delete(long id);
+
+    /**
      * Count all records.
      *
      * @return the long

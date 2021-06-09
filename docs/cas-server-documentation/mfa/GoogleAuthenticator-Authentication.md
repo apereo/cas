@@ -40,6 +40,8 @@ The following endpoints are provided by CAS:
 | Endpoint                 | Description
 |--------------------------|------------------------------------------------
 | `gauthCredentialRepository`   | Manage and control [Google Authenticator account records](GoogleAuthenticator-Authentication.html). A `GET` operation produces a list of all account records. A `DELETE` operation will delete all account records. A `GET` operation produces with a parameter selector of `/{username}` will list the record assigned to the user. A `DELETE` operation produces with a parameter selector of `/{username}` will remove the record assigned to the user.
+| `gauthCredentialRepository/export`       | Invoked via `GET` to export all google accounts as a downloadable zip archive.
+| `gauthCredentialRepository/import`       | Invoked via `POST` to import a single google account provided in the request body.
 
 ## Token Repository
 

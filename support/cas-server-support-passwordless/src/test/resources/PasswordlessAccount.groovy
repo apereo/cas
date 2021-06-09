@@ -12,5 +12,5 @@ def run(Object[] args) {
             .username("casuser")
             .name("casuser")
             .attributes(Map.of("lastName", List.of("Smith")))
-            .build();
+            .build()
 }

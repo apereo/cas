@@ -94,6 +94,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
                 @Override
                 public void execute() {
                     repo.delete("casuser");
+                    repo.delete(12345);
                     repo.deleteAll();
                 }
             });

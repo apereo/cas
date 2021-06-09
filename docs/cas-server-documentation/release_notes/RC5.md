@@ -92,11 +92,20 @@ A number of improvements are now implemented for a better use experience while b
        
 - [SSO Sessions endpoint](../authentication/Configuring-SSO.html) now indicates the expiration 
   policy and remember-me flags for authenticated sessions.
-- Password management APIs are updated to allow updating security questions.
-- SAML2 authentication statements can now customize the `SubjectLocality` field on a per-application basis.
+- [Password management APIs](../password_management/Password-Management.html) are updated to allow updating security questions.
+- SAML2 logout requests and responses should now respect the appropriate binding defined in CAS configuration.
+- Minor adjustments to SSO participation strategies to handle `UNDEFINED` states better.
+- [SAML2 authentication](../authentication/Configuring-SAML2-Authentication.html) statements 
+  can now customize the `SubjectLocality` field on a per-application basis.
 - HTTP request entities used for `POST` methods in REST API interactions are set to use the `UTF-8` encoding.
-- Generating access tokens for the OAuth authorization grants is set to use client id first and then 
-  redirect URIs to locate the service definition.
+- Generating access tokens for the [OAuth authorization grants](../authentication/OAuth-Authentication.html) 
+  is set to use client id first and then redirect URIs to locate the service definition.
+- Settings and properties controlled by CAS themes are now automatically documented.
+- [X509 Authentication](../authentication/X509-Authentication.html) can now handle account status errors via webflow.
+- [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) repository implementations 
+  are allowed to remove records by id. To handle this change, the [JPA data structures](../mfa/GoogleAuthenticator-Authentication-Registration-JPA.html)
+  that keep track of scratch codes have been altered to link devices and scratch codes by id, rather than by username.
+- Minor fixes to impersonation allow the surrogate user to be correctly authorized even if attribute repositories produce no attributes.
 - Additional [Puppeteer tests](../developer/Test-Process.html) to cover scenarios for 
   password management, delegated authentication and OAuth protocol.
 - [Groovy Interrupts](../webflow/Webflow-Customization-Interrupt-Groovy.html) are now correctly 
@@ -116,4 +125,6 @@ A number of improvements are now implemented for a better use experience while b
 - Apache Tomcat
 - Spring Security
 - DropWizard
-
+- SnakeYAML
+- Apache CXF
+- BounctCastle

@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
+import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContext;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -103,15 +104,17 @@ public abstract class AbstractSamlIdPProfileHandlerController {
     /**
      * Bind relay state parameter.
      *
-     * @param request    the request
-     * @param response   the response
-     * @param relayState the relay state
+     * @param request      the request
+     * @param response     the response
+     * @param authnContext the authn context
+     * @param relayState   the relay state
      * @return the message context
      */
     protected static MessageContext bindRelayStateParameter(final HttpServletRequest request,
                                                             final HttpServletResponse response,
+                                                            final Pair<? extends RequestAbstractType, MessageContext> authnContext,
                                                             final String relayState) {
-        val messageContext = new MessageContext();
+        val messageContext = authnContext.getValue();
         LOGGER.trace("Relay state is [{}]", relayState);
         SAMLBindingSupport.setRelayState(messageContext, relayState);
         return messageContext;
@@ -342,7 +345,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @return the model and view
      * @throws Exception the exception
      */
-    protected ModelAndView initiateAuthenticationRequest(final Pair<? extends SignableSAMLObject, MessageContext> pair,
+    protected ModelAndView initiateAuthenticationRequest(final Pair<? extends RequestAbstractType, MessageContext> pair,
                                                          final HttpServletResponse response,
                                                          final HttpServletRequest request) throws Exception {
         autoConfigureCookiePath(request);
@@ -361,22 +364,22 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * to ensure a clean slate from previous attempts, specially
      * when requests/responses are produced rapidly.
      *
-     * @param pair           the pair
+     * @param context        the pair
      * @param authentication the authentication
      * @param request        the request
      * @param response       the response
      */
-    protected void buildResponseBasedSingleSignOnSession(final Pair<? extends SignableSAMLObject, MessageContext> pair,
+    protected void buildResponseBasedSingleSignOnSession(final Pair<? extends RequestAbstractType, MessageContext> context,
                                                          final Authentication authentication,
                                                          final HttpServletRequest request,
                                                          final HttpServletResponse response) {
-        val authnRequest = (AuthnRequest) pair.getLeft();
+        val authnRequest = (AuthnRequest) context.getLeft();
         val id = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
         val service = configurationContext.getWebApplicationServiceFactory().createService(id);
         val registeredService = configurationContext.getServicesManager().findServiceBy(service);
 
         val assertion = buildCasAssertion(authentication, service, registeredService, Map.of());
-        val authenticationContext = buildAuthenticationContextPair(request, response, authnRequest);
+        val authenticationContext = buildAuthenticationContextPair(request, response, context);
         val binding = determineProfileBinding(authenticationContext, assertion);
 
         val messageContext = authenticationContext.getRight();
@@ -391,18 +394,18 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      *
      * @param request      the request
      * @param response     the response
-     * @param authnRequest the authn request
+     * @param authnContext the authn context
      * @return the pair
      */
-    protected Pair<AuthnRequest, MessageContext> buildAuthenticationContextPair(final HttpServletRequest request,
-                                                                                final HttpServletResponse response,
-                                                                                final AuthnRequest authnRequest) {
+    protected Pair<? extends RequestAbstractType, MessageContext> buildAuthenticationContextPair(final HttpServletRequest request,
+                                                                                                 final HttpServletResponse response,
+                                                                                                 final Pair<? extends RequestAbstractType, MessageContext> authnContext) {
         val context = new JEEContext(request, response);
         val relayState = configurationContext.getSessionStore()
             .get(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE)
             .orElseGet(() -> request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));
-        val messageContext = bindRelayStateParameter(request, response, (String) relayState);
-        return Pair.of(authnRequest, messageContext);
+        val messageContext = bindRelayStateParameter(request, response, authnContext, (String) relayState);
+        return Pair.of(authnContext.getLeft(), messageContext);
     }
 
     /**
@@ -538,11 +541,11 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      */
     protected void buildSamlResponse(final HttpServletResponse response,
                                      final HttpServletRequest request,
-                                     final Pair<AuthnRequest, MessageContext> authenticationContext,
+                                     final Pair<? extends RequestAbstractType, MessageContext> authenticationContext,
                                      final Assertion casAssertion,
                                      final String binding) {
 
-        val authnRequest = authenticationContext.getKey();
+        val authnRequest = AuthnRequest.class.cast(authenticationContext.getKey());
         val pair = getRegisteredServiceAndFacade(authnRequest);
 
         val entityId = pair.getValue().getEntityId();
@@ -644,7 +647,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             val result = getConfigurationContext().getSamlHttpRequestExtractor()
                 .extract(request, decoder, AuthnRequest.class)
                 .orElseThrow(() -> new IllegalArgumentException("Unable to extract SAML request"));
-            return initiateAuthenticationRequest(result, response, request);
+            val context = Pair.of(AuthnRequest.class.cast(result.getLeft()), result.getRight());
+            return initiateAuthenticationRequest(context, response, request);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             return WebUtils.produceErrorView(e);
@@ -659,12 +663,12 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @return the authn request
      */
     @Synchronized
-    protected AuthnRequest retrieveAuthenticationRequest(final HttpServletResponse response, final HttpServletRequest request) {
+    protected final Pair<? extends RequestAbstractType, MessageContext> retrieveAuthenticationRequest(final HttpServletResponse response,
+                                                                                                      final HttpServletRequest request) {
         LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
-        return SamlIdPUtils.retrieveSamlRequest(new JEEContext(request, response),
-            configurationContext.getSessionStore(),
-            configurationContext.getOpenSamlConfigBean(),
-            AuthnRequest.class);
+        val webContext = new JEEContext(request, response);
+        return SamlIdPUtils.retrieveSamlRequest(webContext, configurationContext.getSessionStore(),
+            configurationContext.getOpenSamlConfigBean(), AuthnRequest.class);
     }
 
     /**
@@ -686,6 +690,9 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             val context = new JEEContext(request, response);
             sessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
             sessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, SAMLBindingSupport.getRelayState(messageContext));
+
+            val authnContext = SamlIdPAuthenticationContext.from(messageContext).encode();
+            sessionStore.set(context, MessageContext.class.getName(), authnContext);
         }
     }
 
@@ -696,10 +703,10 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param assertion             the assertion
      * @return the string
      */
-    protected String determineProfileBinding(final Pair<AuthnRequest, MessageContext> authenticationContext,
+    protected String determineProfileBinding(final Pair<? extends RequestAbstractType, MessageContext> authenticationContext,
                                              final Assertion assertion) {
 
-        val authnRequest = authenticationContext.getKey();
+        val authnRequest = AuthnRequest.class.cast(authenticationContext.getKey());
         val pair = getRegisteredServiceAndFacade(authnRequest);
         val facade = pair.getValue();
 

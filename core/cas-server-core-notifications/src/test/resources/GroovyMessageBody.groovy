@@ -3,5 +3,5 @@ def run(Object[] args) {
     def logger = args[1]
 
     logger.info("Parameters are {}", args[0])
-    return String.format("%s, %s", params[0], params[1]);
+    return String.format("%s, %s", params[0], params[1])
 }

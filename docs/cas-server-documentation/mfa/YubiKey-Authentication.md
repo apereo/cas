@@ -29,6 +29,8 @@ The following endpoints are provided by CAS:
 | Endpoint                 | Description
 |--------------------------|------------------------------------------------
 | `yubikeyAccountRepository`    | Manage and control [Google Authenticator account records](YubiKey-Authentication.html). A `GET` operation produces a list of all account records. A `DELETE` operation will delete all account records. A `GET` operation produces with a parameter selector of `/{username}` will list the record assigned to the user. A `DELETE` operation produces with a parameter selector of `/{username}` will remove the record assigned to the user.
+| `yubikeyAccountRepository/export`       | Invoked via `GET` to export all accounts as a downloadable zip archive.
+| `yubikeyAccountRepository/import`       | Invoked via `POST` to import a single account provided in the request body.
 
 ## Configuration
 
