@@ -6,10 +6,9 @@ import org.apereo.cas.aup.AcceptableUsagePolicyTerms
 
 AcceptableUsagePolicyStatus verify(Object[] args) {
     def requestContext = args[0]
-    def credential = args[1]
-    def applicationContext = args[2]
-    def principal = args[3]
-    def logger = args[4]
+    def applicationContext = args[1]
+    def principal = args[2]
+    def logger = args[3]
 
     if (count > 1) {
         return AcceptableUsagePolicyStatus.accepted(principal)
@@ -19,10 +18,9 @@ AcceptableUsagePolicyStatus verify(Object[] args) {
 
 def submit(Object[] args) {
     def requestContext = args[0]
-    def credential = args[1]
-    def applicationContext = args[2]
-    def principal = args[3]
-    def logger = args[4]
+    def applicationContext = args[1]
+    def principal = args[2]
+    def logger = args[3]
 
     count++
     return true
@@ -30,13 +28,12 @@ def submit(Object[] args) {
 
 AcceptableUsagePolicyTerms fetch(Object[] args) {
     def requestContext = args[0]
-    def credential = args[1]
-    def applicationContext = args[2]
-    def principal = args[3]
-    def logger = args[4]
+    def applicationContext = args[1]
+    def principal = args[2]
+    def logger = args[3]
 
     return AcceptableUsagePolicyTerms.builder()
             .defaultText("Hello, World")
             .code(AcceptableUsagePolicyTerms.CODE)
-            .build();
+            .build()
 }

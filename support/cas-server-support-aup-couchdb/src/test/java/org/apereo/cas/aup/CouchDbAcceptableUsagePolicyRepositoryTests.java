@@ -84,8 +84,8 @@ public class CouchDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
 
         val c = getCredential("casuser");
         val context = getRequestContext("casuser", attributes, c);
-        acceptableUsagePolicyRepository.submit(context, c);
-        assertTrue(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
+        acceptableUsagePolicyRepository.submit(context);
+        assertTrue(getAcceptableUsagePolicyRepository().verify(context).isAccepted());
 
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser", Map.of("aupAccepted", List.of("true")));
         val authentication = RegisteredServiceTestUtils.getAuthentication(principal);
@@ -95,6 +95,6 @@ public class CouchDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         ticketRegistry.addTicket(tgt);
         
-        assertTrue(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
+        assertTrue(getAcceptableUsagePolicyRepository().verify(context).isAccepted());
     }
 }

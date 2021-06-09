@@ -22,10 +22,9 @@ import org.springframework.webflow.execution.*
 
 def verify(Object[] args) {
     def requestContext = args[0]
-    def credential = args[1]
-    def applicationContext = args[2]
-    def principal = args[3]
-    def logger = args[4]
+    def applicationContext = args[1]
+    def principal = args[2]
+    def logger = args[3]
     ...
     if (policyAccepted()) {
         return AcceptableUsagePolicyStatus.accepted(principal)
@@ -34,13 +33,12 @@ def verify(Object[] args) {
 }
 
 def submit(Object[] args) {
-     def requestContext = args[0]
-     def credential = args[1]
-     def applicationContext = args[2]
-     def principal = args[3]
-     def logger = args[4]
-     ...
-     return true
+    def requestContext = args[0]
+    def applicationContext = args[1]
+    def principal = args[2]
+    def logger = args[3]
+    ...
+    return true
 }
      
 /*
@@ -51,17 +49,16 @@ def submit(Object[] args) {
 */
 def fetch(Object[] args) {
     def requestContext = args[0]
-    def credential = args[1]
-    def applicationContext = args[2]
-    def principal = args[3]
-    def logger = args[4]
+    def applicationContext = args[1]
+    def principal = args[2]
+    def logger = args[3]
 
     ...    
 
     return AcceptableUsagePolicyTerms.builder()
             .defaultText("Hello, World")
             .code(AcceptableUsagePolicyTerms.CODE)
-            .build();
+            .build()
 }
 ```
 
@@ -70,7 +67,6 @@ The parameters passed are as follows:
 | Parameter             | Description
 |-----------------------|-----------------------------------------------------------------------
 | `requestContext`      | The object representing the Spring Webflow `RequestContext`.
-| `credential`          | The object representing the authentication `Credential`.
 | `applicationContext`  | The object representing the Spring `ApplicationContext`.
 | `principal`           | The object representing the authenticated `Principal`.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
