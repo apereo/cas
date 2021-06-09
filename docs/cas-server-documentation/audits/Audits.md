@@ -46,38 +46,21 @@ The following filters that can be applied:
 | `resourceOperatedOn`      | `ST-1.*`, `TGT-1-.*`
 
 Each filter other than `interval` can accept a regular expression to match against.
+     
+## Storage
 
-## File-based Audits
+Audits can be managed via the following strategies.
 
-Please [see this guide](Audits-File.html) for more info.
-
-## Database Audits
-
-Please [see this guide](Audits-Database.html) for more info.
-
-## MongoDb Audits
-
-Please [see this guide](Audits-MongoDb.html) for more info.
-
-## Redis Audits
-
-Please [see this guide](Audits-Redis.html) for more info.
-
-## CouchDb Audits
-
-Please [see this guide](Audits-CouchDb.html) for more info.
-
-## Couchbase Audits
-
-Please [see this guide](Audits-Couchbase.html) for more info.
-
-## DynamoDb Audits
-
-Please [see this guide](Audits-DynamoDb.html) for more info.
-
-## REST Audits
-
-Please [see this guide](Audits-REST.html) for more info.
+| Storage          | Description                                         
+|-----------------------------------------------------------
+| File System      | [See this guide](Audits-File.html).
+| JPA              | [See this guide](Audits-Database.html).
+| MongoDb          | [See this guide](Audits-MongoDb.html).
+| Redis            | [See this guide](Audits-Redis.html).
+| CouchDb          | [See this guide](Audits-CouchDb.html).
+| Couchbase        | [See this guide](Audits-Couchbase.html).
+| DynamoDb         | [See this guide](Audits-DynamoDb.html).
+| REST             | [See this guide](Audits-REST.html).
 
 ## Audit Events
 
