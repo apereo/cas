@@ -1,8 +1,7 @@
 {
-  "dependencies": "gauth,trusted-mfa",
+  "dependencies": "gauth",
   "properties": [
     "--cas.authn.mfa.gauth.crypto.enabled=false",
-    "--cas.authn.mfa.gauth.core.trusted-device-enabled=true",
     "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
@@ -11,9 +10,6 @@
     "--management.endpoints.enabled-by-default=true",
 
     "--cas.authn.mfa.triggers.global.global-provider-id=mfa-gauth",
-    
-    "--cas.authn.mfa.trusted.core.device-registration-enabled=true",
-    "--cas.authn.mfa.trusted.core.auto-assign-device-name=true",
 
     "--logging.level.org.apereo.cas=info"
   ]

@@ -5,6 +5,7 @@ const BROWSER_OPTIONS = {
     headless: process.env.CI === "true",
     devtools: true,
     defaultViewport: null,
+    slowMo: process.env.CI === "true" ? 0 : 25,
     args: ['--start-maximized']
 };
 
@@ -60,13 +61,13 @@ exports.loginWith = async(page, user, password) => {
 exports.assertVisibility = async(page, selector) => {
     let element = await page.$(selector);
     console.log(`Checking visibility for ${selector}`);
-    assert(await element.boundingBox() != null);
+    assert(await element != null && element.boundingBox() != null);
 }
 
 exports.assertInvisibility = async(page, selector) => {
     let element = await page.$(selector);
     console.log(`Checking invisibility for ${selector}`);
-    assert(await element.boundingBox() == null);
+    assert(await element == null || element.boundingBox() == null);
 }
 
 exports.submitForm = async(page, selector) => {
