@@ -3,10 +3,10 @@ const assert = require('assert');
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
     headless: process.env.CI === "true",
-    devtools: true,
+    devtools: process.env.CI !== "true",
     defaultViewport: null,
-    slowMo: process.env.CI === "true" ? 0 : 10,
-    args: ['--start-maximized']
+    slowMo: process.env.CI === "true" ? 0 : 15,
+    args: ['--start-maximized', "--window-size=1920,1080"]
 };
 
 exports.browserOptions = () => BROWSER_OPTIONS;
@@ -78,4 +78,11 @@ exports.submitForm = async(page, selector) => {
 exports.type = async(page, selector, value) => {
     await page.$eval(selector, el => el.value = '');
     await page.type(selector, value);
+}
+
+exports.newPage = async(browser) => {
+    const page = await browser.newPage();
+    await page.setDefaultNavigationTimeout(0);
+    await page.bringToFront();
+    return page;
 }
