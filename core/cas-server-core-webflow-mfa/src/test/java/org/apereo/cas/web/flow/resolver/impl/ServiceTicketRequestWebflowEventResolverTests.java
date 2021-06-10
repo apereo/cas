@@ -23,6 +23,8 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -40,6 +42,29 @@ public class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflo
     @BeforeEach
     public void beforeEach() {
         servicesManager.deleteAll();
+    }
+
+    @Test
+    public void verifyAttemptWithoutCredential() {
+        val context = new MockRequestContext();
+
+        val request = new MockHttpServletRequest();
+
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+
+        val tgt = new MockTicketGrantingTicket("casuser");
+        ticketRegistry.addTicket(tgt);
+
+        val service = RegisteredServiceTestUtils.getService("service-ticket-request");
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
+        servicesManager.save(registeredService);
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        WebUtils.putServiceIntoFlowScope(context, service);
+        val event = serviceTicketRequestWebflowEventResolver.resolveSingle(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_GENERATE_SERVICE_TICKET, event.getId());
     }
 
     @Test
