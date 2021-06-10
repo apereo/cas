@@ -198,7 +198,7 @@ public class DelegatedClientAuthenticationActionTests {
         setExternalContext(context.getExternalContext());
 
         val event = delegatedAuthenticationAction.execute(context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
     }
 
     @Test
@@ -342,6 +342,25 @@ public class DelegatedClientAuthenticationActionTests {
         assertEquals(CasWebflowConstants.TRANSITION_ID_STOP, delegatedAuthenticationAction.execute(context).getId());
     }
 
+    @Test
+    public void verifyLogoutRequestWithOkAction() throws Exception {
+        val request = new MockHttpServletRequest();
+        request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "MockClientNoCredentials");
+        request.addParameter(Pac4jConstants.LOGOUT_ENDPOINT_PARAMETER, "true");
+        val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+        servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+
+        val context = new MockRequestContext();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        setRequestContext(context);
+        setExternalContext(context.getExternalContext());
+
+        val event = delegatedAuthenticationAction.execute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
+    }
+    
     @Test
     public void verifySsoAuthenticationUnauthz() {
         val context = new MockRequestContext();
