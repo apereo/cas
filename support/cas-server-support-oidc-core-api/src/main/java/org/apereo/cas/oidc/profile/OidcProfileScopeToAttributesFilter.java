@@ -99,10 +99,16 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                                                                      final Service service,
                                                                      final OidcRegisteredService oidcService,
                                                                      final OAuth20AccessToken accessToken) {
-        if (!oidcService.getScopes().isEmpty()) {
-            scopes.retainAll(oidcService.getScopes());
+        val serviceScopes = oidcService.getScopes();
+        LOGGER.trace("Scopes assigned to service definition [{}] are [{}]", oidcService.getName(), serviceScopes);
+        val scopeFree = serviceScopes.isEmpty() || (serviceScopes.size() == 1
+            && serviceScopes.contains(OidcConstants.StandardScopes.OPENID.getScope()));
+        if (!scopeFree) {
+            scopes.retainAll(serviceScopes);
+            LOGGER.trace("Service definition [{}] will filter attributes based on scopes [{}]", oidcService.getName(), scopes);
             return filterAttributesByScope(scopes, principal, service, oidcService, accessToken);
         }
+        LOGGER.trace("Service definition [{}] invokes the assigned attribute release policy without using scopes", oidcService.getName());
         return oidcService.getAttributeReleasePolicy().getAttributes(principal, service, oidcService);
     }
 

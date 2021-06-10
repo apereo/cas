@@ -107,6 +107,12 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
                 }
             }
         });
+        val scopeFree = definedServiceScopes.isEmpty() || (definedServiceScopes.size() == 1
+            && definedServiceScopes.contains(OidcConstants.StandardScopes.OPENID.getScope()));
+        if (scopeFree) {
+            LOGGER.trace("Service definition [{}] will use the assigned attribute release policy without scopes", oidcService.getName());
+            policyChain.addPolicy(oidcService.getAttributeReleasePolicy());
+        }
 
         if (policyChain.getPolicies().isEmpty()) {
             LOGGER.debug("No attribute release policy could be determined based on given scopes. "
