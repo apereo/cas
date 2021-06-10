@@ -151,7 +151,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             FunctionUtils.doIf(LOGGER.isDebugEnabled(),
                 o -> LOGGER.debug(e.getMessage(), e), o -> LOGGER.info(e.getMessage())).accept(e);
             JEEHttpActionAdapter.INSTANCE.adapt(e, webContext);
-            return success();
+            return isLogoutRequest(request) ? error() : success();
         } catch (final UnauthorizedServiceException e) {
             LOGGER.warn(e.getMessage(), e);
             throw e;
