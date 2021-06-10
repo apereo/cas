@@ -96,6 +96,16 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return Optional.empty();
     }
 
+    /**
+     * Is this a SAML logout request?
+     *
+     * @param request the HTTP request
+     * @return whether it is a SAML logout request
+     */
+    protected static boolean isLogoutRequest(final HttpServletRequest request) {
+        return request.getParameter(Pac4jConstants.LOGOUT_ENDPOINT_PARAMETER) != null;
+    }
+
     @Override
     public Event doExecute(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
@@ -143,7 +153,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             FunctionUtils.doIf(LOGGER.isDebugEnabled(),
                 o -> LOGGER.debug(e.getMessage(), e), o -> LOGGER.info(e.getMessage())).accept(e);
             JEEHttpActionAdapter.INSTANCE.adapt(e, webContext);
-            return success();
+            return isLogoutRequest(request) ? error() : success();
         } catch (final UnauthorizedServiceException e) {
             LOGGER.warn(e.getMessage(), e);
             throw e;
@@ -162,41 +172,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      */
     protected String retrieveClientName(final WebContext webContext) {
         return webContext.getRequestParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER).orElse(null);
-    }
-
-    private Service resolveServiceFromRequestContext(final RequestContext context) {
-        val service = WebUtils.getService(context);
-        return configContext.getAuthenticationRequestServiceSelectionStrategies().resolveService(service);
-    }
-
-    private Optional<Authentication> getSingleSignOnAuthenticationFrom(final RequestContext requestContext) {
-        val tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
-        if (StringUtils.isBlank(tgtId)) {
-            LOGGER.trace("No ticket-granting ticket could be located in the webflow context");
-            return Optional.empty();
-        }
-        val ticket = configContext.getCentralAuthenticationService().getTicket(tgtId, TicketGrantingTicket.class);
-        if (ticket != null && !ticket.isExpired()) {
-            LOGGER.trace("Located a valid ticket-granting ticket");
-            return Optional.of(ticket.getAuthentication());
-        }
-        return Optional.empty();
-    }
-
-    private boolean isDelegatedClientAuthorizedForService(final Client<Credentials> client,
-                                                          final Service service) {
-        return configContext.getDelegatedAuthenticationAccessStrategyHelper()
-            .isDelegatedClientAuthorizedForService(client, service);
-    }
-
-    /**
-     * Is this a SAML logout request?
-     *
-     * @param request the HTTP request
-     * @return whether it is a SAML logout request
-     */
-    protected static boolean isLogoutRequest(final HttpServletRequest request) {
-        return request.getParameter(Pac4jConstants.LOGOUT_ENDPOINT_PARAMETER) != null;
     }
 
     @Override
@@ -381,5 +356,30 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         }
         LOGGER.trace("Ticket-granting ticket found in the webflow context is invalid or has expired");
         return false;
+    }
+
+    private Service resolveServiceFromRequestContext(final RequestContext context) {
+        val service = WebUtils.getService(context);
+        return configContext.getAuthenticationRequestServiceSelectionStrategies().resolveService(service);
+    }
+
+    private Optional<Authentication> getSingleSignOnAuthenticationFrom(final RequestContext requestContext) {
+        val tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
+        if (StringUtils.isBlank(tgtId)) {
+            LOGGER.trace("No ticket-granting ticket could be located in the webflow context");
+            return Optional.empty();
+        }
+        val ticket = configContext.getCentralAuthenticationService().getTicket(tgtId, TicketGrantingTicket.class);
+        if (ticket != null && !ticket.isExpired()) {
+            LOGGER.trace("Located a valid ticket-granting ticket");
+            return Optional.of(ticket.getAuthentication());
+        }
+        return Optional.empty();
+    }
+
+    private boolean isDelegatedClientAuthorizedForService(final Client<Credentials> client,
+                                                          final Service service) {
+        return configContext.getDelegatedAuthenticationAccessStrategyHelper()
+            .isDelegatedClientAuthorizedForService(client, service);
     }
 }

@@ -131,8 +131,7 @@ public class DelegatedClientAuthenticationActionTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyFinishAuthentication() {
+    public void verifyFinishAuthentication() throws Exception {
         val request = new MockHttpServletRequest();
         request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
 
@@ -169,8 +168,7 @@ public class DelegatedClientAuthenticationActionTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyFailedAuthentication() {
+    public void verifyFailedAuthentication() throws Exception {
         val mockRequest = new MockHttpServletRequest();
         mockRequest.setParameter("error_message", "bad authn");
         mockRequest.setParameter("error_code", "403");
@@ -221,8 +219,7 @@ public class DelegatedClientAuthenticationActionTests {
     }
     
     @Test
-    @SneakyThrows
-    public void verifySsoAuthentication() {
+    public void verifySsoAuthentication() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -248,8 +245,7 @@ public class DelegatedClientAuthenticationActionTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifySsoAuthenticationUnauthz() {
+    public void verifySsoAuthenticationUnauthz() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -279,6 +275,25 @@ public class DelegatedClientAuthenticationActionTests {
 
         assertThrows(UnauthorizedServiceException.class, () -> delegatedAuthenticationAction.execute(context).getId());
         assertThrows(InvalidTicketException.class, () -> centralAuthenticationService.getTicket(tgt.getId()));
+    }
+
+    @Test
+    public void verifyLogoutRequestWithOkAction() throws Exception {
+        val request = new MockHttpServletRequest();
+        request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "MockClientNoCredentials");
+        request.addParameter(Pac4jConstants.LOGOUT_ENDPOINT_PARAMETER, "true");
+        val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+        servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+        
+        val context = new MockRequestContext();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        setRequestContext(context);
+        setExternalContext(context.getExternalContext());
+
+        val event = delegatedAuthenticationAction.execute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
     }
 
     @SneakyThrows
