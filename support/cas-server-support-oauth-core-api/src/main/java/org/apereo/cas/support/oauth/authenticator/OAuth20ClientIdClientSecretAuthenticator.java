@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.authenticator;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -27,6 +28,7 @@ import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.CommonProfile;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Authenticator for client credentials authentication.
@@ -75,13 +77,21 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
 
             val credential = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
             val principal = principalResolver.resolve(credential);
+            val attributes = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
 
             val profile = new CommonProfile();
-            profile.setId(id);
-            principal.getAttributes().forEach(profile::addAttribute);
+            val username = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
+            LOGGER.debug("Created profile id [{}]", username);
 
-            credentials.setUserProfile(profile);
+            if (principal instanceof NullPrincipal) {
+                LOGGER.debug("No principal was resolved. Falling back to the username [{}] from the credentials.", id);
+                profile.setId(id);
+            } else {
+                profile.setId(username);
+            }
+            profile.addAttributes((Map) attributes);
             LOGGER.debug("Authenticated user profile [{}]", profile);
+            credentials.setUserProfile(profile);
         }
     }
 
