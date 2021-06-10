@@ -77,7 +77,7 @@ use the tooling provided by the build to locate or fetch the templates from the 
 
 ### CAS Documentation
 
-A number of improvements are now implemented for a better use experience while browsing the CAS documentation:
+A number of improvements are now implemented for a better user experience while browsing the CAS documentation:
 
 - Pagination is now available for listed CAS properties.
 - Additional details on properties that support the [Expression Language](../configuration/Configuration-Spring-Expressions.html) 

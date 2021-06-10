@@ -78,12 +78,11 @@ Automated browser testing is done via the [Puppeteer framework](https://pptr.dev
 API to control Chrome or Chromium over the DevTools Protocol and runs headless by default.
 
 Functional tests start by generating a plain CAS overlay as a baseline that is able to run under HTTPS using a pre-generated keystore.
-This overlay is supplied the test scenario configuration that explain the required modules, properties, etc to use when CAS is deployed
+This overlay is supplied the test scenario configuration that explains the required modules, properties, etc to use when CAS is deployed
 inside an embedded Apache Tomcat container. Once running, the Puppeteer script is executed by Node for the given test scenario to verify
 specific functionality such as successful logins, generation of tickets, etc.
 
-All functional and browser tests are executed by the [continuous integration system](Test-Process.html#continuous-integration). If you 
-are adding a new batch of tests, make sure the scenario (i.e. test) name is included in the CI configuration.
+All functional and browser tests are executed by the [continuous integration system](Test-Process.html#continuous-integration). 
   
 To install Puppeteer once:
 
