@@ -4,7 +4,7 @@ const cas = require('../../cas.js');
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    const page = await browser.newPage();
+    const page = await cas.newPage(browser);
 
     console.log("Create SSO session with external CAS server...")
     await page.goto("https://casserver.herokuapp.com/cas/login");

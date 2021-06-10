@@ -6,7 +6,7 @@ const cas = require('../../cas.js');
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    const page = await browser.newPage();
+    const page = await cas.newPage(browser);
     const url = "http://localhost:8080";
     await page.goto(url);
 
