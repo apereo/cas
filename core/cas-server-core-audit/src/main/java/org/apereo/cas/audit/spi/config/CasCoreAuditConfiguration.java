@@ -65,7 +65,6 @@ import java.util.Map;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnProperty(prefix = "cas.audit.engine", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasCoreAuditConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -83,6 +82,7 @@ public class CasCoreAuditConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "auditTrailManagementAspect")
+    @ConditionalOnProperty(prefix = "cas.audit.engine", name = "enabled", havingValue = "true", matchIfMissing = true)
     public AuditTrailManagementAspect auditTrailManagementAspect() {
         val audit = casProperties.getAudit().getEngine();
         val auditFormat = AbstractStringAuditTrailManager.AuditFormats.valueOf(audit.getAuditFormat().name());

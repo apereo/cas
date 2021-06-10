@@ -47,8 +47,9 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
 
         if (cookieProperties.isPinToSession()) {
             val clientInfo = ClientInfoHolder.getClientInfo();
-            builder.append(COOKIE_FIELD_SEPARATOR).append(clientInfo.getClientIpAddress());
-
+            if (clientInfo != null) {
+                builder.append(COOKIE_FIELD_SEPARATOR).append(clientInfo.getClientIpAddress());
+            }
             val userAgent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
             if (StringUtils.isBlank(userAgent)) {
                 throw new IllegalStateException("Request does not specify a user-agent");
