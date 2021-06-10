@@ -111,7 +111,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 service = populateContextWithService(context, webContext, clientName);
                 if (singleSignOnSessionAuthorizedForService(context)) {
                     val providers = configContext.getDelegatedClientIdentityProvidersFunction().apply(context);
-                    LOGGER.trace("Skipping delegation and routing back to CAS authentication flow with providers [{}]", providers);
+                    LOGGER.debug("Skipping delegation and routing back to CAS authentication flow with providers [{}]", providers);
                     return super.doExecute(context);
                 }
                 val resolvedService = resolveServiceFromRequestContext(context);

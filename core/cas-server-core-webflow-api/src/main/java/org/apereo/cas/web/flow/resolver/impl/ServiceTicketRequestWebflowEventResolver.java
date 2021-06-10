@@ -3,6 +3,9 @@ package org.apereo.cas.web.flow.resolver.impl;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -15,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -38,22 +42,6 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
             return source != null ? CollectionUtils.wrapSet(source) : null;
         }
         return null;
-    }
-
-    private boolean validateExistingAuthentication(final Authentication authentication,
-                                                   final RequestContext requestContext) {
-        if (authentication != null) {
-            val configContext = getWebflowEventResolutionConfigurationContext();
-            val ssoStrategy = configContext.getSingleSignOnParticipationStrategy();
-            if (ssoStrategy.supports(requestContext) && !ssoStrategy.isParticipating(requestContext)) {
-                LOGGER.debug("Single sign-on strategy does not allow reusing the authentication attempt [{}]", authentication);
-                return false;
-            }
-            LOGGER.trace("Existing authentication attempt [{}] is valid", authentication);
-            return true;
-        }
-        LOGGER.trace("Cannot validate absent/missing authentication attempt");
-        return false;
     }
 
     /**
@@ -123,11 +111,13 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
                 accessResult.throwExceptionIfNeeded();
             }
 
-            LOGGER.trace("Finalizing authentication transaction for [{}]", credential);
-            val authenticationResult = configContext.getAuthenticationSystemSupport()
-                .handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+            if (existingAuthn == null && credential == null) {
+                throw new AuthenticationException("Unable to grant service ticket without authentication and credential");
+            }
 
-            val principal = authenticationResult.getAuthentication().getPrincipal();
+            val principal = getActivePrincipal(credential, service, existingAuthn);
+            LOGGER.debug("Primary principal for this authentication session to receive a service ticket is [{}]", principal);
+            
             if (existingAuthn != null && !existingAuthn.getPrincipal().equals(principal)) {
                 LOGGER.trace("Existing authentication context linked to ticket-granting ticket [{}] is issued for principal [{}] "
                         + " which does not match [{}], established by the requested authentication transaction. CAS will NOT re-use the existing "
@@ -141,5 +131,33 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
             LOGGER.trace(e.getMessage(), e);
             return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
         }
+    }
+
+    private boolean validateExistingAuthentication(final Authentication authentication,
+                                                   final RequestContext requestContext) {
+        if (authentication != null) {
+            val configContext = getWebflowEventResolutionConfigurationContext();
+            val ssoStrategy = configContext.getSingleSignOnParticipationStrategy();
+            if (ssoStrategy.supports(requestContext) && !ssoStrategy.isParticipating(requestContext)) {
+                LOGGER.debug("Single sign-on strategy does not allow reusing the authentication attempt [{}]", authentication);
+                return false;
+            }
+            LOGGER.trace("Existing authentication attempt [{}] is valid", authentication);
+            return true;
+        }
+        LOGGER.trace("Cannot validate absent/missing authentication attempt");
+        return false;
+    }
+
+    private Principal getActivePrincipal(final Credential credential,
+                                         final WebApplicationService service,
+                                         final Authentication authentication) {
+        if (credential != null) {
+            LOGGER.trace("Finalizing authentication transaction for [{}]", credential);
+            val authenticationResult = getWebflowEventResolutionConfigurationContext().getAuthenticationSystemSupport()
+                .handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+            return authenticationResult.getAuthentication().getPrincipal();
+        }
+        return Objects.requireNonNull(authentication).getPrincipal();
     }
 }
