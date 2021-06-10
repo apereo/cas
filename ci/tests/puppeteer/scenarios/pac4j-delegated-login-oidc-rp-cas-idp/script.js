@@ -22,9 +22,24 @@ const cas = require('../../cas.js');
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(1000)
 
-    console.log(page.url());
     let result = new URL(page.url());
-    assert(result.searchParams.has("ticket") === false);
+    console.log(result.searchParams.toString())
 
+    assert(result.searchParams.has("ticket") === false);
+    assert(result.searchParams.has("client_id"));
+    assert(result.searchParams.has("redirect_uri"));
+    assert(result.searchParams.has("scope"));
+
+    console.log("Allowing release of scopes and claims...")
+    await cas.click(page, "#allow")
+    await page.waitForNavigation();
+    await page.waitForTimeout(2000)
+
+    let header = await cas.textContent(page, "h1.green-text");
+    assert(header === "Success!")
+
+    console.log(page.url());
+    assert(page.url().startsWith("https://oidcdebugger.com/debug"))
+    
     await browser.close();
 })();

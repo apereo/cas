@@ -139,13 +139,13 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
         val webContext = new JEEContext(request, response);
 
         val currentService = WebUtils.getService(requestContext);
-        val service = authenticationRequestServiceSelectionStrategies.resolveService(currentService, WebApplicationService.class);
-        LOGGER.debug("Initializing client [{}] with request parameters [{}]", client, requestContext.getRequestParameters());
+        LOGGER.debug("Initializing client [{}] with request parameters [{}] and service [{}]",
+            client, requestContext.getRequestParameters(), currentService);
         client.init();
         return DelegatedClientIdentityProviderConfigurationFactory.builder()
             .client(client)
             .webContext(webContext)
-            .service(service)
+            .service(currentService)
             .casProperties(casProperties)
             .build()
             .resolve();
