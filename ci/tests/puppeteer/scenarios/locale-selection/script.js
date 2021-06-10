@@ -4,7 +4,7 @@ const cas = require('../../cas.js');
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions({ args: ['--lang=de'] }));
-    const page = await browser.newPage();
+    const page = await cas.newPage(browser);
     await page.setExtraHTTPHeaders({
         'Accept-Language': 'de'
     });

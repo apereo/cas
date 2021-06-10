@@ -6,7 +6,7 @@ const request = require('request');
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    const page = await browser.newPage();
+    const page = await cas.newPage(browser);
 
     await page.setRequestInterception(true);
     let args = process.argv.slice(2);

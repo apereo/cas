@@ -32,7 +32,7 @@ const httpGet = (options) => {
     let response = await httpGet(options1);
     let scratch = JSON.stringify(JSON.parse(response)[0].scratchCodes[0]);
 
-    const page = await browser.newPage();
+    const page = await cas.newPage(browser);
 
     await page.goto("https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "Mellon");
