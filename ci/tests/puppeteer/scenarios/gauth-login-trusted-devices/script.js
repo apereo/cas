@@ -6,7 +6,6 @@ const cas = require('../../cas.js');
 
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await browser.newPage();
-    await page.setDefaultNavigationTimeout(0);
     await page.goto("https://localhost:8443/cas/login?authn_method=mfa-gauth");
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(1000)

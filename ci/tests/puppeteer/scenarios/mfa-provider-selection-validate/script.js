@@ -34,11 +34,9 @@ const httpGet = (options) => {
     let scratch = JSON.stringify(JSON.parse(response)[0].scratchCodes[0]);
 
     const page = await browser.newPage();
-    await page.setDefaultNavigationTimeout(0);
 
     const service = "https://google.com";
     await page.goto("https://localhost:8443/cas/login?service=" + service);
-    await page.bringToFront();
     await page.waitForTimeout(1000);
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(500);

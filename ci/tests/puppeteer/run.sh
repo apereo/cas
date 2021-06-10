@@ -12,8 +12,6 @@ fi
 
 scenarioName=${scenario##*/}
 
-# note if debugging you might need to call
-# await page.setDefaultNavigationTimeout(0);
 if [[ "${CI}" == "true" ]]; then
   DEBUG=${2}
 else
