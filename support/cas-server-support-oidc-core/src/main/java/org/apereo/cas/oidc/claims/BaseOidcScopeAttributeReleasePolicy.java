@@ -43,7 +43,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
 
     private static final long serialVersionUID = -7302163334687300920L;
 
-    private List<String> allowedAttributes;
+    private List<String> allowedAttributes = new ArrayList<>();
 
     @JsonIgnore
     private String scopeType;
