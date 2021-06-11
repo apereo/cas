@@ -28,6 +28,8 @@ import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
 import org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver;
+import org.opensaml.saml.saml2.core.Attribute;
+import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
@@ -54,7 +56,7 @@ import java.util.zip.InflaterInputStream;
 @Slf4j
 @UtilityClass
 public class SamlIdPUtils {
-    
+
     /**
      * Retrieve saml request.
      *
@@ -157,7 +159,21 @@ public class SamlIdPUtils {
                                                                         final AssertionConsumerService acsFromRequest,
                                                                         final AssertionConsumerService acsFromMetadata) {
         if (acsFromRequest != null) {
-            if (!authnRequest.isSigned()) {
+
+            var requestSigned = authnRequest.isSigned();
+            if (!requestSigned && authnRequest.getExtensions() != null && authnRequest.getExtensions().getUnknownXMLObjects() != null) {
+                LOGGER.debug("Checking SAML authentication extensions [{}]", authnRequest.getExtensions().getUnknownXMLObjects());
+                requestSigned = authnRequest.getExtensions().getUnknownXMLObjects()
+                    .stream()
+                    .filter(object -> object.getElementQName().equals(Attribute.DEFAULT_ELEMENT_NAME))
+                    .map(Attribute.class::cast)
+                    .filter(attribute -> attribute.getName().equalsIgnoreCase("hasBindingSignature"))
+                    .allMatch(attribute -> attribute.getAttributeValues().stream()
+                        .map(AttributeValue.class::cast)
+                        .allMatch(value -> Boolean.parseBoolean(value.getTextContent())));
+            }
+
+            if (!requestSigned) {
                 val locations = adaptor.getAssertionConsumerServiceLocations(binding);
                 val acsUrl = StringUtils.defaultIfBlank(acsFromRequest.getResponseLocation(), acsFromRequest.getLocation());
                 val acsIndex = authnRequest instanceof AuthnRequest
@@ -191,7 +207,7 @@ public class SamlIdPUtils {
         acs.setIsDefault(Boolean.TRUE);
         return acs;
     }
-    
+
     /**
      * Gets chaining metadata resolver for all saml services.
      *

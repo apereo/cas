@@ -40,10 +40,17 @@ import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.BindingDescriptor;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
+import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder;
+import org.opensaml.saml.saml2.core.Attribute;
+import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.Extensions;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.opensaml.saml.saml2.core.impl.AttributeBuilder;
+import org.opensaml.saml.saml2.core.impl.AttributeValueBuilder;
+import org.opensaml.saml.saml2.core.impl.ExtensionsBuilder;
 import org.pac4j.core.context.JEEContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -176,9 +183,32 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             throw new IllegalArgumentException("SAML request could not be determined from the authentication request");
         }
         val encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes(StandardCharsets.UTF_8));
-        return (AuthnRequest) XMLObjectSupport.unmarshallFromInputStream(
+        val authnRequest = (AuthnRequest) XMLObjectSupport.unmarshallFromInputStream(
             this.configurationContext.getOpenSamlConfigBean().getParserPool(),
             new ByteArrayInputStream(encodedRequest));
+
+        configurationContext.getSessionStore().get(context, MessageContext.class.getName())
+            .map(Map.class::cast)
+            .ifPresent(messageContextMap -> {
+                if (messageContextMap.containsKey("hasBindingSignature")) {
+                    val builderFactory = configurationContext.getOpenSamlConfigBean().getBuilderFactory();
+                    if (authnRequest.getExtensions() == null) {
+                        var builder = (ExtensionsBuilder) builderFactory.getBuilder(Extensions.DEFAULT_ELEMENT_NAME);
+                        var extensions = (Extensions) builder.buildObject();
+                        authnRequest.setExtensions(extensions);
+                    }
+                    var builder = (AttributeBuilder) builderFactory.getBuilder(Attribute.DEFAULT_ELEMENT_NAME);
+                    var contextExtension = (Attribute) builder.buildObject();
+                    contextExtension.setName("hasBindingSignature");
+
+                    var builderAttr = (AttributeValueBuilder) builderFactory.getBuilder(AttributeValue.DEFAULT_ELEMENT_NAME);
+                    var attributeValue = (AttributeValue) builderAttr.buildObject();
+                    attributeValue.setTextContent(messageContextMap.get("hasBindingSignature").toString());
+                    LOGGER.debug("Restoring SAML authentication context extension for [{}]", messageContextMap);
+                    authnRequest.getExtensions().getUnknownXMLObjects().add(contextExtension);
+                }
+            });
+        return authnRequest;
     }
 
     /**
@@ -265,7 +295,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param request      the request
      * @return the redirect url
      */
-    protected String buildRedirectUrlByRequestedAuthnContext(final String initialUrl, final AuthnRequest authnRequest, final HttpServletRequest request) {
+    protected String buildRedirectUrlByRequestedAuthnContext(final String initialUrl,
+                                                             final AuthnRequest authnRequest, final HttpServletRequest request) {
         val authenticationContextClassMappings = configurationContext.getCasProperties()
             .getAuthn().getSamlIdp().getAuthenticationContextClassMappings();
         if (authnRequest.getRequestedAuthnContext() == null || authenticationContextClassMappings == null || authenticationContextClassMappings.isEmpty()) {
@@ -323,6 +354,15 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                 .set(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
             this.configurationContext.getSessionStore()
                 .set(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, SAMLBindingSupport.getRelayState(messageContext));
+
+            val messageContextMap = new LinkedHashMap<String, Object>();
+            if (messageContext.containsSubcontext(SAMLBindingContext.class)) {
+                val binding = Objects.requireNonNull(messageContext.getSubcontext(SAMLBindingContext.class));
+                messageContextMap.put("hasBindingSignature", binding.hasBindingSignature());
+                messageContextMap.put("relayState", binding.getRelayState());
+            }
+            LOGGER.debug("Tracking SAML authentication context extension for [{}]", messageContextMap);
+            configurationContext.getSessionStore().set(context, MessageContext.class.getName(), messageContextMap);
             val url = builder.buildURL();
 
             LOGGER.trace("Built service callback url [{}]", url);
