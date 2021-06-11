@@ -6,7 +6,7 @@ const cas = require('../../cas.js');
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    const page = await browser.newPage();
+    const page = await cas.newPage(browser);
     await page.goto("https://samltest.id/upload.php");
     await page.waitForTimeout(1000)
 
@@ -21,7 +21,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(1000)
 
     await page.goto("https://samltest.id/start-idp-test/");
-    await page.type('input[name=\'entityID\']', "https://cas.apereo.org/saml/idp");
+    await cas.type(page,'input[name=\'entityID\']', "https://cas.apereo.org/saml/idp");
     // await page.waitForTimeout(1000)
     await cas.click(page, "input[type='submit']")
     await page.waitForNavigation();

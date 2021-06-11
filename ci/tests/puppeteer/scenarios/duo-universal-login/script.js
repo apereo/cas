@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
     assert(config != null)
     
     const browser = await puppeteer.launch(cas.browserOptions());
-    const page = await browser.newPage();
+    const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/login?authn_method=mfa-duo");
     await cas.loginWith(page, "casuser", "Mellon");
 

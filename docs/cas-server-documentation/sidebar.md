@@ -106,7 +106,6 @@ layout: null
             *   [LinkedIn](/cas/{{ version }}/integration/Delegate-Authentication-LinkedIn.html)
             *   [OAuth20](/cas/{{ version }}/integration/Delegate-Authentication-OAuth20.html)
             *   [OpenID Connect](/cas/{{ version }}/integration/Delegate-Authentication-Generic-OpenID-Connect.html)
-            *   [Orcid](/cas/{{ version }}/integration/Delegate-Authentication-Orcid.html)
             *   [PayPal](/cas/{{ version }}/integration/Delegate-Authentication-PayPal.html)
             *   [Windows Live](/cas/{{ version }}/integration/Delegate-Authentication-WindowsLive.html)
             *   [Wordpress](/cas/{{ version }}/integration/Delegate-Authentication-Wordpress.html)

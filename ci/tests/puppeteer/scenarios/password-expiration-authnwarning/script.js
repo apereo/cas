@@ -4,7 +4,7 @@ const cas = require('../../cas.js');
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    const page = await browser.newPage();
+    const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/login");
 
     await cas.loginWith(page, "casuser", "Mellon");
@@ -64,9 +64,6 @@ const cas = require('../../cas.js');
 
 
 async function typePassword(page, pswd, confirm) {
-    await page.$eval('#password', el => el.value = '');
-    await page.type('#password', pswd);
-
-    await page.$eval('#confirmedPassword', el => el.value = '');
-    await page.type('#confirmedPassword', confirm);
+    await cas.type(page,'#password', pswd);
+    await cas.type(page,'#confirmedPassword', confirm);
 }

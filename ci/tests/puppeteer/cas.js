@@ -3,10 +3,10 @@ const assert = require('assert');
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
     headless: process.env.CI === "true",
-    devtools: true,
+    devtools: process.env.CI !== "true",
     defaultViewport: null,
-    slowMo: process.env.CI === "true" ? 0 : 25,
-    args: ['--start-maximized']
+    slowMo: process.env.CI === "true" ? 0 : 15,
+    args: ['--start-maximized', "--window-size=1920,1080"]
 };
 
 exports.browserOptions = () => BROWSER_OPTIONS;
@@ -52,8 +52,8 @@ exports.inputValue = async(page, selector) => {
 
 exports.loginWith = async(page, user, password) => {
     console.log(`Logging in with ${user} and ${password}`);
-    await page.type('#username', user);
-    await page.type('#password', password);
+    await this.type(page, '#username', user);
+    await this.type(page, '#password', password);
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 }
@@ -61,16 +61,28 @@ exports.loginWith = async(page, user, password) => {
 exports.assertVisibility = async(page, selector) => {
     let element = await page.$(selector);
     console.log(`Checking visibility for ${selector}`);
-    assert(await element != null && element.boundingBox() != null);
+    assert(element != null && await element.boundingBox() != null);
 }
 
 exports.assertInvisibility = async(page, selector) => {
     let element = await page.$(selector);
     console.log(`Checking invisibility for ${selector}`);
-    assert(await element == null || element.boundingBox() == null);
+    assert(element == null || await element.boundingBox() == null);
 }
 
 exports.submitForm = async(page, selector) => {
     await page.$eval(selector, form => form.submit());
     await page.waitForTimeout(2500)
+}
+
+exports.type = async(page, selector, value) => {
+    await page.$eval(selector, el => el.value = '');
+    await page.type(selector, value);
+}
+
+exports.newPage = async(browser) => {
+    const page = (await browser.pages())[0];
+    await page.setDefaultNavigationTimeout(0);
+    await page.bringToFront();
+    return page;
 }

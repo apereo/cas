@@ -116,6 +116,16 @@ To see the list of available test scenarios:
 Remote debugging is available on port `5000`. To successfully run tests, 
 you need to make sure [jq](https://stedolan.github.io/jq/) is installed.
 
+### MacOS Firewall Popup
+                      
+To allow the firewall to accept incoming network connections for Chromium on MacOS, 
+you may apply the following command:
+
+```bash
+chromium="/path/to/cas/ci/tests/puppeteer/node_modules/puppeteer/.local-chromium"
+sudo codesign --force --deep --sign - "${chromium}/mac-*/chrome-mac/Chromium.app"
+```
+
 ## Continuous Integration
 
 Unit and integration tests are automatically executed by the CAS CI system, [GitHub Actions](https://github.com/apereo/cas/actions).

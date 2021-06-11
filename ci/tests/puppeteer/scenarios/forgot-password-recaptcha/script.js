@@ -4,7 +4,7 @@ const cas = require('../../cas.js');
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    const page = await browser.newPage();
+    const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/login");
 
     await page.waitForTimeout(2000)
@@ -20,7 +20,7 @@ const cas = require('../../cas.js');
     
     await cas.assertVisibility(page, '#username')
 
-    await page.type('#username', "casuser");
+    await cas.type(page,'#username', "casuser");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 

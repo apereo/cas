@@ -52,7 +52,6 @@ public class DefaultDelegatedClientFactoryTests {
         configureIdentifiableClient(props.getLinkedIn());
         props.getLinkedIn().setScope("scope1");
 
-        configureIdentifiableClient(props.getOrcid());
         configureIdentifiableClient(props.getPaypal());
         configureIdentifiableClient(props.getTwitter());
         configureIdentifiableClient(props.getWindowsLive());
@@ -65,7 +64,7 @@ public class DefaultDelegatedClientFactoryTests {
         casSettings.getAuthn().setPac4j(props);
         val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
         val clients = factory.build();
-        assertEquals(14, clients.size());
+        assertEquals(13, clients.size());
         factory.destroy();
     }
 

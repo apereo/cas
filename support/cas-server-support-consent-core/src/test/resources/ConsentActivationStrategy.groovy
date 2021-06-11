@@ -10,5 +10,5 @@ def run(Object[] args) {
     def logger = args[6]
 
     logger.debug("Activating consent for ${service}")
-    return registeredService.attributeReleasePolicy.consentPolicy.status != TriStateBoolean.FALSE;
+    return registeredService.attributeReleasePolicy.consentPolicy.status != TriStateBoolean.FALSE
 }
