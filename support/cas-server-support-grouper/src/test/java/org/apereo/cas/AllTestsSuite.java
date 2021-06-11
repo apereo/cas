@@ -2,6 +2,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.config.CasPersonDirectoryGrouperConfigurationTests;
+import org.apereo.cas.grouper.GrouperPersonAttributeDaoTests;
 import org.apereo.cas.grouper.services.GrouperRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.web.flow.GrouperMultifactorAuthenticationPolicyEventResolverTests;
 
@@ -15,6 +16,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 6.0.0-RC3
  */
 @SelectClasses({
+    GrouperPersonAttributeDaoTests.class,
     GrouperMultifactorAuthenticationPolicyEventResolverTests.class,
     CasPersonDirectoryGrouperConfigurationTests.class,
     GrouperRegisteredServiceAccessStrategyTests.class
