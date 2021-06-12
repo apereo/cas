@@ -100,3 +100,12 @@ exports.newPage = async(browser) => {
     await page.bringToFront();
     return page;
 }
+
+exports.assertTicketParameter = async(page) => {
+    let result = new URL(page.url());
+    let ticket = result.searchParams.get("ticket");
+    console.log(ticket);
+    assert(ticket != null);
+    return ticket;
+}
+
