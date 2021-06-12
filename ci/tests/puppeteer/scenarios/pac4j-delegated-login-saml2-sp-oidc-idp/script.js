@@ -40,8 +40,7 @@ const path = require('path');
     assert(header.startsWith("Your browser has completed the full SAML 2.0 round-trip"));
 
     await page.goto("https://localhost:8443/cas/login");
-    let tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
+    await cas.assertTicketGrantingCookie(page);
 
     let metadataDir = path.join(__dirname, '/saml-md');
     fs.rmdirSync(metadataDir, { recursive: true });

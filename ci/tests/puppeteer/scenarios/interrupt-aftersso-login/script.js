@@ -21,8 +21,7 @@ const cas = require('../../cas.js');
     header = await cas.textContent(page, "#interruptMessage");
     assert(header === "We interrupted your login");
 
-    const tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
+    await cas.assertTicketGrantingCookie(page);
     
     await cas.assertVisibility(page, '#interruptLinks')
 
