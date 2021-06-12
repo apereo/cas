@@ -5,7 +5,7 @@ const BROWSER_OPTIONS = {
     headless: process.env.CI === "true",
     devtools: process.env.CI !== "true",
     defaultViewport: null,
-    slowMo: process.env.CI === "true" ? 0 : 15,
+    slowMo: process.env.CI === "true" ? 0 : 10,
     args: ['--start-maximized', "--window-size=1920,1080"]
 };
 
@@ -50,10 +50,12 @@ exports.inputValue = async(page, selector) => {
     return text;
 }
 
-exports.loginWith = async(page, user, password) => {
+exports.loginWith = async(page, user, password,
+                          usernameField = "#username",
+                          passwordField = "#password") => {
     console.log(`Logging in with ${user} and ${password}`);
-    await this.type(page, '#username', user);
-    await this.type(page, '#password', password);
+    await this.type(page, usernameField, user);
+    await this.type(page, passwordField, password);
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 }
