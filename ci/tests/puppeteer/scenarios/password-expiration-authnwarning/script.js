@@ -55,8 +55,7 @@ const cas = require('../../cas.js');
     let element = await cas.innerText(page, '#content div h2');
     assert(element === "Log In Successful")
 
-    let tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
+    await cas.assertTicketGrantingCookie(page);
 
     await page.waitForTimeout(1000)
     await browser.close();

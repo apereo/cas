@@ -72,6 +72,18 @@ exports.assertInvisibility = async(page, selector) => {
     assert(element == null || await element.boundingBox() == null);
 }
 
+exports.assertTicketGrantingCookie = async(page) => {
+    let tgc = (await page.cookies()).filter(value => value.name === "TGC");
+    console.log(`Asserting ticket-granting cookie: ${tgc}`);
+    assert(tgc.length !== 0);
+}
+
+exports.assertNoTicketGrantingCookie = async(page) => {
+    let tgc = (await page.cookies()).filter(value => value.name === "TGC");
+    console.log(`Asserting no ticket-granting cookie: ${tgc}`);
+    assert(tgc.length === 0);
+}
+
 exports.submitForm = async(page, selector) => {
     await page.$eval(selector, form => form.submit());
     await page.waitForTimeout(2500)
