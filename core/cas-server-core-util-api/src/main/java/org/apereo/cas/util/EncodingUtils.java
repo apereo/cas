@@ -467,6 +467,13 @@ public class EncodingUtils {
         jws.setAlgorithmHeaderValue(algHeaderValue);
         jws.setKey(key);
         jws.setHeader("typ", "JWT");
+        if(key instanceof JsonWebKey) {
+            JsonWebKey jsonWebKey = (JsonWebKey) key;
+            if (StringUtils.isNotBlank(jsonWebKey.getKeyId())) {
+                jws.setKeyIdHeaderValue(jsonWebKey.getKeyId());
+            }
+        }
+
         headers.forEach((k, v) -> jws.setHeader(k, v.toString()));
         return jws.getCompactSerialization().getBytes(StandardCharsets.UTF_8);
     }
