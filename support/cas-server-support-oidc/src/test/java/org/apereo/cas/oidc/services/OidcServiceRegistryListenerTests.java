@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -41,6 +42,23 @@ public class OidcServiceRegistryListenerTests extends AbstractOidcTests {
         assertTrue(policy instanceof ChainingAttributeReleasePolicy);
         val chain = (ChainingAttributeReleasePolicy) policy;
         assertEquals(5, chain.size());
+    }
+
+    @Test
+    public void verifyScopeFreeAttributeRelease() {
+        var service = getOidcRegisteredService();
+        service.getScopes().clear();
+        
+        val scopes = service.getScopes();
+        scopes.add(OidcConstants.StandardScopes.OPENID.getScope());
+        service.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        
+        service = (OidcRegisteredService) oidcServiceRegistryListener.postLoad(service);
+        val policy = service.getAttributeReleasePolicy();
+        assertTrue(policy instanceof ChainingAttributeReleasePolicy);
+        val chain = (ChainingAttributeReleasePolicy) policy;
+        assertEquals(1, chain.size());
+        assertTrue(chain.getPolicies().get(0) instanceof ReturnAllAttributeReleasePolicy);
     }
 
     @Test
