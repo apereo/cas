@@ -9,7 +9,7 @@ category: Protocols
 
 Clients can be registered with CAS in the following ways.
 
-## Statically 
+## Static Registration 
 
 OpenID Connect clients can be *statically* registered with CAS as such:
 
@@ -60,7 +60,8 @@ you may wish to keep a copy as a reference, this strategy would ultimately lead 
 upgrades increasing chances of breaking changes and a messy 
 deployment at that.</p></div>
 
-Service definitions are typically managed and registered with CAS by the [service management](../services/Service-Management.html) facility.
+Service definitions are typically managed and registered 
+with CAS by the [service management](../services/Service-Management.html) facility.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>CAS today does not strictly 
 enforce the collection of authorized supported 
@@ -72,8 +73,31 @@ and thus, it is strongly recommended that all authorized grant/response types fo
 each profile be declared in the service definition 
 immediately to avoid surprises in the future.</p></div>
 
-## Dynamically
+## Dynamic Registration
 
 Client applications may dynamically be registered with CAS for authentication. By default, CAS operates 
 in a `PROTECTED` mode where the registration endpoint requires user authentication. This behavior may be relaxed via 
 CAS settings to allow CAS to operate in an `OPEN` mode.
+
+## Pairwise Identifiers
+
+When `pairwise` subject type is used, CAS will calculate a unique `sub` value for each sector identifier. This identifier
+should not be reversible by any party other than CAS and is somewhat akin to CAS generating persistent anonymous user
+identifiers. Each value provided to every relying party is different so as not
+to enable clients to correlate the user's activities without permission.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId" : "^<https://the-redirect-uri>",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider",
+    "persistentIdGenerator" : {
+      "@class" : "org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator",
+      "salt" : "aGVsbG93b3JsZA=="
+    }
+  }
+}
+```
