@@ -151,6 +151,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
             .serviceRegistry(serviceRegistry)
             .applicationContext(applicationContext)
             .environments(new HashSet<>(0))
+            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
             .servicesCache(Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(2)).build())
             .build();
         return new DefaultServicesManager(context);

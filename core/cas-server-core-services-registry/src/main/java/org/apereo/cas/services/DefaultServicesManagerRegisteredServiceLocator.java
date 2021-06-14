@@ -26,8 +26,7 @@ public class DefaultServicesManagerRegisteredServiceLocator implements ServicesM
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     private BiPredicate<RegisteredService, Service> registeredServiceFilter = (registeredService, service) -> {
-        val supportedType = RegexRegisteredService.class.isAssignableFrom(registeredService.getClass())
-            && registeredService.getFriendlyName().equalsIgnoreCase(RegexRegisteredService.FRIENDLY_NAME);
+        val supportedType = supports(registeredService, service);
         return supportedType && registeredService.matches(service.getId());
     };
 
@@ -35,8 +34,15 @@ public class DefaultServicesManagerRegisteredServiceLocator implements ServicesM
     public RegisteredService locate(final Collection<RegisteredService> candidates, final Service service) {
         return candidates
             .stream()
+            .filter(registeredService -> supports(registeredService, service))
             .filter(registeredService -> registeredServiceFilter.test(registeredService, service))
             .findFirst()
             .orElse(null);
+    }
+
+    @Override
+    public boolean supports(final RegisteredService registeredService, final Service service) {
+        return RegexRegisteredService.class.isAssignableFrom(registeredService.getClass())
+            && registeredService.getFriendlyName().equalsIgnoreCase(RegexRegisteredService.FRIENDLY_NAME);
     }
 }
