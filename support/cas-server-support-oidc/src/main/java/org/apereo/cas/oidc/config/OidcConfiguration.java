@@ -636,7 +636,6 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean(name = "oidcTokenSigningAndEncryptionService")
     @SneakyThrows
     public OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() {
-        val oidc = casProperties.getAuthn().getOidc();
         return new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),
             oidcIssuerService(),
@@ -648,7 +647,6 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @RefreshScope
     @ConditionalOnMissingBean(name = "oidcUserProfileSigningAndEncryptionService")
     public OAuth20TokenSigningAndEncryptionService oidcUserProfileSigningAndEncryptionService() {
-        val oidc = casProperties.getAuthn().getOidc();
         return new OidcUserProfileSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),
             oidcIssuerService(),
