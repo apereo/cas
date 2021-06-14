@@ -448,6 +448,8 @@ layout: null
             * [Overview](/cas/{{ version }}/authentication/OIDC-Authentication.html)
             * [Clients](/cas/{{ version }}/authentication/OIDC-Authentication-Clients.html)
             * [Discovery](/cas/{{ version }}/authentication/OIDC-Authentication-Discovery.html)
+            * [JWKS](/cas/{{ version }}/authentication/OIDC-Authentication-JWKS.html)
+            * [Logout](/cas/{{ version }}/authentication/OIDC-Authentication-Logout.html)
             * [Claims](/cas/{{ version }}/authentication/OIDC-Authentication-Claims.html)
             * [WebFinger Discovery](/cas/{{ version }}/authentication/OIDC-Authentication-WebFinger.html)
         *   [Delegation](/cas/{{ version }}/integration/Delegate-Authentication.html)
