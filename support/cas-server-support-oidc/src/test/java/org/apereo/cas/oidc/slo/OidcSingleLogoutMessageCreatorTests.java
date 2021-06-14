@@ -6,6 +6,7 @@ import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.issuer.OidcDefaultIssuerService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -36,12 +37,12 @@ public class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
 
     @Test
     public void verifyBackChannelLogout() throws ParseException {
-
         val service = getOidcRegisteredService(true, false);
 
         val context = OidcConfigurationContext.builder()
             .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService)
             .casProperties(casProperties)
+            .issuerService(new OidcDefaultIssuerService(casProperties.getAuthn().getOidc()))
             .build();
         val principal = RegisteredServiceTestUtils.getPrincipal(PRINCIPAL_ID);
         var authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
