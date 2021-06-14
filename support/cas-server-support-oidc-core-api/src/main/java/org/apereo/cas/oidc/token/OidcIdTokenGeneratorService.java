@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -105,7 +106,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         claims.setJwtId(jwtId);
         claims.setClaim(OidcConstants.CLAIM_SESSIOND_ID, DigestUtils.sha(jwtId));
 
-        claims.setIssuer(oidc.getCore().getIssuer());
+        claims.setIssuer(getConfigurationContext().getIssuerService().determineIssuer(Optional.empty()));
         claims.setAudience(accessToken.getClientId());
 
         val expirationDate = NumericDate.now();

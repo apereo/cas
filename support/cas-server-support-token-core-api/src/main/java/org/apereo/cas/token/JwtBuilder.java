@@ -21,7 +21,6 @@ import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 
@@ -30,6 +29,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -43,8 +43,6 @@ import java.util.Optional;
 @Getter
 public class JwtBuilder {
     private static final int MAP_SIZE = 8;
-
-    private final String issuer;
 
     private final CipherExecutor<Serializable, String> defaultTokenCipherExecutor;
 
@@ -80,7 +78,7 @@ public class JwtBuilder {
      * @return the jwt
      */
     public static String buildPlain(final JWTClaimsSet claimsSet,
-        final Optional<RegisteredService> registeredService) {
+                                    final Optional<RegisteredService> registeredService) {
         val header = new PlainHeader.Builder().type(JOSEObjectType.JWT);
         registeredService.ifPresent(svc ->
             header.customParam(RegisteredServiceCipherExecutor.CUSTOM_HEADER_REGISTERED_SERVICE_ID, svc.getId()));
@@ -126,9 +124,10 @@ public class JwtBuilder {
      */
     public String build(final JwtRequest payload) {
         val serviceAudience = payload.getServiceAudience();
+        Objects.requireNonNull(payload.getIssuer(), "Issuer cannot be undefined");
         val claims = new JWTClaimsSet.Builder()
             .audience(serviceAudience)
-            .issuer(StringUtils.defaultString(payload.getIssuer(), this.issuer))
+            .issuer(payload.issuer)
             .jwtID(payload.getJwtId())
             .issueTime(payload.getIssueDate())
             .subject(payload.getSubject());

@@ -18,6 +18,7 @@ import org.apereo.cas.oidc.discovery.webfinger.OidcRestfulWebFingerUserInfoRepos
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryServiceTests;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerUserInfoRepositoryTests;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationResponseTests;
+import org.apereo.cas.oidc.issuer.OidcDefaultIssuerServiceTests;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoaderTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreJacksonDeserializerTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtilsTests;
@@ -137,6 +138,7 @@ import org.junit.platform.suite.api.Suite;
     OidcRestfulJsonWebKeystoreGeneratorServiceTests.class,
     OidcRegisteredServiceJwtAccessTokenCipherExecutorTests.class,
     OidcClientConfigurationAccessTokenAuthenticatorTests.class,
+    OidcDefaultIssuerServiceTests.class,
     OidcSingleLogoutMessageCreatorTests.class,
     OidcSingleLogoutServiceMessageHandlerTests.class
 })

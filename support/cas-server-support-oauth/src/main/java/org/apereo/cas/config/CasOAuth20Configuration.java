@@ -214,7 +214,7 @@ public class CasOAuth20Configuration {
     @Bean
     @RefreshScope
     public JwtBuilder accessTokenJwtBuilder() {
-        return new OAuth20JwtBuilder(casProperties.getServer().getPrefix(),
+        return new OAuth20JwtBuilder(
             oauthAccessTokenJwtCipherExecutor(),
             servicesManager.getObject(),
             oauthRegisteredServiceJwtAccessTokenCipherExecutor());
