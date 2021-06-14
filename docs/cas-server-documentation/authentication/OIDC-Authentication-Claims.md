@@ -9,6 +9,10 @@ category: Protocols
 
 OpenID connect claims are treated as normal CAS attributes that need to
 be [resolved, mapped and released](../integration/Attribute-Release-Policies.html).
+    
+## Configuration
+
+{% include casproperties.html properties="cas.authn.oidc.core" %}
 
 ## Scope-based Claims
 
@@ -162,4 +166,5 @@ and internally defined for the standard `email` scope.
 }
 ```
 
-To learn more about attribute release policies and the chain of command, please [see this guide](../integration/Attribute-Release-Policies.html).
+To learn more about attribute release policies and the chain of 
+command, please [see this guide](../integration/Attribute-Release-Policies.html).
