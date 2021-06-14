@@ -24,6 +24,7 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.UserProfile;
+import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,7 +41,7 @@ import java.util.stream.Stream;
  * @since 5.0.0
  */
 @Slf4j
-public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
+public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<OidcConfigurationContext> {
 
     public OidcIdTokenGeneratorService(final OidcConfigurationContext configurationContext) {
         super(configurationContext);
@@ -53,11 +54,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
                            final long timeoutInSeconds,
                            final OAuth20ResponseTypes responseType,
                            final OAuthRegisteredService registeredService) {
-
-        if (!(registeredService instanceof OidcRegisteredService)) {
-            throw new IllegalArgumentException("Registered service instance is not an OIDC service");
-        }
-
+        Assert.isAssignable(OidcRegisteredService.class, registeredService.getClass(), "Registered service instance is not an OIDC service");
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
         val context = new JEEContext(request, response);
         LOGGER.trace("Attempting to produce claims for the id token [{}]", accessToken);
@@ -67,11 +64,6 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
             oidcRegisteredService, authenticatedProfile, context, responseType);
 
         return encodeAndFinalizeToken(claims, oidcRegisteredService, accessToken);
-    }
-
-    @Override
-    public OidcConfigurationContext getConfigurationContext() {
-        return (OidcConfigurationContext) super.getConfigurationContext();
     }
 
     /**

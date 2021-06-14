@@ -111,6 +111,7 @@ import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20DefaultAccessTokenFactory;
+import org.apereo.cas.ticket.accesstoken.OAuth20JwtBuilder;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
@@ -936,8 +937,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @RefreshScope
     @ConditionalOnMissingBean(name = "oidcAccessTokenJwtBuilder")
     public JwtBuilder oidcAccessTokenJwtBuilder() {
-        return new OidcJwtBuilder(
-            oidcIssuerService(),
+        return new OAuth20JwtBuilder(
             oidcAccessTokenJwtCipherExecutor(),
             servicesManager.getObject(),
             oidcRegisteredServiceJwtAccessTokenCipherExecutor());

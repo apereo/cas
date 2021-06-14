@@ -39,9 +39,9 @@ import java.util.stream.Collectors;
  * @since 6.0.0
  */
 @Slf4j
-public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controller {
+public class OAuth20IntrospectionEndpointController<T extends OAuth20ConfigurationContext> extends BaseOAuth20Controller<T> {
 
-    public OAuth20IntrospectionEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
+    public OAuth20IntrospectionEndpointController(final T oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
     }
 

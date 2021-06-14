@@ -16,8 +16,8 @@ import org.springframework.stereotype.Controller;
 @Controller
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public abstract class BaseOAuth20Controller {
-    private final OAuth20ConfigurationContext oAuthConfigurationContext;
+public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContext> {
+    private final T oAuthConfigurationContext;
 
     /**
      * Extract access token from token.

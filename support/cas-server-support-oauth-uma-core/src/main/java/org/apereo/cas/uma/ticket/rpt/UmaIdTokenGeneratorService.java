@@ -27,7 +27,7 @@ import java.util.UUID;
  * @since 6.0.0
  */
 @Slf4j
-public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService {
+public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService<OAuth20ConfigurationContext> {
     public UmaIdTokenGeneratorService(final OAuth20ConfigurationContext configurationContext) {
         super(configurationContext);
     }

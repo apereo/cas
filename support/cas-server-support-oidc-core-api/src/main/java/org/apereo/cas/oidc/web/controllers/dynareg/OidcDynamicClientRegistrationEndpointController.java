@@ -51,7 +51,7 @@ import java.util.Objects;
  * @since 5.1.0
  */
 @Slf4j
-public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20Controller {
+public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20Controller<OidcConfigurationContext> {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 

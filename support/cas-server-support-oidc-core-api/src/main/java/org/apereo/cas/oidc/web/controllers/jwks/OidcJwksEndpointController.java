@@ -1,11 +1,11 @@
 package org.apereo.cas.oidc.web.controllers.jwks;
 
+import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,10 +31,10 @@ import java.nio.charset.StandardCharsets;
  * @since 5.0.0
  */
 @Slf4j
-public class OidcJwksEndpointController extends BaseOAuth20Controller {
+public class OidcJwksEndpointController extends BaseOAuth20Controller<OidcConfigurationContext> {
     private final OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService;
 
-    public OidcJwksEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext,
+    public OidcJwksEndpointController(final OidcConfigurationContext oAuthConfigurationContext,
                                       final OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService) {
         super(oAuthConfigurationContext);
         this.oidcJsonWebKeystoreGeneratorService = oidcJsonWebKeystoreGeneratorService;
