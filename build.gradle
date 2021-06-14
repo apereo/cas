@@ -395,7 +395,6 @@ subprojects {
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
 
     [compileTestJava, compileJava].each {
-
         if (rootProject.generateGitProperties) {
             it.dependsOn("generateGitProperties")
         }
