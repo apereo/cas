@@ -77,7 +77,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
             val authExtractor = new BasicAuthExtractor();
 
             val context = new JEEContext(request, response);
-            val credentialsResult = authExtractor.extract(context, getOAuthConfigurationContext().getSessionStore());
+            val credentialsResult = authExtractor.extract(context, getConfigurationContext().getSessionStore());
 
             if (credentialsResult.isEmpty()) {
                 return buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_CLIENT, true);
@@ -85,7 +85,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
 
             val credentials = (UsernamePasswordCredentials) credentialsResult.get();
             val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(
-                getOAuthConfigurationContext().getServicesManager(), credentials.getUsername());
+                getConfigurationContext().getServicesManager(), credentials.getUsername());
             if (service == null) {
                 return buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_CLIENT, true);
             }
@@ -101,7 +101,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
                 var ticket = (OAuth20AccessToken) null;
                 try {
                     val token = extractAccessTokenFrom(accessToken);
-                    ticket = getOAuthConfigurationContext().getCentralAuthenticationService().getTicket(token, OAuth20AccessToken.class);
+                    ticket = getConfigurationContext().getCentralAuthenticationService().getTicket(token, OAuth20AccessToken.class);
                 } catch (final InvalidTicketException e) {
                     LOGGER.trace(e.getMessage(), e);
                     LOGGER.info("Unable to fetch access token [{}]: [{}]", accessToken, e.getMessage());
@@ -168,13 +168,13 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
         }
 
         if (OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword(),
-            getOAuthConfigurationContext().getRegisteredServiceCipherExecutor())) {
-            val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getServiceId());
+            getConfigurationContext().getRegisteredServiceCipherExecutor())) {
+            val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getServiceId());
             val audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)
                 .build();
-            val accessResult = getOAuthConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
+            val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             return accessResult.isExecutionFailure()
                 ? Optional.of(buildUnauthorizedResponseEntity(OAuth20Constants.UNAUTHORIZED_CLIENT, false))
                 : Optional.empty();

@@ -69,7 +69,7 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller<OidcConf
 
         if (StringUtils.isNotBlank(idToken)) {
             LOGGER.trace("Decoding logout id token [{}]", idToken);
-            val configContext = getOAuthConfigurationContext();
+            val configContext = getConfigurationContext();
             val claims = configContext.getIdTokenSigningAndEncryptionService().decode(idToken, Optional.empty());
             clientId = claims.getStringClaimValue(OAuth20Constants.CLIENT_ID);
             LOGGER.debug("Client id retrieved from id token is [{}]", clientId);
