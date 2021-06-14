@@ -58,12 +58,12 @@ public class OidcJwksEndpointController extends BaseOAuth20Controller<OidcConfig
             val jsonJwks = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
             val jsonWebKeySet = new JsonWebKeySet(jsonJwks);
 
-            val servicesManager = getOAuthConfigurationContext().getServicesManager();
+            val servicesManager = getConfigurationContext().getServicesManager();
             servicesManager.getAllServicesOfType(OidcRegisteredService.class)
                 .stream()
                 .filter(s -> StringUtils.isNotBlank(s.getJwks()))
                 .forEach(service -> {
-                    val set = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service, getOAuthConfigurationContext().getApplicationContext());
+                    val set = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service, getConfigurationContext().getApplicationContext());
                     set.ifPresent(keys -> keys.getJsonWebKeys().forEach(jsonWebKeySet::addJsonWebKey));
                 });
             val body = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
