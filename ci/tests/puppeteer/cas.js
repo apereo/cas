@@ -95,7 +95,10 @@ exports.type = async(page, selector, value) => {
 }
 
 exports.newPage = async(browser) => {
-    const page = (await browser.pages())[0];
+    let page = (await browser.pages())[0];
+    if (page === undefined) {
+        page = await browser.newPage();
+    }
     await page.setDefaultNavigationTimeout(0);
     await page.bringToFront();
     return page;
