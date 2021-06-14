@@ -7,11 +7,13 @@ import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
+import org.apereo.cas.util.InetAddressUtils;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -63,9 +65,15 @@ public class CasCoreTicketsSchedulingConfiguration {
     public TicketRegistryCleaner ticketRegistryCleaner() {
         val isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().getSchedule().isEnabled();
         if (isCleanerEnabled) {
-            LOGGER.debug("Ticket registry cleaner is enabled.");
-            return new DefaultTicketRegistryCleaner(lockingStrategy.getObject(),
-                logoutManager.getObject(), ticketRegistry.getObject());
+            val enableOnHost = casProperties.getTicket().getRegistry().getCleaner().getSchedule().getEnabledOnHost();
+            if (StringUtils.isBlank(enableOnHost) || enableOnHost.equalsIgnoreCase(InetAddressUtils.getCasServerHostName())) {
+                LOGGER.debug("Ticket registry cleaner is enabled.");
+                return new DefaultTicketRegistryCleaner(lockingStrategy.getObject(),
+                    logoutManager.getObject(), ticketRegistry.getObject());
+            } else {
+                LOGGER.debug("Ticket registry cleaner is enabled but only on server: [{}]", enableOnHost);
+                return NoOpTicketRegistryCleaner.getInstance();
+            }
         }
         LOGGER.debug("Ticket registry cleaner is not enabled. "
             + "Expired tickets are not forcefully cleaned by CAS. It is up to the ticket registry itself to "

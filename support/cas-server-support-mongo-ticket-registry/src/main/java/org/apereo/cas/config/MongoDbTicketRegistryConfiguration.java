@@ -12,10 +12,12 @@ import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
+import org.apereo.cas.util.InetAddressUtils;
 import org.apereo.cas.util.MongoDbTicketRegistryFacilitator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -69,8 +71,14 @@ public class MongoDbTicketRegistryConfiguration {
                                                        @Qualifier("ticketRegistry") final TicketRegistry ticketRegistry) {
         val isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().getSchedule().isEnabled();
         if (isCleanerEnabled) {
-            LOGGER.debug("Ticket registry cleaner for MongoDb is enabled.");
-            return new DefaultTicketRegistryCleaner(lockingStrategy, logoutManager, ticketRegistry);
+            val enableOnHost = casProperties.getTicket().getRegistry().getCleaner().getSchedule().getEnabledOnHost();
+            if (StringUtils.isBlank(enableOnHost) || enableOnHost.equalsIgnoreCase(InetAddressUtils.getCasServerHostName())) {
+                LOGGER.debug("Ticket registry cleaner for MongoDb is enabled.");
+                return new DefaultTicketRegistryCleaner(lockingStrategy, logoutManager, ticketRegistry);
+            } else {
+                LOGGER.debug("Ticket registry cleaner is enabled but only on server: [{}]", enableOnHost);
+                return NoOpTicketRegistryCleaner.getInstance();
+            }
         }
         LOGGER.debug("Ticket registry cleaner for MongoDb is not enabled. "
             + "Expired tickets are not forcefully collected and cleaned by CAS. It is up to the ticket registry itself to "

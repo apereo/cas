@@ -1,12 +1,16 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.util.InetAddressUtils;
 import org.apereo.cas.util.LoggingUtils;
 
+import lombok.val;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,12 +40,17 @@ public class MultifactorAuthenticationTrustStorageCleaner {
         if (!trustedProperties.getCleaner().getSchedule().isEnabled()) {
             LOGGER.debug("[{}] is disabled; expired trusted authentication records will not be removed automatically", getClass().getName());
         } else {
-            try {
-                LOGGER.trace("Proceeding to clean up expired trusted authentication records...");
-                SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-                this.storage.remove();
-            } catch (final Exception e) {
-                LoggingUtils.error(LOGGER, e);
+            val enableOnHost = trustedProperties.getCleaner().getSchedule().getEnabledOnHost();
+            if (StringUtils.isBlank(enableOnHost) || enableOnHost.equalsIgnoreCase(InetAddressUtils.getCasServerHostName())) {
+                try {
+                    LOGGER.trace("Proceeding to clean up expired trusted authentication records...");
+                    SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+                    this.storage.remove();
+                } catch (final Exception e) {
+                    LoggingUtils.error(LOGGER, e);
+                }
+            } else {
+                LOGGER.trace("[{}] is disabled because host does not match [{}]", getClass().getName(), enableOnHost);
             }
         }
     }
