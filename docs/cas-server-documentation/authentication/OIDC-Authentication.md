@@ -38,6 +38,7 @@ The current implementation provides support for:
 | `/oidc/jwks`                              | Contains the server’s public signing keys, which clients may use to verify the digital signatures of access tokens and ID tokens issued by CAS.
 | `/oidc/authorize`                         | Authorization requests are handled here.
 | `/oidc/profile`                           | User profile requests are handled here.
+| `/oidc/logout`                            | Logout requests are handled here.
 | `/oidc/introspect`                        | Query CAS to detect the status of a given access token via [introspection](https://tools.ietf.org/html/rfc7662). This endpoint expects HTTP basic authentication with OIDC service `client_id` and `client_secret` associated as username and password.
 | `/oidc/accessToken`, `/oidc/token`        | Produces authorized access tokens.
 | `/oidc/revoke`                            | [Revoke](https://tools.ietf.org/html/rfc7009) access or refresh tokens. This endpoint expects HTTP basic authentication with OIDC service `client_id` and `client_secret` associated as username and password.
@@ -51,17 +52,9 @@ Please [see this guide](OIDC-Authentication-Claims.html).
 
 {% include casproperties.html properties="cas.authn.oidc.core,cas.client" %}
 
-### Discovery
-
-{% include casproperties.html properties="cas.authn.oidc.discovery" %}
-
 ### JWKS
 
 {% include casproperties.html properties="cas.authn.oidc.jwks" %}
-
-### Scopes & Claims
-
-{% include casproperties.html properties="cas.authn.oidc.core" %}
 
 ### Logout
 

@@ -447,6 +447,7 @@ layout: null
         *   [Identity Provider](#oidcop)
             * [Overview](/cas/{{ version }}/authentication/OIDC-Authentication.html)
             * [Clients](/cas/{{ version }}/authentication/OIDC-Authentication-Clients.html)
+            * [Discovery](/cas/{{ version }}/authentication/OIDC-Authentication-Discovery.html)
             * [Claims](/cas/{{ version }}/authentication/OIDC-Authentication-Claims.html)
             * [WebFinger Discovery](/cas/{{ version }}/authentication/OIDC-Authentication-WebFinger.html)
         *   [Delegation](/cas/{{ version }}/integration/Delegate-Authentication.html)
