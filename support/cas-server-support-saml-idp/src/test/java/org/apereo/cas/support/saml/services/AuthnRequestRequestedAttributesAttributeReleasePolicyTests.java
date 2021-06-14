@@ -118,7 +118,6 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
     public void verifySerializationToJson() throws IOException {
         val filter = new AuthnRequestRequestedAttributesAttributeReleasePolicy();
         filter.setUseFriendlyName(true);
-        filter.setPermitUndefined(true);
         MAPPER.writeValue(JSON_FILE, filter);
         val strategyRead = MAPPER.readValue(JSON_FILE, AuthnRequestRequestedAttributesAttributeReleasePolicy.class);
         assertEquals(filter, strategyRead);
@@ -130,7 +129,6 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
         val filter = new AuthnRequestRequestedAttributesAttributeReleasePolicy();
         filter.setAllowedAttributes(List.of("eduPersonPrincipalAttribute"));
         filter.setUseFriendlyName(true);
-        filter.setPermitUndefined(true);
 
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
@@ -145,7 +143,6 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
         val filter = new AuthnRequestRequestedAttributesAttributeReleasePolicy();
         filter.setAllowedAttributes(List.of("eduPersonPrincipalAttribute"));
         filter.setUseFriendlyName(true);
-        filter.setPermitUndefined(false);
 
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);

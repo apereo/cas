@@ -101,7 +101,8 @@ public class TokenCoreConfiguration {
         return new JwtTokenTicketBuilder(tokenTicketValidator(),
             grantingTicketExpirationPolicy.getObject(),
             tokenTicketJwtBuilder(),
-            servicesManager.getObject());
+            servicesManager.getObject(),
+            casProperties);
     }
 
     @RefreshScope
@@ -109,7 +110,6 @@ public class TokenCoreConfiguration {
     @ConditionalOnMissingBean(name = "tokenTicketJwtBuilder")
     public JwtBuilder tokenTicketJwtBuilder() {
         return new JwtBuilder(
-            casProperties.getServer().getPrefix(),
             tokenCipherExecutor(),
             servicesManager.getObject(),
             new RegisteredServiceJwtTicketCipherExecutor());

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 /**
  * This is {@link OidcIntrospectionEndpointController}.
@@ -61,6 +62,9 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
     @Override
     protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(final OAuth20AccessToken ticket) {
         val r = super.createIntrospectionValidResponse(ticket);
+        val oidc = (OidcConfigurationContext) getOAuthConfigurationContext();
+        r.setIss(oidc.getIssuerService().determineIssuer(Optional.empty()));
+
         if (r.isActive()) {
             r.setScope(String.join(" ", ticket.getScopes()));
         }
