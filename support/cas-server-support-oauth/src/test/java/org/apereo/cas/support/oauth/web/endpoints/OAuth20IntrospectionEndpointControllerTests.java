@@ -34,7 +34,7 @@ public class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20
 
     @Autowired
     @Qualifier("introspectionEndpointController")
-    private OAuth20IntrospectionEndpointController introspectionEndpoint;
+    private OAuth20IntrospectionEndpointController<OAuth20ConfigurationContext> introspectionEndpoint;
 
     @Test
     public void verifyBadCredentialsOperation() {

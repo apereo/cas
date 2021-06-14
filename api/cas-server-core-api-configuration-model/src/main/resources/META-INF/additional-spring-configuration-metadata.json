@@ -1,6 +1,24 @@
 {
   "properties": [
     {
+      "name": "cas.authn.throttle.username-parameter",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.throttle.core.username-parameter",
+        "reason": "Setting is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.throttle.app-code",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.throttle.core.app-code",
+        "reason": "Setting is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.mfa.gauth.code-digits",
       "type": "java.lang.String",
       "deprecation": {

@@ -59,7 +59,7 @@ public class CasThrottlingConfiguration {
     @ConditionalOnMissingBean(name = "throttledRequestResponseHandler")
     public ThrottledRequestResponseHandler throttledRequestResponseHandler() {
         val throttle = casProperties.getAuthn().getThrottle();
-        return new DefaultThrottledRequestResponseHandler(throttle.getUsernameParameter());
+        return new DefaultThrottledRequestResponseHandler(throttle.getCore().getUsernameParameter());
     }
 
     @RefreshScope
@@ -90,15 +90,15 @@ public class CasThrottlingConfiguration {
         val context = ThrottledSubmissionHandlerConfigurationContext.builder()
             .failureThreshold(throttle.getFailure().getThreshold())
             .failureRangeInSeconds(throttle.getFailure().getRangeSeconds())
-            .usernameParameter(throttle.getUsernameParameter())
+            .usernameParameter(throttle.getCore().getUsernameParameter())
             .authenticationFailureCode(throttle.getFailure().getCode())
             .auditTrailExecutionPlan(auditTrailExecutionPlan.getObject())
-            .applicationCode(throttle.getAppCode())
+            .applicationCode(throttle.getCore().getAppCode())
             .throttledRequestResponseHandler(throttledRequestResponseHandler())
             .throttledRequestExecutor(throttledRequestExecutor())
             .build();
 
-        if (StringUtils.isNotBlank(throttle.getUsernameParameter())) {
+        if (StringUtils.isNotBlank(throttle.getCore().getUsernameParameter())) {
             LOGGER.trace("Activating authentication throttling based on IP address and username...");
             return new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(context, throttleSubmissionMap());
         }

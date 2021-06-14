@@ -61,10 +61,10 @@ public class CasMongoDbThrottlingConfiguration {
         val context = ThrottledSubmissionHandlerConfigurationContext.builder()
             .failureThreshold(failure.getThreshold())
             .failureRangeInSeconds(failure.getRangeSeconds())
-            .usernameParameter(throttle.getUsernameParameter())
+            .usernameParameter(throttle.getCore().getUsernameParameter())
             .authenticationFailureCode(failure.getCode())
             .auditTrailExecutionPlan(auditTrailExecutionPlan)
-            .applicationCode(throttle.getAppCode())
+            .applicationCode(throttle.getCore().getAppCode())
             .throttledRequestResponseHandler(throttledRequestResponseHandler.getObject())
             .throttledRequestExecutor(throttledRequestExecutor.getObject())
             .build();
