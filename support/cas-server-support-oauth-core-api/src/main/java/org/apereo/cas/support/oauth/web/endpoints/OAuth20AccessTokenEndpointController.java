@@ -41,7 +41,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 3.5.0
  */
 @Slf4j
-public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller {
+public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller<OAuth20ConfigurationContext> {
     private final AuditableExecution accessTokenGrantAuditableRequestExtractor;
 
     public OAuth20AccessTokenEndpointController(final OAuth20ConfigurationContext oauthConfigurationContext,

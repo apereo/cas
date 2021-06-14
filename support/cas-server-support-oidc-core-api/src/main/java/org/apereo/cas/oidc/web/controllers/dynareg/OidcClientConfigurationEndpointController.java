@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-public class OidcClientConfigurationEndpointController extends BaseOAuth20Controller {
+public class OidcClientConfigurationEndpointController extends BaseOAuth20Controller<OidcConfigurationContext> {
     public OidcClientConfigurationEndpointController(final OidcConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
     }

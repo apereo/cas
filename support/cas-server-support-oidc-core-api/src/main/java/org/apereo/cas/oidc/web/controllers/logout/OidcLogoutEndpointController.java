@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  * @since 6.0.0
  */
 @Slf4j
-public class OidcLogoutEndpointController extends BaseOAuth20Controller {
+public class OidcLogoutEndpointController extends BaseOAuth20Controller<OidcConfigurationContext> {
 
     private final UrlValidator urlValidator;
 

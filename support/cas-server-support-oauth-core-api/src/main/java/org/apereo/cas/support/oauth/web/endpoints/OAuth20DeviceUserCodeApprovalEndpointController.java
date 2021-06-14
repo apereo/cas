@@ -25,7 +25,7 @@ import java.util.Map;
  * @since 6.0.0
  */
 @Slf4j
-public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20Controller {
+public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20Controller<OAuth20ConfigurationContext> {
     /**
      * User code parameter name.
      */

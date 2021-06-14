@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.val;
 import org.springframework.http.MediaType;
@@ -22,7 +23,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEndpointController {
+public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEndpointController<OidcConfigurationContext> {
     public OidcIntrospectionEndpointController(final OidcConfigurationContext context) {
         super(context);
     }
@@ -62,12 +63,8 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
     @Override
     protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(final OAuth20AccessToken ticket) {
         val r = super.createIntrospectionValidResponse(ticket);
-        val oidc = (OidcConfigurationContext) getOAuthConfigurationContext();
-        r.setIss(oidc.getIssuerService().determineIssuer(Optional.empty()));
-
-        if (r.isActive()) {
-            r.setScope(String.join(" ", ticket.getScopes()));
-        }
+        r.setIss(getOAuthConfigurationContext().getIssuerService().determineIssuer(Optional.empty()));
+        FunctionUtils.doIf(r.isActive(), o -> r.setScope(String.join(" ", ticket.getScopes()))).accept(r);
         return r;
     }
 }

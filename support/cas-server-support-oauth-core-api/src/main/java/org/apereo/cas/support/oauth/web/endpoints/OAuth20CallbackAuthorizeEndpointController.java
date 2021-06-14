@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 3.5.0
  */
 @Slf4j
-public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Controller {
+public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Controller<OAuth20ConfigurationContext> {
 
     public OAuth20CallbackAuthorizeEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
