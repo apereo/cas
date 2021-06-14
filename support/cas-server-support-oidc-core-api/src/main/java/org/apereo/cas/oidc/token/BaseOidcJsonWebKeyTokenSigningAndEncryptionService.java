@@ -90,9 +90,11 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
 
     @Override
     protected PublicJsonWebKey getJsonWebKeySigningKey() {
-        val jwks = defaultJsonWebKeystoreCache.get(getIssuer());
+        val iss = issuerService.determineIssuer(Optional.empty());
+        LOGGER.trace("Using issuer [{}] to locate JWK signing key", iss);
+        val jwks = defaultJsonWebKeystoreCache.get(iss);
         if (Objects.requireNonNull(jwks).isEmpty()) {
-            throw new IllegalArgumentException("No signing key could be found for issuer " + getIssuer());
+            throw new IllegalArgumentException("No signing key could be found for issuer " + iss);
         }
         return jwks.get();
     }
