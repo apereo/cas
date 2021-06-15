@@ -65,3 +65,18 @@ The parameters passed are as follows:
 | `requestContext`      | The object representing the Spring Webflow `RequestContext`.
 | `applicationContext`  | The object representing the Spring `ApplicationContext`.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+
+## Custom Error Handling
+     
+For more advanced scenarios, you can also design your webflow exception handler
+and register it with the CAS at runtime:
+
+```java
+@Bean
+public CasWebflowExceptionHandler customExceptionHandler(){
+    return new CustomCasWebflowExceptionHandler();
+}
+```
+
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more
+about how to register configurations into the CAS runtime.
