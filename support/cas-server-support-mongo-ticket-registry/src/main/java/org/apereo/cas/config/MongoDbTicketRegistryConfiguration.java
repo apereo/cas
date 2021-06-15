@@ -9,7 +9,6 @@ import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.MongoDbTicketRegistryFacilitator;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,6 @@ import javax.net.ssl.SSLContext;
  */
 @Configuration("mongoTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class MongoDbTicketRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
