@@ -144,17 +144,19 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     }
 
     protected ServicesManager getServicesManagerInstance() {
+        return new DefaultServicesManager(getConfigurationContext());
+    }
+
+    protected ServicesManagerConfigurationContext getConfigurationContext() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
-
-        val context = ServicesManagerConfigurationContext.builder()
+        return ServicesManagerConfigurationContext.builder()
             .serviceRegistry(serviceRegistry)
             .applicationContext(applicationContext)
             .environments(new HashSet<>(0))
             .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
             .servicesCache(Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(2)).build())
             .build();
-        return new DefaultServicesManager(context);
     }
 
     protected ServiceRegistry getServiceRegistryInstance() {
