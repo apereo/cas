@@ -8,6 +8,7 @@ import org.apereo.cas.config.SamlConfiguration;
 import org.apereo.cas.config.authentication.support.SamlAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.authentication.support.SamlServiceFactoryConfiguration;
 import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
@@ -31,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -68,6 +70,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
             .applicationContext(applicationContext)
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())
+            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
             .build();
 
         val response = new SamlServiceResponseBuilder(new DefaultServicesManager(context))
@@ -96,6 +99,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
             .applicationContext(applicationContext)
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())
+            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
             .build();
 
         val response = new SamlServiceResponseBuilder(new DefaultServicesManager(context))

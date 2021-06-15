@@ -287,6 +287,7 @@ public class CasCoreServicesConfiguration {
                 .applicationContext(applicationContext)
                 .environments(activeProfiles)
                 .servicesCache(servicesManagerCache())
+                .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
                 .build();
             return new DefaultDomainAwareServicesManager(context, new DefaultRegisteredServiceDomainExtractor());
         };
