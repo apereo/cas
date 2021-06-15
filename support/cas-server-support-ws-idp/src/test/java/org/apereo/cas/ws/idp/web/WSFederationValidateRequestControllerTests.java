@@ -80,8 +80,7 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
             return null;
         });
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
-        assertEquals("https://cas.example.org:8443/cas/logout?service=http://app.example5.org/wsfed-idp",
-            response.getHeader("Location"));
+        assertEquals("https://cas.example.org:8443/cas/logout?service=http://app.example5.org/wsfed-idp", response.getHeader("Location"));
     }
 
     @Test

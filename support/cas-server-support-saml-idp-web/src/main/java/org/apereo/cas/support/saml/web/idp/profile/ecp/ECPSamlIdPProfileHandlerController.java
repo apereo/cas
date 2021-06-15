@@ -6,9 +6,11 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
+import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +42,8 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
-    public ECPSamlIdPProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
-        super(samlProfileHandlerConfigurationContext);
+    public ECPSamlIdPProfileHandlerController(final SamlProfileHandlerConfigurationContext configurationContext) {
+        super(configurationContext);
     }
 
     private static Credential extractBasicAuthenticationCredential(final HttpServletRequest request,
@@ -163,6 +165,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
         LOGGER.debug("Located issuer [{}] from request prior to authenticating [{}]", issuer, credential.getId());
 
         val service = getConfigurationContext().getWebApplicationServiceFactory().createService(issuer);
+        service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(issuer));
         LOGGER.debug("Executing authentication request for service [{}] on behalf of credential id [{}]", service, credential.getId());
         val authenticationResult = getConfigurationContext()
             .getAuthenticationSystemSupport().finalizeAuthenticationTransaction(service, credential);

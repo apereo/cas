@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -25,6 +27,7 @@ public class DefaultServicesManagerByEnvironmentTests extends AbstractServicesMa
             .applicationContext(applicationContext)
             .environments(CollectionUtils.wrapSet("prod1", "qa1"))
             .servicesCache(Caffeine.newBuilder().build())
+            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
             .build();
 
         return new DefaultServicesManager(context);

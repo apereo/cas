@@ -39,7 +39,7 @@ public class DefaultServicesManagerCachingTests {
         val context = ServicesManagerConfigurationContext.builder()
             .applicationContext(applicationContext)
             .serviceRegistry(new InMemoryServiceRegistry(applicationContext, List.of(service1), List.of()))
-            .registeredServiceLocators(List.of())
+            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
             .servicesCache((Cache) cache)
             .build();
 
