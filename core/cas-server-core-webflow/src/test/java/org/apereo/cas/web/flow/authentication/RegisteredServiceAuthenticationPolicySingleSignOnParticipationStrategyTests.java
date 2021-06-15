@@ -9,9 +9,11 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.ExcludedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
@@ -33,6 +35,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -56,6 +59,7 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
             .applicationContext(appCtx)
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())
+            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
             .build();
         val servicesManager = new DefaultServicesManager(context);
         servicesManager.load();
@@ -76,10 +80,10 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        val svc = CoreAuthenticationTestUtils.getRegisteredService("serviceid1");
+        val svc = RegisteredServiceTestUtils.getRegisteredService("serviceid1", Map.of());
         val policy = new DefaultRegisteredServiceAuthenticationPolicy();
         policy.setCriteria(null);
-        when(svc.getAuthenticationPolicy()).thenReturn(policy);
+        svc.setAuthenticationPolicy(policy);
         val ticketRegistry = new DefaultTicketRegistry();
         val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
 
@@ -104,7 +108,7 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        val svc = CoreAuthenticationTestUtils.getRegisteredService("serviceid1");
+        val svc = RegisteredServiceTestUtils.getRegisteredService("serviceid1");
         val ticketRegistry = new DefaultTicketRegistry();
         val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
 
@@ -113,7 +117,7 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
             .requestContext(context)
             .build();
         assertFalse(strategy.supports(ssoRequest));
-        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService("serviceid1"));
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService("unknown"));
         assertFalse(strategy.supports(ssoRequest));
     }
 
@@ -127,12 +131,11 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        val svc = CoreAuthenticationTestUtils.getRegisteredService("serviceid1");
+        val svc = RegisteredServiceTestUtils.getRegisteredService("serviceid1", Map.of());
         val policy = new DefaultRegisteredServiceAuthenticationPolicy();
         policy.setRequiredAuthenticationHandlers(Set.of("SomeOtherHandler"));
         policy.setCriteria(new AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria());
-        when(svc.getAuthenticationPolicy()).thenReturn(policy);
-        when(svc.matches(anyString())).thenReturn(Boolean.TRUE);
+        svc.setAuthenticationPolicy(policy);
 
         val ticketRegistry = new DefaultTicketRegistry();
         val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
@@ -160,12 +163,11 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        val svc = CoreAuthenticationTestUtils.getRegisteredService("serviceid1");
+        val svc = RegisteredServiceTestUtils.getRegisteredService("serviceid1", Map.of());
         val policy = new DefaultRegisteredServiceAuthenticationPolicy();
         policy.setRequiredAuthenticationHandlers(
             Set.of(SimpleTestUsernamePasswordAuthenticationHandler.class.getSimpleName()));
-        when(svc.getAuthenticationPolicy()).thenReturn(policy);
-        when(svc.matches(anyString())).thenReturn(Boolean.TRUE);
+        svc.setAuthenticationPolicy(policy);
 
         val ticketRegistry = new DefaultTicketRegistry();
         val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
@@ -193,13 +195,12 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        val svc = CoreAuthenticationTestUtils.getRegisteredService("serviceid1");
+        val svc = RegisteredServiceTestUtils.getRegisteredService("serviceid1", Map.of());
         val policy = new DefaultRegisteredServiceAuthenticationPolicy();
         policy.setCriteria(new ExcludedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria());
         policy.setExcludedAuthenticationHandlers(
             Set.of(SimpleTestUsernamePasswordAuthenticationHandler.class.getName()));
-        when(svc.getAuthenticationPolicy()).thenReturn(policy);
-        when(svc.matches(anyString())).thenReturn(Boolean.TRUE);
+        svc.setAuthenticationPolicy(policy);
 
         val ticketRegistry = new DefaultTicketRegistry();
         val strategy = getSingleSignOnStrategy(svc, ticketRegistry);

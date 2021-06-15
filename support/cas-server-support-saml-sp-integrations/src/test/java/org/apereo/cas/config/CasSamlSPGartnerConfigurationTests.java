@@ -10,7 +10,6 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.2.0
  */
 @Tag("SAMLServiceProvider")
-
 @TestPropertySource(properties = {
     "cas.saml-sp.gartner.metadata=classpath:/metadata/sp-metadata.xml",
     "cas.saml-sp.gartner.name-id-attribute=cn",

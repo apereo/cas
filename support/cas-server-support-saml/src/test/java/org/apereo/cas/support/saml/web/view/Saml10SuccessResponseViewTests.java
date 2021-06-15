@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
 import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -73,6 +74,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
             .applicationContext(appCtx)
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())
+            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
             .build();
         val mgmr = new DefaultServicesManager(context);
         mgmr.load();
