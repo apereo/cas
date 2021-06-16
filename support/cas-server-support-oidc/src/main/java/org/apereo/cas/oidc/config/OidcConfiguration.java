@@ -355,7 +355,9 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(oauthInterceptor()).addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
+        registry.addInterceptor(oauthInterceptor())
+            .order(100)
+            .addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
     }
 
     @Bean
