@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalException;
 import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RequiredAuthenticationHandlerAuthenticationPolicy;
@@ -122,7 +123,7 @@ public class DefaultAuthenticationManagerTests {
     }
 
     private static AuthenticationEventExecutionPlan getAuthenticationExecutionPlan(final Map<AuthenticationHandler, PrincipalResolver> map) {
-        val plan = new DefaultAuthenticationEventExecutionPlan();
+        val plan = new DefaultAuthenticationEventExecutionPlan(CoreAuthenticationTestUtils.getAuthenticationSystemSupport());
         plan.registerAuthenticationHandlerWithPrincipalResolver(map);
         plan.registerAuthenticationHandlerResolver(new RegisteredServiceAuthenticationHandlerResolver(mockServicesManager(),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy())));
@@ -151,6 +152,24 @@ public class DefaultAuthenticationManagerTests {
         val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
             false, mock(ConfigurableApplicationContext.class));
         assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
+    }
+
+    @Test
+    public void verifyTransactionWithAuthnHistoryAndAuthnPolicy() {
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
+        map.put(newMockHandler(true), null);
+
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        val policy = new RequiredAuthenticationHandlerAuthenticationPolicy(
+            SimpleTestUsernamePasswordAuthenticationHandler.class.getSimpleName());
+        authenticationExecutionPlan.registerAuthenticationPolicy(policy);
+        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ConfigurableApplicationContext.class));
+
+        val testTransaction = new DefaultAuthenticationTransactionFactory()
+            .newTransaction(CoreAuthenticationTestUtils.getService(), mock(Credential.class, withSettings().serializable()));
+        testTransaction.collect(List.of(CoreAuthenticationTestUtils.getAuthentication()));
+        assertNotNull(manager.authenticate(testTransaction));
     }
 
     @Test
