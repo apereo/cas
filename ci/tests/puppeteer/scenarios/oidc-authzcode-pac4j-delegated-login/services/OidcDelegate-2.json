@@ -1,0 +1,24 @@
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "clientid",
+  "clientSecret": "clientsecret",
+  "serviceId" : "https://localhost:8443/cas/login/DelegateLogin",
+  "bypassApprovalPrompt": true,
+  "name" : "CAS delegating to another identity provider (here: self)",
+  "id" : 2,
+  "scopes" : [ "java.util.HashSet", [ "profile", "email", "address", "phone", "offline_access" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "delegatedAuthenticationPolicy" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy",
+      "allowedProviders" : [ "java.util.ArrayList", [ "something unavailable" ] ],
+      "permitUndefined": true,
+      "exclusive": false
+    }
+  },
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}
