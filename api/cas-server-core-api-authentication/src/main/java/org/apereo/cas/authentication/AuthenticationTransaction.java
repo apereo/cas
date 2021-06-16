@@ -30,6 +30,13 @@ public interface AuthenticationTransaction extends Serializable {
     Collection<Credential> getCredentials();
 
     /**
+     * Gets authentications.
+     *
+     * @return the authentications
+     */
+    Collection<Authentication> getAuthentications();
+
+    /**
      * Gets the first (primary) credential in the chain.
      *
      * @return the credential

@@ -363,6 +363,12 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         val failures = new LinkedHashSet<Throwable>(authenticationHandlers.size());
         val policies = authenticationEventExecutionPlan.getAuthenticationPolicies(transaction);
 
+        val resultBuilder = new DefaultAuthenticationResultBuilder();
+        resultBuilder.collect(transaction.getAuthentications());
+        resultBuilder.collect(authentication);
+        val principalElectionStrategy = authenticationEventExecutionPlan.getAuthenticationSystemSupport().getPrincipalElectionStrategy();
+        val resultAuthentication = resultBuilder.build(principalElectionStrategy).getAuthentication();
+
         policies.forEach(p -> {
             try {
                 val simpleName = p.getClass().getSimpleName();
@@ -371,7 +377,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                     .stream()
                     .filter(handler -> transaction.getCredentials().stream().anyMatch(handler::supports))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
-                if (!p.isSatisfiedBy(authentication, supportingHandlers, this.applicationContext, Optional.empty())) {
+                if (!p.isSatisfiedBy(resultAuthentication, supportingHandlers, this.applicationContext, Optional.empty())) {
                     failures.add(new AuthenticationException("Unable to satisfy authentication policy " + simpleName));
                 }
             } catch (final GeneralSecurityException e) {

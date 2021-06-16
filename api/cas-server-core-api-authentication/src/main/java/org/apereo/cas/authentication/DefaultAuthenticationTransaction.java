@@ -9,10 +9,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.val;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -36,6 +38,8 @@ public class DefaultAuthenticationTransaction implements AuthenticationTransacti
 
     private final Collection<Credential> credentials;
 
+    private final Collection<Authentication> authentications = new ArrayList<>();
+
     /**
      * Wrap credentials into an authentication transaction, as a factory method,
      * and return the final result.
@@ -58,6 +62,17 @@ public class DefaultAuthenticationTransaction implements AuthenticationTransacti
      */
     public static DefaultAuthenticationTransaction of(final Credential... credentials) {
         return of(null, credentials);
+    }
+
+    /**
+     * Collect previous authentications.
+     *
+     * @param authentications the authentications
+     * @return the default authentication transaction
+     */
+    public DefaultAuthenticationTransaction collect(final Collection<Authentication> authentications) {
+        this.authentications.addAll(authentications);
+        return this;
     }
 
     /**

@@ -21,6 +21,13 @@ import java.util.stream.Collectors;
 public interface AuthenticationEventExecutionPlan {
 
     /**
+     * Gets authentication system support.
+     *
+     * @return the authentication system support
+     */
+    AuthenticationSystemSupport getAuthenticationSystemSupport();
+
+    /**
      * Register authentication handler.
      *
      * @param handler the handler

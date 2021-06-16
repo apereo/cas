@@ -18,12 +18,24 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @TestPropertySource(properties = {
-    "cas.authn.attribute-repository.jdbc[0].attributes.nickname=cas_nickname",
-    "cas.authn.attribute-repository.jdbc[0].attributes.role_code=cas_role",
-    "cas.authn.attribute-repository.jdbc[0].singleRow=false",
-    "cas.authn.attribute-repository.jdbc[0].columnMappings.attr_name=attr_value",
-    "cas.authn.attribute-repository.jdbc[0].sql=SELECT * FROM table_users WHERE {0}",
-    "cas.authn.attribute-repository.jdbc[0].username=uid"
+    "cas.authn.attribute-repository.jdbc[0].single-row=false",
+    "cas.authn.attribute-repository.jdbc[0].column-mappings.attr_name=attr_value",
+    "cas.authn.attribute-repository.jdbc[0].sql=SELECT * FROM table_users WHERE 1=2 AND {0}",
+    "cas.authn.attribute-repository.jdbc[0].username=uid",
+
+    "cas.authn.attribute-repository.jdbc[1].single-row=true",
+    "cas.authn.attribute-repository.jdbc[1].column-mappings.attr_name=attr_value",
+    "cas.authn.attribute-repository.jdbc[1].sql=SELECT * FROM table_users WHERE 1=2 AND {0}",
+    "cas.authn.attribute-repository.jdbc[1].username=uid",
+
+//    "cas.authn.attribute-repository.jdbc[2].attributes.nickname=cas_nickname",
+//    "cas.authn.attribute-repository.jdbc[2].attributes.role_code=cas_role",
+    "cas.authn.attribute-repository.jdbc[2].attributes.armoury-authorities=AUTHORITY",
+    "cas.authn.attribute-repository.jdbc[2].attributes.couch-roles=COUCH_DB",
+    "cas.authn.attribute-repository.jdbc[2].single-row=false",
+    "cas.authn.attribute-repository.jdbc[2].column-mappings.attr_name=attr_value",
+    "cas.authn.attribute-repository.jdbc[2].sql=SELECT * FROM table_users WHERE {0}",
+    "cas.authn.attribute-repository.jdbc[2].username=uid"
 })
 @Tag("JDBC")
 public class JdbcMultiRowAttributeRepositoryTests extends BaseJdbcAttributeRepositoryTests {

@@ -101,7 +101,8 @@ public class DelegatedClientIdentityProviderConfigurationFunction implements Fun
             .map(IndirectClient.class::cast)
             .forEach(client -> {
                 try {
-                    LOGGER.debug("Initializing client [{}] with request parameters [{}]", client, webContext.getRequestParameters());
+                    LOGGER.debug("Initializing client [{}] with request parameters [{}]", 
+                        client, webContext.getRequestParameters());
                     client.init();
                     val provider = DelegatedClientIdentityProviderConfigurationFactory.builder()
                         .client(client)

@@ -39,6 +39,11 @@ public class AuthenticationTransactionTests {
             private static final long serialVersionUID = -8503574003503719399L;
 
             @Override
+            public Collection<Authentication> getAuthentications() {
+                return List.of();
+            }
+
+            @Override
             public Service getService() {
                 return mock(Service.class);
             }
@@ -49,6 +54,7 @@ public class AuthenticationTransactionTests {
             }
         };
         assertNotNull(transaction.getPrimaryCredential());
+        assertNotNull(transaction.getAuthentications());
         assertTrue(transaction.hasCredentialOfType(TestCredentialType1.class));
     }
 

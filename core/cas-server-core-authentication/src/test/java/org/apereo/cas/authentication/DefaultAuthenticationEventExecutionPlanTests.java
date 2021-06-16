@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 public class DefaultAuthenticationEventExecutionPlanTests {
     @Test
     public void verifyOperation() {
-        val plan = new DefaultAuthenticationEventExecutionPlan();
+        val plan = new DefaultAuthenticationEventExecutionPlan(CoreAuthenticationTestUtils.getAuthenticationSystemSupport());
         plan.registerAuthenticationPreProcessor(transaction -> false);
         plan.registerAuthenticationMetadataPopulators(
             Set.of(new RememberMeAuthenticationMetaDataPopulator()));
@@ -40,7 +40,7 @@ public class DefaultAuthenticationEventExecutionPlanTests {
 
     @Test
     public void verifyMismatchedCount() {
-        val plan = new DefaultAuthenticationEventExecutionPlan();
+        val plan = new DefaultAuthenticationEventExecutionPlan(CoreAuthenticationTestUtils.getAuthenticationSystemSupport());
         plan.registerAuthenticationHandlerWithPrincipalResolvers(List.of(new SimpleTestUsernamePasswordAuthenticationHandler()), List.of());
         assertTrue(plan.getAuthenticationHandlers().isEmpty());
     }
@@ -50,7 +50,7 @@ public class DefaultAuthenticationEventExecutionPlanTests {
     public void verifyNoHandlerResolves() {
         val transaction = new DefaultAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
             List.of(mock(Credential.class)));
-        val plan = new DefaultAuthenticationEventExecutionPlan();
+        val plan = new DefaultAuthenticationEventExecutionPlan(CoreAuthenticationTestUtils.getAuthenticationSystemSupport());
         assertThrows(AuthenticationException.class, () -> plan.getAuthenticationHandlers(transaction));
     }
 

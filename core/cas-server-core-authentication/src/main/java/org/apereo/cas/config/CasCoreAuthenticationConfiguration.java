@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationManager;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlan;
@@ -40,6 +41,10 @@ import java.util.List;
 public class CasCoreAuthenticationConfiguration {
 
     @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
+
+    @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
@@ -73,7 +78,7 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(final List<AuthenticationEventExecutionPlanConfigurer> configurers) {
-        val plan = new DefaultAuthenticationEventExecutionPlan();
+        val plan = new DefaultAuthenticationEventExecutionPlan(authenticationSystemSupport.getObject());
         val sortedConfigurers = new ArrayList<>(configurers);
         AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
 
