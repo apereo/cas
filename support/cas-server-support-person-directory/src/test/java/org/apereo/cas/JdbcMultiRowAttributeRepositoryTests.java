@@ -18,24 +18,20 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @TestPropertySource(properties = {
+    "cas.authn.attribute-repository.core.merger=MULTIVALUED",
+
+    "cas.authn.attribute-repository.jdbc[0].attributes.nickname=cas_nickname",
+    "cas.authn.attribute-repository.jdbc[0].attributes.role_code=cas_role",
     "cas.authn.attribute-repository.jdbc[0].single-row=false",
     "cas.authn.attribute-repository.jdbc[0].column-mappings.attr_name=attr_value",
-    "cas.authn.attribute-repository.jdbc[0].sql=SELECT * FROM table_users WHERE 1=2 AND {0}",
+    "cas.authn.attribute-repository.jdbc[0].sql=SELECT * FROM table_users WHERE {0}",
     "cas.authn.attribute-repository.jdbc[0].username=uid",
 
-    "cas.authn.attribute-repository.jdbc[1].single-row=true",
+    "cas.authn.attribute-repository.jdbc[1].attributes.nickname=cas_nickname",
+    "cas.authn.attribute-repository.jdbc[1].single-row=false",
     "cas.authn.attribute-repository.jdbc[1].column-mappings.attr_name=attr_value",
-    "cas.authn.attribute-repository.jdbc[1].sql=SELECT * FROM table_users WHERE 1=2 AND {0}",
-    "cas.authn.attribute-repository.jdbc[1].username=uid",
-
-//    "cas.authn.attribute-repository.jdbc[2].attributes.nickname=cas_nickname",
-//    "cas.authn.attribute-repository.jdbc[2].attributes.role_code=cas_role",
-    "cas.authn.attribute-repository.jdbc[2].attributes.armoury-authorities=AUTHORITY",
-    "cas.authn.attribute-repository.jdbc[2].attributes.couch-roles=COUCH_DB",
-    "cas.authn.attribute-repository.jdbc[2].single-row=false",
-    "cas.authn.attribute-repository.jdbc[2].column-mappings.attr_name=attr_value",
-    "cas.authn.attribute-repository.jdbc[2].sql=SELECT * FROM table_users WHERE {0}",
-    "cas.authn.attribute-repository.jdbc[2].username=uid"
+    "cas.authn.attribute-repository.jdbc[1].sql=SELECT * FROM table_ext_users WHERE {0}",
+    "cas.authn.attribute-repository.jdbc[1].username=uid"
 })
 @Tag("JDBC")
 public class JdbcMultiRowAttributeRepositoryTests extends BaseJdbcAttributeRepositoryTests {
@@ -48,7 +44,7 @@ public class JdbcMultiRowAttributeRepositoryTests extends BaseJdbcAttributeRepos
         assertNotNull(person.getAttributes());
         assertFalse(person.getAttributes().isEmpty());
         assertEquals(3, person.getAttributeValues("cas_role").size());
-        assertEquals(2, person.getAttributeValues("cas_nickname").size());
+        assertEquals(3, person.getAttributeValues("cas_nickname").size());
     }
 
     @Override
@@ -58,8 +54,11 @@ public class JdbcMultiRowAttributeRepositoryTests extends BaseJdbcAttributeRepos
         s.execute("insert into table_users (uid, attr_name, attr_value) values('casuser', 'role_code', 'AL');");
         s.execute("insert into table_users (uid, attr_name, attr_value) values('casuser', 'role_code', 'SF');");
         s.execute("insert into table_users (uid, attr_name, attr_value) values('casuser', 'role_code', 'AZ');");
-
         s.execute("insert into table_users (uid, attr_name, attr_value) values('casuser', 'nickname', 'CASTest1');");
         s.execute("insert into table_users (uid, attr_name, attr_value) values('casuser', 'nickname', 'CasTest2');");
+
+        s.execute("create table table_ext_users (uid VARCHAR(255),attr_name VARCHAR(255),attr_value VARCHAR(255));");
+        s.execute("insert into table_ext_users (uid, attr_name, attr_value) values('casuser', 'nickname', 'ApereoCAS');");
+
     }
 }
