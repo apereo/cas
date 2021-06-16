@@ -133,4 +133,11 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
      * in which case {@link #caseCanonicalization} will dictate the final outcome.
      */
     private List<String> caseInsensitiveQueryAttributes = new ArrayList<>(0);
+
+    /**
+     * Define a {@code Map} of query attribute names to data-layer attribute names to use when building the query.
+     * The key is always the name of the query attribute that is defined by CAS and passed internally,
+     * and the value is the database column that should map.
+     */
+    private Map<String, String> queryAttributes = new HashMap<>(0);
 }

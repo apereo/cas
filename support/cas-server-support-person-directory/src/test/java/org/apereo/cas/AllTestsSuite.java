@@ -23,6 +23,7 @@ import org.junit.platform.suite.api.Suite;
     PersonDirectoryPrincipalResolverConcurrencyTests.class,
     PrincipalAttributeRepositoryFetcherCascadeTests.class,
     CachingAttributeRepositoryTests.class,
+    PrincipalAttributeRepositoryFetcherJdbcTests.class,
     PersonDirectoryPrincipalResolverLdapTests.class,
     PersonDirectoryPrincipalResolverOpenLdapTests.class,
     PersonDirectoryPrincipalResolverActiveDirectoryTests.class,
