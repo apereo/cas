@@ -33,8 +33,8 @@ public class DefaultDomainAwareServicesManagerTests extends AbstractServicesMana
         r.setName("domainService1");
         r.setServiceId("https://company.com.*");
         servicesManager.save(r);
-        assertTrue(domainServicesManager.getServicesForDomain("company.com").isEmpty());
-        assertFalse(domainServicesManager.getServicesForDomain("default").isEmpty());
+        assertFalse(domainServicesManager.getServicesForDomain("company.com").isEmpty());
+        assertTrue(domainServicesManager.getServicesForDomain("default").isEmpty());
 
         r.setServiceId("https://company.com/.*");
         servicesManager.save(r);
