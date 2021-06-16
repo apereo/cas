@@ -10,5 +10,5 @@ def run(Object[] args) {
     def samlIdPProperties = args[2]
     def logger = args[3]
 
-    return new InMemoryResourceMetadataResolver(new ClassPathResource("sample-sp.xml"), samlConfigBean);
+    return new InMemoryResourceMetadataResolver(new ClassPathResource("sample-sp.xml"), samlConfigBean)
 }

@@ -6,7 +6,7 @@ const path = require('path');
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    const page = await browser.newPage();
+    const page = await cas.newPage(browser);
 
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(1000)
@@ -41,8 +41,7 @@ const path = require('path');
     await cas.click(page, "input[name='_eventId_proceed']")
     await page.waitForTimeout(5000)
 
-    const tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
+    await cas.assertTicketGrantingCookie(page);
 
     const title = await page.title();
     console.log(title)

@@ -33,12 +33,10 @@ const httpGet = (options) => {
     const response = await httpGet(options1);
     let scratch = JSON.stringify(JSON.parse(response)[0].scratchCodes[0]);
 
-    const page = await browser.newPage();
-    await page.setDefaultNavigationTimeout(0);
+    const page = await cas.newPage(browser);
 
     const service = "https://google.com";
     await page.goto("https://localhost:8443/cas/login?service=" + service);
-    await page.bringToFront();
     await page.waitForTimeout(1000);
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(500);
@@ -50,15 +48,12 @@ const httpGet = (options) => {
     await page.waitForTimeout(1000);
 
     console.log("Using scratch code " + scratch + " to login...");
-    await page.type('#token', scratch);
+    await cas.type(page,'#token', scratch);
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
     await page.waitForTimeout(1000);
 
-    console.log("Catching generated ticket");
-    let result = new URL(page.url());
-    let ticket = result.searchParams.get("ticket");
-    assert(ticket != null);
+    let ticket = await cas.assertTicketParameter(page);
 
     console.log("Validating ticket " + ticket + " with service " + service);
     let options2 = {

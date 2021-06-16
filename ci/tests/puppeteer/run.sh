@@ -11,9 +11,8 @@ if [[ ! -d "${scenario}" ]]; then
 fi
 
 scenarioName=${scenario##*/}
+export SCENARIO="${scenarioName}"
 
-# note if debugging you might need to call
-# await page.setDefaultNavigationTimeout(0);
 if [[ "${CI}" == "true" ]]; then
   DEBUG=${2}
 else
@@ -71,7 +70,7 @@ initScript="${initScript//\$\{SCENARIO\}/${scenarioName}}"
 [ -n "${initScript}" ] && \
   echo "Initialization script: ${initScript}" && \
   chmod +x "${initScript}" && \
-  eval "${initScript}"
+  eval "export SCENARIO=${scenarioName}"; eval "${initScript}"
 
 runArgs=$(cat "${config}" | jq -j '.jvmArgs // empty')
 runArgs="${runArgs//\$\{PWD\}/${PWD}}"
@@ -115,7 +114,7 @@ exitScript="${exitScript//\$\{SCENARIO\}/${scenarioName}}"
 [ -n "${exitScript}" ] && \
   echo "Exit script: ${exitScript}" && \
   chmod +x "${exitScript}" && \
-  eval "${exitScript}"
+  eval "export SCENARIO=${scenarioName}"; eval "${exitScript}"
 
 if [[ "${CI}" != "true" ]]; then
   echo -e "Hit enter to cleanup scenario ${scenario} that ended with exit code $RC \n"

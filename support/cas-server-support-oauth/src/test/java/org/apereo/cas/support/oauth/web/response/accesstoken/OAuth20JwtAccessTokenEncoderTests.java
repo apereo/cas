@@ -30,25 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuth")
 public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
-    private OAuth20JwtAccessTokenEncoder getAccessTokenEncoder(final OAuth20AccessToken accessToken,
-                                                                      final OAuth20JwtBuilder builder,
-                                                                      final RegisteredService registeredService) {
-        return OAuth20JwtAccessTokenEncoder.builder()
-            .accessToken(accessToken)
-            .registeredService(registeredService)
-            .service(accessToken.getService())
-            .accessTokenJwtBuilder(builder)
-            .casProperties(casProperties)
-            .build();
-    }
-
-    private OAuth20JwtBuilder getCipherDisabledJwtBuilder() {
-        return new OAuth20JwtBuilder("http://cas.example.org/prefix",
-            CipherExecutor.noOp(),
-            servicesManager,
-            RegisteredServiceCipherExecutor.noOp());
-    }
-
     @Test
     public void verifyAccessTokenHeaderService() {
         val accessToken = getAccessToken();
@@ -93,13 +74,6 @@ public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
 
         val encodedAccessToken2 = getAccessTokenEncoder(accessToken, builder, registeredService).encode();
         assertEquals(encodedAccessToken1, encodedAccessToken2);
-    }
-
-    private OAuthRegisteredService getRegisteredServiceForJwtAccessTokenWithoutKeys(final OAuth20AccessToken accessToken) {
-        val registeredService = getRegisteredService(accessToken.getService().getId(), "secret", new LinkedHashSet<>());
-        registeredService.setJwtAccessToken(true);
-        servicesManager.save(registeredService);
-        return registeredService;
     }
 
     @Test
@@ -172,8 +146,34 @@ public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
         assertEquals(accessToken.getId(), decoded);
     }
 
+    private OAuth20JwtAccessTokenEncoder getAccessTokenEncoder(final OAuth20AccessToken accessToken,
+                                                               final OAuth20JwtBuilder builder,
+                                                               final RegisteredService registeredService) {
+        return OAuth20JwtAccessTokenEncoder.builder()
+            .accessToken(accessToken)
+            .registeredService(registeredService)
+            .service(accessToken.getService())
+            .accessTokenJwtBuilder(builder)
+            .casProperties(casProperties)
+            .build();
+    }
+
+    private OAuth20JwtBuilder getCipherDisabledJwtBuilder() {
+        return new OAuth20JwtBuilder(
+            CipherExecutor.noOp(),
+            servicesManager,
+            RegisteredServiceCipherExecutor.noOp());
+    }
+
+    private OAuthRegisteredService getRegisteredServiceForJwtAccessTokenWithoutKeys(final OAuth20AccessToken accessToken) {
+        val registeredService = getRegisteredService(accessToken.getService().getId(), "secret", new LinkedHashSet<>());
+        registeredService.setJwtAccessToken(true);
+        servicesManager.save(registeredService);
+        return registeredService;
+    }
+
     private OAuth20JwtBuilder getCipherEnabledJwtBuilder() {
-        return new OAuth20JwtBuilder("http://cas.example.org/prefix",
+        return new OAuth20JwtBuilder(
             new OAuth20JwtAccessTokenCipherExecutor(true, true),
             servicesManager,
             new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor());

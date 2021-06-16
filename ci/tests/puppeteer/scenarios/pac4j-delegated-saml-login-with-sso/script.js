@@ -6,7 +6,7 @@ const cas = require('../../cas.js');
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    const page = await browser.newPage();
+    const page = await cas.newPage(browser);
 
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(1000)
@@ -51,10 +51,7 @@ const cas = require('../../cas.js');
     console.log(`Page url: ${url}`)
     assert(url.startsWith("https://github.com/"))
 
-    let result = new URL(page.url());
-    let ticket = result.searchParams.get("ticket");
-    console.log(ticket);
-    assert(ticket != null);
+    await cas.assertTicketParameter(page);
 
     let metadataDir = path.join(__dirname, '/saml-md');
     fs.rmdirSync(metadataDir, { recursive: true });

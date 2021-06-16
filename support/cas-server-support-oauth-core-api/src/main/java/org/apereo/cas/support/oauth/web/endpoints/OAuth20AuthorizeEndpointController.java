@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 3.5.0
  */
 @Slf4j
-public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
+public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller<OAuth20ConfigurationContext> {
     public OAuth20AuthorizeEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
     }
@@ -60,10 +60,10 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         ensureSessionReplicationIsAutoconfiguredIfNeedBe(request);
 
         val context = new JEEContext(request, response);
-        val manager = new ProfileManager(context, getOAuthConfigurationContext().getSessionStore());
+        val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
 
         if (context.getRequestAttribute(OAuth20Constants.ERROR).isPresent()) {
-            val mv = getOAuthConfigurationContext().getOauthInvalidAuthorizationResponseBuilder().build(context);
+            val mv = getConfigurationContext().getOauthInvalidAuthorizationResponseBuilder().build(context);
             if (!mv.isEmpty() && mv.hasView()) {
                 return mv;
             }
@@ -76,7 +76,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
 
         if (isRequestAuthenticated(manager)) {
-            val mv = getOAuthConfigurationContext().getConsentApprovalViewResolver().resolve(context, registeredService);
+            val mv = getConfigurationContext().getConsentApprovalViewResolver().resolve(context, registeredService);
             if (!mv.isEmpty() && mv.hasView()) {
                 LOGGER.debug("Redirecting to consent-approval view with model [{}]", mv.getModel());
                 return mv;
@@ -105,20 +105,20 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @param request the request
      */
     protected void ensureSessionReplicationIsAutoconfiguredIfNeedBe(final HttpServletRequest request) {
-        val casProperties = getOAuthConfigurationContext().getCasProperties();
+        val casProperties = getConfigurationContext().getCasProperties();
         val replicationRequested = casProperties.getAuthn().getOauth().isReplicateSessions();
         val cookieAutoconfigured = casProperties.getSessionReplication().getCookie().isAutoConfigureCookiePath();
         if (replicationRequested && cookieAutoconfigured) {
             val contextPath = request.getContextPath();
             val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
 
-            val path = getOAuthConfigurationContext().getOauthDistributedSessionCookieGenerator().getCookiePath();
+            val path = getConfigurationContext().getOauthDistributedSessionCookieGenerator().getCookiePath();
             if (StringUtils.isBlank(path)) {
                 LOGGER.debug("Setting path for cookies for OAuth distributed session cookie generator to: [{}]", cookiePath);
-                getOAuthConfigurationContext().getOauthDistributedSessionCookieGenerator().setCookiePath(cookiePath);
+                getConfigurationContext().getOauthDistributedSessionCookieGenerator().setCookiePath(cookiePath);
             } else {
                 LOGGER.trace("OAuth distributed cookie domain is [{}] with path [{}]",
-                    getOAuthConfigurationContext().getOauthDistributedSessionCookieGenerator().getCookieDomain(), path);
+                    getConfigurationContext().getOauthDistributedSessionCookieGenerator().getCookieDomain(), path);
             }
         }
     }
@@ -130,7 +130,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @return the registered service by client id
      */
     protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
-        return OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId);
+        return OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
     }
 
     /**
@@ -158,11 +158,11 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                                          final JEEContext context,
                                                          final String clientId) {
         val profile = manager.getProfile().orElseThrow();
-        val service = getOAuthConfigurationContext().getAuthenticationBuilder()
+        val service = getConfigurationContext().getAuthenticationBuilder()
             .buildService(registeredService, context, false);
         LOGGER.trace("Created service [{}] based on registered service [{}]", service, registeredService);
 
-        val authentication = getOAuthConfigurationContext().getAuthenticationBuilder()
+        val authentication = getConfigurationContext().getAuthenticationBuilder()
             .build(profile, registeredService, context, service);
         LOGGER.trace("Created OAuth authentication [{}] for service [{}]", authentication, service);
 
@@ -173,7 +173,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                 .authentication(authentication)
                 .registeredService(registeredService)
                 .build();
-            val accessResult = getOAuthConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
+            val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();
         } catch (final UnauthorizedServiceException | PrincipalException e) {
             LoggingUtils.error(LOGGER, e);
@@ -204,7 +204,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                                         final String clientId,
                                                         final Service service,
                                                         final Authentication authentication) {
-        val configContext = getOAuthConfigurationContext();
+        val configContext = getConfigurationContext();
 
         val builder = configContext.getOauthAuthorizationResponseBuilders()
             .stream()

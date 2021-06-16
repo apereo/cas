@@ -29,10 +29,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CasHibernateJpaConfiguration.class,
     BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class
 }, properties = {
-    "cas.authn.throttle.username-parameter=username",
+    "cas.authn.throttle.core.username-parameter=username",
     "cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",
     "cas.audit.jdbc.asynchronous=false",
-    "cas.authn.throttle.username-parameter=username",
+    "cas.authn.throttle.core.username-parameter=username",
     "cas.authn.throttle.failure.range-seconds=5"
 })
 @Getter

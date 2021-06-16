@@ -397,11 +397,10 @@ the attribute release policy explicitly is evaluated for the final attribute rel
   "id": 10,
   "metadataLocation": "path/to/metadata.xml",
   "attributeReleasePolicy": {
-    "@class": "org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicy",
-    "registrationAuthority" : "regex-pattern-to-match",
-    "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ]
+    "@class": "org.apereo.cas.support.saml.services.AuthnRequestRequestedAttributesAttributeReleasePolicy",
+    "useFriendlyName" : false
   }
 }
 ```
 
-The `registrationAuthority` accepts regular expression patterns to filter metadata registration authorities.
+The `useFriendlyName` allows the filter to compare the requested attribute’s friendly name with the resolved attribute.

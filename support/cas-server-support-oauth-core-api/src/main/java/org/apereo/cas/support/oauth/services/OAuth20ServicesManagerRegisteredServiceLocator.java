@@ -1,6 +1,8 @@
 package org.apereo.cas.support.oauth.services;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -19,8 +21,7 @@ public class OAuth20ServicesManagerRegisteredServiceLocator extends DefaultServi
     public OAuth20ServicesManagerRegisteredServiceLocator() {
         setOrder(Ordered.HIGHEST_PRECEDENCE);
         setRegisteredServiceFilter((registeredService, service) -> {
-            var match = service.getAttributes().containsKey(OAuth20Constants.CLIENT_ID)
-                && registeredService instanceof OAuthRegisteredService;
+            var match = supports(registeredService, service);
             if (match) {
                 val oauthService = (OAuthRegisteredService) registeredService;
                 LOGGER.trace("Attempting to locate service [{}] via [{}]", service, oauthService);
@@ -31,6 +32,12 @@ public class OAuth20ServicesManagerRegisteredServiceLocator extends DefaultServi
             }
             return match;
         });
+    }
+
+    @Override
+    public boolean supports(final RegisteredService registeredService, final Service service) {
+        return service.getAttributes().containsKey(OAuth20Constants.CLIENT_ID)
+            && registeredService instanceof OAuthRegisteredService;
     }
 }
 

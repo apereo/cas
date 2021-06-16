@@ -10,6 +10,7 @@ import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -29,6 +30,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -50,7 +52,7 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
 
     private static final String TEST_SERVICE_ID = "TestService";
 
-    private LogoutAction logoutAction;
+    private Action logoutAction;
 
     private DefaultServicesManager serviceManager;
 
@@ -72,6 +74,7 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
         val context = ServicesManagerConfigurationContext.builder()
             .serviceRegistry(new InMemoryServiceRegistry(appCtx))
             .applicationContext(appCtx)
+            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())
             .build();
@@ -80,15 +83,15 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyLogoutNoCookie() {
+    public void verifyLogoutNoCookie() throws Exception {
         val properties = new LogoutProperties();
         this.logoutAction = getLogoutAction(properties);
-        val event = this.logoutAction.doExecute(this.requestContext);
+        val event = this.logoutAction.execute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
     }
 
     @Test
-    public void verifyLogoutForServiceWithFollowRedirectsAndMatchingService() {
+    public void verifyLogoutForServiceWithFollowRedirectsAndMatchingService() throws Exception {
         this.request.addParameter("service", TEST_SERVICE_ID);
         val service = new RegexRegisteredService();
         service.setServiceId(TEST_SERVICE_ID);
@@ -97,13 +100,13 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
         val properties = new LogoutProperties();
         properties.setFollowServiceRedirects(true);
         this.logoutAction = getLogoutAction(properties);
-        val event = this.logoutAction.doExecute(this.requestContext);
+        val event = this.logoutAction.execute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
         assertEquals(TEST_SERVICE_ID, WebUtils.getLogoutRedirectUrl(this.requestContext, String.class));
     }
 
     @Test
-    public void verifyLogoutForServiceWithFollowRedirectsAndInternalService() {
+    public void verifyLogoutForServiceWithFollowRedirectsAndInternalService() throws Exception {
         val service = new RegexRegisteredService();
         service.setServiceId(TEST_SERVICE_ID);
         service.setName(TEST_SERVICE_ID);
@@ -112,23 +115,23 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
         properties.setFollowServiceRedirects(true);
         this.logoutAction = getLogoutAction(properties);
         WebUtils.putLogoutRedirectUrl(request, "https://example.com");
-        val event = this.logoutAction.doExecute(this.requestContext);
+        val event = this.logoutAction.execute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
         assertEquals("https://example.com", WebUtils.getLogoutRedirectUrl(this.requestContext, String.class));
     }
 
     @Test
-    public void logoutForServiceWithNoFollowRedirects() {
+    public void logoutForServiceWithNoFollowRedirects() throws Exception {
         this.request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST_SERVICE_ID);
         val properties = new LogoutProperties();
         this.logoutAction = getLogoutAction(properties);
-        val event = this.logoutAction.doExecute(this.requestContext);
+        val event = this.logoutAction.execute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
         assertNull(WebUtils.getLogoutRedirectUrl(this.requestContext, String.class));
     }
 
     @Test
-    public void logoutForServiceWithFollowRedirectsNoAllowedService() {
+    public void logoutForServiceWithFollowRedirectsNoAllowedService() throws Exception {
         this.request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST_SERVICE_ID);
         val service = new RegexRegisteredService();
         service.setServiceId("http://FooBar");
@@ -136,23 +139,23 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
         this.serviceManager.save(service);
         val properties = new LogoutProperties();
         this.logoutAction = getLogoutAction(properties);
-        val event = this.logoutAction.doExecute(this.requestContext);
+        val event = this.logoutAction.execute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
         assertNull(WebUtils.getLogoutRedirectUrl(this.requestContext, String.class));
     }
 
     @Test
-    public void verifyLogoutCookie() {
+    public void verifyLogoutCookie() throws Exception {
         val cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
         val properties = new LogoutProperties();
         this.logoutAction = getLogoutAction(properties);
-        val event = this.logoutAction.doExecute(this.requestContext);
+        val event = this.logoutAction.execute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
     }
 
     @Test
-    public void verifyLogoutRequestBack() {
+    public void verifyLogoutRequestBack() throws Exception {
         val cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
@@ -165,12 +168,12 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
         WebUtils.putLogoutRequests(this.requestContext, List.of(logoutRequest));
         val properties = new LogoutProperties();
         this.logoutAction = getLogoutAction(properties);
-        val event = this.logoutAction.doExecute(this.requestContext);
+        val event = this.logoutAction.execute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
     }
 
     @Test
-    public void verifyLogoutRequestFront() {
+    public void verifyLogoutRequestFront() throws Exception {
         val cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
@@ -182,7 +185,7 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
         WebUtils.putLogoutRequests(this.requestContext, List.of(logoutRequest));
         val properties = new LogoutProperties();
         this.logoutAction = getLogoutAction(properties);
-        val event = this.logoutAction.doExecute(this.requestContext);
+        val event = this.logoutAction.execute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FRONT, event.getId());
         val logoutRequests = WebUtils.getLogoutRequests(this.requestContext);
         assertEquals(1, logoutRequests.size());

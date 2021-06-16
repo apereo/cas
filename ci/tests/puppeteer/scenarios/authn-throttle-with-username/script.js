@@ -4,7 +4,7 @@ const cas = require('../../cas.js');
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    const page = await browser.newPage();
+    let page = await cas.newPage(browser);
     await submitLoginFailure(page);
 
     let header = await cas.innerText(page, "#content div.banner p");
@@ -17,8 +17,7 @@ const cas = require('../../cas.js');
 
     header = await cas.innerText(page, "#content p")
     assert(header === "You've entered the wrong password for the user too many times. You've been throttled.")
-
-
+    
     const url = "https://localhost:8443/cas/actuator/throttles"
     console.log("Trying " + url)
     const response = await page.goto(url);

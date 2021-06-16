@@ -1,9 +1,9 @@
 package org.apereo.cas.aup;
 
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -40,9 +40,10 @@ public class RedisAcceptableUsagePolicyRepository extends BaseAcceptableUsagePol
     }
 
     @Override
-    public boolean submit(final RequestContext requestContext, final Credential credential) {
+    public boolean submit(final RequestContext requestContext) {
         try {
-            val redisKey = CAS_AUP_PREFIX + credential.getId() + ':' + aupProperties.getCore().getAupAttributeName();
+            val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+            val redisKey = CAS_AUP_PREFIX + principal.getId() + ':' + aupProperties.getCore().getAupAttributeName();
             this.redisTemplate.boundValueOps(redisKey).set(Boolean.TRUE);
             return true;
         } catch (final Exception e) {

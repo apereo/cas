@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class OidcWellKnownEndpointController extends BaseOAuth20Controller {
+public class OidcWellKnownEndpointController extends BaseOAuth20Controller<OidcConfigurationContext> {
 
     private final OidcWebFingerDiscoveryService webFingerDiscoveryService;
 
@@ -35,7 +35,7 @@ public class OidcWellKnownEndpointController extends BaseOAuth20Controller {
      */
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OidcServerDiscoverySettings> getWellKnownDiscoveryConfiguration() {
-        return new ResponseEntity(this.webFingerDiscoveryService.getDiscovery(), HttpStatus.OK);
+        return new ResponseEntity<>(this.webFingerDiscoveryService.getDiscovery(), HttpStatus.OK);
     }
 
     /**

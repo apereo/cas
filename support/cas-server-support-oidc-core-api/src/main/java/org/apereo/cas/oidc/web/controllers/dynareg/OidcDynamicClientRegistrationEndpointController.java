@@ -51,7 +51,7 @@ import java.util.Objects;
  * @since 5.1.0
  */
 @Slf4j
-public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20Controller {
+public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20Controller<OidcConfigurationContext> {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
@@ -75,7 +75,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                                                 final HttpServletRequest request,
                                                 final HttpServletResponse response) {
         try {
-            val registrationRequest = (OidcClientRegistrationRequest) getOAuthConfigurationContext()
+            val registrationRequest = (OidcClientRegistrationRequest) getConfigurationContext()
                 .getClientRegistrationRequestSerializer().from(jsonInput);
             LOGGER.debug("Received client registration request [{}]", registrationRequest);
 
@@ -86,7 +86,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                 throw new IllegalArgumentException("Redirect URI cannot contain a fragment");
             }
 
-            val servicesManager = getOAuthConfigurationContext().getServicesManager();
+            val servicesManager = getConfigurationContext().getServicesManager();
             val registeredService = registrationRequest.getRedirectUris()
                 .stream()
                 .map(uri -> (OidcRegisteredService)
@@ -122,8 +122,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                 registeredService.setTokenEndpointAuthenticationMethod(registrationRequest.getTokenEndpointAuthMethod());
             }
 
-            registeredService.setClientId(getOAuthConfigurationContext().getClientIdGenerator().getNewString());
-            registeredService.setClientSecret(getOAuthConfigurationContext().getClientSecretGenerator().getNewString());
+            registeredService.setClientId(getConfigurationContext().getClientIdGenerator().getNewString());
+            registeredService.setClientSecret(getConfigurationContext().getClientSecretGenerator().getNewString());
             registeredService.setEvaluationOrder(0);
             registeredService.setLogoutUrl(
                 org.springframework.util.StringUtils.collectionToCommaDelimitedString(registrationRequest.getPostLogoutRedirectUris()));
@@ -151,7 +151,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                 }
             }
 
-            val properties = getOAuthConfigurationContext().getCasProperties();
+            val properties = getConfigurationContext().getCasProperties();
             val supportedScopes = new HashSet<>(properties.getAuthn().getOidc().getDiscovery().getScopes());
             val prefix = properties.getServer().getPrefix();
             val clientResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(registeredService, prefix);
@@ -162,8 +162,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                 .accessToken(accessToken)
                 .registeredService(registeredService)
                 .service(accessToken.getService())
-                .accessTokenJwtBuilder(getOAuthConfigurationContext().getAccessTokenJwtBuilder())
-                .casProperties(getOAuthConfigurationContext().getCasProperties())
+                .accessTokenJwtBuilder(getConfigurationContext().getAccessTokenJwtBuilder())
+                .casProperties(getConfigurationContext().getCasProperties())
                 .build()
                 .encode();
 
@@ -209,7 +209,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             registeredService.setDynamicallyRegistered(true);
 
             validate(registrationRequest, registeredService);
-            getOAuthConfigurationContext().getServicesManager().save(registeredService);
+            getConfigurationContext().getServicesManager().save(registeredService);
             return new ResponseEntity<>(clientResponse, HttpStatus.CREATED);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
@@ -262,15 +262,15 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             .setPrincipal(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(registeredService.getClientId()))
             .build();
         val clientConfigUri = OidcClientRegistrationUtils.getClientConfigurationUri(registeredService,
-            getOAuthConfigurationContext().getCasProperties().getServer().getPrefix());
-        val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(clientConfigUri);
-        val accessToken = getOAuthConfigurationContext().getAccessTokenFactory()
+            getConfigurationContext().getCasProperties().getServer().getPrefix());
+        val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(clientConfigUri);
+        val accessToken = getConfigurationContext().getAccessTokenFactory()
             .create(service,
                 authn,
                 List.of(OidcConstants.CLIENT_REGISTRATION_SCOPE),
                 registeredService.getClientId(),
                 new HashMap<>(0));
-        getOAuthConfigurationContext().getTicketRegistry().addTicket(accessToken);
+        getConfigurationContext().getTicketRegistry().addTicket(accessToken);
         return accessToken;
     }
 }
