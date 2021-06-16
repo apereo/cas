@@ -188,7 +188,9 @@ public class CasRestConfiguration {
         public void addInterceptors(final InterceptorRegistry registry) {
             val plan = authenticationThrottlingExecutionPlan.getObject();
             LOGGER.debug("Activating authentication throttling for REST endpoints...");
-            plan.getAuthenticationThrottleInterceptors().forEach(handler -> registry.addInterceptor(handler).addPathPatterns("/v1/**"));
+            plan.getAuthenticationThrottleInterceptors().forEach(handler -> registry.addInterceptor(handler)
+                .order(0)
+                .addPathPatterns("/v1/**"));
         }
     }
 }
