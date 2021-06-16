@@ -69,7 +69,7 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
         val servicesManager = new DefaultServicesManager(context);
         servicesManager.load();
 
-        val authenticationExecutionPlan = new DefaultAuthenticationEventExecutionPlan();
+        val authenticationExecutionPlan = new DefaultAuthenticationEventExecutionPlan(CoreAuthenticationTestUtils.getAuthenticationSystemSupport());
         authenticationExecutionPlan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler());
 
         return new DelegatedAuthenticationSingleSignOnParticipationStrategy(servicesManager,

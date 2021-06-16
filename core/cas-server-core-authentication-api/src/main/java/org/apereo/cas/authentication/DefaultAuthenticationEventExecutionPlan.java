@@ -4,7 +4,9 @@ import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolve
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -26,6 +28,7 @@ import java.util.stream.IntStream;
  * @since 5.1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEventExecutionPlan {
     private static final int MAP_SIZE = 8;
 
@@ -42,6 +45,9 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     private final List<AuthenticationPolicyResolver> authenticationPolicyResolvers = new ArrayList<>(0);
 
     private final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlerPrincipalResolverMap = new LinkedHashMap<>(MAP_SIZE);
+
+    @Getter
+    private final AuthenticationSystemSupport authenticationSystemSupport;
 
     @Override
     public void registerAuthenticationHandler(final AuthenticationHandler handler) {

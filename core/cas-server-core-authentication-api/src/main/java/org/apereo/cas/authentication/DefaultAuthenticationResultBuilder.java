@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -11,6 +12,7 @@ import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -27,10 +29,11 @@ import java.util.Set;
  */
 @Slf4j
 @NoArgsConstructor
+@Getter
 public class DefaultAuthenticationResultBuilder implements AuthenticationResultBuilder {
 
     private static final long serialVersionUID = 6180465589526463843L;
-
+    
     private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>(0));
 
     private final List<Credential> providedCredentials = new ArrayList<>(0);
@@ -62,6 +65,12 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         if (authentication != null) {
             this.authentications.add(authentication);
         }
+        return this;
+    }
+
+    @Override
+    public AuthenticationResultBuilder collect(final Collection<Authentication> authentications) {
+        this.authentications.addAll(authentications);
         return this;
     }
 

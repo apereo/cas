@@ -371,16 +371,22 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         val policies = authenticationEventExecutionPlan.getAuthenticationPolicies(transaction);
         val executionResult = new ChainingAuthenticationPolicyExecutionResult();
 
-        policies.forEach(p -> {
+        val resultBuilder = new DefaultAuthenticationResultBuilder();
+        resultBuilder.collect(transaction.getAuthentications());
+        resultBuilder.collect(authentication);
+        val principalElectionStrategy = authenticationEventExecutionPlan.getAuthenticationSystemSupport().getPrincipalElectionStrategy();
+        val resultAuthentication = resultBuilder.build(principalElectionStrategy).getAuthentication();
+        LOGGER.trace("Final authentication used for authentication policy evaluation is [{}]", resultAuthentication);
+        
+        policies.forEach(policy -> {
             try {
-                val simpleName = p.getClass().getSimpleName();
+                val simpleName = policy.getClass().getSimpleName();
                 LOGGER.debug("Executing authentication policy [{}]", simpleName);
                 val supportingHandlers = authenticationHandlers
                     .stream()
                     .filter(handler -> transaction.getCredentials().stream().anyMatch(handler::supports))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
-                val result = p.isSatisfiedBy(authentication, supportingHandlers, this.applicationContext, Optional.empty());
-
+                val result = policy.isSatisfiedBy(resultAuthentication, supportingHandlers, this.applicationContext, Optional.empty());
                 executionResult.getResults().add(result);
                 if (!result.isSuccess()) {
                     executionResult.getFailures()
