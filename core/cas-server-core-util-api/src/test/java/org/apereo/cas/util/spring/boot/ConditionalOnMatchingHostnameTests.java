@@ -4,14 +4,15 @@ import org.apereo.cas.util.InetAddressUtils;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.StandardEnvironment;
 
@@ -23,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Hal Deadman
  * @since 6.4.0
  */
+@Tag("Simple")
 public class ConditionalOnMatchingHostnameTests {
 
     private static String HOSTNAME;
@@ -85,7 +87,7 @@ public class ConditionalOnMatchingHostnameTests {
         assertThat(this.context.containsBean("bar")).isFalse();
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @TestConfiguration("ConfigurationBeansDependOnHost")
     @ConditionalOnMatchingHostname(name = "hostname")
     static class ConfigurationBeansDependOnHost {
 
@@ -96,7 +98,7 @@ public class ConditionalOnMatchingHostnameTests {
 
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @TestConfiguration("ConfigurationBeansDependOnHostAndProperty")
     @ConditionalOnProperty(name = "someproperty", havingValue="true")
     @ConditionalOnMatchingHostname(name = "hostname")
     static class ConfigurationBeansDependOnHostAndProperty {

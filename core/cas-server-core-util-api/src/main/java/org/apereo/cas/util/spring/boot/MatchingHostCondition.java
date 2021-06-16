@@ -1,10 +1,10 @@
 package org.apereo.cas.util.spring.boot;
 
 import org.apereo.cas.util.InetAddressUtils;
+import org.apereo.cas.util.RegexUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.RegexUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.context.annotation.ConditionContext;
