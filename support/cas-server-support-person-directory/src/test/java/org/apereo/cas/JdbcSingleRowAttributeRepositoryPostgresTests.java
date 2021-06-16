@@ -2,7 +2,6 @@ package org.apereo.cas;
 
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.junit.jupiter.api.Tag;
@@ -65,8 +64,7 @@ public class JdbcSingleRowAttributeRepositoryPostgresTests extends JdbcSingleRow
     }
 
     @Override
-    @SneakyThrows
-    public void prepareDatabaseTable(final Statement s) {
+    public void prepareDatabaseTable(final Statement s) throws Exception {
         s.execute("create table table_users (uid VARCHAR(255), locations TEXT[]);");
         s.execute("insert into table_users (uid, locations) values('casuser', '{\"usa\", \"uk\"}' );");
     }
