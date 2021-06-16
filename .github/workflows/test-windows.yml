@@ -99,6 +99,7 @@ jobs:
       matrix:
         os: [windows-latest]
         category: ${{fromJSON(needs.testcategories.outputs.categories)}}
+    name: ${{ matrix.category }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
