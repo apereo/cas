@@ -3,7 +3,7 @@
   "clientId": "client",
   "clientSecret": "secret",
   "serviceId" : "http://localhost:8080.*",
-  "name": "OIDC Sample Service",
+  "name": "oidcClient",
   "id": 1,
   "description": "Sample Service",
   "evaluationOrder": 10000,
@@ -19,8 +19,5 @@
       "permitUndefined": true,
       "exclusive": true
     }
-  },
-  "attributeReleasePolicy" : {
-    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
   }
 }

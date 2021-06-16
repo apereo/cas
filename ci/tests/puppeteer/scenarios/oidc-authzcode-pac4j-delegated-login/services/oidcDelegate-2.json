@@ -4,7 +4,7 @@
   "clientSecret": "clientsecret",
   "serviceId" : "https://localhost:8443/cas/login/DelegateLogin",
   "bypassApprovalPrompt": true,
-  "name" : "CAS delegating to another identity provider (here: self)",
+  "name" : "oidcDelegate",
   "id" : 2,
   "scopes" : [ "java.util.HashSet", [ "profile", "email", "address", "phone", "offline_access" ] ],
   "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
@@ -17,8 +17,5 @@
       "permitUndefined": true,
       "exclusive": false
     }
-  },
-  "attributeReleasePolicy" : {
-    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
   }
 }
