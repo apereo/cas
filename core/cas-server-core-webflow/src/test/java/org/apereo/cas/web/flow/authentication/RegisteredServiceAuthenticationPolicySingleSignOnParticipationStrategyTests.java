@@ -96,8 +96,7 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
         WebUtils.putRegisteredService(context, svc);
         assertEquals(0, strategy.getOrder());
         assertFalse(strategy.supports(ssoRequest));
-
-        when(svc.getAuthenticationPolicy()).thenReturn(null);
+        svc.setAuthenticationPolicy(null);
         assertTrue(strategy.isParticipating(ssoRequest));
     }
 

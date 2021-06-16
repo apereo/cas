@@ -190,11 +190,5 @@ ext.createPomRepositories = { node ->
     repository.appendNode("url", "https://oss.sonatype.org/content/repositories/snapshots")
     repository.appendNode("snapshots").appendNode("enabled", "true")
     repository.appendNode("releases").appendNode("enabled", "false")
-
-    repository = repositories.appendNode("repository")
-    repository.appendNode("id", "jfrog-snapshot")
-    repository.appendNode("url", "https://oss.jfrog.org/artifactory/oss-snapshot-local")
-    repository.appendNode("snapshots").appendNode("enabled", "true")
-    repository.appendNode("releases").appendNode("enabled", "false")
 }
 
