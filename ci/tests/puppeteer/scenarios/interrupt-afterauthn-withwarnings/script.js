@@ -24,8 +24,7 @@ const cas = require('../../cas.js');
 
     await cas.submitForm(page, "#form");
 
-    let tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
+    await cas.assertTicketGrantingCookie(page);
 
     header = await cas.innerText(page, '#content div h2');
 

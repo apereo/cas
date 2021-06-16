@@ -98,8 +98,7 @@ public class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Te
     public void verifyExpiredAccessToken() throws Exception {
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, new HashMap<>());
         val authentication = getAuthentication(principal);
-        val jwtBuilder = new JwtBuilder("cas.example.org",
-            new OAuth20JwtAccessTokenCipherExecutor(), servicesManager,
+        val jwtBuilder = new JwtBuilder(new OAuth20JwtAccessTokenCipherExecutor(), servicesManager,
             new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor());
         val expiringAccessTokenFactory = new OAuth20DefaultAccessTokenFactory(
             alwaysExpiresExpirationPolicyBuilder(), jwtBuilder, servicesManager);

@@ -170,6 +170,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                 "Could not verify/locate SAML registered service since no serviceId is provided");
         }
         val service = configurationContext.getWebApplicationServiceFactory().createService(serviceId);
+        service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(serviceId));
         LOGGER.debug("Checking service access in CAS service registry for [{}]", service);
         val registeredService = configurationContext.getServicesManager().findServiceBy(service, SamlRegisteredService.class);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
@@ -376,7 +377,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val authnRequest = (AuthnRequest) context.getLeft();
         val id = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
         val service = configurationContext.getWebApplicationServiceFactory().createService(id);
-        val registeredService = configurationContext.getServicesManager().findServiceBy(service);
+        service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(id));
+        val registeredService = configurationContext.getServicesManager().findServiceBy(service, SamlRegisteredService.class);
 
         val assertion = buildCasAssertion(authentication, service, registeredService, Map.of());
         val authenticationContext = buildAuthenticationContextPair(request, response, context);
@@ -561,7 +563,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param request the request
      * @return the registered service and facade
      */
-    protected Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> getRegisteredServiceAndFacade(final AuthnRequest request) {
+    protected Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> getRegisteredServiceAndFacade(
+        final AuthnRequest request) {
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(request);
         LOGGER.debug("Located issuer [{}] from authentication context", issuer);
 

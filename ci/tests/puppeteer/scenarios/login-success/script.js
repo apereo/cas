@@ -9,8 +9,7 @@ const cas = require('../../cas.js');
 
     await cas.loginWith(page, "casuser", "Mellon");
 
-    const tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
+    await cas.assertTicketGrantingCookie(page);
     
     const title = await page.title();
     console.log(title);

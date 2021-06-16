@@ -53,10 +53,7 @@ const httpGet = (options) => {
     await page.waitForNavigation();
     await page.waitForTimeout(1000);
 
-    console.log("Catching generated ticket");
-    let result = new URL(page.url());
-    let ticket = result.searchParams.get("ticket");
-    assert(ticket != null);
+    let ticket = await cas.assertTicketParameter(page);
 
     console.log("Validating ticket " + ticket + " with service " + service);
     let options2 = {

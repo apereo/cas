@@ -18,10 +18,7 @@ const cas = require('../../cas.js');
     
     await cas.loginWith(page, "casuser", "Mellon");
 
-    let result = new URL(page.url());
-    let ticket = result.searchParams.get("ticket");
-    console.log(ticket);
-    assert(ticket != null);
+    let ticket = await cas.assertTicketParameter(page);
 
     let options = {
         protocol: 'https:',

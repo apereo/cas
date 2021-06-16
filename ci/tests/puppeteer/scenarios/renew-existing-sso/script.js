@@ -12,8 +12,7 @@ const cas = require('../../cas.js');
 
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(1000)
-    const tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
+    await cas.assertTicketGrantingCookie(page);
 
     await page.goto("https://localhost:8443/cas/login?service=https://example.com&renew=true");
     await page.waitForTimeout(1000)
