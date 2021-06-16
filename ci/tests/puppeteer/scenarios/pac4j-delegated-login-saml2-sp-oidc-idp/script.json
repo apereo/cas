@@ -1,0 +1,29 @@
+{
+  "dependencies": "saml-idp,pac4j-webflow",
+  "properties": [
+    "--cas.audit.engine.enabled=false",
+
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+    "--cas.authn.attribute-repository.stub.attributes.name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.gender=female",
+    "--cas.authn.attribute-repository.stub.attributes.preferred_username=casuser",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--logging.level.org.apereo.cas=info",
+
+    "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp/%{random}",
+    "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    "--cas.server.scope=example.net",
+    
+    "--cas.authn.pac4j.oidc[0].generic.id=0oau8gzwkc00Ww8a30h7",
+    "--cas.authn.pac4j.oidc[0].generic.secret=DSWj3msY87WuNWwdn3dhNxLxg4jt4j8MwwClGIAD",
+    "--cas.authn.pac4j.oidc[0].generic.discovery-uri=https://dev-968370-admin.oktapreview.com/oauth2/default/.well-known/openid-configuration",
+    "--cas.authn.pac4j.oidc[0].generic.client-name=OktaOidcClient"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

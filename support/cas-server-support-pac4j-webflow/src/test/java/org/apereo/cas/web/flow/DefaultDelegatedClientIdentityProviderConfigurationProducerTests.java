@@ -64,7 +64,8 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
 
     @Test
     public void verifyOperation() {
-        delegatedAuthenticationCookieGenerator.addCookie(context.getNativeRequest(), context.getNativeResponse(), "SAML2Client");
+        delegatedAuthenticationCookieGenerator.addCookie(context.getNativeRequest(),
+            context.getNativeResponse(), "SAML2Client");
         val results = delegatedClientIdentityProviderConfigurationProducer.produce(requestContext);
         assertFalse(results.isEmpty());
         assertNotNull(WebUtils.getDelegatedAuthenticationProviderPrimary(requestContext));

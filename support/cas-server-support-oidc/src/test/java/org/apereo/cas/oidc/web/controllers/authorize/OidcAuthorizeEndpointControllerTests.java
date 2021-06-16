@@ -47,7 +47,7 @@ public class OidcAuthorizeEndpointControllerTests extends AbstractOidcTests {
         mockRequest.setContextPath(StringUtils.EMPTY);
         val mockResponse = new MockHttpServletResponse();
 
-        val oauthContext = oidcAuthorizeEndpointController.getOAuthConfigurationContext();
+        val oauthContext = oidcAuthorizeEndpointController.getConfigurationContext();
         oauthContext.getCasProperties().getSessionReplication().getCookie().setAutoConfigureCookiePath(false);
         oauthContext.getOauthDistributedSessionCookieGenerator().setCookiePath(StringUtils.EMPTY);
 
@@ -58,10 +58,10 @@ public class OidcAuthorizeEndpointControllerTests extends AbstractOidcTests {
         val profile = new CasProfile();
         profile.setId("casuser");
 
-        val sessionStore = oidcAuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore();
+        val sessionStore = oidcAuthorizeEndpointController.getConfigurationContext().getSessionStore();
         val context = new JEEContext(mockRequest, mockResponse);
         val ticket = new MockTicketGrantingTicket("casuser");
-        oidcAuthorizeEndpointController.getOAuthConfigurationContext().getTicketRegistry().addTicket(ticket);
+        oidcAuthorizeEndpointController.getConfigurationContext().getTicketRegistry().addTicket(ticket);
         sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
         sessionStore.set(context, Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 

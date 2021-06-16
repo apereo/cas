@@ -4,7 +4,7 @@ const cas = require('../../cas.js');
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    const page = await browser.newPage();
+    const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/login");
 
     let uid = await page.$('#username');
@@ -14,7 +14,7 @@ const cas = require('../../cas.js');
     
     // await page.waitForTimeout(2000)
     
-    await page.type('#username', "casuser");
+    await cas.type(page,'#username', "casuser");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
     
@@ -32,12 +32,11 @@ const cas = require('../../cas.js');
 
     await cas.submitForm(page, "#fm1");
 
-    await page.type('#password', "Mellon");
+    await cas.type(page,'#password', "Mellon");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
-    const tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
-    
+    await cas.assertTicketGrantingCookie(page);
+
     await browser.close();
 })();

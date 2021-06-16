@@ -32,22 +32,20 @@ const httpGet = (options) => {
     let response = await httpGet(options1);
     let scratch = JSON.stringify(JSON.parse(response)[0].scratchCodes[0]);
 
-    const page = await browser.newPage();
-    await page.setDefaultNavigationTimeout(0);
+    const page = await cas.newPage(browser);
 
     await page.goto("https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "Mellon");
     
     console.log("Using scratch code " + scratch + " to login...");
-    await page.type('#token', scratch);
+    await cas.type(page,'#token', scratch);
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
     let element = await cas.innerText(page, '#content div h2');
     assert(element === "Log In Successful")
 
-    let tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
+    await cas.assertTicketGrantingCookie(page);
 
     options1 = {
         protocol: "https:",

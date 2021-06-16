@@ -34,6 +34,8 @@ import org.apereo.cas.oidc.discovery.webfinger.userinfo.OidcGroovyWebFingerUserI
 import org.apereo.cas.oidc.discovery.webfinger.userinfo.OidcRestfulWebFingerUserInfoRepository;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequestSerializer;
+import org.apereo.cas.oidc.issuer.OidcDefaultIssuerService;
+import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoader;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheExpirationPolicy;
@@ -200,7 +202,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Autowired
     @Qualifier("accessTokenGrantAuditableRequestExtractor")
     private ObjectProvider<AuditableExecution> accessTokenGrantAuditableRequestExtractor;
-    
+
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
     private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
@@ -309,7 +311,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Autowired
     @Qualifier("casWebflowConfigurationContext")
     private ObjectProvider<CasWebflowEventResolutionConfigurationContext> casWebflowConfigurationContext;
-    
+
     @Autowired
     @Qualifier("accessTokenGrantRequestExtractors")
     private ObjectProvider<Collection<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors;
@@ -634,10 +636,9 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean(name = "oidcTokenSigningAndEncryptionService")
     @SneakyThrows
     public OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() {
-        val oidc = casProperties.getAuthn().getOidc();
         return new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),
-            oidc.getCore().getIssuer(),
+            oidcIssuerService(),
             oidcServerDiscoverySettingsFactory().getObject());
     }
 
@@ -646,10 +647,9 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @RefreshScope
     @ConditionalOnMissingBean(name = "oidcUserProfileSigningAndEncryptionService")
     public OAuth20TokenSigningAndEncryptionService oidcUserProfileSigningAndEncryptionService() {
-        val oidc = casProperties.getAuthn().getOidc();
         return new OidcUserProfileSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),
-            oidc.getCore().getIssuer(),
+            oidcIssuerService(),
             oidcServerDiscoverySettingsFactory().getObject());
     }
 
@@ -690,7 +690,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     @ConditionalOnMissingBean(name = "oidcServerDiscoverySettingsFactory")
     public FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory() {
-        return new OidcServerDiscoverySettingsFactory(casProperties);
+        return new OidcServerDiscoverySettingsFactory(casProperties, oidcIssuerService());
     }
 
     @Bean(initMethod = "generate")
@@ -921,7 +921,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
             singleLogoutServiceLogoutUrlBuilder.getObject(),
             casProperties.getSlo().isAsynchronous(),
             authenticationServiceSelectionPlan.getObject(),
-            casProperties.getAuthn().getOidc().getCore().getIssuer());
+            oidcIssuerService());
     }
 
     @Bean
@@ -934,9 +934,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @RefreshScope
     @ConditionalOnMissingBean(name = "oidcAccessTokenJwtBuilder")
     public JwtBuilder oidcAccessTokenJwtBuilder() {
-        val oidc = casProperties.getAuthn().getOidc();
         return new OAuth20JwtBuilder(
-            oidc.getCore().getIssuer(),
             oidcAccessTokenJwtCipherExecutor(),
             servicesManager.getObject(),
             oidcRegisteredServiceJwtAccessTokenCipherExecutor());
@@ -967,8 +965,17 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcIssuerService")
+    public OidcIssuerService oidcIssuerService() {
+        return new OidcDefaultIssuerService(casProperties.getAuthn().getOidc());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "oidcConfigurationContext")
     public OidcConfigurationContext oidcConfigurationContext() {
         return (OidcConfigurationContext) OidcConfigurationContext.builder()
+            .issuerService(oidcIssuerService())
             .attributeToScopeClaimMapper(oidcAttributeToScopeClaimMapper())
             .applicationContext(applicationContext)
             .registeredServiceCipherExecutor(oauthRegisteredServiceCipherExecutor.getObject())

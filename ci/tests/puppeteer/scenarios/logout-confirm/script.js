@@ -4,16 +4,15 @@ const cas = require('../../cas.js');
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    const page = await browser.newPage();
+    const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/login?service=https://github.com");
 
     await cas.loginWith(page, "casuser", "Mellon");
 
     await page.goto("https://localhost:8443/cas/login");
     // await page.waitForTimeout(1000)
-    
-    let tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
+
+    await cas.assertTicketGrantingCookie(page);
 
     await page.goto("https://localhost:8443/cas/logout");
     // await page.waitForTimeout(5000)
@@ -36,9 +35,7 @@ const cas = require('../../cas.js');
 
     // await page.waitForTimeout(20000)
 
-    tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    console.log(tgc)
-    assert(tgc.length === 0);
+    await cas.assertNoTicketGrantingCookie(page);
 
     await browser.close();
 })();

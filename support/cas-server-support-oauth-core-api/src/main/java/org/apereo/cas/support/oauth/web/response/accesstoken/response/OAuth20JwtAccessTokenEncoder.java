@@ -110,6 +110,7 @@ public class OAuth20JwtAccessTokenEncoder {
             .validUntilDate(DateTimeUtils.dateOf(dt))
             .attributes(attributes)
             .registeredService(oAuthRegisteredService)
+            .issuer(casProperties.getServer().getPrefix())
             .build();
     }
 

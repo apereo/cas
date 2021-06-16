@@ -39,8 +39,7 @@ public class AcceptableUsagePolicySubmitActionTests extends BaseAcceptableUsageP
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-
-        WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("casuser"), context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED, acceptableUsagePolicySubmitAction.execute(context).getId());
     }
 }

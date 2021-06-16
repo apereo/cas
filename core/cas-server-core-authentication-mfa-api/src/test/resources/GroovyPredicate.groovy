@@ -6,10 +6,10 @@ import java.util.function.Predicate
 
 @TupleConstructor
 class GroovyPredicate implements Predicate {
-    Object service;
-    Object principal;
+    Object service
+    Object principal
     Object providers
-    Object logger;
+    Object logger
 
     @Override
     boolean test(final Object o) {

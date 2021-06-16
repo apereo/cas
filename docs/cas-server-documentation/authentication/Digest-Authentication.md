@@ -40,34 +40,34 @@ The following snippets demonstrate how a given Java client may use CAS digest au
 via Apache's HttpClient library:
 
 ```java
-final HttpHost target = new HttpHost("localhost", 8080, "http");
+var target = new HttpHost("localhost", 8080, "http");
 
-final CredentialsProvider credsProvider = new BasicCredentialsProvider();
+var credsProvider = new BasicCredentialsProvider();
 credsProvider.setCredentials(
-        new AuthScope(target.getHostName(), target.getPort()),
-        new UsernamePasswordCredentials("casuser", "Mellon"));
+    new AuthScope(target.getHostName(), target.getPort()),
+    new UsernamePasswordCredentials("casuser", "Mellon"));
 
-final CloseableHttpClient httpclient = HttpClients.custom()
+var httpclient = HttpClients.custom()
         .setDefaultCredentialsProvider(credsProvider)
         .build();
 
 try {
-    HttpGet httpget = new HttpGet("http://localhost:8080/cas/login");
+    var httpget = new HttpGet("http://localhost:8080/cas/login");
 
     // Create AuthCache instance
-    final AuthCache authCache = new BasicAuthCache();
+    var authCache = new BasicAuthCache();
 
     // Generate DIGEST scheme object, initialize it and add it to the local auth cache
-    final DigestScheme digestAuth = new DigestScheme();
+    var digestAuth = new DigestScheme();
     digestAuth.overrideParamter("realm", "CAS");
     authCache.put(target, digestAuth);
 
     // Add AuthCache to the execution context
-    final HttpClientContext localContext = HttpClientContext.create();
+    var localContext = HttpClientContext.create();
     localContext.setAuthCache(authCache);
 
-    System.out.println("Executing request " + httpget.getRequestLine() + " to target " + target);
-    try (CloseableHttpResponse response = httpclient.execute(target, httpget, localContext)) {
+    System.out.println("Executing request " + httpget.getRequestLine() + " to " + target);
+    try (var response = httpclient.execute(target, httpget, localContext)) {
         System.out.println(response.getStatusLine());
         System.out.println(EntityUtils.toString(response.getEntity()));
     }

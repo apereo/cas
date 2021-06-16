@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
+import org.apereo.cas.oidc.issuer.OidcDefaultIssuerService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 
 import lombok.val;
@@ -113,7 +114,7 @@ public class OidcIdTokenSigningAndEncryptionServiceTests extends AbstractOidcTes
         discovery.setIdTokenEncryptionAlgValuesSupported(List.of(AlgorithmIdentifiers.NONE));
         val service = new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache,
             oidcServiceJsonWebKeystoreCache,
-            casProperties.getAuthn().getOidc().getCore().getIssuer(),
+            new OidcDefaultIssuerService(casProperties.getAuthn().getOidc()),
             discovery);
 
         val claims = getClaims();

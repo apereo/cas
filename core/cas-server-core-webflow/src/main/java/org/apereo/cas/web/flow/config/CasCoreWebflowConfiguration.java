@@ -41,6 +41,7 @@ import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAbstractTicketExceptionHandler;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAuthenticationExceptionHandler;
 import org.apereo.cas.web.flow.authentication.GenericCasWebflowExceptionHandler;
+import org.apereo.cas.web.flow.authentication.GroovyCasWebflowAuthenticationExceptionHandler;
 import org.apereo.cas.web.flow.authentication.RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -54,6 +55,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -84,7 +86,7 @@ public class CasCoreWebflowConfiguration {
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
     private ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator;
-    
+
     @Autowired
     @Qualifier("centralAuthenticationService")
     private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
@@ -120,7 +122,7 @@ public class CasCoreWebflowConfiguration {
     @Autowired
     @Qualifier("singleSignOnParticipationStrategy")
     private ObjectProvider<SingleSignOnParticipationStrategy> webflowSingleSignOnParticipationStrategy;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -171,7 +173,7 @@ public class CasCoreWebflowConfiguration {
             .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
             .build();
     }
-    
+
     @Bean
     @RefreshScope
     public CipherExecutor webflowCipherExecutor() {
@@ -243,6 +245,15 @@ public class CasCoreWebflowConfiguration {
         val chain = new ChainingSingleSignOnParticipationStrategy();
         providers.forEach(provider -> provider.configureStrategy(chain));
         return chain;
+    }
+
+    @ConditionalOnMissingBean(name = "groovyCasWebflowAuthenticationExceptionHandler")
+    @Bean
+    @RefreshScope
+    @ConditionalOnProperty(name = "cas.authn.errors.groovy.location")
+    public CasWebflowExceptionHandler groovyCasWebflowAuthenticationExceptionHandler() {
+        return new GroovyCasWebflowAuthenticationExceptionHandler(
+            casProperties.getAuthn().getErrors().getGroovy().getLocation(), applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "defaultCasWebflowAuthenticationExceptionHandler")

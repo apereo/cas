@@ -3,11 +3,13 @@ package org.apereo.cas.support.saml.web.idp.profile.slo;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.logout.slo.SingleLogoutUrl;
 import org.apereo.cas.support.saml.SamlIdPUtils;
+import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -60,8 +62,8 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
         LOGGER.trace("SAML logout request from entity id [{}] is signed", entityId);
 
         val service = configContext.getWebApplicationServiceFactory().createService(entityId);
-        val registeredService = configContext
-            .getServicesManager().findServiceBy(service, SamlRegisteredService.class);
+        service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(entityId));
+        val registeredService = configContext.getServicesManager().findServiceBy(service, SamlRegisteredService.class);
         LOGGER.trace("SAML registered service tied to [{}] is [{}]", entityId, registeredService);
         val facade = SamlRegisteredServiceServiceProviderMetadataFacade.get(
             configContext.getSamlRegisteredServiceCachingMetadataResolver(), registeredService, entityId).get();

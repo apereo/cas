@@ -1,6 +1,5 @@
 package org.apereo.cas.aup;
 
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.configuration.model.support.aup.JdbcAcceptableUsagePolicyProperties;
@@ -47,8 +46,8 @@ public class JdbcAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
     }
 
     @Override
-    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext, final Credential credential) {
-        var status = super.verify(requestContext, credential);
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) {
+        var status = super.verify(requestContext);
         if (!status.isAccepted()) {
             val jdbc = aupProperties.getJdbc();
             val aupColumnName = getAcceptableUsagePolicyColumnName(jdbc);
@@ -65,7 +64,7 @@ public class JdbcAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
     }
 
     @Override
-    public boolean submit(final RequestContext requestContext, final Credential credential) {
+    public boolean submit(final RequestContext requestContext) {
         try {
             val jdbc = aupProperties.getJdbc();
             val aupColumnName = getAcceptableUsagePolicyColumnName(jdbc);
