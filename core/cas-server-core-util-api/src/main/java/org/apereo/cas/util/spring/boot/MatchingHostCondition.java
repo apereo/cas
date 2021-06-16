@@ -4,6 +4,7 @@ import org.apereo.cas.util.InetAddressUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.context.annotation.ConditionContext;
@@ -19,13 +20,18 @@ public class MatchingHostCondition extends SpringBootCondition {
 
     @Override
     public ConditionOutcome getMatchOutcome(final ConditionContext context, final AnnotatedTypeMetadata metadata) {
-        val name = metadata.getAnnotationAttributes(ConditionalOnMatchingHostname.class.getName()).get("name").toString();
-
+        val attributes = metadata.getAnnotationAttributes(ConditionalOnMatchingHostname.class.getName());
+        if (attributes == null) {
+            return ConditionOutcome.match("No annotation attributes found");
+        }
+        val name = attributes.get("name").toString();
         val hostnameToMatch = context.getEnvironment().getProperty(name);
         if (StringUtils.isBlank(hostnameToMatch)) {
             return ConditionOutcome.match("No hostname set with property: " + name);
         }
-        if (hostnameToMatch.equalsIgnoreCase(InetAddressUtils.getCasServerHostName())) {
+        val pattern = RegexUtils.createPattern(hostnameToMatch);
+        val matcher = pattern.matcher(InetAddressUtils.getCasServerHostName());
+        if (matcher.find()) {
             return ConditionOutcome.match("Hostname matches value for " + name);
         }
         return ConditionOutcome.noMatch("Hostname doesn't match value for " + name);

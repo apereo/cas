@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
 @Conditional(MatchingHostCondition.class)
 public @interface ConditionalOnMatchingHostname {
     /**
-     * Name of the property containing the hostname to match as its value.
+     * Name of the property containing the hostname to match as its value (may be Java regular expression).
      *
      * @return the string
      */
