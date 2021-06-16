@@ -27,20 +27,20 @@ CAS expects a `token` parameter (or request header) to be passed along to the `/
 Here is an example of how to generate a JWT via [Pac4j](https://github.com/pac4j/pac4j):
 
 ```java
-final String signingSecret = RandomUtils.randomAlphanumeric(256);
-final String encryptionSecret = RandomUtils.randomAlphanumeric(48);
+var signingSecret = RandomUtils.randomAlphanumeric(256);
+var encryptionSecret = RandomUtils.randomAlphanumeric(48);
 
 System.out.println("signingSecret " + signingSecret);
 System.out.println("encryptionSecret " + encryptionSecret);
 
-final JwtGenerator<CommonProfile> g = new JwtGenerator<>();
+var g = new JwtGenerator<>();
 g.setSignatureConfiguration(new SecretSignatureConfiguration(signingSecret, JWSAlgorithm.HS256));
 g.setEncryptionConfiguration(new SecretEncryptionConfiguration(encryptionSecret,
         JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
 
-final CommonProfile profile = new CommonProfile();
+var profile = new CommonProfile();
 profile.setId("casuser");
-final String token = g.generate(profile);
+var token = g.generate(profile);
 System.out.println("token: " + token);
 ```
 
