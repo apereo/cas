@@ -43,6 +43,6 @@ const cas = require('../../cas.js');
     console.log(page.url());
     assert(page.url().startsWith("https://oidcdebugger.com/debug"))
 
-    await page.waitForTimeout(30000)
+    await page.waitForTimeout(20000)
     await browser.close();
 })();
