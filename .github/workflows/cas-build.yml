@@ -25,7 +25,6 @@ on:
   push:
     branches:
       - 6.3.x
-      - authn-policy
     
   pull_request:
     branches: [ 6.3.x ]
