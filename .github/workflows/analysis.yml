@@ -111,6 +111,7 @@ jobs:
           - checkstyleMain
           - checkstyleTest
           - checkLicense
+    name: ${{ matrix.category }}
     steps:
       - uses: actions/checkout@v2
 #      - name: Setup tmate session
@@ -153,6 +154,7 @@ jobs:
           - CheckMissingTestTagAnnotation
           - CheckEnforceLombokAnnotations
           - CheckRequiredModuleAnnotationReferences
+    name: ${{ matrix.category }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
