@@ -154,7 +154,7 @@ jobs:
           - CheckMissingTestTagAnnotation
           - CheckEnforceLombokAnnotations
           - CheckRequiredModuleAnnotationReferences
-    name: ${{ matrix.category }}
+    name: ${{ matrix.check }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
