@@ -167,6 +167,7 @@ jobs:
           - config-server
           - discovery-server
           - bootadmin-server
+    name: ${{ matrix.category }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
