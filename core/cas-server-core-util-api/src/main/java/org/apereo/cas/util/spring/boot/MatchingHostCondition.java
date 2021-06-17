@@ -25,9 +25,7 @@ public class MatchingHostCondition extends SpringBootCondition {
         if (StringUtils.isBlank(hostnameToMatch)) {
             return ConditionOutcome.match("No hostname set with property: " + name);
         }
-        val pattern = RegexUtils.createPattern(hostnameToMatch);
-        val matcher = pattern.matcher(InetAddressUtils.getCasServerHostName());
-        if (matcher.find()) {
+        if (RegexUtils.find(hostnameToMatch, InetAddressUtils.getCasServerHostName())) {
             return ConditionOutcome.match("Hostname matches value for " + name);
         }
         return ConditionOutcome.noMatch("Hostname doesn't match value for " + name);
