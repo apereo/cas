@@ -99,7 +99,7 @@ public class ConditionalOnMatchingHostnameTests {
     static class ConfigurationBeansDependOnHost {
 
         @Bean
-        String foo() {
+        public String foo() {
             return "foo";
         }
 
@@ -111,7 +111,7 @@ public class ConditionalOnMatchingHostnameTests {
     static class ConfigurationBeansDependOnHostAndProperty {
 
         @Bean
-        String bar() {
+        public String bar() {
             return "bar";
         }
 
