@@ -64,3 +64,6 @@ to generate an overlay project template for this release.
 ## Library Upgrades
 
 - Apache Tomcat
+- Twilio
+- DropWizard
+- PostgreSQL Driver
