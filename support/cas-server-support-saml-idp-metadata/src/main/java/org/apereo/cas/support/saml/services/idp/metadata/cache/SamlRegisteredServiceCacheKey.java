@@ -33,8 +33,7 @@ public class SamlRegisteredServiceCacheKey implements Serializable {
     static final String KEY_SEPARATOR = "|";
 
     private static final long serialVersionUID = -7238573226470492601L;
-
-
+    
     private final String id;
 
     private final SamlRegisteredService registeredService;
@@ -66,6 +65,6 @@ public class SamlRegisteredServiceCacheKey implements Serializable {
         if (SamlUtils.isDynamicMetadataQueryConfigured(service.getMetadataLocation())) {
             return entityId;
         }
-        return String.format("%s%s%s", entityId, KEY_SEPARATOR, service.getMetadataLocation());
+        return String.format("%s", service.getMetadataLocation());
     }
 }
