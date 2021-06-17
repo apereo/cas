@@ -87,6 +87,13 @@ public class ConditionalOnMatchingHostnameTests {
         assertThat(this.context.containsBean("bar")).isFalse();
     }
 
+    @Test
+    void hostnamePropertyNotSet() {
+        load(ConfigurationBeansDependOnHostAndProperty.class, "someproperty=true");
+        assertThat(this.context.containsBean("bar")).isTrue();
+    }
+
+
     @TestConfiguration("ConfigurationBeansDependOnHost")
     @ConditionalOnMatchingHostname(name = "hostname")
     static class ConfigurationBeansDependOnHost {

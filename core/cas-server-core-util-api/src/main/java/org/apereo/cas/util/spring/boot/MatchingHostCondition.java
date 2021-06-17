@@ -20,11 +20,7 @@ public class MatchingHostCondition extends SpringBootCondition {
 
     @Override
     public ConditionOutcome getMatchOutcome(final ConditionContext context, final AnnotatedTypeMetadata metadata) {
-        val attributes = metadata.getAnnotationAttributes(ConditionalOnMatchingHostname.class.getName());
-        if (attributes == null) {
-            return ConditionOutcome.match("No annotation attributes found");
-        }
-        val name = attributes.get("name").toString();
+        val name = metadata.getAnnotationAttributes(ConditionalOnMatchingHostname.class.getName()).get("name").toString();
         val hostnameToMatch = context.getEnvironment().getProperty(name);
         if (StringUtils.isBlank(hostnameToMatch)) {
             return ConditionOutcome.match("No hostname set with property: " + name);
