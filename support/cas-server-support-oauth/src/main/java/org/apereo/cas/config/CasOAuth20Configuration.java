@@ -420,7 +420,8 @@ public class CasOAuth20Configuration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "defaultAccessTokenFactory")
     public OAuth20AccessTokenFactory defaultAccessTokenFactory() {
-        return new OAuth20DefaultAccessTokenFactory(accessTokenIdGenerator(),
+        return new OAuth20DefaultAccessTokenFactory(
+            accessTokenIdGenerator(),
             accessTokenExpirationPolicy(),
             accessTokenJwtBuilder(),
             servicesManager.getObject());
@@ -524,7 +525,8 @@ public class CasOAuth20Configuration {
     @Bean
     @RefreshScope
     public OAuth20TokenGenerator oauthTokenGenerator() {
-        return new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory(),
+        return new OAuth20DefaultTokenGenerator(
+            defaultAccessTokenFactory(),
             defaultDeviceTokenFactory(),
             defaultDeviceUserCodeFactory(),
             defaultRefreshTokenFactory(),
