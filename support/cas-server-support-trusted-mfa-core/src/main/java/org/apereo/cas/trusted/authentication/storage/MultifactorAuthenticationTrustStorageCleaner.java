@@ -3,7 +3,6 @@ package org.apereo.cas.trusted.authentication.storage;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.spring.boot.ConditionalOnMatchingHostname;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +30,6 @@ public class MultifactorAuthenticationTrustStorageCleaner {
     /**
      * Clean up expired records.
      */
-    @ConditionalOnMatchingHostname(name = "cas.authn.mfa.trusted.cleaner.schedule.enabled-on-host")
     @Scheduled(initialDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.start-delay:PT10S}",
         fixedDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.repeat-interval:PT60S}")
     public void clean() {
