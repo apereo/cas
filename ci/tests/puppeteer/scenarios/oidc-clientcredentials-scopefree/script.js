@@ -28,13 +28,18 @@ const jwt = require('jsonwebtoken');
         .then(res => {
             console.log(res.data);
             assert(res.data.access_token !== null);
+
+            console.log("Decoding JWT access token...");
+            let decoded = jwt.decode(res.data.access_token);
+            console.log(decoded);
+            
             assert(res.data.id_token !== null);
             assert(res.data.refresh_token !== null);
             assert(res.data.token_type !== null);
             assert(res.data.scope !== null);
 
-            let decoded = jwt.decode(res.data.id_token);
             console.log("Decoding id token...")
+            decoded = jwt.decode(res.data.id_token);
             console.log(decoded);
 
             assert(decoded.sub !== null)
