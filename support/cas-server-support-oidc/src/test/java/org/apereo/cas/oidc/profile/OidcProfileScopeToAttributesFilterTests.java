@@ -96,7 +96,7 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
         service.getScopes().add(OidcConstants.StandardScopes.PROFILE.getScope());
         val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
         val original = CoreAuthenticationTestUtils.getPrincipal(
-            CollectionUtils.wrap("email", "casuser@example.org", "address", "1234 Main Street",
+            CollectionUtils.wrap("email", "casuser@example.org", "street_address", "1234 Main Street",
                 "phone", "123445677", "name", "CAS", "gender", "male"));
         val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
             original, service, context, accessToken);

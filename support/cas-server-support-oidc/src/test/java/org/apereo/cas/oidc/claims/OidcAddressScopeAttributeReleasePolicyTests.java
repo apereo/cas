@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,13 +28,36 @@ public class OidcAddressScopeAttributeReleasePolicyTests extends AbstractOidcTes
     public void verifyOperation() {
         val policy = new OidcAddressScopeAttributeReleasePolicy();
         assertEquals(OidcConstants.StandardScopes.ADDRESS.getScope(), policy.getScopeType());
-        assertNotNull(policy.getAllowedAttributes());
-        val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("name", List.of("cas"), "address", List.of("Main St")));
-        val attrs = policy.getAttributes(principal,
-            CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getRegisteredService());
-        assertTrue(policy.getAllowedAttributes().stream().allMatch(attrs::containsKey));
-        assertTrue(policy.determineRequestedAttributeDefinitions().containsAll(policy.getAllowedAttributes()));
+        assertNotNull(policy.getAllowedNormalClaims());
+
+        val principal = CoreAuthenticationTestUtils.getPrincipal(
+                CollectionUtils.wrap(
+                        "name", List.of("cas"),
+                        "street_address", "Main St",
+                        "postal_code", "123456",
+                        "locality", "Somewhere",
+                        "region", "Earth",
+                        "country", "Wonderland",
+                        "formatted", "Some formatted address",
+                        "attributeThatIsNotInAddressScope", "something"));
+        val releasedAttributes = policy.getAttributes(principal,
+                CoreAuthenticationTestUtils.getService(),
+                CoreAuthenticationTestUtils.getRegisteredService());
+        assertNotNull(releasedAttributes);
+
+        val addressAttribute = releasedAttributes.get("address");
+        assertNotNull(addressAttribute);
+
+        val fieldMap = (Map<String, List<Object>>)addressAttribute.get(0);
+        assertNotNull(fieldMap);
+
+        assertFalse(fieldMap.containsKey("attributeThatIsNotInAddressScope"));
+        assertEquals("Main St", fieldMap.get("street_address").get(0));
+        assertEquals("123456", fieldMap.get("postal_code").get(0));
+        assertEquals("Somewhere", fieldMap.get("locality").get(0));
+        assertEquals("Wonderland", fieldMap.get("country").get(0));
+        assertEquals("Earth", fieldMap.get("region").get(0));
+        assertEquals("Some formatted address", fieldMap.get("formatted").get(0));
     }
 
     @Test

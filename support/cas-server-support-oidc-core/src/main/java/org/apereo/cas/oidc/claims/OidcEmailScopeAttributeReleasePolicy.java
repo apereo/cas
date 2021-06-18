@@ -4,6 +4,7 @@ import org.apereo.cas.oidc.OidcConstants;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,12 +23,13 @@ public class OidcEmailScopeAttributeReleasePolicy extends BaseOidcScopeAttribute
 
     public OidcEmailScopeAttributeReleasePolicy() {
         super(OidcConstants.StandardScopes.EMAIL.getScope());
-        setAllowedAttributes(ALLOWED_CLAIMS);
+        setAllowedNormalClaims(ALLOWED_CLAIMS);
+        setAllowedAggregatedClaims(Collections.emptyMap());
     }
 
     @JsonIgnore
     @Override
-    public List<String> getAllowedAttributes() {
-        return super.getAllowedAttributes();
+    public List<String> getAllowedNormalClaims() {
+        return super.getAllowedNormalClaims();
     }
 }

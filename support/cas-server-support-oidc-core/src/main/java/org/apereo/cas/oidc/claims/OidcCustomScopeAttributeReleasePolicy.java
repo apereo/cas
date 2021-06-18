@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -28,9 +29,10 @@ public class OidcCustomScopeAttributeReleasePolicy extends BaseOidcScopeAttribut
 
     @JsonCreator
     public OidcCustomScopeAttributeReleasePolicy(@JsonProperty("scopeName") final String scopeName,
-                                                 @JsonProperty("allowedAttributes") final List<String> allowedAttributes) {
+                                                 @JsonProperty("allowedAttributes") final List<String> allowedNormalClaims) {
         super(OidcConstants.CUSTOM_SCOPE_TYPE);
         this.scopeName = scopeName;
-        setAllowedAttributes(allowedAttributes);
+        setAllowedNormalClaims(allowedNormalClaims);
+        setAllowedAggregatedClaims(Collections.emptyMap());
     }
 }

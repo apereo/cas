@@ -31,18 +31,18 @@ public class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTest
     public void verifyOperation() {
         val policy = new OidcCustomScopeAttributeReleasePolicy("groups", CollectionUtils.wrap("groups"));
         assertEquals(OidcConstants.CUSTOM_SCOPE_TYPE, policy.getScopeType());
-        assertNotNull(policy.getAllowedAttributes());
+        assertNotNull(policy.getAllowedNormalClaims());
         val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("groups", List.of("admin", "user")));
         val attrs = policy.getAttributes(principal,
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
-        assertTrue(policy.getAllowedAttributes().stream().allMatch(attrs::containsKey));
+        assertTrue(policy.getAllowedNormalClaims().stream().allMatch(attrs::containsKey));
         val principal2 = CoreAuthenticationTestUtils.getPrincipal(attrs);
         val releaseAttrs = policy.getAttributes(principal2,
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
-        assertTrue(policy.getAllowedAttributes().stream().allMatch(releaseAttrs::containsKey));
-        assertTrue(policy.getAllowedAttributes().containsAll(policy.determineRequestedAttributeDefinitions()));
+        assertTrue(policy.getAllowedNormalClaims().stream().allMatch(releaseAttrs::containsKey));
+        assertTrue(policy.getAllowedNormalClaims().containsAll(policy.determineRequestedAttributeDefinitions()));
         assertEquals(releaseAttrs.get("groups"), List.of("admin", "user"));
     }
 

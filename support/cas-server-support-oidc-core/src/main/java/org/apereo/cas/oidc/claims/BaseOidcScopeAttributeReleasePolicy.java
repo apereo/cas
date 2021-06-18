@@ -21,12 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * This is {@link BaseOidcScopeAttributeReleasePolicy}.
@@ -45,7 +40,10 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
     private static final long serialVersionUID = -7302163334687300920L;
 
     @JsonProperty
-    private List<String> allowedAttributes;
+    private List<String> allowedNormalClaims;
+
+    @JsonProperty
+    private Map<String, List<String>> allowedAggregatedClaims;
 
     @JsonIgnore
     private String scopeType;
@@ -71,16 +69,47 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         val properties = applicationContext.getBean(CasConfigurationProperties.class);
         val supportedClaims = properties.getAuthn().getOidc().getDiscovery().getClaims();
         
-        val allowedClaims = new LinkedHashSet<>(getAllowedAttributes());
+        val allowedClaims = new LinkedHashSet<>(getAllowedNormalClaims());
+        allowedClaims.addAll(getAllowedAggregatedClaims().keySet());
         allowedClaims.retainAll(supportedClaims);
+        
         LOGGER.debug("[{}] is designed to allow claims [{}] for scope [{}]. After cross-checking with "
                 + "supported claims [{}], the final collection of allowed attributes is [{}]", getClass().getSimpleName(),
-            getAllowedAttributes(), getScopeType(), supportedClaims, allowedClaims);
-        allowedClaims.stream()
-            .map(claim -> mapClaimToAttribute(claim, resolvedAttributes))
-            .filter(p -> p.getValue() != null)
-            .forEach(p -> attributesToRelease.put(p.getKey(), CollectionUtils.toCollection(p.getValue(), ArrayList.class)));
+                getAllowedNormalClaims(), getScopeType(), supportedClaims, allowedClaims);
+        allowedClaims
+                .forEach(claim -> {
+                    if (getAllowedAggregatedClaims().containsKey(claim)) {
+                        resolveValuesForTheClaimFieldsAndAddThem(resolvedAttributes, attributesToRelease, claim);
+                    }
+                    else {
+                        resolveValuesForTheClaimAndAddThem(resolvedAttributes, attributesToRelease, claim);
+                    }
+                });
         return attributesToRelease;
+    }
+
+    private void resolveValuesForTheClaimAndAddThem(TreeMap<String, List<Object>> resolvedAttributes, HashMap<String, List<Object>> attributesToRelease, String claim) {
+        Pair<String, Object> claimToAttribute = mapClaimToAttribute(claim, resolvedAttributes);
+        if (claimToAttribute.getValue() != null) {
+            attributesToRelease.put(claimToAttribute.getKey(), CollectionUtils.toCollection(claimToAttribute.getValue(), ArrayList.class));
+        }
+    }
+
+    private void resolveValuesForTheClaimFieldsAndAddThem(TreeMap<String, List<Object>> resolvedAttributes, HashMap<String, List<Object>> attributesToRelease, String claim) {
+        getAllowedAggregatedClaims().get(claim).stream()
+                .filter(resolvedAttributes::containsKey)
+                .forEach(field -> {
+                    if (attributesToRelease.containsKey(claim)) {
+                        val valueList = attributesToRelease.get(claim);
+                        val map = (Map<String, List<Object>>)valueList.get(0);
+                        map.put(field, resolvedAttributes.get(field));
+                    }
+                    else {
+                        val fieldMap = new HashMap<String, List<Object>>();
+                        fieldMap.put(field, resolvedAttributes.get(field));
+                        attributesToRelease.put(claim, List.of(fieldMap));
+                    }
+                });
     }
 
     private static Pair<String, Object> mapClaimToAttribute(final String claim, final Map<String, List<Object>> resolvedAttributes) {
@@ -106,7 +135,8 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
 
     @Override
     public List<String> determineRequestedAttributeDefinitions() {
-        val attributes = getAllowedAttributes();
-        return attributes != null ? attributes : new ArrayList<>();
+        val attributes = new ArrayList<>(getAllowedNormalClaims());
+        getAllowedAggregatedClaims().forEach((key, value) -> attributes.addAll(value));
+        return attributes;
     }
 }

@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -18,11 +19,12 @@ public class OidcOpenIdScopeAttributeReleasePolicy extends BaseOidcScopeAttribut
 
     public OidcOpenIdScopeAttributeReleasePolicy() {
         super(OidcConstants.StandardScopes.OPENID.getScope());
+        setAllowedAggregatedClaims(Collections.emptyMap());
     }
 
     @JsonIgnore
     @Override
-    public List<String> getAllowedAttributes() {
+    public List<String> getAllowedNormalClaims() {
         return new ArrayList<>(0);
     }
 }

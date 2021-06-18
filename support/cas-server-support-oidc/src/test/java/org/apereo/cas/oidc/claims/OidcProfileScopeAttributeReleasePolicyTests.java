@@ -27,7 +27,7 @@ public class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTes
     public void verifyOperation() {
         val policy = new OidcProfileScopeAttributeReleasePolicy();
         assertEquals(OidcConstants.StandardScopes.PROFILE.getScope(), policy.getScopeType());
-        assertNotNull(policy.getAllowedAttributes());
+        assertNotNull(policy.getAllowedNormalClaims());
         val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("name", List.of("cas"),
             "profile", List.of("test"),
             "preferred_username", List.of("casuser"),
@@ -35,8 +35,8 @@ public class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTes
         val attrs = policy.getAttributes(principal,
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
-        assertTrue(policy.getAllowedAttributes().containsAll(attrs.keySet()));
-        assertTrue(policy.determineRequestedAttributeDefinitions().containsAll(policy.getAllowedAttributes()));
+        assertTrue(policy.getAllowedNormalClaims().containsAll(attrs.keySet()));
+        assertTrue(policy.determineRequestedAttributeDefinitions().containsAll(policy.getAllowedNormalClaims()));
     }
 
     @Test

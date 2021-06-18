@@ -32,21 +32,21 @@ public class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests
     public void verifyOperation() {
         val policy = new OidcEmailScopeAttributeReleasePolicy();
         assertEquals(OidcConstants.StandardScopes.EMAIL.getScope(), policy.getScopeType());
-        assertNotNull(policy.getAllowedAttributes());
+        assertNotNull(policy.getAllowedNormalClaims());
         val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("email", List.of("cas@example.org"),
             "email_verified", List.of("cas@example.org")));
         val attrs = policy.getAttributes(principal,
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
-        assertTrue(policy.getAllowedAttributes().stream().allMatch(attrs::containsKey));
-        assertTrue(policy.determineRequestedAttributeDefinitions().containsAll(policy.getAllowedAttributes()));
+        assertTrue(policy.getAllowedNormalClaims().stream().allMatch(attrs::containsKey));
+        assertTrue(policy.determineRequestedAttributeDefinitions().containsAll(policy.getAllowedNormalClaims()));
     }
 
     @Test
     public void verifyClaimMapOperation() {
         val policy = new OidcEmailScopeAttributeReleasePolicy();
         assertEquals(OidcConstants.StandardScopes.EMAIL.getScope(), policy.getScopeType());
-        assertNotNull(policy.getAllowedAttributes());
+        assertNotNull(policy.getAllowedNormalClaims());
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("mail", List.of("cas@example.org"),
             "mail_confirmed", List.of("cas@example.org"), "phone", List.of("0000000000")));
