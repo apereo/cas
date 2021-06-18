@@ -12,12 +12,10 @@ import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -43,9 +41,6 @@ import java.time.ZonedDateTime;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreUtilConfiguration implements InitializingBean {
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public ApplicationContextProvider casApplicationContextProvider() {
@@ -56,7 +51,7 @@ public class CasCoreUtilConfiguration implements InitializingBean {
     public MessageInterpolator messageInterpolator() {
         return new SpringAwareMessageMessageInterpolator();
     }
-    
+
     @Bean
     public Converter<ZonedDateTime, String> zonedDateTimeToStringConverter() {
         return new Converters.ZonedDateTimeToStringConverter();
