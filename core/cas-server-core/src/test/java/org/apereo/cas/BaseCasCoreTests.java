@@ -94,7 +94,6 @@ public abstract class BaseCasCoreTests {
         CasCookieConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
-        AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
         CasCoreServicesAuthenticationConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,

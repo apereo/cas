@@ -59,7 +59,6 @@ import org.springframework.test.annotation.DirtiesContext;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
-    AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
     BaseCasWebflowMultifactorAuthenticationTests.TestAuthenticationConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     CasCoreServicesConfiguration.class,

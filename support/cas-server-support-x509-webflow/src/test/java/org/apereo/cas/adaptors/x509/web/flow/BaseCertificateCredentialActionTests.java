@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.x509.web.flow;
 
-import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 import org.apereo.cas.adaptors.x509.config.X509AuthenticationConfiguration;
 import org.apereo.cas.adaptors.x509.config.X509CertificateExtractorConfiguration;
@@ -53,7 +52,6 @@ import org.springframework.webflow.execution.Action;
     RefreshAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
-    AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,

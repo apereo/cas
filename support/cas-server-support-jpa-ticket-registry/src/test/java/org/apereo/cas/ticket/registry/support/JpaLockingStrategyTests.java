@@ -4,20 +4,15 @@ import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRe
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.JpaTicketRegistryTests;
 import org.apereo.cas.ticket.registry.generic.JpaLockEntity;
-import org.apereo.cas.util.SchedulingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.test.annotation.DirtiesContext;
@@ -207,18 +202,6 @@ public class JpaLockingStrategyTests {
         when(lock.getUniqueId()).thenReturn(UUID.randomUUID().toString());
         when(mgr.find(any(), anyString(), any(LockModeType.class))).thenReturn(lock);
         assertFalse(strategy.acquire());
-    }
-
-    @TestConfiguration("JpaTestLockingConfiguration")
-    @Lazy(false)
-    public static class JpaTestConfiguration implements InitializingBean {
-        @Autowired
-        protected ApplicationContext applicationContext;
-
-        @Override
-        public void afterPropertiesSet() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-        }
     }
 
     @RequiredArgsConstructor
