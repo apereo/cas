@@ -11,12 +11,12 @@ import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
- * This is {@link MatchingHostCondition}.
+ * This is {@link MatchingHostnameCondition}.
  *
  * @author Hal Deadman
  * @since 6.4.0
  */
-public class MatchingHostCondition extends SpringBootCondition {
+public class MatchingHostnameCondition extends SpringBootCondition {
 
     @Override
     public ConditionOutcome getMatchOutcome(final ConditionContext context, final AnnotatedTypeMetadata metadata) {

@@ -16,12 +16,13 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Documented
-@Conditional(MatchingHostCondition.class)
+@Conditional(MatchingHostnameCondition.class)
 public @interface ConditionalOnMatchingHostname {
     /**
-     * Name of the property containing the hostname to match as its value (may be Java regular expression).
+     * Name of the property containing the hostname to
+     * match as its value (may be a Java regular expression).
      *
-     * @return the string
+     * @return the pattern or the host name.
      */
     String name();
 
