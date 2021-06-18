@@ -26,6 +26,7 @@ import org.apereo.cas.util.spring.ConvertersTests;
 import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolatorTests;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolverTests;
 import org.apereo.cas.util.spring.boot.BeanDefinitionStoreFailureAnalyzerTests;
+import org.apereo.cas.util.spring.boot.ConditionalOnMatchingHostnameTests;
 import org.apereo.cas.util.spring.boot.DefaultCasBannerTests;
 import org.apereo.cas.util.ssl.CompositeX509KeyManagerTests;
 import org.apereo.cas.util.ssl.CompositeX509TrustManagerTests;
@@ -58,6 +59,7 @@ import org.junit.platform.suite.api.Suite;
     HttpUtilsTests.class,
     ConvertersTests.class,
     BeanDefinitionStoreFailureAnalyzerTests.class,
+    ConditionalOnMatchingHostnameTests.class,
     SimpleHttpClientFactoryBeanTests.class,
     GroovyScriptResourceCacheManagerTests.class,
     LoggingUtilsTests.class,
