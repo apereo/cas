@@ -1,7 +1,8 @@
 const puppeteer = require('puppeteer');
-const fs = require('fs');
 const performance = require('perf_hooks').performance;
+const fs = require('fs');
 const path = require('path');
+const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -33,7 +34,7 @@ const cas = require('../../cas.js');
         if (count > 1 && duration > 8) {
             throw "Request took longer than expected";
         }
-        
+    
         await page.waitForTimeout(1000);
         await cas.assertVisibility(page, '#username')
         await cas.assertVisibility(page, '#password')
@@ -41,8 +42,6 @@ const cas = require('../../cas.js');
     }
     let metadataDir = path.join(__dirname, '/saml-md');
     fs.rmdirSync(metadataDir, { recursive: true });
-    
+
     await browser.close();
 })();
-
-

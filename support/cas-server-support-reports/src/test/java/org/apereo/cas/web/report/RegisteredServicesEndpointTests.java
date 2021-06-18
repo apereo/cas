@@ -5,6 +5,7 @@ import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,15 +56,23 @@ public class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
         val request = new MockHttpServletRequest();
         val content = new RegisteredServiceJsonSerializer().toString(RegisteredServiceTestUtils.getRegisteredService());
         request.setContent(content.getBytes(StandardCharsets.UTF_8));
-        assertEquals(HttpStatus.CREATED, endpoint.importService(request));
+        assertEquals(HttpStatus.CREATED, endpoint.importService(request).getStatusCode());
     }
+
+    @Test
+    public void verifyImportOperationFails() throws Exception {
+        val request = new MockHttpServletRequest();
+        request.setContent(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8));
+        assertEquals(HttpStatus.BAD_REQUEST, endpoint.importService(request).getStatusCode());
+    }
+
 
     @Test
     public void verifyImportOperationAsYaml() throws Exception {
         val request = new MockHttpServletRequest();
         val content = new RegisteredServiceYamlSerializer().toString(RegisteredServiceTestUtils.getRegisteredService());
         request.setContent(content.getBytes(StandardCharsets.UTF_8));
-        assertEquals(HttpStatus.CREATED, endpoint.importService(request));
+        assertEquals(HttpStatus.CREATED, endpoint.importService(request).getStatusCode());
     }
 
     @Test
@@ -92,7 +101,7 @@ public class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
             zipStream.closeEntry();
             request.setContent(out.toByteArray());
         }
-        assertEquals(HttpStatus.CREATED, endpoint.importService(request));
+        assertEquals(HttpStatus.OK, endpoint.importService(request).getStatusCode());
     }
 }
 

@@ -99,7 +99,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
         if (signatureValidationFilter != null) {
             signatureValidationFilter.setRequireSignedRoot(false);
             metadataFilterList.add(signatureValidationFilter);
-            LOGGER.debug("Added metadata SignatureValidationFilter [{}] for [{}]", signatureValidationFilter, service.getServiceId());
+            LOGGER.debug("Added metadata SignatureValidationFilter for [{}]", service.getServiceId());
         } else {
             LOGGER.warn("Skipped metadata SignatureValidationFilter since signature cannot be located for [{}]", service.getServiceId());
         }

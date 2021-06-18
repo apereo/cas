@@ -81,7 +81,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
@@ -98,7 +97,6 @@ import org.apache.http.HttpStatus;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -661,19 +659,10 @@ public abstract class AbstractOAuth20Tests {
 
     @TestConfiguration("OAuth20TestConfiguration")
     @Lazy(false)
-    public static class OAuth20TestConfiguration implements ComponentSerializationPlanConfigurer, InitializingBean {
+    public static class OAuth20TestConfiguration implements ComponentSerializationPlanConfigurer {
         @Autowired
         protected ApplicationContext applicationContext;
-
-        @Override
-        public void afterPropertiesSet() {
-            init();
-        }
-
-        public void init() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-        }
-
+        
         @Bean
         public List inMemoryRegisteredServices() {
             val svc1 = (OAuthRegisteredService)
