@@ -24,6 +24,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterRegistry;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.util.Assert;
 import org.springframework.validation.beanvalidation.BeanValidationPostProcessor;
 
 import javax.validation.MessageInterpolator;
@@ -35,7 +36,7 @@ import java.time.ZonedDateTime;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casCoreUtilConfiguration", proxyBeanMethods = false)
+@Configuration(value = "casCoreUtilConfiguration", proxyBeanMethods = true)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -76,6 +77,7 @@ public class CasCoreUtilConfiguration implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
+        Assert.notNull(casApplicationContextProvider(), "Application context cannot be initialized");
         val registry = (ConverterRegistry) DefaultConversionService.getSharedInstance();
         registry.addConverter(zonedDateTimeToStringConverter());
     }
