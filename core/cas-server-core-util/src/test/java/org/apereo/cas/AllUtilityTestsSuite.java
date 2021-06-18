@@ -1,6 +1,5 @@
 package org.apereo.cas;
 
-import org.apereo.cas.util.CasEmbeddedValueResolverTests;
 import org.apereo.cas.util.CollectionUtilsTests;
 import org.apereo.cas.util.CompressionUtilsTests;
 import org.apereo.cas.util.DateTimeUtilsTests;
@@ -44,7 +43,6 @@ import org.junit.platform.suite.api.Suite;
     RsaKeyPairCipherExecutorTests.class,
     HttpMessageTests.class,
     SimpleHttpClientTests.class,
-    CasEmbeddedValueResolverTests.class,
     RandomStringGeneratorTests.class,
     ChainingPrincipalNameTransformerTests.class,
     CollectionUtilsTests.class,

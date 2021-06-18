@@ -3,17 +3,12 @@ package org.apereo.cas.gauth.token;
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepositoryCleaner;
-import org.apereo.cas.util.SchedulingUtils;
 
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Lazy;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -117,17 +112,5 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         assertEquals(1, oneTimeTokenAuthenticatorTokenRepository.count("sample"));
         oneTimeTokenAuthenticatorTokenRepository.removeAll();
         assertEquals(0, oneTimeTokenAuthenticatorTokenRepository.count(), "Repository is not empty");
-    }
-
-    @TestConfiguration("BaseOneTimeTokenRepositoryTestConfiguration")
-    @Lazy(false)
-    public static class BaseOneTimeTokenRepositoryTestConfiguration implements InitializingBean {
-        @Autowired
-        protected ApplicationContext applicationContext;
-
-        @Override
-        public void afterPropertiesSet() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-        }
     }
 }
