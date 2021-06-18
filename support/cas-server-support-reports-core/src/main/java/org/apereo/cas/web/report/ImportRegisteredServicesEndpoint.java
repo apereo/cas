@@ -3,6 +3,7 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
@@ -11,15 +12,16 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.springframework.boot.actuate.endpoint.http.ActuatorMediaType;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * This is {@link ImportRegisteredServicesEndpoint}.
@@ -50,21 +52,24 @@ public class ImportRegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      * @throws Exception the exception
      */
     @PostMapping(consumes = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
-    public HttpStatus importService(final HttpServletRequest request) throws Exception {
+    public ResponseEntity<RegisteredService> importService(final HttpServletRequest request) throws Exception {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.trace("Submitted registered service:\n[{}]", requestBody);
 
-        val status = new AtomicInteger();
-        registeredServiceSerializers
+        return registeredServiceSerializers
             .stream()
             .map(serializer -> serializer.from(requestBody))
             .filter(Objects::nonNull)
             .findFirst()
-            .ifPresentOrElse(service -> {
+            .map(service -> {
                 LOGGER.trace("Storing registered service:\n[{}]", service);
-                servicesManager.save(service);
-                status.set(HttpStatus.CREATED.value());
-            }, () -> status.set(HttpStatus.BAD_REQUEST.value()));
-        return HttpStatus.valueOf(status.get());
+                return servicesManager.save(service);
+            })
+            .map(service -> {
+                val headers = new HttpHeaders();
+                headers.put("id", CollectionUtils.wrapList(String.valueOf(service.getId())));
+                return new ResponseEntity<>(service, headers, HttpStatus.CREATED);
+            })
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 }

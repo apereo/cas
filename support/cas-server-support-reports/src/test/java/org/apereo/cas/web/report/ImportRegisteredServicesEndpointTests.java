@@ -35,7 +35,7 @@ public class ImportRegisteredServicesEndpointTests extends AbstractCasEndpointTe
         val request = new MockHttpServletRequest();
         val content = new RegisteredServiceJsonSerializer().toString(RegisteredServiceTestUtils.getRegisteredService());
         request.setContent(content.getBytes(StandardCharsets.UTF_8));
-        assertEquals(HttpStatus.CREATED, endpoint.importService(request));
+        assertEquals(HttpStatus.CREATED, endpoint.importService(request).getStatusCode());
     }
 
     @Test
@@ -43,7 +43,7 @@ public class ImportRegisteredServicesEndpointTests extends AbstractCasEndpointTe
         val request = new MockHttpServletRequest();
         val content = new RegisteredServiceYamlSerializer().toString(RegisteredServiceTestUtils.getRegisteredService());
         request.setContent(content.getBytes(StandardCharsets.UTF_8));
-        assertEquals(HttpStatus.CREATED, endpoint.importService(request));
+        assertEquals(HttpStatus.CREATED, endpoint.importService(request).getStatusCode());
     }
 }
 
