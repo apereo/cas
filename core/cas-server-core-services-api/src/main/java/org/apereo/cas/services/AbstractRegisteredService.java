@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -125,6 +126,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     @Override
     @Deprecated(since = "6.2.0")
+    @JsonIgnore
     public Set<String> getRequiredHandlers() {
         LOGGER.debug("Assigning a collection of required authentication handlers to a registered service is deprecated. "
             + "This field is scheduled to be removed in the future. If you need to, consider defining an authentication policy "
@@ -139,6 +141,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
      * @deprecated Since 6.2
      */
     @Deprecated(since = "6.2.0")
+    @JsonIgnore
     public void setRequiredHandlers(final Set<String> requiredHandlers) {
         if (requiredHandlers != null) {
             LOGGER.debug("Assigning a collection of required authentication handlers to a registered service is deprecated. "
