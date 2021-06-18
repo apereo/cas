@@ -1,6 +1,3 @@
-org.springframework.context.ApplicationContextInitializer=\
-  org.apereo.cas.config.support.EnvironmentConversionServiceInitializer
-
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   org.apereo.cas.config.CasFiltersConfiguration,\
   org.apereo.cas.config.CasPropertiesConfiguration,\
