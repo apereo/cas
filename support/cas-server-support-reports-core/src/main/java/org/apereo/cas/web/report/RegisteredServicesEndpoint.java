@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.serialization.StringSerializer;
@@ -40,7 +41,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 import java.util.zip.ZipInputStream;
 
@@ -136,7 +136,7 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
         ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml",
         MediaType.APPLICATION_JSON_VALUE
     })
-    public HttpStatus importService(final HttpServletRequest request) throws Exception {
+    public ResponseEntity<RegisteredService> importService(final HttpServletRequest request) throws Exception {
         val contentType = request.getContentType();
         if (StringUtils.equalsAnyIgnoreCase(MediaType.APPLICATION_OCTET_STREAM_VALUE, contentType)) {
             return importServicesAsStream(request);
@@ -167,30 +167,33 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
-    private HttpStatus importSingleService(final HttpServletRequest request) throws IOException {
+    private ResponseEntity<RegisteredService> importSingleService(final HttpServletRequest request) throws IOException {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.trace("Submitted registered service:\n[{}]", requestBody);
 
         if (StringUtils.isBlank(requestBody)) {
             LOGGER.warn("Could not extract registered services from request body");
-            return HttpStatus.BAD_REQUEST;
+            return ResponseEntity.badRequest().build();
         }
 
-        val status = new AtomicInteger();
-        registeredServiceSerializers
+        return registeredServiceSerializers
             .stream()
             .map(serializer -> serializer.from(requestBody))
             .filter(Objects::nonNull)
             .findFirst()
-            .ifPresentOrElse(service -> {
+            .map(service -> {
                 LOGGER.trace("Storing registered service:\n[{}]", service);
-                servicesManager.save(service);
-                status.set(HttpStatus.CREATED.value());
-            }, () -> status.set(HttpStatus.BAD_REQUEST.value()));
-        return HttpStatus.valueOf(status.get());
+                return servicesManager.save(service);
+            })
+            .map(service -> {
+                val headers = new HttpHeaders();
+                headers.put("id", CollectionUtils.wrapList(String.valueOf(service.getId())));
+                return new ResponseEntity<>(service, headers, HttpStatus.CREATED);
+            })
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
-    private HttpStatus importServicesAsStream(final HttpServletRequest request) throws IOException {
+    private ResponseEntity<RegisteredService> importServicesAsStream(final HttpServletRequest request) throws IOException {
         var servicesToImport = Stream.<RegisteredService>empty();
         try (val bais = new ByteArrayInputStream(IOUtils.toByteArray(request.getInputStream()));
              val zipIn = new ZipInputStream(bais)) {
@@ -208,6 +211,6 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
             }
         }
         servicesManager.save(servicesToImport);
-        return HttpStatus.CREATED;
+        return ResponseEntity.ok().build();
     }
 }
