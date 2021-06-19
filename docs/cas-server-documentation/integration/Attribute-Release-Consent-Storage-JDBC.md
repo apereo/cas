@@ -14,4 +14,4 @@ Support is enabled by including the following module in the WAR Overlay:
 
 ## Configuration
 
-{% include casproperties.html properties="cas.consent.jdbc" %}
+{% include casproperties.html properties="cas.consent.jpa" %}
