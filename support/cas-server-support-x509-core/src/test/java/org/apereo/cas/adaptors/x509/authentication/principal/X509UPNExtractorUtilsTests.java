@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,7 +28,13 @@ public class X509UPNExtractorUtilsTests {
         val altNames = new HashSet();
         altNames.add(names);
 
-        val results = X509UPNExtractorUtils.extractUPNString(altNames);
+        var results = X509UPNExtractorUtils.extractUPNString(altNames);
+        assertTrue(results.isEmpty());
+
+        results = X509UPNExtractorUtils.extractUPNString(List.of());
+        assertTrue(results.isEmpty());
+
+        results = X509UPNExtractorUtils.extractUPNString(List.of(List.of(100)));
         assertTrue(results.isEmpty());
     }
 

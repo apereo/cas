@@ -122,19 +122,10 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
      * @throws Exception the exception
      */
     protected X509CRL fetchX509CRLFromAttribute(final LdapAttribute attribute) throws Exception {
-        if (attribute != null && attribute.isBinary()) {
-            val val = attribute.getBinaryValue();
-            if (val == null || val.length == 0) {
-                throw new CertificateException("Empty attribute. Can not download CRL from ldap");
-            }
-            val decoded64 = EncodingUtils.decodeBase64(val);
-            if (decoded64 == null) {
-                throw new CertificateException("Could not decode the attribute value to base64");
-            }
-            LOGGER.trace("Retrieved CRL from ldap as byte array decoded in base64. Fetching...");
-            return super.fetch(new ByteArrayResource(decoded64));
-        }
-        throw new CertificateException("Attribute not found. Can not retrieve CRL");
+        val val = attribute.getBinaryValue();
+        val decoded64 = EncodingUtils.decodeBase64(val);
+        LOGGER.trace("Retrieved CRL from ldap as byte array decoded in base64. Fetching...");
+        return super.fetch(new ByteArrayResource(decoded64));
     }
 
     /**

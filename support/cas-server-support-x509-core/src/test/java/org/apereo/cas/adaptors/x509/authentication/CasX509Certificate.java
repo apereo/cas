@@ -47,6 +47,8 @@ public class CasX509Certificate extends X509Certificate {
 
     private String subjectDn;
 
+    private Boolean keyUsage;
+
     @SneakyThrows
     public String getContent() {
         return IOUtils.toString(this.certificateResource.getInputStream(), StandardCharsets.UTF_8);
@@ -83,6 +85,9 @@ public class CasX509Certificate extends X509Certificate {
 
     @Override
     public boolean[] getKeyUsage() {
+        if (keyUsage != null) {
+            return new boolean[] {keyUsage};
+        }
         return x509Certificate.getKeyUsage();
     }
 

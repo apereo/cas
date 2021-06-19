@@ -53,10 +53,7 @@ public class X509UPNExtractorUtils {
      * @return UPN string or null
      */
     private String getUPNStringFromSequence(final ASN1Sequence seq) {
-        if (seq == null) {
-            return null;
-        }
-        val id = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
+        val id = seq != null ? ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0)) : null;
         if (id != null && UPN_OBJECTID.equals(id.getId())) {
             val obj = (ASN1TaggedObject) seq.getObjectAt(1);
             val primitiveObj = obj.getObject();
