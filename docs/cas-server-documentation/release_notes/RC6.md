@@ -4,11 +4,12 @@ title: CAS - Release Notes
 category: Planning
 ---
 
-# RC5 Release Notes
+# RC6 Release Notes
 
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set 
 you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS 
-releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks, statistics or completion of features. To gain 
+releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks, 
+statistics or completion of features. To gain 
 confidence in a particular release, it is strongly recommended that you start early by experimenting with 
 release candidates and/or follow-up snapshots.
 
@@ -17,7 +18,8 @@ release candidates and/or follow-up snapshots.
 If you benefit from Apereo CAS as free and open-source software, we 
 invite you to [join the Apereo Foundation](https://www.apereo.org/content/apereo-membership) 
 and financially support the project at a capacity that best suits your deployment. Note that all development activity 
-is performed *almost exclusively* on a voluntary basis with no expectations, commitments or strings attached. Having the financial means to better 
+is performed *almost exclusively* on a voluntary basis with no expectations, commitments 
+or strings attached. Having the financial means to better 
 sustain engineering activities will allow the developer community to allocate *dedicated and committed* time for long-term support, 
 maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner. Funding will 
 ensure support for the software you rely on and you gain an advantage and say in the way Apereo, and the CAS project at that, runs 
@@ -43,7 +45,8 @@ In the `gradle.properties` of the [CAS WAR Overlay](../installation/WAR-Overlay-
 cas.version=6.4.0-RC6
 ```
 
-Alternatively and for new deployments, [CAS Initializr](../installation/WAR-Overlay-Initializr.html) has been updated and can also be used
+Alternatively and for new deployments, [CAS Initializr](../installation/WAR-Overlay-Initializr.html) has 
+been updated and can also be used
 to generate an overlay project template for this release.
 
 <div class="alert alert-info">
@@ -60,6 +63,7 @@ to generate an overlay project template for this release.
 - Person Directory principal resolution now can receive the credential type and id as query attributes.
 - JDBC attribute repositories are able to specify query attributes for advanced `WHERE` clauses in query builders.
 - Execution order of authentication throttlers for OAuth and OpenID Connect protocols is now restored and corrected.
+- Scheduled jobs can now be activated conditionally using a regular expression matches against the running CAS node hostname.
 
 ## Library Upgrades
 
@@ -67,3 +71,6 @@ to generate an overlay project template for this release.
 - Twilio
 - DropWizard
 - PostgreSQL Driver
+- Hazelcast Kubernetes
+- Azure DocumentDb
+- Amazon SDK
