@@ -66,9 +66,9 @@ public class CasOAuth20EndpointsConfiguration {
     @ConditionalOnMissingBean(name = "introspectionEndpointController")
     @Bean
     @Autowired
-    public OAuth20IntrospectionEndpointController introspectionEndpointController(
+    public OAuth20IntrospectionEndpointController<OAuth20ConfigurationContext> introspectionEndpointController(
         @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
-        return new OAuth20IntrospectionEndpointController(context);
+        return new OAuth20IntrospectionEndpointController<>(context);
     }
 
     @ConditionalOnMissingBean(name = "accessTokenController")
