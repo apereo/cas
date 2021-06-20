@@ -22,13 +22,6 @@ import java.util.Map;
 public class CasServerDiscoveryProfileEndpoint extends BaseCasActuatorEndpoint {
     private final CasServerProfileRegistrar casServerProfileRegistrar;
 
-    /**
-     * Instantiates a new mvc endpoint.
-     * Endpoints are by default sensitive.
-     *
-     * @param casProperties             the cas properties
-     * @param casServerProfileRegistrar the cas server profile registrar
-     */
     public CasServerDiscoveryProfileEndpoint(final CasConfigurationProperties casProperties,
                                              final CasServerProfileRegistrar casServerProfileRegistrar) {
         super(casProperties);
