@@ -63,7 +63,7 @@ to generate an overlay project template for this release.
 - Person Directory principal resolution now can receive the credential type and id as query attributes.
 - JDBC attribute repositories are able to specify query attributes for advanced `WHERE` clauses in query builders.
 - Execution order of authentication throttlers for OAuth and OpenID Connect protocols is now restored and corrected.
-- Scheduled jobs can now be activated conditionally using a regular expression matches against the running CAS node hostname.
+- Scheduled jobs can now be activated conditionally using a regular expression matched against the running CAS node hostname.
 
 ## Library Upgrades
 
