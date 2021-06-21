@@ -22,7 +22,7 @@ import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcClientSecretJwtAuthenticator;
 import org.apereo.cas.oidc.authn.OidcPrivateKeyJwtAuthenticator;
-import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.*;
 import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.claims.mapping.OidcDefaultAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
@@ -445,7 +445,35 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     @ConditionalOnMissingBean(name = "oidcServiceRegistryListener")
     public ServiceRegistryListener oidcServiceRegistryListener() {
-        return new OidcServiceRegistryListener(userDefinedScopeBasedAttributeReleasePolicies());
+        return new OidcServiceRegistryListener(userDefinedScopeBasedAttributeReleasePolicies(),
+                oidcProfileScopeAttributeReleasePolicy(),
+                oidcEmailScopeAttributeReleasePolicy(),
+                oidcAddressScopeAttributeReleasePolicy(),
+                oidcPhoneScopeAttributeReleasePolicy());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "oidcEmailScopeAttributeReleasePolicy")
+    public BaseOidcScopeAttributeReleasePolicy oidcEmailScopeAttributeReleasePolicy() {
+        return new OidcEmailScopeAttributeReleasePolicy();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "oidcAddressScopeAttributeReleasePolicy")
+    public BaseOidcScopeAttributeReleasePolicy oidcAddressScopeAttributeReleasePolicy() {
+        return new OidcAddressScopeAttributeReleasePolicy();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "oidcProfileScopeAttributeReleasePolicy")
+    public BaseOidcScopeAttributeReleasePolicy oidcProfileScopeAttributeReleasePolicy() {
+        return new OidcProfileScopeAttributeReleasePolicy();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "oidcPhoneScopeAttributeReleasePolicy")
+    public BaseOidcScopeAttributeReleasePolicy oidcPhoneScopeAttributeReleasePolicy() {
+        return new OidcPhoneScopeAttributeReleasePolicy();
     }
 
     @Bean

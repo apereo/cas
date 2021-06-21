@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -17,6 +18,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 /**
  * Handles tests for {@link JpaServiceRegistry} for OIDC services.
@@ -62,7 +64,11 @@ public class JpaServiceRegistryOidcTests extends JpaServiceRegistryTests {
     public static class OidcJpaServiceRegistryTestConfiguration {
         @Bean
         public ServiceRegistryListener oidcServiceRegistryListener() {
-            return new OidcServiceRegistryListener(new ArrayList<>());
+            return new OidcServiceRegistryListener(new ArrayList<>(),
+                    mock(BaseOidcScopeAttributeReleasePolicy.class),
+                    mock(BaseOidcScopeAttributeReleasePolicy.class),
+                    mock(BaseOidcScopeAttributeReleasePolicy.class),
+                    mock(BaseOidcScopeAttributeReleasePolicy.class));
         }
     }
 }

@@ -2,11 +2,7 @@ package org.apereo.cas.oidc.services;
 
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -32,6 +28,11 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
     private static final long serialVersionUID = -2492163812728091841L;
 
     private final Collection<OidcCustomScopeAttributeReleasePolicy> userScopes;
+
+    private final BaseOidcScopeAttributeReleasePolicy oidcProfileScopeAttributeReleasePolicy;
+    private final BaseOidcScopeAttributeReleasePolicy oidcEmailScopeAttributeReleasePolicy;
+    private final BaseOidcScopeAttributeReleasePolicy oidcAddressScopeAttributeReleasePolicy;
+    private final BaseOidcScopeAttributeReleasePolicy oidcPhoneScopeAttributeReleasePolicy;
 
     private static void addAttributeReleasePolicy(final ChainingAttributeReleasePolicy chain,
                                                   final BaseOidcScopeAttributeReleasePolicy policyToAdd,
@@ -86,16 +87,16 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
                 val scope = OidcConstants.StandardScopes.valueOf(givenScope.trim().toUpperCase());
                 switch (scope) {
                     case EMAIL:
-                        addAttributeReleasePolicy(policyChain, new OidcEmailScopeAttributeReleasePolicy(), givenScope, oidcService);
+                        addAttributeReleasePolicy(policyChain, oidcEmailScopeAttributeReleasePolicy, givenScope, oidcService);
                         break;
                     case ADDRESS:
-                        addAttributeReleasePolicy(policyChain, new OidcAddressScopeAttributeReleasePolicy(), givenScope, oidcService);
+                        addAttributeReleasePolicy(policyChain, oidcAddressScopeAttributeReleasePolicy, givenScope, oidcService);
                         break;
                     case PROFILE:
-                        addAttributeReleasePolicy(policyChain, new OidcProfileScopeAttributeReleasePolicy(), givenScope, oidcService);
+                        addAttributeReleasePolicy(policyChain, oidcProfileScopeAttributeReleasePolicy, givenScope, oidcService);
                         break;
                     case PHONE:
-                        addAttributeReleasePolicy(policyChain, new OidcPhoneScopeAttributeReleasePolicy(), givenScope, oidcService);
+                        addAttributeReleasePolicy(policyChain, oidcPhoneScopeAttributeReleasePolicy, givenScope, oidcService);
                         break;
                     case OFFLINE_ACCESS:
                         LOGGER.debug("Given scope [{}], service [{}] is marked to generate refresh tokens", givenScope, oidcService.getId());
