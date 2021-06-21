@@ -8,6 +8,7 @@ import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -45,6 +46,10 @@ public class RedirectToServiceActionTests {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier("urlValidator")
+    private UrlValidator urlValidator;
+
     @Test
     public void verifyAction() throws Exception {
         val context = new MockRequestContext();
@@ -55,7 +60,8 @@ public class RedirectToServiceActionTests {
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
         val locator = mock(ResponseBuilderLocator.class);
-        when(locator.locate(any(WebApplicationService.class))).thenReturn(new WebApplicationServiceResponseBuilder(this.servicesManager));
+        when(locator.locate(any(WebApplicationService.class)))
+            .thenReturn(new WebApplicationServiceResponseBuilder(this.servicesManager, this.urlValidator));
 
         val redirectToServiceAction = new RedirectToServiceAction(locator);
         val event = redirectToServiceAction.execute(context);

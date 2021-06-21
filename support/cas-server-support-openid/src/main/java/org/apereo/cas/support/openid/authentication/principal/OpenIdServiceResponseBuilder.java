@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.Assertion;
+import org.apereo.cas.web.UrlValidator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -45,8 +46,8 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
 
     public OpenIdServiceResponseBuilder(final String openIdPrefixUrl, final ServerManager serverManager,
                                         final CentralAuthenticationService centralAuthenticationService,
-                                        final ServicesManager servicesManager) {
-        super(servicesManager);
+                                        final ServicesManager servicesManager, final UrlValidator urlValidator) {
+        super(servicesManager, urlValidator);
         this.serverManager = serverManager;
         this.openIdPrefixUrl = openIdPrefixUrl;
         this.centralAuthenticationService = centralAuthenticationService;
