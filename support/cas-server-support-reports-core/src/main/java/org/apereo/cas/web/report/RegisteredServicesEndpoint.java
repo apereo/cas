@@ -108,6 +108,7 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      *
      * @param id the id
      * @return the registered service
+     * @throws Exception the exception
      */
     @Operation(summary = "Delete registered service by id", parameters = {@Parameter(name = "id")})
     @DeleteMapping(path = "{id}", produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})

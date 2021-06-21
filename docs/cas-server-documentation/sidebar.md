@@ -146,7 +146,7 @@ layout: null
         *   [Account Storage](#surrogacystorage)
             *   [LDAP](/cas/{{ version }}/authentication/Surrogate-Authentication-Storage-LDAP.html)
             *   [JSON](/cas/{{ version }}/authentication/Surrogate-Authentication-Storage-JSON.html)
-            *   [REST](/cas/{{ version }}/authentication/Surrogate-Authentication-Storage-Rest.html)
+            *   [REST](/cas/{{ version }}/authentication/Surrogate-Authentication-Storage-REST.html)
             *   [JDBC](/cas/{{ version }}/authentication/Surrogate-Authentication-Storage-JDBC.html)
             *   [CouchDb](/cas/{{ version }}/authentication/Surrogate-Authentication-Storage-CouchDb.html)
             *   [Custom](/cas/{{ version }}/authentication/Surrogate-Authentication-Storage-Custom.html)
