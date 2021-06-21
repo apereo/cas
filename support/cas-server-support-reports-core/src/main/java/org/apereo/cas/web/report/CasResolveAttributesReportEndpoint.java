@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
@@ -37,6 +38,7 @@ public class CasResolveAttributesReportEndpoint extends BaseCasActuatorEndpoint 
      * @return the map
      */
     @ReadOperation
+    @Operation(summary = "Resolve principal attributes for user")
     public Map<String, Object> resolvePrincipalAttributes(@Selector final String uid) {
         val p = defaultPrincipalResolver.resolve(new BasicIdentifiableCredential(uid));
         val map = new HashMap<String, Object>();

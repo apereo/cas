@@ -7,6 +7,7 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -64,6 +65,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
      * @return the collection
      */
     @GetMapping(path = "{principal}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get consent decisions for principal")
     public Collection<Map<String, Object>> consentDecisions(@PathVariable final String principal) {
         val result = new HashSet<Map<String, Object>>();
         LOGGER.debug("Fetching consent decisions for principal [{}]", principal);
@@ -86,6 +88,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
      */
     @GetMapping(path = "/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
+    @Operation(summary = "Export consent decisions as a zip file")
     public ResponseEntity<Resource> export() {
         val accounts = consentRepository.findConsentDecisions();
         val resource = CompressionUtils.toZipFile(accounts.stream(),
@@ -110,6 +113,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
      * @throws Exception the exception
      */
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Import a consent decision as a JSON document")
     public HttpStatus importAccount(final HttpServletRequest request) throws Exception {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.trace("Submitted account: [{}]", requestBody);
@@ -119,7 +123,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
         consentRepository.storeConsentDecision(decision);
         return HttpStatus.CREATED;
     }
-    
+
     /**
      * Revoke consents.
      *
@@ -128,6 +132,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
      * @return true/false
      */
     @DeleteMapping(path = "{principal}/{decisionId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Delete a consent decision for principal using a decision id")
     public boolean revokeConsents(@PathVariable final String principal, @PathVariable final long decisionId) {
         LOGGER.debug("Deleting consent decisions for principal [{}].", principal);
         return this.consentRepository.deleteConsentDecision(decisionId, principal);

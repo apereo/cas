@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -43,6 +44,7 @@ public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEnd
      */
     @ReadOperation(produces = {
         ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "Get collection of available authentication handlers")
     public Collection<AuthenticationHandlerDetails> handle() {
         return this.authenticationEventExecutionPlan.getAuthenticationHandlers()
             .stream()
@@ -57,6 +59,7 @@ public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEnd
      * @param name the name
      * @return the authentication handler
      */
+    @Operation(summary = "Get available authentication handler by name")
     @ReadOperation(produces = {
         ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
     public AuthenticationHandlerDetails fetchAuthnHandler(@Selector final String name) {

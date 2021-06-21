@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -43,6 +44,7 @@ public class RegisteredAuthenticationPoliciesEndpoint extends BaseCasActuatorEnd
      */
     @ReadOperation(produces = {
         ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "Get available authentication policies")
     public Collection<AuthenticationPolicyDetails> handle() {
         return this.authenticationEventExecutionPlan.getAuthenticationPolicies()
             .stream()
@@ -59,6 +61,7 @@ public class RegisteredAuthenticationPoliciesEndpoint extends BaseCasActuatorEnd
      */
     @ReadOperation(produces = {
         ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "Get available authentication policy by name")
     public AuthenticationPolicyDetails fetchPolicy(@Selector final String name) {
         return this.authenticationEventExecutionPlan.getAuthenticationPolicies()
             .stream()
