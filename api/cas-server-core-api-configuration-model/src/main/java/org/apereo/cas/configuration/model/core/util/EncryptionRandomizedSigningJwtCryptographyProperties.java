@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.util;
 
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -47,5 +48,5 @@ public class EncryptionRandomizedSigningJwtCryptographyProperties implements Ser
     /**
      * The signing/encryption algorithm to use.
      */
-    private String alg = "AES";
+    private String alg = CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM;
 }
