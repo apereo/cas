@@ -421,7 +421,7 @@ components (ticket registries, etc) given the component's *configuration key*:
 # ${configurationKey}.crypto.alg=AES
 # ${configurationKey}.crypto.enabled=false   
 
-# ${configurationKey}.crypto.strategyType=ENCRYPT_AND_SIGN|SIGN_AND_ENCRYPT
+# ${configurationKey}.crypto.strategy-type=ENCRYPT_AND_SIGN|SIGN_AND_ENCRYPT
 ```
 
 The following cipher strategy types are available:
