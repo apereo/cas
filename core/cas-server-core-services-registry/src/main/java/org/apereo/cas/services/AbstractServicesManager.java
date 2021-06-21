@@ -242,16 +242,17 @@ public abstract class AbstractServicesManager implements ServicesManager {
     @Override
     public Collection<RegisteredService> load() {
         LOGGER.trace("Loading services from [{}]", configurationContext.getServiceRegistry().getName());
+        val servicesMap = configurationContext.getServiceRegistry().load()
+                .stream()
+                .filter(this::supports)
+                .peek(this::loadInternal)
+                .collect(Collectors.toMap(r -> {
+                    LOGGER.trace("Adding registered service [{}] with name [{}] and internal identifier [{}]",
+                            r.getServiceId(), r.getName(), r.getId());
+                    return r.getId();
+                }, Function.identity(), (r, s) -> s));
         configurationContext.getServicesCache().invalidateAll();
-        configurationContext.getServicesCache().putAll(configurationContext.getServiceRegistry().load()
-            .stream()
-            .filter(this::supports)
-            .peek(this::loadInternal)
-            .collect(Collectors.toMap(r -> {
-                LOGGER.trace("Adding registered service [{}] with name [{}] and internal identifier [{}]",
-                    r.getServiceId(), r.getName(), r.getId());
-                return r.getId();
-            }, Function.identity(), (r, s) -> s)));
+        configurationContext.getServicesCache().putAll(servicesMap);
         loadInternal();
         publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices()));
         evaluateExpiredServiceDefinitions();
