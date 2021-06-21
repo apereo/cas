@@ -332,7 +332,7 @@
         SAML version/binding to use.
         -->
 
-            <AssertionConsumerService index="1" isDefault="true"
+            <AssertionConsumerService index="1"
                                       Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
                                       Location="https://sp.testshib.org/Shibboleth.sso/SAML2/POST"/>
             <AssertionConsumerService index="2"
@@ -353,7 +353,7 @@
 
             <!-- A couple additional assertion consumers for the registration webapp. -->
 
-            <AssertionConsumerService index="7"
+            <AssertionConsumerService index="7" isDefault="true"
                                       Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
                                       Location="https://www.testshib.org/Shibboleth.sso/SAML2/POST"/>
             <AssertionConsumerService index="8"
