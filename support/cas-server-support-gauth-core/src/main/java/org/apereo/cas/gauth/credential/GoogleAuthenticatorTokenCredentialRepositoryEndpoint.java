@@ -7,6 +7,7 @@ import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -54,7 +55,7 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
      * @return the one time token account
      */
     @GetMapping(path = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Load and get all accounts for the user")
+    @Operation(summary = "Load and get all accounts for the user", parameters = {@Parameter(name = "username")})
     public Collection<? extends OneTimeTokenAccount> get(@PathVariable final String username) {
         return repository.get(username);
     }
@@ -76,7 +77,7 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
      * @param username the username
      */
     @DeleteMapping(path = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Delete account for the user")
+    @Operation(summary = "Delete account for the user", parameters = {@Parameter(name = "username")})
     public void delete(@PathVariable final String username) {
         repository.delete(username);
     }

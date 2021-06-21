@@ -49,7 +49,7 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
      */
     @ReadOperation
     @SuppressWarnings("JavaUtilDate")
-    @Operation(summary = "Provide a report of the audit log using a given interval")
+    @Operation(summary = "Provide a report of the audit log using a given interval", parameters = {@Parameter(name = "interval")})
     public Set<AuditActionContext> getAuditLog(@Selector final String interval) {
         if (StringUtils.isBlank(interval)) {
             val sinceDate = LocalDate.now(ZoneId.systemDefault())

@@ -10,6 +10,7 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -63,7 +64,7 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
      * @return the yubi key account
      */
     @GetMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get Yubikey account for username")
+    @Operation(summary = "Get Yubikey account for username", parameters = {@Parameter(name = "username")})
     public YubiKeyAccount get(@PathVariable final String username) {
         val result = registry.getAccount(username);
         return result.orElse(null);
@@ -86,7 +87,7 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
      * @param username the username
      */
     @DeleteMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Delete Yubikey account for username")
+    @Operation(summary = "Delete Yubikey account for username", parameters = {@Parameter(name = "username")})
     public void delete(@PathVariable final String username) {
         registry.delete(username);
     }

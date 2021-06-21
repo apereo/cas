@@ -8,6 +8,7 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -65,7 +66,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
      * @return the collection
      */
     @GetMapping(path = "{principal}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get consent decisions for principal")
+    @Operation(summary = "Get consent decisions for principal", parameters = {@Parameter(name = "principal")})
     public Collection<Map<String, Object>> consentDecisions(@PathVariable final String principal) {
         val result = new HashSet<Map<String, Object>>();
         LOGGER.debug("Fetching consent decisions for principal [{}]", principal);
@@ -132,8 +133,10 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
      * @return true/false
      */
     @DeleteMapping(path = "{principal}/{decisionId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Delete a consent decision for principal using a decision id")
-    public boolean revokeConsents(@PathVariable final String principal, @PathVariable final long decisionId) {
+    @Operation(summary = "Delete a consent decision for principal using a decision id",
+        parameters = {@Parameter(name = "principal"), @Parameter(name = "decisionId")})
+    public boolean revokeConsents(@PathVariable final String principal,
+                                  @PathVariable final long decisionId) {
         LOGGER.debug("Deleting consent decisions for principal [{}].", principal);
         return this.consentRepository.deleteConsentDecision(decisionId, principal);
     }

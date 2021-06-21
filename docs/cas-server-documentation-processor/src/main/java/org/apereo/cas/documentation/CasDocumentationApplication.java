@@ -19,15 +19,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.lang.Nullable;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -38,6 +44,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -102,10 +109,12 @@ public class CasDocumentationApplication {
         parentPath.mkdirs();
 
         var urls = new ArrayList<>(ClasspathHelper.forPackage(CentralAuthenticationService.NAMESPACE));
-        urls.addAll(ClasspathHelper.forPackage("org.springframework.boot.actuate"));
+        urls.addAll(ClasspathHelper.forPackage("org.springframework.boot"));
+        urls.addAll(ClasspathHelper.forPackage("org.springframework.cloud"));
         var reflections = new Reflections(new ConfigurationBuilder()
             .filterInputsBy(new FilterBuilder()
-                .includePackage("org.springframework.boot.actuate")
+                .includePackage("org.springframework.boot")
+                .includePackage("org.springframework.cloud")
                 .includePackage(CentralAuthenticationService.NAMESPACE))
             .setUrls(urls)
             .setScanners(new TypeAnnotationsScanner()));
@@ -321,37 +330,75 @@ public class CasDocumentationApplication {
     private static void collectActuatorEndpointMethodMetadata(final Method method, final Map<Object, Object> map) {
         map.put("signature", method.toGenericString());
         map.put("returnType", method.getReturnType().getSimpleName());
-        var parameterTypes = Arrays.stream(method.getParameterTypes())
-            .map(Class::getSimpleName).collect(Collectors.toList());
-        if (!parameterTypes.isEmpty()) {
-            map.put("parameterTypes", parameterTypes);
-        }
+
         var clazz = method.getDeclaringClass();
         if (clazz.getAnnotation(Deprecated.class) != null) {
             map.put("deprecated", true);
         }
-        if (clazz.getPackageName().startsWith(CentralAuthenticationService.NAMESPACE)) {
-            var operation = method.getAnnotation(Operation.class);
-            if (operation == null) {
-                throw new RuntimeException("Unable to locate @Operation annotation for " + method.toGenericString()
-                    + " in declaring class " + clazz.getName());
-            }
-            if (!map.containsKey("deprecated") && operation.deprecated()) {
-                map.put("deprecated", true);
-            }
-            map.put("summary", operation.summary());
 
-            var parameters = new ArrayList<>();
-            Arrays.stream(operation.parameters()).forEach(p -> {
-                var params = new LinkedHashMap<>();
-                params.put("name", p.name());
-                params.put("required", p.required());
-                parameters.add(params);
-            });
-            if (!parameters.isEmpty()) {
-                map.put("parameters", parameters);
+        var parameters = new ArrayList<Map<?, ?>>();
+        for (var i = 0; i < method.getParameters().length; i++) {
+            var param = method.getParameters()[i];
+
+            var paramData = new LinkedHashMap<String, Object>();
+
+            var required = param.getAnnotation(Nullable.class) == null;
+            if (!required) {
+                required = Optional.ofNullable(param.getAnnotation(PathVariable.class))
+                    .map(PathVariable::required).orElse(false);
             }
+            paramData.put("required", required);
+
+            paramData.put("type", param.getType().getSimpleName());
+            var selector = param.getAnnotation(Selector.class) != null;
+            paramData.put("selector", selector || param.getAnnotation(PathVariable.class) != null);
+
+            if (clazz.getPackageName().startsWith(CentralAuthenticationService.NAMESPACE)) {
+                var operation = method.getAnnotation(Operation.class);
+                if (operation == null) {
+                    throw new RuntimeException("Unable to locate @Operation annotation for " + method.toGenericString()
+                        + " in declaring class " + clazz.getName());
+                }
+                if (!map.containsKey("deprecated") && operation.deprecated()) {
+                    map.put("deprecated", true);
+                }
+                map.put("summary", operation.summary());
+
+                if (!param.getType().equals(HttpServletRequest.class)
+                    && !param.getType().equals(HttpServletResponse.class)
+                    && !param.getType().equals(MultiValueMap.class)) {
+
+                    if (operation.parameters().length == 0) {
+                        throw new RuntimeException("Unable to locate @Parameter annotation for " + method.toGenericString()
+                            + " in declaring class " + clazz.getName());
+                    }
+                    var parameter = operation.parameters()[i];
+                    paramData.put("name", parameter.name());
+                    paramData.put("required", (boolean) paramData.get("required") || parameter.required());
+
+                    if (selector) {
+                        var path = map.get("path");
+                        path = StringUtils.appendIfMissing(path.toString(), "/")
+                            .concat(String.format("${%s}", parameter.name()));
+                        map.put("path", path);
+                    }
+                }
+            } else {
+                if (selector) {
+                    var path = map.get("path");
+                    path = StringUtils.appendIfMissing(path.toString(), "/")
+                        .concat(String.format("${%s}", param.getName()));
+                    map.put("path", path);
+                }
+            }
+
+            parameters.add(paramData);
         }
+
+        if (!parameters.isEmpty()) {
+            map.put("parameters", parameters);
+        }
+
     }
 
     private static void exportThemeProperties(final String projectRootDirectory, final File dataPath) throws Exception {
