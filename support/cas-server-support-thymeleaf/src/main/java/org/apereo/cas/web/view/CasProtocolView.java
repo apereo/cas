@@ -3,6 +3,7 @@ package org.apereo.cas.web.view;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.view.ThymeleafView;
 
@@ -31,7 +32,6 @@ public class CasProtocolView extends ThymeleafView {
         setApplicationContext(applicationContext);
         setTemplateEngine(templateEngine);
         setCharacterEncoding(properties.getEncoding().displayName());
-        setLocale(Locale.getDefault());
         if (StringUtils.isNotBlank(contentType)) {
             setContentType(contentType);
         }
@@ -53,5 +53,10 @@ public class CasProtocolView extends ThymeleafView {
     @Override
     public String toString() {
         return getTemplateName();
+    }
+
+    @Override
+    protected Locale getLocale() {
+        return LocaleContextHolder.getLocale();
     }
 }
