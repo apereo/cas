@@ -7,6 +7,7 @@ import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -55,7 +56,7 @@ public class CasConfigurationMetadataServerEndpoint extends BaseCasActuatorEndpo
      * @return the response entity
      */
     @ReadOperation
-    @Operation(summary = "Get all properties from the repository that match the name")
+    @Operation(summary = "Get all properties from the repository that match the name", parameters = {@Parameter(name = "name")})
     public List<ConfigurationMetadataSearchResult> search(@Selector final String name) {
         val allProps = repository.getRepository().getAllProperties();
 

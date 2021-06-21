@@ -14,6 +14,7 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -90,7 +91,7 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      * @return the registered service
      * @throws Exception the exception
      */
-    @Operation(summary = "Fetch service either by numeric id or service id pattern")
+    @Operation(summary = "Fetch service either by numeric id or service id pattern", parameters = {@Parameter(name = "id")})
     @GetMapping(path = "{id}", produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<String> fetchService(@PathVariable final String id) throws Exception {
         val service = NumberUtils.isDigits(id)
@@ -108,7 +109,7 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      * @param id the id
      * @return the registered service
      */
-    @Operation(summary = "Delete registered service by id")
+    @Operation(summary = "Delete registered service by id", parameters = {@Parameter(name = "id")})
     @DeleteMapping(path = "{id}", produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<String> deleteService(@PathVariable final String id) throws Exception {
         if (NumberUtils.isDigits(id)) {

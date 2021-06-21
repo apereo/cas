@@ -10,6 +10,7 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
@@ -66,7 +67,7 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
      * @return the access token
      */
     @ReadOperation
-    @Operation(summary = "Get single token by id")
+    @Operation(summary = "Get single token by id", parameters = {@Parameter(name = "token")})
     public Ticket getToken(@Selector final String token) {
         try {
             val ticketId = extractAccessTokenFrom(token);
@@ -83,7 +84,7 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
      * @param ticketId the ticket id
      */
     @DeleteOperation
-    @Operation(summary = "Delete token by id")
+    @Operation(summary = "Delete token by id", parameters = {@Parameter(name = "ticketId")})
     public void deleteToken(@Selector final String ticketId) {
         val ticket = getToken(ticketId);
         if (ticket != null) {

@@ -16,6 +16,7 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -71,7 +72,7 @@ public class TicketExpirationPoliciesEndpoint extends BaseCasActuatorEndpoint {
      * @throws Exception the exception
      */
     @ReadOperation
-    @Operation(summary = "Produce expiration policies given an optional service id")
+    @Operation(summary = "Produce expiration policies given an optional service id", parameters = {@Parameter(name = "serviceId")})
     public Map<String, String> handle(@Nullable final String serviceId) throws Exception {
         val model = new HashMap<String, String>();
         expirationPolicyBuilders.forEach(Unchecked.consumer(builder -> {
