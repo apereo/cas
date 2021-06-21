@@ -488,6 +488,7 @@ subprojects {
         implementation libraries.validationapi
 
         api libraries.jaxb
+        api libraries.swaggerannotations
         api libraries.slf4j
         api libraries.guava
         api libraries.commons

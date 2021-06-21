@@ -162,13 +162,15 @@ ext.libraries = [
                     exclude(group: "javax.validation", module: "validation-api")
                 }
         ],
-        swagger                 : [
+        swaggerannotations : [
                 dependencies.create("io.swagger.core.v3:swagger-annotations:$swaggerVersion") {
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "javax.validation", module: "validation-api")
-                },
+                }
+        ],
+        swagger                 : [
                 dependencies.create("io.swagger.core.v3:swagger-core:$swaggerVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")

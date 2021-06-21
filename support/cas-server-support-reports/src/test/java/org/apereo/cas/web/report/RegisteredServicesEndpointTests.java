@@ -37,7 +37,7 @@ public class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
     private RegisteredServicesEndpoint endpoint;
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val service1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         val service2 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(service1, service2);

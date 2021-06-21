@@ -6,6 +6,7 @@ import org.apereo.cas.metadata.CasReferenceProperty;
 import org.apereo.cas.metadata.ConfigurationMetadataCatalogQuery;
 import org.apereo.cas.services.RegisteredServiceProperty;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
@@ -90,10 +91,10 @@ public class CasDocumentationApplication {
         exportRegisteredServiceProperties(dataPath);
         exportTemplateViews(projectRootDirectory, dataPath);
         exportThemeProperties(projectRootDirectory, dataPath);
-        exportActuatorEndpoints(projectRootDirectory, dataPath);
+        exportActuatorEndpoints(dataPath);
     }
 
-    private static void exportActuatorEndpoints(final String projectRootDirectory, final File dataPath) {
+    private static void exportActuatorEndpoints(final File dataPath) {
         var parentPath = new File(dataPath, "actuators");
         if (parentPath.exists()) {
             FileUtils.deleteQuietly(parentPath);
@@ -312,7 +313,6 @@ public class CasDocumentationApplication {
                 destination.mkdirs();
 
                 var configFile = new File(destination, "config.yml");
-                System.out.println(configFile);
                 CasConfigurationMetadataCatalog.export(configFile, properties);
             }
         });
@@ -325,6 +325,32 @@ public class CasDocumentationApplication {
             .map(Class::getSimpleName).collect(Collectors.toList());
         if (!parameterTypes.isEmpty()) {
             map.put("parameterTypes", parameterTypes);
+        }
+        var clazz = method.getDeclaringClass();
+        if (clazz.getAnnotation(Deprecated.class) != null) {
+            map.put("deprecated", true);
+        }
+        if (clazz.getPackageName().startsWith(CentralAuthenticationService.NAMESPACE)) {
+            var operation = method.getAnnotation(Operation.class);
+            if (operation == null) {
+                throw new RuntimeException("Unable to locate @Operation annotation for " + method.toGenericString()
+                    + " in declaring class " + clazz.getName());
+            }
+            if (!map.containsKey("deprecated") && operation.deprecated()) {
+                map.put("deprecated", true);
+            }
+            map.put("summary", operation.summary());
+
+            var parameters = new ArrayList<>();
+            Arrays.stream(operation.parameters()).forEach(p -> {
+                var params = new LinkedHashMap<>();
+                params.put("name", p.name());
+                params.put("required", p.required());
+                parameters.add(params);
+            });
+            if (!parameters.isEmpty()) {
+                map.put("parameters", parameters);
+            }
         }
     }
 

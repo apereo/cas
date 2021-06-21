@@ -16,6 +16,8 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
@@ -72,6 +74,11 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
      * @return the map
      */
     @ReadOperation
+    @Operation(summary = "Handle validation request and produce saml1 payload.", parameters = {
+        @Parameter(name = "username"),
+        @Parameter(name = "password"),
+        @Parameter(name = "service")
+    })
     public Map<String, Object> handle(final String username, final String password, final String service) {
         val credential = new UsernamePasswordCredential(username, password);
         val selectedService = this.serviceFactory.createService(service);
