@@ -61,6 +61,8 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
 
         when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(
                 supportingService, nonSupportingService, promiscuousService));
+        when(serviceManager.getAllServicesOfType(any())).thenReturn(CollectionUtils.wrapList(
+            supportingService, nonSupportingService, promiscuousService));
 
         val context = OAuth20ConfigurationContext.builder()
             .servicesManager(serviceManager)
