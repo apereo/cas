@@ -49,52 +49,6 @@ import static org.mockito.Mockito.*;
 @EnabledIfPortOpen(port = 25000)
 @Tag("Mail")
 public class CasSimpleMultifactorSendTokenActionTests {
-
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @SpringBootTest(classes = BaseCasSimpleMultifactorAuthenticationTests.SharedTestConfiguration.class)
-    public abstract class BaseCasSimpleMultifactorSendTokenActionTests {
-        @Autowired
-        @Qualifier("mfaSimpleMultifactorSendTokenAction")
-        protected Action mfaSimpleMultifactorSendTokenAction;
-
-        @Autowired
-        @Qualifier("casSimpleMultifactorAuthenticationHandler")
-        protected AuthenticationHandler authenticationHandler;
-
-        @Autowired
-        @Qualifier("ticketRegistry")
-        protected TicketRegistry ticketRegistry;
-
-        @Autowired
-        @Qualifier("casSimpleMultifactorAuthenticationProvider")
-        protected MultifactorAuthenticationProvider casSimpleMultifactorAuthenticationProvider;
-
-        protected Pair<String, RequestContext> createToken(final String user) throws Exception {
-            val context = buildRequestContextFor(user);
-            val event = mfaSimpleMultifactorSendTokenAction.execute(context);
-            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
-            return Pair.of(event.getAttributes().getString("token"), context);
-        }
-
-        protected MockRequestContext buildRequestContextFor(final String user) {
-            val context = new MockRequestContext();
-            val messageContext = (DefaultMessageContext) context.getMessageContext();
-            messageContext.setMessageSource(mock(MessageSource.class));
-
-            val request = new MockHttpServletRequest();
-            val response = new MockHttpServletResponse();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-            RequestContextHolder.setRequestContext(context);
-            WebUtils.putServiceIntoFlashScope(context, RegisteredServiceTestUtils.getService());
-
-            val principal = RegisteredServiceTestUtils.getPrincipal(user,
-                CollectionUtils.wrap("phone", List.of("123456789"), "mail", List.of("cas@example.org")));
-            WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(principal), context);
-            WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, casSimpleMultifactorAuthenticationProvider);
-            return context;
-        }
-    }
-
     @SuppressWarnings("ClassCanBeStatic")
     @Nested
     @TestPropertySource(properties = {
