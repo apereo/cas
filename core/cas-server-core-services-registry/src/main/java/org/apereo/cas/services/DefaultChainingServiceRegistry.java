@@ -41,8 +41,11 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
-        serviceRegistries.forEach(registry -> registry.save(registeredService));
-        return registeredService;
+        var result = registeredService;
+        for (val serviceRegistry : serviceRegistries) {
+            result = serviceRegistry.save(result);
+        }
+        return result;
     }
 
     @Override
@@ -138,10 +141,10 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
     @Override
     public RegisteredService findServiceBy(final String id) {
         return serviceRegistries.stream()
-                .map(registry -> registry.findServiceBy(id))
-                .filter(Objects::nonNull)
-                .findFirst()
-                 .orElse(null);
+            .map(registry -> registry.findServiceBy(id))
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
     }
 
 }
