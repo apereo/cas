@@ -18,8 +18,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.session.SessionStore;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link DelegatedClientAuthenticationConfigurationContext}.
@@ -30,7 +34,7 @@ import org.pac4j.core.context.session.SessionStore;
 @ToString
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 public class DelegatedClientAuthenticationConfigurationContext {
     private final Clients clients;
 
@@ -71,4 +75,7 @@ public class DelegatedClientAuthenticationConfigurationContext {
     private final CasCookieBuilder delegatedClientCookieGenerator;
 
     private final TicketFactory ticketFactory;
+
+    @Builder.Default
+    private List<DelegatedClientAuthenticationRequestCustomizer> delegatedClientAuthenticationRequestCustomizers = new ArrayList<>();
 }

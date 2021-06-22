@@ -25,6 +25,7 @@ import org.apereo.cas.web.flow.DelegatedAuthenticationErrorViewResolver;
 import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
+import org.apereo.cas.web.flow.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowManager;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -53,6 +54,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -211,10 +213,17 @@ public class DelegatedAuthenticationWebflowConfiguration {
             .delegatedClientCookieGenerator(delegatedAuthenticationCookieGenerator())
             .delegatedClientDistributedSessionCookieGenerator(delegatedClientDistributedSessionCookieGenerator.getObject())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
-            .delegatedAuthenticationAccessStrategyHelper(
-                new DelegatedAuthenticationAccessStrategyHelper(servicesManager.getObject(),
-                    delegatedAuthenticationPolicyAuditableEnforcer.getObject()))
+            .delegatedClientAuthenticationRequestCustomizers(delegatedClientAuthenticationRequestCustomizers())
+            .delegatedAuthenticationAccessStrategyHelper(getDelegatedAuthenticationAccessStrategyHelper())
             .build();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "delegatedClientAuthenticationRequestCustomizers")
+    @RefreshScope
+    public List<DelegatedClientAuthenticationRequestCustomizer> delegatedClientAuthenticationRequestCustomizers() {
+        var customizers = applicationContext.getBeansOfType(DelegatedClientAuthenticationRequestCustomizer.class, false, true).values();
+        return new ArrayList<>(customizers);
     }
 
     @ConditionalOnMissingBean(name = "delegatedAuthenticationWebflowConfigurer")
@@ -263,8 +272,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "delegatedClientIdentityProviderConfigurationProducer")
     public DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProviderConfigurationProducer() {
-        val helper = new DelegatedAuthenticationAccessStrategyHelper(servicesManager.getObject(),
-            delegatedAuthenticationPolicyAuditableEnforcer.getObject());
+        val helper = getDelegatedAuthenticationAccessStrategyHelper();
         return new DefaultDelegatedClientIdentityProviderConfigurationProducer(servicesManager.getObject(),
             authenticationRequestServiceSelectionStrategies.getObject(),
             builtClients.getObject(),
@@ -279,5 +287,10 @@ public class DelegatedAuthenticationWebflowConfiguration {
     public CasCookieBuilder delegatedAuthenticationCookieGenerator() {
         val props = casProperties.getAuthn().getPac4j().getCookie();
         return new DelegatedAuthenticationCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
+    }
+
+    private DelegatedAuthenticationAccessStrategyHelper getDelegatedAuthenticationAccessStrategyHelper() {
+        return new DelegatedAuthenticationAccessStrategyHelper(servicesManager.getObject(),
+            delegatedAuthenticationPolicyAuditableEnforcer.getObject());
     }
 }
