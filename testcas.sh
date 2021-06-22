@@ -123,6 +123,18 @@ while (( "$#" )); do
             tickets|ticketing)
                 task+="testTickets "
                 ;;
+            delegation)
+                task+="testDelegation "
+                ;;
+            cookie)
+                task+="testCookie "
+                ;;
+            event|events)
+                task+="testEvents "
+                ;;
+            impersonation|surrogate)
+                task+="testImpersonation "
+                ;;
             x509)
                 task+="testX509 "
                 ;;
