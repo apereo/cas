@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OidcMultifactorAuthenticationTriggerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcMultifactorAuthenticationTrigger")
-    private MultifactorAuthenticationTrigger oidcMultifactorAuthenticationTrigger;
+    private MultifactorAuthenticationTrigger trigger;
     
     @Test
     @Order(1)
@@ -40,7 +40,7 @@ public class OidcMultifactorAuthenticationTriggerTests extends AbstractOidcTests
         val request = new MockHttpServletRequest();
         val authn = RegisteredServiceTestUtils.getAuthentication();
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
-        assertTrue(oidcMultifactorAuthenticationTrigger.isActivated(authn, registeredService, request, service).isEmpty());
+        assertTrue(trigger.isActivated(authn, registeredService, request, service).isEmpty());
     }
 
     @Test
@@ -52,7 +52,7 @@ public class OidcMultifactorAuthenticationTriggerTests extends AbstractOidcTests
         val authn = RegisteredServiceTestUtils.getAuthentication();
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         assertThrows(AuthenticationException.class,
-            () -> oidcMultifactorAuthenticationTrigger.isActivated(authn, registeredService, request, service));
+            () -> trigger.isActivated(authn, registeredService, request, service));
     }
     
     @Test
@@ -66,6 +66,19 @@ public class OidcMultifactorAuthenticationTriggerTests extends AbstractOidcTests
             CasProtocolConstants.PARAMETER_SERVICE, OAuth20Constants.ACR_VALUES));
         val authn = RegisteredServiceTestUtils.getAuthentication();
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
-        assertFalse(oidcMultifactorAuthenticationTrigger.isActivated(authn, registeredService, request, service).isEmpty());
+        assertFalse(trigger.isActivated(authn, registeredService, request, service).isEmpty());
+    }
+
+    @Test
+    @Order(4)
+    public void verifyUrlEncoding() {
+        val url = "https://link.test.edu/web/cas?profile=Example Primo&targetURL=abc";
+        val request = new MockHttpServletRequest();
+        request.setRequestURI("/cas/login");
+        request.setQueryString(String.format("%s=%s", CasProtocolConstants.PARAMETER_SERVICE, url));
+        val authn = RegisteredServiceTestUtils.getAuthentication();
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService();
+        val service = RegisteredServiceTestUtils.getService(url);
+        assertTrue(trigger.isActivated(authn, registeredService, request, service).isEmpty());
     }
 }
