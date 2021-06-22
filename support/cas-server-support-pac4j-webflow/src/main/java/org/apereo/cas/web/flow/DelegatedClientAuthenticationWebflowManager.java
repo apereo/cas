@@ -21,6 +21,11 @@ public interface DelegatedClientAuthenticationWebflowManager {
     String PARAMETER_CLIENT_ID = "delegatedclientid";
 
     /**
+     * Default implementation bean name.
+     */
+    String DEFAULT_BEAN_NAME = "delegatedClientWebflowManager";
+
+    /**
      * Store.
      *
      * @param webContext the web context

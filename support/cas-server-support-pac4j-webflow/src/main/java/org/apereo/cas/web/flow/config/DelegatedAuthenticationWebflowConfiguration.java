@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.ticket.TicketFactory;
@@ -25,7 +26,6 @@ import org.apereo.cas.web.flow.DelegatedAuthenticationErrorViewResolver;
 import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
-import org.apereo.cas.web.flow.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowManager;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -191,7 +191,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
     @Bean
     @RefreshScope
-    @ConditionalOnMissingBean(name = "delegatedClientAuthenticationConfigurationContext")
+    @ConditionalOnMissingBean(name = DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
     public DelegatedClientAuthenticationConfigurationContext delegatedClientAuthenticationConfigurationContext() {
         return DelegatedClientAuthenticationConfigurationContext.builder()
             .initialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver.getObject())
@@ -238,7 +238,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
             casProperties);
     }
 
-    @ConditionalOnMissingBean(name = "delegatedClientWebflowManager")
+    @ConditionalOnMissingBean(name = DelegatedClientAuthenticationWebflowManager.DEFAULT_BEAN_NAME)
     @RefreshScope
     @Bean
     public DelegatedClientAuthenticationWebflowManager delegatedClientWebflowManager() {
