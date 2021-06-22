@@ -22,6 +22,7 @@ import org.pac4j.core.exception.http.WithContentAction;
 import org.pac4j.core.exception.http.WithLocationAction;
 import org.pac4j.core.redirect.RedirectionActionBuilder;
 import org.pac4j.core.util.Pac4jConstants;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
@@ -60,7 +61,7 @@ public abstract class BaseDelegatedAuthenticationController {
      * @return the redirection action
      */
     protected Optional<RedirectionAction> getRedirectionAction(final IndirectClient client, final WebContext webContext,
-                                                            final TransientSessionTicket ticket) {
+                                                               final TransientSessionTicket ticket) {
         val properties = ticket.getProperties();
         if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN)) {
             webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, true);
@@ -72,6 +73,12 @@ public abstract class BaseDelegatedAuthenticationController {
         if (ticket.getService() != null) {
             configureWebContextForRegisteredService(webContext, ticket);
         }
+
+        configurationContext.getDelegatedClientAuthenticationRequestCustomizers()
+            .stream()
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .forEach(c -> c.customize(client, webContext));
+
         return client.getRedirectionActionBuilder()
             .getRedirectionAction(webContext, configurationContext.getSessionStore());
     }
