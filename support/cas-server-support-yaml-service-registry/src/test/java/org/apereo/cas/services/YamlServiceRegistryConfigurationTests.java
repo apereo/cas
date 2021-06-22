@@ -29,8 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreNotificationsConfiguration.class,
-    YamlServiceRegistryConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class
+    YamlServiceRegistryConfiguration.class
 },
     properties = "cas.service-registry.yaml.location=classpath:/services")
 @Tag("FileSystem")
