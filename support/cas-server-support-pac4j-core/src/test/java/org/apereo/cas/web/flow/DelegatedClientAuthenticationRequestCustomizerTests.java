@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
+
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

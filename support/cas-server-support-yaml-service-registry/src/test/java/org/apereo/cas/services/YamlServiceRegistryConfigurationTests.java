@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.config.YamlServiceRegistryConfiguration;
 
@@ -22,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = {
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreServicesConfiguration.class,

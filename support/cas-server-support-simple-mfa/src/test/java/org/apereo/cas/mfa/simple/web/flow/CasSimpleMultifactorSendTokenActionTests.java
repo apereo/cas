@@ -1,44 +1,20 @@
 package org.apereo.cas.mfa.simple.web.flow;
 
-import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.BaseCasSimpleMultifactorAuthenticationTests;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
-import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.binding.message.DefaultMessageContext;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Import;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
 
 import javax.security.auth.login.FailedLoginException;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CasSimpleMultifactorSendTokenActionTests}.

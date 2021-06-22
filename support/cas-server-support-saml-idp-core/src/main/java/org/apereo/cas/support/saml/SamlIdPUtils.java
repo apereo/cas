@@ -17,6 +17,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
@@ -32,6 +33,7 @@ import org.opensaml.saml.saml2.core.StatusResponseType;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 
@@ -335,6 +337,31 @@ public class SamlIdPUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * Store saml request.
+     *
+     * @param webContext         the web context
+     * @param openSamlConfigBean the open saml config bean
+     * @param sessionStore       the session store
+     * @param context            the context
+     * @throws Exception the exception
+     */
+    public static void storeSamlRequest(final JEEContext webContext,
+                                        final OpenSamlConfigBean openSamlConfigBean,
+                                        final SessionStore sessionStore,
+                                        final Pair<? extends SignableSAMLObject, MessageContext> context) throws Exception {
+        val authnRequest = (AuthnRequest) context.getLeft();
+        val messageContext = context.getValue();
+        try (val writer = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest)) {
+            val samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
+            sessionStore.set(webContext, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
+            sessionStore.set(webContext, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, SAMLBindingSupport.getRelayState(messageContext));
+
+            val authnContext = SamlIdPAuthenticationContext.from(messageContext).encode();
+            sessionStore.set(webContext, MessageContext.class.getName(), authnContext);
+        }
     }
 }
 

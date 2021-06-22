@@ -77,6 +77,7 @@ public abstract class BaseDelegatedAuthenticationController {
         configurationContext.getDelegatedClientAuthenticationRequestCustomizers()
             .stream()
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .filter(c -> c.supports(client, webContext))
             .forEach(c -> c.customize(client, webContext));
 
         return client.getRedirectionActionBuilder()
