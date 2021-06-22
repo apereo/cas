@@ -29,8 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesConfiguration.class,
-    JsonServiceRegistryConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class
+    JsonServiceRegistryConfiguration.class
 },
 properties = "cas.service-registry.json.location=classpath:/services")
 @Tag("FileSystem")
