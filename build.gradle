@@ -248,8 +248,8 @@ subprojects {
 
     jacocoTestReport {
         reports {
-            xml.enabled(true)
-            html.enabled(true)
+            xml.required.set(true)
+            html.required.set(true)
         }
         afterEvaluate {
             classDirectories.setFrom(files(classDirectories.files.collect {
@@ -597,9 +597,9 @@ task jacocoRootReport(type: JacocoReport) {
     executionData jacocoMerge.destinationFile
 
     reports {
-        html.enabled = true
-        xml.enabled = true
-        csv.enabled = true
+        html.required.set(true)
+        xml.required.set(true)
+        csv.required.set(true)
     }
 }
 
