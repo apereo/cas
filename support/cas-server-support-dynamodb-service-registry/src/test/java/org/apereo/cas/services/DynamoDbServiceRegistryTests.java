@@ -4,7 +4,9 @@ import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.DynamoDbServiceRegistryConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
@@ -27,6 +29,8 @@ import software.amazon.awssdk.core.SdkSystemSetting;
     DynamoDbServiceRegistryConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
     RefreshAutoConfiguration.class

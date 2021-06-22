@@ -7,6 +7,8 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuil
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -36,6 +38,8 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class
