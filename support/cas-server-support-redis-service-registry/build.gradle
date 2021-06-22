@@ -6,18 +6,19 @@ dependencies {
     api project(":api:cas-server-core-api-services")
 
     implementation libraries.redis
-    
+
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-notifications")
     implementation project(":support:cas-server-support-redis-core")
-    
+
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":support:cas-server-support-oauth-core")
