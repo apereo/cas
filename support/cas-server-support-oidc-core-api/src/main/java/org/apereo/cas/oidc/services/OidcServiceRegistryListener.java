@@ -11,6 +11,7 @@ import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.ServiceRegistryListener;
 
 import lombok.RequiredArgsConstructor;
@@ -111,7 +112,13 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
             && definedServiceScopes.contains(OidcConstants.StandardScopes.OPENID.getScope()));
         if (scopeFree) {
             LOGGER.trace("Service definition [{}] will use the assigned attribute release policy without scopes", oidcService.getName());
-            policyChain.addPolicy(oidcService.getAttributeReleasePolicy());
+
+            if (oidcService.getAttributeReleasePolicy() instanceof ChainingAttributeReleasePolicy) {
+                val chain = (ChainingAttributeReleasePolicy) oidcService.getAttributeReleasePolicy();
+                policyChain.addPolicies(chain.getPolicies().toArray(new RegisteredServiceAttributeReleasePolicy[0]));
+            } else {
+                policyChain.addPolicy(oidcService.getAttributeReleasePolicy());
+            }
         }
 
         if (policyChain.getPolicies().isEmpty()) {
@@ -119,7 +126,11 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
                 + "No claims/attributes will be released to [{}]", oidcService.getServiceId());
             oidcService.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
         } else {
-            oidcService.setAttributeReleasePolicy(policyChain);
+            if (policyChain.size() == 1) {
+                oidcService.setAttributeReleasePolicy(policyChain.getPolicies().get(0));
+            } else {
+                oidcService.setAttributeReleasePolicy(policyChain);
+            }
         }
 
         LOGGER.trace("Scope/claim reconciliation for service [{}] resulted in the following attribute release policy [{}]",

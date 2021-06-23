@@ -6,6 +6,8 @@ import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
+import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -48,17 +50,15 @@ public class OidcServiceRegistryListenerTests extends AbstractOidcTests {
     public void verifyScopeFreeAttributeRelease() {
         var service = getOidcRegisteredService();
         service.getScopes().clear();
-        
+
         val scopes = service.getScopes();
         scopes.add(OidcConstants.StandardScopes.OPENID.getScope());
         service.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        
+
         service = (OidcRegisteredService) oidcServiceRegistryListener.postLoad(service);
         val policy = service.getAttributeReleasePolicy();
-        assertTrue(policy instanceof ChainingAttributeReleasePolicy);
-        val chain = (ChainingAttributeReleasePolicy) policy;
-        assertEquals(1, chain.size());
-        assertTrue(chain.getPolicies().get(0) instanceof ReturnAllAttributeReleasePolicy);
+        assertFalse(policy instanceof ChainingAttributeReleasePolicy);
+        assertTrue(policy instanceof ReturnAllAttributeReleasePolicy);
     }
 
     @Test
@@ -80,5 +80,33 @@ public class OidcServiceRegistryListenerTests extends AbstractOidcTests {
         assertTrue(policy instanceof DenyAllAttributeReleasePolicy);
     }
 
+    @Test
+    public void verifyOperationReconAsChain() {
+        var service = getOidcRegisteredService();
+        service.getScopes().clear();
+        service.getScopes().add(OidcConstants.StandardScopes.OPENID.getScope());
+        service.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(CollectionUtils.wrapList("cn")));
+
+        service = (OidcRegisteredService) oidcServiceRegistryListener.postLoad(service);
+        val policy = service.getAttributeReleasePolicy();
+        assertFalse(policy instanceof ChainingAttributeReleasePolicy);
+        assertTrue(policy instanceof ReturnAllowedAttributeReleasePolicy);
+    }
+
+    @Test
+    public void verifyReleasePolicyStartingWithChain() {
+        var service = getOidcRegisteredService();
+        service.getScopes().clear();
+        service.getScopes().add(OidcConstants.StandardScopes.OPENID.getScope());
+
+        val chain = new ChainingAttributeReleasePolicy();
+        chain.addPolicy(new ReturnAllowedAttributeReleasePolicy(CollectionUtils.wrapList("cn")));
+        service.setAttributeReleasePolicy(chain);
+
+        service = (OidcRegisteredService) oidcServiceRegistryListener.postLoad(service);
+        val policy = service.getAttributeReleasePolicy();
+        assertFalse(policy instanceof ChainingAttributeReleasePolicy);
+        assertTrue(policy instanceof ReturnAllowedAttributeReleasePolicy);
+    }
 
 }
