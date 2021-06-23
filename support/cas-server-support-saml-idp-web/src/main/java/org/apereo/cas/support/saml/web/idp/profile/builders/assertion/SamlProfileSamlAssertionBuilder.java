@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.assertion;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
@@ -47,8 +46,6 @@ import java.util.Objects;
 public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Assertion> {
     private static final long serialVersionUID = -3945938960014421135L;
 
-    private final CasConfigurationProperties casProperties;
-
     private final SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder;
 
     private final SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder;
@@ -62,7 +59,6 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
     private final MetadataResolver samlIdPMetadataResolver;
 
     public SamlProfileSamlAssertionBuilder(final OpenSamlConfigBean configBean,
-                                           final CasConfigurationProperties casProperties,
                                            final SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder,
                                            final SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder,
                                            final SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder,
@@ -75,7 +71,6 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
         this.samlProfileSamlSubjectBuilder = samlProfileSamlSubjectBuilder;
         this.samlProfileSamlConditionsBuilder = samlProfileSamlConditionsBuilder;
         this.samlObjectSigner = samlObjectSigner;
-        this.casProperties = casProperties;
         this.samlIdPMetadataResolver = samlIdPMetadataResolver;
     }
 
