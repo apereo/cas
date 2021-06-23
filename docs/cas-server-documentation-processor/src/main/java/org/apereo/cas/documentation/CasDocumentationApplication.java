@@ -7,13 +7,13 @@ import org.apereo.cas.metadata.ConfigurationMetadataCatalogQuery;
 import org.apereo.cas.services.RegisteredServiceProperty;
 
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
@@ -78,6 +78,11 @@ public class CasDocumentationApplication {
                     groups.put(property.getModule(), values);
                 }
             });
+
+        if (args.length != 3) {
+            System.err.println("Error: data directory, project version and project root directory are unspecified");
+            System.exit(1);
+        }
         var dataDirectory = args[0];
         var projectVersion = args[1];
         var projectRootDirectory = args[2];
@@ -111,11 +116,8 @@ public class CasDocumentationApplication {
         var urls = new ArrayList<>(ClasspathHelper.forPackage(CentralAuthenticationService.NAMESPACE));
         urls.addAll(ClasspathHelper.forPackage("org.springframework.boot"));
         urls.addAll(ClasspathHelper.forPackage("org.springframework.cloud"));
+        urls.addAll(ClasspathHelper.forPackage("org.springframework.data"));
         var reflections = new Reflections(new ConfigurationBuilder()
-            .filterInputsBy(new FilterBuilder()
-                .includePackage("org.springframework.boot")
-                .includePackage("org.springframework.cloud")
-                .includePackage(CentralAuthenticationService.NAMESPACE))
             .setUrls(urls)
             .setScanners(new TypeAnnotationsScanner()));
 
@@ -328,73 +330,90 @@ public class CasDocumentationApplication {
     }
 
     private static void collectActuatorEndpointMethodMetadata(final Method method, final Map<Object, Object> map) {
-        map.put("signature", method.toGenericString());
+        var signature = method.toGenericString();
+        signature = signature.substring(signature.indexOf(method.getDeclaringClass().getSimpleName()));
+        
+        map.put("signature", signature);
         map.put("returnType", method.getReturnType().getSimpleName());
 
         var clazz = method.getDeclaringClass();
         if (clazz.getAnnotation(Deprecated.class) != null) {
             map.put("deprecated", true);
         }
+        if (method.getAnnotation(Deprecated.class) != null) {
+            map.put("deprecated", true);
+        }
 
         var parameters = new ArrayList<Map<?, ?>>();
-        for (var i = 0; i < method.getParameters().length; i++) {
-            var param = method.getParameters()[i];
 
-            var paramData = new LinkedHashMap<String, Object>();
-
-            var required = param.getAnnotation(Nullable.class) == null;
-            if (!required) {
-                required = Optional.ofNullable(param.getAnnotation(PathVariable.class))
-                    .map(PathVariable::required).orElse(false);
-            }
-            paramData.put("required", required);
-
-            paramData.put("type", param.getType().getSimpleName());
-            var selector = param.getAnnotation(Selector.class) != null;
-            paramData.put("selector", selector || param.getAnnotation(PathVariable.class) != null);
-
+        if (method.getParameters().length == 0) {
             if (clazz.getPackageName().startsWith(CentralAuthenticationService.NAMESPACE)) {
                 var operation = method.getAnnotation(Operation.class);
                 if (operation == null) {
                     throw new RuntimeException("Unable to locate @Operation annotation for " + method.toGenericString()
                         + " in declaring class " + clazz.getName());
                 }
-                if (!map.containsKey("deprecated") && operation.deprecated()) {
-                    map.put("deprecated", true);
+                map.put("summary", StringUtils.appendIfMissing(operation.summary(), "."));
+            }
+        } else {
+            for (var i = 0; i < method.getParameters().length; i++) {
+                var param = method.getParameters()[i];
+
+                var paramData = new LinkedHashMap<String, Object>();
+
+                var required = param.getAnnotation(Nullable.class) == null;
+                if (!required) {
+                    required = Optional.ofNullable(param.getAnnotation(PathVariable.class))
+                        .map(PathVariable::required).orElse(false);
                 }
-                map.put("summary", operation.summary());
+                paramData.put("required", required);
 
-                if (!param.getType().equals(HttpServletRequest.class)
-                    && !param.getType().equals(HttpServletResponse.class)
-                    && !param.getType().equals(MultiValueMap.class)) {
+                paramData.put("type", param.getType().getSimpleName());
+                var selector = param.getAnnotation(Selector.class) != null;
+                paramData.put("selector", selector || param.getAnnotation(PathVariable.class) != null);
 
-                    if (operation.parameters().length == 0) {
-                        throw new RuntimeException("Unable to locate @Parameter annotation for " + method.toGenericString()
+                if (clazz.getPackageName().startsWith(CentralAuthenticationService.NAMESPACE)) {
+                    var operation = method.getAnnotation(Operation.class);
+                    if (operation == null) {
+                        throw new RuntimeException("Unable to locate @Operation annotation for " + method.toGenericString()
                             + " in declaring class " + clazz.getName());
                     }
-                    var parameter = operation.parameters()[i];
-                    paramData.put("name", parameter.name());
-                    paramData.put("required", (boolean) paramData.get("required") || parameter.required());
+                    if (!map.containsKey("deprecated") && operation.deprecated()) {
+                        map.put("deprecated", true);
+                    }
+                    map.put("summary", StringUtils.appendIfMissing(operation.summary(), "."));
 
+                    if (!param.getType().equals(HttpServletRequest.class)
+                        && !param.getType().equals(HttpServletResponse.class)
+                        && !param.getType().equals(MultiValueMap.class)) {
+
+                        if (operation.parameters().length == 0) {
+                            throw new RuntimeException("Unable to locate @Parameter annotation for " + method.toGenericString()
+                                + " in declaring class " + clazz.getName());
+                        }
+                        var parameter = operation.parameters()[i];
+                        paramData.put("name", parameter.name());
+                        paramData.put("required", (boolean) paramData.get("required") || parameter.required());
+
+                        if (selector) {
+                            var path = map.get("path");
+                            path = StringUtils.appendIfMissing(path.toString(), "/")
+                                .concat(String.format("${%s}", parameter.name()));
+                            map.put("path", path);
+                        }
+                    }
+                } else {
                     if (selector) {
                         var path = map.get("path");
                         path = StringUtils.appendIfMissing(path.toString(), "/")
-                            .concat(String.format("${%s}", parameter.name()));
+                            .concat(String.format("${%s}", param.getName()));
                         map.put("path", path);
                     }
                 }
-            } else {
-                if (selector) {
-                    var path = map.get("path");
-                    path = StringUtils.appendIfMissing(path.toString(), "/")
-                        .concat(String.format("${%s}", param.getName()));
-                    map.put("path", path);
-                }
+
+                parameters.add(paramData);
             }
-
-            parameters.add(paramData);
         }
-
         if (!parameters.isEmpty()) {
             map.put("parameters", parameters);
         }
