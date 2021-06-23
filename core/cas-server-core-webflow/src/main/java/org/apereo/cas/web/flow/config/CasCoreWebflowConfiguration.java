@@ -142,7 +142,7 @@ public class CasCoreWebflowConfiguration {
     private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
-    @Qualifier("authenticationEventExecutionPlan")
+    @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
     private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
 
     @ConditionalOnMissingBean(name = "serviceTicketRequestWebflowEventResolver")

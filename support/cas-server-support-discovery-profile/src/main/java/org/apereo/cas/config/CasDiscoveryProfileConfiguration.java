@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -40,13 +41,25 @@ public class CasDiscoveryProfileConfiguration {
     private ObjectProvider<Clients> builtClients;
 
     @Autowired
+    @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
+    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
+
+    @Autowired
     @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private ObjectProvider<IPersonAttributeDao> attributeRepository;
+
+    private static Set<String> transformAttributes(final List<String> attributes) {
+        val attributeSet = new LinkedHashSet<String>(attributes.size());
+        CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributes)
+            .values()
+            .forEach(v -> attributeSet.add(v.toString()));
+        return attributeSet;
+    }
 
     @Bean
     public CasServerProfileRegistrar casServerProfileRegistrar() {
         return new CasServerProfileRegistrar(casProperties, this.builtClients.getIfAvailable(),
-            discoveryProfileAvailableAttributes());
+            discoveryProfileAvailableAttributes(), authenticationEventExecutionPlan.getObject());
     }
 
     @Bean
@@ -75,13 +88,5 @@ public class CasDiscoveryProfileConfiguration {
             jdbcProps.getQuery().forEach(jdbc -> attributes.addAll(transformAttributes(jdbc.getPrincipalAttributeList())));
         }
         return attributes;
-    }
-
-    private static Set<String> transformAttributes(final List<String> attributes) {
-        val attributeSet = new LinkedHashSet<String>(attributes.size());
-        CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributes)
-            .values()
-            .forEach(v -> attributeSet.add(v.toString()));
-        return attributeSet;
     }
 }

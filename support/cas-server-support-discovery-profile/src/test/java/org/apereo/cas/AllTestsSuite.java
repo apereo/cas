@@ -1,4 +1,7 @@
-package org.apereo.cas.discovery;
+package org.apereo.cas;
+
+import org.apereo.cas.discovery.CasServerDiscoveryProfileEndpointTests;
+import org.apereo.cas.discovery.CasServerProfileRegistrarTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;

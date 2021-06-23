@@ -73,7 +73,7 @@ public abstract class AbstractCasEndpointTests {
     protected ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("authenticationEventExecutionPlan")
+    @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
     protected AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
     
     @TestConfiguration
