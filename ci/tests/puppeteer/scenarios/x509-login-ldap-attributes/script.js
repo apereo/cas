@@ -52,7 +52,8 @@ const request = require('request');
     assert(header === "Log In Successful")
 
     const body = await cas.innerText(page, '#content div p');
-    assert(body.includes("CN=mmoayyed, OU=dev, O=bft, L=mt, C=world"))
+    assert(body.includes("CN=CAS User, OU=IT, O=Some Company, Inc., L=Fairfax, ST=Virginia, C=US"))
+    assert(body.includes("casuserx509"))
 
     await browser.close();
 })();

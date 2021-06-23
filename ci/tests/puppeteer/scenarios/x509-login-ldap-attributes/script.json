@@ -8,11 +8,6 @@
 
     "--logging.level.org.apereo.cas=debug",
 
-    "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
-    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
-    "--cas.authn.attribute-repository.stub.attributes.givenName=ApereoCAS",
-    "--cas.authn.attribute-repository.stub.attributes.sn=CAS",
-
     "--cas.authn.x509.principal.active-attribute-repository-ids=ADCERT",
 
     "--cas.authn.attribute-repository.ldap[1].id=ADCERT",
@@ -24,15 +19,15 @@
     "--cas.authn.attribute-repository.ldap[0].subtree-search=true",
     "--cas.authn.attribute-repository.ldap[0].base-dn=dc=cas,dc=example,dc=org",
     "--cas.authn.attribute-repository.ldap[0].follow-referrals=false",
-    "--cas.authn.attribute-repository.ldap[0].search-filter=(userPrincipalName={x509subjectUPN})",
+    "--cas.authn.attribute-repository.ldap[0].search-filter=(mail={x509Rfc822Email})",
     "--cas.authn.attribute-repository.ldap[0].min-pool-size=0",
     "--cas.authn.attribute-repository.ldap[0].trust-store=file:/tmp/adcacerts.jks",
     "--cas.authn.attribute-repository.ldap[0].trust-store-type=JKS",
     "--cas.authn.attribute-repository.ldap[0].trust-store-password=changeit",
     "--cas.authn.attribute-repository.ldap[0].hostname-verifier=ANY",
 
-    "--cas.authn.x509.principal-type=SUBJECT_ALT_NAME",
-    "--cas.authn.x509.principal.principalAttribute=x509subjectUPN,subjectDn",
+    "--cas.authn.x509.principal-type=RFC822_EMAIL",
+    "--cas.authn.x509.principal.principalAttribute=x509Rfc822Email,subjectDn",
     "--cas.authn.x509.subjectAltName.alternatePrincipalAttribute=subjectDn",
     "--cas.authn.x509.subject-alt-name.alternate-principal-attribute=subjectDn"
   ],
