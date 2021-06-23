@@ -246,6 +246,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
     }
 
     @Bean
+    @ConditionalOnSaml2ClientConfigured
     public DelegatedSaml2ClientMetadataController delegatedSaml2ClientMetadataController() {
         return new DelegatedSaml2ClientMetadataController(builtClients.getObject(), configBean.getObject());
     }
