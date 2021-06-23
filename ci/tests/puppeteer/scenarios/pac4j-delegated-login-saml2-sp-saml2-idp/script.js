@@ -3,6 +3,8 @@ const assert = require('assert');
 const fs = require('fs');
 const cas = require('../../cas.js');
 const path = require('path');
+const axios = require('axios');
+const https = require('https');
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -10,6 +12,28 @@ const path = require('path');
 
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(1000)
+
+    const instance = axios.create({
+        httpsAgent: new https.Agent({
+            rejectUnauthorized: false
+        })
+    });
+    instance
+        .get('https://localhost:8443/cas/sp/metadata')
+        .then(res => {
+            assert(res.status === 200)
+        })
+        .catch(error => {
+            throw 'Operation failed to capture metadata';
+        })
+    instance
+        .get('https://localhost:8443/cas/sp/idp/metadata')
+        .then(res => {
+            assert(res.status === 200)
+        })
+        .catch(error => {
+            throw 'Operation failed to capture metadata';
+        })
 
     console.log("Upload CAS SP metadata...")
     await page.goto("https://samltest.id/upload.php");
