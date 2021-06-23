@@ -33,6 +33,7 @@ import org.apereo.cas.support.saml.web.idp.profile.SamlIdPInitiatedProfileHandle
 import org.apereo.cas.support.saml.web.idp.profile.SamlIdPProfileHandlerControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.artifact.CasSamlArtifactMapTests;
 import org.apereo.cas.support.saml.web.idp.profile.artifact.SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests;
+import org.apereo.cas.support.saml.web.idp.profile.builders.assertion.SamlProfileSamlAssertionBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlProfileSamlAttributeStatementBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlProfileSamlRegisteredServiceAttributeBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.authn.DefaultAuthnContextClassRefBuilderTests;
@@ -138,6 +139,7 @@ import org.junit.platform.suite.api.Suite;
     SamlTemplatesVelocityEngineTests.class,
     SamlIdPDelegatedAuthenticationConfigurationTests.class,
     SamlIdPAuthenticationContextTests.class,
+    SamlProfileSamlAssertionBuilderTests.class,
     SamlProfileSamlAuthNStatementBuilderTests.class,
     MetadataRegistrationAuthorityAttributeReleasePolicyTests.class,
     SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests.class,

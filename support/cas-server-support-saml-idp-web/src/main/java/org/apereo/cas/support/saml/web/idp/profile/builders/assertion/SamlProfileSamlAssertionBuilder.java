@@ -3,17 +3,24 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.assertion;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnStatement;
@@ -21,12 +28,14 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Statement;
 import org.opensaml.saml.saml2.core.Subject;
+import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * This is {@link SamlProfileSamlAssertionBuilder}.
@@ -48,7 +57,9 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
 
     private final SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder;
 
-    private final transient SamlIdPObjectSigner samlObjectSigner;
+    private final SamlIdPObjectSigner samlObjectSigner;
+
+    private final MetadataResolver samlIdPMetadataResolver;
 
     public SamlProfileSamlAssertionBuilder(final OpenSamlConfigBean configBean,
                                            final CasConfigurationProperties casProperties,
@@ -56,7 +67,8 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
                                            final SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder,
                                            final SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder,
                                            final SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder,
-                                           final SamlIdPObjectSigner samlObjectSigner) {
+                                           final SamlIdPObjectSigner samlObjectSigner,
+                                           final MetadataResolver samlIdPMetadataResolver) {
         super(configBean);
         this.samlProfileSamlAuthNStatementBuilder = samlProfileSamlAuthNStatementBuilder;
         this.samlProfileSamlAttributeStatementBuilder = samlProfileSamlAttributeStatementBuilder;
@@ -64,6 +76,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
         this.samlProfileSamlConditionsBuilder = samlProfileSamlConditionsBuilder;
         this.samlObjectSigner = samlObjectSigner;
         this.casProperties = casProperties;
+        this.samlIdPMetadataResolver = samlIdPMetadataResolver;
     }
 
     @Override
@@ -87,12 +100,19 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
             statements.add(attrStatement);
         }
 
+        val issuerId = FunctionUtils.doIf(StringUtils.isNotBlank(service.getIssuerEntityId()),
+            service::getIssuerEntityId,
+            Unchecked.supplier(() -> {
+                val criteriaSet = new CriteriaSet(
+                    new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME),
+                    new SamlIdPSamlRegisteredServiceCriterion(service));
+                LOGGER.trace("Resolving entity id from SAML2 IdP metadata to determine issuer for [{}]", service.getName());
+                val entityDescriptor = Objects.requireNonNull(samlIdPMetadataResolver.resolveSingle(criteriaSet));
+                return entityDescriptor.getEntityID();
+            }))
+            .get();
+
         val id = '_' + String.valueOf(RandomUtils.nextLong());
-
-        val issuerId = StringUtils.isBlank(service.getIssuerEntityId())
-            ? casProperties.getAuthn().getSamlIdp().getCore().getEntityId()
-            : service.getIssuerEntityId();
-
         val assertion = newAssertion(statements, issuerId, ZonedDateTime.now(ZoneOffset.UTC), id);
         assertion.setSubject(this.samlProfileSamlSubjectBuilder.build(authnRequest, request, response,
             casAssertion, service, adaptor, binding, messageContext));
@@ -112,15 +132,15 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
      * @param adaptor      the adaptor
      * @param binding      the binding
      * @param authnRequest the authn request
-     * @throws SamlException the saml exception
      */
+    @SneakyThrows
     protected void signAssertion(final Assertion assertion,
                                  final HttpServletRequest request,
                                  final HttpServletResponse response,
                                  final SamlRegisteredService service,
                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                  final String binding,
-                                 final RequestAbstractType authnRequest) throws SamlException {
+                                 final RequestAbstractType authnRequest) {
 
         if (service.isSignAssertions()) {
             LOGGER.debug("SAML registered service [{}] requires assertions to be signed", adaptor.getEntityId());

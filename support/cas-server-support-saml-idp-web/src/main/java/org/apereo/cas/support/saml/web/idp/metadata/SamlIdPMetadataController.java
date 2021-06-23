@@ -60,8 +60,7 @@ public class SamlIdPMetadataController implements InitializingBean {
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_IDP_METADATA)
     public void generateMetadataForIdp(
-        @RequestParam(value = "service", required = false)
-        final String service,
+        @RequestParam(value = "service", required = false) final String service,
         final HttpServletResponse response) throws IOException {
 
         val registeredService = getRegisteredServiceIfAny(service);

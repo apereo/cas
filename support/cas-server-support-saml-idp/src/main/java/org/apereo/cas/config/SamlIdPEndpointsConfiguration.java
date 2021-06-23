@@ -162,7 +162,7 @@ public class SamlIdPEndpointsConfiguration {
     private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
-    @Qualifier("samlObjectSigner")
+    @Qualifier(SamlIdPObjectSigner.DEFAULT_BEAN_NAME)
     private ObjectProvider<SamlIdPObjectSigner> samlObjectSigner;
 
     @Autowired

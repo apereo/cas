@@ -11,6 +11,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.Saml
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.support.CookieUtils;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +46,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
     }
 
     @Override
+    @SneakyThrows
     public Response buildResponse(final Assertion assertion,
                                   final Object casAssertion,
                                   final RequestAbstractType authnRequest,
