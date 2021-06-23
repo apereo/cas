@@ -233,7 +233,7 @@ public class SamlIdPConfiguration {
             .build();
         return new SamlProfileSamlSoap11ResponseBuilder(context);
     }
-    
+
     @ConditionalOnMissingBean(name = "samlProfileSamlArtifactFaultResponseBuilder")
     @Bean
     @RefreshScope
@@ -282,7 +282,6 @@ public class SamlIdPConfiguration {
     public SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder() {
         return new SamlProfileSamlAssertionBuilder(
             openSamlConfigBean.getObject(),
-            casProperties,
             samlProfileSamlAuthNStatementBuilder(),
             samlProfileSamlAttributeStatementBuilder(),
             samlProfileSamlSubjectBuilder(),
