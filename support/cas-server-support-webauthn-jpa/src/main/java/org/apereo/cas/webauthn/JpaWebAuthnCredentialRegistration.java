@@ -27,6 +27,11 @@ import java.io.Serializable;
 @Entity
 @Accessors(chain = true)
 public class JpaWebAuthnCredentialRegistration implements Serializable {
+    /**
+     * JPA entity name.
+     */
+    static final String ENTITY_NAME = "JpaWebAuthnCredentialRegistration";
+
     private static final long serialVersionUID = 1505204109111619367L;
 
     @Id
