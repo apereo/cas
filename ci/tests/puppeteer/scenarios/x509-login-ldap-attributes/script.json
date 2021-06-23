@@ -1,0 +1,42 @@
+{
+  "dependencies": "x509-webflow,ldap",
+  "properties": [
+    "--server.ssl.trust-store=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/truststore.jks",
+    "--server.ssl.trust-store-password=changeit",
+    "--server.ssl.key-store-type=PKCS12",
+    "--server.ssl.client-auth=want",
+
+    "--logging.level.org.apereo.cas=debug",
+
+    "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+    "--cas.authn.attribute-repository.stub.attributes.givenName=ApereoCAS",
+    "--cas.authn.attribute-repository.stub.attributes.sn=CAS",
+
+    "--cas.authn.x509.principal.active-attribute-repository-ids=ADCERT",
+
+    "--cas.authn.attribute-repository.ldap[1].id=ADCERT",
+    "--cas.authn.attribute-repository.ldap[1].attributes.sAMAccountName=uid",
+    "--cas.authn.attribute-repository.ldap[0].bind-dn=Administrator@cas.example.org",
+    "--cas.authn.attribute-repository.ldap[0].bind-credential=M3110nM3110n#1",
+    "--cas.authn.attribute-repository.ldap[0].ldap-url=ldap://localhost:10390",
+    "--cas.authn.attribute-repository.ldap[0].use-start-tls=false",
+    "--cas.authn.attribute-repository.ldap[0].subtree-search=true",
+    "--cas.authn.attribute-repository.ldap[0].base-dn=dc=cas,dc=example,dc=org",
+    "--cas.authn.attribute-repository.ldap[0].follow-referrals=false",
+    "--cas.authn.attribute-repository.ldap[0].search-filter=(userPrincipalName={x509subjectUPN})",
+    "--cas.authn.attribute-repository.ldap[0].min-pool-size=0",
+    "--cas.authn.attribute-repository.ldap[0].trust-store=file:/tmp/adcacerts.jks",
+    "--cas.authn.attribute-repository.ldap[0].trust-store-type=JKS",
+    "--cas.authn.attribute-repository.ldap[0].trust-store-password=changeit",
+    "--cas.authn.attribute-repository.ldap[0].hostname-verifier=ANY",
+
+    "--cas.authn.x509.principal-type=SUBJECT_ALT_NAME",
+    "--cas.authn.x509.principal.principalAttribute=x509subjectUPN,subjectDn",
+    "--cas.authn.x509.subjectAltName.alternatePrincipalAttribute=subjectDn",
+    "--cas.authn.x509.subject-alt-name.alternate-principal-attribute=subjectDn"
+  ],
+  "trustStoreCertificateFile": "./ci/tests/puppeteer/scenarios/${SCENARIO}/cert.pem",
+  "trustStorePrivateKeyFile": "./ci/tests/puppeteer/scenarios/${SCENARIO}/key.pem",
+  "initScript": "${PWD}/ci/tests/ldap/run-ad-server.sh"
+}
