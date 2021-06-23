@@ -30,7 +30,7 @@ jobs:
 #          access_token: ${{ github.token }}
 
   initialize:
-    needs: [cancel-previous-runs]
+#    needs: [cancel-previous-runs]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
