@@ -138,6 +138,21 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         assertNull(servicesManager.findServiceBy(serviceFactory.createService(r.getServiceId())));
     }
 
+    @Test
+    public void verifySaveInRegistryLoadAndGetByService() throws InterruptedException {
+        val service = new RegexRegisteredService();
+        service.setId(2200);
+        service.setName(TEST);
+        service.setServiceId("https://test.edu.*");
+        assertFalse(isServiceInCache(null, 2200));
+        serviceRegistry.save(service);
+        servicesManager.load();
+        assertNotNull(servicesManager.findServiceBy(2200));
+        assertTrue(isServiceInCache(null, 2200));
+        Thread.sleep(3000);
+        assertNotNull(servicesManager.findServiceBy(serviceFactory.createService("https://test.edu/path/")));
+    }
+
     protected ServicesManager getServicesManagerInstance() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
