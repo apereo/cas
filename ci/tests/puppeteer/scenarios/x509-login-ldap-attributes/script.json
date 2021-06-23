@@ -26,6 +26,7 @@
     "--cas.authn.attribute-repository.ldap[0].trust-store-password=changeit",
     "--cas.authn.attribute-repository.ldap[0].hostname-verifier=ANY",
 
+    "--cas.authn.x509.reg-ex-trusted-issuer-dn-pattern=.*",
     "--cas.authn.x509.max-path-length-allow-unspecified=true",
     "--cas.authn.x509.principal-type=RFC822_EMAIL",
     "--cas.authn.x509.principal.principalAttribute=x509Rfc822Email,subjectDn",
