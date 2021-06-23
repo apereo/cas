@@ -31,7 +31,7 @@
     "--cas.authn.x509.subjectAltName.alternatePrincipalAttribute=subjectDn",
     "--cas.authn.x509.subject-alt-name.alternate-principal-attribute=subjectDn"
   ],
-  "trustStoreCertificateFile": "./ci/tests/puppeteer/scenarios/${SCENARIO}/cert.pem",
-  "trustStorePrivateKeyFile": "./ci/tests/puppeteer/scenarios/${SCENARIO}/key.pem",
+  "trustStoreCertificateFile": "./ci/tests/puppeteer/scenarios/x509-login-ldap-attributes/cert.pem",
+  "trustStorePrivateKeyFile": "./ci/tests/puppeteer/scenarios/x509-login-ldap-attributes/key.pem",
   "initScript": "${PWD}/ci/tests/ldap/run-ad-server.sh"
 }
