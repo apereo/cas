@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SamlIdPObjectSignerTests extends BaseSamlIdPConfigurationTests {
 
     @Test
-    public void findsSigningCredential() {
+    public void findsSigningCredential() throws Exception {
         val samlRegisteredService = getSamlRegisteredServiceFor(true, true, false, "https://cassp.example.org");
         samlRegisteredService.setId(1000);
         samlRegisteredService.setName("ObjectSignerTest");

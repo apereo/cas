@@ -25,6 +25,7 @@ import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
 import org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver;
+import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
@@ -256,6 +257,9 @@ public class SamlIdPUtils {
         }
         if (object instanceof StatusResponseType) {
             return StatusResponseType.class.cast(object).getIssuer().getValue();
+        }
+        if (object instanceof Assertion) {
+            return Assertion.class.cast(object).getIssuer().getValue();
         }
         return null;
     }

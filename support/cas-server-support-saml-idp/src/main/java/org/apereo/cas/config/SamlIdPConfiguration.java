@@ -26,6 +26,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.authn.AuthnContextCl
 import org.apereo.cas.support.saml.web.idp.profile.builders.authn.DefaultAuthnContextClassRefBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.authn.SamlProfileSamlAuthNStatementBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.conditions.SamlProfileSamlConditionsBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.DefaultSamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSamlNameIdBuilder;
@@ -286,7 +287,8 @@ public class SamlIdPConfiguration {
             samlProfileSamlAttributeStatementBuilder(),
             samlProfileSamlSubjectBuilder(),
             samlProfileSamlConditionsBuilder(),
-            samlObjectSigner());
+            samlObjectSigner(),
+            casSamlIdPMetadataResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlAuthNStatementBuilder")
@@ -315,11 +317,11 @@ public class SamlIdPConfiguration {
         return new SamlIdPObjectEncrypter(casProperties.getAuthn().getSamlIdp());
     }
 
-    @ConditionalOnMissingBean(name = "samlObjectSigner")
+    @ConditionalOnMissingBean(name = SamlIdPObjectSigner.DEFAULT_BEAN_NAME)
     @Bean
     @RefreshScope
     public SamlIdPObjectSigner samlObjectSigner() {
-        return new SamlIdPObjectSigner(
+        return new DefaultSamlIdPObjectSigner(
             casSamlIdPMetadataResolver.getObject(),
             casProperties,
             samlIdPMetadataLocator.getObject());
