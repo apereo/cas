@@ -55,7 +55,7 @@ public class CasCoreAuthenticationConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("authenticationEventExecutionPlan")
+    @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
     private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
 
     @Bean
@@ -92,7 +92,7 @@ public class CasCoreAuthenticationConfiguration {
         return new DefaultAuthenticationTransactionFactory();
     }
     
-    @ConditionalOnMissingBean(name = "authenticationEventExecutionPlan")
+    @ConditionalOnMissingBean(name = AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
     @Autowired
     @Bean
     @RefreshScope

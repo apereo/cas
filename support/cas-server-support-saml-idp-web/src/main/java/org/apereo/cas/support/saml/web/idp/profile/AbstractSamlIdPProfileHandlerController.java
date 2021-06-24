@@ -10,14 +10,12 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContext;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.DigestUtils;
-import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -58,7 +56,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
@@ -679,24 +676,16 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      *
      * @param request  the request
      * @param response the response
-     * @param pair     the pair
+     * @param context  the pair
      * @throws Exception the exception
      */
     @Synchronized
     protected void storeAuthenticationRequest(final HttpServletRequest request, final HttpServletResponse response,
-                                              final Pair<? extends SignableSAMLObject, MessageContext> pair) throws Exception {
-        val authnRequest = (AuthnRequest) pair.getLeft();
-        val messageContext = pair.getValue();
-        try (val writer = SamlUtils.transformSamlObject(configurationContext.getOpenSamlConfigBean(), authnRequest)) {
-            val samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
-            val sessionStore = configurationContext.getSessionStore();
-            val context = new JEEContext(request, response);
-            sessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
-            sessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, SAMLBindingSupport.getRelayState(messageContext));
+                                              final Pair<? extends SignableSAMLObject, MessageContext> context) throws Exception {
+        val webContext = new JEEContext(request, response);
+        SamlIdPUtils.storeSamlRequest(webContext, configurationContext.getOpenSamlConfigBean(),
+            configurationContext.getSessionStore(), context);
 
-            val authnContext = SamlIdPAuthenticationContext.from(messageContext).encode();
-            sessionStore.set(context, MessageContext.class.getName(), authnContext);
-        }
     }
 
     /**

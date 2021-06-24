@@ -13,7 +13,8 @@ import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -75,10 +76,11 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      * Handle and produce a list of services from registry.
      *
      * @return collection of services
+     * @throws Exception the exception
      */
-    @SneakyThrows
+    @Operation(summary = "Handle and produce a list of services from registry")
     @GetMapping(produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<String> handle() {
+    public ResponseEntity<String> handle() throws Exception {
         return ResponseEntity.ok(MAPPER.writeValueAsString(servicesManager.load()));
     }
 
@@ -87,10 +89,11 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      *
      * @param id the id
      * @return the registered service
+     * @throws Exception the exception
      */
-    @SneakyThrows
+    @Operation(summary = "Fetch service either by numeric id or service id pattern", parameters = {@Parameter(name = "id")})
     @GetMapping(path = "{id}", produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<String> fetchService(@PathVariable final String id) {
+    public ResponseEntity<String> fetchService(@PathVariable final String id) throws Exception {
         val service = NumberUtils.isDigits(id)
             ? servicesManager.findServiceBy(Long.parseLong(id))
             : servicesManager.findServiceBy(webApplicationServiceFactory.createService(id));
@@ -105,10 +108,11 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      *
      * @param id the id
      * @return the registered service
+     * @throws Exception the exception
      */
-    @SneakyThrows
+    @Operation(summary = "Delete registered service by id", parameters = {@Parameter(name = "id")})
     @DeleteMapping(path = "{id}", produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<String> deleteService(@PathVariable final String id) {
+    public ResponseEntity<String> deleteService(@PathVariable final String id) throws Exception {
         if (NumberUtils.isDigits(id)) {
             val svc = servicesManager.findServiceBy(Long.parseLong(id));
             if (svc != null) {
@@ -136,6 +140,7 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
         ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml",
         MediaType.APPLICATION_JSON_VALUE
     })
+    @Operation(summary = "Import registered services as a JSON document or a zip file")
     public ResponseEntity<RegisteredService> importService(final HttpServletRequest request) throws Exception {
         val contentType = request.getContentType();
         if (StringUtils.equalsAnyIgnoreCase(MediaType.APPLICATION_OCTET_STREAM_VALUE, contentType)) {
@@ -151,6 +156,7 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      */
     @GetMapping(path = "/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
+    @Operation(summary = "Export registered services as a zip file")
     public ResponseEntity<Resource> export() {
         val serializer = new RegisteredServiceJsonSerializer();
         val resource = CompressionUtils.toZipFile(servicesManager.stream(),

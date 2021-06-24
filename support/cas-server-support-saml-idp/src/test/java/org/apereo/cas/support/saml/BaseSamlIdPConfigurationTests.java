@@ -139,7 +139,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected VelocityEngine velocityEngine;
 
     @Autowired
-    @Qualifier("samlObjectSigner")
+    @Qualifier(SamlIdPObjectSigner.DEFAULT_BEAN_NAME)
     protected SamlIdPObjectSigner samlIdPObjectSigner;
 
     @Autowired

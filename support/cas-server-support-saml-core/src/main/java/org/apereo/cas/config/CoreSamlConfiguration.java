@@ -13,6 +13,7 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.velocity.runtime.resource.loader.FileResourceLoader;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
+import org.apache.xml.security.Init;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallerFactory;
@@ -40,6 +41,14 @@ import java.util.Properties;
 public class CoreSamlConfiguration {
 
     private static final int POOL_SIZE = 200;
+
+    /**
+     * Make that SAML2 responses is not built with linebreaks.
+     */
+    static {
+        System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
+        Init.init();
+    }
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -91,7 +100,7 @@ public class CoreSamlConfiguration {
         pool.setBuilderFeatures(features);
         return pool;
     }
-    
+
     @Bean(name = "shibboleth.BuilderFactory")
     @DependsOn(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     public XMLObjectBuilderFactory builderFactory() {

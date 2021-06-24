@@ -11,6 +11,8 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -93,6 +95,13 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
      * @return the map
      */
     @PostMapping
+    @Operation(summary = "Fetch temporary credentials from Amazon Security Token Service", parameters = {
+        @Parameter(name = "duration"),
+        @Parameter(name = "tokenCode"),
+        @Parameter(name = "profile"),
+        @Parameter(name = "serialNumber"),
+        @Parameter(name = "roleArn")
+    })
     public ResponseEntity<String> fetchCredentials(@RequestParam(required = false, defaultValue = "PT1H") final String duration,
                                                    @RequestParam(value = "token", required = false) final String tokenCode,
                                                    @RequestParam(required = false) final String profile,

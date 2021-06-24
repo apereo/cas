@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.TokenTicketBuilder;
 import org.apereo.cas.token.authentication.principal.TokenWebApplicationServiceResponseBuilder;
+import org.apereo.cas.web.UrlValidator;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +32,15 @@ public class TokenTicketsConfiguration {
     @Qualifier("tokenTicketBuilder")
     private ObjectProvider<TokenTicketBuilder> tokenTicketBuilder;
 
+
+    @Autowired
+    @Qualifier("urlValidator")
+    private ObjectProvider<UrlValidator> urlValidator;
+
     @Bean
     public ResponseBuilder webApplicationServiceResponseBuilder() {
-        return new TokenWebApplicationServiceResponseBuilder(servicesManager.getObject(), tokenTicketBuilder.getObject());
+        return new TokenWebApplicationServiceResponseBuilder(servicesManager.getObject(),
+            tokenTicketBuilder.getObject(), urlValidator.getObject());
     }
 
 }
