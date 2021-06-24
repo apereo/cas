@@ -17,7 +17,7 @@ const assert = require('assert');
     const isNotHidden = await page.$eval('.caps-warn', (elem) => {
         return elem.style.display !== 'none';
     });
-    console.log(isNotHidden)
+    console.log(`Caps warning is NOT hidden: ${isNotHidden ? 'TRUE' : 'FALSE'}`);
     assert(isNotHidden === true);
 
 
