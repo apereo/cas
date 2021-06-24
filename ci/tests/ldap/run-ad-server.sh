@@ -129,6 +129,10 @@ docker exec samba bash -c "samba-tool user setpassword --filter=cn=changepasswor
 docker exec samba bash -c "samba-tool user create mustchangepassword $DEFAULT_TESTUSER_PASSWORD --must-change-at-next-login --use-username-as-cn"
 docker exec samba bash -c "samba-tool user setpassword --filter=cn=mustchangepassword --newpassword=$DEFAULT_TESTUSER_PASSWORD --must-change-at-next-login"
 
+docker exec samba bash -c "samba-tool user create casuserx509 $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn --mail-address=1234567890@college.edu"
+docker exec samba bash -c "samba-tool user setpassword --filter=cn=casuserx509 --newpassword=$DEFAULT_TESTUSER_PASSWORD"
+
+
 docker exec samba bash -c "samba-tool user setexpiry --days 0 expireduser"
 docker exec samba bash -c "samba-tool user disable disableduser"
 docker exec samba bash -c "samba-tool user list"
