@@ -206,8 +206,8 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         val setCookieHeaders = response.getHeaders("Set-Cookie");
         response.setHeader("Set-Cookie", value);
         setCookieHeaders.stream()
-                .filter(header -> !header.startsWith(cookie.getName() + "="))
-                .forEach(header -> response.addHeader("Set-Cookie", header));
+            .filter(header -> !header.startsWith(cookie.getName() + "="))
+            .forEach(header -> response.addHeader("Set-Cookie", header));
         return cookie;
     }
 }
