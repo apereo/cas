@@ -81,9 +81,9 @@ public class CookieRetrievingCookieGeneratorTests {
         var headersAfter = response.getHeaders("Set-Cookie");
         assertEquals(2, headersAfter.size());
         val headerValuesAfter = response.getHeaderValues("Set-Cookie").stream()
-                .map(String.class::cast)
-                .map(header -> Arrays.stream(header.split(";")).iterator().next())
-                .collect(Collectors.toSet());
+            .map(String.class::cast)
+            .map(header -> Arrays.stream(header.split(";")).iterator().next())
+            .collect(Collectors.toSet());
         assertEquals(headerValuesAfter, new HashSet<>(Arrays.asList(cookie.getName() + "=some-value", "OtherCookie=other-cookie-value")));
     }
 
