@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreEventsConfiguration.class,
     RefreshAutoConfiguration.class
 })
-@Tag("Simple")
+@Tag("Events")
 public class DefaultCasEventListenerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

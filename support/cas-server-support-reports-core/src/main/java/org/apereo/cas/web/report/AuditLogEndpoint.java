@@ -5,6 +5,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
@@ -47,6 +49,7 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
      */
     @ReadOperation
     @SuppressWarnings("JavaUtilDate")
+    @Operation(summary = "Provide a report of the audit log using a given interval", parameters = {@Parameter(name = "interval")})
     public Set<AuditActionContext> getAuditLog(@Selector final String interval) {
         if (StringUtils.isBlank(interval)) {
             val sinceDate = LocalDate.now(ZoneId.systemDefault())
@@ -75,6 +78,13 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
      * @return - the audit log
      */
     @WriteOperation(produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "Provide a report of the audit log", parameters = {
+        @Parameter(name = "interval"),
+        @Parameter(name = "actionPerformed"),
+        @Parameter(name = "clientIpAddress"),
+        @Parameter(name = "principal"),
+        @Parameter(name = "resourceOperatedUpon")
+    })
     public Set<AuditActionContext> getAuditLog(@Nullable final String interval,
                                                @Nullable final String actionPerformed,
                                                @Nullable final String clientIpAddress,

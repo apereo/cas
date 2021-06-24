@@ -54,16 +54,25 @@ to generate an overlay project template for this release.
 </div>
 
 ## New & Noteworthy
+ 
+## SAML2 Identity Provider w/ Delegation
 
+[SAML2 authentication requests](../authentication/Configuring-SAML2-Authentication.html) can now be translated and adapted, to 
+contribute to the properties of the authentication request sent off to a delegated SAML2 identity provider. For example, a 
+requested SAML2 authentication context class can now be passed to an external SAML2 identity provider using
+[delegated authentication](../integration/Delegate-Authentication-SAML.html).
 
 ## Other Stuff
        
 - Service registry lookup enforcements to ensure located service definition types can be supported by the enabled protocols.
-- Evaluation of authentication policies is now able to consider the entire authentication history.
-- Person Directory principal resolution now can receive the credential type and id as query attributes.
+- Evaluation of [authentication policies](../authentication/Configuring-Authentication-Policy.html) is now 
+  able to consider the entire authentication history.
+- Person Directory [principal resolution](../authentication/Configuring-Authentication-PrincipalResolution.html) now 
+  can receive the credential type and id as query attributes.
 - JDBC attribute repositories are able to specify query attributes for advanced `WHERE` clauses in query builders.
-- Execution order of authentication throttlers for OAuth and OpenID Connect protocols is now restored and corrected.
-- Scheduled jobs can now be activated conditionally using a regular expression matches against the running CAS node hostname.
+- Execution order of [authentication throttlers](../authentication/Configuring-Authentication-Throttling.html) for 
+  OAuth and OpenID Connect protocols is now restored and corrected.
+- Scheduled jobs can now be activated conditionally using a regular expression matched against the running CAS node hostname.
 
 ## Library Upgrades
 
@@ -74,3 +83,5 @@ to generate an overlay project template for this release.
 - Hazelcast Kubernetes
 - Azure DocumentDb
 - Amazon SDK
+- Lettuce
+- Spring Session
