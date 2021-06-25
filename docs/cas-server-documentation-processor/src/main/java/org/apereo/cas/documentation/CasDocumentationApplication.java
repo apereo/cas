@@ -7,8 +7,8 @@ import org.apereo.cas.metadata.ConfigurationMetadataCatalogQuery;
 import org.apereo.cas.services.RegisteredServiceProperty;
 
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.TypeAnnotationsScanner;
@@ -330,13 +330,20 @@ public class CasDocumentationApplication {
     }
 
     private static void collectActuatorEndpointMethodMetadata(final Method method, final Map<Object, Object> map) {
-        var signature = method.toGenericString();
-        signature = signature.substring(signature.indexOf(method.getDeclaringClass().getSimpleName()));
-        
-        map.put("signature", signature);
-        map.put("returnType", method.getReturnType().getSimpleName());
-
         var clazz = method.getDeclaringClass();
+
+        var signature = method.toGenericString();
+        signature = signature.substring(signature.lastIndexOf(method.getDeclaringClass().getSimpleName()));
+        signature = RegExUtils.removePattern(signature, "throws.+");
+        map.put("signature", signature);
+        map.put("owner", clazz.getName());
+        
+        var returnType = method.getReturnType().getSimpleName();
+        if (!StringUtils.equalsAnyIgnoreCase(returnType, "void")) {
+            map.put("returnType", returnType);
+        }
+        map.put("casEndpoint", isCasEndpoint(clazz));
+
         if (clazz.getAnnotation(Deprecated.class) != null) {
             map.put("deprecated", true);
         }
@@ -347,7 +354,7 @@ public class CasDocumentationApplication {
         var parameters = new ArrayList<Map<?, ?>>();
 
         if (method.getParameters().length == 0) {
-            if (clazz.getPackageName().startsWith(CentralAuthenticationService.NAMESPACE)) {
+            if (isCasEndpoint(clazz)) {
                 var operation = method.getAnnotation(Operation.class);
                 if (operation == null) {
                     throw new RuntimeException("Unable to locate @Operation annotation for " + method.toGenericString()
@@ -372,7 +379,7 @@ public class CasDocumentationApplication {
                 var selector = param.getAnnotation(Selector.class) != null;
                 paramData.put("selector", selector || param.getAnnotation(PathVariable.class) != null);
 
-                if (clazz.getPackageName().startsWith(CentralAuthenticationService.NAMESPACE)) {
+                if (isCasEndpoint(clazz)) {
                     var operation = method.getAnnotation(Operation.class);
                     if (operation == null) {
                         throw new RuntimeException("Unable to locate @Operation annotation for " + method.toGenericString()
@@ -418,6 +425,10 @@ public class CasDocumentationApplication {
             map.put("parameters", parameters);
         }
 
+    }
+
+    private static boolean isCasEndpoint(final Class<?> clazz) {
+        return clazz.getPackageName().startsWith(CentralAuthenticationService.NAMESPACE);
     }
 
     private static void exportThemeProperties(final String projectRootDirectory, final File dataPath) throws Exception {
