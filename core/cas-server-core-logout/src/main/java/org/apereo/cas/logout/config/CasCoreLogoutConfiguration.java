@@ -56,10 +56,6 @@ public class CasCoreLogoutConfiguration {
     private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
 
     @Autowired
-    @Qualifier("singleLogoutServiceLogoutUrlBuilder")
-    private ObjectProvider<SingleLogoutServiceLogoutUrlBuilder> singleLogoutServiceLogoutUrlBuilder;
-
-    @Autowired
     @Qualifier("ticketRegistry")
     private ObjectProvider<TicketRegistry> ticketRegistry;
 
@@ -156,7 +152,7 @@ public class CasCoreLogoutConfiguration {
     @ConditionalOnMissingBean(name = "defaultLogoutRedirectionStrategy")
     public LogoutRedirectionStrategy defaultLogoutRedirectionStrategy() {
         return new DefaultLogoutRedirectionStrategy(webApplicationServiceFactory.getObject(),
-            casProperties.getLogout(), singleLogoutServiceLogoutUrlBuilder.getObject());
+            casProperties.getLogout(), singleLogoutServiceLogoutUrlBuilder());
     }
 
     @Bean
