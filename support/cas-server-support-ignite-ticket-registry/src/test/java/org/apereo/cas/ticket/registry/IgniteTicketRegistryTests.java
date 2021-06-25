@@ -108,6 +108,8 @@ public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
         registry.addTicket(ticketGrantingTicket);
         val deletedTicketCount = registry.deleteTicket(ticketGrantingTicket.getId());
 
+        registry.destroy();
+
         assertEquals(1, deletedTicketCount);
     }
 }
