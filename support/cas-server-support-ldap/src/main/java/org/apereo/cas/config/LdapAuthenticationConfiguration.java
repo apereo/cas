@@ -83,75 +83,6 @@ public class LdapAuthenticationConfiguration {
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
-    private static PasswordPolicyContext createLdapPasswordPolicyConfiguration(final LdapPasswordPolicyProperties passwordPolicy,
-                                                                               final Authenticator authenticator,
-                                                                               final Multimap<String, Object> attributes) {
-        val cfg = new PasswordPolicyContext(passwordPolicy);
-        val handlers = new HashSet<>();
-
-        val customPolicyClass = passwordPolicy.getCustomPolicyClass();
-        if (StringUtils.isNotBlank(customPolicyClass)) {
-            try {
-                LOGGER.debug("Configuration indicates use of a custom password policy handler [{}]", customPolicyClass);
-                val clazz = (Class<AuthenticationResponseHandler>) Class.forName(customPolicyClass);
-                handlers.add(clazz.getDeclaredConstructor().newInstance());
-            } catch (final Exception e) {
-                LoggingUtils.warn(LOGGER, "Unable to construct an instance of the password policy handler", e);
-            }
-        }
-        LOGGER.debug("Password policy authentication response handler is set to accommodate directory type: [{}]", passwordPolicy.getType());
-        switch (passwordPolicy.getType()) {
-            case AD:
-                handlers.add(new ActiveDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
-                Arrays.stream(ActiveDirectoryAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
-                    LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
-                    attributes.put(a, a);
-                });
-                break;
-            case FreeIPA:
-                Arrays.stream(FreeIPAAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
-                    LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
-                    attributes.put(a, a);
-                });
-                handlers.add(new FreeIPAAuthenticationResponseHandler(
-                    Period.ofDays(cfg.getPasswordWarningNumberOfDays()), cfg.getLoginFailures()));
-                break;
-            case EDirectory:
-                Arrays.stream(EDirectoryAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
-                    LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
-                    attributes.put(a, a);
-                });
-                handlers.add(new EDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
-                break;
-            default:
-                handlers.add(new PasswordPolicyAuthenticationResponseHandler());
-                handlers.add(new PasswordExpirationAuthenticationResponseHandler());
-                break;
-        }
-        authenticator.setResponseHandlers(handlers.toArray(AuthenticationResponseHandler[]::new));
-
-        LOGGER.debug("LDAP authentication response handlers configured are: [{}]", handlers);
-
-        if (!passwordPolicy.isAccountStateHandlingEnabled()) {
-            cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>(0));
-            LOGGER.trace("Handling LDAP account states is disabled via CAS configuration");
-        } else if (StringUtils.isNotBlank(passwordPolicy.getWarningAttributeName()) && StringUtils.isNotBlank(passwordPolicy.getWarningAttributeValue())) {
-            val accountHandler = new OptionalWarningLdapAccountStateHandler();
-            accountHandler.setDisplayWarningOnMatch(passwordPolicy.isDisplayWarningOnMatch());
-            accountHandler.setWarnAttributeName(passwordPolicy.getWarningAttributeName());
-            accountHandler.setWarningAttributeValue(passwordPolicy.getWarningAttributeValue());
-            accountHandler.setAttributesToErrorMap(passwordPolicy.getPolicyAttributes());
-            cfg.setAccountStateHandler(accountHandler);
-            LOGGER.debug("Configuring an warning account state handler for LDAP authentication for warning attribute [{}] and value [{}]",
-                passwordPolicy.getWarningAttributeName(), passwordPolicy.getWarningAttributeValue());
-        } else {
-            val accountHandler = new DefaultLdapAccountStateHandler();
-            accountHandler.setAttributesToErrorMap(passwordPolicy.getPolicyAttributes());
-            cfg.setAccountStateHandler(accountHandler);
-            LOGGER.debug("Configuring the default account state handler for LDAP authentication");
-        }
-        return cfg;
-    }
 
     @ConditionalOnMissingBean(name = "ldapPrincipalFactory")
     @Bean
@@ -162,16 +93,7 @@ public class LdapAuthenticationConfiguration {
 
     @Bean
     public SetFactoryBean ldapAuthenticationHandlerSetFactoryBean() {
-        val bean = new SetFactoryBean() {
-            @Override
-            protected void destroyInstance(final Set set) {
-                set.forEach(Unchecked.consumer(handler ->
-                    ((DisposableBean) handler).destroy()
-                ));
-            }
-        };
-        bean.setSourceSet(new HashSet<>());
-        return bean;
+        return LdapUtils.createLdapAuthenticationFactoryBean();
     }
 
     @Bean
@@ -196,82 +118,14 @@ public class LdapAuthenticationConfiguration {
                 return true;
             })
             .forEach(l -> {
-                val multiMapAttributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(l.getPrincipalAttributeList());
-                LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", multiMapAttributes, l.getLdapUrl());
-
-                LOGGER.debug("Creating LDAP authenticator for [{}] and baseDn [{}]", l.getLdapUrl(), l.getBaseDn());
-                val authenticator = LdapUtils.newLdaptiveAuthenticator(l);
-                LOGGER.debug("Ldap authenticator configured with return attributes [{}] for [{}] and baseDn [{}]",
-                    multiMapAttributes.keySet(), l.getLdapUrl(), l.getBaseDn());
-
-                LOGGER.debug("Creating LDAP password policy handling strategy for [{}]", l.getLdapUrl());
-                val strategy = createLdapPasswordPolicyHandlingStrategy(l);
-
-                LOGGER.debug("Creating LDAP authentication handler for [{}]", l.getLdapUrl());
-                val handler = new LdapAuthenticationHandler(l.getName(),
-                    servicesManager.getObject(), ldapPrincipalFactory(),
-                    l.getOrder(), authenticator, strategy);
-                handler.setCollectDnAttribute(l.isCollectDnAttribute());
-
-                if (!l.getAdditionalAttributes().isEmpty()) {
-                    val additional = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(l.getAdditionalAttributes());
-                    multiMapAttributes.putAll(additional);
-                }
-                if (StringUtils.isNotBlank(l.getPrincipalDnAttributeName())) {
-                    handler.setPrincipalDnAttributeName(l.getPrincipalDnAttributeName());
-                }
-                handler.setAllowMultiplePrincipalAttributeValues(l.isAllowMultiplePrincipalAttributeValues());
-                handler.setAllowMissingPrincipalAttributeValue(l.isAllowMissingPrincipalAttributeValue());
-                handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(l.getPasswordEncoder(), applicationContext));
-                handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(l.getPrincipalTransformation()));
-
-                if (StringUtils.isNotBlank(l.getCredentialCriteria())) {
-                    LOGGER.trace("Ldap authentication for [{}] is filtering credentials by [{}]",
-                        l.getLdapUrl(), l.getCredentialCriteria());
-                    handler.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(l.getCredentialCriteria()));
-                }
-
-                if (StringUtils.isBlank(l.getPrincipalAttributeId())) {
-                    LOGGER.trace("No principal id attribute is found for LDAP authentication via [{}]", l.getLdapUrl());
-                } else {
-                    handler.setPrincipalIdAttribute(l.getPrincipalAttributeId());
-                    LOGGER.trace("Using principal id attribute [{}] for LDAP authentication via [{}]", l.getPrincipalAttributeId(), l.getLdapUrl());
-                }
-
-                val passwordPolicy = l.getPasswordPolicy();
-                if (passwordPolicy.isEnabled()) {
-                    LOGGER.trace("Password policy is enabled for [{}]. Constructing password policy configuration", l.getLdapUrl());
-                    val cfg = createLdapPasswordPolicyConfiguration(passwordPolicy, authenticator, multiMapAttributes);
-                    handler.setPasswordPolicyConfiguration(cfg);
-                }
-
-                val attributes = CollectionUtils.wrap(multiMapAttributes);
-                handler.setPrincipalAttributeMap(attributes);
-
-                LOGGER.debug("Initializing LDAP authentication handler for [{}]", l.getLdapUrl());
-                handler.initialize();
+                val handler = LdapUtils.createLdapAuthenticationHandler(l, applicationContext,
+                    servicesManager.getObject(), ldapPrincipalFactory());
                 handlers.add(handler);
             });
-        ((Set) ldapAuthenticationHandlerSetFactoryBean.getObject()).addAll(handlers);
+        ldapAuthenticationHandlerSetFactoryBean.getObject().addAll(handlers);
         return handlers;
     }
 
-    private AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyContext>
-        createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l) {
-        if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
-            LOGGER.debug("Created LDAP password policy handling strategy based on blocked authentication result codes");
-            return new RejectResultCodeLdapPasswordPolicyHandlingStrategy();
-        }
-
-        val location = l.getPasswordPolicy().getGroovy().getLocation();
-        if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.GROOVY && location != null) {
-            LOGGER.debug("Created LDAP password policy handling strategy based on Groovy script [{}]", location);
-            return new GroovyPasswordPolicyHandlingStrategy(location, applicationContext);
-        }
-
-        LOGGER.debug("Created default LDAP password policy handling strategy");
-        return new DefaultPasswordPolicyHandlingStrategy();
-    }
 
     @ConditionalOnMissingBean(name = "ldapAuthenticationEventExecutionPlanConfigurer")
     @Bean
