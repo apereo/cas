@@ -54,8 +54,10 @@ to generate an overlay project template for this release.
 </div>
 
 ## New & Noteworthy
- 
-## SAML2 Identity Provider w/ Delegation
+
+The following items are new improvements and enhancements presented in this release.
+
+### SAML2 Identity Provider w/ Delegation
 
 [SAML2 authentication requests](../authentication/Configuring-SAML2-Authentication.html) can now be translated and adapted, to 
 contribute to the properties of the authentication request sent off to a delegated SAML2 identity provider. For example, a 

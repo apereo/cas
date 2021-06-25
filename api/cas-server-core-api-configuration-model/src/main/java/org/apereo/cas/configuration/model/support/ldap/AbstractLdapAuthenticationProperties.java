@@ -29,9 +29,9 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
      * <li>{@code AD} - Users authenticate with {@code sAMAccountName}. </li>
      *
      * <li>{@code AUTHENTICATED} - Manager bind/search type of authentication.
-     * If {@code }principalAttributePassword}
+     * If {@code} principalAttributePassword}
      * is empty then a user simple bind is done to validate credentials. Otherwise the given
-     * attribute is compared with the given {@code rincipalAttributePassword} using
+     * attribute is compared with the given {@code principalAttributePassword} using
      * the {@code SHA} encrypted value of it.</li>
      *
      * <li>{@code ANONYMOUS}: Similar semantics as {@code AUTHENTICATED} except no {@code bindDn}
