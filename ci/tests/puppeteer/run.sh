@@ -97,9 +97,8 @@ if [[ "$DEBUG" == "debug" ]]; then
   echo -e "Enabling debugger on port $DEBUG_PORT"
   runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
 fi
-echo PWD is $PWD
 echo -e "\nLaunching CAS with properties [${properties}], run arguments [${runArgs}] and dependencies [${dependencies}]"
-java ${runArgs} -jar "$PORTABLE_PWD"/cas.war ${properties} \
+java ${runArgs} -jar "$PWD"/cas.war ${properties} \
   --spring.profiles.active=none --server.ssl.key-store="$keystore" &
 pid=$!
 echo -e "\nWaiting for CAS under process id ${pid}"
