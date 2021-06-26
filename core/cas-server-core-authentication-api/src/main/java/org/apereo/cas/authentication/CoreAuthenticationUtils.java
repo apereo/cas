@@ -378,11 +378,7 @@ public class CoreAuthenticationUtils {
             .principalNameTransformer(formUserId -> formUserId)
             .useCurrentPrincipalId(Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isUseExistingPrincipalId))
             .resolveAttributes(Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isAttributeResolutionEnabled))
-            .activeAttributeRepositoryIdentifiers(Arrays.stream(personDirectory)
-                .filter(p -> StringUtils.isNotBlank(p.getActiveAttributeRepositoryIds()))
-                .map(p -> org.springframework.util.StringUtils.commaDelimitedListToSet(p.getActiveAttributeRepositoryIds()))
-                .flatMap(Set::stream)
-                .collect(Collectors.toSet()))
+            .activeAttributeRepositoryIdentifiers(org.springframework.util.StringUtils.commaDelimitedListToSet(personDirectory[0].getActiveAttributeRepositoryIds()))
             .build();
 
         val ctor = resolverClass.getDeclaredConstructor(PrincipalResolutionContext.class);
