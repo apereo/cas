@@ -22,7 +22,7 @@
 
     "--cas.authn.attribute-repository.core.aggregation=CASCADE",
     "--cas.authn.attribute-repository.core.merger=MULTIVALUED",
-    "--cas.authn.attribute-repository.core.default-attributes-to-release=",
+    "--cas.authn.attribute-repository.core.default-attributes-to-release=someattribute,anotherattribute,ldap-dn,uid,user-account-control,x509Rfc822Email,x509subjectUPN",
 
     "--cas.authn.ldap[0].base-dn=dc=cas,dc=example,dc=org",
     "--cas.authn.ldap[0].bind-credential=M3110nM3110n#1",

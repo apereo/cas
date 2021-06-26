@@ -14,6 +14,8 @@ const request = require('request');
     assert(headerldap === "Log In Successful")
     const attributesldap = await cas.innerText(pageldap, '#attribute-tab-0 table#attributesTable tbody');
     assert(attributesldap.includes("aburr"))
+    assert(attributesldap.includes("someattribute"))
+    assert(attributesldap.includes("ldap-dn"))
     await browserldap.close();
 
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -67,6 +69,8 @@ const request = require('request');
 
     const attributes = await cas.innerText(page, '#attribute-tab-0 table#attributesTable tbody');
     assert(attributes.includes("casuserx509"))
+    assert(attributes.includes("someattribute"))
+    assert(attributes.includes("user-account-control"))
 
     await browser.close();
 })();
