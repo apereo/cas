@@ -54,6 +54,7 @@ import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.ProtocolEndpointConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -188,6 +189,10 @@ public class SamlIdPEndpointsConfiguration {
     @Autowired
     @Qualifier("samlProfileSamlArtifactFaultResponseBuilder")
     private ObjectProvider<SamlProfileObjectBuilder<Response>> samlProfileSamlArtifactFaultResponseBuilder;
+
+    @Autowired
+    @Qualifier("authenticationAttributeReleasePolicy")
+    private ObjectProvider<AuthenticationAttributeReleasePolicy> authenticationAttributeReleasePolicy;
 
     @Autowired
     @Qualifier("samlProfileSamlAttributeQueryResponseBuilder")
@@ -426,7 +431,8 @@ public class SamlIdPEndpointsConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "samlIdPTicketValidator")
     public TicketValidator samlIdPTicketValidator() {
-        return new InternalTicketValidator(centralAuthenticationService.getObject(), samlIdPServiceFactory.getObject());
+        return new InternalTicketValidator(centralAuthenticationService.getObject(),
+            samlIdPServiceFactory.getObject(), authenticationAttributeReleasePolicy.getObject(), servicesManager.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlLogoutBuilder")
