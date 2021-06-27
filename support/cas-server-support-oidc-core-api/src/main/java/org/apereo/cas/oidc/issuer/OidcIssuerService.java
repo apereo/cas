@@ -14,6 +14,16 @@ import java.util.Optional;
 public interface OidcIssuerService {
 
     /**
+     * Immutable issuer service that always returns a static issuer.
+     *
+     * @param issuer the issuer
+     * @return the oidc issuer service
+     */
+    static OidcIssuerService immutable(final String issuer) {
+        return registeredService -> issuer;
+    }
+
+    /**
      * Determine issuer.
      *
      * @param registeredService the registered service
