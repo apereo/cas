@@ -67,7 +67,7 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
      * @return the access token
      */
     @ReadOperation
-    @Operation(summary = "Get single token by id", parameters = {@Parameter(name = "token")})
+    @Operation(summary = "Get single token by id", parameters = {@Parameter(name = "token", required = true)})
     public Ticket getToken(@Selector final String token) {
         try {
             val ticketId = extractAccessTokenFrom(token);
@@ -84,7 +84,7 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
      * @param ticketId the ticket id
      */
     @DeleteOperation
-    @Operation(summary = "Delete token by id", parameters = {@Parameter(name = "ticketId")})
+    @Operation(summary = "Delete token by id", parameters = {@Parameter(name = "ticketId", required = true)})
     public void deleteToken(@Selector final String ticketId) {
         val ticket = getToken(ticketId);
         if (ticket != null) {

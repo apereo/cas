@@ -39,7 +39,7 @@ public class CasResolveAttributesReportEndpoint extends BaseCasActuatorEndpoint 
      * @return the map
      */
     @ReadOperation
-    @Operation(summary = "Resolve principal attributes for user", parameters = {@Parameter(name = "uid")})
+    @Operation(summary = "Resolve principal attributes for user", parameters = {@Parameter(name = "uid", required = true)})
     public Map<String, Object> resolvePrincipalAttributes(@Selector final String uid) {
         val p = defaultPrincipalResolver.resolve(new BasicIdentifiableCredential(uid));
         val map = new HashMap<String, Object>();

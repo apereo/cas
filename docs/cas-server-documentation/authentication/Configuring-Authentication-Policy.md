@@ -24,13 +24,11 @@ Typical use cases of authentication policies may include:
 2. Ensure a specific class of failure is not evident in the authentication chain's execution log.
 3. Ensure that all authentication schemes in the chain are executed successfully, for the entire authentication event to be considered successful.
 
-### Administrative Endpoints
+### Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                  | Description
-|---------------------------|------------------------------------------------
-| `authenticationPolicies`  | A `GET` request presents the collection of registered authentication policies. An individual authentication policy can be queried via `GET` by its name using a selector path (i.e. `authenticationPolicies/{name}`).
+
+{% include actuators.html endpoints="authenticationPolicies" casModule="cas-server-support-reports" %}
 
 ## Policies
 

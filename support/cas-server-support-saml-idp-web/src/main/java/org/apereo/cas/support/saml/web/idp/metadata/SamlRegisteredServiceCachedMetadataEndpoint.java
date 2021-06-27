@@ -91,7 +91,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
      */
     @ReadOperation
     @Operation(summary = "Get SAML2 cached metadata", parameters = {
-        @Parameter(name = "serviceId"),
+        @Parameter(name = "serviceId", required = true),
         @Parameter(name = "entityId")
     })
     public Map<String, Object> getCachedMetadataObject(final String serviceId, @Nullable final String entityId) {

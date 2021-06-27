@@ -11,64 +11,12 @@ category: Monitoring & Statistics
 Actuator endpoints used to monitor and diagnose the internal configuration of the CAS server are typically
 exposed over the endpoint `/actuator`.
 
-## Spring Boot Endpoints
-
-The following endpoints are secured and available by 
-[Spring Boot actuators](http://docs.spring.io/spring-boot/docs/current/reference/html/):
-
-| Endpoint                  | Description
-|---------------------------|-------------------------------------------------------------------------------------
-| `beans`                   | Displays all CAS application context **internal** Spring beans.
-| `conditions`              | Shows the conditions that were evaluated on configuration and auto-configuration classes and the reasons.
-| `configprops`             | List of **internal** configuration properties.
-| `startup`                 | Analyze application startup events, beans and load and optionally report events to Java Flight Recorder.
-| `threaddump`              | Produces a thread dump for the running CAS server.
-| `env`                     | Produces a collection of all application properties.
-| `health`                  | Reports back general health status of the system, produced by various monitors.
-| `info`                    | CAS version information and other system traits.
-| `metrics`                 | Runtime metrics and stats.
-| `loggers`                 | Logger configuration and levels.
-| `httptrace`               | Displays HTTP trace information (by default, the last 100 HTTP request-response exchanges).
-| `mappings`                | Describes how requests are mapped and handled by CAS.
-| `scheduledtasks`          | Displays the scheduled tasks in CAS.
-| `shutdown`                | Shut down the application via a `POST`. Disabled by default.
-| `restart`                 | Restart the application via a `POST`. Disabled by default.
-| `refresh`                 | Refresh the application configuration via a `POST` to let components reload and recognize new values.
-| `heapdump`                | Returns a GZip compressed hprof heap dump file.
-| `jolokia`                 | Exposes JMX beans over HTTP when Jolokia is configured and included in CAS.
-| `logfile`                 | Returns the log file content if `logging.file` or `logging.path` are set with support for HTTP `Range` header.
-| `prometheus`              | Exposes metrics in a format that can be scraped by a Prometheus server.
-
-
-Actuator endpoints provided by Spring Boot can also be visually managed and monitored
-via the [Spring Boot Administration Server](Configuring-Monitoring-Administration.html).
 
 ## Metrics
 
 Metrics allow to gain insight into the running CAS software, and provide 
 ways to measure the behavior of critical components. 
 See [this guide](Configuring-Metrics.html) for more info.
-
-### JAAS Authentication Security
-
-{% include casproperties.html properties="cas.monitor.endpoints.jaas" %}
-
-### LDAP Authentication Security
-
-{% include casproperties.html properties="cas.monitor.endpoints.ldap" %}
-
-### JDBC Authentication Security
-
-{% include casproperties.html properties="cas.monitor.endpoints.jdbc" %}
-
-
-### Endpoint Security
-
-Note that any individual endpoint must be first enabled before any security
-can be applied. The security of all endpoints is controlled using the following settings:
-
-{% include casproperties.html 
-properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpoint" %}
 
 ## Distributed Tracing
 

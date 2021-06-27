@@ -55,7 +55,7 @@ public class U2FRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      * @return the collection
      */
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get all registered devices for the user", parameters = {@Parameter(name = "username")})
+    @Operation(summary = "Get all registered devices for the user", parameters = {@Parameter(name = "username", required = true)})
     public Collection<? extends U2FDeviceRegistration> fetchBy(@Selector final String username) {
         return u2fDeviceRepository.getRegisteredDevices(username)
             .stream()
@@ -69,7 +69,7 @@ public class U2FRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      * @param username the username
      */
     @DeleteOperation
-    @Operation(summary = "Delete all registered devices", parameters = {@Parameter(name = "username")})
+    @Operation(summary = "Delete all registered devices", parameters = {@Parameter(name = "username", required = true)})
     public void delete(@Selector final String username) {
         val registeredDevices = new ArrayList<>(u2fDeviceRepository.getRegisteredDevices(username));
         registeredDevices.forEach(u2fDeviceRepository::deleteRegisteredDevice);
@@ -82,7 +82,8 @@ public class U2FRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      * @param id       the id
      */
     @DeleteOperation
-    @Operation(summary = "Delete registered device for username and device", parameters = {@Parameter(name = "username"), @Parameter(name = "id")})
+    @Operation(summary = "Delete registered device for username and device",
+        parameters = {@Parameter(name = "username", required = true), @Parameter(name = "id", required = true)})
     public void delete(@Selector final String username, @Selector final Long id) {
         val registeredDevices = new ArrayList<>(u2fDeviceRepository.getRegisteredDevices(username));
         registeredDevices

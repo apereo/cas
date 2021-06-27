@@ -14,13 +14,11 @@ Allow CAS to act as an OAuth authentication provider. Please [review the specifi
 OAuth/OpenID server support for CAS. If you would like to have CAS act as an OAuth/OpenID client communicating with
 other providers (such as Google, Facebook, etc), <a href="../integration/Delegate-Authentication.html">see this page</a>.</p></div>
 
-## Administrative Endpoints
-
+## Actuator Endpoints
+   
 The following endpoints are provided by CAS:
 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `oauthTokens`            | Manage and control [OAuth2 access tokens](OAuth-Authentication.html). A `GET` operation produces a list of all access/refresh tokens. A `DELETE` operation will delete the provided access/refresh token provided in form of a parameter selector. (i.e. `/{token}`). A `GET` operation produces with a parameter selector of `/{token}` will list the details of the fetched access/refresh token.
+{% include actuators.html endpoints="oauthTokens" %}
 
 ## Configuration
 
@@ -184,7 +182,7 @@ also the option to generate JWTs as access tokens on a per-service basis:
 
 Signing and encryption keys may also be defined on a per-service basis, or globally via CAS settings.
 
-{% include registeredserviceproperties.html groups="JWT_ACCESS_TOKENS"%}
+{% include registeredserviceproperties.html groups="JWT_ACCESS_TOKENS" %}
 
 ## OAuth User Profile Structure
 

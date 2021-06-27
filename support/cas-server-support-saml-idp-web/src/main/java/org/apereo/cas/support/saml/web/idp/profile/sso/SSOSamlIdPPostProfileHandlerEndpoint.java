@@ -101,9 +101,9 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
     @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseBody
     @Operation(summary = "Produce SAML2 response entity", parameters = {
-        @Parameter(name = "username"),
-        @Parameter(name = "password"),
-        @Parameter(name = SamlProtocolConstants.PARAMETER_ENTITY_ID),
+        @Parameter(name = "username", required = true),
+        @Parameter(name = "password", required = true),
+        @Parameter(name = SamlProtocolConstants.PARAMETER_ENTITY_ID, required = true),
         @Parameter(name = "encrypt")
     })
     public ResponseEntity<Object> produceGet(final HttpServletRequest request, final HttpServletResponse response) {
@@ -126,9 +126,9 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
     @PostMapping(produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseBody
     @Operation(summary = "Produce SAML2 response entity", parameters = {
-        @Parameter(name = "username"),
-        @Parameter(name = "password"),
-        @Parameter(name = SamlProtocolConstants.PARAMETER_ENTITY_ID),
+        @Parameter(name = "username", required = true),
+        @Parameter(name = "password", required = true),
+        @Parameter(name = SamlProtocolConstants.PARAMETER_ENTITY_ID, required = true),
         @Parameter(name = "encrypt")
     })
     public ResponseEntity<Object> producePost(final HttpServletRequest request,

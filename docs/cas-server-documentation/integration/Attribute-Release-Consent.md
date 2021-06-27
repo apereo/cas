@@ -22,15 +22,11 @@ Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-webflow" %}
 
-## Administrative Endpoints
-
+## Actuator Endpoints
+      
 The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `attributeConsent`       | Manage and control [attribute consent decisions](Attribute-Release-Consent.html). A `GET` operation produces a list of all consent decisions. A `DELETE` operation with a record key id will attempt to remove and revoke the registered device (i.e. `attributeConsent/{principal}/{id}`).
-| `attributeConsent/export`       | Invoked via `GET` to export all consent decisions as a downloadable zip archive.
-| `attributeConsent/import`       | Invoked via `POST` to import a single consent decision provided in the request body.
+
+{% include actuators.html endpoints="attributeConsent" %}
 
 ## Attribute Selection
 
