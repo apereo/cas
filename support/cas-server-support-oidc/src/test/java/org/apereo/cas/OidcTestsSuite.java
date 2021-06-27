@@ -31,6 +31,7 @@ import org.apereo.cas.oidc.profile.OidcUserProfileDataCreatorTests;
 import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionServiceTests;
 import org.apereo.cas.oidc.profile.OidcUserProfileViewRendererDefaultTests;
 import org.apereo.cas.oidc.profile.OidcUserProfileViewRendererFlatTests;
+import org.apereo.cas.oidc.scopes.DefaultOidcAttributeReleasePolicyFactoryTests;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListenerTests;
 import org.apereo.cas.oidc.services.OidcServicesManagerRegisteredServiceLocatorTests;
 import org.apereo.cas.oidc.slo.OidcSingleLogoutMessageCreatorTests;
@@ -139,6 +140,7 @@ import org.junit.platform.suite.api.Suite;
     OidcRegisteredServiceJwtAccessTokenCipherExecutorTests.class,
     OidcClientConfigurationAccessTokenAuthenticatorTests.class,
     OidcDefaultIssuerServiceTests.class,
+    DefaultOidcAttributeReleasePolicyFactoryTests.class,
     OidcSingleLogoutMessageCreatorTests.class,
     OidcSingleLogoutServiceMessageHandlerTests.class
 })

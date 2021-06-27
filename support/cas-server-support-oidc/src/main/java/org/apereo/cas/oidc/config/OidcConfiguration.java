@@ -22,7 +22,6 @@ import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcClientSecretJwtAuthenticator;
 import org.apereo.cas.oidc.authn.OidcPrivateKeyJwtAuthenticator;
-import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.claims.mapping.OidcDefaultAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
@@ -46,6 +45,8 @@ import org.apereo.cas.oidc.profile.OidcProfileScopeToAttributesFilter;
 import org.apereo.cas.oidc.profile.OidcUserProfileDataCreator;
 import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionService;
 import org.apereo.cas.oidc.profile.OidcUserProfileViewRenderer;
+import org.apereo.cas.oidc.scopes.DefaultOidcAttributeReleasePolicyFactory;
+import org.apereo.cas.oidc.scopes.OidcAttributeReleasePolicyFactory;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
 import org.apereo.cas.oidc.services.OidcServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.oidc.slo.OidcSingleLogoutMessageCreator;
@@ -114,7 +115,6 @@ import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.token.JwtBuilder;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.http.HttpClient;
@@ -268,7 +268,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Autowired
     @Qualifier("oauthSecConfig")
     private ObjectProvider<Config> oauthSecConfig;
-    
+
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
     private ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator;
@@ -438,14 +438,20 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     @RefreshScope
     public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter() {
-        return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory(),
-            casProperties, userDefinedScopeBasedAttributeReleasePolicies());
+        return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory(), casProperties, oidcAttributeReleasePolicyFactory());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "oidcServiceRegistryListener")
     public ServiceRegistryListener oidcServiceRegistryListener() {
-        return new OidcServiceRegistryListener(userDefinedScopeBasedAttributeReleasePolicies());
+        return new OidcServiceRegistryListener(oidcAttributeReleasePolicyFactory());
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcAttributeReleasePolicyFactory")
+    public OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory() {
+        return new DefaultOidcAttributeReleasePolicyFactory(casProperties);
     }
 
     @Bean
@@ -713,16 +719,6 @@ public class OidcConfiguration implements WebMvcConfigurer {
             servicesManager.getObject(),
             oauthDistributedSessionStore.getObject(),
             oauthRequestValidators.getObject());
-    }
-
-    @RefreshScope
-    @Bean
-    public Collection<OidcCustomScopeAttributeReleasePolicy> userDefinedScopeBasedAttributeReleasePolicies() {
-        val oidc = casProperties.getAuthn().getOidc();
-        return oidc.getCore().getUserDefinedScopes().entrySet()
-            .stream()
-            .map(k -> new OidcCustomScopeAttributeReleasePolicy(k.getKey(), CollectionUtils.wrapList(k.getValue().split(","))))
-            .collect(Collectors.toSet());
     }
 
     @Bean
