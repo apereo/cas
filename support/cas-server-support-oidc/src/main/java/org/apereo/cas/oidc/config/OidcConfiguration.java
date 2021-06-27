@@ -37,8 +37,8 @@ import org.apereo.cas.oidc.issuer.OidcDefaultIssuerService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoader;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
+import org.apereo.cas.oidc.jwks.OidcRegisteredServiceJsonWebKeystoreCacheLoader;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheExpirationPolicy;
-import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheLoader;
 import org.apereo.cas.oidc.jwks.generator.OidcDefaultJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.generator.OidcRestfulJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.profile.OidcProfileScopeToAttributesFilter;
@@ -683,7 +683,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     @ConditionalOnMissingBean(name = "oidcServiceJsonWebKeystoreCacheLoader")
     public CacheLoader<OAuthRegisteredService, Optional<PublicJsonWebKey>> oidcServiceJsonWebKeystoreCacheLoader() {
-        return new OidcServiceJsonWebKeystoreCacheLoader(applicationContext);
+        return new OidcRegisteredServiceJsonWebKeystoreCacheLoader(applicationContext);
     }
 
     @Bean
@@ -805,16 +805,14 @@ public class OidcConfiguration implements WebMvcConfigurer {
     public RegisteredServiceCipherExecutor oidcRegisteredServiceJwtAccessTokenCipherExecutor() {
         val oidc = casProperties.getAuthn().getOidc();
         return new OidcRegisteredServiceJwtAccessTokenCipherExecutor(oidcDefaultJsonWebKeystoreCache(),
-            oidcServiceJsonWebKeystoreCache(),
-            oidc.getCore().getIssuer());
+            oidcServiceJsonWebKeystoreCache(), oidcIssuerService());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "oidcAccessTokenJwtCipherExecutor")
     public CipherExecutor<Serializable, String> oidcAccessTokenJwtCipherExecutor() {
-        val oidc = casProperties.getAuthn().getOidc();
-        return new OidcJwtAccessTokenCipherExecutor(oidcDefaultJsonWebKeystoreCache(), oidc.getCore().getIssuer());
+        return new OidcJwtAccessTokenCipherExecutor(oidcDefaultJsonWebKeystoreCache(), oidcIssuerService());
     }
 
     @Bean

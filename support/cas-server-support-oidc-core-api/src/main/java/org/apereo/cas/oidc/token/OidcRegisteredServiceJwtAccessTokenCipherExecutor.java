@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.token;
 
+import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -46,7 +47,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
     /**
      * OIDC issuer.
      */
-    protected final String issuer;
+    protected final OidcIssuerService oidcIssuerService;
 
     @Override
     public Optional<String> getSigningKey(final RegisteredService registeredService) {
@@ -57,9 +58,12 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
         if (result.isPresent()) {
             return result;
         }
-        val jwks = defaultJsonWebKeystoreCache.get(this.issuer);
+        val oidcRegisteredService = OidcRegisteredService.class.cast(registeredService);
+        val issuer = oidcIssuerService.determineIssuer(Optional.of(oidcRegisteredService));
+        LOGGER.trace("Using issuer [{}] to determine JWKS from default keystore cache", issuer);
+        val jwks = defaultJsonWebKeystoreCache.get(issuer);
         if (jwks.isEmpty()) {
-            LOGGER.warn("No signing key could be found for issuer " + this.issuer);
+            LOGGER.warn("No signing key could be found for issuer " + issuer);
             return Optional.empty();
         }
         return Optional.of(jwks.get().toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE));
@@ -114,8 +118,11 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
             @Override
             protected byte[] sign(final byte[] value) {
                 if (EncodingUtils.isJsonWebKey(signingKey)) {
-                    val jwks = defaultJsonWebKeystoreCache.get(
-                        OidcRegisteredServiceJwtAccessTokenCipherExecutor.this.issuer);
+                    val oidcRegisteredService = OidcRegisteredService.class.cast(registeredService);
+                    val issuer = oidcIssuerService.determineIssuer(Optional.of(oidcRegisteredService));
+                    LOGGER.trace("Using issuer [{}] to determine signing key from default keystore cache", issuer);
+
+                    val jwks = defaultJsonWebKeystoreCache.get(issuer);
                     if (Objects.requireNonNull(jwks).isPresent()) {
                         val jws = jwks.get();
                         val kid = jws.getKeyId();

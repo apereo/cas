@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
@@ -36,7 +37,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutorNoCacheTests exten
         val serviceCache = mock(LoadingCache.class);
         when(serviceCache.get(any())).thenReturn(Optional.empty());
 
-        val cipher = new OidcRegisteredServiceJwtAccessTokenCipherExecutor(defaultCache, serviceCache, id);
+        val cipher = new OidcRegisteredServiceJwtAccessTokenCipherExecutor(defaultCache, serviceCache, OidcIssuerService.immutable(id));
 
         val service = getOidcRegisteredService("whatever");
         assertTrue(cipher.getSigningKey(service).isEmpty());
@@ -61,7 +62,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutorNoCacheTests exten
         val serviceCache = mock(LoadingCache.class);
         when(serviceCache.get(any())).thenReturn(Optional.empty());
 
-        val cipher = new OidcRegisteredServiceJwtAccessTokenCipherExecutor(defaultCache, serviceCache, id);
+        val cipher = new OidcRegisteredServiceJwtAccessTokenCipherExecutor(defaultCache, serviceCache, OidcIssuerService.immutable(id));
 
         val service = getOidcRegisteredService("whatever");
 
