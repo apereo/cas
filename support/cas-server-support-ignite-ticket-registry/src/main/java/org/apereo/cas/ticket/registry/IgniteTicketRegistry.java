@@ -58,7 +58,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
     private Ignite ignite;
 
     @Override
-    public void addTicket(final Ticket ticket) {
+    public void addTicketInternal(final Ticket ticket) {
         val encodedTicket = encodeTicket(ticket);
         val metadata = this.ticketCatalog.find(ticket);
         val cache = getIgniteCacheFromMetadata(metadata);
