@@ -32,7 +32,7 @@ public class JmsTicketRegistry extends DefaultTicketRegistry {
     }
 
     @Override
-    public void addTicket(final Ticket ticket) {
+    public void addTicketInternal(final Ticket ticket) {
         super.addTicket(ticket);
         LOGGER.trace("Publishing add command for id [{}] and ticket [{}]", id, ticket.getId());
         ticketPublisher.publishMessageToQueue(new AddTicketMessageQueueCommand(id, ticket));

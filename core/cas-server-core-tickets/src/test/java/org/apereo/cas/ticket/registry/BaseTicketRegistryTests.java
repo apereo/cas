@@ -157,6 +157,16 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
+    public void verifyUnableToAddExpiredTicket() {
+        val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
+        val s1 = Stream.of(new TicketGrantingTicketImpl(ticketGrantingTicketId,
+            originalAuthn, AlwaysExpiresExpirationPolicy.INSTANCE));
+        ticketRegistry.addTicket(s1);
+        val tgt = ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        assertNull(tgt);
+    }
+
+    @RepeatedTest(2)
     public void verifyAddTicketToCache() {
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,

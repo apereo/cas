@@ -131,7 +131,7 @@ public class DistributedTicketRegistryTests {
         }
 
         @Override
-        public void addTicket(final Ticket ticket) {
+        public void addTicketInternal(final Ticket ticket) {
             this.tickets.put(ticket.getId(), ticket);
             updateTicket(ticket);
         }

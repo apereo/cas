@@ -34,7 +34,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public void addTicket(final Ticket ticketToAdd) {
+    public void addTicketInternal(final Ticket ticketToAdd) {
         val ticket = encodeTicket(ticketToAdd);
         val expirationPolicy = ticketToAdd.getExpirationPolicy();
         val idleTime = expirationPolicy.getTimeToIdle() <= 0

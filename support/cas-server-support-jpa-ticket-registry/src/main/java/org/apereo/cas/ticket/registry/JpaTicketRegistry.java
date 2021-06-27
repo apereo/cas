@@ -64,7 +64,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public void addTicket(final Ticket ticket) {
+    public void addTicketInternal(final Ticket ticket) {
         val encodeTicket = encodeTicket(ticket);
         val factory = getJpaTicketEntityFactory();
         val ticketEntity = factory.fromTicket(encodeTicket);
