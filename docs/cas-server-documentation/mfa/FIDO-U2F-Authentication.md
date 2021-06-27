@@ -43,13 +43,11 @@ clustered CAS deployment, it is best to keep the cleaner running on one designat
 CAS node only and turn it off on all others via CAS settings. Keeping the 
 cleaner running on all nodes may likely lead to severe performance and locking issues.</p></div>
 
-### Administrative Endpoints
+### Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                  | Description
-|---------------------------|------------------------------------------------
-| `u2fDevices`  | A `GET` request presents the collection of registered devices. Registered devices for a single user can be queried via `GET` by using a selector path (i.e. `u2fDevices/{username}`). Registered devices for a single user can be deleted via `DELETE` by using a selector path (i.e. `u2fDevices/{username}`). A single registered devices for a single user can be deleted via `DELETE` by using a selector path (i.e. `u2fDevices/{username}/{id}`).
+
+{% include actuators.html endpoints="u2fDevices" %}
 
 ### Default
 

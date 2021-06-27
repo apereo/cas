@@ -63,9 +63,9 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
     @ReadOperation
     @Operation(summary = "Get collection of released attributes for the user and application",
         parameters = {
-            @Parameter(name = "username"),
-            @Parameter(name = "password"),
-            @Parameter(name = "service")
+            @Parameter(name = "username", required = true),
+            @Parameter(name = "password", required = true),
+            @Parameter(name = "service", required = true)
         })
     public Map<String, Object> releasePrincipalAttributes(final String username,
                                                           final String password,
@@ -115,9 +115,9 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
     @WriteOperation
     @Operation(summary = "Get collection of released attributes for the user and application",
         parameters = {
-            @Parameter(name = "username"),
-            @Parameter(name = "password"),
-            @Parameter(name = "service")
+            @Parameter(name = "username", required = true),
+            @Parameter(name = "password", required = true),
+            @Parameter(name = "service", required = true)
         })
     public Map<String, Object> releaseAttributes(final String username,
                                                  final String password,

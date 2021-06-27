@@ -64,7 +64,8 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
      * @return the yubi key account
      */
     @GetMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get Yubikey account for username", parameters = {@Parameter(name = "username")})
+    @Operation(summary = "Get Yubikey account for username",
+        parameters = {@Parameter(name = "username", required = true)})
     public YubiKeyAccount get(@PathVariable final String username) {
         val result = registry.getAccount(username);
         return result.orElse(null);
@@ -87,7 +88,7 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
      * @param username the username
      */
     @DeleteMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Delete Yubikey account for username", parameters = {@Parameter(name = "username")})
+    @Operation(summary = "Delete Yubikey account for username", parameters = {@Parameter(name = "username", required = true)})
     public void delete(@PathVariable final String username) {
         registry.delete(username);
     }
@@ -132,7 +133,8 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
      * @return the http status
      * @throws Exception the exception
      */
-    @Operation(summary = "Import a Yubikey account as a JSON document")
+    @Operation(summary = "Import a Yubikey account as a JSON document",
+        parameters = {@Parameter(name = "request", required = true)})
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus importAccount(final HttpServletRequest request) throws Exception {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);

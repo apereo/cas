@@ -8,8 +8,10 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.reflections.Reflections;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
@@ -22,8 +24,8 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
-import org.springframework.lang.Nullable;
-import org.springframework.util.MultiValueMap;
+import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -32,8 +34,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -44,11 +44,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CasDocumentationApplication}.
@@ -106,7 +105,7 @@ public class CasDocumentationApplication {
         exportActuatorEndpoints(dataPath);
     }
 
-    private static void exportActuatorEndpoints(final File dataPath) {
+    private static void exportActuatorEndpoints(final File dataPath) throws Exception {
         var parentPath = new File(dataPath, "actuators");
         if (parentPath.exists()) {
             FileUtils.deleteQuietly(parentPath);
@@ -127,18 +126,21 @@ public class CasDocumentationApplication {
             var endpoint = clazz.getAnnotation(RestControllerEndpoint.class);
 
             var methods = findAnnotatedMethods(clazz, GetMapping.class);
-            methods.forEach(method -> {
+
+            methods.forEach(Unchecked.consumer(method -> {
                 var get = method.getAnnotation(GetMapping.class);
                 var map = new LinkedHashMap<>();
                 var paths = Arrays.stream(get.path())
                     .map(path -> StringUtils.isBlank(path) ? endpoint.id() : endpoint.id()
-                        + StringUtils.prependIfMissing(path, "/")).collect(Collectors.toSet());
+                        + StringUtils.prependIfMissing(path, "/"))
+                    .findFirst()
+                    .orElse(null);
                 map.put("method", RequestMethod.GET.name());
-                map.put("path", paths.isEmpty() ? endpoint.id() : paths);
+                map.put("path", paths == null ? endpoint.id() : paths);
                 map.put("name", endpoint.id());
                 map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
 
-                collectActuatorEndpointMethodMetadata(method, map);
+                collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
                 if (get.produces().length > 0) {
                     map.put("produces", get.produces());
                 }
@@ -155,20 +157,21 @@ public class CasDocumentationApplication {
                     map.put("value", get.value());
                 }
                 properties.add(map);
-            });
+            }));
 
             methods = findAnnotatedMethods(clazz, DeleteMapping.class);
-            methods.forEach(method -> {
+            methods.forEach(Unchecked.consumer(method -> {
                 var delete = method.getAnnotation(DeleteMapping.class);
                 var map = new LinkedHashMap<>();
                 var paths = Arrays.stream(delete.path())
                     .map(path -> StringUtils.isBlank(path) ? endpoint.id() : endpoint.id()
-                        + StringUtils.prependIfMissing(path, "/")).collect(Collectors.toSet());
+                        + StringUtils.prependIfMissing(path, "/"))
+                    .findFirst().orElse(null);
                 map.put("method", RequestMethod.DELETE.name());
-                map.put("path", paths.isEmpty() ? endpoint.id() : paths);
+                map.put("path", paths == null ? endpoint.id() : paths);
                 map.put("name", endpoint.id());
                 map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
-                collectActuatorEndpointMethodMetadata(method, map);
+                collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
                 if (delete.produces().length > 0) {
                     map.put("produces", delete.produces());
                 }
@@ -185,20 +188,21 @@ public class CasDocumentationApplication {
                     map.put("value", delete.value());
                 }
                 properties.add(map);
-            });
+            }));
 
             methods = findAnnotatedMethods(clazz, PostMapping.class);
-            methods.forEach(method -> {
+            methods.forEach(Unchecked.consumer(method -> {
                 var post = method.getAnnotation(PostMapping.class);
                 var map = new LinkedHashMap<>();
                 var paths = Arrays.stream(post.path())
                     .map(path -> StringUtils.isBlank(path) ? endpoint.id() : endpoint.id()
-                        + StringUtils.prependIfMissing(path, "/")).collect(Collectors.toSet());
+                        + StringUtils.prependIfMissing(path, "/"))
+                    .findFirst().orElse(null);
                 map.put("method", RequestMethod.POST.name());
-                map.put("path", paths.isEmpty() ? endpoint.id() : paths);
+                map.put("path", paths == null ? endpoint.id() : paths);
                 map.put("name", endpoint.id());
                 map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
-                collectActuatorEndpointMethodMetadata(method, map);
+                collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
                 if (post.produces().length > 0) {
                     map.put("produces", post.produces());
                 }
@@ -215,20 +219,21 @@ public class CasDocumentationApplication {
                     map.put("value", post.value());
                 }
                 properties.add(map);
-            });
+            }));
 
             methods = findAnnotatedMethods(clazz, PatchMapping.class);
-            methods.forEach(method -> {
+            methods.forEach(Unchecked.consumer(method -> {
                 var patch = method.getAnnotation(PatchMapping.class);
                 var map = new LinkedHashMap<>();
                 var paths = Arrays.stream(patch.path())
                     .map(path -> StringUtils.isBlank(path) ? endpoint.id() : endpoint.id()
-                        + StringUtils.prependIfMissing(path, "/")).collect(Collectors.toSet());
+                        + StringUtils.prependIfMissing(path, "/"))
+                    .findFirst().orElse(null);
                 map.put("method", RequestMethod.PATCH.name());
-                map.put("path", paths.isEmpty() ? endpoint.id() : paths);
+                map.put("path", paths == null ? endpoint.id() : paths);
                 map.put("name", endpoint.id());
                 map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
-                collectActuatorEndpointMethodMetadata(method, map);
+                collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
                 if (patch.produces().length > 0) {
                     map.put("produces", patch.produces());
                 }
@@ -245,20 +250,21 @@ public class CasDocumentationApplication {
                     map.put("value", patch.value());
                 }
                 properties.add(map);
-            });
+            }));
 
             methods = findAnnotatedMethods(clazz, PutMapping.class);
-            methods.forEach(method -> {
+            methods.forEach(Unchecked.consumer(method -> {
                 var put = method.getAnnotation(PutMapping.class);
                 var map = new LinkedHashMap<>();
                 var paths = Arrays.stream(put.path())
                     .map(path -> StringUtils.isBlank(path) ? endpoint.id() : endpoint.id()
-                        + StringUtils.prependIfMissing(path, "/")).collect(Collectors.toSet());
+                        + StringUtils.prependIfMissing(path, "/"))
+                    .findFirst().orElse(null);
                 map.put("method", RequestMethod.PUT.name());
-                map.put("path", paths.isEmpty() ? endpoint.id() : paths);
+                map.put("path", paths == null ? endpoint.id() : paths);
                 map.put("name", endpoint.id());
                 map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
-                collectActuatorEndpointMethodMetadata(method, map);
+                collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
                 if (put.produces().length > 0) {
                     map.put("produces", put.produces());
                 }
@@ -275,7 +281,7 @@ public class CasDocumentationApplication {
                     map.put("value", put.value());
                 }
                 properties.add(map);
-            });
+            }));
 
             if (!properties.isEmpty()) {
                 var destination = new File(parentPath, endpoint.id());
@@ -292,49 +298,49 @@ public class CasDocumentationApplication {
             var endpoint = clazz.getAnnotation(Endpoint.class);
 
             var methods = findAnnotatedMethods(clazz, ReadOperation.class);
-            methods.forEach(method -> {
+            methods.forEach(Unchecked.consumer(method -> {
                 var read = method.getAnnotation(ReadOperation.class);
                 var map = new LinkedHashMap<>();
                 map.put("method", RequestMethod.GET.name());
                 map.put("path", endpoint.id());
                 map.put("name", endpoint.id());
                 map.put("endpointType", Endpoint.class.getSimpleName());
-                collectActuatorEndpointMethodMetadata(method, map);
+                collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
                 if (read.produces().length > 0) {
                     map.put("produces", read.produces());
                 }
                 properties.add(map);
-            });
+            }));
 
             methods = findAnnotatedMethods(clazz, WriteOperation.class);
-            methods.forEach(method -> {
+            methods.forEach(Unchecked.consumer(method -> {
                 var write = method.getAnnotation(WriteOperation.class);
                 var map = new LinkedHashMap<>();
                 map.put("method", RequestMethod.POST.name());
                 map.put("path", endpoint.id());
                 map.put("name", endpoint.id());
                 map.put("endpointType", Endpoint.class.getSimpleName());
-                collectActuatorEndpointMethodMetadata(method, map);
+                collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
                 if (write.produces().length > 0) {
                     map.put("produces", write.produces());
                 }
                 properties.add(map);
-            });
+            }));
 
             methods = findAnnotatedMethods(clazz, DeleteOperation.class);
-            methods.forEach(method -> {
+            methods.forEach(Unchecked.consumer(method -> {
                 var delete = method.getAnnotation(DeleteOperation.class);
                 var map = new LinkedHashMap<>();
                 map.put("method", RequestMethod.DELETE.name());
                 map.put("path", endpoint.id());
                 map.put("name", endpoint.id());
                 map.put("endpointType", Endpoint.class.getSimpleName());
-                collectActuatorEndpointMethodMetadata(method, map);
+                collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
                 if (delete.produces().length > 0) {
                     map.put("produces", delete.produces());
                 }
                 properties.add(map);
-            });
+            }));
 
             if (!properties.isEmpty()) {
                 var destination = new File(parentPath, endpoint.id());
@@ -346,7 +352,12 @@ public class CasDocumentationApplication {
         });
     }
 
-    private static void collectActuatorEndpointMethodMetadata(final Method method, final Map<Object, Object> map) {
+    private static void collectActuatorEndpointMethodMetadata(final Method method,
+                                                              final Map<Object, Object> map,
+                                                              final String endpointId) throws Exception {
+        var actuatorProperties = new Properties();
+        actuatorProperties.load(new ClassPathResource("actuators.properties").getInputStream());
+
         var clazz = method.getDeclaringClass();
 
         var signature = method.toGenericString();
@@ -354,7 +365,7 @@ public class CasDocumentationApplication {
         signature = RegExUtils.removePattern(signature, "throws.+");
         map.put("signature", signature);
         map.put("owner", clazz.getName());
-        
+
         var returnType = method.getReturnType().getSimpleName();
         if (!StringUtils.equalsAnyIgnoreCase(returnType, "void")) {
             map.put("returnType", returnType);
@@ -368,76 +379,72 @@ public class CasDocumentationApplication {
             map.put("deprecated", true);
         }
 
-        var parameters = new ArrayList<Map<?, ?>>();
+        var paramNames = ArrayUtils.EMPTY_STRING_ARRAY;
+        try {
+            paramNames = new LocalVariableTableParameterNameDiscoverer().getParameterNames(method);
+        } catch (final Throwable e) {
+            LOGGER.error(e.getMessage());
+        }
 
-        if (method.getParameters().length == 0) {
-            if (isCasEndpoint(clazz)) {
-                var operation = method.getAnnotation(Operation.class);
-                if (operation == null) {
-                    throw new RuntimeException("Unable to locate @Operation annotation for " + method.toGenericString()
-                        + " in declaring class " + clazz.getName());
+        for (var i = 0; i < method.getParameters().length; i++) {
+            var param = method.getParameters()[i];
+            var selector = param.getAnnotation(Selector.class) != null;
+            selector = selector || param.getAnnotation(PathVariable.class) != null;
+
+            if (selector) {
+                var path = (String) map.get("path");
+
+                if (path.indexOf('{') == -1) {
+                    var paramName = StringUtils.EMPTY;
+                    if (param.getAnnotation(PathVariable.class) != null) {
+                        paramName = param.getAnnotation(PathVariable.class).name();
+                    }
+                    if (StringUtils.isBlank(paramName) && paramNames.length > 0) {
+                        paramName = paramNames[i];
+                    }
+
+                    path = StringUtils.appendIfMissing(path, "/")
+                        .concat(String.format("{%s}", paramName));
+                    map.put("path", path);
                 }
-                map.put("summary", StringUtils.appendIfMissing(operation.summary(), "."));
-            }
-        } else {
-            for (var i = 0; i < method.getParameters().length; i++) {
-                var param = method.getParameters()[i];
-
-                var paramData = new LinkedHashMap<String, Object>();
-
-                var required = param.getAnnotation(Nullable.class) == null;
-                if (!required) {
-                    required = Optional.ofNullable(param.getAnnotation(PathVariable.class))
-                        .map(PathVariable::required).orElse(false);
-                }
-                paramData.put("required", required);
-
-                paramData.put("type", param.getType().getSimpleName());
-                var selector = param.getAnnotation(Selector.class) != null;
-                paramData.put("selector", selector || param.getAnnotation(PathVariable.class) != null);
-
-                if (isCasEndpoint(clazz)) {
-                    var operation = method.getAnnotation(Operation.class);
-                    if (operation == null) {
-                        throw new RuntimeException("Unable to locate @Operation annotation for " + method.toGenericString()
-                            + " in declaring class " + clazz.getName());
-                    }
-                    if (!map.containsKey("deprecated") && operation.deprecated()) {
-                        map.put("deprecated", true);
-                    }
-                    map.put("summary", StringUtils.appendIfMissing(operation.summary(), "."));
-
-                    if (!param.getType().equals(HttpServletRequest.class)
-                        && !param.getType().equals(HttpServletResponse.class)
-                        && !param.getType().equals(MultiValueMap.class)) {
-
-                        if (operation.parameters().length == 0) {
-                            throw new RuntimeException("Unable to locate @Parameter annotation for " + method.toGenericString()
-                                + " in declaring class " + clazz.getName());
-                        }
-                        var parameter = operation.parameters()[i];
-                        paramData.put("name", parameter.name());
-                        paramData.put("required", (boolean) paramData.get("required") || parameter.required());
-
-                        if (selector) {
-                            var path = map.get("path");
-                            path = StringUtils.appendIfMissing(path.toString(), "/")
-                                .concat(String.format("${%s}", parameter.name()));
-                            map.put("path", path);
-                        }
-                    }
-                } else {
-                    if (selector) {
-                        var path = map.get("path");
-                        path = StringUtils.appendIfMissing(path.toString(), "/")
-                            .concat(String.format("${%s}", param.getName()));
-                        map.put("path", path);
-                    }
-                }
-
-                parameters.add(paramData);
             }
         }
+
+        var parameters = new ArrayList<Map<?, ?>>();
+        if (isCasEndpoint(clazz)) {
+            var operation = method.getAnnotation(Operation.class);
+            if (operation == null) {
+                throw new RuntimeException("Unable to locate @Operation annotation for " + method.toGenericString()
+                    + " in declaring class " + clazz.getName());
+            }
+            if (!map.containsKey("deprecated") && operation.deprecated()) {
+                map.put("deprecated", true);
+            }
+            map.put("summary", StringUtils.appendIfMissing(operation.summary(), "."));
+            if (operation.parameters().length == 0 && method.getParameterCount() > 0) {
+                throw new RuntimeException("Unable to locate @Parameter annotation for " + method.toGenericString()
+                    + " in declaring class " + clazz.getName());
+            }
+
+            for (int i = 0; i < operation.parameters().length; i++) {
+                var parameter = operation.parameters()[i];
+                var paramData = new LinkedHashMap<String, Object>();
+                paramData.put("name", parameter.name());
+                if (StringUtils.isNotBlank(parameter.description())) {
+                    paramData.put("description", parameter.description());
+                }
+                paramData.put("required", parameter.required());
+                parameters.add(paramData);
+            }
+        } else {
+            var name = String.format("actuator.endpoint.%s.description", endpointId);
+            var summary = actuatorProperties.getProperty(name);
+            if (StringUtils.isBlank(summary)) {
+                throw new RuntimeException("Unable to locate undocumented endpoint summary " + endpointId);
+            }
+            map.put("summary", StringUtils.appendIfMissing(summary, "."));
+        }
+
         if (!parameters.isEmpty()) {
             map.put("parameters", parameters);
         }

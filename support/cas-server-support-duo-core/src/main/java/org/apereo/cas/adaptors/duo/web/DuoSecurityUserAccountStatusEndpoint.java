@@ -47,7 +47,7 @@ public class DuoSecurityUserAccountStatusEndpoint extends BaseCasActuatorEndpoin
      */
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Fetch Duo Security user account status", parameters = {
-        @Parameter(name = "username"),
+        @Parameter(name = "username", required = true),
         @Parameter(name = "providerId")
     })
     public Map<?, ?> fetchAccountStatus(@Selector final String username, @Nullable final String providerId) {
