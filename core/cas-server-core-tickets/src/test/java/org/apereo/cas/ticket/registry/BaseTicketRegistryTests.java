@@ -37,6 +37,7 @@ import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
@@ -66,6 +67,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.util.AopTestUtils;
 
+import java.time.Clock;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.UUID;
@@ -179,6 +182,20 @@ public abstract class BaseTicketRegistryTests {
         assertNotNull(authentication.getSuccesses());
         assertNotNull(authentication.getWarnings());
         assertNotNull(authentication.getFailures());
+    }
+
+    @RepeatedTest(2)
+    public void verifyDeleteExpiredTicketById() {
+        val expirationPolicy = new TicketGrantingTicketExpirationPolicy(42, 23);
+        val ticketGrantingTicket = new TicketGrantingTicketImpl(ticketGrantingTicketId,
+            CoreAuthenticationTestUtils.getAuthentication(), expirationPolicy);
+        expirationPolicy.setClock(Clock.fixed(ticketGrantingTicket.getCreationTime().toInstant(), ZoneOffset.UTC));
+        assertFalse(ticketGrantingTicket.isExpired());
+        getNewTicketRegistry().addTicket(ticketGrantingTicket);
+        ticketGrantingTicket.markTicketExpired();
+        assertTrue(ticketGrantingTicket.isExpired());
+        val deletedTicketCount = getNewTicketRegistry().deleteTicket(ticketGrantingTicket.getId());
+        assertEquals(1, deletedTicketCount);
     }
 
     @RepeatedTest(2)
