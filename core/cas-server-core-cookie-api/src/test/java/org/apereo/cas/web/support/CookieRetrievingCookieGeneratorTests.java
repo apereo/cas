@@ -18,7 +18,6 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -84,7 +83,7 @@ public class CookieRetrievingCookieGeneratorTests {
             .map(String.class::cast)
             .map(header -> Arrays.stream(header.split(";")).iterator().next())
             .collect(Collectors.toSet());
-        assertEquals(headerValuesAfter, new HashSet<>(Arrays.asList(cookie.getName() + "=some-value", "OtherCookie=other-cookie-value")));
+        assertEquals(headerValuesAfter, CollectionUtils.wrapSet(cookie.getName() + "=some-value", "OtherCookie=other-cookie-value"));
     }
 
     @Test
