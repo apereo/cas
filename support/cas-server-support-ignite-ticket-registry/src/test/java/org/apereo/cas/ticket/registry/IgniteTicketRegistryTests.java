@@ -26,6 +26,7 @@ import java.time.Clock;
 import java.time.ZoneOffset;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
@@ -99,13 +100,16 @@ public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
         final long maxTimeToLive = 42L;
         val expirationPolicy = new TicketGrantingTicketExpirationPolicy(maxTimeToLive, 23L);
         val ticketGrantingTicket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + "-test", CoreAuthenticationTestUtils.getAuthentication(), expirationPolicy);
-        expirationPolicy.setClock(Clock.fixed(ticketGrantingTicket.getCreationTime().plusSeconds(maxTimeToLive).plusNanos(1).toInstant(), ZoneOffset.UTC));
-        assertTrue(ticketGrantingTicket.isExpired());
+        expirationPolicy.setClock(Clock.fixed(ticketGrantingTicket.getCreationTime().toInstant(), ZoneOffset.UTC));
+        assertFalse(ticketGrantingTicket.isExpired());
 
         val registry = new IgniteTicketRegistry(ticketCatalog, igniteConfiguration, casProperties.getTicket().getRegistry().getIgnite());
         registry.initialize();
-
         registry.addTicket(ticketGrantingTicket);
+
+        ticketGrantingTicket.setExpired(true);
+        assertTrue(ticketGrantingTicket.isExpired());
+
         val deletedTicketCount = registry.deleteTicket(ticketGrantingTicket.getId());
 
         registry.destroy();
