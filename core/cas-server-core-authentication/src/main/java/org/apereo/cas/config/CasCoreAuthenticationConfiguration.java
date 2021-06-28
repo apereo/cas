@@ -73,7 +73,7 @@ public class CasCoreAuthenticationConfiguration {
     public AuthenticationManager casAuthenticationManager() {
         return new DefaultAuthenticationManager(
             authenticationEventExecutionPlan.getObject(),
-            casProperties.getPersonDirectory().isPrincipalResolutionFailureFatal(),
+            casProperties.getGlobalPersonDirectory().isPrincipalResolutionFailureFatal(),
             applicationContext
         );
     }

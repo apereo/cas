@@ -178,10 +178,11 @@ public class SurrogateAuthenticationConfiguration {
     public PrincipalResolver surrogatePrincipalResolver() {
         val principal = casProperties.getAuthn().getSurrogate().getPrincipal();
         val personDirectory = casProperties.getPersonDirectory();
+        val globalPersonDirectory = casProperties.getGlobalPersonDirectory();
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(surrogatePrincipalFactory(),
             attributeRepository.getObject(),
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            SurrogatePrincipalResolver.class,
+            SurrogatePrincipalResolver.class, globalPersonDirectory,
             principal, personDirectory);
         resolver.setSurrogatePrincipalBuilder(surrogatePrincipalBuilder());
         return resolver;

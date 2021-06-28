@@ -166,7 +166,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                     val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(wsfedPrincipalFactory(),
                         attributeRepository.getObject(),
                         CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-                        WsFederationCredentialsToPrincipalResolver.class,
+                        WsFederationCredentialsToPrincipalResolver.class, casProperties.getGlobalPersonDirectory(),
                         principal, personDirectory);
                     resolver.setConfiguration(cfg);
                     plan.registerAuthenticationHandlerWithPrincipalResolver(handler, resolver);

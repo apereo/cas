@@ -183,6 +183,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
         @RefreshScope
         public List<PrincipalResolver> jaasPersonDirectoryPrincipalResolvers() {
             val personDirectory = casProperties.getPersonDirectory();
+            val globalPersonDirectory = casProperties.getGlobalPersonDirectory();
             return casProperties.getAuthn().getJaas()
                 .stream()
                 .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
@@ -191,6 +192,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
                     return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(jaasPrincipalFactory(),
                         attributeRepository.getObject(),
                         CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+                        globalPersonDirectory,
                         jaasPrincipal,
                         personDirectory);
                 })

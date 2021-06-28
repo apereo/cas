@@ -65,6 +65,7 @@ public class PersonDirectoryPrincipalResolverActiveDirectoryTests {
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
             this.attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            casProperties.getGlobalPersonDirectory(),
             casProperties.getPersonDirectory());
         val p = resolver.resolve(new UsernamePasswordCredential("admin", "P@ssw0rd"),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal()),

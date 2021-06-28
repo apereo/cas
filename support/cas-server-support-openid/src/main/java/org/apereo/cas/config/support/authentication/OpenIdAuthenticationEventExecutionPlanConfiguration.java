@@ -60,11 +60,12 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public OpenIdPrincipalResolver openIdPrincipalResolver() {
         val personDirectory = casProperties.getPersonDirectory();
+        val globalPersonDirectory = casProperties.getGlobalPersonDirectory();
         val principal = casProperties.getAuthn().getOpenid().getPrincipal();
         return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(openidPrincipalFactory(),
             attributeRepository.getObject(),
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            OpenIdPrincipalResolver.class,
+            OpenIdPrincipalResolver.class, globalPersonDirectory,
             principal, personDirectory);
     }
 

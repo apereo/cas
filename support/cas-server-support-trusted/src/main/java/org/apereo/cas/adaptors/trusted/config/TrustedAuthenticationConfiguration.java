@@ -90,12 +90,13 @@ public class TrustedAuthenticationConfiguration {
     public PrincipalResolver trustedPrincipalResolver() {
         val resolver = new ChainingPrincipalResolver(this.principalElectionStrategy.getObject(), casProperties);
         val personDirectory = casProperties.getPersonDirectory();
+        val globalPersonDirectory = casProperties.getGlobalPersonDirectory();
         val trusted = casProperties.getAuthn().getTrusted();
 
         val bearingPrincipalResolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(trustedPrincipalFactory(),
             attributeRepository.getObject(),
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            PrincipalBearingPrincipalResolver.class,
+            PrincipalBearingPrincipalResolver.class, globalPersonDirectory,
             trusted, personDirectory);
         resolver.setChain(CollectionUtils.wrapList(new EchoingPrincipalResolver(), bearingPrincipalResolver));
         return resolver;

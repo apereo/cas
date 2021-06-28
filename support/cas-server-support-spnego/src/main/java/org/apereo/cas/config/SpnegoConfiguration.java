@@ -131,12 +131,13 @@ public class SpnegoConfiguration {
     @ConditionalOnMissingBean(name = "spnegoPrincipalResolver")
     public PrincipalResolver spnegoPrincipalResolver() {
         val personDirectory = casProperties.getPersonDirectory();
+        val globalPersonDirectory = casProperties.getGlobalPersonDirectory();
         val spnegoPrincipal = casProperties.getAuthn().getSpnego().getPrincipal();
 
         return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(spnegoPrincipalFactory(),
             attributeRepository.getObject(),
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            SpnegoPrincipalResolver.class,
+            SpnegoPrincipalResolver.class, globalPersonDirectory,
             spnegoPrincipal, personDirectory);
     }
 

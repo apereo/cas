@@ -110,6 +110,7 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
             PrincipalFactoryUtils.newPrincipalFactory(),
             attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            casProperties.getGlobalPersonDirectory(),
             casProperties.getPersonDirectory()
         );
     }

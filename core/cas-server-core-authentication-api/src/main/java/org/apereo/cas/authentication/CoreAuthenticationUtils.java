@@ -22,6 +22,7 @@ import org.apereo.cas.authentication.support.password.RejectResultCodePasswordPo
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverGlobalProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -58,6 +59,7 @@ import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -341,20 +343,22 @@ public class CoreAuthenticationUtils {
         final PrincipalFactory principalFactory,
         final IPersonAttributeDao attributeRepository,
         final IAttributeMerger attributeMerger,
+        final PersonDirectoryPrincipalResolverGlobalProperties globalPersonDirectory,
         final PersonDirectoryPrincipalResolverProperties... personDirectory) {
         return newPersonDirectoryPrincipalResolver(principalFactory, attributeRepository,
-            attributeMerger, PersonDirectoryPrincipalResolver.class, personDirectory);
+            attributeMerger, PersonDirectoryPrincipalResolver.class, globalPersonDirectory, personDirectory);
     }
 
     /**
      * New person directory principal resolver.
      *
-     * @param <T>                 the type parameter
-     * @param principalFactory    the principal factory
-     * @param attributeRepository the attribute repository
-     * @param attributeMerger     the attribute merger
-     * @param resolverClass       the resolver class
-     * @param personDirectory     the person directory
+     * @param <T>                   the type parameter
+     * @param principalFactory      the principal factory
+     * @param attributeRepository   the attribute repository
+     * @param attributeMerger       the attribute merger
+     * @param resolverClass         the resolver class
+     * @param globalPersonDirectory the person directory
+     * @param personDirectory       the person directory
      * @return the resolver
      */
     @SneakyThrows
@@ -363,22 +367,28 @@ public class CoreAuthenticationUtils {
         final IPersonAttributeDao attributeRepository,
         final IAttributeMerger attributeMerger,
         final Class<T> resolverClass,
+        final PersonDirectoryPrincipalResolverGlobalProperties globalPersonDirectory,
         final PersonDirectoryPrincipalResolverProperties... personDirectory) {
 
         val context = PrincipalResolutionContext.builder()
             .attributeRepository(attributeRepository)
             .attributeMerger(attributeMerger)
             .principalFactory(principalFactory)
-            .returnNullIfNoAttributes(Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isReturnNull))
+            .returnNullIfNoAttributes(globalPersonDirectory.isReturnNull())
             .principalAttributeNames(Arrays.stream(personDirectory)
                 .filter(p -> StringUtils.isNotBlank(p.getPrincipalAttribute()))
                 .map(PersonDirectoryPrincipalResolverProperties::getPrincipalAttribute)
                 .findFirst()
                 .orElse(StringUtils.EMPTY))
             .principalNameTransformer(formUserId -> formUserId)
-            .useCurrentPrincipalId(Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isUseExistingPrincipalId))
-            .resolveAttributes(Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isAttributeResolutionEnabled))
+            .useCurrentPrincipalId(globalPersonDirectory.isUseExistingPrincipalId())
+            .resolveAttributes(globalPersonDirectory.isAttributeResolutionEnabled())
             .activeAttributeRepositoryIdentifiers(org.springframework.util.StringUtils.commaDelimitedListToSet(personDirectory[0].getActiveAttributeRepositoryIds()))
+            .activeAttributeRepositoryIdentifiers(Arrays.stream(personDirectory)
+                .filter(p -> p.getActiveAttributeRepositoryIds().isEmpty())
+                .map(p -> org.springframework.util.StringUtils.commaDelimitedListToSet(p.getActiveAttributeRepositoryIds()))
+                .findFirst()
+                .orElse(Collections.emptySet()))
             .build();
 
         val ctor = resolverClass.getDeclaredConstructor(PrincipalResolutionContext.class);
@@ -466,7 +476,7 @@ public class CoreAuthenticationUtils {
      * @return the principal election strategy conflict resolver
      */
     public static PrincipalElectionStrategyConflictResolver newPrincipalElectionStrategyConflictResolver(
-        final PersonDirectoryPrincipalResolverProperties properties) {
+        final PersonDirectoryPrincipalResolverGlobalProperties properties) {
         if (StringUtils.equalsIgnoreCase(properties.getPrincipalResolutionConflictStrategy(), "first")) {
             return PrincipalElectionStrategyConflictResolver.first();
         }

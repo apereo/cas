@@ -63,6 +63,7 @@ public class PersonDirectoryPrincipalResolverLdapTests {
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
             this.attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            casProperties.getGlobalPersonDirectory(),
             casProperties.getPersonDirectory());
         val p = resolver.resolve(new UsernamePasswordCredential("admin", "password"),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
@@ -77,6 +78,7 @@ public class PersonDirectoryPrincipalResolverLdapTests {
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
             this.attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            casProperties.getGlobalPersonDirectory(),
             casProperties.getPersonDirectory());
         val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy(), casProperties);
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver));
