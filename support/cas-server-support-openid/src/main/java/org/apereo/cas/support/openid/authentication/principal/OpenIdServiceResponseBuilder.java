@@ -29,8 +29,8 @@ import java.util.Map;
  * Builds responses to Openid authN requests.
  *
  * @author Misagh Moayyed
- * @deprecated 6.2
  * @since 4.2
+ * @deprecated 6.2
  */
 @Slf4j
 @Deprecated(since = "6.2.0")
@@ -102,6 +102,11 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
         return buildAuthenticationResponse(service, parameters, successFullAuthentication, id, parameterList);
     }
 
+    @Override
+    public boolean supports(final WebApplicationService service) {
+        return service instanceof OpenIdService;
+    }
+
     /**
      * Determine identity.
      *
@@ -163,11 +168,6 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
             LoggingUtils.error(LOGGER, e);
         }
         return null;
-    }
-
-    @Override
-    public boolean supports(final WebApplicationService service) {
-        return service instanceof OpenIdService;
     }
 
     /**

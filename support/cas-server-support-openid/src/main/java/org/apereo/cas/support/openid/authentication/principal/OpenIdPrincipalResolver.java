@@ -14,8 +14,8 @@ import java.util.Optional;
  * user name to a Principal.
  *
  * @author Scott Battaglia
- * @deprecated 6.2
  * @since 3.1
+ * @deprecated 6.2
  */
 @ToString(callSuper = true)
 @Deprecated(since = "6.2.0")
@@ -26,12 +26,12 @@ public class OpenIdPrincipalResolver extends PersonDirectoryPrincipalResolver {
     }
 
     @Override
-    protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
-        return ((OpenIdCredential) credential).getUsername();
+    public boolean supports(final Credential credential) {
+        return credential instanceof OpenIdCredential;
     }
 
     @Override
-    public boolean supports(final Credential credential) {
-        return credential instanceof OpenIdCredential;
+    protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
+        return ((OpenIdCredential) credential).getUsername();
     }
 }
