@@ -288,6 +288,7 @@ public class CasOAuth20Configuration {
         oauthCasClient.setName(Authenticators.CAS_OAUTH_CLIENT);
         oauthCasClient.setUrlResolver(casCallbackUrlResolver());
         oauthCasClient.setCallbackUrl(OAuth20Utils.casOAuthCallbackUrl(server.getPrefix()));
+        oauthCasClient.setCheckAuthenticationAttempt(false);
         oauthCasClient.init();
 
         val authenticator = oAuthClientAuthenticator();
