@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 
 import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@FunctionalInterface
 public interface SamlIdPObjectSigner {
     /**
      * Default bean name.
@@ -43,4 +43,11 @@ public interface SamlIdPObjectSigner {
                                     HttpServletRequest request,
                                     String binding,
                                     RequestAbstractType authnRequest) throws Exception;
+
+    /**
+     * Gets saml idp metadata resolver.
+     *
+     * @return the saml id p metadata resolver
+     */
+    MetadataResolver getSamlIdPMetadataResolver();
 }
