@@ -135,6 +135,9 @@ public class CasDocumentationApplication {
                         + StringUtils.prependIfMissing(path, "/")).collect(Collectors.toSet());
                 map.put("method", RequestMethod.GET.name());
                 map.put("path", paths.isEmpty() ? endpoint.id() : paths);
+                map.put("name", endpoint.id());
+                map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
+
                 collectActuatorEndpointMethodMetadata(method, map);
                 if (get.produces().length > 0) {
                     map.put("produces", get.produces());
@@ -163,6 +166,8 @@ public class CasDocumentationApplication {
                         + StringUtils.prependIfMissing(path, "/")).collect(Collectors.toSet());
                 map.put("method", RequestMethod.DELETE.name());
                 map.put("path", paths.isEmpty() ? endpoint.id() : paths);
+                map.put("name", endpoint.id());
+                map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map);
                 if (delete.produces().length > 0) {
                     map.put("produces", delete.produces());
@@ -191,6 +196,8 @@ public class CasDocumentationApplication {
                         + StringUtils.prependIfMissing(path, "/")).collect(Collectors.toSet());
                 map.put("method", RequestMethod.POST.name());
                 map.put("path", paths.isEmpty() ? endpoint.id() : paths);
+                map.put("name", endpoint.id());
+                map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map);
                 if (post.produces().length > 0) {
                     map.put("produces", post.produces());
@@ -219,6 +226,8 @@ public class CasDocumentationApplication {
                         + StringUtils.prependIfMissing(path, "/")).collect(Collectors.toSet());
                 map.put("method", RequestMethod.PATCH.name());
                 map.put("path", paths.isEmpty() ? endpoint.id() : paths);
+                map.put("name", endpoint.id());
+                map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map);
                 if (patch.produces().length > 0) {
                     map.put("produces", patch.produces());
@@ -247,6 +256,8 @@ public class CasDocumentationApplication {
                         + StringUtils.prependIfMissing(path, "/")).collect(Collectors.toSet());
                 map.put("method", RequestMethod.PUT.name());
                 map.put("path", paths.isEmpty() ? endpoint.id() : paths);
+                map.put("name", endpoint.id());
+                map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map);
                 if (put.produces().length > 0) {
                     map.put("produces", put.produces());
@@ -286,6 +297,8 @@ public class CasDocumentationApplication {
                 var map = new LinkedHashMap<>();
                 map.put("method", RequestMethod.GET.name());
                 map.put("path", endpoint.id());
+                map.put("name", endpoint.id());
+                map.put("endpointType", Endpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map);
                 if (read.produces().length > 0) {
                     map.put("produces", read.produces());
@@ -299,6 +312,8 @@ public class CasDocumentationApplication {
                 var map = new LinkedHashMap<>();
                 map.put("method", RequestMethod.POST.name());
                 map.put("path", endpoint.id());
+                map.put("name", endpoint.id());
+                map.put("endpointType", Endpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map);
                 if (write.produces().length > 0) {
                     map.put("produces", write.produces());
@@ -312,6 +327,8 @@ public class CasDocumentationApplication {
                 var map = new LinkedHashMap<>();
                 map.put("method", RequestMethod.DELETE.name());
                 map.put("path", endpoint.id());
+                map.put("name", endpoint.id());
+                map.put("endpointType", Endpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map);
                 if (delete.produces().length > 0) {
                     map.put("produces", delete.produces());
