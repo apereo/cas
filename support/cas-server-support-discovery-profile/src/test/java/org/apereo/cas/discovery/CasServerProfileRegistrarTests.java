@@ -79,5 +79,6 @@ public class CasServerProfileRegistrarTests {
         assertNotNull(profile.getMultifactorAuthenticationProviderTypesSupported());
         assertNotNull(profile.getRegisteredServiceTypesSupported());
         assertNotNull(profile.getUserDefinedScopes());
+        assertNotNull(profile.getAvailableAuthenticationHandlers());
     }
 }

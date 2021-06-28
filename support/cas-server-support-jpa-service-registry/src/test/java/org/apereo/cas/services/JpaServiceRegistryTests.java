@@ -3,8 +3,10 @@ package org.apereo.cas.services;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 
 import lombok.Getter;
 import lombok.val;
@@ -36,6 +38,8 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     JpaServiceRegistryConfiguration.class,
     CasHibernateJpaConfiguration.class,

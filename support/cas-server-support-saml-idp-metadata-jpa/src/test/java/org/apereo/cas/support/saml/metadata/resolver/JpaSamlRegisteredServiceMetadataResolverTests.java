@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("JDBC")
 @Transactional(transactionManager = "transactionManagerSamlMetadata")
 public class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMetadataTests {
-    
+
     @RetryingTest(3)
     public void verifyResolver() throws Exception {
         val res = new ClassPathResource("samlsp-metadata.xml");
@@ -43,5 +43,8 @@ public class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMe
         assertTrue(resolver.isAvailable(service));
         val resolvers = resolver.resolve(service);
         assertEquals(1, resolvers.size());
+
+        service.setMetadataLocation("whatever");
+        assertFalse(resolver.supports(service));
     }
 }

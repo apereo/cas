@@ -15,6 +15,7 @@ import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,6 +56,11 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+
+    @Autowired
+    @Qualifier("urlValidator")
+    private UrlValidator urlValidator;
+
     @Autowired
     @Qualifier("samlServiceFactory")
     private ServiceFactory<SamlService> samlServiceFactory;
@@ -73,7 +79,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
             .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
             .build();
 
-        val response = new SamlServiceResponseBuilder(new DefaultServicesManager(context))
+        val response = new SamlServiceResponseBuilder(new DefaultServicesManager(context), this.urlValidator)
             .build(impl, "ticketId", CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
@@ -102,7 +108,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
             .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
             .build();
 
-        val response = new SamlServiceResponseBuilder(new DefaultServicesManager(context))
+        val response = new SamlServiceResponseBuilder(new DefaultServicesManager(context), this.urlValidator)
             .build(impl, null, CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());

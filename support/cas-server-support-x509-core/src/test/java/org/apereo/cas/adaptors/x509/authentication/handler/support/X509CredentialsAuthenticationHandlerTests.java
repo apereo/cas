@@ -22,7 +22,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.security.auth.login.FailedLoginException;
-
 import java.security.GeneralSecurityException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.X509Certificate;
@@ -31,9 +30,9 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
-import static org.apereo.cas.util.junit.Assertions.assertThrowsOrNot;
+import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.junit.jupiter.params.provider.Arguments.*;
 
 /**
  * Unit test for {@link X509CredentialsAuthenticationHandler} class.
@@ -223,6 +222,18 @@ public class X509CredentialsAuthenticationHandlerTests {
             true,
             new DefaultAuthenticationHandlerExecutionResult(handler, credential, PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(credential.getId())),
             new FailedLoginException()));
+
+        handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".+"), true, true, false);
+        certificate = new CasX509Certificate(true);
+        certificate.setKeyUsage(true);
+        credential = new X509CertificateCredential(Stream.of(certificate).toArray(X509Certificate[]::new));
+        params.add(arguments(
+            handler,
+            credential,
+            true,
+            new DefaultAuthenticationHandlerExecutionResult(handler, credential,
+                PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(credential.getId())),
+            null));
 
         return params.stream();
     }

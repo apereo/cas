@@ -10,6 +10,8 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -36,9 +38,9 @@ public class JwtTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpo
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     public JwtTokenCipherSigningPublicKeyEndpoint(final CasConfigurationProperties casProperties,
-        final CipherExecutor tokenCipherExecutor,
-        final ServicesManager servicesManager,
-        final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
+                                                  final CipherExecutor tokenCipherExecutor,
+                                                  final ServicesManager servicesManager,
+                                                  final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
         super(casProperties);
         this.tokenCipherExecutor = tokenCipherExecutor;
         this.servicesManager = servicesManager;
@@ -53,9 +55,10 @@ public class JwtTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpo
      * @throws Exception the exception
      */
     @ReadOperation(produces = MediaType.TEXT_PLAIN_VALUE)
-    public String fetchPublicKey(
-        @Nullable
-        final String service) throws Exception {
+    @Operation(summary = "Get public key for signing operations", parameters = {
+        @Parameter(name = "service")
+    })
+    public String fetchPublicKey(@Nullable final String service) throws Exception {
         var signingKey = tokenCipherExecutor.getSigningKey();
 
         if (StringUtils.isNotBlank(service)) {

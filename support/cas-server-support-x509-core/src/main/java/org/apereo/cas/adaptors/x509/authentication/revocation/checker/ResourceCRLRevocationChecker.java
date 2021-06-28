@@ -107,10 +107,6 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
         this(new ResourceCRLFetcher(), crls, DEFAULT_REFRESH_INTERVAL);
     }
 
-    public ResourceCRLRevocationChecker(final Resource... crls) {
-        this(new ResourceCRLFetcher(), CollectionUtils.wrapList(crls), DEFAULT_REFRESH_INTERVAL);
-    }
-
     /**
      * Instantiates a new Resource cRL revocation checker.
      *
@@ -157,22 +153,16 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
             TimeUnit.SECONDS);
     }
 
-    private boolean validateConfiguration() {
-        if (this.resources == null || this.resources.isEmpty()) {
-            LOGGER.debug("[{}] is not configured with resources. Skipping configuration...",
-                this.getClass().getSimpleName());
-            return false;
-        }
-        return true;
+    @Override
+    public void destroy() {
+        shutdown();
     }
 
     /**
-     * Add fetched crls to the map.
-     *
-     * @param results the results
+     * Shutdown scheduler.
      */
-    private void addCrls(final Collection<X509CRL> results) {
-        results.forEach(entry -> addCRL(entry.getIssuerX500Principal(), entry));
+    public void shutdown() {
+        this.scheduler.shutdown();
     }
 
     @Override
@@ -193,15 +183,21 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
         return new ArrayList<>(0);
     }
 
-    @Override
-    public void destroy() {
-        shutdown();
+    private boolean validateConfiguration() {
+        if (this.resources == null || this.resources.isEmpty()) {
+            LOGGER.debug("[{}] is not configured with resources. Skipping configuration...",
+                this.getClass().getSimpleName());
+            return false;
+        }
+        return true;
     }
 
     /**
-     * Shutdown scheduler.
+     * Add fetched crls to the map.
+     *
+     * @param results the results
      */
-    public void shutdown() {
-        this.scheduler.shutdown();
+    private void addCrls(final Collection<X509CRL> results) {
+        results.forEach(entry -> addCRL(entry.getIssuerX500Principal(), entry));
     }
 }
