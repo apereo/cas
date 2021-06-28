@@ -98,9 +98,9 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @param strategy         the strategy
      */
     public LdapAuthenticationHandler(final String name, final ServicesManager servicesManager,
-        final PrincipalFactory principalFactory, final Integer order,
-        final Authenticator authenticator,
-        final AuthenticationPasswordPolicyHandlingStrategy strategy) {
+                                     final PrincipalFactory principalFactory, final Integer order,
+                                     final Authenticator authenticator,
+                                     final AuthenticationPasswordPolicyHandlingStrategy strategy) {
         super(name, servicesManager, principalFactory, order);
         this.authenticator = authenticator;
         this.passwordPolicyHandlingStrategy = strategy;

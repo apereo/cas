@@ -7,8 +7,8 @@ import org.apereo.cas.metadata.ConfigurationMetadataCatalogQuery;
 import org.apereo.cas.services.RegisteredServiceProperty;
 
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.TypeAnnotationsScanner;
@@ -135,6 +135,9 @@ public class CasDocumentationApplication {
                         + StringUtils.prependIfMissing(path, "/")).collect(Collectors.toSet());
                 map.put("method", RequestMethod.GET.name());
                 map.put("path", paths.isEmpty() ? endpoint.id() : paths);
+                map.put("name", endpoint.id());
+                map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
+
                 collectActuatorEndpointMethodMetadata(method, map);
                 if (get.produces().length > 0) {
                     map.put("produces", get.produces());
@@ -163,6 +166,8 @@ public class CasDocumentationApplication {
                         + StringUtils.prependIfMissing(path, "/")).collect(Collectors.toSet());
                 map.put("method", RequestMethod.DELETE.name());
                 map.put("path", paths.isEmpty() ? endpoint.id() : paths);
+                map.put("name", endpoint.id());
+                map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map);
                 if (delete.produces().length > 0) {
                     map.put("produces", delete.produces());
@@ -191,6 +196,8 @@ public class CasDocumentationApplication {
                         + StringUtils.prependIfMissing(path, "/")).collect(Collectors.toSet());
                 map.put("method", RequestMethod.POST.name());
                 map.put("path", paths.isEmpty() ? endpoint.id() : paths);
+                map.put("name", endpoint.id());
+                map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map);
                 if (post.produces().length > 0) {
                     map.put("produces", post.produces());
@@ -219,6 +226,8 @@ public class CasDocumentationApplication {
                         + StringUtils.prependIfMissing(path, "/")).collect(Collectors.toSet());
                 map.put("method", RequestMethod.PATCH.name());
                 map.put("path", paths.isEmpty() ? endpoint.id() : paths);
+                map.put("name", endpoint.id());
+                map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map);
                 if (patch.produces().length > 0) {
                     map.put("produces", patch.produces());
@@ -247,6 +256,8 @@ public class CasDocumentationApplication {
                         + StringUtils.prependIfMissing(path, "/")).collect(Collectors.toSet());
                 map.put("method", RequestMethod.PUT.name());
                 map.put("path", paths.isEmpty() ? endpoint.id() : paths);
+                map.put("name", endpoint.id());
+                map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map);
                 if (put.produces().length > 0) {
                     map.put("produces", put.produces());
@@ -286,6 +297,8 @@ public class CasDocumentationApplication {
                 var map = new LinkedHashMap<>();
                 map.put("method", RequestMethod.GET.name());
                 map.put("path", endpoint.id());
+                map.put("name", endpoint.id());
+                map.put("endpointType", Endpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map);
                 if (read.produces().length > 0) {
                     map.put("produces", read.produces());
@@ -299,6 +312,8 @@ public class CasDocumentationApplication {
                 var map = new LinkedHashMap<>();
                 map.put("method", RequestMethod.POST.name());
                 map.put("path", endpoint.id());
+                map.put("name", endpoint.id());
+                map.put("endpointType", Endpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map);
                 if (write.produces().length > 0) {
                     map.put("produces", write.produces());
@@ -312,6 +327,8 @@ public class CasDocumentationApplication {
                 var map = new LinkedHashMap<>();
                 map.put("method", RequestMethod.DELETE.name());
                 map.put("path", endpoint.id());
+                map.put("name", endpoint.id());
+                map.put("endpointType", Endpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map);
                 if (delete.produces().length > 0) {
                     map.put("produces", delete.produces());
@@ -330,13 +347,20 @@ public class CasDocumentationApplication {
     }
 
     private static void collectActuatorEndpointMethodMetadata(final Method method, final Map<Object, Object> map) {
-        var signature = method.toGenericString();
-        signature = signature.substring(signature.indexOf(method.getDeclaringClass().getSimpleName()));
-        
-        map.put("signature", signature);
-        map.put("returnType", method.getReturnType().getSimpleName());
-
         var clazz = method.getDeclaringClass();
+
+        var signature = method.toGenericString();
+        signature = signature.substring(signature.lastIndexOf(method.getDeclaringClass().getSimpleName()));
+        signature = RegExUtils.removePattern(signature, "throws.+");
+        map.put("signature", signature);
+        map.put("owner", clazz.getName());
+        
+        var returnType = method.getReturnType().getSimpleName();
+        if (!StringUtils.equalsAnyIgnoreCase(returnType, "void")) {
+            map.put("returnType", returnType);
+        }
+        map.put("casEndpoint", isCasEndpoint(clazz));
+
         if (clazz.getAnnotation(Deprecated.class) != null) {
             map.put("deprecated", true);
         }
@@ -347,7 +371,7 @@ public class CasDocumentationApplication {
         var parameters = new ArrayList<Map<?, ?>>();
 
         if (method.getParameters().length == 0) {
-            if (clazz.getPackageName().startsWith(CentralAuthenticationService.NAMESPACE)) {
+            if (isCasEndpoint(clazz)) {
                 var operation = method.getAnnotation(Operation.class);
                 if (operation == null) {
                     throw new RuntimeException("Unable to locate @Operation annotation for " + method.toGenericString()
@@ -372,7 +396,7 @@ public class CasDocumentationApplication {
                 var selector = param.getAnnotation(Selector.class) != null;
                 paramData.put("selector", selector || param.getAnnotation(PathVariable.class) != null);
 
-                if (clazz.getPackageName().startsWith(CentralAuthenticationService.NAMESPACE)) {
+                if (isCasEndpoint(clazz)) {
                     var operation = method.getAnnotation(Operation.class);
                     if (operation == null) {
                         throw new RuntimeException("Unable to locate @Operation annotation for " + method.toGenericString()
@@ -418,6 +442,10 @@ public class CasDocumentationApplication {
             map.put("parameters", parameters);
         }
 
+    }
+
+    private static boolean isCasEndpoint(final Class<?> clazz) {
+        return clazz.getPackageName().startsWith(CentralAuthenticationService.NAMESPACE);
     }
 
     private static void exportThemeProperties(final String projectRootDirectory, final File dataPath) throws Exception {
