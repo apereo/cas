@@ -65,19 +65,16 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public void addTicketInternal(final Ticket ticket) {
-        val encodeTicket = encodeTicket(ticket);
-        val factory = getJpaTicketEntityFactory();
-        val ticketEntity = factory.fromTicket(encodeTicket);
-        if (ticket.getTicketGrantingTicket() != null) {
-            ticketEntity.setParentId(encodeTicketId(ticket.getTicketGrantingTicket().getId()));
-        }
-        this.entityManager.persist(ticketEntity);
-        LOGGER.debug("Added ticket [{}] to registry.", encodeTicket);
-    }
-
-    @Override
-    public void addTicket(final Stream<? extends Ticket> toSave) {
-        this.transactionTemplate.executeWithoutResult(status -> super.addTicket(toSave));
+        this.transactionTemplate.executeWithoutResult(status -> {
+            val encodeTicket = encodeTicket(ticket);
+            val factory = getJpaTicketEntityFactory();
+            val ticketEntity = factory.fromTicket(encodeTicket);
+            if (ticket.getTicketGrantingTicket() != null) {
+                ticketEntity.setParentId(encodeTicketId(ticket.getTicketGrantingTicket().getId()));
+            }
+            this.entityManager.persist(ticketEntity);
+            LOGGER.debug("Added ticket [{}] to registry.", encodeTicket);
+        });
     }
 
     @Override
