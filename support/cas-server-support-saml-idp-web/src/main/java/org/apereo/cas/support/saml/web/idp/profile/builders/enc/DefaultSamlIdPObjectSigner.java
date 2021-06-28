@@ -17,6 +17,7 @@ import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 
 import com.google.common.collect.Sets;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -69,8 +70,9 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
-    private final MetadataResolver casSamlIdPMetadataResolver;
+    private final MetadataResolver samlIdPMetadataResolver;
 
     private final CasConfigurationProperties casProperties;
 
@@ -251,7 +253,7 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
 
         val mdCredentialResolver = new SamlIdPMetadataCredentialResolver();
         val roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(
-            casSamlIdPMetadataResolver,
+            samlIdPMetadataResolver,
             samlIdp.getMetadata().getCore().isRequireValidMetadata());
         mdCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
         mdCredentialResolver.setKeyInfoCredentialResolver(DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
@@ -266,7 +268,7 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
             new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME),
             new SamlIdPSamlRegisteredServiceCriterion(service));
         LOGGER.trace("Resolving entity id from SAML2 IdP metadata for signature signing configuration is [{}]", service.getName());
-        val entityId = Objects.requireNonNull(casSamlIdPMetadataResolver.resolveSingle(entityIdCriteriaSet)).getEntityID();
+        val entityId = Objects.requireNonNull(samlIdPMetadataResolver.resolveSingle(entityIdCriteriaSet)).getEntityID();
         LOGGER.trace("Resolved entity id from SAML2 IdP metadata is [{}]", entityId);
         criteriaSet.add(new EntityIdCriterion(entityId));
 
