@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support.gen;
 
+import io.thedocs.cookie.CookieSameSiteNoneChecker;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.util.LoggingUtils;
@@ -119,7 +120,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         cookie.setSecure(isCookieSecure());
         cookie.setHttpOnly(isCookieHttpOnly());
 
-        return addCookieHeaderToResponse(cookie, response);
+        return addCookieHeaderToResponse(cookie, response, request);
     }
 
     @Override
@@ -166,7 +167,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     }
 
     private Cookie addCookieHeaderToResponse(final Cookie cookie,
-                                             final HttpServletResponse response) {
+                                             final HttpServletResponse response, final HttpServletRequest request) {
         val builder = new StringBuilder();
         builder.append(String.format("%s=%s;", cookie.getName(), cookie.getValue()));
 
@@ -189,7 +190,10 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                 break;
             case "none":
             default:
-                builder.append(" SameSite=None;");
+                var userAgent = request.getHeader("User-Agent");
+                if (userAgent == null || !new CookieSameSiteNoneChecker().isSameSiteNoneIncompatible(userAgent)) {
+                    builder.append(" SameSite=None;");
+                }
                 break;
         }
         if (cookie.getSecure() || StringUtils.equalsIgnoreCase(sameSitePolicy, "none")) {
