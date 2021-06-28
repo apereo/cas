@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletRequest;
  * The {@link OpenIdServiceFactory} creates {@link OpenIdService} objects.
  *
  * @author Misagh Moayyed
- * @deprecated 6.2
  * @since 4.2
+ * @deprecated 6.2
  */
 @RequiredArgsConstructor
 @NoArgsConstructor(force = true)
