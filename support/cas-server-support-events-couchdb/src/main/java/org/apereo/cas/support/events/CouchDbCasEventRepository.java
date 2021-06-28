@@ -5,6 +5,7 @@ import org.apereo.cas.couchdb.events.EventCouchDbRepository;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 
+import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.time.ZonedDateTime;
@@ -75,12 +76,14 @@ public class CouchDbCasEventRepository extends AbstractCasEventRepository implem
     }
 
     @Override
-    public void saveInternal(final CasEvent event) {
+    public CasEvent saveInternal(final CasEvent event) {
+        val cdbEvent = new CouchDbCasEvent(event);
         if (asynchronous) {
-            this.executorService.execute(() -> couchDb.add(new CouchDbCasEvent(event)));
+            this.executorService.execute(() -> couchDb.add(cdbEvent));
         } else {
-            couchDb.add(new CouchDbCasEvent(event));
+            couchDb.add(cdbEvent);
         }
+        return cdbEvent;
     }
 
     @Override

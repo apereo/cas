@@ -7,6 +7,7 @@ import org.apereo.cas.support.events.authentication.CasAuthenticationTransaction
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationDetectedEvent;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
+import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.serialization.MessageSanitizationUtils;
@@ -63,6 +64,23 @@ public class DefaultCasEventListener {
     @EventListener
     @Async
     public void handleCasTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent event) {
+        if (this.casEventRepository != null) {
+            val dto = prepareCasEvent(event);
+            dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
+            dto.putEventId(MessageSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
+            dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
+            this.casEventRepository.save(dto);
+        }
+    }
+
+    /**
+     * Handle TGT deleted event.
+     *
+     * @param event the event
+     */
+    @EventListener
+    @Async
+    public void handleCasTicketGrantingTicketDeletedEvent(final CasTicketGrantingTicketDestroyedEvent event) {
         if (this.casEventRepository != null) {
             val dto = prepareCasEvent(event);
             dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
