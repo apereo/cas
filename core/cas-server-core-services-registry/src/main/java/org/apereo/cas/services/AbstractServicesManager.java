@@ -35,7 +35,6 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class AbstractServicesManager implements ServicesManager {
-
     /**
      * The Configuration context.
      */
@@ -223,13 +222,13 @@ public abstract class AbstractServicesManager implements ServicesManager {
     public Collection<RegisteredService> getAllServicesOfType(final Class clazz) {
         if (supports(clazz)) {
             return configurationContext.getServicesCache().asMap().values()
-                    .stream()
-                    .filter(s -> clazz.isAssignableFrom(s.getClass()))
-                    .filter(this::validateAndFilterServiceByEnvironment)
-                    .filter(getRegisteredServicesFilteringPredicate())
-                    .sorted()
-                    .peek(RegisteredService::initialize)
-                    .collect(Collectors.toList());
+                .stream()
+                .filter(s -> clazz.isAssignableFrom(s.getClass()))
+                .filter(this::validateAndFilterServiceByEnvironment)
+                .filter(getRegisteredServicesFilteringPredicate())
+                .sorted()
+                .peek(RegisteredService::initialize)
+                .collect(Collectors.toList());
         }
         return new ArrayList<>();
     }
@@ -239,18 +238,24 @@ public abstract class AbstractServicesManager implements ServicesManager {
         return configurationContext.getServiceRegistry().getServicesStream();
     }
 
+    /**
+     * For the duration of the read, the cache store should not remain empty.
+     * Otherwise, lookup operations during that loading time window might produce
+     * unauthorized failure errors. Invalidation attempts must happen after the load
+     * to minimize chances of faliures.
+     */
     @Override
-    public Collection<RegisteredService> load() {
+    public synchronized Collection<RegisteredService> load() {
         LOGGER.trace("Loading services from [{}]", configurationContext.getServiceRegistry().getName());
         val servicesMap = configurationContext.getServiceRegistry().load()
-                .stream()
-                .filter(this::supports)
-                .peek(this::loadInternal)
-                .collect(Collectors.toMap(r -> {
-                    LOGGER.trace("Adding registered service [{}] with name [{}] and internal identifier [{}]",
-                            r.getServiceId(), r.getName(), r.getId());
-                    return r.getId();
-                }, Function.identity(), (r, s) -> s));
+            .stream()
+            .filter(this::supports)
+            .peek(this::loadInternal)
+            .collect(Collectors.toMap(r -> {
+                LOGGER.trace("Adding registered service [{}] with name [{}] and internal identifier [{}]",
+                    r.getServiceId(), r.getName(), r.getId());
+                return r.getId();
+            }, Function.identity(), (r, s) -> s));
         configurationContext.getServicesCache().invalidateAll();
         configurationContext.getServicesCache().putAll(servicesMap);
         loadInternal();
