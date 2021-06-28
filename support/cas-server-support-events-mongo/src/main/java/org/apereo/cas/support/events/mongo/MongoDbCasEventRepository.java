@@ -93,7 +93,7 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    public void saveInternal(final CasEvent event) {
-        this.mongoTemplate.save(event, this.collectionName);
+    public CasEvent saveInternal(final CasEvent event) {
+        return this.mongoTemplate.save(event, this.collectionName);
     }
 }

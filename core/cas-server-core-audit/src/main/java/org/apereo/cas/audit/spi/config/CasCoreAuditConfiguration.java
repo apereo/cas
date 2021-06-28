@@ -19,11 +19,13 @@ import org.apereo.cas.audit.spi.resource.TicketAsFirstParameterResourceResolver;
 import org.apereo.cas.audit.spi.resource.TicketValidationResourceResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.serialization.MessageSanitizationUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
+import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.FilterAndDelegateAuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
@@ -39,6 +41,8 @@ import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.audit.AuditEventRepository;
+import org.springframework.boot.actuate.audit.InMemoryAuditEventRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -51,6 +55,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,22 +86,23 @@ public class CasCoreAuditConfiguration {
     private ObjectProvider<AuditTrailRecordResolutionPlan> auditTrailRecordResolutionPlan;
 
     @Bean
+    @ConditionalOnProperty(prefix = "cas.audit.engine", name = "enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnMissingBean(name = "inMemoryAuditEventRepository")
+    public AuditEventRepository inMemoryAuditEventRepository() {
+        return new InMemoryAuditEventRepository();
+    }
+
+    @Bean
     @ConditionalOnMissingBean(name = "auditTrailManagementAspect")
     @ConditionalOnProperty(prefix = "cas.audit.engine", name = "enabled", havingValue = "true", matchIfMissing = true)
     public AuditTrailManagementAspect auditTrailManagementAspect() {
         val audit = casProperties.getAudit().getEngine();
         val auditFormat = AbstractStringAuditTrailManager.AuditFormats.valueOf(audit.getAuditFormat().name());
-
-        val auditManager = new FilterAndDelegateAuditTrailManager(
-            auditTrailExecutionPlan.getObject().getAuditTrailManagers(),
-            audit.getSupportedActions(), audit.getExcludedActions());
-        auditManager.setAuditFormat(auditFormat);
-
         val auditRecordResolutionPlan = auditTrailRecordResolutionPlan.getObject();
         val aspect = new AuditTrailManagementAspect(
             audit.getAppCode(),
             auditablePrincipalResolver(auditPrincipalIdProvider()),
-            CollectionUtils.wrapList(auditManager),
+            CollectionUtils.wrapList(filterAndDelegateAuditTrailManager()),
             auditRecordResolutionPlan.getAuditActionResolvers(),
             auditRecordResolutionPlan.getAuditResourceResolvers(),
             auditRecordResolutionPlan.getAuditPrincipalResolvers(),
@@ -182,7 +188,11 @@ public class CasCoreAuditConfiguration {
     @ConditionalOnMissingBean(name = "nullableReturnValueResourceResolver")
     @Bean
     public AuditResourceResolver nullableReturnValueResourceResolver() {
-        return new NullableReturnValueAuditResourceResolver(returnValueResourceResolver());
+        val resolver = new NullableReturnValueAuditResourceResolver(returnValueResourceResolver());
+        resolver.setResourcePostProcessor(inputs -> Arrays.stream(inputs)
+            .map(MessageSanitizationUtils::sanitize)
+            .toArray(String[]::new));
+        return resolver;
     }
 
     @ConditionalOnMissingBean(name = "serviceAccessEnforcementAuditResourceResolver")
@@ -238,7 +248,11 @@ public class CasCoreAuditConfiguration {
     @ConditionalOnMissingBean(name = "messageBundleAwareResourceResolver")
     @Bean
     public AuditResourceResolver messageBundleAwareResourceResolver() {
-        return new MessageBundleAwareResourceResolver(applicationContext);
+        val resolver = new MessageBundleAwareResourceResolver(applicationContext);
+        resolver.setResourcePostProcessor(inputs -> Arrays.stream(inputs)
+            .map(MessageSanitizationUtils::sanitize)
+            .toArray(String[]::new));
+        return resolver;
     }
 
     @ConditionalOnMissingBean(name = "serviceAuditResourceResolver")
@@ -265,7 +279,7 @@ public class CasCoreAuditConfiguration {
         return new ObjectCreationAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_SUCCESS,
             AuditTrailConstants.AUDIT_ACTION_POSTFIX_FAILED);
     }
-    
+
     @Bean
     @ConditionalOnMissingBean(name = "credentialsAsFirstParameterResourceResolver")
     public CredentialsAsFirstParameterResourceResolver credentialsAsFirstParameterResourceResolver() {
@@ -302,6 +316,18 @@ public class CasCoreAuditConfiguration {
             addAuditResourceResolvers(plan);
             addAuditCustomResolvers(plan);
         };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "filterAndDelegateAuditTrailManager")
+    protected AuditTrailManager filterAndDelegateAuditTrailManager() {
+        val audit = casProperties.getAudit().getEngine();
+        val auditFormat = AbstractStringAuditTrailManager.AuditFormats.valueOf(audit.getAuditFormat().name());
+        val auditManager = new FilterAndDelegateAuditTrailManager(
+            auditTrailExecutionPlan.getObject().getAuditTrailManagers(),
+            audit.getSupportedActions(), audit.getExcludedActions());
+        auditManager.setAuditFormat(auditFormat);
+        return auditManager;
     }
 
     private void addAuditCustomResolvers(final AuditTrailRecordResolutionPlan plan) {
