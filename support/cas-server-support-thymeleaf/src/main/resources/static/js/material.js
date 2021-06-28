@@ -27,7 +27,6 @@
         checkCaps: function (ev) {
             var s = String.fromCharCode(ev.which),
                 parent = $(ev.target).parents('.mdc-input-group');
-                console.log(parent);
             if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
                 parent.addClass('caps-on');
             } else {

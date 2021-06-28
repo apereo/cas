@@ -5,6 +5,12 @@
     </span>
 </span>
 
+<span th:remove="tag" th:unless="${'true' == #strings.defaultString(#themes.code('cas.js.core.enabled'), 'true')}">
+    <span th:replace="fragments/bootstrap :: bootstrap">
+        <a href="fragments/bootstrap.html">Material</a> fragment will go here
+    </span>
+</span>
+
 <span th:remove="tag" th:each="file : ${#strings.arraySplit(#themes.code('cas.standard.js.file'), ',')}">
     <script type="text/javascript" th:src="@{${file}}"></script>
 </span>
@@ -15,7 +21,7 @@
         resourceLoadedSuccessfully();
     }
     $(function() {
-        cssVars && cssVars({onlyLegacy: true});
+        typeof cssVars === "function" && cssVars({onlyLegacy: true});
     })
 </script>
 
