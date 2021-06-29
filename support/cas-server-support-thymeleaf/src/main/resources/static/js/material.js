@@ -1,13 +1,13 @@
 (function (material, $) {
-    var cas = {
+    let cas = {
         init: function () {
             cas.attachFields();
             material.autoInit();
         },
         attachFields: function () {
-            var divs = document.querySelectorAll('.mdc-text-field'),
+            let divs = document.querySelectorAll('.mdc-text-field'),
                 field;
-            var div;
+            let div;
             for (i = 0; i < divs.length; ++i) {
                 div = divs[i];
                 field = material.textField.MDCTextField.attachTo(div);
@@ -25,12 +25,12 @@
             }
         },
         checkCaps: function (ev) {
-            var s = String.fromCharCode(ev.which),
-                parent = $(ev.target).parents('.mdc-input-group');
+            let s = String.fromCharCode(ev.which);
             if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
-                parent.addClass('caps-on');
+                ev.target.parentElement.classList.add('caps-on');
             } else {
-                parent.removeClass('caps-on');
+                console.log('caps off')
+                ev.target.parentElement.classList.remove('caps-on');
             }
         }
     }
