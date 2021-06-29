@@ -6,6 +6,7 @@ import org.apereo.cas.util.model.TriStateBoolean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 
@@ -65,7 +66,7 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
      * if attribute resolution is enabled.
      * The list here may include identifiers separated by comma.
      */
-    private String activeAttributeRepositoryIds;
+    private String activeAttributeRepositoryIds = StringUtils.EMPTY;
 
     /**
      * In the event that the principal resolution engine resolves

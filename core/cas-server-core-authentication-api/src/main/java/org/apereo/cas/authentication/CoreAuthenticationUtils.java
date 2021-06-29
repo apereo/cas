@@ -366,8 +366,27 @@ public class CoreAuthenticationUtils {
         final IAttributeMerger attributeMerger,
         final Class<T> resolverClass,
         final PersonDirectoryPrincipalResolverProperties... personDirectory) {
+        val context = buildPrincipalResolutionContext(principalFactory, attributeRepository, attributeMerger, personDirectory);
 
-        val context = PrincipalResolutionContext.builder()
+        val ctor = resolverClass.getDeclaredConstructor(PrincipalResolutionContext.class);
+        return ctor.newInstance(context);
+    }
+
+    /**
+     * New PrincipalResolutionContext.
+     *
+     * @param <T>                 the type parameter
+     * @param principalFactory    the principal factory
+     * @param attributeRepository the attribute repository
+     * @param attributeMerger     the attribute merger
+     * @param personDirectory     the person directory properties
+     * @return the resolver
+     */
+    public static PrincipalResolutionContext buildPrincipalResolutionContext(final PrincipalFactory principalFactory,
+                                                                             final IPersonAttributeDao attributeRepository,
+                                                                             final IAttributeMerger attributeMerger,
+                                                                             final PersonDirectoryPrincipalResolverProperties... personDirectory) {
+        return PrincipalResolutionContext.builder()
             .attributeRepository(attributeRepository)
             .attributeMerger(attributeMerger)
             .principalFactory(principalFactory)
@@ -384,14 +403,12 @@ public class CoreAuthenticationUtils {
             .resolveAttributes(Arrays.stream(personDirectory).filter(p -> p.getAttributeResolutionEnabled() != TriStateBoolean.UNDEFINED)
                 .map(p -> p.getAttributeResolutionEnabled().toBoolean()).findFirst().orElse(Boolean.TRUE))
             .activeAttributeRepositoryIdentifiers(Arrays.stream(personDirectory)
-                .filter(p -> p.getActiveAttributeRepositoryIds().isEmpty())
+                .filter(p -> !p.getActiveAttributeRepositoryIds().isBlank())
                 .map(p -> org.springframework.util.StringUtils.commaDelimitedListToSet(p.getActiveAttributeRepositoryIds()))
+                .filter(p -> !p.isEmpty())
                 .findFirst()
                 .orElse(Collections.EMPTY_SET))
             .build();
-
-        val ctor = resolverClass.getDeclaredConstructor(PrincipalResolutionContext.class);
-        return ctor.newInstance(context);
     }
 
     /**
