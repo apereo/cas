@@ -14,6 +14,12 @@
 # docker exec -it samba /bin/bash
 # The container also contains the ldap-utils package so users could be imported via LDIF files.
 
+docker ps | grep samba > /dev/null
+if [[ $? -eq 0 ]]; then
+  echo "Samba already running, run docker rm -f samba to get clean directory"
+  exit 0
+fi
+
 # Passing true as first argument will reset directory config and data
 RESET=${1:-false}
 

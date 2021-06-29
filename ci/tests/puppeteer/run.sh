@@ -55,13 +55,26 @@ config="${scenario}/script.json"
 echo "Using scenario configuration file: ${config}"
 
 dependencies=$(cat "${config}" | jq -j '.dependencies')
-echo -e "\nBuilding CAS found in $PWD for dependencies [${dependencies}]"
-./gradlew :webapp:cas-server-webapp-tomcat:build -DskipNestedConfigMetadataGen=true -x check -x javadoc \
-  --no-daemon --build-cache --configure-on-demand --parallel -PcasModules="${dependencies}"
+if [[ "${REBUILD}" != "false" ]]; then
+  echo -e "\nBuilding CAS found in $PWD for dependencies [${dependencies}]"
+  ./gradlew :webapp:cas-server-webapp-tomcat:build -DskipNestedConfigMetadataGen=true -x check -x javadoc \
+    --no-daemon --build-cache --configure-on-demand --parallel -PcasModules="${dependencies}"
+else
+  echo -e "\nNot rebuilding war because REBUILD=false"
+fi
 cp "$PWD"/webapp/cas-server-webapp-tomcat/build/libs/cas-server-webapp-tomcat-*-SNAPSHOT.war "$PWD"/cas.war
 if [ $? -eq 1 ]; then
   echo "Unable to build or locate the CAS web application file. Aborting test..."
   exit 1
+fi
+
+# paths passed as arguments on command line get converted
+# by msys2 on windows, in some cases that is good but not with --somearg=file:/${PWD}/ci/...
+# so this converts path to windows format
+PORTABLE_PWD=${PWD}
+command -v cygpath > /dev/null && test ! -z "$MSYSTEM"
+if [[ $? -eq 0 ]]; then
+  PORTABLE_PWD=$(cygpath -w $PWD)
 fi
 
 initScript=$(cat "${config}" | jq -j '.initScript // empty')
@@ -77,14 +90,13 @@ runArgs="${runArgs//\$\{PWD\}/${PWD}}"
 [ -n "${runArgs}" ] && echo -e "JVM runtime arguments: [${runArgs}]"
 
 properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
-properties="${properties//\$\{PWD\}/${PWD}}"
+properties="${properties//\$\{PWD\}/${PORTABLE_PWD}}"
 properties="${properties//\$\{SCENARIO\}/${scenarioName}}"
 properties="${properties//\%\{random\}/${random}}"
 if [[ "$DEBUG" == "debug" ]]; then
   echo -e "Enabling debugger on port $DEBUG_PORT"
   runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
 fi
-
 echo -e "\nLaunching CAS with properties [${properties}], run arguments [${runArgs}] and dependencies [${dependencies}]"
 java ${runArgs} -jar "$PWD"/cas.war ${properties} \
   --spring.profiles.active=none --server.ssl.key-store="$keystore" &
