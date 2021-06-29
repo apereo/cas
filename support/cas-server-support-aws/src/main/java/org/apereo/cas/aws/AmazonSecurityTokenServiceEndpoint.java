@@ -100,7 +100,9 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
         @Parameter(name = "tokenCode"),
         @Parameter(name = "profile"),
         @Parameter(name = "serialNumber"),
-        @Parameter(name = "roleArn")
+        @Parameter(name = "roleArn"),
+        @Parameter(name = "requestBody"),
+        @Parameter(name = "request")
     })
     public ResponseEntity<String> fetchCredentials(@RequestParam(required = false, defaultValue = "PT1H") final String duration,
                                                    @RequestParam(value = "token", required = false) final String tokenCode,

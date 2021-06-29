@@ -67,7 +67,8 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @return the sso sessions
      */
     @ReadOperation
-    @Operation(summary = "Get all single sign-on sessions with the given type", parameters = {@Parameter(name = "type")})
+    @Operation(summary = "Get all single sign-on sessions with the given type",
+        parameters = {@Parameter(name = "type", required = true)})
     public Map<String, Object> getSsoSessions(@Nullable final String type) {
         val sessionsMap = new HashMap<String, Object>();
         val option = Optional.ofNullable(type).map(SsoSessionReportOptions::valueOf).orElse(SsoSessionReportOptions.ALL);
@@ -110,7 +111,8 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @return result map
      */
     @DeleteOperation
-    @Operation(summary = "Remove single sign-on session for ticket id", parameters = {@Parameter(name = "ticketGrantingTicket")})
+    @Operation(summary = "Remove single sign-on session for ticket id",
+        parameters = {@Parameter(name = "ticketGrantingTicket", required = true)})
     public Map<String, Object> destroySsoSession(@Selector final String ticketGrantingTicket) {
 
         val sessionsMap = new HashMap<String, Object>(1);

@@ -61,13 +61,11 @@ repositories {
 
 {% include casproperties.html properties="cas.authn.saml-idp.core,cas.client,cas.session-replication" %}
 
-### Administrative Endpoints
+### Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint          | Description
-|-------------------|-------------------------------------------------------------------------------------------------------
-| `samlPostProfileResponse` | Obtain a SAML2 response payload by supplying a `username`, `password`, `entityId` and `encrypt` as parameters.
+
+{% include actuators.html endpoints="samlPostProfileResponse" %}
 
 ### SAML Services
 

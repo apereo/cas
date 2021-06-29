@@ -46,18 +46,11 @@ expire after a fixed period since a user registered their device.
 the cleaner running on one designated CAS node only and turn it off on all others via CAS settings. Keeping the cleaner running 
 on all nodes may likely lead to severe performance and locking issues.</p></div>
 
-### Administrative Endpoints
+### Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                                      | Description
-|-----------------------------------------------|----------------------------------------------------------------------------
-| `webAuthnDevices/{username}`                  | `GET` request to fetch device registration records for the user.
-| `webAuthnDevices/{username}`                  | `DELETE` request to delete all device registration records for the user.
-| `webAuthnDevices/{username}/{credential}`     | `DELETE` request to delete a device registration record for the user.
-| `webAuthnDevices/{username}` | `POST` request to add a device registration record for the user with request body parameter `record`.
-| `webAuthnDevices/export`       | Invoked via `GET` to export all accounts as a downloadable zip archive.
-| `webAuthnDevices/import`       | Invoked via `POST` to import a single account provided in the request body.
+
+{% include actuators.html endpoints="webAuthnDevices" %}
 
 ### Default
 

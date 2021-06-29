@@ -58,7 +58,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
     private Ignite ignite;
 
     @Override
-    public void addTicket(final Ticket ticket) {
+    public void addTicketInternal(final Ticket ticket) {
         val encodedTicket = encodeTicket(ticket);
         val metadata = this.ticketCatalog.find(ticket);
         val cache = getIgniteCacheFromMetadata(metadata);
@@ -84,11 +84,11 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        val ticket = getTicket(ticketId);
-        if (ticket != null) {
-            val metadata = this.ticketCatalog.find(ticket);
+        val encTicketId = encodeTicketId(ticketId);
+        val metadata = this.ticketCatalog.find(ticketId);
+        if (metadata != null) {
             val cache = getIgniteCacheFromMetadata(metadata);
-            return cache.remove(encodeTicketId(ticket.getId()));
+            return cache.remove(encTicketId);
         }
         return true;
     }
@@ -158,17 +158,6 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
         }
     }
 
-    private IgniteCache<String, Ticket> getIgniteCacheFromMetadata(final TicketDefinition metadata) {
-        val mapName = metadata.getProperties().getStorageName();
-        LOGGER.trace("Locating cache name [{}] for ticket definition [{}]", mapName, metadata);
-        return getIgniteCacheInstanceByName(mapName);
-    }
-
-    private IgniteCache<String, Ticket> getIgniteCacheInstanceByName(final String name) {
-        LOGGER.trace("Attempting to get/create cache [{}]", name);
-        return this.ignite.getOrCreateCache(name);
-    }
-
     @ToString
     @RequiredArgsConstructor
     private static class IgniteInternalTicketExpiryPolicy implements ExpiryPolicy {
@@ -190,5 +179,16 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
         public Duration getExpiryForUpdate() {
             return new Duration(TimeUnit.SECONDS, expirationPolicy.getTimeToLive());
         }
+    }
+
+    private IgniteCache<String, Ticket> getIgniteCacheFromMetadata(final TicketDefinition metadata) {
+        val mapName = metadata.getProperties().getStorageName();
+        LOGGER.trace("Locating cache name [{}] for ticket definition [{}]", mapName, metadata);
+        return getIgniteCacheInstanceByName(mapName);
+    }
+
+    private IgniteCache<String, Ticket> getIgniteCacheInstanceByName(final String name) {
+        LOGGER.trace("Attempting to get/create cache [{}]", name);
+        return this.ignite.getOrCreateCache(name);
     }
 }

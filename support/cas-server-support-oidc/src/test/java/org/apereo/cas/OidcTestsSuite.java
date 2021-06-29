@@ -22,8 +22,8 @@ import org.apereo.cas.oidc.issuer.OidcDefaultIssuerServiceTests;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoaderTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreJacksonDeserializerTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtilsTests;
+import org.apereo.cas.oidc.jwks.OidcRegisteredServiceJsonWebKeystoreCacheLoaderTests;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheExpirationPolicyTests;
-import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheLoaderTests;
 import org.apereo.cas.oidc.jwks.generator.OidcDefaultJsonWebKeystoreGeneratorServiceTests;
 import org.apereo.cas.oidc.jwks.generator.OidcRestfulJsonWebKeystoreGeneratorServiceTests;
 import org.apereo.cas.oidc.profile.OidcProfileScopeToAttributesFilterTests;
@@ -31,6 +31,7 @@ import org.apereo.cas.oidc.profile.OidcUserProfileDataCreatorTests;
 import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionServiceTests;
 import org.apereo.cas.oidc.profile.OidcUserProfileViewRendererDefaultTests;
 import org.apereo.cas.oidc.profile.OidcUserProfileViewRendererFlatTests;
+import org.apereo.cas.oidc.scopes.DefaultOidcAttributeReleasePolicyFactoryTests;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListenerTests;
 import org.apereo.cas.oidc.services.OidcServicesManagerRegisteredServiceLocatorTests;
 import org.apereo.cas.oidc.slo.OidcSingleLogoutMessageCreatorTests;
@@ -85,7 +86,7 @@ import org.junit.platform.suite.api.Suite;
     OidcProfileScopeToAttributesFilterTests.class,
     OidcServerDiscoverySettingsFactoryTests.class,
     OidcRegisteredServiceUIActionTests.class,
-    OidcServiceJsonWebKeystoreCacheLoaderTests.class,
+    OidcRegisteredServiceJsonWebKeystoreCacheLoaderTests.class,
     OidcAuthorizationRequestSupportTests.class,
     OidcPrivateKeyJwtAuthenticatorTests.class,
     OidcClientSecretJwtAuthenticatorTests.class,
@@ -139,6 +140,7 @@ import org.junit.platform.suite.api.Suite;
     OidcRegisteredServiceJwtAccessTokenCipherExecutorTests.class,
     OidcClientConfigurationAccessTokenAuthenticatorTests.class,
     OidcDefaultIssuerServiceTests.class,
+    DefaultOidcAttributeReleasePolicyFactoryTests.class,
     OidcSingleLogoutMessageCreatorTests.class,
     OidcSingleLogoutServiceMessageHandlerTests.class
 })

@@ -50,7 +50,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public void addTicket(final Ticket ticket) {
+    public void addTicketInternal(final Ticket ticket) {
         try {
             LOGGER.debug("Adding ticket [{}]", ticket);
             val redisKey = getTicketRedisKey(encodeTicketId(ticket.getId()));

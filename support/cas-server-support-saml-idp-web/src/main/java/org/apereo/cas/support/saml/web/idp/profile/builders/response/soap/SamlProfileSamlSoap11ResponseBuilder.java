@@ -89,7 +89,7 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
                                           final String binding,
                                           final MessageContext messageContext) {
         return (Response)
-            getSamlResponseBuilderConfigurationContext().getSamlSoapResponseBuilder()
+            getConfigurationContext().getSamlSoapResponseBuilder()
                 .build(authnRequest, request, response, casAssertion, service, adaptor, binding, messageContext);
     }
 

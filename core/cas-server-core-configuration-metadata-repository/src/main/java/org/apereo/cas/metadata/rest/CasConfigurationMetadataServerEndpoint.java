@@ -56,7 +56,8 @@ public class CasConfigurationMetadataServerEndpoint extends BaseCasActuatorEndpo
      * @return the response entity
      */
     @ReadOperation
-    @Operation(summary = "Get all properties from the repository that match the name", parameters = {@Parameter(name = "name")})
+    @Operation(summary = "Get all properties from the repository that match the name",
+        parameters = {@Parameter(name = "name", required = true)})
     public List<ConfigurationMetadataSearchResult> search(@Selector final String name) {
         val allProps = repository.getRepository().getAllProperties();
 

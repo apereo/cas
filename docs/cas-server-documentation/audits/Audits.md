@@ -20,32 +20,11 @@ to both a database and a REST endpoint as well as any number of logger-based des
 
 {% include casproperties.html properties="cas.audit.engine." %}
 
-## Administrative Endpoints
+## Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `auditLog`               | Provides a JSON representation of all the audit log.
 
-You can specify an interval of log entries to return by adding a `Duration` Syntax 
-to the navigated path. This interval will be subtracted from the current 
-date and time when the query is executed. For instance `/actuator/auditLog/PT1H` will 
-return only entries for the past hour.
-
-The actuator endpoint can also accept a JSON object through a POST method containing criteria to filter log entries by.
-
-The following filters that can be applied:
-
-| Key                       | Value
-|---------------------------|-----------------------------------------------
-| `interval`                | `PT1H`, `PT10M`, `P1D`
-| `actionPerformed`         | `TICKET_GRANTING_TICKET_CREATED`, `SERVICE_TICK.*`
-| `clientIpAddress`         | `111.111.111.111`, `111.111.*` 
-| `username`                | `casuser`, `cas.*`
-| `resourceOperatedOn`      | `ST-1.*`, `TGT-1-.*`
-
-Each filter other than `interval` can accept a regular expression to match against.
+{% include actuators.html endpoints="auditLog" casModule="cas-server-support-reports" %}
      
 ## Storage
 
