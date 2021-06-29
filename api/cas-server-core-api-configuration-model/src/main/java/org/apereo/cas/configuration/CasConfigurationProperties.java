@@ -135,7 +135,7 @@ public class CasConfigurationProperties implements Serializable {
     /**
      * Person directory principal resolution properties, allows setting principal attribute and active attribute repositories.
      * Some authentication methods with their own principal resolvers (e.g. x509, spnego, trusted, wsfed, surrogate) may override
-     * these values but these serve  as the defaults for all resolvers if not overridden.
+     * these values but these serve as the defaults for all resolvers if not overridden.
      */
     @NestedConfigurationProperty
     private PersonDirectoryPrincipalProperties principal = new PersonDirectoryPrincipalProperties();
