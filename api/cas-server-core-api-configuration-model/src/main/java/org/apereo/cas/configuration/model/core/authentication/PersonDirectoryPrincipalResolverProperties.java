@@ -55,9 +55,9 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
 
     /**
      * Whether attribute repositories should be contacted
-     * to fetch person attributes.
+     * to fetch person attributes. Defaults to true if not set.
      */
-    private Boolean attributeResolutionEnabled = Boolean.TRUE;
+    private TriStateBoolean attributeResolutionEnabled = TriStateBoolean.UNDEFINED;
 
     /**
      * Activated attribute repository identifiers
