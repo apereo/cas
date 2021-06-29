@@ -67,13 +67,13 @@ public class CasPersonDirectoryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "personDirectoryAttributeRepositoryPrincipalResolver")
     public PrincipalResolver personDirectoryAttributeRepositoryPrincipalResolver() {
-        val defaultPrincipal = casProperties.getPrincipal();
+        val principal = casProperties.getPrincipal();
         val personDirectory = casProperties.getPersonDirectory();
         return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(personDirectoryPrincipalFactory(),
             attributeRepository(),
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
             personDirectory,
-            defaultPrincipal);
+            principal);
     }
 
     @ConditionalOnMissingBean(name = "principalResolutionExecutionPlanConfigurer")

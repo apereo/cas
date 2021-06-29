@@ -336,7 +336,8 @@ public class CoreAuthenticationUtils {
      * @param principalFactory    the principal factory
      * @param attributeRepository the attribute repository
      * @param attributeMerger     the attribute merger
-     * @param personDirectory     the person directory
+     * @param personDirectory     the person directory resolver properties
+     * @param principal           the person directory principal properities
      * @return the principal resolver
      */
     public static PrincipalResolver newPersonDirectoryPrincipalResolver(
@@ -344,9 +345,9 @@ public class CoreAuthenticationUtils {
         final IPersonAttributeDao attributeRepository,
         final IAttributeMerger attributeMerger,
         final PersonDirectoryPrincipalResolverProperties personDirectory,
-        final PersonDirectoryPrincipalProperties... defaultPrincipal) {
+        final PersonDirectoryPrincipalProperties... principal) {
         return newPersonDirectoryPrincipalResolver(principalFactory, attributeRepository,
-            attributeMerger, PersonDirectoryPrincipalResolver.class, personDirectory, defaultPrincipal);
+            attributeMerger, PersonDirectoryPrincipalResolver.class, personDirectory, principal);
     }
 
     /**
@@ -357,8 +358,8 @@ public class CoreAuthenticationUtils {
      * @param attributeRepository the attribute repository
      * @param attributeMerger     the attribute merger
      * @param resolverClass       the resolver class
-     * @param personDirectory     the person directory
-     * @param personDirectory     the person directory
+     * @param personDirectory     the person directory resolver properties
+     * @param principal           the person directory principal properties
      * @return the resolver
      */
     @SneakyThrows
