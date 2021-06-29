@@ -68,8 +68,8 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         createViewState(flow, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS, "password-reset/casPasswordUpdateSuccessView");
 
         if (casProperties.getAuthn().getPm().getCore().isEnabled()) {
-            configurePasswordResetFlow(flow, CasWebflowConstants.STATE_ID_EXPIRED_PASSWORD);
-            configurePasswordResetFlow(flow, CasWebflowConstants.STATE_ID_MUST_CHANGE_PASSWORD);
+            configurePasswordResetFlow(flow, CasWebflowConstants.STATE_ID_EXPIRED_PASSWORD, "login-error/casExpiredPassView");
+            configurePasswordResetFlow(flow, CasWebflowConstants.STATE_ID_MUST_CHANGE_PASSWORD, "login-error/casMustChangePassView");
             configurePasswordMustChangeForAuthnWarnings(flow);
             configurePasswordExpirationWarning(flow);
             createPasswordResetFlow();
@@ -196,7 +196,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             "password-reset/casResetPasswordErrorView");
         createViewState(pswdFlow, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS,
             "password-reset/casPasswordUpdateSuccessView");
-        configurePasswordResetFlow(pswdFlow, CasWebflowConstants.STATE_ID_MUST_CHANGE_PASSWORD);
+        configurePasswordResetFlow(pswdFlow, CasWebflowConstants.STATE_ID_MUST_CHANGE_PASSWORD, "login-error/casMustChangePassView");
         pswdFlow.setStartState(verifyRequest);
         mainFlowDefinitionRegistry.registerFlowDefinition(pswdFlow);
 
@@ -213,11 +213,11 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
                 casProperties.getAuthn().getPm().getCore().isEnabled())));
     }
 
-    private void configurePasswordResetFlow(final Flow flow, final String id) {
+    private void configurePasswordResetFlow(final Flow flow, final String id, final String viewId) {
         createFlowVariable(flow, FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);
 
         val binder = createStateBinderConfiguration(CollectionUtils.wrapList(FLOW_VAR_ID_PASSWORD, "confirmedPassword"));
-        val viewState = createViewState(flow, id, id, binder);
+        val viewState = createViewState(flow, id, viewId, binder);
         createStateModelBinding(viewState, FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);
 
         viewState.getEntryActionList().add(createEvaluateAction("initPasswordChangeAction"));

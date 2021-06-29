@@ -9,7 +9,6 @@
         <Logger name="org.apereo.cas" level="error" />
         <Logger name="org.ldaptive" level="warn" />
         <Logger name="org.apereo.services.persondir" level="warn" />
-        <Logger name="org.apereo.cas.persondir.DefaultPersonDirectoryAttributeRepositoryPlan" level="trace" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

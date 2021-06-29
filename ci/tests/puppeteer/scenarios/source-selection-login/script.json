@@ -3,7 +3,7 @@
   "properties": [
     "--cas.authn.policy.source-selection-enabled=true",
     
-    "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/source-selection-login/accounts.json",
+    "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
     "--cas.authn.json.name=JSON",
     
     "--cas.authn.accept.enabled=true",

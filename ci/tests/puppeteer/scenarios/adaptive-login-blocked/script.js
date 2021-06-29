@@ -1,32 +1,24 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true
-    });
-    const page = await browser.newPage();
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
     const context = browser.defaultBrowserContext()
     await context.overridePermissions("https://localhost:8443/cas/login", ['geolocation'])
     await page.setGeolocation({latitude:90, longitude:20})
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(1000)
 
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(1000)
 
-    let element = await page.$('#content h2');
-    let header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
+    let header = await cas.textContent(page, "#content h2");
+
     assert(header === "Authentication attempt is blocked.")
 
-    element = await page.$('#content p');
-    header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
+    header = await cas.textContent(page, "#content p");
     assert(header === "Your authentication attempt is untrusted and unauthorized from your current workstation.")
     
     await browser.close();

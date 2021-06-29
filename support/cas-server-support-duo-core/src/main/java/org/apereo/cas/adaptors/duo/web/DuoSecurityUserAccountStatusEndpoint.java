@@ -5,6 +5,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -44,6 +46,10 @@ public class DuoSecurityUserAccountStatusEndpoint extends BaseCasActuatorEndpoin
      * @return the map
      */
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Fetch Duo Security user account status", parameters = {
+        @Parameter(name = "username", required = true),
+        @Parameter(name = "providerId")
+    })
     public Map<?, ?> fetchAccountStatus(@Selector final String username, @Nullable final String providerId) {
         val results = new LinkedHashMap<>(MAP_SIZE);
         val providers = applicationContext.getBeansOfType(DuoSecurityMultifactorAuthenticationProvider.class).values();

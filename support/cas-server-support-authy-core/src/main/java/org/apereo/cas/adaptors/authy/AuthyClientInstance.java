@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.authy;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.model.support.mfa.AuthyMultifactorAuthenticationProperties;
 
 import com.authy.AuthyApiClient;
 import com.authy.api.Tokens;
@@ -23,27 +24,18 @@ import java.net.URL;
 public class AuthyClientInstance {
 
     private final Users authyUsers;
+
     private final Tokens authyTokens;
 
-    private final String mailAttribute;
-    private final String phoneAttribute;
-    private final String countryCode;
+    private final AuthyMultifactorAuthenticationProperties properties;
 
     @SneakyThrows
-    public AuthyClientInstance(final String apiKey,
-                               final String apiUrl,
-                               final String mailAttribute,
-                               final String phoneAttribute,
-                               final String countryCode) {
-
-        this.mailAttribute = mailAttribute;
-        this.phoneAttribute = phoneAttribute;
-        this.countryCode = countryCode;
-
-        val authyUrl = StringUtils.defaultIfBlank(apiUrl, AuthyApiClient.DEFAULT_API_URI);
+    public AuthyClientInstance(final AuthyMultifactorAuthenticationProperties settings) {
+        this.properties = settings;
+        val authyUrl = StringUtils.defaultIfBlank(properties.getApiUrl(), AuthyApiClient.DEFAULT_API_URI);
         val url = new URL(authyUrl);
         val testFlag = url.getProtocol().equalsIgnoreCase("http");
-        val authyClient = new AuthyApiClient(apiKey, authyUrl, testFlag);
+        val authyClient = new AuthyApiClient(properties.getApiKey(), authyUrl, testFlag);
         this.authyUsers = authyClient.getUsers();
         this.authyTokens = authyClient.getTokens();
     }
@@ -55,7 +47,7 @@ public class AuthyClientInstance {
      * @return the authy error message
      */
     public static String getErrorMessage(final com.authy.api.Error err) {
-        val builder = new StringBuilder();
+        val builder = new StringBuilder(100);
         if (err != null) {
             builder.append("Authy Error");
             if (StringUtils.isNotBlank(err.getCountryCode())) {
@@ -79,15 +71,15 @@ public class AuthyClientInstance {
     @SneakyThrows
     public User getOrCreateUser(final Principal principal) {
         val attributes = principal.getAttributes();
-        if (!attributes.containsKey(this.mailAttribute)) {
+        if (!attributes.containsKey(properties.getMailAttribute())) {
             throw new IllegalArgumentException("No email address found for " + principal.getId());
         }
-        if (!attributes.containsKey(this.phoneAttribute)) {
+        if (!attributes.containsKey(properties.getPhoneAttribute())) {
             throw new IllegalArgumentException("No phone number found for " + principal.getId());
         }
 
-        val email = attributes.get(this.mailAttribute).get(0).toString();
-        val phone = attributes.get(this.phoneAttribute).get(0).toString();
-        return this.authyUsers.createUser(email, phone, this.countryCode);
+        val email = attributes.get(properties.getMailAttribute()).get(0).toString();
+        val phone = attributes.get(properties.getPhoneAttribute()).get(0).toString();
+        return this.authyUsers.createUser(email, phone, "1");
     }
 }

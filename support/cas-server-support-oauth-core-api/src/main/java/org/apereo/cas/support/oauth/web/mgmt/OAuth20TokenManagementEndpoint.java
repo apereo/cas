@@ -9,6 +9,8 @@ import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
@@ -35,8 +37,8 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
     private final JwtBuilder accessTokenJwtBuilder;
 
     public OAuth20TokenManagementEndpoint(final CasConfigurationProperties casProperties,
-        final CentralAuthenticationService centralAuthenticationService,
-        final JwtBuilder accessTokenJwtBuilder) {
+                                          final CentralAuthenticationService centralAuthenticationService,
+                                          final JwtBuilder accessTokenJwtBuilder) {
         super(casProperties);
         this.centralAuthenticationService = centralAuthenticationService;
         this.accessTokenJwtBuilder = accessTokenJwtBuilder;
@@ -48,6 +50,7 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
      * @return the access tokens
      */
     @ReadOperation
+    @Operation(summary = "Get access and/or refresh tokens")
     public Collection<Ticket> getTokens() {
         return centralAuthenticationService.getTickets(ticket ->
             (ticket instanceof OAuth20AccessToken || ticket instanceof OAuth20RefreshToken) && !ticket.isExpired())
@@ -64,9 +67,8 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
      * @return the access token
      */
     @ReadOperation
-    public Ticket getToken(
-        @Selector
-        final String token) {
+    @Operation(summary = "Get single token by id", parameters = {@Parameter(name = "token", required = true)})
+    public Ticket getToken(@Selector final String token) {
         try {
             val ticketId = extractAccessTokenFrom(token);
             return centralAuthenticationService.getTicket(ticketId, Ticket.class);
@@ -82,9 +84,8 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
      * @param ticketId the ticket id
      */
     @DeleteOperation
-    public void deleteToken(
-        @Selector
-        final String ticketId) {
+    @Operation(summary = "Delete token by id", parameters = {@Parameter(name = "ticketId", required = true)})
+    public void deleteToken(@Selector final String ticketId) {
         val ticket = getToken(ticketId);
         if (ticket != null) {
             centralAuthenticationService.deleteTicket(ticket.getId());

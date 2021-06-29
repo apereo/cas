@@ -5,7 +5,9 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -14,6 +16,7 @@ import org.apereo.cas.trusted.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.Getter;
 import lombok.val;
@@ -33,7 +36,6 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-import static org.apereo.cas.trusted.BeanNames.BEAN_DEVICE_FINGERPRINT_STRATEGY;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -55,19 +57,19 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     protected MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy;
 
     @Autowired
-    @Qualifier("mfaVerifyTrustAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_MFA_VERIFY_TRUST_ACTION)
     protected Action mfaVerifyTrustAction;
 
     @Autowired
-    @Qualifier("mfaSetTrustAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_MFA_SET_TRUST_ACTION)
     protected Action mfaSetTrustAction;
 
     @Autowired
-    @Qualifier("mfaPrepareTrustDeviceViewAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_MFA_PREPARE_TRUST_DEVICE_VIEW_ACTION)
     protected Action mfaPrepareTrustDeviceViewAction;
 
     @Autowired
-    @Qualifier(BEAN_DEVICE_FINGERPRINT_STRATEGY)
+    @Qualifier(DeviceFingerprintStrategy.DEFAULT_BEAN_NAME)
     protected DeviceFingerprintStrategy deviceFingerprintStrategy;
     
     protected static MultifactorAuthenticationTrustRecord getMultifactorAuthenticationTrustRecord() {
@@ -110,6 +112,8 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         CasRegisteredServicesTestConfiguration.class,
         CasCoreAuditConfiguration.class,
         CasCoreHttpConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
         MultifactorAuthnTrustWebflowConfiguration.class,
         MultifactorAuthnTrustConfiguration.class,
         MultifactorAuthnTrustedDeviceFingerprintConfiguration.class

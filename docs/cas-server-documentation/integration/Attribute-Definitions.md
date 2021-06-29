@@ -171,13 +171,13 @@ Same use case as above, except the attribute value be additional processed by an
       "name" : "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
       "friendlyName" : "eduPersonPrincipalName",
       "scoped" : true,
-      "script": " groovy { logger.info(\" name: ${attributeName}, values: ${attributeValues} \"); return ['hello', 'world'] } "
+      "script": "groovy { logger.info(\" name: ${attributeName}, values: ${attributeValues} \"); return ['Hi', attributes['firstname']] }"
     }
 }
 ```  
 
 If the CAS server has a scope of `example.org`, 
-the final values of `eduPersonPrincipalName` would be [`hello@example.org`, `world@example.org`]
+the final values of `eduPersonPrincipalName` would be [`Hi, casuser`]
 released as `urn:oid:1.3.6.1.4.1.5923.1.1.1.6` with a friendly name of `eduPersonPrincipalName`.
 
 ### External Script
@@ -207,11 +207,12 @@ def run(Object[] args) {
     def logger = args[2]
     def registeredService = args[3]
     def attributes = args[4]
-    logger.info("name: ${attributeName}, values: ${attributeValues}")
-    return ["casuser", "groovy"]
+    
+    logger.info("name: ${attributeName}, values: ${attributeValues}, attributes: ${attributes}")
+    return ["Hello " + attributes['givenName']]
 }
 ```
 
 If the CAS server has a scope of `example.org`, 
-the final values of `eduPersonPrincipalName` would be [`casuser@example.org`, `groovy@example.org`]
+the final values of `eduPersonPrincipalName` would be [`Hello casuser`]
 released as `urn:oid:1.3.6.1.4.1.5923.1.1.1.6` with a friendly name of `eduPersonPrincipalName`.

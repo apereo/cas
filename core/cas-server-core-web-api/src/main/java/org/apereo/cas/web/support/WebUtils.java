@@ -32,9 +32,12 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.binding.message.MessageBuilder;
+import org.springframework.binding.message.MessageContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
@@ -461,12 +464,16 @@ public class WebUtils {
      */
     public static Credential getCredential(final RequestContext context) {
         val cFromRequest = (Credential) context.getRequestScope().get(PARAMETER_CREDENTIAL);
+        val cFromFlashScope = (Credential) context.getFlashScope().get(PARAMETER_CREDENTIAL);
         val cFromFlow = (Credential) context.getFlowScope().get(PARAMETER_CREDENTIAL);
         val cFromConversation = (Credential) context.getConversationScope().get(PARAMETER_CREDENTIAL);
 
         var credential = cFromRequest;
         if (credential == null || StringUtils.isBlank(credential.getId())) {
             credential = cFromFlow;
+        }
+        if (credential == null || StringUtils.isBlank(credential.getId())) {
+            credential = cFromFlashScope;
         }
         if (credential == null || StringUtils.isBlank(credential.getId())) {
             credential = cFromConversation;
@@ -488,19 +495,29 @@ public class WebUtils {
     /**
      * Puts credential into the context.
      *
-     * @param context the context
-     * @param c       the c
+     * @param context    the context
+     * @param credential the credential
      */
-    public static void putCredential(final RequestContext context, final Credential c) {
-        if (c == null) {
+    public static void putCredential(final RequestContext context, final Credential credential) {
+        if (credential == null) {
             context.getRequestScope().remove(PARAMETER_CREDENTIAL);
             context.getFlowScope().remove(PARAMETER_CREDENTIAL);
             context.getConversationScope().remove(PARAMETER_CREDENTIAL);
         } else {
-            context.getRequestScope().put(PARAMETER_CREDENTIAL, c);
-            context.getFlowScope().put(PARAMETER_CREDENTIAL, c);
-            context.getConversationScope().put(PARAMETER_CREDENTIAL, c);
+            putCredentialIntoScope(context.getRequestScope(), credential);
+            putCredentialIntoScope(context.getFlowScope(), credential);
+            putCredentialIntoScope(context.getConversationScope(), credential);
         }
+    }
+
+    /**
+     * Put credential into scope.
+     *
+     * @param scope      the scope
+     * @param credential the credential
+     */
+    public static void putCredentialIntoScope(final MutableAttributeMap<Object> scope, final Credential credential) {
+        scope.put(PARAMETER_CREDENTIAL, credential);
     }
 
     /**
@@ -1694,5 +1711,113 @@ public class WebUtils {
             return servicesManager.findServiceBy(serviceToUse);
         }
         return null;
+    }
+
+    /**
+     * Add error message to context.
+     *
+     * @param requestContext the request context
+     * @param code           the code
+     * @param defaultText    the default text
+     * @param args           the args
+     */
+    public static void addErrorMessageToContext(final RequestContext requestContext, final String code,
+                                                final String defaultText, final Object[] args) {
+        addErrorMessageToContext(requestContext.getMessageContext(), code, defaultText, args);
+    }
+
+    /**
+     * Add error message to context.
+     *
+     * @param requestContext the request context
+     * @param code           the code
+     * @param defaultText    the default text
+     */
+    public static void addErrorMessageToContext(final RequestContext requestContext, final String code,
+                                                final String defaultText) {
+        addErrorMessageToContext(requestContext.getMessageContext(), code, defaultText, ArrayUtils.EMPTY_OBJECT_ARRAY);
+    }
+
+    /**
+     * Add error message to context.
+     *
+     * @param requestContext the request context
+     * @param code           the code
+     */
+    public static void addErrorMessageToContext(final RequestContext requestContext, final String code) {
+        addErrorMessageToContext(requestContext.getMessageContext(), code, null, null);
+    }
+
+    /**
+     * Add error message to context.
+     *
+     * @param messageContext the message context
+     * @param code           the code
+     * @param defaultText    the default text
+     * @param args           the args
+     */
+    public static void addErrorMessageToContext(final MessageContext messageContext, final String code,
+                                                final String defaultText, final Object[] args) {
+        val msg = new MessageBuilder()
+            .error()
+            .code(code)
+            .args(args)
+            .defaultText(defaultText)
+            .build();
+        messageContext.addMessage(msg);
+    }
+
+    /**
+     * Add info message to context.
+     *
+     * @param requestContext the request context
+     * @param code           the code
+     */
+    public static void addInfoMessageToContext(final RequestContext requestContext, final String code) {
+        val msg = new MessageBuilder()
+            .info()
+            .code(code)
+            .build();
+        requestContext.getMessageContext().addMessage(msg);
+    }
+
+    /**
+     * Put the logout POST url in the flow scope.
+     *
+     * @param requestContext the flow context
+     * @param postUrl the POST url
+     */
+    public static void putLogoutPostUrl(final RequestContext requestContext, final String postUrl) {
+        requestContext.getFlowScope().put("logoutPostUrl", postUrl);
+    }
+
+    /**
+     * Put the logout POST data in the flow scope.
+     *
+     * @param requestContext the flow context
+     * @param postData the POST data
+     */
+    public static void putLogoutPostData(final RequestContext requestContext, final Map<String, Object> postData) {
+        requestContext.getFlowScope().put("logoutPostData", postData);
+    }
+
+    /**
+     * Get the logout POST url from the flow scope.
+     *
+     * @param requestContext the flow context
+     * @return the POST url
+     */
+    public static String getLogoutPostUrl(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("logoutPostUrl", String.class);
+    }
+
+    /**
+     * Get the logout POST data from the flow scope.
+     *
+     * @param requestContext the flow context
+     * @return the POST data
+     */
+    public static Map<String, Object> getLogoutPostData(final RequestContext requestContext) {
+        return (Map<String, Object>) requestContext.getFlowScope().get("logoutPostData", Map.class);
     }
 }

@@ -53,6 +53,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.CasOAuth20TestAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20DeviceUserCodeApprovalEndpointController;
@@ -80,7 +81,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
@@ -95,8 +95,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
 import org.pac4j.core.context.HttpConstants;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -122,6 +122,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -605,19 +606,22 @@ public abstract class AbstractOAuth20Tests {
             RegisteredServiceTestUtils.getAuthentication("casuser"), OAuth20GrantTypes.AUTHORIZATION_CODE);
     }
 
-    /**
-     * Generate access token response and get model and view.
-     *
-     * @param registeredService the registered service
-     * @param authentication    the authentication
-     * @param grantType         the grant type
-     * @return the model and view
-     */
     protected ModelAndView generateAccessTokenResponseAndGetModelAndView(
-        final OAuthRegisteredService registeredService, final Authentication authentication,
+        final OAuthRegisteredService registeredService,
+        final Authentication authentication,
         final OAuth20GrantTypes grantType) {
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        return generateAccessTokenResponseAndGetModelAndView(registeredService, authentication, grantType, mockRequest);
+    }
+
+    @SneakyThrows
+    protected ModelAndView generateAccessTokenResponseAndGetModelAndView(
+        final OAuthRegisteredService registeredService,
+        final Authentication authentication,
+        final OAuth20GrantTypes grantType,
+        final HttpServletRequest mockRequest) {
+
         val mockResponse = new MockHttpServletResponse();
 
         val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
@@ -629,6 +633,7 @@ public abstract class AbstractOAuth20Tests {
             .grantType(grantType)
             .responseType(OAuth20ResponseTypes.CODE)
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+            .claims(OAuth20Utils.parseRequestClaims(new JEEContext(mockRequest, mockResponse)))
             .build();
 
         val generatedToken = oauthTokenGenerator.generate(holder);
@@ -654,19 +659,10 @@ public abstract class AbstractOAuth20Tests {
 
     @TestConfiguration("OAuth20TestConfiguration")
     @Lazy(false)
-    public static class OAuth20TestConfiguration implements ComponentSerializationPlanConfigurer, InitializingBean {
+    public static class OAuth20TestConfiguration implements ComponentSerializationPlanConfigurer {
         @Autowired
         protected ApplicationContext applicationContext;
-
-        @Override
-        public void afterPropertiesSet() {
-            init();
-        }
-
-        public void init() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-        }
-
+        
         @Bean
         public List inMemoryRegisteredServices() {
             val svc1 = (OAuthRegisteredService)

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("SAML")
+@Tag("SAMLMetadata")
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.http.metadata-backup-location=file:${#systemProperties['java.io.tmpdir']}")
 public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlIdPServicesTests {
     private static CriteriaSet getCriteriaFor(final String entityId) {
@@ -91,8 +91,6 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
         assertTrue(resolver.resolveIfPresent(aggregateRegisteredService, criteriaSet1).isPresent());
 
         val criteriaSet3 = getCriteriaFor("https://mfa-auth.dev.phenoapp.com/Saml2");
-
-        assertFalse(resolver.resolveIfPresent(aggregateRegisteredService, criteriaSet3).isPresent());
         assertNotNull(resolver.resolve(aggregateRegisteredService, criteriaSet3));
         assertTrue(resolver.resolveIfPresent(aggregateRegisteredService, criteriaSet3).isPresent());
 
@@ -120,8 +118,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
         val criteriaSet2 = getCriteriaFor("unknown-service-provider");
         assertThrows(SamlException.class, () -> resolver.resolve(service, criteriaSet2));
 
-        assertTrue(resolver.resolveIfPresent(service, criteriaSet).isPresent());
-
+        assertFalse(resolver.resolveIfPresent(service, criteriaSet).isPresent());
         resolver.invalidate();
     }
 
@@ -146,7 +143,6 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
 
     @Test
     public void verifyRetryableOp() {
-        val criteriaSet = getCriteriaFor("https://carmenwiki.osu.edu/shibboleth");
 
         val service = new SamlRegisteredService();
         service.setName("Example");
@@ -159,7 +155,14 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
             new ClasspathResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean));
         val cacheLoader = new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean, httpClient, resolutionPlan);
         val resolver = new SamlRegisteredServiceDefaultCachingMetadataResolver(Duration.ofSeconds(5), cacheLoader, openSamlConfigBean);
-        assertNotNull(resolver.resolve(service, criteriaSet));
+
+        val criteriaSet1 = getCriteriaFor("https://carmenwiki.osu.edu/shibboleth");
+        assertNotNull(resolver.resolve(service, criteriaSet1));
+        
+        val criteriaSet2 = getCriteriaFor("unknown-service-provider");
+        assertThrows(SamlException.class, () -> resolver.resolve(service, criteriaSet2));
+
+        assertFalse(resolver.resolveIfPresent(service, criteriaSet1).isPresent());
         resolver.invalidate();
     }
 

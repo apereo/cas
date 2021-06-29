@@ -23,7 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class
 },
     properties = {
-        "cas.authn.throttle.usernameParameter=username",
+        "cas.authn.throttle.core.usernameParameter=username",
         "cas.authn.throttle.failure.range-seconds=5",
         "cas.audit.mongo.database-name=throttle",
         "cas.audit.mongo.host=localhost",

@@ -128,7 +128,7 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
             if (encKey.getPrivateKey() == null) {
                 throw new IllegalArgumentException("Private key located from endpoint for key id " + encKey.getKeyId() + " is undefined");
             }
-            setSecretKeyEncryptionKey(encKey.getPrivateKey());
+            setEncryptionKey(encKey.getPrivateKey());
             setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
             setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
         }
@@ -149,7 +149,7 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
             if (encKey.getPublicKey() == null) {
                 throw new IllegalArgumentException("Public key from endpoint for key id " + encKey.getKeyId() + " is undefined");
             }
-            setSecretKeyEncryptionKey(encKey.getPublicKey());
+            setEncryptionKey(encKey.getPublicKey());
             setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
             setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
         }

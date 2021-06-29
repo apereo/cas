@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
-@Tag("Simple")
+@Tag("Delegation")
 @DirtiesContext
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DefaultDelegatedAuthenticationNavigationControllerTests {
@@ -45,7 +45,6 @@ public class DefaultDelegatedAuthenticationNavigationControllerTests {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
 
     @BeforeEach
     public void beforeEach() {

@@ -35,25 +35,8 @@ Th configuration for the external SAML2 identity provider is typically done at b
 via CAS configuration settings and applies to all applications and relying parties. You may override
 certain aspects this configuration on a per application basis by assigning 
 dedicated [properties to the service definition](../services/Configuring-Service-Custom-Properties.html).
-                                                  
-The following properties are available as overrides:
 
-| Property                              | Value(s)                
-|---------------------------------------|---------------------------------
-| `AuthnRequestBindingType`             | `String`                  
-| `AssertionConsumerServiceIndex`       | `Integer`         
-| `AttributeConsumingServiceIndex`      | `Integer`
-| `MaximumAuthenticationLifetime`       | `Integer`
-| `NameIdPolicyFormat`                  | `String`
-| `NameIdPolicyAllowCreate`             | `true` or `false`
-| `ComparisonType`                      | `String`. One of `exact`, `better`, `minimum`, `maximum`.
-| `ProviderName`                        | `String`
-| `IssuerFormat`                        | `String`
-| `UseNameQualifier`                    | `true` or `false`
-| `AuthnContextClassRefs`               | `Set<String>`
-| `NameIdAttribute`                     | `String`
-| `WantsAssertionsSigned`               | `true` or `false`
-| `WantsResponsesSigned`                | `true` or `false`
+{% include registeredserviceproperties.html groups="DELEGATED_AUTHN,DELEGATED_AUTHN_SAML2" %}
 
 A sample JSON file follows:
 

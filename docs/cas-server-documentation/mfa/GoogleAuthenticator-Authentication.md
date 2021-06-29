@@ -22,7 +22,9 @@ Support is enabled by including the following module in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-gauth" %}
 
-{% include casproperties.html properties="cas.authn.mfa.gauth" %}
+{% include casproperties.html properties="cas.authn.mfa.gauth.core" %}
+
+## Repository Cleaner
 
 A background *cleaner* process is also automatically scheduled to scan the
 repository periodically and remove expired device registration records
@@ -31,13 +33,11 @@ expire after a fixed period since a user registered their device.
 
 {% include casproperties.html properties="cas.authn.mfa.gauth.cleaner" %}
 
-## Administrative Endpoints
+## Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `gauthCredentialRepository`   | Manage and control [Google Authenticator account records](GoogleAuthenticator-Authentication.html). A `GET` operation produces a list of all account records. A `DELETE` operation will delete all account records. A `GET` operation produces with a parameter selector of `/{username}` will list the record assigned to the user. A `DELETE` operation produces with a parameter selector of `/{username}` will remove the record assigned to the user.
+
+{% include actuators.html endpoints="gauthCredentialRepository" %}
 
 ## Token Repository
 

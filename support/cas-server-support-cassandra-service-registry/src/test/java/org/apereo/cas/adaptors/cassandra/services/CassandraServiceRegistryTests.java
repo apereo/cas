@@ -4,7 +4,9 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CassandraServiceRegistryConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegisteredService;
@@ -36,6 +38,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CassandraServiceRegistryConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreNotificationsConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreHttpConfiguration.class,
     RefreshAutoConfiguration.class

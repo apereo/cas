@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -34,10 +36,12 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowAuthenticationActions")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasCoreNotificationsConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class
 })

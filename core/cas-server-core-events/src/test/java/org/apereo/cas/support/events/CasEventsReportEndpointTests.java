@@ -90,8 +90,9 @@ public class CasEventsReportEndpointTests {
                 private final Collection<CasEvent> events = new LinkedHashSet<>();
 
                 @Override
-                public void saveInternal(final CasEvent event) {
+                public CasEvent saveInternal(final CasEvent event) {
                     events.add(event);
+                    return event;
                 }
 
                 @Override

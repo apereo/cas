@@ -11,10 +11,12 @@ import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultRequestedAuthenticationContextValidator}.
@@ -31,30 +33,30 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
 
     private final MultifactorAuthenticationContextValidator authenticationContextValidator;
 
-    private static AuthenticationContextValidationResult toSuccessfulResult() {
+    /**
+     * To successful result.
+     *
+     * @return the authentication context validation result
+     */
+    protected static AuthenticationContextValidationResult toSuccessfulResult() {
         return AuthenticationContextValidationResult.builder().success(true).build();
     }
 
-    @Override
-    public AuthenticationContextValidationResult validateAuthenticationContext(final Assertion assertion, final HttpServletRequest request) {
-        LOGGER.trace("Locating the primary authentication associated with this service request [{}]", assertion.getService());
-        val registeredService = servicesManager.findServiceBy(assertion.getService());
-        val authentication = assertion.getPrimaryAuthentication();
-        return validateAuthenticationContext(request, registeredService, authentication, assertion.getService());
-    }
-
-    @Override
-    public AuthenticationContextValidationResult validateAuthenticationContext(final HttpServletRequest request,
-                                                                               final RegisteredService registeredService,
-                                                                               final Authentication authentication,
-                                                                               final Service service) {
-        val providerResult = multifactorTriggerSelectionStrategy.resolve(request, registeredService, authentication, service);
-        if (providerResult.isEmpty()) {
-            LOGGER.debug("No particular authentication context is required for this request");
-            return toSuccessfulResult();
-        }
-        
-        val provider = providerResult.get();
+    /**
+     * Validate multifactor provider bypass.
+     *
+     * @param provider          the provider
+     * @param registeredService the registered service
+     * @param authentication    the authentication
+     * @param service           the service
+     * @param request           the request
+     * @return the authentication context validation result
+     */
+    protected static AuthenticationContextValidationResult validateMultifactorProviderBypass(final MultifactorAuthenticationProvider provider,
+                                                                                             final RegisteredService registeredService,
+                                                                                             final Authentication authentication,
+                                                                                             final Service service,
+                                                                                             final HttpServletRequest request) {
         if (provider.isAvailable(registeredService)) {
             val bypassEvaluator = provider.getBypassEvaluator();
             if (bypassEvaluator != null) {
@@ -75,13 +77,67 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
                 return toSuccessfulResult();
             }
         }
-        val result = authenticationContextValidator.validate(authentication,
-            providerResult.map(MultifactorAuthenticationProvider::getId).orElse(StringUtils.EMPTY),
-            Optional.ofNullable(registeredService));
+        return toFailureResult();
+    }
 
-        return AuthenticationContextValidationResult.builder()
-            .success(result.isSuccess())
-            .contextId(result.getProvider().map(MultifactorAuthenticationProvider::getId))
-            .build();
+    private static AuthenticationContextValidationResult toFailureResult() {
+        return AuthenticationContextValidationResult.builder().success(false).build();
+    }
+
+    @Override
+    public AuthenticationContextValidationResult validateAuthenticationContext(final Assertion assertion, final HttpServletRequest request) {
+        LOGGER.trace("Locating the primary authentication associated with this service request [{}]", assertion.getService());
+        val registeredService = servicesManager.findServiceBy(assertion.getService());
+        val authentication = assertion.getPrimaryAuthentication();
+        return validateAuthenticationContext(request, registeredService, authentication, assertion.getService());
+    }
+
+    @Override
+    public AuthenticationContextValidationResult validateAuthenticationContext(final HttpServletRequest request,
+                                                                               final RegisteredService registeredService,
+                                                                               final Authentication authentication,
+                                                                               final Service service) {
+        if (registeredService != null && registeredService.getMultifactorPolicy().isBypassEnabled()) {
+            LOGGER.debug("Multifactor authentication execution is ignored for [{}]", registeredService.getName());
+            return toSuccessfulResult();
+        }
+
+        val providerResult = multifactorTriggerSelectionStrategy.resolve(request, registeredService, authentication, service);
+        if (providerResult.isEmpty()) {
+            LOGGER.debug("No authentication context is required for this request");
+            return toSuccessfulResult();
+        }
+
+        val providers = providerResult
+            .map(provider -> {
+                if (provider instanceof ChainingMultifactorAuthenticationProvider) {
+                    val chain = ChainingMultifactorAuthenticationProvider.class.cast(provider);
+                    return chain.getMultifactorAuthenticationProviders().stream()
+                        .filter(p -> p.equals(provider)).collect(Collectors.toList());
+                }
+                return List.of(provider);
+            })
+            .orElse(List.of());
+
+        if (providers.stream()
+            .map(provider -> validateMultifactorProviderBypass(provider, registeredService, authentication, service, request))
+            .allMatch(AuthenticationContextValidationResult::isSuccess)) {
+            return toSuccessfulResult();
+        }
+
+        LOGGER.debug("Multifactor providers eligible for validation are [{}]", providers);
+        return providers.stream()
+            .sorted(Comparator.comparing(MultifactorAuthenticationProvider::getOrder))
+            .map(provider -> authenticationContextValidator.validate(authentication,
+                provider.getId(),
+                Optional.ofNullable(registeredService)))
+            .filter(MultifactorAuthenticationContextValidationResult::isSuccess)
+            .findAny()
+            .map(result -> AuthenticationContextValidationResult.builder()
+                .success(result.isSuccess())
+                .contextId(result.getProvider().map(MultifactorAuthenticationProvider::getId))
+                .build())
+            .map(AuthenticationContextValidationResult.class::cast)
+            .orElseGet(DefaultRequestedAuthenticationContextValidator::toFailureResult);
     }
 }

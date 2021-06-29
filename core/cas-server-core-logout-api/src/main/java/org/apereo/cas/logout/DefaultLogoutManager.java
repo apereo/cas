@@ -2,6 +2,7 @@ package org.apereo.cas.logout;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
+import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -66,9 +68,11 @@ public class DefaultLogoutManager implements LogoutManager {
             .collect(Collectors.toList());
         
         val sloHandlers = logoutExecutionPlan.getSingleLogoutServiceMessageHandlers();
-        return logoutServices.stream()
+        return logoutServices
+            .stream()
             .map(entry -> sloHandlers
                 .stream()
+                .sorted(Comparator.comparing(SingleLogoutServiceMessageHandler::getOrder))
                 .filter(handler -> handler.supports(context, entry.getValue()))
                 .map(handler -> {
                     val service = entry.getValue();

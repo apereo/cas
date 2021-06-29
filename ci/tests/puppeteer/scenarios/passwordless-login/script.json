@@ -1,7 +1,12 @@
 {
   "dependencies": "passwordless-webflow",
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+
     "--cas.service-registry.core.init-from-json=true",
-    "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/passwordless-login/accounts.json"
+    "--logging.level.org.apereo.cas=debug",
+    
+    "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
   ]
 }

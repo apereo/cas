@@ -43,7 +43,7 @@ to be defined in the CAS configuration as well.
 
 ### Default
 
-{% assign providers = "DropBox,Facebook,FourSquare,Google,HiOrgServer,Orcid,PayPal,Twitter,WindowsLive,Wordpress,Yahoo,CAS,LinkedIn,GitHub,OAuth20,Google-OpenID-Connect,Keycloak,Azure-AD,Apple,Generic-OpenID-Connect" | split: "," | sort %}
+{% assign providers = "DropBox,Facebook,FourSquare,Google,HiOrgServer,PayPal,Twitter,WindowsLive,Wordpress,Yahoo,CAS,LinkedIn,GitHub,OAuth20,Google-OpenID-Connect,Keycloak,Azure-AD,Apple,Generic-OpenID-Connect" | split: "," | sort %}
 
 Identity providers for delegated authentication can be registered with CAS using settings. 
 
@@ -85,10 +85,8 @@ a remote REST endpoint whose responsibility is to produce the following payload 
 ```
 
 The syntax and collection of available `properties` in the above 
-payload is controlled by [Pac4j]((https://pac4j.org/docs/index.html). 
-The response that is returned must be accompanied by a 200 status code.
-
-{% include casproperties.html properties="cas.authn.pac4j.rest" %}
+payload is controlled by the [pac4j library](https://pac4j.org/docs/index.html). 
+The response that is returned must be accompanied by a `200` status code.
 
 ## Profile Attributes
 

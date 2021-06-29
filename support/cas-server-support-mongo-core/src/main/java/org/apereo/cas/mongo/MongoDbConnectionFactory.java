@@ -229,11 +229,11 @@ public class MongoDbConnectionFactory {
                 .applyToConnectionPoolSettings(builder -> {
                     val poolConfig = mongo.getPool();
                     val pool = ConnectionPoolSettings.builder()
-                        .maxConnectionLifeTime(poolConfig.getLifeTime(), TimeUnit.MILLISECONDS)
-                        .maxConnectionIdleTime(poolConfig.getIdleTime(), TimeUnit.MILLISECONDS)
+                        .maxConnectionLifeTime(Beans.newDuration(poolConfig.getLifeTime()).toMillis(), TimeUnit.MILLISECONDS)
+                        .maxConnectionIdleTime(Beans.newDuration(poolConfig.getIdleTime()).toMillis(), TimeUnit.MILLISECONDS)
                         .maxSize(poolConfig.getMaxSize())
                         .minSize(poolConfig.getMinSize())
-                        .maxWaitTime(poolConfig.getMaxWaitTime(), TimeUnit.MILLISECONDS)
+                        .maxWaitTime(Beans.newDuration(poolConfig.getMaxWaitTime()).toMillis(), TimeUnit.MILLISECONDS)
                         .build();
                     builder.applySettings(pool);
                 })

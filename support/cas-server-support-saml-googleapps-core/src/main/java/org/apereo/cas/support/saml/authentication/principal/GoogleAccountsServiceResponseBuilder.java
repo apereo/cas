@@ -12,6 +12,7 @@ import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
+import org.apereo.cas.web.UrlValidator;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -51,11 +52,17 @@ import java.util.stream.Stream;
 public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
     private static final long serialVersionUID = -4584732364007702423L;
+
     private final String publicKeyLocation;
+
     private final String privateKeyLocation;
+
     private final String keyAlgorithm;
+
     private PrivateKey privateKey;
+
     private PublicKey publicKey;
+
     private GoogleSaml20ObjectBuilder samlObjectBuilder;
 
     private int skewAllowance;
@@ -67,8 +74,9 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
                                                 final String publicKeyLocation, final String keyAlgorithm,
                                                 final ServicesManager servicesManager,
                                                 final GoogleSaml20ObjectBuilder samlObjectBuilder,
-                                                final int skewAllowance, final String casServerPrefix) {
-        super(servicesManager);
+                                                final int skewAllowance, final String casServerPrefix,
+                                                final UrlValidator urlValidator) {
+        super(servicesManager, urlValidator);
         this.privateKeyLocation = privateKeyLocation;
         this.publicKeyLocation = publicKeyLocation;
         this.keyAlgorithm = keyAlgorithm;
@@ -91,6 +99,11 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, signedResponse);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, service.getRelayState());
         return buildPost(service, parameters);
+    }
+
+    @Override
+    public boolean supports(final WebApplicationService service) {
+        return service instanceof GoogleAccountsService;
     }
 
     /**
@@ -196,10 +209,5 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
     private boolean isValidConfiguration() {
         return Stream.of(this.privateKeyLocation, this.publicKeyLocation, this.keyAlgorithm).anyMatch(StringUtils::isNotBlank);
-    }
-
-    @Override
-    public boolean supports(final WebApplicationService service) {
-        return service instanceof GoogleAccountsService;
     }
 }

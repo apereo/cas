@@ -11,7 +11,7 @@ category: Ticketing
 CAS can be enabled with a variety of messaging systems in order to distribute and share ticket data: 
 from simplified use of the JMS API to a complete infrastructure to receive messages asynchronously. 
 Integration with messaging systems is entirely built on 
-top of [Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-messaging.html).
+top of [Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/html/).
 
 Support is enabled by including the following dependency in the overlay:
 

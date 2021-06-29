@@ -6,9 +6,9 @@ import java.util.List;
 /**
  * This is {@link AuthenticationAccountStateHandler}.
  *
+ * @author Misagh Moayyed
  * @param <AuthnResponse> the type parameter
  * @param <Configuration> the type parameter
- * @author Misagh Moayyed
  * @since 5.3.0
  */
 @FunctionalInterface

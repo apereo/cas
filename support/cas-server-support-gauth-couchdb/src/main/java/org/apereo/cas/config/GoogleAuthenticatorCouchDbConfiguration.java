@@ -77,7 +77,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(
         @Qualifier("couchDbOneTimeTokenRepository") final GoogleAuthenticatorTokenCouchDbRepository couchDbOneTimeTokenRepository) {
         return new GoogleAuthenticatorCouchDbTokenRepository(couchDbOneTimeTokenRepository,
-            casProperties.getAuthn().getMfa().getGauth().getTimeStepSize());
+            casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize());
     }
 
     @ConditionalOnMissingBean(name = "oneTimeTokenCouchDbFactory")

@@ -123,7 +123,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 service = populateContextWithService(context, webContext, clientName);
                 if (singleSignOnSessionAuthorizedForService(context)) {
                     val providers = configContext.getDelegatedClientIdentityProvidersProducer().produce(context);
-                    LOGGER.trace("Skipping delegation and routing back to CAS authentication flow with providers [{}]", providers);
+                    LOGGER.debug("Skipping delegation and routing back to CAS authentication flow with providers [{}]", providers);
                     return super.doExecute(context);
                 }
                 val resolvedService = resolveServiceFromRequestContext(context);
@@ -151,7 +151,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             FunctionUtils.doIf(LOGGER.isDebugEnabled(),
                 o -> LOGGER.debug(e.getMessage(), e), o -> LOGGER.info(e.getMessage())).accept(e);
             JEEHttpActionAdapter.INSTANCE.adapt(e, webContext);
-            return success();
+            return isLogoutRequest(request) ? error() : success();
         } catch (final UnauthorizedServiceException e) {
             LOGGER.warn(e.getMessage(), e);
             throw e;

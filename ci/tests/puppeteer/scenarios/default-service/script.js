@@ -1,11 +1,10 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true
-    });
-    const page = await browser.newPage();
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/login");
 
     let uid = await page.$('#username');
@@ -13,10 +12,7 @@ const assert = require('assert');
     assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")))
     assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")))
     
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
     
     const url = await page.url()
     console.log(`Page url: ${url}`)

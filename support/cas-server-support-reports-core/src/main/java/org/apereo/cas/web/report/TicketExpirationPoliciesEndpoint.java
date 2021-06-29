@@ -15,8 +15,11 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -69,6 +72,7 @@ public class TicketExpirationPoliciesEndpoint extends BaseCasActuatorEndpoint {
      * @throws Exception the exception
      */
     @ReadOperation
+    @Operation(summary = "Produce expiration policies given an optional service id", parameters = {@Parameter(name = "serviceId")})
     public Map<String, String> handle(@Nullable final String serviceId) throws Exception {
         val model = new HashMap<String, String>();
         expirationPolicyBuilders.forEach(Unchecked.consumer(builder -> {
@@ -77,39 +81,41 @@ public class TicketExpirationPoliciesEndpoint extends BaseCasActuatorEndpoint {
             model.put(builder.getTicketType().getName(), details);
         }));
 
-        val service = NumberUtils.isDigits(serviceId)
-            ? servicesManager.findServiceBy(Long.parseLong(serviceId))
-            : servicesManager.findServiceBy(webApplicationServiceFactory.createService(serviceId));
+        val registeredService = StringUtils.isNotBlank(serviceId)
+            ? NumberUtils.isCreatable(serviceId)
+                ? servicesManager.findServiceBy(Long.parseLong(serviceId))
+                : servicesManager.findServiceBy(webApplicationServiceFactory.createService(serviceId))
+            : null;
 
-        Optional.ofNullable(service)
+        Optional.ofNullable(registeredService)
             .map(RegisteredService::getTicketGrantingTicketExpirationPolicy)
             .map(RegisteredServiceTicketGrantingTicketExpirationPolicy::toExpirationPolicy)
             .filter(Optional::isPresent)
             .map(Optional::get)
             .ifPresent(Unchecked.consumer(policy -> {
                 val details = getTicketExpirationPolicyDetails(policy);
-                model.put(TicketGrantingTicket.class.getName().concat(service.getName()), details);
+                model.put(TicketGrantingTicket.class.getName().concat(registeredService.getName()), details);
             }));
 
-        Optional.ofNullable(service)
+        Optional.ofNullable(registeredService)
             .map(RegisteredService::getServiceTicketExpirationPolicy)
             .ifPresent(Unchecked.consumer(policy -> {
                 val details = getTicketExpirationPolicyDetails(policy);
-                model.put(ServiceTicket.class.getName().concat(service.getName()), details);
+                model.put(ServiceTicket.class.getName().concat(registeredService.getName()), details);
             }));
 
-        Optional.ofNullable(service)
+        Optional.ofNullable(registeredService)
             .map(RegisteredService::getProxyGrantingTicketExpirationPolicy)
             .ifPresent(Unchecked.consumer(policy -> {
                 val details = getTicketExpirationPolicyDetails(policy);
-                model.put(ProxyGrantingTicket.class.getName().concat(service.getName()), details);
+                model.put(ProxyGrantingTicket.class.getName().concat(registeredService.getName()), details);
             }));
 
-        Optional.ofNullable(service)
+        Optional.ofNullable(registeredService)
             .map(RegisteredService::getProxyTicketExpirationPolicy)
             .ifPresent(Unchecked.consumer(policy -> {
                 val details = getTicketExpirationPolicyDetails(policy);
-                model.put(ProxyTicket.class.getName().concat(service.getName()), details);
+                model.put(ProxyTicket.class.getName().concat(registeredService.getName()), details);
             }));
 
         return model;

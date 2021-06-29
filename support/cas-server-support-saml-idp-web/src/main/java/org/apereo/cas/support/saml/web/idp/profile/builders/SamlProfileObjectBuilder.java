@@ -15,8 +15,8 @@ import javax.servlet.http.HttpServletResponse;
  * The {@link SamlProfileObjectBuilder} defines the operations
  * required for building the saml response for an RP.
  *
- * @param <T> the type parameter
  * @author Misagh Moayyed
+ * @param <T> the type parameter
  * @since 5.0.0
  */
 @FunctionalInterface

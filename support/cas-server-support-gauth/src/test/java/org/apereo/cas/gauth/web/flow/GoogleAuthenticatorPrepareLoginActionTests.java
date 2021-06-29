@@ -35,7 +35,7 @@ public class GoogleAuthenticatorPrepareLoginActionTests {
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
         val props = new CasConfigurationProperties();
-        props.getAuthn().getMfa().getGauth().setMultipleDeviceRegistrationEnabled(true);
+        props.getAuthn().getMfa().getGauth().getCore().setMultipleDeviceRegistrationEnabled(true);
         val action = new GoogleAuthenticatorPrepareLoginAction(props);
         assertNull(action.execute(context));
         assertTrue(WebUtils.isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(context));

@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
+@Tag("SAMLMetadata")
 public class SamlRegisteredServiceServiceProviderMetadataFacadeTests extends BaseSamlIdPConfigurationTests {
 
     @Test
@@ -43,7 +43,9 @@ public class SamlRegisteredServiceServiceProviderMetadataFacadeTests extends Bas
         assertNotNull(adaptor.getExtensions());
         assertNotNull(adaptor.getSupportedProtocols());
         assertNotNull(adaptor.getSingleLogoutService());
-        assertNotNull(adaptor.getAssertionConsumerServiceForPostBinding());
+        val acs = adaptor.getAssertionConsumerServiceForPostBinding();
+        assertNotNull(acs);
+        assertEquals(7, acs.getIndex());
         assertNotNull(adaptor.getAssertionConsumerServiceForArtifactBinding());
         assertTrue(adaptor.assertionConsumerServicesSize() > 0);
         assertFalse(adaptor.isWantAssertionsSigned());

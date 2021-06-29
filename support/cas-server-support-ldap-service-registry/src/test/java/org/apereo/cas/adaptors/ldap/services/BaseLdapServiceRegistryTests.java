@@ -4,6 +4,8 @@ import org.apereo.cas.adaptors.ldap.services.config.LdapServiceRegistryConfigura
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -39,6 +41,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     LdapServiceRegistryConfiguration.class,
     CasCoreServicesConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     RefreshAutoConfiguration.class

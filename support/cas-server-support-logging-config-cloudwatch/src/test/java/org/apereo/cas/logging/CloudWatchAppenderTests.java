@@ -4,7 +4,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
+import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.message.SimpleMessage;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -15,6 +17,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CloudWatchAppenderTests}.
@@ -38,9 +41,13 @@ public class CloudWatchAppenderTests {
         val logger = context.getLogger(CloudWatchAppender.class.getName());
         val appender = (CloudWatchAppender) logger.getAppenders().get("CloudWatchAppender");
         assertNotNull(appender);
+
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() {
+                val event = mock(LogEvent.class);
+                when(event.getMessage()).thenReturn(new SimpleMessage());
+                appender.append(event);
                 IntStream.range(1, 20).forEach(idx -> logger.info("Testing CloudWatchAppender [{}]...", idx));
             }
         });

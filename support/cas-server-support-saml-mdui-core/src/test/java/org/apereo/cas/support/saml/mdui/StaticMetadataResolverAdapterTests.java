@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("SAML")
+@Tag("SAMLMetadata")
 public class StaticMetadataResolverAdapterTests extends AbstractOpenSamlTests {
     @Test
     public void verifyOperation() {

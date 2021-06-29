@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("SAML")
+@Tag("SAMLMetadata")
 public class SamlMetadataUIInfoTests {
     @Test
     public void verifyInfoNotAvailable() {

@@ -100,6 +100,6 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
     com.example.cas.MyAuthenticationEventExecutionPlanConfiguration
 ```
 
-To learn more about the registration strategy, [please see this guide](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-auto-configuration.html).
+To learn more about the registration strategy, [please see this guide](http://docs.spring.io/spring-boot/docs/current/reference/html/).
 
 At runtime, CAS will try to automatically detect all components and beans that advertise themselves as `AuthenticationEventExecutionPlanConfigurers`. Each detected component is then invoked to register its own authentication execution plan. The result of this operation at the end will produce a ready-made collection of authentication handlers that are ready to be invoked by CAS in the given order defined, if any.

@@ -32,15 +32,9 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## Per Application
 
-SCIM relevant settings can be specified per application in form of service properties. The
-following properties are supported:
+SCIM relevant settings can be specified per application in form of service properties. 
 
-| Property          | Description
-|-------------------|-----------------------------------------------------------------------
-| `scimOAuthToken`  | OAuth token to use for authenticated requests.
-| `scimUsername`    | Username to use for authenticated requests.
-| `scimPassword`    | Password to use for authenticated requests.
-| `scimTarget`      | SCIM target to use for provisioning.
+{% include registeredserviceproperties.html groups="SCIM" %}
  
 A sample JSON file follows:
 

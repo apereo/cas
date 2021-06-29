@@ -27,8 +27,8 @@ public abstract class BaseAlternativePrincipalResolverProperties implements Seri
      * for attributes in the certificate that are not common to all certificates.
      * (e.g. {@code SUBJECT_ALT_NAME}, {@code CN_EDIPI})
      * <p>
-     * This assumes you would rather get something like the subjectDn rather than null
-     * where null would allow falling through to another authentication mechanism.
+     * This assumes you would rather get something like the {@code subjectDn} rather than {@code null}
+     * where {@code null} would allow falling through to another authentication mechanism.
      * <p>
      * Currently supported values are: {@code subjectDn}, {@code sigAlgOid}, {@code subjectX500Principal}.
      */

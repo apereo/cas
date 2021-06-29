@@ -21,6 +21,7 @@ import org.apereo.cas.gauth.credential.InMemoryGoogleAuthenticatorTokenCredentia
 import org.apereo.cas.gauth.credential.JsonGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.credential.RestGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorToken;
+import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorDeleteAccountAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorPrepareLoginAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorSaveRegistrationAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorValidateSelectedRegistrationAction;
@@ -100,7 +101,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "googleAuthenticatorInstance")
     public IGoogleAuthenticator googleAuthenticatorInstance() {
-        val gauth = casProperties.getAuthn().getMfa().getGauth();
+        val gauth = casProperties.getAuthn().getMfa().getGauth().getCore();
         val bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
         bldr.setCodeDigits(gauth.getCodeDigits());
         bldr.setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(gauth.getTimeStepSize()));
@@ -178,12 +179,18 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         return new OneTimeTokenAccountConfirmSelectionRegistrationAction(googleAuthenticatorAccountRegistry.getObject());
     }
 
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "googleAccountDeleteDeviceAction")
+    public Action googleAccountDeleteDeviceAction() {
+        return new GoogleAuthenticatorDeleteAccountAction(googleAuthenticatorAccountRegistry.getObject());
+    }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "googleAccountCreateRegistrationAction")
     public Action googleAccountCreateRegistrationAction() {
-        val gauth = casProperties.getAuthn().getMfa().getGauth();
+        val gauth = casProperties.getAuthn().getMfa().getGauth().getCore();
         return new OneTimeTokenAccountCreateRegistrationAction(googleAuthenticatorAccountRegistry.getObject(),
             gauth.getLabel(), gauth.getIssuer());
     }
@@ -201,7 +208,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry() {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         if (gauth.getJson().getLocation() != null) {
-            return new JsonGoogleAuthenticatorTokenCredentialRepository(gauth.getJson().getLocation(), googleAuthenticatorInstance(),
+            return new JsonGoogleAuthenticatorTokenCredentialRepository(
+                gauth.getJson().getLocation(), googleAuthenticatorInstance(),
                 googleAuthenticatorAccountCipherExecutor());
         }
         if (StringUtils.isNotBlank(gauth.getRest().getUrl())) {
@@ -255,7 +263,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer googleAuthenticatorAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGauth().getIssuer())) {
+            if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGauth().getCore().getIssuer())) {
                 plan.registerAuthenticationHandler(googleAuthenticatorAuthenticationHandler());
                 plan.registerAuthenticationMetadataPopulator(googleAuthenticatorAuthenticationMetaDataPopulator());
                 plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(GoogleAuthenticatorTokenCredential.class));

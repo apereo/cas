@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
-import org.apereo.cas.configuration.model.support.mfa.u2f.U2FDynamoDbMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.u2f.U2FDynamoDbMultifactorAuthenticationProperties;
 import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
 import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.util.CollectionUtils;
@@ -51,11 +51,11 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class U2FDynamoDbFacilitator {
-    private final U2FDynamoDbMultifactorProperties dynamoDbProperties;
+    private final U2FDynamoDbMultifactorAuthenticationProperties dynamoDbProperties;
 
     private final DynamoDbClient amazonDynamoDBClient;
 
-    public U2FDynamoDbFacilitator(final U2FDynamoDbMultifactorProperties dynamoDbProperties,
+    public U2FDynamoDbFacilitator(final U2FDynamoDbMultifactorAuthenticationProperties dynamoDbProperties,
                                   final DynamoDbClient amazonDynamoDBClient) {
         this.dynamoDbProperties = dynamoDbProperties;
         this.amazonDynamoDBClient = amazonDynamoDBClient;

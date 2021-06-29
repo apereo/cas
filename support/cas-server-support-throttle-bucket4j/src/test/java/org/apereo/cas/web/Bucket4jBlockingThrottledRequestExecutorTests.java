@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.throttle.bucket4j.capacity=1",
     "cas.authn.throttle.bucket4j.blocking=false"
 })
-@Tag("Simple")
+@Tag("AuthenticationThrottling")
 public class Bucket4jBlockingThrottledRequestExecutorTests {
     @Autowired
     @Qualifier("throttledRequestExecutor")

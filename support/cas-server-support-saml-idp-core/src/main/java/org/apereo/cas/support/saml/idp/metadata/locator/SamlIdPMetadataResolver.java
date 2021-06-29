@@ -39,12 +39,33 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
     private final OpenSamlConfigBean openSamlConfigBean;
 
     public SamlIdPMetadataResolver(final SamlIdPMetadataLocator locator,
-        final SamlIdPMetadataGenerator generator,
-        final OpenSamlConfigBean openSamlConfigBean) {
+                                   final SamlIdPMetadataGenerator generator,
+                                   final OpenSamlConfigBean openSamlConfigBean) {
         super(null);
         this.locator = locator;
         this.generator = generator;
         this.openSamlConfigBean = openSamlConfigBean;
+    }
+
+    /**
+     * Determine the criteria to resolve idp metadata.
+     * If the criteria-set contains a service defn to act as an override,
+     * based on the presence of {@link SamlIdPSamlRegisteredServiceCriterion},
+     * that service is positioned first in the list. An empty criteria
+     * is always added to calculate and resolve metadata globally as the last step,
+     * in case an override is not available.
+     *
+     * @param criteria criteria set
+     * @return list of optional service defns
+     */
+    private static List<Optional<SamlRegisteredService>> determineFilteringCriteria(final CriteriaSet criteria) {
+        val results = new ArrayList<Optional<SamlRegisteredService>>();
+        if (criteria.contains(SamlIdPSamlRegisteredServiceCriterion.class)) {
+            val criterion = criteria.get(SamlIdPSamlRegisteredServiceCriterion.class);
+            results.add(Optional.of(Objects.requireNonNull(criterion).getRegisteredService()));
+        }
+        results.add(Optional.empty());
+        return results;
     }
 
     @Override
@@ -66,7 +87,7 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
     }
 
     private Iterable<EntityDescriptor> resolveMetadata(final CriteriaSet criteria,
-        final Optional<SamlRegisteredService> registeredService) throws Exception {
+                                                       final Optional<SamlRegisteredService> registeredService) throws Exception {
         if (!locator.exists(registeredService) && locator.shouldGenerateMetadataFor(registeredService)) {
             generator.generate(registeredService);
         }
@@ -74,11 +95,12 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
         LOGGER.trace("Resolved metadata resource is [{}]", resource);
         if (resource.contentLength() > 0) {
             val element = SamlUtils.getRootElementFrom(resource.getInputStream(), openSamlConfigBean);
-                  
+
             LOGGER.trace("Located metadata root element [{}]", element.getNodeName());
             setMetadataRootElement(element);
 
             LOGGER.trace("Initializing metadata resolver [{}]", getClass().getSimpleName());
+            setResolveViaPredicatesOnly(true);
             initialize();
             LOGGER.trace("Resolving metadata for criteria [{}]", criteria);
             return super.resolve(criteria);
@@ -100,27 +122,5 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
         field = ReflectionUtils.findField(getClass(), "isInitialized");
         ReflectionUtils.makeAccessible(Objects.requireNonNull(field));
         ReflectionUtils.setField(field, this, Boolean.FALSE);
-    }
-
-    /**
-     * Determine the criteria to resolve idp metadata.
-     * If the criteria-set contains a service defn to act as an override,
-     * based on the presence of {@link SamlIdPSamlRegisteredServiceCriterion},
-     * that service is positioned first in the list. An empty criteria
-     * is always added to calculate and resolve metadata globally as the last step,
-     * in case an override is not available.
-     *
-     * @param criteria criteria set
-     * @return list of optional service defns
-     */
-    private static List<Optional<SamlRegisteredService>> determineFilteringCriteria(
-        final CriteriaSet criteria) {
-        val results = new ArrayList<Optional<SamlRegisteredService>>();
-        if (criteria.contains(SamlIdPSamlRegisteredServiceCriterion.class)) {
-            val criterion = criteria.get(SamlIdPSamlRegisteredServiceCriterion.class);
-            results.add(Optional.of(Objects.requireNonNull(criterion).getRegisteredService()));
-        }
-        results.add(Optional.empty());
-        return results;
     }
 }

@@ -162,13 +162,15 @@ ext.libraries = [
                     exclude(group: "javax.validation", module: "validation-api")
                 }
         ],
-        swagger                 : [
+        swaggerannotations : [
                 dependencies.create("io.swagger.core.v3:swagger-annotations:$swaggerVersion") {
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "javax.validation", module: "validation-api")
-                },
+                }
+        ],
+        swagger                 : [
                 dependencies.create("io.swagger.core.v3:swagger-core:$swaggerVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
@@ -692,11 +694,9 @@ ext.libraries = [
                     exclude(group: "org.mockito", module: "mockito-all")
                 }
         ],
-        hibernatevalidator      : [
-                dependencies.create("org.hibernate.validator:hibernate-validator:$hibernateValidatorVersion") {
+        bvalidator      : [
+                dependencies.create("org.apache.bval:bval-jsr:$apacheBValVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.hibernate", module: "hibernate-core")
-                    exclude(group: "org.hibernate", module: "hibernate-entitymanager")
                 },
                 dependencies.create("javax.persistence:javax.persistence-api:$jpaPersistenceApiVersion") {
                     exclude(group: "xml-apis", module: "xml-apis")
@@ -1100,7 +1100,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
 
                 },
-                dependencies.create("org.messaginghub:pooled-jms:1.2.2") {
+                dependencies.create("org.messaginghub:pooled-jms:2.0.0") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.apache.commons", module: "commons-pool2")
@@ -3015,7 +3015,7 @@ ext.libraries = [
                     exclude(group: "com.netflix.ribbon", module: "ribbon-transport")
                     exclude(group: "com.netflix.ribbon", module: "ribbon-eureka")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-
+                    exclude(group: "javax.servlet", module: "servlet-api")
                 }
         ],
         springcloudsleuth       : [
@@ -3030,7 +3030,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "com.fasterxml", module: "classmate")
-
+                    exclude(group: "javax.servlet", module: "servlet-api")
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-sleuth-zipkin:$springCloudSleuthVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -3045,7 +3045,6 @@ ext.libraries = [
                     exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
-
                 }
         ],
         springcloudzookeeper    : [

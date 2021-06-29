@@ -62,12 +62,13 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         }
         LOGGER.trace("Creating principal for [{}]", principalId);
         if (context.isResolveAttributes()) {
-            val attributes = retrievePersonAttributes(principalId, credential, currentPrincipal, new HashMap<>());
+            val attributes = retrievePersonAttributes(principalId, credential, currentPrincipal, new HashMap<>(0));
             if (attributes == null || attributes.isEmpty()) {
                 LOGGER.debug("Principal id [{}] did not specify any attributes", principalId);
                 if (!context.isReturnNullIfNoAttributes()) {
-                    LOGGER.debug("Returning the principal with id [{}] without any attributes", principalId);
-                    return context.getPrincipalFactory().createPrincipal(principalId);
+                    val principal = buildResolvedPrincipal(principalId, new HashMap<>(0), credential, currentPrincipal, handler);
+                    LOGGER.debug("Returning the principal with id [{}] without any attributes", principal);
+                    return principal;
                 }
                 LOGGER.debug("[{}] is configured to return null if no attributes are found for [{}]", getClass().getName(), principalId);
                 return null;
@@ -188,6 +189,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential,
                                                                  final Optional<Principal> currentPrincipal,
                                                                  final Map<String, List<Object>> queryAttributes) {
+
+        queryAttributes.putIfAbsent("credentialId", CollectionUtils.wrapList(credential.getId()));
+        queryAttributes.putIfAbsent("credentialClass", CollectionUtils.wrapList(credential.getClass().getSimpleName()));
         return PrincipalAttributeRepositoryFetcher.builder()
             .attributeRepository(context.getAttributeRepository())
             .principalId(principalId)

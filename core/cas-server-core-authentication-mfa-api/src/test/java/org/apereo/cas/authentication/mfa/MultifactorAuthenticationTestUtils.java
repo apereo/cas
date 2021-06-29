@@ -88,6 +88,7 @@ public class MultifactorAuthenticationTestUtils {
         when(access.isServiceAccessAllowed()).thenReturn(true);
         when(service.getAccessStrategy()).thenReturn(access);
         val mfaPolicy = mock(RegisteredServiceMultifactorPolicy.class);
+        when(mfaPolicy.isBypassEnabled()).thenReturn(false);
         when(mfaPolicy.getFailureMode())
             .thenReturn(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.valueOf(failureMode));
         when(service.getMultifactorPolicy()).thenReturn(mfaPolicy);
@@ -95,13 +96,13 @@ public class MultifactorAuthenticationTestUtils {
     }
 
     public static RequestedAuthenticationContextValidator mockRequestAuthnContextValidator(
+        final ServicesManager servicesManager,
         final Optional<MultifactorAuthenticationProvider> provider,
-        final ConfigurableApplicationContext applicationContext, final String failureMode) {
-        val servicesManager = mock(ServicesManager.class);
+        final ConfigurableApplicationContext applicationContext,
+        final String failureMode) {
         val multifactorTrigger = mock(MultifactorAuthenticationTriggerSelectionStrategy.class);
 
         val service = MultifactorAuthenticationTestUtils.getRegisteredService("https://www.github.com/apereo/cas", failureMode);
-        when(servicesManager.findServiceBy(any(Service.class))).thenReturn(service);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(service);
         when(multifactorTrigger.resolve(any(), any(), any(), any())).thenReturn(provider);
 

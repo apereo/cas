@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
 import org.apereo.cas.adaptors.x509.authentication.revocation.RevokedCertificateException;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.ResourceCRLRevocationChecker;
@@ -16,10 +17,11 @@ import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.params.provider.Arguments.arguments;
-
+import static org.junit.jupiter.params.provider.Arguments.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link ResourceCRLRevocationChecker} class.
@@ -30,15 +32,6 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 @Tag("X509")
 public class ResourceCRLRevocationCheckerTests extends BaseCRLRevocationCheckerTests {
 
-    @ParameterizedTest
-    @MethodSource("getTestParameters")
-    public void checkCertificate(final ResourceCRLRevocationChecker checker, final String[] certFiles,
-                                 final GeneralSecurityException expected) {
-        checker.init();
-        BaseCRLRevocationCheckerTests.checkCertificate(checker, certFiles, expected);
-        checker.destroy();
-    }
-
     /**
      * Gets the unit test parameters.
      *
@@ -48,6 +41,12 @@ public class ResourceCRLRevocationCheckerTests extends BaseCRLRevocationCheckerT
         val zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
 
         return Stream.of(
+            arguments(
+                new ResourceCRLRevocationChecker(mock(CRLFetcher.class), List.of(new ClassPathResource("userCA-valid.crl")), 1),
+                new String[]{"user-valid.crt"},
+                new GeneralSecurityException("Unknown CRL")
+            ),
+
             /*
              * Test case #1
              * Valid certificate on valid CRL data
@@ -85,7 +84,7 @@ public class ResourceCRLRevocationCheckerTests extends BaseCRLRevocationCheckerT
                     new ClassPathResource("rootCA-valid.crl"),
                 }, zeroThresholdPolicy),
                 new String[]{"user-valid.crt", "userCA.crt", "intermediateCA.crt", "rootCA.crt"},
-                new ExpiredCRLException("test", ZonedDateTime.now(ZoneOffset.UTC))
+                new ExpiredCRLException("test", ZonedDateTime.now(ZoneOffset.UTC), 1)
             ),
 
             /*
@@ -115,5 +114,15 @@ public class ResourceCRLRevocationCheckerTests extends BaseCRLRevocationCheckerT
                 null
             )
         );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getTestParameters")
+    public void checkCertificate(final ResourceCRLRevocationChecker checker, final String[] certFiles,
+                                 final GeneralSecurityException expected) throws Exception {
+        checker.init();
+        Thread.sleep(1500);
+        BaseCRLRevocationCheckerTests.checkCertificate(checker, certFiles, expected);
+        checker.destroy();
     }
 }

@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @author Daniel Frett
  * @since 5.3.0
  */
-@Tag("Simple")
+@Tag("Cookie")
 public class DefaultCasCookieValueManagerTests {
     private static final String CLIENT_IP = "127.0.0.1";
 

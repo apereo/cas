@@ -8,7 +8,8 @@ category: Developer
 
 # Test Process
 
-This page documents the steps that a CAS developer/contributor should take for testing a CAS server deployment during development. For additional
+This page documents the steps that a CAS developer/contributor should take for testing a CAS 
+server deployment during development. For additional
 instructions and guidance on the general build process, please [see this page](Build-Process.html).
 
 <div class="alert alert-info"><strong>Contributions</strong><p>Patches submitted to the CAS codebase 
@@ -26,22 +27,10 @@ To test the functionality provided by a given CAS module, execute the following 
 implementation project(":support:cas-server-support-modulename")
 ```
 
-- Alternatively, set a `casModules` property in the root project's `gradle.properties` or `~/.gradle/gradle.properties` to a 
-comma separated list of modules without the `cas-server-` prefix:
-
-For example:
-
-```properties
-casModules=monitor,\
-    ldap,\
-    x509,\
-    bootadmin-client
-```
-
-Or set the property on the command-line:
+Alternatively, pass the required modules automatically: 
 
 ```bash
-bc -PcasModules=ldap,x509
+bc ldap,x509
 ```
 
 ...where `bc` is an [alias for building CAS](Build-Process.html#sample-build-aliases).
@@ -89,14 +78,17 @@ Automated browser testing is done via the [Puppeteer framework](https://pptr.dev
 API to control Chrome or Chromium over the DevTools Protocol and runs headless by default.
 
 Functional tests start by generating a plain CAS overlay as a baseline that is able to run under HTTPS using a pre-generated keystore.
-This overlay is supplied the test scenario configuration that explain the required modules, properties, etc to use when CAS is deployed
+This overlay is supplied the test scenario configuration that explains the required modules, properties, etc to use when CAS is deployed
 inside an embedded Apache Tomcat container. Once running, the Puppeteer script is executed by Node for the given test scenario to verify
 specific functionality such as successful logins, generation of tickets, etc.
 
-All functional and browser tests are executed by the [continuous integration system](Test-Process.html#continuous-integration). If you 
-are adding a new batch of tests, make sure the scenario (i.e. test) name is included in the CI configuration.
+All functional and browser tests are executed by the [continuous integration system](Test-Process.html#continuous-integration). 
   
-To install Puppeteer once, please refer to [this reference guide](https://www.npmjs.com/package/puppeteer).
+To install Puppeteer once:
+
+```bash
+npm i -g puppeteer
+```
 
 To help simplify the testing process, you may use the following bash function in your `~/.profile`:
 
@@ -113,8 +105,25 @@ function pupcas() {
 ```bash
 pupcas <scenario-name>
 ```
- 
-To successfully run tests, you need to make sure [jq](https://stedolan.github.io/jq/) is installed.
+                                 
+To see the list of available test scenarios:
+
+```bash
+./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios
+```
+
+Remote debugging is available on port `5000`. To successfully run tests, 
+you need to make sure [jq](https://stedolan.github.io/jq/) is installed.
+
+### MacOS Firewall Popup
+                      
+To allow the firewall to accept incoming network connections for Chromium on MacOS, 
+you may apply the following command:
+
+```bash
+chromium="/path/to/cas/ci/tests/puppeteer/node_modules/puppeteer/.local-chromium"
+sudo codesign --force --deep --sign - "${chromium}/mac-*/chrome-mac/Chromium.app"
+```
 
 ## Continuous Integration
 

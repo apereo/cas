@@ -11,7 +11,7 @@
     "--cas.authn.pm.forgot-username.mail.subject=Reset your password",
     "--cas.authn.pm.forgot-username.mail.attribute-name=mail",
 
-    "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/forgot-username/accounts.json"
+    "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
   ],
   "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
 }

@@ -41,11 +41,11 @@ import java.util.Objects;
 public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder {
     private static final long serialVersionUID = -1891703354216174875L;
 
-    private final transient SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext;
+    private final transient SamlProfileSamlResponseBuilderConfigurationContext configurationContext;
 
-    protected BaseSamlProfileSamlResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext) {
-        super(samlResponseBuilderConfigurationContext.getOpenSamlConfigBean());
-        this.samlResponseBuilderConfigurationContext = samlResponseBuilderConfigurationContext;
+    protected BaseSamlProfileSamlResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext configurationContext) {
+        super(configurationContext.getOpenSamlConfigBean());
+        this.configurationContext = configurationContext;
     }
 
     @Audit(
@@ -101,7 +101,8 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
             var relayState = SAMLBindingSupport.getRelayState(messageContext);
             LOGGER.trace("RelayState is [{}]", relayState);
             return encode(service, finalResponse, response, request,
-                adaptor, relayState, binding, authnRequest, assertion);
+                adaptor, relayState, binding, authnRequest, assertion,
+                messageContext);
         }
         return finalResponse;
     }
@@ -127,7 +128,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                            final String binding,
                                            final MessageContext messageContext) {
-        return samlResponseBuilderConfigurationContext.getSamlProfileSamlAssertionBuilder()
+        return configurationContext.getSamlProfileSamlAssertionBuilder()
             .build(authnRequest, request, response, casAssertion, service, adaptor, binding, messageContext);
     }
 
@@ -171,15 +172,16 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
     /**
      * Encode the final result into the http response.
      *
-     * @param service      the service
-     * @param samlResponse the saml response
-     * @param httpResponse the http response; may be null to mute encoding.
-     * @param httpRequest  the http request
-     * @param adaptor      the adaptor
-     * @param relayState   the relay state
-     * @param binding      the binding
-     * @param authnRequest the authn request
-     * @param assertion    the assertion
+     * @param service        the service
+     * @param samlResponse   the saml response
+     * @param httpResponse   the http response; may be null to mute encoding.
+     * @param httpRequest    the http request
+     * @param adaptor        the adaptor
+     * @param relayState     the relay state
+     * @param binding        the binding
+     * @param authnRequest   the authn request
+     * @param assertion      the assertion
+     * @param messageContext the message context
      * @return the t
      * @throws SamlException the saml exception
      */
@@ -191,7 +193,8 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
                                 String relayState,
                                 String binding,
                                 RequestAbstractType authnRequest,
-                                Object assertion) throws SamlException;
+                                Object assertion,
+                                MessageContext messageContext) throws SamlException;
 
     /**
      * Encrypt assertion.
@@ -213,7 +216,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
 
         if (service.isEncryptAssertions()) {
             LOGGER.debug("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
-            val encrypted = samlResponseBuilderConfigurationContext.getSamlObjectEncrypter().encode(assertion, service, adaptor);
+            val encrypted = configurationContext.getSamlObjectEncrypter().encode(assertion, service, adaptor);
             if (encrypted == null) {
                 LOGGER.debug("SAML registered service [{}] is unable to encrypt assertions", adaptor.getEntityId());
                 return assertion;

@@ -13,8 +13,13 @@
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content" class="banner banner-danger alert alert-danger mdc-card card p-4 m-auto w-lg-66">
         <h2 th:utext="#{cas.inwebo.error.heading}">An Inwebo error has occured.</h2>
-        <p th:unless="${#strings.isEmpty(inweboErrorMessage)}" th:utext="${inweboErrorMessage}">Custom error</p>
-        <p />
+        <div id="errorPanel" class="banner banner-danger alert-dismissible mb-4"
+             th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+            <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
+               th:utext="#{${message.text}}">
+                Error Message Text
+            </p>
+        </div>
         <div class="form-wrapper">
             <form id="retryForm" method="POST">
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
@@ -27,7 +32,7 @@
             </form>
         </div>
         <div th:if="${mustEnroll}">
-            <p />
+            <p>
             <script src="https://ult-inwebo.com/neon/3.6.0/simple-neon-lib.js " type="text/javascript"></script>
             <form id="inweboErrorForm" method="POST">
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}" />

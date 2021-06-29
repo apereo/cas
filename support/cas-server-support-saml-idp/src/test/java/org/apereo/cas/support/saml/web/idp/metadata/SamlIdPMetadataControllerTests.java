@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
+@Tag("SAMLMetadata")
 public class SamlIdPMetadataControllerTests extends BaseSamlIdPConfigurationTests {
 
     @Autowired

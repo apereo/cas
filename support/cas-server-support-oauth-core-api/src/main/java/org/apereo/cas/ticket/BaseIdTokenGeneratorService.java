@@ -26,8 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 @Getter
-public abstract class BaseIdTokenGeneratorService implements IdTokenGeneratorService {
-    private final OAuth20ConfigurationContext configurationContext;
+public abstract class BaseIdTokenGeneratorService<T extends OAuth20ConfigurationContext> implements IdTokenGeneratorService {
+    private final T configurationContext;
 
     /**
      * Gets authenticated profile.

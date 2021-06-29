@@ -24,7 +24,7 @@ public class PasswordChangeRequest implements Serializable {
     private static final long serialVersionUID = 8885460875620586503L;
 
     private String username;
-    
+
     private @Size(min = 1, message = "required.password") String password;
 
     private @Size(min = 1, message = "required.confirmedPassword") String confirmedPassword;

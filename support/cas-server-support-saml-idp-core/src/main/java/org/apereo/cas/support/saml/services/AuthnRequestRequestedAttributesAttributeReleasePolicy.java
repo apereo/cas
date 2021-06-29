@@ -40,8 +40,6 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicy extends BaseS
 
     private boolean useFriendlyName;
 
-    private boolean permitUndefined;
-
     @Override
     protected Map<String, List<Object>> getAttributesForSamlRegisteredService(final Map<String, List<Object>> attributes,
                                                                               final SamlRegisteredService registeredService,

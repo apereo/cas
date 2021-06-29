@@ -1,44 +1,30 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true
-    });
-    const page = await browser.newPage();
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/login?authn_method=mfa-webauthn");
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
 
     await page.waitForTimeout(1000)
     
-    let element = await page.$('#status');
-    let header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
+    let header = await cas.textContent(page, "#status");
+
     assert(header === "Register Device")
 
-    var messages = await page.$('#messages');
-    assert(await messages.boundingBox() != null);
+    await cas.assertVisibility(page, '#messages')
     
-    var dInfo = await page.$('#device-info');
-    assert(await dInfo.boundingBox() == null);
-    var dIcon = await page.$('#device-icon');
-    assert(await dIcon.boundingBox() == null);
-    var dName = await page.$('#device-name');
-    assert(await dName.boundingBox() == null);
+    await cas.assertInvisibility(page, '#device-info')
+    await cas.assertInvisibility(page, '#device-icon')
+    await cas.assertInvisibility(page, '#device-name')
 
-    var credentialNickname = await page.$('#credentialNickname');
-    assert(await credentialNickname.boundingBox() != null);
-    var registerButton = await page.$('#registerButton');
-    assert(await registerButton.boundingBox() != null);
+    await cas.assertVisibility(page, '#credentialNickname')
+    await cas.assertVisibility(page, '#registerButton')
     
-    var residentKeysPanel = await page.$('#residentKeysPanel');
-    assert(await residentKeysPanel.boundingBox() != null);
-    var registerResident = await page.$('#registerDiscoverableCredentialButton');
-    assert(await registerResident.boundingBox() != null);
+    await cas.assertVisibility(page, '#residentKeysPanel')
+    await cas.assertVisibility(page, '#registerDiscoverableCredentialButton')
 
     await browser.close();
 })();

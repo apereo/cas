@@ -1,26 +1,21 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
 const url = require('url');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true
-    });
-    const page = await browser.newPage();
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/login");
 
     // await page.waitForTimeout(1000)
 
-    let source = await page.$('#authnSourceSection');
-    assert(await source.boundingBox() != null);
+    await cas.assertVisibility(page, '#authnSourceSection')
 
-    let json = await page.$eval('#JSON-authnSource', el => el.innerText)
-    console.log(json.trim())
+    let json = await cas.innerText(page, '#JSON-authnSource');
     assert(json.trim() === "JSON")
 
-    let example = await page.$eval('#EXAMPLE-authnSource', el => el.innerText)
-    console.log(example.trim())
+    let example = await cas.innerText(page, '#EXAMPLE-authnSource');
     assert(example.trim() === "EXAMPLE")
 
     await browser.close();

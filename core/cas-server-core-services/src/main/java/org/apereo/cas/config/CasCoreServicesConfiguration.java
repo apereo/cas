@@ -39,6 +39,7 @@ import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrat
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.web.UrlValidator;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -87,6 +88,10 @@ public class CasCoreServicesConfiguration {
     private ObjectProvider<CommunicationsManager> communicationsManager;
 
     @Autowired
+    @Qualifier("urlValidator")
+    private ObjectProvider<UrlValidator> urlValidator;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
@@ -114,7 +119,7 @@ public class CasCoreServicesConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "webApplicationServiceResponseBuilder")
     public ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder() {
-        return new WebApplicationServiceResponseBuilder(servicesManager());
+        return new WebApplicationServiceResponseBuilder(servicesManager(), urlValidator.getObject());
     }
 
     @ConditionalOnMissingBean(name = RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME)
@@ -287,6 +292,7 @@ public class CasCoreServicesConfiguration {
                 .applicationContext(applicationContext)
                 .environments(activeProfiles)
                 .servicesCache(servicesManagerCache())
+                .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
                 .build();
             return new DefaultDomainAwareServicesManager(context, new DefaultRegisteredServiceDomainExtractor());
         };

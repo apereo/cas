@@ -1,30 +1,23 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true
-    });
-    const page = await browser.newPage();
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/login?service=https://example.org");
 
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
 
     // await page.waitForTimeout(5000)
     
-    let element = await page.$('#main-content #login #fm1 h3');
-    const header = await page.evaluate(element => element.textContent, element);
-    console.log(header)
+    const header = await cas.textContent(page, "#main-content #login #fm1 h3");
+
     assert(header === "Acceptable Usage Policy")
 
-    let accept = await page.$('button[name=submit]');
-    assert(await accept.boundingBox() != null);
+    await cas.assertVisibility(page, 'button[name=submit]')
 
-    let cancel = await page.$('button[name=cancel]');
-    assert(await cancel.boundingBox() != null);
+    await cas.assertVisibility(page, 'button[name=cancel]')
 
     await browser.close();
 })();

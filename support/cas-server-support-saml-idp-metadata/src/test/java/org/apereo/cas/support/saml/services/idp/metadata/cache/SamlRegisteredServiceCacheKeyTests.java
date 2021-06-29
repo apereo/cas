@@ -38,8 +38,7 @@ public class SamlRegisteredServiceCacheKeyTests {
         assertNotNull(results.getId());
         assertNotNull(results.getRegisteredService());
         assertNotNull(results.getCriteriaSet());
-        assertTrue(results.getCacheKey().contains(SamlRegisteredServiceCacheKey.KEY_SEPARATOR));
-        assertTrue(results.getCacheKey().startsWith(entityId));
+        assertEquals(results.getCacheKey(), service.getMetadataLocation());
     }
 
     @Test

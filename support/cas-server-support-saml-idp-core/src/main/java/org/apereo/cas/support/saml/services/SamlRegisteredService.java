@@ -55,6 +55,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     private String requiredNameIdFormat;
 
+    @ExpressionLanguageCapable
     private String metadataSignatureLocation;
 
     private boolean logoutResponseEnabled = true;
@@ -96,6 +97,8 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private boolean skipGeneratingNameIdQualifiers;
 
     private boolean skipGeneratingTransientNameId;
+
+    private boolean skipValidatingAuthnRequest;
 
     private boolean signResponses = true;
 

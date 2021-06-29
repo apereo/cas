@@ -30,6 +30,8 @@ public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonI
      * Attribute to indicate the x509 certificate.
      */
     public static final String REQUEST_ATTRIBUTE_X509_CERTIFICATE = "javax.servlet.request.X509Certificate";
+    
+    private static final String REQUEST_ATTRIBUTE_X509_ERROR = "X509CertificateAuthenticationError";
 
     /**
      * CAS configuration settings.
@@ -47,7 +49,9 @@ public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonI
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        val certificates = (X509Certificate[]) request.getAttribute(REQUEST_ATTRIBUTE_X509_CERTIFICATE);
+        val certificates = context.getRequestScope().contains(REQUEST_ATTRIBUTE_X509_ERROR)
+            ? null
+            : (X509Certificate[]) request.getAttribute(REQUEST_ATTRIBUTE_X509_CERTIFICATE);
 
         if (certificates == null || certificates.length == 0) {
             LOGGER.debug("Certificates not found in request attribute: [{}]", REQUEST_ATTRIBUTE_X509_CERTIFICATE);
@@ -59,7 +63,7 @@ public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonI
 
     @Override
     protected void onError(final RequestContext requestContext) {
-        super.onError(requestContext);
         WebUtils.putCasLoginFormViewable(requestContext, casProperties.getAuthn().getX509().isMixedMode());
+        requestContext.getRequestScope().put(REQUEST_ATTRIBUTE_X509_ERROR, "true");
     }
 }

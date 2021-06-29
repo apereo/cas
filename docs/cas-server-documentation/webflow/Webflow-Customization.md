@@ -40,7 +40,6 @@ of the webflow.
 
 {% include casproperties.html properties="cas.webflow.auto-configuration." %}
 
-
 <div class="alert alert-warning"><strong>Note</strong><p>Only attempt to 
 modify the Spring webflow configuration files by hand when/if absolutely necessary and the
 change is rather minimal or decorative. Extensive modifications of the webflow, if not done carefully
@@ -53,17 +52,16 @@ CAS by default is configured to hot reload changes to the Spring webflow configu
 
 If you want to learn how to modify and extend the CAS authentication flows, [please see this guide](Webflow-Customization-Extensions.html).
 
-## Administrative Endpoints
+## Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `springWebflow`          | Provides a JSON representation of the CAS authentication webflows. The endpoint can accept a `flowId` parameter as part of a `GET` operation to only present the flow body of the requested flow id.
+
+{% include actuators.html endpoints="springWebflow" casModule="cas-server-support-reports" %}
 
 ## Webflow Decorations
 
-Learn how to fetch and display data dynamically from external data sources and endpoints and pass those along to the webflow by [reviewing this guide](Webflow-Customization-Extensions.html).
+Learn how to fetch and display data dynamically from external data sources and 
+endpoints and pass those along to the webflow by [reviewing this guide](Webflow-Customization-Extensions.html).
 
 ## Required Service for Authentication
 

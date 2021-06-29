@@ -1,6 +1,7 @@
 const https = require('https');
 const assert = require('assert');
 const jwt = require('jsonwebtoken');
+const cas = require('../../cas.js');
 
 (async () => {
     console.log("Creating ticket-granting ticket as JWT")

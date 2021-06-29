@@ -110,6 +110,17 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     }
 
     @Override
+    public void delete(final long id) {
+        entityManager.createNativeQuery("DELETE FROM " + OneTimeTokenAccount.TABLE_NAME_SCRATCH_CODES + " WHERE id = :id")
+            .setParameter("id", id)
+            .executeUpdate();
+
+        entityManager.createQuery("DELETE FROM " + ENTITY_NAME + " r WHERE r.id = :id")
+            .setParameter("id", id)
+            .executeUpdate();
+    }
+
+    @Override
     public long count() {
         val count = (Number) entityManager.createQuery("SELECT COUNT(r.username) FROM " + ENTITY_NAME + " r").getSingleResult();
         LOGGER.debug("Counted [{}] record(s)", count);

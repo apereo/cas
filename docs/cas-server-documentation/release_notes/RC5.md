@@ -43,6 +43,9 @@ In the `gradle.properties` of the [CAS WAR Overlay](../installation/WAR-Overlay-
 cas.version=6.4.0-RC5
 ```
 
+Alternatively and for new deployments, [CAS Initializr](../installation/WAR-Overlay-Initializr.html) has been updated and can also be used
+to generate an overlay project template for this release.
+
 <div class="alert alert-info">
   <strong>System Requirements</strong><br/>There are no changes to the minimum system/platform requirements for this release.
 </div>
@@ -50,12 +53,18 @@ cas.version=6.4.0-RC5
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
-        
+           
+### Spring Boot 2.5
+
+CAS is now based on the Spring Boot `2.5.x` series which by extension also requires CAS to 
+upgrade its dependency on related projects such as Spring and Spring Cloud frameworks. While this 
+is a significant framework upgrade, the change should remain largely invisible to CAS users and adopters.
+
 ### SAML2 Identity Provider
 
 CAS acting as a [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html) is now able to provide basic support
 for browser's local storage as a means to track authentication requests. Furthermore, the handling of SAML2 authentication requests is 
-now slightly modified to recognize the presence of a single sign-on sessions to produce a SAML2 response directly off of the existing
+now slightly modified to recognize the presence of single sign-on sessions to produce a SAML2 response directly off of the existing
 session without having to redirect to CAS itself for a ticket.
                                                
 ### Thymeleaf User Interface Pages
@@ -66,19 +75,41 @@ login or logout functionality can now be found inside `login` or `logout` direct
 You should always cross-check the template locations with the [CAS WAR Overlay](../installation/WAR-Overlay-Installation.html) and 
 use the tooling provided by the build to locate or fetch the templates from the CAS web application context.
 
+### CAS Documentation
+
+A number of improvements are now implemented for a better user experience while browsing the CAS documentation:
+
+- Pagination is now available for listed CAS properties.
+- Additional details on properties that support the [Expression Language](../configuration/Configuration-Spring-Expressions.html) 
+  are now displayed as tooltips.
+- The setting owner is now listed, where available, for each listed property.
+- Settings that control the behavior of a CAS user interface theme are now automatically documented.
+- Supported [registered service properties](../services/Configuring-Service-Custom-Properties.html) are
+  now automatically included in the documentation. Relevant properties are also filtered 
+  by group and listed for each appropriate delegated identity provider.
+
 ## Other Stuff
        
 - [SSO Sessions endpoint](../authentication/Configuring-SSO.html) now indicates the expiration 
   policy and remember-me flags for authenticated sessions.
-- Password management APIs are updated to allow updating security questions.
-- Supported [registered service properties](../services/Configuring-Service-Custom-Properties.html) are 
-  now automatically included in the documentation.
-- SAML2 authentication statements can now customize the `SubjectLocality` field on a per-application basis.
+- [Password management APIs](../password_management/Password-Management.html) are updated to allow updating security questions.
+- SAML2 logout requests and responses should now respect the appropriate binding defined in CAS configuration.
+- Minor adjustments to SSO participation strategies to handle `UNDEFINED` states better.
+- [SAML2 authentication](../authentication/Configuring-SAML2-Authentication.html) statements 
+  can now customize the `SubjectLocality` field on a per-application basis.
 - HTTP request entities used for `POST` methods in REST API interactions are set to use the `UTF-8` encoding.
-- Generating access tokens for the OAuth authorization grants is set to use client id first and then 
-  redirect URIs to locate the service definition.
-- 
-
+- Generating access tokens for the [OAuth authorization grants](../authentication/OAuth-Authentication.html) 
+  is set to use client id first and then redirect URIs to locate the service definition.
+- Settings and properties controlled by CAS themes are now automatically documented.
+- [X509 Authentication](../authentication/X509-Authentication.html) can now handle account status errors via webflow.
+- [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) repository implementations 
+  are allowed to remove records by id. To handle this change, the [JPA data structures](../mfa/GoogleAuthenticator-Authentication-Registration-JPA.html)
+  that keep track of scratch codes have been altered to link devices and scratch codes by id, rather than by username.
+- Minor fixes to impersonation allow the surrogate user to be correctly authorized even if attribute repositories produce no attributes.
+- Additional [Puppeteer tests](../developer/Test-Process.html) to cover scenarios for 
+  password management, delegated authentication and OAuth protocol.
+- [Groovy Interrupts](../webflow/Webflow-Customization-Interrupt-Groovy.html) are now correctly 
+  initialized to recognize the script location.
 
 ## Library Upgrades
 
@@ -87,8 +118,13 @@ use the tooling provided by the build to locate or fetch the templates from the 
 - MariaDb Driver
 - Mockito
 - Amazon SDK
+- OpenSAML
+- Hibernate
 - Micrometer
+- Pac4j
 - Apache Tomcat
 - Spring Security
 - DropWizard
-
+- SnakeYAML
+- Apache CXF
+- BounctCastle

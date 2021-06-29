@@ -1,11 +1,11 @@
 package org.apereo.cas.aup;
 
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.couchdb.core.CouchDbProfileDocument;
 import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -38,10 +38,11 @@ public class CouchDbAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
     }
 
     @Override
-    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext, final Credential credential) {
-        var status = super.verify(requestContext, credential);
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) {
+        var status = super.verify(requestContext);
         if (!status.isAccepted()) {
-            val profile = couchDb.findByUsername(credential.getId());
+            val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+            val profile = couchDb.findByUsername(principal.getId());
             var accepted = false;
             if (profile != null) {
                 val values = CollectionUtils.toCollection(profile.getAttribute(aupProperties.getCore().getAupAttributeName()));
@@ -56,8 +57,9 @@ public class CouchDbAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
     }
 
     @Override
-    public boolean submit(final RequestContext requestContext, final Credential credential) {
-        val username = credential.getId();
+    public boolean submit(final RequestContext requestContext) {
+        val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+        val username = principal.getId();
         val profile = couchDb.findByUsername(username);
         if (profile == null) {
             val doc = new CouchDbProfileDocument(username, null,

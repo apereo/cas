@@ -14,6 +14,7 @@ import org.apereo.cas.util.DateTimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.NameID;
@@ -76,7 +77,7 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
         val assertion = Assertion.class.cast(casAssertion);
         val validFromDate = DateTimeUtils.zonedDateTimeOf(assertion.getValidFromDate());
         LOGGER.trace("Locating the assertion consumer service url for binding [{}]", binding);
-        val acs = SamlIdPUtils.determineEndpointForRequest(authnRequest, adaptor, binding);
+        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, messageContext), adaptor, binding);
         val location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
         if (StringUtils.isBlank(location)) {
             LOGGER.warn("Subject recipient is not defined from either authentication request or metadata for [{}]", adaptor.getEntityId());

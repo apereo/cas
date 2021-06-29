@@ -56,6 +56,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
                                                                        final Credential... credentials) throws AuthenticationException {
 
         val transaction = authenticationTransactionFactory.newTransaction(service, credentials);
+        transaction.collect(authenticationResultBuilder.getAuthentications());
         this.authenticationTransactionManager.handle(transaction, authenticationResultBuilder);
         return authenticationResultBuilder;
     }

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationResultBuilderFactory;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.AuthenticationTransactionFactory;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
@@ -44,13 +45,17 @@ import java.util.List;
 public class CasCoreAuthenticationConfiguration {
 
     @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
+
+    @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("authenticationEventExecutionPlan")
+    @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
     private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
 
     @Bean
@@ -87,12 +92,12 @@ public class CasCoreAuthenticationConfiguration {
         return new DefaultAuthenticationTransactionFactory();
     }
     
-    @ConditionalOnMissingBean(name = "authenticationEventExecutionPlan")
+    @ConditionalOnMissingBean(name = AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
     @Autowired
     @Bean
     @RefreshScope
     public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(final List<AuthenticationEventExecutionPlanConfigurer> configurers) {
-        val plan = new DefaultAuthenticationEventExecutionPlan();
+        val plan = new DefaultAuthenticationEventExecutionPlan(authenticationSystemSupport.getObject());
         val sortedConfigurers = new ArrayList<>(configurers);
         AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
 
@@ -110,7 +115,7 @@ public class CasCoreAuthenticationConfiguration {
         val release = casProperties.getAuthn().getAuthenticationAttributeRelease();
         if (!release.isEnabled()) {
             LOGGER.debug("CAS is configured to not release protocol-level authentication attributes.");
-            return AuthenticationAttributeReleasePolicy.noOp();
+            return AuthenticationAttributeReleasePolicy.none();
         }
         return new DefaultAuthenticationAttributeReleasePolicy(release.getOnlyRelease(),
             release.getNeverRelease(),

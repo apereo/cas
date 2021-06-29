@@ -57,10 +57,6 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
 
     static final String STATE_ID_DETERMINE_DUO_REQUEST = "determineDuoRequest";
 
-    static final String STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN = "duoUniversalPromptPrepareValidate";
-
-    static final String ACTION_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN = "duoUniversalPromptPrepareLoginAction";
-
     private static final String ACTION_CHECK_WEB_AUTHENTICATION_REQUEST = "checkWebAuthenticationRequestAction";
 
     private static final String ACTION_DUO_AUTHENTICATION_WEBFLOW = "duoAuthenticationWebflowAction";
@@ -126,7 +122,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
     }
 
     private void createDuoFlowUniversalPromptActions(final Flow flow) {
-        val actionState = createActionState(flow, STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN,
+        val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN,
             "duoUniversalPromptValidateLoginAction");
 
         val realSubmit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
@@ -171,7 +167,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
     private static void createDuoUniversalPromptLoginViewState(final ArrayList<AbstractStateModel> states) {
         val viewState = new ViewStateModel(STATE_ID_VIEW_LOGIN_FORM_DUO);
         val actions = new LinkedList<AbstractActionModel>();
-        val action = new EvaluateModel(ACTION_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN);
+        val action = new EvaluateModel(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN);
         actions.add(action);
         viewState.setOnEntryActions(actions);
         viewState.setView("externalRedirect:#{flowScope.duoUniversalPromptLoginUrl}");
