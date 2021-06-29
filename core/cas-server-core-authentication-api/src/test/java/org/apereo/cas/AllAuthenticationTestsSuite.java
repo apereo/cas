@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactoryTests;
 import org.apereo.cas.authentication.AuthenticationCredentialTypeMetaDataPopulatorTests;
 import org.apereo.cas.authentication.AuthenticationDateAttributeMetaDataPopulatorTests;
 import org.apereo.cas.authentication.AuthenticationTransactionTests;
-import org.apereo.cas.authentication.CoreAuthenticationUtilsTests;
 import org.apereo.cas.authentication.CredentialCustomFieldsAttributeMetaDataPopulatorTests;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilderTests;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResultTests;
@@ -58,7 +57,6 @@ import org.junit.platform.suite.api.Suite;
     GroovyIPAddressIntelligenceServiceTests.class,
     RestfulIPAddressIntelligenceServiceTests.class,
     BlackDotIPAddressIntelligenceServiceTests.class,
-    CoreAuthenticationUtilsTests.class,
     GroovyScriptAuthenticationPolicyTests.class,
     InternalGroovyScriptDaoTests.class,
     PersonDirectoryPrincipalResolverTests.class,

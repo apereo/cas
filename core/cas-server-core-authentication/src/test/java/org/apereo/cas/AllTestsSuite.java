@@ -3,7 +3,6 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandlerTests;
 import org.apereo.cas.authentication.BasicCredentialMetaDataTests;
 import org.apereo.cas.authentication.CacheCredentialsMetaDataPopulatorTests;
-import org.apereo.cas.authentication.CoreAuthenticationUtilsTests;
 import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlanTests;
 import org.apereo.cas.authentication.DefaultAuthenticationManagerTests;
 import org.apereo.cas.authentication.DefaultAuthenticationTests;
@@ -60,7 +59,6 @@ import org.junit.platform.suite.api.Suite;
     JaasAuthenticationHandlerSystemConfigurationTests.class,
     JaasAuthenticationHandlerTests.class,
     SimpleTestUsernamePasswordHandlerTests.class,
-    CoreAuthenticationUtilsTests.class,
     DefaultAttributeDefinitionTests.class,
     UsernamePasswordCredentialTests.class,
     DefaultPasswordEncoderTests.class,

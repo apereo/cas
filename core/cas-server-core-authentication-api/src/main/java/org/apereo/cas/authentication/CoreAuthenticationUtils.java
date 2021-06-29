@@ -375,7 +375,6 @@ public class CoreAuthenticationUtils {
     /**
      * New PrincipalResolutionContext.
      *
-     * @param <T>                 the type parameter
      * @param principalFactory    the principal factory
      * @param attributeRepository the attribute repository
      * @param attributeMerger     the attribute merger
@@ -394,7 +393,7 @@ public class CoreAuthenticationUtils {
                 .map(p -> p.getReturnNull().toBoolean()).findFirst().orElse(Boolean.FALSE))
             .principalAttributeNames(Arrays.stream(personDirectory)
                 .map(PersonDirectoryPrincipalResolverProperties::getPrincipalAttribute)
-                .filter(p -> StringUtils.isNotBlank(p))
+                .filter(StringUtils::isNotBlank)
                 .findFirst()
                 .orElse(StringUtils.EMPTY))
             .principalNameTransformer(formUserId -> formUserId)
