@@ -4,6 +4,7 @@ import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutHttpMessage;
 import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
+import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -16,6 +17,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Comparator;
 import java.util.HashMap;
 
 /**
@@ -60,6 +62,7 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
                 LOGGER.debug("Using logout url [{}] for front-channel logout requests", r.getLogoutUrl().toExternalForm());
                 logoutExecutionPlan.getSingleLogoutServiceMessageHandlers()
                     .stream()
+                    .sorted(Comparator.comparing(SingleLogoutServiceMessageHandler::getOrder))
                     .filter(handler -> handler.supports(r.getExecutionRequest(), r.getService()))
                     .forEach(handler -> {
                         val logoutMessage = handler.createSingleLogoutMessage(r);

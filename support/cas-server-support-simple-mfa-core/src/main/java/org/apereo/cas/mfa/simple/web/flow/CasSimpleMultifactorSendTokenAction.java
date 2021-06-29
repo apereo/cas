@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -66,11 +65,13 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
 
     private static boolean isMailSent(final CommunicationsManager communicationsManager,
                                       final CasSimpleMultifactorAuthenticationProperties properties,
-                                      final Principal principal,
-                                      final Ticket token) {
+                                      final Principal principal, final Ticket token,
+                                      final RequestContext requestContext) {
         if (communicationsManager.isMailSenderDefined()) {
             val mailProperties = properties.getMail();
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val body = EmailMessageBodyBuilder.builder().properties(mailProperties)
+                .locale(Optional.ofNullable(request.getLocale()))
                 .parameters(Map.of("token", token.getId())).build().produce();
             return communicationsManager.email(principal, mailProperties.getAttributeName(), mailProperties, body);
         }
@@ -98,7 +99,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
             && isSmsSent(communicationsManager, properties, principal, token);
 
         val emailSent = strategy.contains(CasSimpleMultifactorTokenCommunicationStrategy.TokenSharingStrategyOptions.EMAIL)
-            && isMailSent(communicationsManager, properties, principal, token);
+            && isMailSent(communicationsManager, properties, principal, token, requestContext);
 
         val notificationSent = strategy.contains(CasSimpleMultifactorTokenCommunicationStrategy.TokenSharingStrategyOptions.NOTIFICATION)
             && isNotificationSent(communicationsManager, principal, token);
@@ -107,13 +108,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
             ticketRegistry.addTicket(token);
             LOGGER.debug("Successfully submitted token via strategy option [{}] to [{}]", strategy, principal.getId());
 
-            val resolver = new MessageBuilder()
-                .info()
-                .code(MESSAGE_MFA_TOKEN_SENT)
-                .defaultText(MESSAGE_MFA_TOKEN_SENT)
-                .build();
-            requestContext.getMessageContext().addMessage(resolver);
-
+            WebUtils.addInfoMessageToContext(requestContext, MESSAGE_MFA_TOKEN_SENT);
             val attributes = new LocalAttributeMap<Object>("token", token.getId());
             WebUtils.putSimpleMultifactorAuthenticationToken(requestContext, token);
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS, attributes);

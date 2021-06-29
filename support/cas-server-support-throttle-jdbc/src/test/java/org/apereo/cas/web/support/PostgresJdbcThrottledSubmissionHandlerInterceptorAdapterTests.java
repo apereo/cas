@@ -24,9 +24,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 }, properties = {
     "cas.jdbc.show-sql=true",
 
-    "cas.authn.throttle.username-parameter=username",
     "cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",
-    "cas.authn.throttle.username-parameter=username",
+    "cas.authn.throttle.core.username-parameter=username",
     "cas.authn.throttle.failure.range-seconds=5",
 
     "cas.authn.throttle.jdbc.user=postgres",

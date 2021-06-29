@@ -71,6 +71,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
@@ -101,6 +102,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.webflow.execution.Action;
 
+import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -154,8 +156,12 @@ public abstract class AbstractOidcTests {
     protected OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenCallbackUrlBuilder;
 
     @Autowired
-    @Qualifier("oauthRegisteredServiceJwtAccessTokenCipherExecutor")
-    protected RegisteredServiceCipherExecutor oauthRegisteredServiceJwtAccessTokenCipherExecutor;
+    @Qualifier("oidcRegisteredServiceJwtAccessTokenCipherExecutor")
+    protected RegisteredServiceCipherExecutor oidcRegisteredServiceJwtAccessTokenCipherExecutor;
+
+    @Autowired
+    @Qualifier("oidcAccessTokenJwtCipherExecutor")
+    protected CipherExecutor<Serializable, String> oidcAccessTokenJwtCipherExecutor;
 
     @Autowired
     @Qualifier("oidcUserProfileViewRenderer")
@@ -253,7 +259,7 @@ public abstract class AbstractOidcTests {
     protected ConsentApprovalViewResolver consentApprovalViewResolver;
 
     @Autowired
-    @Qualifier("oidcAccessTokenJwtBuilder")
+    @Qualifier("accessTokenJwtBuilder")
     protected JwtBuilder oidcAccessTokenJwtBuilder;
 
     @Autowired

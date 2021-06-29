@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml;
 
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContext;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -12,15 +13,19 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.SignableSAMLObject;
+import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
 import org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver;
+import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
@@ -29,6 +34,7 @@ import org.opensaml.saml.saml2.core.StatusResponseType;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 
@@ -52,26 +58,29 @@ public class SamlIdPUtils {
     /**
      * Retrieve authn request authn request.
      *
-     * @param <T>                the type parameter
      * @param context            the context
      * @param sessionStore       the session store
      * @param openSamlConfigBean the open saml config bean
      * @param clazz              the clazz
      * @return the request
      */
-    public static <T extends RequestAbstractType> T retrieveSamlRequest(final WebContext context,
-                                                                        final SessionStore sessionStore,
-                                                                        final OpenSamlConfigBean openSamlConfigBean,
-                                                                        final Class<T> clazz) {
+    public static Pair<? extends RequestAbstractType, MessageContext> retrieveSamlRequest(final WebContext context,
+                                                                                          final SessionStore sessionStore,
+                                                                                          final OpenSamlConfigBean openSamlConfigBean,
+                                                                                          final Class<? extends RequestAbstractType> clazz) {
         LOGGER.trace("Retrieving authentication request from scope");
         val requestValue = sessionStore
             .get(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST)
-            .orElse(StringUtils.EMPTY)
-            .toString();
-        if (StringUtils.isBlank(requestValue)) {
-            throw new IllegalArgumentException("SAML request could not be determined from the authentication request");
-        }
-        return retrieveSamlRequest(openSamlConfigBean, clazz, requestValue);
+            .map(String.class::cast)
+            .orElseThrow(() -> new IllegalArgumentException("SAML request could not be determined from session store"));
+        val authnRequest = retrieveSamlRequest(openSamlConfigBean, clazz, requestValue);
+        val messageContext = sessionStore
+            .get(context, MessageContext.class.getName())
+            .map(String.class::cast)
+            .map(result -> SamlIdPAuthenticationContext.decode(result).toMessageContext(authnRequest))
+            .orElseThrow(() -> new IllegalArgumentException("SAML message context could not be determined from from session store"));
+
+        return Pair.of(authnRequest, messageContext);
     }
 
     /**
@@ -105,13 +114,13 @@ public class SamlIdPUtils {
     /**
      * Prepare peer entity saml endpoint.
      *
-     * @param request         the authn request
+     * @param authnContext    the authn context
      * @param outboundContext the outbound context
      * @param adaptor         the adaptor
      * @param binding         the binding
      * @throws SamlException the saml exception
      */
-    public static void preparePeerEntitySamlEndpointContext(final RequestAbstractType request,
+    public static void preparePeerEntitySamlEndpointContext(final Pair<? extends RequestAbstractType, MessageContext> authnContext,
                                                             final MessageContext outboundContext,
                                                             final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                             final String binding) throws SamlException {
@@ -124,7 +133,7 @@ public class SamlIdPUtils {
         peerEntityContext.setEntityId(entityId);
 
         val endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
-        val endpoint = determineEndpointForRequest(request, adaptor, binding);
+        val endpoint = determineEndpointForRequest(authnContext, adaptor, binding);
         LOGGER.debug("Configured peer entity endpoint to be [{}] with binding [{}]", endpoint.getLocation(), endpoint.getBinding());
         endpointContext.setEndpoint(endpoint);
     }
@@ -132,21 +141,23 @@ public class SamlIdPUtils {
     /**
      * Determine assertion consumer service assertion consumer service.
      *
-     * @param authnRequest the authn request
+     * @param authnContext the authn context
      * @param adaptor      the adaptor
      * @param binding      the binding
      * @return the assertion consumer service
      */
-    public static Endpoint determineEndpointForRequest(final RequestAbstractType authnRequest,
+    public static Endpoint determineEndpointForRequest(final Pair<? extends RequestAbstractType, MessageContext> authnContext,
                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                        final String binding) {
         var endpoint = (Endpoint) null;
+        val authnRequest = authnContext.getLeft();
         if (authnRequest instanceof LogoutRequest) {
             endpoint = adaptor.getSingleLogoutService(binding);
         } else {
             val acsEndpointFromReq = getAssertionConsumerServiceFromRequest(authnRequest, binding, adaptor);
             val acsEndpointFromMetadata = adaptor.getAssertionConsumerService(binding);
-            endpoint = determineEndpointForRequest(authnRequest, adaptor, binding, acsEndpointFromReq, acsEndpointFromMetadata);
+            endpoint = determineEndpointForRequest(authnRequest, adaptor, binding,
+                acsEndpointFromReq, acsEndpointFromMetadata, authnContext.getRight());
         }
         if (endpoint == null) {
             throw new SamlException("Endpoint for " + authnRequest.getSchemaType()
@@ -163,9 +174,10 @@ public class SamlIdPUtils {
                                                                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                                         final String binding,
                                                                         final AssertionConsumerService acsFromRequest,
-                                                                        final AssertionConsumerService acsFromMetadata) {
+                                                                        final AssertionConsumerService acsFromMetadata,
+                                                                        final MessageContext authenticationContext) {
         if (acsFromRequest != null) {
-            if (!authnRequest.isSigned()) {
+            if (!authnRequest.isSigned() && !SAMLBindingSupport.isMessageSigned(authenticationContext)) {
                 val locations = adaptor.getAssertionConsumerServiceLocations(binding);
                 val acsUrl = StringUtils.defaultIfBlank(acsFromRequest.getResponseLocation(), acsFromRequest.getLocation());
                 val acsIndex = authnRequest instanceof AuthnRequest
@@ -245,6 +257,9 @@ public class SamlIdPUtils {
         }
         if (object instanceof StatusResponseType) {
             return StatusResponseType.class.cast(object).getIssuer().getValue();
+        }
+        if (object instanceof Assertion) {
+            return Assertion.class.cast(object).getIssuer().getValue();
         }
         return null;
     }
@@ -326,6 +341,31 @@ public class SamlIdPUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * Store saml request.
+     *
+     * @param webContext         the web context
+     * @param openSamlConfigBean the open saml config bean
+     * @param sessionStore       the session store
+     * @param context            the context
+     * @throws Exception the exception
+     */
+    public static void storeSamlRequest(final JEEContext webContext,
+                                        final OpenSamlConfigBean openSamlConfigBean,
+                                        final SessionStore sessionStore,
+                                        final Pair<? extends SignableSAMLObject, MessageContext> context) throws Exception {
+        val authnRequest = (AuthnRequest) context.getLeft();
+        val messageContext = context.getValue();
+        try (val writer = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest)) {
+            val samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
+            sessionStore.set(webContext, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
+            sessionStore.set(webContext, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, SAMLBindingSupport.getRelayState(messageContext));
+
+            val authnContext = SamlIdPAuthenticationContext.from(messageContext).encode();
+            sessionStore.set(webContext, MessageContext.class.getName(), authnContext);
+        }
     }
 }
 

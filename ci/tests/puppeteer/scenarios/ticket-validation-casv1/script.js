@@ -2,12 +2,11 @@ const puppeteer = require('puppeteer');
 const assert = require('assert');
 const url = require('url');
 const https = require('https');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true
-    });
-    const page = await browser.newPage();
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
     const service = "https://example.com";
 
     await page.goto("https://localhost:8443/cas/login?service=" + service);
@@ -17,15 +16,9 @@ const https = require('https');
     assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")))
     assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")))
     
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
 
-    let result = new URL(page.url());
-    let ticket = result.searchParams.get("ticket");
-    console.log(ticket);
-    assert(ticket != null);
+    let ticket = await cas.assertTicketParameter(page);
 
     let options = {
         protocol: 'https:',

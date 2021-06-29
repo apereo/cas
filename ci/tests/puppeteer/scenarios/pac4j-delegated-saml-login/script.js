@@ -1,16 +1,12 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
 const fs = require('fs');
+const cas = require('../../cas.js');
 const path = require('path');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true,
-        defaultViewport: null,
-        args: ['--start-maximized']
-    });
-    const page = await browser.newPage();
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
 
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(1000)
@@ -23,42 +19,36 @@ const path = require('path');
     console.log("Metadata file: " + metadata);
 
     await fileElement.uploadFile(metadata);
-    await click(page, "input[name='submit']")
+    await cas.click(page, "input[name='submit']")
     await page.waitForNavigation();
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(2000)
 
     await page.goto("https://localhost:8443/cas/login");
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
 
-    var loginProviders = await page.$('#loginProviders');
-    assert(await loginProviders.boundingBox() != null);
+    await cas.assertVisibility(page, '#loginProviders')
 
-    var client = await page.$('li #SAML2Client');
-    assert(await client.boundingBox() != null);
+    await cas.assertVisibility(page, 'li #SAML2Client')
     
-    await click(page, "li #SAML2Client")
+    await cas.click(page, "li #SAML2Client")
     await page.waitForNavigation();
 
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(5000)
 
-    await page.type('#username', "morty");
-    await page.type('#password', "panic");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
-    await page.waitForTimeout(1000)
+    await cas.loginWith(page, "morty", "panic");
+    await page.waitForTimeout(3000)
 
-    await click(page, "input[name='_eventId_proceed']")
-    await page.waitForTimeout(1000)
+    await cas.click(page, "input[name='_eventId_proceed']")
+    await page.waitForTimeout(5000)
 
-    const tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
+    await cas.assertTicketGrantingCookie(page);
 
     const title = await page.title();
     console.log(title)
     assert(title === "CAS - Central Authentication Service")
 
-    const header = await page.$eval('#content div h2', el => el.innerText.trim())
-    console.log(header)
+    const header = await cas.innerText(page, '#content div h2');
+
     assert(header === "Log In Successful")
     
     let metadataDir = path.join(__dirname, '/saml-md');
@@ -67,8 +57,4 @@ const path = require('path');
     await browser.close();
 })();
 
-async function click(page, button) {
-    await page.evaluate((button) => {
-        document.querySelector(button).click();
-    }, button);
-}
+

@@ -28,8 +28,8 @@ import java.util.TreeSet;
  */
 @Slf4j
 public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAccessTokenGrantRequestExtractor {
-    public AccessTokenAuthorizationCodeGrantRequestExtractor(final OAuth20ConfigurationContext oAuthConfigurationContext) {
-        super(oAuthConfigurationContext);
+    public AccessTokenAuthorizationCodeGrantRequestExtractor(final OAuth20ConfigurationContext config) {
+        super(config);
     }
 
     /**
@@ -47,7 +47,6 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         val grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
 
         LOGGER.debug("OAuth grant type is [{}]", grantType);
-
         val redirectUri = getRegisteredServiceIdentifierFromRequest(context);
         val registeredService = getOAuthRegisteredServiceBy(context);
         if (registeredService == null) {

@@ -1,19 +1,15 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
 const https = require('https');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true
-    });
-    const page = await browser.newPage();
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
     const service = "https://example.com";
 
     await page.goto("https://localhost:8443/cas/login?TARGET=" + service);
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
 
     let result = new URL(page.url());
     let ticket = result.searchParams.get("SAMLart");

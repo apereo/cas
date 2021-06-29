@@ -1,8 +1,15 @@
 package org.apereo.cas.redis.core;
 
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
+import org.apereo.cas.configuration.support.Beans;
 
+import io.lettuce.core.ClientOptions;
 import io.lettuce.core.ReadFrom;
+import io.lettuce.core.SocketOptions;
+import io.lettuce.core.TimeoutOptions;
+import io.lettuce.core.cluster.ClusterClientOptions;
+import io.lettuce.core.cluster.ClusterTopologyRefreshOptions;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
@@ -33,6 +40,7 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @Slf4j
+@UtilityClass
 public class RedisObjectFactory {
 
     /**
@@ -76,11 +84,11 @@ public class RedisObjectFactory {
                                                                    final boolean initialize) {
         var factory = (LettuceConnectionFactory) null;
         if (redis.getSentinel() != null && StringUtils.hasText(redis.getSentinel().getMaster())) {
-            factory = new LettuceConnectionFactory(getSentinelConfig(redis), getRedisPoolConfig(redis));
+            factory = new LettuceConnectionFactory(getSentinelConfig(redis), getRedisPoolClientConfig(redis, true));
         } else if (redis.getCluster() != null && !redis.getCluster().getNodes().isEmpty()) {
-            factory = new LettuceConnectionFactory(getClusterConfig(redis), getRedisPoolConfig(redis));
+            factory = new LettuceConnectionFactory(getClusterConfig(redis), getRedisPoolClientConfig(redis, true));
         } else {
-            factory = new LettuceConnectionFactory(getStandaloneConfig(redis), getRedisPoolConfig(redis));
+            factory = new LettuceConnectionFactory(getStandaloneConfig(redis), getRedisPoolClientConfig(redis, false));
         }
 
         if (initialize) {
@@ -125,20 +133,27 @@ public class RedisObjectFactory {
         return redisConfiguration;
     }
 
-    private static LettucePoolingClientConfiguration getRedisPoolConfig(final BaseRedisProperties redis) {
-        val poolConfig = LettucePoolingClientConfiguration.builder();
+    private static LettucePoolingClientConfiguration getRedisPoolClientConfig(final BaseRedisProperties redis, final boolean cluster) {
+        val poolingClientConfig = LettucePoolingClientConfiguration.builder();
         if (redis.isUseSsl()) {
-            poolConfig.useSsl();
+            poolingClientConfig.useSsl();
             LOGGER.trace("Redis configuration: SSL connections are enabled");
         }
         if (redis.getReadFrom() != null) {
-            poolConfig.readFrom(ReadFrom.valueOf(redis.getReadFrom().name()));
+            poolingClientConfig.readFrom(ReadFrom.valueOf(redis.getReadFrom().name()));
             LOGGER.debug("Redis configuration: readFrom property is set to [{}]", redis.getReadFrom());
         }
-        if (redis.getTimeout() > 0) {
-            poolConfig.commandTimeout(Duration.ofMillis(redis.getTimeout()));
-            LOGGER.trace("Redis configuration: commandTimeout is set to [{}]ms", redis.getTimeout());
+
+        if (StringUtils.hasText(redis.getTimeout())) {
+            val commandTimeout = Beans.newDuration(redis.getTimeout());
+            val commandTimeoutMillis = commandTimeout.toMillis();
+            if (commandTimeoutMillis > 0) {
+                poolingClientConfig.commandTimeout(Duration.ofMillis(commandTimeoutMillis));
+                LOGGER.trace("Redis configuration: commandTimeout is set to [{}]ms", commandTimeoutMillis);
+            }
         }
+
+        poolingClientConfig.clientOptions(createClientOptions(redis, cluster));
 
         val pool = redis.getPool();
         if (pool != null && pool.isEnabled()) {
@@ -162,10 +177,35 @@ public class RedisObjectFactory {
             if (pool.getSoftMinEvictableIdleTimeMillis() > 0) {
                 config.setSoftMinEvictableIdleTimeMillis(pool.getSoftMinEvictableIdleTimeMillis());
             }
-            poolConfig.poolConfig(config);
+            poolingClientConfig.poolConfig(config);
             LOGGER.trace("Redis configuration: the pool is configured to [{}]", config);
         }
-        return poolConfig.build();
+        return poolingClientConfig.build();
+    }
+
+    private static ClientOptions createClientOptions(final BaseRedisProperties redis, final boolean cluster) {
+        val clientOptionsBuilder = initializeClientOptionsBuilder(redis, cluster);
+        if (StringUtils.hasText(redis.getConnectTimeout())) {
+            val connectTimeout = Beans.newDuration(redis.getConnectTimeout());
+            clientOptionsBuilder.socketOptions(SocketOptions.builder().connectTimeout(connectTimeout).build());
+        }
+        return clientOptionsBuilder.timeoutOptions(TimeoutOptions.enabled()).build();
+    }
+
+    private static ClientOptions.Builder initializeClientOptionsBuilder(final BaseRedisProperties redis, final boolean cluster) {
+        if (cluster) {
+            ClusterTopologyRefreshOptions.Builder refreshBuilder = ClusterTopologyRefreshOptions.builder()
+                .dynamicRefreshSources(redis.getCluster().isDynamicRefreshSources());
+            if (StringUtils.hasText(redis.getCluster().getTopologyRefreshPeriod())) {
+                refreshBuilder.enablePeriodicRefresh(Beans.newDuration(redis.getCluster().getTopologyRefreshPeriod()));
+            }
+            if (redis.getCluster().isAdaptiveTopologyRefresh()) {
+                refreshBuilder.enableAllAdaptiveRefreshTriggers();
+            }
+            ClusterClientOptions.Builder clusterClientOptionsBuilder = ClusterClientOptions.builder();
+            return clusterClientOptionsBuilder.topologyRefreshOptions(refreshBuilder.build());
+        }
+        return ClientOptions.builder();
     }
 
     private static RedisConfiguration getStandaloneConfig(final BaseRedisProperties redis) {

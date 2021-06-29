@@ -248,8 +248,8 @@ subprojects {
 
     jacocoTestReport {
         reports {
-            xml.enabled(true)
-            html.enabled(true)
+            xml.required.set(true)
+            html.required.set(true)
         }
         afterEvaluate {
             classDirectories.setFrom(files(classDirectories.files.collect {
@@ -395,7 +395,6 @@ subprojects {
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
 
     [compileTestJava, compileJava].each {
-
         if (rootProject.generateGitProperties) {
             it.dependsOn("generateGitProperties")
         }
@@ -489,6 +488,7 @@ subprojects {
         implementation libraries.validationapi
 
         api libraries.jaxb
+        api libraries.swaggerannotations
         api libraries.slf4j
         api libraries.guava
         api libraries.commons
@@ -500,7 +500,7 @@ subprojects {
         api libraries.jackson
         api libraries.httpclient
         api libraries.quartz
-        api libraries.hibernatevalidator
+        api libraries.bvalidator
         api libraries.groovy
         api libraries.caffein
         api libraries.springcloud
@@ -597,9 +597,9 @@ task jacocoRootReport(type: JacocoReport) {
     executionData jacocoMerge.destinationFile
 
     reports {
-        html.enabled = true
-        xml.enabled = true
-        csv.enabled = true
+        html.required.set(true)
+        xml.required.set(true)
+        csv.required.set(true)
     }
 }
 
@@ -629,7 +629,9 @@ task verifyRequiredJavaVersion {
 }
 
 boolean projectShouldBePublished(Project project) {
-    return !["api", "core", "docs", "support", "webapp"].contains(project.name) && !project.getPath().contains("cas-server-documentation")
+    def publishable = !["api", "core", "docs", "support", "webapp"].contains(project.name)
+            && !project.getPath().contains("cas-server-documentation")
+    project.ext.publishable = publishable
 }
 
 

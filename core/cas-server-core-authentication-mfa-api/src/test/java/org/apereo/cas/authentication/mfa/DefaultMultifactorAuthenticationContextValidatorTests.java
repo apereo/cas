@@ -1,11 +1,16 @@
 package org.apereo.cas.authentication.mfa;
 
+import org.apereo.cas.authentication.DefaultChainingMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
+import org.apereo.cas.authentication.DefaultMultifactorAuthenticationFailureModeEvaluator;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.List;
@@ -21,6 +26,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("MFA")
 public class DefaultMultifactorAuthenticationContextValidatorTests {
+    private static ConfigurableApplicationContext getStaticApplicationContext() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        return applicationContext;
+    }
+
     @Test
     public void verifyContextFailsValidationWithNoProviders() {
         val applicationContext = new StaticApplicationContext();
@@ -35,9 +47,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
 
     @Test
     public void verifyContextFailsValidationWithMissingProvider() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        val applicationContext = getStaticApplicationContext();
         val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "trusted_authn", applicationContext);
         val result = v.validate(
@@ -49,9 +59,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
 
     @Test
     public void verifyContextPassesValidationWithProvider() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        val applicationContext = getStaticApplicationContext();
         val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "trusted_authn", applicationContext);
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(
@@ -63,10 +71,40 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
     }
 
     @Test
-    public void verifyTrustedAuthnFoundInContext() {
+    public void verifyContextPassesValidationWithChainProvider() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
-        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+
+        val casProperties = new CasConfigurationProperties();
+        casProperties.getAuthn().getMfa().getCore()
+            .setGlobalFailureMode(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.OPEN);
+        val failureEvaluator = new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties);
+        val chainProvider = new DefaultChainingMultifactorAuthenticationProvider(failureEvaluator);
+
+        val provider1 = new TestMultifactorAuthenticationProvider("mfa-first");
+        provider1.setOrder(10);
+        val provider2 = new TestMultifactorAuthenticationProvider("mfa-second");
+        provider2.setOrder(20);
+
+        chainProvider.addMultifactorAuthenticationProvider(provider1);
+        chainProvider.addMultifactorAuthenticationProvider(provider2);
+        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, chainProvider);
+        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, provider1);
+        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, provider2);
+
+        val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
+            "trusted_authn", applicationContext);
+        val authentication = MultifactorAuthenticationTestUtils.getAuthentication(
+            MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
+            CollectionUtils.wrap("authn_method", List.of(provider2.getId())));
+        val result = v.validate(authentication, provider2.getId(),
+            Optional.of(MultifactorAuthenticationTestUtils.getRegisteredService()));
+        assertTrue(result.isSuccess());
+    }
+
+    @Test
+    public void verifyTrustedAuthnFoundInContext() {
+        val applicationContext = getStaticApplicationContext();
         val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "trusted_authn", applicationContext);
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(
@@ -79,9 +117,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
 
     @Test
     public void verifyTrustedAuthnFoundFromContext() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        val applicationContext = getStaticApplicationContext();
         val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "trusted_authn", applicationContext);
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(

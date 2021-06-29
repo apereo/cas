@@ -54,27 +54,14 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
     protected Event doExecute(final RequestContext requestContext) {
         val requestParameters = requestContext.getRequestParameters();
         if (requestParameters.contains(REQUEST_PARAMETER_CODE) && requestParameters.contains(REQUEST_PARAMETER_STATE)) {
-            val duoCode = requestParameters.get(REQUEST_PARAMETER_CODE, String.class);
             val duoState = requestParameters.get(REQUEST_PARAMETER_STATE, String.class);
-            LOGGER.trace("Received Duo Security code [{}] and state [{}]", duoCode, duoState);
-
+            LOGGER.trace("Received Duo Security state [{}]", duoState);
             try {
                 val ticket = centralAuthenticationService.getTicket(duoState, TransientSessionTicket.class);
-                val duoSecurityIdentifier = ticket.getProperty("duoProviderId", String.class);
                 val authentication = ticket.getProperty("authentication", Authentication.class);
-                val registeredService = ticket.getProperty("registeredService", RegisteredService.class);
-
-                val credential = new DuoSecurityUniversalPromptCredential(duoCode, authentication);
-                val provider = duoProviderBean.getProvider(duoSecurityIdentifier);
-                credential.setProviderId(provider.getId());
-                WebUtils.putCredential(requestContext, credential);
-                val authenticationResultBuilder = ticket.getProperty("authenticationResultBuilder", AuthenticationResultBuilder.class);
-                WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
-                val authenticationResult = authenticationResultBuilder.build(authenticationSystemSupport.getPrincipalElectionStrategy());
-                WebUtils.putAuthenticationResult(authenticationResult, requestContext);
-                WebUtils.putAuthentication(authenticationResult.getAuthentication(), requestContext);
-                WebUtils.putRegisteredService(requestContext, registeredService);
-                WebUtils.putServiceIntoFlowScope(requestContext, ticket.getService());
+                populateContextWithCredential(requestContext, ticket, authentication);
+                populateContextWithAuthentication(requestContext, ticket);
+                populateContextWithService(requestContext, ticket);
                 return super.doExecute(requestContext);
             } catch (final Exception e) {
                 LoggingUtils.warn(LOGGER, e);
@@ -84,5 +71,51 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
             }
         }
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SKIP);
+    }
+
+    /**
+     * Populate context with service.
+     *
+     * @param requestContext the request context
+     * @param ticket         the ticket
+     */
+    protected void populateContextWithService(final RequestContext requestContext, final TransientSessionTicket ticket) {
+        val registeredService = ticket.getProperty("registeredService", RegisteredService.class);
+        WebUtils.putRegisteredService(requestContext, registeredService);
+        WebUtils.putServiceIntoFlowScope(requestContext, ticket.getService());
+    }
+
+    /**
+     * Populate context with credential.
+     *
+     * @param requestContext the request context
+     * @param ticket         the ticket
+     * @param authentication the authentication
+     */
+    protected void populateContextWithCredential(final RequestContext requestContext, final TransientSessionTicket ticket,
+                                                 final Authentication authentication) {
+        val requestParameters = requestContext.getRequestParameters();
+        val duoCode = requestParameters.get(REQUEST_PARAMETER_CODE, String.class);
+        LOGGER.trace("Received Duo Security code [{}]", duoCode);
+
+        val duoSecurityIdentifier = ticket.getProperty("duoProviderId", String.class);
+        val credential = new DuoSecurityUniversalPromptCredential(duoCode, authentication);
+        val provider = duoProviderBean.getProvider(duoSecurityIdentifier);
+        credential.setProviderId(provider.getId());
+        WebUtils.putCredential(requestContext, credential);
+    }
+
+    /**
+     * Populate context with authentication.
+     *
+     * @param requestContext the request context
+     * @param ticket         the ticket
+     */
+    protected void populateContextWithAuthentication(final RequestContext requestContext, final TransientSessionTicket ticket) {
+        val authenticationResultBuilder = ticket.getProperty("authenticationResultBuilder", AuthenticationResultBuilder.class);
+        WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
+        val authenticationResult = authenticationResultBuilder.build(authenticationSystemSupport.getPrincipalElectionStrategy());
+        WebUtils.putAuthenticationResult(authenticationResult, requestContext);
+        WebUtils.putAuthentication(authenticationResult.getAuthentication(), requestContext);
     }
 }

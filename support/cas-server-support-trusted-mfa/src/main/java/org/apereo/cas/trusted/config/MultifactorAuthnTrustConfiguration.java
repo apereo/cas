@@ -8,6 +8,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorCoreProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
+import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDeviceNamingStrategy;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -21,6 +22,7 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.boot.ConditionalOnMatchingHostname;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Expiry;
@@ -74,6 +76,13 @@ public class MultifactorAuthnTrustConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @ConditionalOnMissingBean(name = "mfaTrustDeviceNamingStrategy")
+    @Bean
+    @RefreshScope
+    public MultifactorAuthenticationTrustedDeviceNamingStrategy mfaTrustDeviceNamingStrategy() {
+        return MultifactorAuthenticationTrustedDeviceNamingStrategy.random();
+    }
 
     @ConditionalOnMissingBean(name = "mfaTrustEngine")
     @Bean
@@ -134,6 +143,7 @@ public class MultifactorAuthnTrustConfiguration {
         return CipherExecutor.noOp();
     }
 
+    @ConditionalOnMatchingHostname(name = "cas.authn.mfa.trusted.cleaner.schedule.enabled-on-host")
     @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
     @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
     @Bean

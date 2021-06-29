@@ -2,7 +2,7 @@
   "dependencies": "passwordless-webflow,yubikey",
   "properties": [
     "--cas.service-registry.core.init-from-json=true",
-    "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/passwordless-mfa-login/accounts.json",
+    "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
     "--cas.authn.mfa.triggers.principal.global-principal-attribute-name-triggers=memberOf",
     "--cas.authn.mfa.triggers.principal.global-principal-attribute-value-regex=mfa",
     "--cas.authn.mfa.yubikey.client-id=18420",

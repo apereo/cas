@@ -4,6 +4,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -119,6 +121,7 @@ public class LoggingConfigurationEndpoint extends BaseCasActuatorEndpoint implem
      * @return the map
      */
     @ReadOperation
+    @Operation(summary = "Get logging configuration report")
     public Map<String, Object> configuration() {
         val configuredLoggers = new HashSet<>();
         getLoggerConfigurations().forEach(config -> {
@@ -171,6 +174,39 @@ public class LoggingConfigurationEndpoint extends BaseCasActuatorEndpoint implem
         return responseMap;
     }
 
+    /**
+     * Looks up the logger in the logger factory,
+     * and attempts to find the real logger instance
+     * based on the underlying logging framework
+     * and retrieve the logger object. Then, updates the level.
+     * This functionality at this point is heavily dependant
+     * on the log4j API.
+     *
+     * @param loggerName  the logger name
+     * @param loggerLevel the logger level
+     * @param additive    the additive nature of the logger
+     */
+    @WriteOperation
+    @Operation(summary = "Update logger level for a logger name", parameters = {
+        @Parameter(name = "loggerName", required = true),
+        @Parameter(name = "loggerLevel", required = true),
+        @Parameter(name = "additive")
+    })
+    public void updateLoggerLevel(@Selector final String loggerName,
+                                  final String loggerLevel,
+                                  final boolean additive) {
+
+
+        val loggerConfigs = getLoggerConfigurations();
+        loggerConfigs.stream()
+            .filter(cfg -> cfg.getName().equals(loggerName))
+            .forEachOrdered(cfg -> {
+                cfg.setLevel(Level.getLevel(loggerLevel));
+                cfg.setAdditive(additive);
+            });
+        this.loggerContext.updateLoggers();
+    }
+
     private Map<String, Logger> getActiveLoggersInFactory() {
         val factory = (Log4jLoggerFactory) getCasLoggerFactoryInstance();
         if (factory != null) {
@@ -187,33 +223,5 @@ public class LoggingConfigurationEndpoint extends BaseCasActuatorEndpoint implem
     private Set<LoggerConfig> getLoggerConfigurations() {
         val configuration = this.loggerContext.getConfiguration();
         return new HashSet<>(configuration.getLoggers().values());
-    }
-
-    /**
-     * Looks up the logger in the logger factory,
-     * and attempts to find the real logger instance
-     * based on the underlying logging framework
-     * and retrieve the logger object. Then, updates the level.
-     * This functionality at this point is heavily dependant
-     * on the log4j API.
-     *
-     * @param loggerName  the logger name
-     * @param loggerLevel the logger level
-     * @param additive    the additive nature of the logger
-     */
-    @WriteOperation
-    public void updateLoggerLevel(@Selector final String loggerName,
-                                  final String loggerLevel,
-                                  final boolean additive) {
-
-
-        val loggerConfigs = getLoggerConfigurations();
-        loggerConfigs.stream()
-            .filter(cfg -> cfg.getName().equals(loggerName))
-            .forEachOrdered(cfg -> {
-                cfg.setLevel(Level.getLevel(loggerLevel));
-                cfg.setAdditive(additive);
-            });
-        this.loggerContext.updateLoggers();
     }
 }

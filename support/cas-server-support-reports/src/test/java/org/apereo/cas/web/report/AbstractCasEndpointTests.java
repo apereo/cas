@@ -1,6 +1,5 @@
 package org.apereo.cas.web.report;
 
-import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.spi.MockAuditTrailManager;
@@ -74,7 +73,7 @@ public abstract class AbstractCasEndpointTests {
     protected ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("authenticationEventExecutionPlan")
+    @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
     protected AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
     
     @TestConfiguration
@@ -96,7 +95,6 @@ public abstract class AbstractCasEndpointTests {
         CasReportsConfiguration.class,
         CasLoggingConfiguration.class,
         CasCoreAuditConfiguration.class,
-        AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
         AbstractCasEndpointTests.AuditTestConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreServicesConfiguration.class,

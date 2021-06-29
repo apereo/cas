@@ -45,6 +45,8 @@ public class GoogleAuthenticatorSaveRegistrationAction extends OneTimeTokenAccou
             val token = requestContext.getRequestParameters().getRequiredInteger(REQUEST_PARAMETER_TOKEN);
             if (validator.isTokenAuthorizedFor(token, account)) {
                 LOGGER.debug("Successfully validated token [{}]", token);
+                val gtoken = new GoogleAuthenticatorToken(token, account.getUsername());
+                validator.getTokenRepository().store(gtoken);
                 return true;
             }
         } catch (final Exception e) {

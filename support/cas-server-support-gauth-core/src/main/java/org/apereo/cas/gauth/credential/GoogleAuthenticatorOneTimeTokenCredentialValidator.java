@@ -9,6 +9,7 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialValidator
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,6 +29,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
     OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> {
     private final IGoogleAuthenticator googleAuthenticatorInstance;
@@ -105,7 +107,7 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
             .filter(ac -> isCredentialAssignedToAccount(tokenCredential, ac) && ac.getScratchCodes().contains(otp))
             .map(GoogleAuthenticatorAccount.class::cast)
             .peek(acct -> {
-                LOGGER.warn("Using scratch code [{}] to authenticate user [{}]. Scratch code will be removed", otp, uid);
+                LOGGER.info("Using scratch code [{}] to authenticate user [{}]. Scratch code will be removed", otp, uid);
                 acct.getScratchCodes().removeIf(token -> token == otp);
                 credentialRepository.update(acct);
             })

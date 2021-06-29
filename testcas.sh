@@ -105,6 +105,9 @@ while (( "$#" )); do
             webapp)
                 task+="testWebApp "
                 ;;
+            throttling|bucket4j|authenticationthrottling)
+                task+="testAuthenticationThrottling "
+                ;;
             authnhandler|authenticationhandler)
                 task+="testAuthenticationHandler "
                 ;;
@@ -119,6 +122,18 @@ while (( "$#" )); do
                 ;;
             tickets|ticketing)
                 task+="testTickets "
+                ;;
+            delegation)
+                task+="testDelegation "
+                ;;
+            cookie)
+                task+="testCookie "
+                ;;
+            event|events)
+                task+="testEvents "
+                ;;
+            impersonation|surrogate)
+                task+="testImpersonation "
                 ;;
             x509)
                 task+="testX509 "
@@ -189,6 +204,12 @@ while (( "$#" )); do
             mfa|duo|gauth|webauthn|authy|fido|u2f|swivel|acceptto)
                 task+="testMFA "
                 ;;
+            saml2sp|samlsp|samlserviceprovider)
+                task+="testSAMLServiceProvider "
+                ;;
+            metadata|md|samlmetadata)
+                task+="testSAMLMetadata "
+                ;;
             saml|saml2)
                 task+="testSAML "
                 ;;
@@ -201,6 +222,9 @@ while (( "$#" )); do
             webflow-mfa-actions|swf-mfa_actions|webflowmfaactions)
                 task+="testWebflowMfaActions "
                 ;;
+            webflowauthenticationactions|swfauthnactions|webflowauthnactions)
+                task+="testWebflowAuthenticationActions "
+                ;;
             webflowactions|swfactions|webflow-actions)
                 task+="testWebflowActions "
                 ;;
@@ -209,6 +233,9 @@ while (( "$#" )); do
                 ;;
             webflowconfig|swfcfg|webflowcfg|webflow-config)
                 task+="testWebflowConfig "
+                ;;
+            webflowmfaconfig)
+                task+="testWebflowMfaConfig "
                 ;;
             webflow|swf)
                 task+="testWebflow "

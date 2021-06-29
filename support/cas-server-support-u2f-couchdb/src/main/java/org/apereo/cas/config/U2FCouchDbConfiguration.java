@@ -70,11 +70,11 @@ public class U2FCouchDbConfiguration {
 
         final LoadingCache<String, String> requestStorage =
             Caffeine.newBuilder()
-                .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
+                .expireAfterWrite(u2f.getCore().getExpireRegistrations(), u2f.getCore().getExpireRegistrationsTimeUnit())
                 .build(key -> StringUtils.EMPTY);
         return new U2FCouchDbDeviceRepository(requestStorage, couchDbU2fDeviceRegistrationRepository,
-            u2f.getExpireRegistrations(),
-            u2f.getExpireDevicesTimeUnit(),
+            u2f.getCore().getExpireRegistrations(),
+            u2f.getCore().getExpireDevicesTimeUnit(),
             couchDb.isAsynchronous(),
             u2fRegistrationRecordCipherExecutor);
     }

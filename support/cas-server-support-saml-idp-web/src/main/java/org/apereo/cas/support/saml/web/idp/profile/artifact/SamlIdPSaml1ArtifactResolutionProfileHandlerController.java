@@ -45,13 +45,13 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerController extends Abst
         val config = getConfigurationContext();
         try {
             val issuer = artifactMsg.getIssuer().getValue();
-            val service = verifySamlRegisteredService(issuer);
-            val adaptor = getSamlMetadataFacadeFor(service, artifactMsg);
+            val registeredService = verifySamlRegisteredService(issuer);
+            val adaptor = getSamlMetadataFacadeFor(registeredService, artifactMsg);
             if (adaptor.isEmpty()) {
                 throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer);
             }
             val facade = adaptor.get();
-            verifyAuthenticationContextSignature(ctx, request, artifactMsg, facade);
+            verifyAuthenticationContextSignature(ctx, request, artifactMsg, facade, registeredService);
             val artifactId = artifactMsg.getArtifact().getValue();
             val ticketId = config.getArtifactTicketFactory().createTicketIdFor(artifactId);
             val ticket = config.getTicketRegistry().getTicket(ticketId, SamlArtifactTicket.class);
@@ -60,10 +60,10 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerController extends Abst
             }
             val issuerService = config.getWebApplicationServiceFactory().createService(issuer);
             val casAssertion = buildCasAssertion(ticket.getTicketGrantingTicket().getAuthentication(),
-                issuerService, service,
+                issuerService, registeredService,
                 CollectionUtils.wrap("artifact", ticket));
             config.getResponseBuilder().build(artifactMsg, request, response, casAssertion,
-                service, facade, SAMLConstants.SAML2_ARTIFACT_BINDING_URI, ctx);
+                registeredService, facade, SAMLConstants.SAML2_ARTIFACT_BINDING_URI, ctx);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             request.setAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR,

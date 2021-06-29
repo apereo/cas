@@ -38,34 +38,15 @@ The current implementation provides support for:
 | `/oidc/jwks`                              | Contains the server’s public signing keys, which clients may use to verify the digital signatures of access tokens and ID tokens issued by CAS.
 | `/oidc/authorize`                         | Authorization requests are handled here.
 | `/oidc/profile`                           | User profile requests are handled here.
+| `/oidc/logout`                            | Logout requests are handled here.
 | `/oidc/introspect`                        | Query CAS to detect the status of a given access token via [introspection](https://tools.ietf.org/html/rfc7662). This endpoint expects HTTP basic authentication with OIDC service `client_id` and `client_secret` associated as username and password.
 | `/oidc/accessToken`, `/oidc/token`        | Produces authorized access tokens.
 | `/oidc/revoke`                            | [Revoke](https://tools.ietf.org/html/rfc7009) access or refresh tokens. This endpoint expects HTTP basic authentication with OIDC service `client_id` and `client_secret` associated as username and password.
 | `/oidc/register`                          | Register clients via the [dynamic client registration](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01) protocol.
 
-## Register Clients
-
-Please [see this guide](OIDC-Authentication-Claims.html).
-
 ## Configuration
 
 {% include casproperties.html properties="cas.authn.oidc.core,cas.client" %}
-
-### Discovery
-
-{% include casproperties.html properties="cas.authn.oidc.discovery" %}
-
-### JWKS
-
-{% include casproperties.html properties="cas.authn.oidc.jwks" %}
-
-### Scopes & Claims
-
-{% include casproperties.html properties="cas.authn.oidc.core" %}
-
-### Logout
-
-{% include casproperties.html properties="cas.authn.oidc.logout" %}
 
 ## Server Configuration
 
@@ -81,64 +62,9 @@ You will need to configure your deployment environment and load-balancers accord
 
 - [MITREid Sample Java Webapp](https://github.com/cas-projects/oidc-sample-java-webapp)
 
-## Claims
-
-Please [see this guide](OIDC-Authentication-Claims.html).
-
 ## Authentication Context Class
 
 Support for authentication context class references is implemented in form of `acr_values` as part of the original 
 authorization request, which is mostly taken into account by 
 the [multifactor authentication features](../mfa/Configuring-Multifactor-Authentication.html) of CAS. 
 Once successful, `acr` and `amr` values are passed back to the relying party as part of the id token.
-
-## Pairwise Identifiers
-
-When `pairwise` subject type is used, CAS will calculate a unique `sub` value for each sector identifier. This identifier 
-should not be reversible by any party other than CAS and is somewhat akin to CAS generating persistent anonymous user 
-identifiers. Each value provided to every relying party is different so as not 
-to enable clients to correlate the user's activities without permission.
-
-```json
-{
-  "@class" : "org.apereo.cas.services.OidcRegisteredService",
-  "clientId": "client",
-  "clientSecret": "secret",
-  "serviceId" : "^<https://the-redirect-uri>",
-  "usernameAttributeProvider" : {
-    "@class" : "org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider",
-    "persistentIdGenerator" : {
-      "@class" : "org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator",
-      "salt" : "aGVsbG93b3JsZA=="
-    }
-  }
-}
-```
-
-## Keystores
-
-Each registered application in CAS can contain its own keystore as a `jwks` resource. By default,
-a global keystore can be expected and defined via CAS properties. The format of the keystore
-file is similar to the following:
-
-```json
-{
-  "keys": [
-    {
-      "d": "...",
-      "e": "AQAB",
-      "n": "...",
-      "kty": "RSA",
-      "kid": "cas"
-    }
-  ]
-}
-```
-
-CAS will attempt to auto-generate a keystore if it can't find one, but if you wish to generate one manually, 
-a JWKS can be generated using [this tool](https://mkjwk.org/)
-or [this tool](http://connect2id.com/products/nimbus-jose-jwt/generator).
-
-## WebFinger Issuer Discovery
-
-Please see [this guide](OIDC-Authentication-WebFinger.html).

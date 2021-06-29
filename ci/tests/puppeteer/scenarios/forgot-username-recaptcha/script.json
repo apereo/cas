@@ -18,7 +18,7 @@
     "--cas.authn.pm.forgot-username.google-recaptcha.version=GOOGLE_RECAPTCHA_V2",
     "--cas.authn.pm.forgot-username.google-recaptcha.invisible=false",
 
-    "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/forgot-username-recaptcha/accounts.json"
+    "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
   ],
   "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
 }

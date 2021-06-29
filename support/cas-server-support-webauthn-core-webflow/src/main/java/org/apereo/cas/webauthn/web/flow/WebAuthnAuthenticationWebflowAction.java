@@ -2,10 +2,10 @@ package org.apereo.cas.webauthn.web.flow;
 
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -25,12 +25,7 @@ public class WebAuthnAuthenticationWebflowAction extends AbstractAction {
     protected Event doExecute(final RequestContext requestContext) {
         val result = this.authenticationWebflowEventResolver.resolveSingle(requestContext);
         if (!result.getId().equals(CasWebflowConstants.STATE_ID_SUCCESS)) {
-            val messageContext = requestContext.getMessageContext();
-            val message = new MessageBuilder()
-                .error()
-                .code("cas.mfa.webauthn.auth.fail")
-                .build();
-            messageContext.addMessage(message);
+            WebUtils.addErrorMessageToContext(requestContext, "cas.mfa.webauthn.auth.fail");
         }
         return result;
     }

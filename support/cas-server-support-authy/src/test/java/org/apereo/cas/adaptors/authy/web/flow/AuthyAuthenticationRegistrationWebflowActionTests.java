@@ -65,12 +65,14 @@ public class AuthyAuthenticationRegistrationWebflowActionTests {
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
 
         user.setStatus(400);
-        assertThrows(IllegalArgumentException.class, () -> action.doExecute(context));
-
+        event = action.doExecute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
+        
         user.setStatus(200);
         hash.setSuccess(false);
         hash.setError(new Error());
         hash.setMessage("Message");
-        assertThrows(IllegalArgumentException.class, () -> action.doExecute(context));
+        event = action.doExecute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
     }
 }

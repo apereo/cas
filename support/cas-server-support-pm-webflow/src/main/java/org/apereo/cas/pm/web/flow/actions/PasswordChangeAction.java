@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -43,16 +42,24 @@ public class PasswordChangeAction extends AbstractAction {
 
     private final PasswordValidationService passwordValidationService;
 
-    private Event getErrorEvent(final RequestContext ctx, final String code, final String message, final Object... params) {
-        ctx.getMessageContext().addMessage(new MessageBuilder().error().code(code).defaultText(message).args(params).build());
-        return error();
+    /**
+     * Gets password change request.
+     *
+     * @param requestContext the request context
+     * @return the password change request
+     */
+    protected static PasswordChangeRequest getPasswordChangeRequest(final RequestContext requestContext) {
+        val credential = Objects.requireNonNull(WebUtils.getCredential(requestContext, UsernamePasswordCredential.class));
+        val bean = requestContext.getFlowScope().get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);
+        bean.setUsername(credential.getUsername());
+        return bean;
     }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         try {
             val creds = Objects.requireNonNull(WebUtils.getCredential(requestContext, UsernamePasswordCredential.class));
-            val bean = getPasswordChangeRequest(requestContext, creds);
+            val bean = getPasswordChangeRequest(requestContext);
 
             LOGGER.debug("Attempting to validate the password change bean for username [{}]", creds.getUsername());
             if (!passwordValidationService.isValid(creds, bean)) {
@@ -62,7 +69,7 @@ public class PasswordChangeAction extends AbstractAction {
             if (passwordManagementService.change(creds, bean)) {
                 WebUtils.putCredential(requestContext, new UsernamePasswordCredential(creds.getUsername(), bean.getPassword()));
                 LOGGER.info("Password successfully changed for [{}]", bean.getUsername());
-                return getSuccessEvent(requestContext, creds, bean);
+                return getSuccessEvent(requestContext, bean);
             }
         } catch (final InvalidPasswordException e) {
             return getErrorEvent(requestContext,
@@ -79,26 +86,18 @@ public class PasswordChangeAction extends AbstractAction {
      * Finalize password change success.
      *
      * @param requestContext the request context
-     * @param credential     the credential
      * @param bean           the bean
      * @return the event
      */
-    protected Event getSuccessEvent(final RequestContext requestContext, final UsernamePasswordCredential credential, final PasswordChangeRequest bean) {
+    protected Event getSuccessEvent(final RequestContext requestContext,
+                                    final PasswordChangeRequest bean) {
         return new EventFactorySupport()
             .event(this, CasWebflowConstants.TRANSITION_ID_PASSWORD_UPDATE_SUCCESS,
                 new LocalAttributeMap<>("passwordChangeRequest", bean));
     }
 
-    /**
-     * Gets password change request.
-     *
-     * @param requestContext the request context
-     * @param c              the c
-     * @return the password change request
-     */
-    protected static PasswordChangeRequest getPasswordChangeRequest(final RequestContext requestContext, final UsernamePasswordCredential c) {
-        val bean = requestContext.getFlowScope().get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);
-        bean.setUsername(c.getUsername());
-        return bean;
+    private Event getErrorEvent(final RequestContext ctx, final String code, final String message, final Object... params) {
+        WebUtils.addErrorMessageToContext(ctx, code, message, params);
+        return error();
     }
 }

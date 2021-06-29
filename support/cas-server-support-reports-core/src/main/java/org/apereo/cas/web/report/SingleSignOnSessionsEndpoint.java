@@ -11,6 +11,8 @@ import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -65,6 +67,8 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @return the sso sessions
      */
     @ReadOperation
+    @Operation(summary = "Get all single sign-on sessions with the given type",
+        parameters = {@Parameter(name = "type", required = true)})
     public Map<String, Object> getSsoSessions(@Nullable final String type) {
         val sessionsMap = new HashMap<String, Object>();
         val option = Optional.ofNullable(type).map(SsoSessionReportOptions::valueOf).orElse(SsoSessionReportOptions.ALL);
@@ -107,6 +111,8 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @return result map
      */
     @DeleteOperation
+    @Operation(summary = "Remove single sign-on session for ticket id",
+        parameters = {@Parameter(name = "ticketGrantingTicket", required = true)})
     public Map<String, Object> destroySsoSession(@Selector final String ticketGrantingTicket) {
 
         val sessionsMap = new HashMap<String, Object>(1);
@@ -132,6 +138,8 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @param username the username
      * @return the map
      */
+    @Operation(summary = "Remove single sign-on session for type and user",
+        parameters = {@Parameter(name = "type"), @Parameter(name = "username")})
     @DeleteOperation
     public Map<String, Object> destroySsoSessions(@Nullable final String type, @Nullable final String username) {
         if (StringUtils.isBlank(username) && StringUtils.isBlank(type)) {
@@ -267,4 +275,5 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
     private Collection<Ticket> getNonExpiredTicketGrantingTickets() {
         return this.centralAuthenticationService.getTickets(ticket -> ticket instanceof TicketGrantingTicket && !ticket.isExpired());
     }
+
 }

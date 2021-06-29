@@ -116,3 +116,5 @@ Interrupt notifications may be disabled on a per-service basis. A sample JSON fi
   }
 }
 ```
+
+{% include registeredserviceproperties.html groups="INTERRUPTS" %}

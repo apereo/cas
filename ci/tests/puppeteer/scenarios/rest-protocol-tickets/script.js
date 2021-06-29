@@ -1,5 +1,6 @@
 const https = require('https');
 const assert = require('assert');
+const cas = require('../../cas.js');
 
 (async () => {
 

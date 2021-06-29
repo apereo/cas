@@ -21,8 +21,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.ldaptive.BindConnectionInitializer;
+import org.ldaptive.ConnectionConfig;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapAttribute;
+import org.ldaptive.SearchOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
@@ -64,7 +66,17 @@ public class LdaptiveResourceCRLFetcherTests {
         val bindInit = new BindConnectionInitializer("cn=Directory Manager", new Credential("password"));
         LdapTestUtils.modifyLdapEntry(localhost, DN, attr, bindInit);
     }
-    
+
+    @Test
+    public void verifyOperation() throws Exception {
+        val config = mock(ConnectionConfig.class);
+        val operation = mock(SearchOperation.class);
+        val fetcher = new LdaptiveResourceCRLFetcher(config, operation, "attribute");
+        assertNull(fetcher.fetch(new URI("https://github.com")));
+        assertNull(fetcher.fetch(new URL("https://github.com")));
+        assertNull(fetcher.fetch("https://github.com"));
+    }
+
     @Nested
     @Tag("Ldap")
     @TestPropertySource(properties = "cas.authn.x509.ldap.certificate-attribute=cn")

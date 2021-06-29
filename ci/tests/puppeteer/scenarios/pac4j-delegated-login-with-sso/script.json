@@ -1,0 +1,14 @@
+{
+  "dependencies": "pac4j-webflow",
+  "properties": [
+    "--logging.level.org.apereo.cas=debug",
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    
+    "--cas.authn.pac4j.cas[0].login-url=https://casserver.herokuapp.com/cas/login",
+    "--cas.authn.pac4j.cas[0].protocol=CAS30",
+    "--cas.authn.pac4j.cas[0].client-name=CASServer"
+  ]
+}

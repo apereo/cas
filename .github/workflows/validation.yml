@@ -6,7 +6,7 @@ env:
   GRADLE_BUILDCACHE_USER: ${{ secrets.GRADLE_BUILDCACHE_USER }}
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
   TERM: xterm-256color
-  JDK_CURRENT: 11.0.10
+  JDK_CURRENT: 11.0.11
 
 ##########################################################################
 
@@ -134,6 +134,7 @@ jobs:
           - tomcat
           - jetty
           - undertow
+    name: ${{ matrix.category }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -166,6 +167,7 @@ jobs:
           - config-server
           - discovery-server
           - bootadmin-server
+    name: ${{ matrix.category }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

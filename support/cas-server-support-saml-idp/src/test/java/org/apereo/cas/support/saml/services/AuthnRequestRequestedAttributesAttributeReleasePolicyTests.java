@@ -7,6 +7,7 @@ import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
+import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.HttpRequestUtils;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.criterion.EntityIdCriterion;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
@@ -116,7 +118,6 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
     public void verifySerializationToJson() throws IOException {
         val filter = new AuthnRequestRequestedAttributesAttributeReleasePolicy();
         filter.setUseFriendlyName(true);
-        filter.setPermitUndefined(true);
         MAPPER.writeValue(JSON_FILE, filter);
         val strategyRead = MAPPER.readValue(JSON_FILE, AuthnRequestRequestedAttributesAttributeReleasePolicy.class);
         assertEquals(filter, strategyRead);
@@ -128,7 +129,6 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
         val filter = new AuthnRequestRequestedAttributesAttributeReleasePolicy();
         filter.setAllowedAttributes(List.of("eduPersonPrincipalAttribute"));
         filter.setUseFriendlyName(true);
-        filter.setPermitUndefined(true);
 
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
@@ -143,7 +143,6 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
         val filter = new AuthnRequestRequestedAttributesAttributeReleasePolicy();
         filter.setAllowedAttributes(List.of("eduPersonPrincipalAttribute"));
         filter.setUseFriendlyName(true);
-        filter.setPermitUndefined(false);
 
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
@@ -235,6 +234,11 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
             val context = new JEEContext(request, response);
 
             samlIdPDistributedSessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
+            val messageContext = new MessageContext();
+            messageContext.setMessage(authnRequest);
+            samlIdPDistributedSessionStore.set(context, MessageContext.class.getName(),
+                SamlIdPAuthenticationContext.from(messageContext).encode());
+            
             val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("eduPersonPrincipalName", "casuser", "givenName", "CAS")),
                 CoreAuthenticationTestUtils.getService(), registeredService);

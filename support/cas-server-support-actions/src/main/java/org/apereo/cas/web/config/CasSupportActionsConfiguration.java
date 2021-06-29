@@ -75,7 +75,7 @@ public class CasSupportActionsConfiguration {
     private ObjectProvider<LogoutManager> logoutManager;
     
     @Autowired
-    @Qualifier("authenticationEventExecutionPlan")
+    @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
     private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
 
     @Autowired

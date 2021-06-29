@@ -12,16 +12,25 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@FunctionalInterface
 public interface ServicesManagerRegisteredServiceLocator extends Ordered {
     /**
      * Locate registered service.
      *
-     * @param candidates      the candidates
-     * @param service         the service id
+     * @param candidates the candidates
+     * @param service    the service id
      * @return the registered service
      */
     RegisteredService locate(Collection<RegisteredService> candidates, Service service);
+
+    /**
+     * Can this locator find/locate the given registered service
+     * based on the provided service request?
+     *
+     * @param registeredService the registered service
+     * @param service           the service
+     * @return true/false
+     */
+    boolean supports(RegisteredService registeredService, Service service);
 
     @Override
     default int getOrder() {

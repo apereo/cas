@@ -2,23 +2,16 @@ const puppeteer = require('puppeteer');
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true,
-        defaultViewport: null,
-        args: ['--start-maximized']
-    });
+    const browser = await puppeteer.launch(cas.browserOptions());
 
-    const page = await browser.newPage();
+    const page = await cas.newPage(browser);
 
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(1000);
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
     
     await page.goto("https://samltest.id/upload.php");
     await page.waitForTimeout(1000)
@@ -30,34 +23,27 @@ const path = require('path');
     await fileElement.uploadFile(metadata);
     // await page.waitForTimeout(1000)
 
-    await click(page, "input[name='submit']")
+    await cas.click(page, "input[name='submit']")
     await page.waitForNavigation();
 
     await page.waitForTimeout(1000)
 
     await page.goto("https://samltest.id/start-idp-test/");
-    await page.type('input[name=\'entityID\']', "https://cas.apereo.org/saml/idp");
+    await cas.type(page,'input[name=\'entityID\']', "https://cas.apereo.org/saml/idp");
     // await page.waitForTimeout(1000)
-    await click(page, "input[type='submit']")
+    await cas.click(page, "input[type='submit']")
     await page.waitForNavigation();
 
-    await page.waitForTimeout(5000)
+    await page.waitForTimeout(3000)
     
+    const header = await cas.textContent(page, "div.entry-content p");
+    assert(header.startsWith("Your browser has completed the full SAML 2.0 round-trip"));
+
     let metadataDir = path.join(__dirname, '/saml-md');
     fs.rmdirSync(metadataDir, { recursive: true });
 
     // await page.waitForTimeout(1000)
 
-    let element = await page.$('div.entry-content p');
-    const header = await page.evaluate(element => element.textContent, element);
-    console.log(header)
-    assert(header.startsWith("Your browser has completed the full SAML 2.0 round-trip"));
-
     await browser.close();
 })();
 
-async function click(page, button) {
-    await page.evaluate((button) => {
-        document.querySelector(button).click();
-    }, button);
-}

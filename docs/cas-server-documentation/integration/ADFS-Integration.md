@@ -129,6 +129,9 @@ registry to match the following:
 }
 ```
 
+{% include registeredserviceproperties.html groups="DELEGATED_AUTHN_WSFED" %}
+
 ## Troubleshooting
 
-Be aware of clock drift issues between CAS and the ADFS server. Validation failures of the response do show up in the logs, and the request is routed back to ADFS again, causing redirect loops.
+Be aware of clock drift issues between CAS and the ADFS server. Validation failures 
+of the response do show up in the logs, and the request is routed back to ADFS again, causing redirect loops.

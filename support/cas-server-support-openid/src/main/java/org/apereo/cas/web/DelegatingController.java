@@ -20,8 +20,8 @@ import java.util.List;
  * If none is found, an error is generated.
  *
  * @author Frederic Esnault
- * @deprecated 6.2
  * @since 3.5
+ * @deprecated 6.2
  */
 @Setter
 @Deprecated(since = "6.2.0")

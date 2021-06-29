@@ -26,9 +26,17 @@ public class SchedulingProperties implements Serializable {
     private static final long serialVersionUID = -1522227059439367394L;
 
     /**
-     * Whether scheduler is should schedule the job to run.
+     * Whether scheduler should be enabled to schedule the job to run.
      */
     private boolean enabled = true;
+
+    /**
+     * Overrides {@link SchedulingProperties#enabled} property value of true if this property does not match hostname of CAS server.
+     * This can be useful if deploying CAS with an image in a statefulset where all names are predictable but
+     * where having different configurations for different servers is hard. The value can be an exact hostname
+     * or a regular expression that will be used to match the hostname.
+     */
+    private String enabledOnHost = ".*";
 
     /**
      * String representation of a start delay of loading data for a data store implementation.

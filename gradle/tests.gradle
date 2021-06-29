@@ -7,19 +7,24 @@ enum TestCategories {
     AuthenticationHandler,
     AuthenticationPolicy,
     AuthenticationMetadata,
+    AuthenticationThrottling,
     CAS,
     CasConfiguration,
     Cassandra,
+    Cookie,
     CosmosDb,
     Couchbase,
     CouchDb,
+    Delegation,
     DynamoDb,
     Ehcache,
     ExpirationPolicy,
+    Events,
     FileSystem,
     Groovy,
     Hazelcast,
     Ignite,
+    Impersonation,
     Infinispan,
     InfluxDb,
     JDBC,
@@ -46,6 +51,8 @@ enum TestCategories {
     RegisteredService,
     RestfulApi,
     SAML,
+    SAMLMetadata,
+    SAMLServiceProvider,
     SHELL,
     Simple,
     SMS,
@@ -57,7 +64,9 @@ enum TestCategories {
     WebApp,
     Webflow,
     WebflowActions,
+    WebflowAuthenticationActions,
     WebflowConfig,
+    WebflowMfaConfig,
     WebflowEvents,
     WebflowMfaActions,
     WSFederation,
@@ -81,7 +90,7 @@ if (rootProject.tasks.findByName("testCategories") == null) {
 if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
     rootProject.tasks.create(name: "puppeteerScenarios", description: "Display all available puppeteer scenarios") {
         doLast {
-            def scenarios = new TreeSet<String>();
+            def scenarios = new TreeSet<String>()
             rootProject.file("ci/tests/puppeteer/scenarios").eachDir {
                 scenarios += it.getName()
             }

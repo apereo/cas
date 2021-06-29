@@ -9,6 +9,8 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -62,6 +64,8 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
      * @return the yubi key account
      */
     @GetMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get Yubikey account for username",
+        parameters = {@Parameter(name = "username", required = true)})
     public YubiKeyAccount get(@PathVariable final String username) {
         val result = registry.getAccount(username);
         return result.orElse(null);
@@ -73,6 +77,7 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
      * @return the collection
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get all Yubikey accounts")
     public Collection<? extends YubiKeyAccount> load() {
         return registry.getAccounts();
     }
@@ -83,6 +88,7 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
      * @param username the username
      */
     @DeleteMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Delete Yubikey account for username", parameters = {@Parameter(name = "username", required = true)})
     public void delete(@PathVariable final String username) {
         registry.delete(username);
     }
@@ -91,6 +97,7 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
      * Delete all.
      */
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Delete all Yubikey accounts")
     public void deleteAll() {
         registry.deleteAll();
     }
@@ -102,6 +109,7 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
      */
     @GetMapping(path = "/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
+    @Operation(summary = "Export all Yubikey accounts as a zip file")
     public ResponseEntity<Resource> export() {
         val accounts = registry.getAccounts();
         val resource = CompressionUtils.toZipFile(accounts.stream(),
@@ -125,6 +133,8 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
      * @return the http status
      * @throws Exception the exception
      */
+    @Operation(summary = "Import a Yubikey account as a JSON document",
+        parameters = {@Parameter(name = "request", required = true)})
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus importAccount(final HttpServletRequest request) throws Exception {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);

@@ -1,44 +1,33 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true
-    });
-    const page = await browser.newPage();
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/login?service=https://github.com");
 
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
 
     await page.goto("https://localhost:8443/cas/login");
     // await page.waitForTimeout(1000)
-    
-    let tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
+
+    await cas.assertTicketGrantingCookie(page);
 
     await page.goto("https://localhost:8443/cas/logout");
     // await page.waitForTimeout(5000)
 
-    const header = await page.$eval('#content h2', el => el.innerText)
-    console.log(header)
+    const header = await cas.innerText(page, '#content h2');
+
     assert(header === "Do you, casuser, want to log out completely?")
 
-    let button = await page.$('#logoutButton');
-    assert(await button.boundingBox() != null);
+    await cas.assertVisibility(page, '#logoutButton')
 
-    let divServices = await page.$('#divServices');
-    assert(await divServices.boundingBox() != null);
+    await cas.assertVisibility(page, '#divServices')
 
-    let servicesTable = await page.$('#servicesTable');
-    assert(await servicesTable.boundingBox() != null);
+    await cas.assertVisibility(page, '#servicesTable')
 
-    await page.$eval('#fm1', form => form.submit());
-    // await page.waitForNavigation();
-    await page.waitForTimeout(1000)
+    await cas.submitForm(page, "#fm1");
 
     const url = await page.url()
     console.log(`Page url: ${url}`)
@@ -46,9 +35,7 @@ const assert = require('assert');
 
     // await page.waitForTimeout(20000)
 
-    tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    console.log(tgc)
-    assert(tgc.length === 0);
+    await cas.assertNoTicketGrantingCookie(page);
 
     await browser.close();
 })();

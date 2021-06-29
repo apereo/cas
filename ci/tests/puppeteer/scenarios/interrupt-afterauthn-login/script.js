@@ -1,64 +1,47 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
 const url = require('url');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true
-    });
-    const page = await browser.newPage();
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/login");
 
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
     
     // await page.waitForTimeout(20000)
     
-    let element = await page.$('#content h1');
-    let header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
+    let header = await cas.textContent(page, "#content h1");
+
     assert(header === "Authentication Interrupt")
 
-    element = await page.$('#content p');
-    header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
+    header = await cas.textContent(page, "#content p");
+
     assert(header.startsWith("The authentication flow has been interrupted"));
 
-    let tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length == 0);
+    await cas.assertNoTicketGrantingCookie(page);
 
-    element = await page.$('#interruptMessage');
-    header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
+    header = await cas.textContent(page, "#interruptMessage");
+
     assert(header === "We interrupted your login");
 
-    let interruptLinks = await page.$('#interruptLinks');
-    assert(await interruptLinks.boundingBox() != null);
+    await cas.assertVisibility(page, '#interruptLinks')
 
-    let attributesTable = await page.$('#attributesTable');
-    assert(await attributesTable.boundingBox() != null);
+    await cas.assertVisibility(page, '#attributesTable')
 
-    let field1 = await page.$('#field1');
-    assert(await field1.boundingBox() != null);
-    let field1Value = await page.$('#field1-value');
-    assert(await field1Value.boundingBox() != null);
+    await cas.assertVisibility(page, '#field1')
+    await cas.assertVisibility(page, '#field1-value')
 
-    let field2 = await page.$('#field2');
-    assert(await field2.boundingBox() != null);
-    let field2Value = await page.$('#field2-value');
-    assert(await field2Value.boundingBox() != null);
+    await cas.assertVisibility(page, '#field2')
+    await cas.assertVisibility(page, '#field2-value')
 
     let cancel = await page.$('#cancel');
     assert(cancel == null);
 
-    await page.$eval('#fm1', form => form.submit());
-    await page.waitForTimeout(2000)
+    await cas.submitForm(page, "#fm1");
 
-    tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
+    await cas.assertTicketGrantingCookie(page);
 
     await browser.close();
 })();

@@ -16,18 +16,14 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.binding.message.MessageContext;
+import org.springframework.binding.message.DefaultMessageContext;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
-import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.test.MockFlowExecutionContext;
-import org.springframework.webflow.test.MockFlowSession;
-import org.springframework.webflow.test.MockParameterMap;
+import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.Optional;
 
@@ -53,21 +49,15 @@ public class RadiusAuthenticationWebflowEventResolverTests extends BaseCasWebflo
     @Qualifier("radiusAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver radiusAuthenticationWebflowEventResolver;
 
-    private RequestContext context;
+    private MockRequestContext context;
 
     @BeforeEach
     public void initialize() {
-        this.context = mock(RequestContext.class);
-        when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
-        when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
-        when(context.getRequestScope()).thenReturn(new LocalAttributeMap<>());
-        when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
-        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
+        context = new MockRequestContext();
+        val messageContext = (DefaultMessageContext) context.getMessageContext();
+        messageContext.setMessageSource(mock(MessageSource.class));
         val request = new MockHttpServletRequest();
-        when(context.getExternalContext())
-            .thenReturn(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        when(context.getFlowExecutionContext()).thenReturn(
-            new MockFlowExecutionContext(new MockFlowSession(new Flow("mockFlow"))));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);

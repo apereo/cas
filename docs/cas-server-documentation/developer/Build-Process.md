@@ -56,6 +56,11 @@ When done, you may build the codebase via the following command:
 ./gradlew build --parallel -x test -x javadoc -x check --build-cache --configure-on-demand
 ```
 
+<div class="alert alert-info"><strong>Gradle Wrapper & Gum</strong>
+<p>Rather than using the Gradle Wrapper directly, you
+might want to <a href="https://github.com/kordamp/gm">use Gum</a>, which is able to 
+auto-detect the location of the Gradle Wrapper anywhere in the project structure.</p></div>
+
 The following commandline boolean flags are supported by the build and can be passed in form of system properties via `-D`:
 
 | Flag                              | Description
@@ -301,16 +306,30 @@ installing dependencies from the project for use in the cas-overlay.
 # Adjust the cas alias to the location of cas project folder
 alias cas='cd ~/Workspace/cas'
 
-# test cas directly from project rather than using the CAS overlay
-alias bc='clear; cas; cd webapp/cas-server-webapp-tomcat ; \
-    ../../gradlew build bootRun --configure-on-demand --build-cache --parallel \
-    -x test -x javadoc -x check -DremoteDebuggingSuspend=false \
-    -DenableRemoteDebugging=true --stacktrace \
-    -DskipNestedConfigMetadataGen=true'
+# Run CAS with module selections
+# $> bc oidc,gauth
+function bc() {
+  clear
+  cas
+  cd webapp/cas-server-webapp-tomcat
+  casmodules="$1"
+  if [ ! -z "$casmodules" ] ; then
+    echo "Loading CAS Modules: ${casmodules}"
+  fi
 
-# Install jars for use with a CAS overlay project
+  # Could also use: gm -b ./build.gradle
+  ../../gradlew build bootRun \
+    --configure-on-demand --build-cache \
+    --parallel -x test -x javadoc -x check -DenableRemoteDebugging=true \
+    --stacktrace -DskipNestedConfigMetadataGen=true \
+    -DremoteDebuggingSuspend=false \
+    -PcasModules=${casmodules}
+}
+
+# Install JARs/WARs for use with a CAS overlay project
 alias bci='clear; cas; \
-    ./gradlew clean build publishToMavenLocal --configure-on-demand \
+    ./gradlew clean build publishToMavenLocal \ 
+    --configure-on-demand \
     --build-cache --parallel \
     -x test -x javadoc -x check --stacktrace \
     -DskipNestedConfigMetadataGen=true \

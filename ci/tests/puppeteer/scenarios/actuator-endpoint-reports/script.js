@@ -1,21 +1,15 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true
-    });
-    const page = await browser.newPage();
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
 
     await page.goto("https://localhost:8443/cas/login");
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await cas.loginWith(page, "casuser", "Mellon");
 
-    let tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
+    await cas.assertTicketGrantingCookie(page);
 
     const endpoints = [
         "info",
@@ -43,7 +37,7 @@ const assert = require('assert');
         "ssoSessions",
         "sso",
         "casModules",
-        "ticketExpirationPolicies?service=10000001",
+        "ticketExpirationPolicies?serviceId=10000001",
         "springWebflow",
         "statistics",
         "resolveAttributes/casuser",

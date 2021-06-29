@@ -114,10 +114,6 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         assertEquals(0, repo.count(toSave.getUsername()));
     }
 
-    protected String getUsernameUnderTest() {
-        return UUID.randomUUID().toString();
-    }
-
     @Test
     public void verifySaveAndUpdate() {
         val casuser = getUsernameUnderTest();
@@ -143,6 +139,9 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         s = accts.iterator().next();
         assertEquals(999666, s.getValidationCode());
         assertEquals("newSecret", s.getSecretKey());
+
+        repo.delete(s.getId());
+        assertNull(repo.get(s.getId()));
     }
 
     @Test
@@ -166,6 +165,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         assertEquals(acct2.getValidationCode(), acct3.getValidationCode());
         assertEquals(acct2.getSecretKey(), acct3.getSecretKey());
         assertEquals(acct2.getScratchCodes(), acct3.getScratchCodes());
+        repo.delete(acct3.getId());
     }
 
     @Test
@@ -193,7 +193,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         assertEquals(0, repo.count());
         assertEquals(0, repo.count(toSave.getUsername().toUpperCase()));
     }
-    
+
     @Test
     public void verifyGetWithDecodedSecret() {
         val casuser = getUsernameUnderTest();
@@ -220,6 +220,10 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     public abstract OneTimeTokenCredentialRepository getRegistry();
+
+    protected String getUsernameUnderTest() {
+        return UUID.randomUUID().toString();
+    }
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,

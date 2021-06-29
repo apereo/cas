@@ -39,7 +39,6 @@ import static org.mockito.Mockito.*;
  */
 @Tag("SAML")
 @Import(SSOSamlIdPProfileCallbackHandlerControllerTests.SamlIdPTestConfiguration.class)
-@Tag("SAML")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.core.authentication-context-class-mappings=context1->mfa-dummy",
@@ -91,7 +90,7 @@ public class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         val context = new MessageContext();
         context.setMessage(authnRequest);
         assertThrows(SAMLException.class,
-            () -> controller.verifyAuthenticationContextSignature(context, request, authnRequest, adaptor));
+            () -> controller.verifyAuthenticationContextSignature(context, request, authnRequest, adaptor, service));
     }
 
 

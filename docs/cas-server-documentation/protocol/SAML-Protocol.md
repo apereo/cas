@@ -19,13 +19,11 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml" %}
 
-## Administrative Endpoints
-
+## Actuator Endpoints
+           
 The following endpoints are provided by CAS:
- 
-| Endpoint          | Description
-|-------------------|---------------------------------------------------------------------------------------------------
-| `samlValidate`    | Obtain a SAML 1.1 validation payload by supplying a `username`, `password` and `service` as parameters.
+
+{% include actuators.html endpoints="samlValidate" %}
 
 ## Sample Request
 

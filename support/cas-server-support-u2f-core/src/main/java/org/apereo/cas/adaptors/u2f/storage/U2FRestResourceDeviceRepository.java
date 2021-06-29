@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
-import org.apereo.cas.configuration.model.support.mfa.u2f.U2FRestfulMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.u2f.U2FRestfulMultifactorAuthenticationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -39,12 +39,12 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
-    private final U2FRestfulMultifactorProperties restProperties;
+    private final U2FRestfulMultifactorAuthenticationProperties restProperties;
 
     public U2FRestResourceDeviceRepository(final LoadingCache<String, String> requestStorage,
                                            final long expirationTime,
                                            final TimeUnit expirationTimeUnit,
-                                           final U2FRestfulMultifactorProperties restProperties,
+                                           final U2FRestfulMultifactorAuthenticationProperties restProperties,
                                            final CipherExecutor<Serializable, String> cipherExecutor) {
         super(requestStorage, expirationTime, expirationTimeUnit, cipherExecutor);
         this.restProperties = restProperties;

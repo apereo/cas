@@ -42,8 +42,7 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
     public void verifyAuthentication() {
         val refreshToken = getRefreshToken(serviceWithoutSecret);
         ticketRegistry.addTicket(refreshToken);
-
-
+        
         val credentials = new UsernamePasswordCredentials("clientWithoutSecret", refreshToken.getId());
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name());
@@ -87,8 +86,7 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
         val unsupportedClientCtx = new JEEContext(unsupportedClientRequest, new MockHttpServletResponse());
         authenticator.validate(unsupportedClientCredentials, unsupportedClientCtx, JEESessionStore.INSTANCE);
         assertNull(unsupportedClientCredentials.getUserProfile());
-
-
+        
         val unknownClientCredentials = new UsernamePasswordCredentials("unknownclient", refreshToken.getId());
         val unknownclientRequest = new MockHttpServletRequest();
         unknownclientRequest.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name());

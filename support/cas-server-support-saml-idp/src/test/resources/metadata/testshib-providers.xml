@@ -190,7 +190,7 @@
                       xmlns:xrd="http://docs.oasis-open.org/ns/xri/xrd-1.0">
 
         <Extensions>
-
+            
             <mdattr:EntityAttributes>
                 <saml:Attribute Name="http://macedir.org/entity-category" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
                     <saml:AttributeValue>
@@ -229,7 +229,8 @@
                 protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol http://schemas.xmlsoap.org/ws/2003/07/secext">
 
             <Extensions>
-                <!-- A request initiator at /Testshib that you can use to customize authentication requests issued to your IdP by TestShib. -->
+                <!-- A request initiator at /Testshib that you can use to customize
+                authentication requests issued to your IdP by TestShib. -->
                 <init:RequestInitiator xmlns:init="urn:oasis:names:tc:SAML:profiles:SSO:request-init" Binding="urn:oasis:names:tc:SAML:profiles:SSO:request-init" Location="https://sp.testshib.org/Shibboleth.sso/TestShib"/>
 
                 <mdui:UIInfo>
@@ -240,6 +241,17 @@
                     </mdui:Description>
                     <mdui:Logo height="88" width="253">https://www.testshib.org/testshibtwo.jpg</mdui:Logo>
                 </mdui:UIInfo>
+
+                <mdrpi:RegistrationInfo
+                        registrationAuthority="urn:mace:switch.ch:SWITCHaai"
+                        registrationInstant="2006-05-29T11:34:27Z">
+                    <mdrpi:RegistrationPolicy xml:lang="en">
+                        http://www.switch.ch/aai/metadata/en_registration.html
+                    </mdrpi:RegistrationPolicy>
+                    <mdrpi:RegistrationPolicy xml:lang="de">
+                        http://www.switch.ch/aai/metadata/de_registration.html
+                    </mdrpi:RegistrationPolicy>
+                </mdrpi:RegistrationInfo>
             </Extensions>
 
             <KeyDescriptor>
@@ -320,7 +332,7 @@
         SAML version/binding to use.
         -->
 
-            <AssertionConsumerService index="1" isDefault="true"
+            <AssertionConsumerService index="1"
                                       Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
                                       Location="https://sp.testshib.org/Shibboleth.sso/SAML2/POST"/>
             <AssertionConsumerService index="2"
@@ -341,7 +353,7 @@
 
             <!-- A couple additional assertion consumers for the registration webapp. -->
 
-            <AssertionConsumerService index="7"
+            <AssertionConsumerService index="7" isDefault="true"
                                       Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
                                       Location="https://www.testshib.org/Shibboleth.sso/SAML2/POST"/>
             <AssertionConsumerService index="8"

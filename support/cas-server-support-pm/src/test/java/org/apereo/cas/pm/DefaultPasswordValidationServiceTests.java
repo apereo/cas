@@ -45,6 +45,18 @@ public class DefaultPasswordValidationServiceTests {
     private PasswordHistoryService passwordHistoryService;
 
     @Test
+    public void verifyReuseOldPassword() {
+        val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "This!$P@$$");
+        assertFalse(passwordValidationService.isValid(
+            creds,
+            new PasswordChangeRequest("user", "123456", "123456")));
+
+        assertFalse(passwordValidationService.isValid(
+            creds,
+            new PasswordChangeRequest("user", "This!$P@$$", "This!$P@$$")));
+    }
+
+    @Test
     public void verifyValidity() {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "password");
         assertFalse(passwordValidationService.isValid(
