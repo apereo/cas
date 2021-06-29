@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.config.IgniteTicketRegistryConfiguration;
 import org.apereo.cas.config.IgniteTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.TicketCatalog;
 
 import lombok.Getter;
 import lombok.val;
@@ -18,6 +19,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.security.KeyStore;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link IgniteTicketRegistry}.
@@ -70,8 +74,13 @@ public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
         }
     }
 
-    @RepeatedTest(2)
+    @RepeatedTest(1)
     public void verifyDeleteUnknown() {
-        assertTrue(getNewTicketRegistry().deleteSingleTicket("unknownticket"));
+        val catalog = mock(TicketCatalog.class);
+        val registry = new IgniteTicketRegistry(catalog, igniteConfiguration,
+            casProperties.getTicket().getRegistry().getIgnite());
+        registry.initialize();
+        assertTrue(registry.deleteSingleTicket("unknownticket"));
+        registry.destroy();
     }
 }
