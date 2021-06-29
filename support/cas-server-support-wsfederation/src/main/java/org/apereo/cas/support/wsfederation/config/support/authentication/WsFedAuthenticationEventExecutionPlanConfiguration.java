@@ -143,7 +143,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer wsfedAuthenticationEventExecutionPlanConfigurer() {
-        val personDirectory = casProperties.getPersonDirectory();
+        val defaultPrincipal = casProperties.getPrincipal();
         return plan -> casProperties.getAuthn().getWsfed()
             .stream()
             .filter(wsfed -> StringUtils.isNotBlank(wsfed.getIdentityProviderUrl())
@@ -166,8 +166,8 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                     val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(wsfedPrincipalFactory(),
                         attributeRepository.getObject(),
                         CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-                        WsFederationCredentialsToPrincipalResolver.class, casProperties.getGlobalPersonDirectory(),
-                        principal, personDirectory);
+                        WsFederationCredentialsToPrincipalResolver.class, casProperties.getPersonDirectory(),
+                        principal, defaultPrincipal);
                     resolver.setConfiguration(cfg);
                     plan.registerAuthenticationHandlerWithPrincipalResolver(handler, resolver);
                 }

@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.spnego;
 
-import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
@@ -128,7 +128,7 @@ public class SpnegoProperties implements Serializable {
      * Password encoding settings for this authentication.
      */
     @NestedConfigurationProperty
-    private PersonDirectoryPrincipalResolverProperties principal = new PersonDirectoryPrincipalResolverProperties();
+    private PersonDirectoryPrincipalProperties principal = new PersonDirectoryPrincipalProperties();
 
     /**
      * Name of the authentication handler.

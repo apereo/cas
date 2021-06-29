@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.support.jaas;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
-import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -118,7 +118,7 @@ public class JaasAuthenticationProperties implements Serializable {
      * Principal construction settings.
      */
     @NestedConfigurationProperty
-    private PersonDirectoryPrincipalResolverProperties principal = new PersonDirectoryPrincipalResolverProperties();
+    private PersonDirectoryPrincipalProperties principal = new PersonDirectoryPrincipalProperties();
 
     /**
      * Name of the authentication handler.

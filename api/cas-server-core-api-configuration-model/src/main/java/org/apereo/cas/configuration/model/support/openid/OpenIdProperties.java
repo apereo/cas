@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.openid;
 
-import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -32,7 +32,7 @@ public class OpenIdProperties implements Serializable {
      */
     @NestedConfigurationProperty
     @Deprecated(since = "6.2.0")
-    private PersonDirectoryPrincipalResolverProperties principal = new PersonDirectoryPrincipalResolverProperties();
+    private PersonDirectoryPrincipalProperties principal = new PersonDirectoryPrincipalProperties();
 
     /**
      * Whether relying party identifies should be enforced.

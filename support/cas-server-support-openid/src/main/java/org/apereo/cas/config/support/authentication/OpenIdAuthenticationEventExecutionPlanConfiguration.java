@@ -59,14 +59,14 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     public OpenIdPrincipalResolver openIdPrincipalResolver() {
+        val defaultPrincipal = casProperties.getPrincipal();
         val personDirectory = casProperties.getPersonDirectory();
-        val globalPersonDirectory = casProperties.getGlobalPersonDirectory();
         val principal = casProperties.getAuthn().getOpenid().getPrincipal();
         return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(openidPrincipalFactory(),
             attributeRepository.getObject(),
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            OpenIdPrincipalResolver.class, globalPersonDirectory,
-            principal, personDirectory);
+            OpenIdPrincipalResolver.class, personDirectory,
+            principal, defaultPrincipal);
     }
 
     @ConditionalOnMissingBean(name = "openidPrincipalFactory")

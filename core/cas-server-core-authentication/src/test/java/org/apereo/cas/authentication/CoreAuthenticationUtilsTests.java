@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthentica
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.GroovyAuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
-import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverGlobalProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.configuration.model.core.authentication.RestAuthenticationPolicyProperties;
 import org.apereo.cas.util.CollectionUtils;
@@ -244,15 +244,15 @@ public class CoreAuthenticationUtilsTests {
     @Test
     public void verifyPrincipalConflictResolution() {
         val r1 = CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(
-            new PersonDirectoryPrincipalResolverGlobalProperties().setPrincipalResolutionConflictStrategy("LAST"));
+            new PersonDirectoryPrincipalResolverProperties().setPrincipalResolutionConflictStrategy("LAST"));
         assertNotNull(r1);
 
         val r2 = CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(
-            new PersonDirectoryPrincipalResolverGlobalProperties().setPrincipalResolutionConflictStrategy("FIRST"));
+            new PersonDirectoryPrincipalResolverProperties().setPrincipalResolutionConflictStrategy("FIRST"));
         assertNotNull(r2);
 
         val r3 = CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(
-            new PersonDirectoryPrincipalResolverGlobalProperties().setPrincipalResolutionConflictStrategy("INVALID"));
+            new PersonDirectoryPrincipalResolverProperties().setPrincipalResolutionConflictStrategy("INVALID"));
         assertEquals(r3, r1);
     }
 

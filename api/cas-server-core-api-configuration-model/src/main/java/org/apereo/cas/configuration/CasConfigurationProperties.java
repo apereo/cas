@@ -6,8 +6,8 @@ import org.apereo.cas.configuration.model.core.CasServerProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
-import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverGlobalProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalProperties;
 import org.apereo.cas.configuration.model.core.config.cloud.SpringCloudConfigurationProperties;
 import org.apereo.cas.configuration.model.core.config.standalone.StandaloneConfigurationProperties;
 import org.apereo.cas.configuration.model.core.events.EventsProperties;
@@ -136,13 +136,13 @@ public class CasConfigurationProperties implements Serializable {
      * Person directory and principal resolution functionality.
      */
     @NestedConfigurationProperty
-    private PersonDirectoryPrincipalResolverProperties personDirectory = new PersonDirectoryPrincipalResolverProperties();
+    private PersonDirectoryPrincipalProperties principal = new PersonDirectoryPrincipalProperties();
 
     /**
      * Global Person directory and principal resolution functionality settings.
      */
     @NestedConfigurationProperty
-    private PersonDirectoryPrincipalResolverGlobalProperties globalPersonDirectory = new PersonDirectoryPrincipalResolverGlobalProperties();
+    private PersonDirectoryPrincipalResolverProperties personDirectory = new PersonDirectoryPrincipalResolverProperties();
 
     /**
      * Authentication events functionality.

@@ -130,15 +130,15 @@ public class SpnegoConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "spnegoPrincipalResolver")
     public PrincipalResolver spnegoPrincipalResolver() {
+        val defaultPrincipal = casProperties.getPrincipal();
         val personDirectory = casProperties.getPersonDirectory();
-        val globalPersonDirectory = casProperties.getGlobalPersonDirectory();
         val spnegoPrincipal = casProperties.getAuthn().getSpnego().getPrincipal();
 
         return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(spnegoPrincipalFactory(),
             attributeRepository.getObject(),
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            SpnegoPrincipalResolver.class, globalPersonDirectory,
-            spnegoPrincipal, personDirectory);
+            SpnegoPrincipalResolver.class, personDirectory,
+            spnegoPrincipal, defaultPrincipal);
     }
 
     @ConditionalOnMissingBean(name = "spnegoPrincipalFactory")

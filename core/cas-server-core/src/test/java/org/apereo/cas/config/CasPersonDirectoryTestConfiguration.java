@@ -63,13 +63,13 @@ public class CasPersonDirectoryTestConfiguration {
     @Bean
     public PrincipalResolutionExecutionPlanConfigurer testPersonDirectoryPrincipalResolutionExecutionPlanConfigurer() {
         return plan -> {
+            val defaultPrincipal = casProperties.getPrincipal();
             val personDirectory = casProperties.getPersonDirectory();
-            val globalPersonDirectory = casProperties.getGlobalPersonDirectory();
             val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
                 attributeRepository(),
                 CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-                globalPersonDirectory,
-                personDirectory);
+                personDirectory,
+                defaultPrincipal);
             plan.registerPrincipalResolver(resolver);
         };
     }

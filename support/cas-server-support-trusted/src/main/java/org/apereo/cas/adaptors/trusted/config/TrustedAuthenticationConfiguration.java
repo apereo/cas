@@ -89,15 +89,15 @@ public class TrustedAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "trustedPrincipalResolver")
     public PrincipalResolver trustedPrincipalResolver() {
         val resolver = new ChainingPrincipalResolver(this.principalElectionStrategy.getObject(), casProperties);
+        val defaultPrincipal = casProperties.getPrincipal();
         val personDirectory = casProperties.getPersonDirectory();
-        val globalPersonDirectory = casProperties.getGlobalPersonDirectory();
         val trusted = casProperties.getAuthn().getTrusted();
 
         val bearingPrincipalResolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(trustedPrincipalFactory(),
             attributeRepository.getObject(),
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            PrincipalBearingPrincipalResolver.class, globalPersonDirectory,
-            trusted, personDirectory);
+            PrincipalBearingPrincipalResolver.class, personDirectory,
+            trusted, defaultPrincipal);
         resolver.setChain(CollectionUtils.wrapList(new EchoingPrincipalResolver(), bearingPrincipalResolver));
         return resolver;
     }

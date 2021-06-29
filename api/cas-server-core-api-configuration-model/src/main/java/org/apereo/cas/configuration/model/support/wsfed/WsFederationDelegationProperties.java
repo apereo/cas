@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
-import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -110,7 +110,7 @@ public class WsFederationDelegationProperties implements Serializable {
      * Principal resolution settings.
      */
     @NestedConfigurationProperty
-    private PersonDirectoryPrincipalResolverProperties principal = new PersonDirectoryPrincipalResolverProperties();
+    private PersonDirectoryPrincipalProperties principal = new PersonDirectoryPrincipalProperties();
 
     /**
      * Name of the authentication handler.

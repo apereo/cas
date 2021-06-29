@@ -69,7 +69,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer() {
         return chain -> {
             val strategy = new DefaultPrincipalElectionStrategy(principalFactory(),
-                CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(casProperties.getGlobalPersonDirectory()));
+                CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(casProperties.getPersonDirectory()));
             val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
             strategy.setAttributeMerger(merger);
             chain.registerElectionStrategy(strategy);

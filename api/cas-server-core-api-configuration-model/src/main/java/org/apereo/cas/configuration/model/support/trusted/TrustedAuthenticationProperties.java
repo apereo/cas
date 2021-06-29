@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.trusted;
 
-import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("TrustedAuthenticationProperties")
-public class TrustedAuthenticationProperties extends PersonDirectoryPrincipalResolverProperties {
+public class TrustedAuthenticationProperties extends PersonDirectoryPrincipalProperties {
 
     private static final long serialVersionUID = 279410895614233349L;
 

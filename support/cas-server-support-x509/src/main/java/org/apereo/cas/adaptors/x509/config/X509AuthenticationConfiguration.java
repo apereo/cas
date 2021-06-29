@@ -212,16 +212,16 @@ public class X509AuthenticationConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "x509SubjectPrincipalResolver")
     public PrincipalResolver x509SubjectPrincipalResolver() {
+        val defaultPrincipal = casProperties.getPrincipal();
         val personDirectory = casProperties.getPersonDirectory();
-        val globalPersonDirectory = casProperties.getGlobalPersonDirectory();
         val x509 = casProperties.getAuthn().getX509();
         val principal = x509.getPrincipal();
 
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory(),
             attributeRepository.getObject(),
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            X509SubjectPrincipalResolver.class, globalPersonDirectory,
-            principal, personDirectory);
+            X509SubjectPrincipalResolver.class, personDirectory,
+            principal, defaultPrincipal);
         resolver.setPrincipalDescriptor(x509.getPrincipalDescriptor());
         resolver.setX509AttributeExtractor(x509AttributeExtractor());
         return resolver;
@@ -233,15 +233,15 @@ public class X509AuthenticationConfiguration {
     public PrincipalResolver x509SubjectDNPrincipalResolver() {
         val x509 = casProperties.getAuthn().getX509();
         val subjectDn = x509.getSubjectDn();
+        val defaultPrincipal = casProperties.getPrincipal();
         val personDirectory = casProperties.getPersonDirectory();
-        val globalPersonDirectory = casProperties.getGlobalPersonDirectory();
         val principal = x509.getPrincipal();
 
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory(),
             attributeRepository.getObject(),
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            X509SubjectDNPrincipalResolver.class, globalPersonDirectory,
-            principal, personDirectory);
+            X509SubjectDNPrincipalResolver.class, personDirectory,
+            principal, defaultPrincipal);
         resolver.setSubjectDnFormat(X509AuthenticationUtils.getSubjectDnFormat(subjectDn.getFormat()));
         resolver.setX509AttributeExtractor(x509AttributeExtractor());
         return resolver;
@@ -252,16 +252,16 @@ public class X509AuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "x509SubjectAlternativeNameUPNPrincipalResolver")
     public PrincipalResolver x509SubjectAlternativeNameUPNPrincipalResolver() {
         val x509 = casProperties.getAuthn().getX509();
+        val defaultPrincipal = casProperties.getPrincipal();
         val personDirectory = casProperties.getPersonDirectory();
-        val globalPersonDirectory = casProperties.getGlobalPersonDirectory();
         val subjectAltNameProperties = x509.getSubjectAltName();
         val principal = x509.getPrincipal();
 
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory(),
             attributeRepository.getObject(),
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            X509SubjectAlternativeNameUPNPrincipalResolver.class, globalPersonDirectory,
-            principal, personDirectory);
+            X509SubjectAlternativeNameUPNPrincipalResolver.class, personDirectory,
+            principal, defaultPrincipal);
         resolver.setAlternatePrincipalAttribute(subjectAltNameProperties.getAlternatePrincipalAttribute());
         resolver.setX509AttributeExtractor(x509AttributeExtractor());
         return resolver;
@@ -272,15 +272,15 @@ public class X509AuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "x509SubjectAlternativeNameRFC822EmailPrincipalResolver")
     public PrincipalResolver x509SubjectAlternativeNameRFC822EmailPrincipalResolver() {
         val x509 = casProperties.getAuthn().getX509();
+        val defaultPrincipal = casProperties.getPrincipal();
         val personDirectory = casProperties.getPersonDirectory();
-        val globalPersonDirectory = casProperties.getGlobalPersonDirectory();
         val rfc822EmailProperties = x509.getRfc822Email();
         val principal = x509.getPrincipal();
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory(),
             attributeRepository.getObject(),
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            X509SubjectAlternativeNameRFC822EmailPrincipalResolver.class, globalPersonDirectory,
-            principal, personDirectory);
+            X509SubjectAlternativeNameRFC822EmailPrincipalResolver.class, personDirectory,
+            principal, defaultPrincipal);
         resolver.setAlternatePrincipalAttribute(rfc822EmailProperties.getAlternatePrincipalAttribute());
         resolver.setX509AttributeExtractor(x509AttributeExtractor());
         return resolver;
@@ -307,14 +307,14 @@ public class X509AuthenticationConfiguration {
         val x509 = casProperties.getAuthn().getX509();
         val serialNoDnProperties = x509.getSerialNoDn();
         val principal = x509.getPrincipal();
+        val defaultPrincipal = casProperties.getPrincipal();
         val personDirectory = casProperties.getPersonDirectory();
-        val globalPersonDirectory = casProperties.getGlobalPersonDirectory();
 
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory(),
             attributeRepository.getObject(),
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            X509SerialNumberAndIssuerDNPrincipalResolver.class, globalPersonDirectory,
-            principal, personDirectory);
+            X509SerialNumberAndIssuerDNPrincipalResolver.class, personDirectory,
+            principal, defaultPrincipal);
         resolver.setSerialNumberPrefix(serialNoDnProperties.getSerialNumberPrefix());
         resolver.setValueDelimiter(serialNoDnProperties.getValueDelimiter());
         resolver.setX509AttributeExtractor(x509AttributeExtractor());
@@ -328,14 +328,14 @@ public class X509AuthenticationConfiguration {
         val x509 = casProperties.getAuthn().getX509();
         val cnEdipiProperties = x509.getCnEdipi();
         val principal = x509.getPrincipal();
+        val defaultPrincipal = casProperties.getPrincipal();
         val personDirectory = casProperties.getPersonDirectory();
-        val globalPersonDirectory = casProperties.getGlobalPersonDirectory();
 
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory(),
             attributeRepository.getObject(),
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            X509CommonNameEDIPIPrincipalResolver.class, globalPersonDirectory,
-            principal, personDirectory);
+            X509CommonNameEDIPIPrincipalResolver.class, personDirectory,
+            principal, defaultPrincipal);
         resolver.setAlternatePrincipalAttribute(cnEdipiProperties.getAlternatePrincipalAttribute());
         resolver.setX509AttributeExtractor(x509AttributeExtractor());
         return resolver;
@@ -383,16 +383,16 @@ public class X509AuthenticationConfiguration {
 
     private X509SerialNumberPrincipalResolver getX509SerialNumberPrincipalResolver(final X509Properties x509) {
         val serialNoProperties = x509.getSerialNo();
-        val personDirectory = casProperties.getPersonDirectory();
+        val defaultPrincipal = casProperties.getPrincipal();
         val radix = serialNoProperties.getPrincipalSNRadix();
         val principal = x509.getPrincipal();
-        val globalPersonDirectory = casProperties.getGlobalPersonDirectory();
+        val personDirectory = casProperties.getPersonDirectory();
 
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory(),
             attributeRepository.getObject(),
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            X509SerialNumberPrincipalResolver.class, globalPersonDirectory,
-            principal, personDirectory);
+            X509SerialNumberPrincipalResolver.class, personDirectory,
+            principal, defaultPrincipal);
         resolver.setX509AttributeExtractor(x509AttributeExtractor());
         if (Character.MIN_RADIX <= radix && radix <= Character.MAX_RADIX) {
             if (radix == HEX) {
