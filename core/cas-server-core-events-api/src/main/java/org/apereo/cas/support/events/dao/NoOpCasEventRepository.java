@@ -28,11 +28,12 @@ public class NoOpCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    public void saveInternal(final CasEvent event) {
+    public CasEvent saveInternal(final CasEvent event) {
         /*
          * A no-op event repository
          * does not save events.
          */
+        return event;
     }
 
     @Override

@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import com.nimbusds.jose.Algorithm;
@@ -68,7 +67,7 @@ public class OidcPrivateKeyJwtAuthenticator extends BaseOidcJwtAuthenticator {
 
         val clientId = registeredService.getClientId();
         val audience = casProperties.getServer().getPrefix().concat('/'
-            + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL);
+            + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
         val keys = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(registeredService, this.applicationContext);
         keys.ifPresent(Unchecked.consumer(jwks ->
             jwks.getJsonWebKeys().forEach(jsonWebKey -> {

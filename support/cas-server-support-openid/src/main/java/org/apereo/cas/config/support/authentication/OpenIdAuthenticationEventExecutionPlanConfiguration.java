@@ -27,8 +27,8 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author Misagh Moayyed
  * @author Dmitriy Kopylenko
- * @deprecated 6.2
  * @since 5.1.0
+ * @deprecated 6.2
  */
 @Configuration("openIdAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)

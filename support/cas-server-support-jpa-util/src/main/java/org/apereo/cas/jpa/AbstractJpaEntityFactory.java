@@ -8,8 +8,8 @@ import lombok.SneakyThrows;
 /**
  * This is {@link AbstractJpaEntityFactory}.
  *
- * @param <T> the type parameter
  * @author Misagh Moayyed
+ * @param <T> the type parameter
  * @since 6.2.0
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)

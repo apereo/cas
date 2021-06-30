@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
+import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 
@@ -27,7 +27,7 @@ import java.util.HashMap;
 public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthorizeViewResolver {
     @Override
     public ModelAndView resolve(final JEEContext ctx, final ProfileManager manager, final String url) {
-        val prompt = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
+        val prompt = OidcRequestSupport.getOidcPromptFromAuthorizationRequest(url);
         if (prompt.contains(OidcConstants.PROMPT_NONE)) {
             val result = manager.getProfile();
             if (result.isPresent()) {
@@ -41,13 +41,13 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
                 model.put(OAuth20Constants.ERROR, OidcConstants.LOGIN_REQUIRED);
                 return new ModelAndView(new MappingJackson2JsonView(), model);
             }
-            val redirectUrlWithErrorCode = OidcAuthorizationRequestSupport.getRedirectUrlWithError(originalRedirectUrl.get(), OidcConstants.LOGIN_REQUIRED);
+            val redirectUrlWithErrorCode = OidcRequestSupport.getRedirectUrlWithError(originalRedirectUrl.get(), OidcConstants.LOGIN_REQUIRED);
             LOGGER.warn("Unable to detect an authenticated user profile for prompt-less login attempts. Redirecting to URL [{}]", redirectUrlWithErrorCode);
             return new ModelAndView(new RedirectView(redirectUrlWithErrorCode));
         }
         if (prompt.contains(OidcConstants.PROMPT_LOGIN)) {
             LOGGER.trace("Removing login prompt from URL [{}]", url);
-            val newUrl = OidcAuthorizationRequestSupport.removeOidcPromptFromAuthorizationRequest(url, OidcConstants.PROMPT_LOGIN);
+            val newUrl = OidcRequestSupport.removeOidcPromptFromAuthorizationRequest(url, OidcConstants.PROMPT_LOGIN);
             LOGGER.trace("Redirecting to URL [{}]", newUrl);
             return new ModelAndView(new RedirectView(newUrl));
         }

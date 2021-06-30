@@ -694,11 +694,9 @@ ext.libraries = [
                     exclude(group: "org.mockito", module: "mockito-all")
                 }
         ],
-        hibernatevalidator      : [
-                dependencies.create("org.hibernate.validator:hibernate-validator:$hibernateValidatorVersion") {
+        bvalidator      : [
+                dependencies.create("org.apache.bval:bval-jsr:$apacheBValVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.hibernate", module: "hibernate-core")
-                    exclude(group: "org.hibernate", module: "hibernate-entitymanager")
                 },
                 dependencies.create("javax.persistence:javax.persistence-api:$jpaPersistenceApiVersion") {
                     exclude(group: "xml-apis", module: "xml-apis")
@@ -3047,7 +3045,6 @@ ext.libraries = [
                     exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
-
                 }
         ],
         springcloudzookeeper    : [

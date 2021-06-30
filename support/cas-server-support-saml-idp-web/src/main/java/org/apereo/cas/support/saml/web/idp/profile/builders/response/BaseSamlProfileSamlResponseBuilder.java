@@ -41,11 +41,11 @@ import java.util.Objects;
 public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder {
     private static final long serialVersionUID = -1891703354216174875L;
 
-    private final transient SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext;
+    private final transient SamlProfileSamlResponseBuilderConfigurationContext configurationContext;
 
-    protected BaseSamlProfileSamlResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext) {
-        super(samlResponseBuilderConfigurationContext.getOpenSamlConfigBean());
-        this.samlResponseBuilderConfigurationContext = samlResponseBuilderConfigurationContext;
+    protected BaseSamlProfileSamlResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext configurationContext) {
+        super(configurationContext.getOpenSamlConfigBean());
+        this.configurationContext = configurationContext;
     }
 
     @Audit(
@@ -128,7 +128,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                            final String binding,
                                            final MessageContext messageContext) {
-        return samlResponseBuilderConfigurationContext.getSamlProfileSamlAssertionBuilder()
+        return configurationContext.getSamlProfileSamlAssertionBuilder()
             .build(authnRequest, request, response, casAssertion, service, adaptor, binding, messageContext);
     }
 
@@ -216,7 +216,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
 
         if (service.isEncryptAssertions()) {
             LOGGER.debug("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
-            val encrypted = samlResponseBuilderConfigurationContext.getSamlObjectEncrypter().encode(assertion, service, adaptor);
+            val encrypted = configurationContext.getSamlObjectEncrypter().encode(assertion, service, adaptor);
             if (encrypted == null) {
                 LOGGER.debug("SAML registered service [{}] is unable to encrypt assertions", adaptor.getEntityId());
                 return assertion;

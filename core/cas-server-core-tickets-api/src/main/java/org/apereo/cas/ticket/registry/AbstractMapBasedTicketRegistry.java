@@ -5,7 +5,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +33,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     }
 
     @Override
-    public void addTicket(final @NonNull Ticket ticket) {
+    public void addTicketInternal(final Ticket ticket) {
         val encTicket = encodeTicket(ticket);
         LOGGER.debug("Added ticket [{}] to registry.", ticket.getId());
         getMapInstance().put(encTicket.getId(), encTicket);

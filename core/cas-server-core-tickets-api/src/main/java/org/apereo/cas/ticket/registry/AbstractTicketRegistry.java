@@ -46,6 +46,13 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     protected CipherExecutor cipherExecutor;
 
     @Override
+    public void addTicket(final Ticket ticket) {
+        if (ticket != null && !ticket.isExpired()) {
+            addTicketInternal(ticket);
+        }
+    }
+
+    @Override
     public Ticket getTicket(final String ticketId) {
         return getTicket(ticketId, ticket -> {
             if (ticket != null && ticket.isExpired()) {
@@ -145,6 +152,14 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * @return true/false
      */
     public abstract boolean deleteSingleTicket(String ticketId);
+
+    /**
+     * Add ticket internally by the
+     * registry implementation.
+     *
+     * @param ticket the ticket
+     */
+    protected abstract void addTicketInternal(Ticket ticket);
 
     /**
      * Delete tickets.

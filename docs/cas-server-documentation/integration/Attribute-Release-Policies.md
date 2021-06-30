@@ -29,31 +29,11 @@ you understand the why. Avoid where and when you can, specially when it comes to
 CAS makes a distinction between attributes that convey metadata about the authentication event versus
 those that contain personally identifiable data for the authenticated principal.
 
-## Administrative Endpoints
+## Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `releaseAttributes`           | Invoke the CAS [attribute release](../integration/Attribute-Release.html) engine to release attributes to an application.
 
-Supported parameters are the following:
-
-| Query Parameter           | Description
-|---------------------------|--------------------------------------------
-| `username`                | The username to use for authentication.
-| `password`                | The password to use for authentication.
-| `service`                 | Service to which attributes should be released.
-
-The parameters above can either be added as query string parameters or as a JSON object submitted with a POST:
-
-```json
-{ 
-  "username": "USERNAME",
-  "password": "PASSWORD",
-  "service": "SERVICE_URL"
-}
-```
+{% include actuators.html endpoints="releaseAttributes" casModule="cas-server-support-reports" %}
 
 ## Authentication Attributes
 

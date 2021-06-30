@@ -8,6 +8,8 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.val;
+import org.pac4j.core.context.JEEContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,12 +37,15 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
      * @param response the response
      * @return the response entity
      */
-    @GetMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE,
-        value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL)
+    @GetMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE,
+        value = "/**/" + OidcConstants.INTROSPECTION_URL)
     @Override
     public ResponseEntity<OAuth20IntrospectionAccessTokenResponse> handleRequest(final HttpServletRequest request,
-                                                                                 final HttpServletResponse response) {
+                                                                                        final HttpServletResponse response) {
+        val webContext = new JEEContext(request, response);
+        if (!getConfigurationContext().getOidcRequestSupport().isValidIssuerForEndpoint(webContext, OidcConstants.INTROSPECTION_URL)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         return super.handleRequest(request, response);
     }
 
@@ -51,12 +56,11 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
      * @param response the response
      * @return the response entity
      */
-    @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE,
-        value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL)
+    @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE,
+        value = "/**/" + OidcConstants.INTROSPECTION_URL)
     @Override
     public ResponseEntity<OAuth20IntrospectionAccessTokenResponse> handlePostRequest(final HttpServletRequest request,
-                                                                                     final HttpServletResponse response) {
+                                                                                         final HttpServletResponse response) {
         return super.handlePostRequest(request, response);
     }
 

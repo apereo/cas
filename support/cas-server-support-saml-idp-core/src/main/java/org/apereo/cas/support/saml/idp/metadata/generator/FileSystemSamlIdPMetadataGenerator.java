@@ -90,7 +90,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
             FileUtils.forceDelete(certificate);
         }
         if (key.exists()) {
-            LOGGER.info("Key file [{}] already exists, and will be deleted", certificate.getCanonicalPath());
+            LOGGER.info("Key file [{}] already exists, and will be deleted", key.getCanonicalPath());
             FileUtils.forceDelete(key);
         }
         try (val keyWriter = Files.newBufferedWriter(key.toPath(), StandardCharsets.UTF_8);

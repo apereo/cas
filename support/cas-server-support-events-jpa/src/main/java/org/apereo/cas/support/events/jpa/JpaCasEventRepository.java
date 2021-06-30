@@ -7,15 +7,13 @@ import org.apereo.cas.support.events.dao.CasEvent;
 import lombok.ToString;
 import lombok.val;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import java.time.ZonedDateTime;
 import java.util.Collection;
 
@@ -102,20 +100,16 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    public void saveInternal(final CasEvent event) {
-        new TransactionTemplate(this.transactionManager).execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(final TransactionStatus status) {
-                val jpaEvent = new JpaCasEvent();
-
-                jpaEvent.setId(event.getId());
-                jpaEvent.setCreationTime(event.getCreationTime());
-                jpaEvent.setPrincipalId(event.getPrincipalId());
-                jpaEvent.setProperties(event.getProperties());
-                jpaEvent.setType(event.getType());
-
-                entityManager.merge(jpaEvent);
-            }
+    public CasEvent saveInternal(final CasEvent event) {
+        val transactionTemplate = new TransactionTemplate(this.transactionManager);
+        return transactionTemplate.execute((TransactionCallback<CasEvent>) ts -> {
+            val jpaEvent = new JpaCasEvent();
+            jpaEvent.setId(event.getId());
+            jpaEvent.setCreationTime(event.getCreationTime());
+            jpaEvent.setPrincipalId(event.getPrincipalId());
+            jpaEvent.setProperties(event.getProperties());
+            jpaEvent.setType(event.getType());
+            return entityManager.merge(jpaEvent);
         });
     }
 }

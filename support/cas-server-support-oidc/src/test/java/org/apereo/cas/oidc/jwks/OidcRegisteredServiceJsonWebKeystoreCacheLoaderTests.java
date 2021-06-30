@@ -9,13 +9,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link OidcServiceJsonWebKeystoreCacheLoaderTests}.
+ * This is {@link OidcRegisteredServiceJsonWebKeystoreCacheLoaderTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @Tag("OIDC")
-public class OidcServiceJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
+public class OidcRegisteredServiceJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
     @Test
     public void verifyOperation() {
         val service = getOidcRegisteredService();

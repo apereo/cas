@@ -182,13 +182,6 @@ Protocol tickets that are issued by CAS and shared with other applications such 
 Secure ticket replication as it regards clustered CAS deployments may be required to ensure generated tickets by CAS are not tampered with in transit. CAS covers this issue by allowing tickets to be natively encrypted and signed. While sample data is provided for initial deployments, these keys **MUST** be regenerated per your specific environment.
 Please [see this guide](../installation/Ticket-Registry-Replication-Encryption.html) for more info.
 
-### Administrative Pages Security
-
-CAS provides a large variety of web interfaces that are aimed at system administrators and deployers.
-These screens along with a number of REST endpoints allow a CAS deployer to manage and reconfigure CAS behavior without resorting to
-native command-line interfaces. Needless to say, these endpoints and screens must be secured and allowed proper access only to
-authorized parties. Please [see this guide](../monitoring/Monitoring-Statistics.html) for more info.
-
 ### Ticket Expiration Policies
 
 Ticket expiration policies are a primary mechanism for implementing security policy. Ticket expiration policy allows

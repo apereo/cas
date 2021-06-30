@@ -25,7 +25,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.FailedLoginException;
-
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 
@@ -33,26 +32,32 @@ import java.util.Arrays;
  * Implementation of an AuthenticationHandler for NTLM supports.
  *
  * @author <a href="mailto:julien.henry@capgemini.com">Julien Henry</a>
- * @deprecated Since 6.3.0
  * @author Scott Battaglia
  * @author Arnaud Lesueur
  * @since 3.1
+ * @deprecated Since 6.3.0
  */
 @Slf4j
 @Deprecated(since = "6.3.0")
 public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private static final int NBT_ADDRESS_TYPE = 0x1C;
+
     private static final int NTLM_TOKEN_TYPE_FIELD_INDEX = 8;
+
     private static final int NTLM_TOKEN_TYPE_ONE = 1;
+
     private static final int NTLM_TOKEN_TYPE_THREE = 3;
 
     private static final String DEFAULT_DOMAIN_CONTROLLER = Config.getProperty("jcifs.smb.client.domain");
+
     /**
      * Sets domain controller. Will default if none is defined or passed.
      */
     private final String domainController;
+
     private final String includePattern;
+
     private final boolean loadBalance;
 
     public NtlmAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
@@ -62,6 +67,16 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
         this.loadBalance = loadBalance;
         this.domainController = StringUtils.isBlank(domainController) ? DEFAULT_DOMAIN_CONTROLLER : domainController;
         this.includePattern = includePattern;
+    }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return SpnegoCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
+    public boolean supports(final Credential credential) {
+        return credential instanceof SpnegoCredential;
     }
 
     @Override
@@ -124,15 +139,5 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
             return new UniAddress(NbtAddress.getByName(this.domainController, NBT_ADDRESS_TYPE, null));
         }
         return UniAddress.getByName(this.domainController, true);
-    }
-
-    @Override
-    public boolean supports(final Class<? extends Credential> clazz) {
-        return SpnegoCredential.class.isAssignableFrom(clazz);
-    }
-
-    @Override
-    public boolean supports(final Credential credential) {
-        return credential instanceof SpnegoCredential;
     }
 }

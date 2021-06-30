@@ -97,13 +97,15 @@ public class DynamoDbCasEventsFacilitator {
      * Save.
      *
      * @param record the record
+     * @return the cas event
      */
-    public void save(final CasEvent record) {
+    public CasEvent save(final CasEvent record) {
         val values = buildTableAttributeValuesMap(record);
         val putItemRequest = PutItemRequest.builder().tableName(dynamoDbProperties.getTableName()).item(values).build();
         LOGGER.debug("Submitting put request [{}] for record [{}]", putItemRequest, record);
         val putItemResult = amazonDynamoDBClient.putItem(putItemRequest);
         LOGGER.debug("Record added with result [{}]", putItemResult);
+        return record;
     }
 
     public Set<CasEvent> getAll() {
