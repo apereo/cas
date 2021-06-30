@@ -66,7 +66,7 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
      * if attribute resolution is enabled.
      * The list here may include identifiers separated by comma.
      */
-    private String activeAttributeRepositoryIds = StringUtils.EMPTY;
+    private String activeAttributeRepositoryIds;
 
     /**
      * In the event that the principal resolution engine resolves

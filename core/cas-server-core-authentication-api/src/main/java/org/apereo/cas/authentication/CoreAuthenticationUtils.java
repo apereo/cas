@@ -402,7 +402,7 @@ public class CoreAuthenticationUtils {
             .resolveAttributes(Arrays.stream(personDirectory).filter(p -> p.getAttributeResolutionEnabled() != TriStateBoolean.UNDEFINED)
                 .map(p -> p.getAttributeResolutionEnabled().toBoolean()).findFirst().orElse(Boolean.TRUE))
             .activeAttributeRepositoryIdentifiers(Arrays.stream(personDirectory)
-                .filter(p -> !p.getActiveAttributeRepositoryIds().isBlank())
+                .filter(p -> StringUtils.isNotBlank(p.getActiveAttributeRepositoryIds()))
                 .map(p -> org.springframework.util.StringUtils.commaDelimitedListToSet(p.getActiveAttributeRepositoryIds()))
                 .filter(p -> !p.isEmpty())
                 .findFirst()
