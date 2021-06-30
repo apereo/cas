@@ -99,7 +99,6 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
 
             LOGGER.trace("Located metadata root element [{}]", element.getNodeName());
             setMetadataRootElement(element);
-
             LOGGER.trace("Initializing metadata resolver [{}]", getClass().getSimpleName());
             initialize();
             LOGGER.trace("Resolving metadata for criteria [{}]", criteria);
