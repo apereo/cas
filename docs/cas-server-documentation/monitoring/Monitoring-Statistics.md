@@ -11,6 +11,11 @@ category: Monitoring & Statistics
 Actuator endpoints used to monitor and diagnose the internal configuration of the CAS server are typically
 exposed over the endpoint `/actuator`.
 
+## Actuator Endpoints
+
+The following endpoints are provided by Spring Boot:
+
+{% include actuators.html endpoints="beans,conditions,configprops,startup,threaddump,env,health,info,metrics,loggers,httptrace,mappings,scheduledtasks,integrationgraph,shutdown,restart,heapdump,jolokia,logfile,prometheus,auditevents,pause,resume,caches,flyway,sessions,liquibase,channels,consul,serviceregistry,quartz" %}
 
 ## Metrics
 

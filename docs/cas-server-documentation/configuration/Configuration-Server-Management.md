@@ -263,6 +263,10 @@ locate properties and settings. [Please review this guide](Configuration-Propert
 CAS is also able to use [Consul](https://www.consul.io/) to
 locate properties and settings. [Please review this guide](../installation/Service-Discovery-Guide-Consul.html).
 
+The following endpoints are provided by Spring Cloud:
+
+{% include actuators.html endpoints="consul" %}
+
 ##### Apache ZooKeeper
 
 CAS is also able to use [Apache ZooKeeper](https://zookeeper.apache.org/) to locate properties and settings.
