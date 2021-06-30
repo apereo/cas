@@ -39,13 +39,17 @@ public class FileSystemSamlIdPMetadataGeneratorTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         assertNotNull(samlIdPMetadataGenerator.generate(Optional.empty()));
-        assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
+        val metadata = samlIdPMetadataLocator.resolveMetadata(Optional.empty());
+        assertNotNull(metadata);
         assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.resolveSigningKey(Optional.empty()));
+
+        FileUtils.delete(metadata.getFile());
+        assertNotNull(samlIdPMetadataGenerator.generate(Optional.empty()));
     }
 
     @Test
