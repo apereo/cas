@@ -1,6 +1,9 @@
 {
   "dependencies": "saml",
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
     "--cas.service-registry.core.init-from-json=true"
   ]
 }
