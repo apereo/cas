@@ -33,6 +33,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -77,7 +78,7 @@ public class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Te
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
         assertNotNull(entity.getBody());
-        assertTrue(entity.getBody().contains(OAuth20Constants.MISSING_ACCESS_TOKEN));
+        assertTrue(entity.getBody().toString().contains(OAuth20Constants.MISSING_ACCESS_TOKEN));
     }
 
     @Test
@@ -91,7 +92,7 @@ public class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Te
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
         assertNotNull(entity.getBody());
-        assertTrue(entity.getBody().contains(OAuth20Constants.EXPIRED_ACCESS_TOKEN));
+        assertTrue(entity.getBody().toString().contains(OAuth20Constants.EXPIRED_ACCESS_TOKEN));
     }
 
     @Test
@@ -114,7 +115,7 @@ public class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Te
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
         assertNotNull(entity.getBody());
-        assertTrue(entity.getBody().contains(OAuth20Constants.EXPIRED_ACCESS_TOKEN));
+        assertTrue(entity.getBody().toString().contains(OAuth20Constants.EXPIRED_ACCESS_TOKEN));
     }
 
     @Test
@@ -135,13 +136,14 @@ public class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Te
         val mockResponse = new MockHttpServletResponse();
 
         val entity = oAuth20ProfileController.handleGetRequest(mockRequest, mockResponse);
+
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
 
         val expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
             + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
         val expectedObj = MAPPER.readTree(expected);
-        val receivedObj = MAPPER.readTree(entity.getBody());
+        val receivedObj = MAPPER.readTree(Objects.requireNonNull(entity.getBody()).toString());
         assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
 
         val expectedAttributes = expectedObj.get(ATTRIBUTES_PARAM);
@@ -183,7 +185,7 @@ public class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Te
         expectedObj.put("id", ID);
         expectedObj.put("attributes", attrNode);
 
-        val receivedObj = MAPPER.readTree(entity.getBody());
+        val receivedObj = MAPPER.readTree(entity.getBody().toString());
         assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
 
         val expectedAttributes = expectedObj.get(ATTRIBUTES_PARAM);
@@ -216,7 +218,7 @@ public class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Te
         val expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
             + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
         val expectedObj = MAPPER.readTree(expected);
-        val receivedObj = MAPPER.readTree(entity.getBody());
+        val receivedObj = MAPPER.readTree(entity.getBody().toString());
         assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
 
         val expectedAttributes = expectedObj.get(ATTRIBUTES_PARAM);

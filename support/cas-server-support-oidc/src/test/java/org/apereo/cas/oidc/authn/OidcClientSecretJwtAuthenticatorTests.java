@@ -52,7 +52,7 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
         val context = new JEEContext(request, response);
 
         val audience = casProperties.getServer().getPrefix().concat('/'
-            + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL);
+            + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
         val registeredService = getOidcRegisteredService();
         val claims = getClaims(registeredService.getClientId(), registeredService.getClientId(),
             registeredService.getClientId(), audience);
@@ -79,7 +79,7 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
         val context = new JEEContext(request, response);
 
         val audience = casProperties.getServer().getPrefix().concat('/'
-            + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL);
+            + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
         val registeredService = getOidcRegisteredService();
         val claims = getClaims(registeredService.getClientId(), registeredService.getClientId(),
             registeredService.getClientId(), audience);
@@ -105,7 +105,7 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
         val context = new JEEContext(request, response);
 
         val audience = casProperties.getServer().getPrefix().concat('/'
-            + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL);
+            + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy().setEnabled(false));
         servicesManager.save(registeredService);

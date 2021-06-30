@@ -393,6 +393,7 @@ public class SamlIdPConfiguration {
         SamlProfileSamlResponseBuilderConfigurationContextBuilder getSamlResponseBuilderConfigurationContextBuilder() {
 
         return SamlProfileSamlResponseBuilderConfigurationContext.builder()
+            .samlIdPMetadataResolver(casSamlIdPMetadataResolver.getObject())
             .openSamlConfigBean(openSamlConfigBean.getObject())
             .samlObjectSigner(samlObjectSigner())
             .velocityEngineFactory(velocityEngineFactory.getObject())

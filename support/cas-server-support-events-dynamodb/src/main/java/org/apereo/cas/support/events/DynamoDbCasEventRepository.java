@@ -22,8 +22,8 @@ public class DynamoDbCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    public void saveInternal(final CasEvent event) {
-        dbCasEventsFacilitator.save(event);
+    public CasEvent saveInternal(final CasEvent event) {
+        return dbCasEventsFacilitator.save(event);
     }
 
     @Override

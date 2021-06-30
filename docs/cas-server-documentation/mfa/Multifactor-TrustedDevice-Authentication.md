@@ -33,13 +33,11 @@ Support is provided via the following module:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa" %}
 
-## Administrative Endpoints
+## Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `multifactorTrustedDevices`   | Expose devices currently [registered and trusted](Multifactor-TrustedDevice-Authentication.html) by the CAS multifactor authentication engine. A `GET` operation produces a list of all trusted devices. Specifying a username in the URL as the placeholder/selector will fetch devices registered for that user (i.e. `multifactorTrustedDevices/{username}`). A `DELETE` operation with a device key  id will attempt to remove the trusted device (i.e. `multifactorTrustedDevices/{id}`).
+
+{% include actuators.html endpoints="multifactorTrustedDevices" %}
 
 ## Settings
 

@@ -24,14 +24,17 @@ public interface AuthenticationAttributeReleasePolicy {
      * @param service        the service
      * @return The attributes to be released
      */
-    Map<String, List<Object>> getAuthenticationAttributesForRelease(Authentication authentication, Assertion assertion, Map<String, Object> model, RegisteredService service);
+    Map<String, List<Object>> getAuthenticationAttributesForRelease(Authentication authentication,
+                                                                    Assertion assertion,
+                                                                    Map<String, Object> model,
+                                                                    RegisteredService service);
 
     /**
      * NoOp authentication attribute release policy.
      *
      * @return the authentication attribute release policy
      */
-    static AuthenticationAttributeReleasePolicy noOp() {
+    static AuthenticationAttributeReleasePolicy none() {
         return (authentication, assertion, model, service) -> new HashMap<>(0);
     }
 }

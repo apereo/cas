@@ -64,6 +64,14 @@ contribute to the properties of the authentication request sent off to a delegat
 requested SAML2 authentication context class can now be passed to an external SAML2 identity provider using
 [delegated authentication](../integration/Delegate-Authentication-SAML.html).
 
+### OpenID Connect Dynamic Issuers
+
+Modifying the [OpenID Connect](../protocol/OIDC-Protocol.html) issuer setting to include dynamic path segments is now possible,
+where CAS can now allow specification of issuer values that would match `https://sso.example.org/cas/custom/oidc/issuer/value-here`.
+All applications can now be given a custom issuer to locate the OpenID Connect discovery document and looks for appropriate URLs.
+Applications that have hardcoded the OpenID Connect URL endpoints 
+such as `authorization_endpoint` or `token_endpoint`, etc need to revisit and update those values.
+
 ## Other Stuff
        
 - Service registry lookup enforcements to ensure located service definition types can be supported by the enabled protocols.

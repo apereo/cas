@@ -17,6 +17,9 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -58,6 +61,29 @@ public class CookieRetrievingCookieGeneratorTests {
         headers = response.getHeaders("Set-Cookie");
         assertEquals(1, headers.size());
         assertTrue(headers.get(0).contains(context.getName() + '=' + cookie.getValue()));
+    }
+
+    @Test
+    public void verifyOtherSetCookieHeaderIsNotDiscarded() {
+        val context = getCookieGenerationContext();
+
+        val gen = new CookieRetrievingCookieGenerator(context);
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        response.addHeader("Set-Cookie", gen.getCookieName() + "=some-cookie-value");
+        response.addHeader("Set-Cookie", "OtherCookie=other-cookie-value");
+        var headers = response.getHeaders("Set-Cookie");
+        assertEquals(2, headers.size());
+        val cookie = gen.addCookie(request, response, "some-value");
+        assertNotNull(cookie);
+        assertEquals("some-value", cookie.getValue());
+        var headersAfter = response.getHeaders("Set-Cookie");
+        assertEquals(2, headersAfter.size());
+        val headerValuesAfter = response.getHeaderValues("Set-Cookie").stream()
+            .map(String.class::cast)
+            .map(header -> Arrays.stream(header.split(";")).iterator().next())
+            .collect(Collectors.toSet());
+        assertEquals(headerValuesAfter, CollectionUtils.wrapSet(cookie.getName() + "=some-value", "OtherCookie=other-cookie-value"));
     }
 
     @Test

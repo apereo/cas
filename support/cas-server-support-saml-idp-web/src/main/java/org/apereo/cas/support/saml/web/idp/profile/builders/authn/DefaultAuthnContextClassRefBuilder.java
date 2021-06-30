@@ -87,6 +87,7 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
         val authnContexts = casProperties.getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings();
         val definedContexts = CollectionUtils.convertDirectedListToMap(authnContexts);
         val mappedMethod = authnContextClassRefs.stream()
+            .filter(ref -> StringUtils.isNotBlank(ref.getURI()))
             .filter(ref -> definedContexts.containsKey(ref.getURI()))
             .map(ref -> Pair.of(ref, definedContexts.get(ref.getURI())))
             .findFirst()

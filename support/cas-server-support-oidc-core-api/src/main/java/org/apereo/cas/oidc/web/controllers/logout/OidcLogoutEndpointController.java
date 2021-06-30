@@ -5,9 +5,9 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.logout.slo.SingleLogoutUrl;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.web.controllers.BaseOidcController;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -15,6 +15,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +35,7 @@ import java.util.stream.Collectors;
  * @since 6.0.0
  */
 @Slf4j
-public class OidcLogoutEndpointController extends BaseOAuth20Controller<OidcConfigurationContext> {
+public class OidcLogoutEndpointController extends BaseOidcController {
 
     private final UrlValidator urlValidator;
 
@@ -58,13 +59,19 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller<OidcConf
      * @param response              the response
      * @return the response entity
      */
-    @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.LOGOUT_URL)
+    @GetMapping(value = "/**/" + OidcConstants.LOGOUT_URL)
     @SneakyThrows
     public ResponseEntity<HttpStatus> handleRequestInternal(
         @RequestParam(value = "post_logout_redirect_uri", required = false) final String postLogoutRedirectUrl,
         @RequestParam(value = "state", required = false) final String state,
         @RequestParam(value = "id_token_hint", required = false) final String idToken,
         final HttpServletRequest request, final HttpServletResponse response) {
+
+        val webContext = new JEEContext(request, response);
+        if (!getConfigurationContext().getOidcRequestSupport().isValidIssuerForEndpoint(webContext, OidcConstants.LOGOUT_URL)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        
         String clientId = null;
 
         if (StringUtils.isNotBlank(idToken)) {

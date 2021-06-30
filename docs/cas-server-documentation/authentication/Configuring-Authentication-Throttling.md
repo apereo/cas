@@ -48,14 +48,12 @@ Enable the following module in your configuration overlay:
 
 {% include casproperties.html properties="cas.authn.throttle.core,cas.authn.throttle.schedule,cas.authn.throttle.failure" %}
 
-### Administrative Endpoints
+### Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                     | Description
-|------------------------------|---------------------------------------------
-| `throttles`                  | `GET` request to fetch throttled records.
-   
+
+{% include actuators.html endpoints="throttles" %}
+
 ### Throttling Strategies
       
 The following throttling strategies are offered by CAS.

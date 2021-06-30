@@ -115,7 +115,7 @@ public class CasCoreAuthenticationConfiguration {
         val release = casProperties.getAuthn().getAuthenticationAttributeRelease();
         if (!release.isEnabled()) {
             LOGGER.debug("CAS is configured to not release protocol-level authentication attributes.");
-            return AuthenticationAttributeReleasePolicy.noOp();
+            return AuthenticationAttributeReleasePolicy.none();
         }
         return new DefaultAuthenticationAttributeReleasePolicy(release.getOnlyRelease(),
             release.getNeverRelease(),

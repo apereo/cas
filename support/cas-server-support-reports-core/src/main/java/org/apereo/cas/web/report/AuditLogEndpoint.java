@@ -49,7 +49,8 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
      */
     @ReadOperation
     @SuppressWarnings("JavaUtilDate")
-    @Operation(summary = "Provide a report of the audit log using a given interval", parameters = {@Parameter(name = "interval")})
+    @Operation(summary = "Provide a report of the audit log using a given interval",
+        parameters = {@Parameter(name = "interval", description = "Accepts the duration syntax, such as PT1H")})
     public Set<AuditActionContext> getAuditLog(@Selector final String interval) {
         if (StringUtils.isBlank(interval)) {
             val sinceDate = LocalDate.now(ZoneId.systemDefault())
@@ -78,13 +79,14 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
      * @return - the audit log
      */
     @WriteOperation(produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "Provide a report of the audit log", parameters = {
-        @Parameter(name = "interval"),
-        @Parameter(name = "actionPerformed"),
-        @Parameter(name = "clientIpAddress"),
-        @Parameter(name = "principal"),
-        @Parameter(name = "resourceOperatedUpon")
-    })
+    @Operation(summary = "Provide a report of the audit log. Each filter other than `interval` can accept a regular expression to match against.",
+        parameters = {
+            @Parameter(name = "interval", description = "Accepts the duration syntax, such as PT1H"),
+            @Parameter(name = "actionPerformed"),
+            @Parameter(name = "clientIpAddress"),
+            @Parameter(name = "principal"),
+            @Parameter(name = "resourceOperatedUpon")
+        })
     public Set<AuditActionContext> getAuditLog(@Nullable final String interval,
                                                @Nullable final String actionPerformed,
                                                @Nullable final String clientIpAddress,

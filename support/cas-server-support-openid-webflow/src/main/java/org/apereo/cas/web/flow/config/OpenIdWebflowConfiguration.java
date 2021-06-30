@@ -54,7 +54,7 @@ public class OpenIdWebflowConfiguration {
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
-    
+
     @Autowired
     @Qualifier("loginFlowRegistry")
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
@@ -70,7 +70,7 @@ public class OpenIdWebflowConfiguration {
     public OpenIdUserNameExtractor defaultOpenIdUserNameExtractor() {
         return new DefaultOpenIdUserNameExtractor();
     }
-    
+
     @ConditionalOnMissingBean(name = "openidWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
@@ -87,7 +87,7 @@ public class OpenIdWebflowConfiguration {
             defaultOpenIdUserNameExtractor(),
             ticketRegistrySupport.getObject());
     }
-    
+
     @Bean
     @ConditionalOnMissingBean(name = "openidCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer openidCasWebflowExecutionPlanConfigurer() {

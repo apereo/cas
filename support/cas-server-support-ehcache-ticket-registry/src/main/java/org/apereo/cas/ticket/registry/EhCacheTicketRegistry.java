@@ -64,7 +64,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public void addTicket(final Ticket ticketToAdd) {
+    public void addTicketInternal(final Ticket ticketToAdd) {
         val metadata = this.ticketCatalog.find(ticketToAdd);
 
         val ticket = encodeTicket(ticketToAdd);

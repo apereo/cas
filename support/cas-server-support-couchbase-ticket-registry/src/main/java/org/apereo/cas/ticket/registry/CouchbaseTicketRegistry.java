@@ -59,7 +59,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    public void addTicket(final Ticket ticketToAdd) {
+    public void addTicketInternal(final Ticket ticketToAdd) {
         LOGGER.debug("Adding ticket [{}]", ticketToAdd);
         try {
             val ticket = encodeTicket(ticketToAdd);

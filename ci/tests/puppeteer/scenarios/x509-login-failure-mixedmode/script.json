@@ -1,0 +1,23 @@
+{
+  "dependencies": "x509-webflow",
+  "properties": [
+    "--server.ssl.trust-store=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/truststore.jks",
+    "--server.ssl.trust-store-password=changeit",
+    "--server.ssl.key-store-type=PKCS12",
+    "--server.ssl.client-auth=want",
+
+    "--logging.level.org.apereo.cas=debug",
+    
+    "--cas.authn.attribute-repository.stub.attributes.sn=CAS",
+
+    "--cas.authn.x509.principal-type=SUBJECT_ALT_NAME",
+    "--cas.authn.x509.subject-alt-name.alternate-principal-attribute=subjectDn",
+
+    "--cas.authn.x509.reg-ex-subject-dn-pattern=unknown",
+    "--cas.authn.x509.reg-ex-trusted-issuer-dn-pattern=nothing",
+    
+    "--cas.authn.x509.mixed-mode=true"
+  ],
+  "trustStoreCertificateFile": "./ci/tests/puppeteer/scenarios/x509-login-failure-mixedmode/cert.pem",
+  "trustStorePrivateKeyFile": "./ci/tests/puppeteer/scenarios/x509-login-failure-mixedmode/key.pem"
+}
