@@ -35,6 +35,5 @@ public class OidcServerDiscoverySettingsFactoryTests extends AbstractOidcTests {
         assertNotNull(oidcServerDiscoverySettings.getUserinfoEndpoint());
         assertNotNull(oidcServerDiscoverySettings.getIssuer());
         assertNotNull(oidcServerDiscoverySettings.getJwksUri());
-        assertNotNull(oidcServerDiscoverySettings.getServerPrefix());
     }
 }

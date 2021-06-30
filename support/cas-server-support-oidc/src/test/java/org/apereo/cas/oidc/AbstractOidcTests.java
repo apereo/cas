@@ -98,6 +98,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.webflow.execution.Action;
@@ -435,5 +436,14 @@ public abstract class AbstractOidcTests {
             OidcConstants.StandardScopes.OPENID.getScope()));
         when(token.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
         return token;
+    }
+
+    protected static MockHttpServletRequest getHttpRequestForEndpoint(final String endpoint) {
+        val request = new MockHttpServletRequest();
+        request.setScheme("https");
+        request.setServerName("sso.example.org");
+        request.setServerPort(443);
+        request.setRequestURI("/cas/oidc/" + endpoint);
+        return request;
     }
 }

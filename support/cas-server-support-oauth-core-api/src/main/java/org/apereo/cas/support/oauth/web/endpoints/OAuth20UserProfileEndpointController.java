@@ -29,10 +29,10 @@ import javax.servlet.http.HttpServletResponse;
  * @since 3.5.0
  */
 @Slf4j
-public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller<OAuth20ConfigurationContext> {
+public class OAuth20UserProfileEndpointController<T extends OAuth20ConfigurationContext> extends BaseOAuth20Controller<T> {
     private final ResponseEntity<String> expiredAccessTokenResponseEntity;
 
-    public OAuth20UserProfileEndpointController(final OAuth20ConfigurationContext configurationContext) {
+    public OAuth20UserProfileEndpointController(final T configurationContext) {
         super(configurationContext);
         this.expiredAccessTokenResponseEntity = buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
     }

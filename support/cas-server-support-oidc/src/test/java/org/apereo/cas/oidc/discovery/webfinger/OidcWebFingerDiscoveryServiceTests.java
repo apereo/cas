@@ -50,7 +50,7 @@ public class OidcWebFingerDiscoveryServiceTests extends AbstractOidcTests {
         when(repository.findByEmailAddress(anyString())).thenReturn(Map.of());
         when(repository.findByUsername(anyString())).thenReturn(Map.of());
         val service = new OidcWebFingerDiscoveryService(repository,
-            new OidcServerDiscoverySettings(casProperties, "https://apereo.org/cas"));
+            new OidcServerDiscoverySettings("https://apereo.org/cas"));
         val entity = service.handleWebFingerDiscoveryRequest(
             "okta:acct:joe.stormtrooper@sso.example.org", OidcConstants.WEBFINGER_REL);
         assertEquals(HttpStatus.SC_NOT_FOUND, entity.getStatusCodeValue());

@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletResponse;
  * @since 6.2.0
  */
 @Slf4j
-public class OAuth20RevocationEndpointController extends BaseOAuth20Controller<OAuth20ConfigurationContext> {
-    public OAuth20RevocationEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
+public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationContext> extends BaseOAuth20Controller<T> {
+    public OAuth20RevocationEndpointController(final T oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
     }
 

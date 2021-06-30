@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.CommonProfile;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -41,6 +42,12 @@ public class OAuth20UtilsTests {
     public void verifyRequestHeaderBad() {
         assertNull(OAuth20Utils.getServiceRequestHeaderIfAny(null));
         assertNull(OAuth20Utils.getClientIdFromAuthenticatedProfile(new CommonProfile()));
+    }
+
+    @Test
+    public void verifyUnauthzView() {
+        val mv = OAuth20Utils.produceUnauthorizedErrorView();
+        assertEquals(HttpStatus.UNAUTHORIZED, mv.getStatus());
     }
     
     @Test

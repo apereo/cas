@@ -2,7 +2,7 @@ package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
+import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -32,7 +32,7 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
     protected boolean isConsentApprovalBypassed(final JEEContext context, final OAuthRegisteredService service) {
         if (service instanceof OidcRegisteredService) {
             val url = context.getFullRequestURL();
-            val prompts = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
+            val prompts = OidcRequestSupport.getOidcPromptFromAuthorizationRequest(url);
             if (prompts.contains(OidcConstants.PROMPT_CONSENT)) {
                 return false;
             }

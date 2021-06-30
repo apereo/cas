@@ -109,7 +109,7 @@ public class OidcIdTokenSigningAndEncryptionServiceTests extends AbstractOidcTes
 
     @Test
     public void verifyNoneSupported() {
-        val discovery = new OidcServerDiscoverySettings(casProperties, casProperties.getAuthn().getOidc().getCore().getIssuer());
+        val discovery = new OidcServerDiscoverySettings(casProperties.getAuthn().getOidc().getCore().getIssuer());
         discovery.setIdTokenSigningAlgValuesSupported(List.of(AlgorithmIdentifiers.NONE));
         discovery.setIdTokenEncryptionAlgValuesSupported(List.of(AlgorithmIdentifiers.NONE));
         val service = new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache,

@@ -23,7 +23,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
     @Override
     public OidcServerDiscoverySettings getObject() {
         val oidc = casProperties.getAuthn().getOidc();
-        val discovery = new OidcServerDiscoverySettings(casProperties, issuerService.determineIssuer(Optional.empty()));
+        val discovery = new OidcServerDiscoverySettings(issuerService.determineIssuer(Optional.empty()));
         discovery.setClaimsSupported(oidc.getDiscovery().getClaims());
         discovery.setScopesSupported(oidc.getDiscovery().getScopes());
         discovery.setResponseTypesSupported(oidc.getDiscovery().getResponseTypesSupported());

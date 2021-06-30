@@ -56,7 +56,7 @@ import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionService;
 import org.apereo.cas.oidc.token.OidcJwtAccessTokenCipherExecutor;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutor;
-import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
+import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.oidc.web.OidcAccessTokenResponseGenerator;
 import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolver;
 import org.apereo.cas.oidc.web.OidcCasClientRedirectActionBuilder;
@@ -182,6 +182,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@SuppressWarnings("unchecked")
 @Configuration("oidcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
@@ -368,7 +369,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @Bean
     public OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
-        return new OidcCasClientRedirectActionBuilder(oidcAuthorizationRequestSupport());
+        return new OidcCasClientRedirectActionBuilder(oidcRequestSupport());
     }
 
     @Bean
@@ -395,7 +396,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean(name = "oidcCasClientRedirectActionBuilder")
     @RefreshScope
     public OAuth20CasClientRedirectActionBuilder oidcCasClientRedirectActionBuilder() {
-        return new OidcCasClientRedirectActionBuilder(oidcAuthorizationRequestSupport());
+        return new OidcCasClientRedirectActionBuilder(oidcRequestSupport());
     }
 
     @RefreshScope
@@ -415,9 +416,11 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "oidcAuthorizationRequestSupport")
-    public OidcAuthorizationRequestSupport oidcAuthorizationRequestSupport() {
-        return new OidcAuthorizationRequestSupport(ticketGrantingTicketCookieGenerator.getObject(), ticketRegistrySupport.getObject());
+    @ConditionalOnMissingBean(name = "oidcRequestSupport")
+    @RefreshScope
+    public OidcRequestSupport oidcRequestSupport() {
+        return new OidcRequestSupport(ticketGrantingTicketCookieGenerator.getObject(),
+            ticketRegistrySupport.getObject(), oidcIssuerService());
     }
 
     @ConditionalOnMissingBean(name = "oidcPrincipalFactory")
@@ -937,6 +940,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean(name = "oidcConfigurationContext")
     public OidcConfigurationContext oidcConfigurationContext() {
         return (OidcConfigurationContext) OidcConfigurationContext.builder()
+            .oidcRequestSupport(oidcRequestSupport())
             .issuerService(oidcIssuerService())
             .attributeToScopeClaimMapper(oidcAttributeToScopeClaimMapper())
             .applicationContext(applicationContext)

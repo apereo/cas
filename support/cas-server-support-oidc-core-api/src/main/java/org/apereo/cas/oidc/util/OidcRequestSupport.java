@@ -3,9 +3,11 @@ package org.apereo.cas.oidc.util;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.NonNull;
@@ -31,17 +33,19 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link OidcAuthorizationRequestSupport}.
+ * This is {@link OidcRequestSupport}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class OidcAuthorizationRequestSupport {
+public class OidcRequestSupport {
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     private final TicketRegistrySupport ticketRegistrySupport;
+
+    private final OidcIssuerService oidcIssuerService;
 
     /**
      * Gets oidc prompt from authorization request.
@@ -224,4 +228,21 @@ public class OidcAuthorizationRequestSupport {
     }
 
 
+    /**
+     * Is valid issuer for endpoint.
+     *
+     * @param webContext the web context
+     * @param endpoint   the endpoint
+     * @return true /false
+     */
+    public boolean isValidIssuerForEndpoint(final JEEContext webContext, final String endpoint) {
+        val requestUrl = webContext.getNativeRequest().getRequestURL().toString();
+        val issuer = StringUtils.remove(requestUrl, '/' + endpoint);
+        val definedIssuer = this.oidcIssuerService.determineIssuer(Optional.empty());
+        val result = definedIssuer.equalsIgnoreCase(issuer);
+        FunctionUtils.doIf(!result,
+            o -> LOGGER.warn("Server issuer [{}] does not match the request [{}]", o, issuer))
+            .accept(definedIssuer);
+        return result;
+    }
 }
