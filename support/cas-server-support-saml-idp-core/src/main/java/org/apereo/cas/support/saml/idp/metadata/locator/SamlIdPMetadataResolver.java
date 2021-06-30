@@ -45,6 +45,7 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
         this.locator = locator;
         this.generator = generator;
         this.openSamlConfigBean = openSamlConfigBean;
+        setResolveViaPredicatesOnly(true);
     }
 
     /**
@@ -100,7 +101,6 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
             setMetadataRootElement(element);
 
             LOGGER.trace("Initializing metadata resolver [{}]", getClass().getSimpleName());
-            setResolveViaPredicatesOnly(true);
             initialize();
             LOGGER.trace("Resolving metadata for criteria [{}]", criteria);
             return super.resolve(criteria);

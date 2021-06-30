@@ -16,7 +16,7 @@ const jwt = require('jsonwebtoken');
     params += "grant_type=client_credentials&";
     params += "scope=openid";
 
-    let url = 'https://localhost:8443/cas/oidc/token?' + params;
+    let url = 'https://localhost:8443/cas/oidc/oidcToken?' + params;
     console.log("Calling " + url);
     
     instance

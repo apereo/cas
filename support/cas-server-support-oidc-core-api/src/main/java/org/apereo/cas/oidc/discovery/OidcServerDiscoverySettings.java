@@ -1,12 +1,12 @@
 package org.apereo.cas.oidc.discovery;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.support.oauth.OAuth20Constants;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -18,12 +18,10 @@ import java.util.List;
  */
 @Getter
 @Setter
+@RequiredArgsConstructor
 public class OidcServerDiscoverySettings {
     @JsonProperty
     private final String issuer;
-
-    @JsonIgnore
-    private final String serverPrefix;
 
     @JsonProperty("scopes_supported")
     private List<String> scopesSupported;
@@ -82,56 +80,51 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("frontchannel_logout_supported")
     private boolean frontchannelLogoutSupported;
 
-    public OidcServerDiscoverySettings(final CasConfigurationProperties casProperties, final String issuer) {
-        this.issuer = issuer;
-        this.serverPrefix = casProperties.getServer().getPrefix();
-    }
-
     @JsonProperty("authorization_endpoint")
     public String getAuthorizationEndpoint() {
-        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.AUTHORIZE_URL);
+        return StringUtils.appendIfMissing(this.issuer, "/").concat(OidcConstants.AUTHORIZE_URL);
     }
 
     @JsonProperty("token_endpoint")
     public String getTokenEndpoint() {
-        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL);
+        return StringUtils.appendIfMissing(this.issuer, "/").concat(OidcConstants.ACCESS_TOKEN_URL);
     }
 
     @JsonProperty("userinfo_endpoint")
     public String getUserinfoEndpoint() {
-        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.PROFILE_URL);
+        return StringUtils.appendIfMissing(this.issuer, "/").concat(OidcConstants.PROFILE_URL);
     }
 
     @JsonProperty("jwks_uri")
     public String getJwksUri() {
-        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.JWKS_URL);
+        return StringUtils.appendIfMissing(this.issuer, "/").concat(OidcConstants.JWKS_URL);
     }
 
     @JsonProperty("registration_endpoint")
     public String getRegistrationEndpoint() {
-        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REGISTRATION_URL);
+        return StringUtils.appendIfMissing(this.issuer, "/").concat(OidcConstants.REGISTRATION_URL);
     }
 
     @JsonProperty("end_session_endpoint")
     public String getEndSessionEndpoint() {
-        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.LOGOUT_URL);
+        return StringUtils.appendIfMissing(this.issuer, "/").concat(OidcConstants.LOGOUT_URL);
     }
 
     @JsonProperty("introspection_endpoint")
     public String getIntrospectionEndpoint() {
-        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL);
+        return StringUtils.appendIfMissing(this.issuer, "/").concat(OidcConstants.INTROSPECTION_URL);
     }
 
     @JsonProperty("revocation_endpoint")
     public String getRevocationEndpoint() {
-        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REVOCATION_URL);
+        return StringUtils.appendIfMissing(this.issuer, "/").concat(OidcConstants.REVOCATION_URL);
     }
 
     @JsonProperty("backchannel_logout_session_supported")
     public boolean isBackchannelLogoutSessionSupported() {
         return isBackchannelLogoutSupported();
     }
-    
+
     @JsonProperty("frontchannel_logout_session_supported")
     public boolean isFrontchannelLogoutSessionSupported() {
         return isFrontchannelLogoutSupported();

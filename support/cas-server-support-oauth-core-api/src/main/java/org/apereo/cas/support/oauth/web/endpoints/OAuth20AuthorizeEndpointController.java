@@ -40,9 +40,20 @@ import javax.servlet.http.HttpServletResponse;
  * @since 3.5.0
  */
 @Slf4j
-public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller<OAuth20ConfigurationContext> {
-    public OAuth20AuthorizeEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
+public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationContext> extends BaseOAuth20Controller<T> {
+    public OAuth20AuthorizeEndpointController(final T oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
+    }
+
+    /**
+     * Is the request authenticated?
+     *
+     * @param manager the Profile Manager
+     * @return whether the request is authenticated or not
+     */
+    private static boolean isRequestAuthenticated(final ProfileManager manager) {
+        val opt = manager.getProfile();
+        return opt.isPresent();
     }
 
     /**
@@ -131,17 +142,6 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller<OA
      */
     protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
         return OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
-    }
-
-    /**
-     * Is the request authenticated?
-     *
-     * @param manager the Profile Manager
-     * @return whether the request is authenticated or not
-     */
-    private static boolean isRequestAuthenticated(final ProfileManager manager) {
-        val opt = manager.getProfile();
-        return opt.isPresent();
     }
 
     /**
