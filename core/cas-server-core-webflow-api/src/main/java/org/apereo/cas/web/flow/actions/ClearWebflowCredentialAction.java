@@ -35,15 +35,11 @@ public class ClearWebflowCredentialAction extends AbstractAction {
             return null;
         }
 
-        val credential = WebUtils.getCredential(requestContext);
         WebUtils.removeCredential(requestContext);
         if (current.equalsIgnoreCase(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)
             || current.equalsIgnoreCase(CasWebflowConstants.TRANSITION_ID_ERROR)) {
             LOGGER.trace("Current event signaled a failure. Recreating credentials instance from the context");
             WebUtils.createCredential(requestContext);
-            if (credential != null) {
-                WebUtils.putCredentialIntoScope(requestContext.getFlashScope(), credential);
-            }
         }
         return null;
     }
