@@ -347,14 +347,18 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
+        val baseEndpoint = getOidcBaseEndpoint();
         registry.addInterceptor(oauthInterceptor())
             .order(100)
-            .addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
+            .addPathPatterns(baseEndpoint.concat("/*"));
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "oidcProtocolEndpointConfigurer")
+    @RefreshScope
     public ProtocolEndpointConfigurer oidcProtocolEndpointConfigurer() {
-        return () -> List.of(StringUtils.prependIfMissing(OidcConstants.BASE_OIDC_URL, "/"));
+        val baseEndpoint = getOidcBaseEndpoint();
+        return () -> List.of(baseEndpoint);
     }
 
     @Bean
@@ -980,5 +984,11 @@ public class OidcConfiguration implements WebMvcConfigurer {
             .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService())
             .accessTokenJwtBuilder(accessTokenJwtBuilder())
             .build();
+    }
+
+    private String getOidcBaseEndpoint() {
+        val issuer = oidcIssuerService().determineIssuer(Optional.empty());
+        val endpoint = StringUtils.remove(issuer, casProperties.getServer().getPrefix());
+        return StringUtils.prependIfMissing(endpoint, "/");
     }
 }

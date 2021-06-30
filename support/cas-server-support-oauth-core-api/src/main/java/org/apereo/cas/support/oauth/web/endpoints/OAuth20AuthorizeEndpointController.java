@@ -157,7 +157,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
                                                          final OAuthRegisteredService registeredService,
                                                          final JEEContext context,
                                                          final String clientId) {
-        val profile = manager.getProfile().orElseThrow();
+        val profile = manager.getProfile().orElseThrow(() -> new IllegalArgumentException("Unable to locate authentication profile"));
         val service = getConfigurationContext().getAuthenticationBuilder()
             .buildService(registeredService, context, false);
         LOGGER.trace("Created service [{}] based on registered service [{}]", service, registeredService);
