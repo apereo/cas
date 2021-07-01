@@ -11,13 +11,13 @@
 
 <body>
 <main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content" class="banner banner-message mdc-card p-4 m-auto w-lg-66">
+    <div layout:fragment="content" class="banner banner-message mdc-card card p-4 m-auto w-lg-66">
         <h2 th:utext="#{cas.inwebo.selectauthent.heading}">Select your authentication method:</h2>
 
         <form method="POST" id="startBrowserForm">
             <input type="hidden" name="_eventId" value="browser" />
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
-            <button id="browser" name="browser" type="submit" class="mdc-button mdc-button--raised">
+            <button id="browser" name="browser" type="submit" class="mdc-button mdc-button--raised btn btn-primary">
                 <span class="mdc-button__label" th:text="#{cas.inwebo.selectauthent.browser}">Browser authentication</span>
             </button>
         </form>
@@ -25,7 +25,7 @@
         <form method="POST" id="startPushForm">
             <input type="hidden" name="_eventId" value="push" />
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
-            <button id="push" name="push" type="submit" class="mdc-button mdc-button--raised">
+            <button id="push" name="push" type="submit" class="mdc-button mdc-button--raised btn btn-primary">
                 <span class="mdc-button__label" th:text="#{cas.inwebo.selectauthent.push}">Mobile/desktop notification</span>
             </button>
         </form>

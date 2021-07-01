@@ -11,12 +11,12 @@
 
 <body>
     <main role="main" class="container mt-3 mb-3">
-        <div layout:fragment="content" class="mdc-card p-4 m-auto w-lg-66">
+        <div layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
             <h2 th:utext="#{screen.saml.idp.discovery}">SAML Identity Provider Discovery</h2>
 
             <link rel="stylesheet" type="text/css" href="../static/css/samlidp/idpselect.css"
                 th:href="@{/css/samlidp/idpselect.css}" />
-            <div id="errorDiv" class="banner banner-danger" role="alert" style="display:none;"></div>
+            <div id="errorDiv" class="banner banner-danger alert alert-danger" role="alert" style="display:none;"></div>
 
             <div id="idpSelect"></div>
             <script type="text/javascript" th:inline="javascript">

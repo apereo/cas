@@ -12,10 +12,10 @@
 <body>
     <main role="main" class="container mt-3 mb-3">
         <div layout:fragment="content" id="login" class="d-flex justify-content-center">
-            <div class="mdc-card mdc-card-content w-lg-50 p-4">
+            <div class="mdc-card card mdc-card-content w-lg-50 p-4">
                 <h2 class="text-center" th:text="${guaUsername}">guaUsername</h2>
-                <div id="guaInfo" class="banner banner-danger d-flex m-4 p-4" role="alert">
-                    <i class="mdi mdi-alert-octagon"></i>
+                <div id="guaInfo" class="banner banner-danger alert alert-danger d-flex m-4 p-4" role="alert">
+                    <i class="mdi mdi-alert-octagon fas fa-exclamation-circle"></i>
                     <strong th:utext="#{screen.gua.confirm.message}">
                         If you do not recognize this image as yours, do NOT continue.</strong>
                 </div>
@@ -31,7 +31,7 @@
                         <input type="hidden" name="username" th:value="${guaUsername}" />
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
                         <input type="hidden" name="_eventId_submit" value="Continue" />
-                        <button class="mdc-button mdc-button--raised" accesskey="l">
+                        <button class="mdc-button mdc-button--raised btn btn-primary" accesskey="l">
                             <span class="mdc-button__label" th:text="#{screen.button.continue}">Login</span>
                         </button>
                     </form>

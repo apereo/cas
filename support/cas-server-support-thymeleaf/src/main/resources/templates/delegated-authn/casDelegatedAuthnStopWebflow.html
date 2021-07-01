@@ -11,7 +11,7 @@
 
 <body>
     <main role="main" class="container mt-3 mb-3">
-        <div id="content" layout:fragment="content" class="banner banner-danger mdc-card p-4 m-auto w-lg-66 text-justify">
+        <div id="content" layout:fragment="content" class="banner banner-danger alert alert-danger mdc-card card p-4 m-auto w-lg-66 text-justify">
             <div>
                 <h2 th:utext="#{screen.pac4j.unauthz.heading}">Unauthorized Access</h2>
                 <p th:utext="#{screen.pac4j.unauthz.message}">Either the authentication request was rejected/cancelled,
@@ -19,14 +19,14 @@
                     cause of the issue.</p>
 
                 <p>
-                    <i class="mdi mdi-alert mr-2"></i>
+                    <i class="mdi mdi-alert fas fa-exclamation-triangle mr-2"></i>
                     <span th:text="#{${'screen.pac4j.authn.' + rootCauseException.class.simpleName}}">
                         Authentication response provided to CAS by the external identity provider cannot be accepted.</span>
                 </p>
                 
-                <div class="mdc-data-table">
+                <div class="mdc-data-table table-responsive">
                     <table id="errorTable" th:if="${error != null or reason != null or code != null or description != null}"
-                        class="mdc-data-table__table w-100" aria-label="Error information">
+                        class="table table-striped w-100" aria-label="Error information">
                         <thead>
                             <tr class="mdc-data-table__header-row">
                                 <th class="mdc-data-table__header-cell">Error</th>
@@ -54,16 +54,16 @@
             </div>
             <br/>
             <div class="d-flex">
-                <a id="loginLink" class="mdc-button mdc-button--raised mr-2" th:href="@{/login}">
+                <a id="loginLink" class="mdc-button mdc-button--raised btn btn-primary mr-2" th:href="@{/login}">
                     <span class="mdc-button__label" th:text="#{screen.pac4j.unauthz.login}">Back to CAS</span>
                 </a>
-                <a id="appLink" class="mdc-button mdc-button--raised mr-2" th:href="${service}">
+                <a id="appLink" class="mdc-button mdc-button--raised btn btn-primary mr-2" th:href="${service}">
                     <span class="mdc-button__label" th:text="#{screen.pac4j.unauthz.gotoapp}">Goto Application</span>
                 </a>
                 <form method="post" id="fm1">
                     <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                     <input type="hidden" name="_eventId" value="retry"/>
-                    <button id="retryButton" class="mdc-button mdc-button--raised mr-2" name="retry" accesskey="r">
+                    <button id="retryButton" class="mdc-button mdc-button--raised btn btn-primary mr-2" name="retry" accesskey="r">
                         <span class="mdc-button__label" th:text="#{screen.pac4j.button.retry}">Try Again</span>
                     </button>
                 </form>

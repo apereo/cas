@@ -14,14 +14,14 @@
         <div layout:fragment="content" id="reset">
             <div class="row">
                 <div class="col-lg-6 offset-lg-3">
-                    <div class="mdc-card">
+                    <div class="mdc-card card">
                         <form method="post" id="fm1">
                             <section class="p-4">
                                 <h3 th:utext="#{screen.pm.forgotusername.title}">Forgot your username?</h3>
                                 <div th:utext="#{screen.pm.forgotusername.instructions}" class="my-4">Please provide
                                     your email address. You will receive an email with your username.</div>
 
-                                <div class="banner banner-danger alert-dismissible mb-4"
+                                <div class="banner banner-danger alert alert-danger alert-dismissible mb-4"
                                     th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
                                     <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
                                         th:utext="${message.text}">Message Text
@@ -31,37 +31,36 @@
                                 <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
                                 <input type="hidden" name="_eventId" value="findUsername" />
                                 <div class="d-flex">
-                                    <label for="email" class="mdc-text-field mdc-text-field--outlined">
-                                        <input class="mdc-text-field__input"
+                                    <label for="email" class="mdc-text-field mdc-text-field--outlined control-label">
+                                        <span class="mdc-notched-outline">
+                                            <span class="mdc-notched-outline__leading"></span>
+                                            <span class="mdc-notched-outline__notch">
+                                                <span class="mdc-floating-label" th:utext="#{screen.pm.reset.email}">Email</span>
+                                            </span>
+                                            <span class="mdc-notched-outline__trailing"></span>
+                                        </span>
+                                        <input class="mdc-text-field__input form-control"
                                                type="text"
                                                name="email"
                                                id="email"
                                                size="45"
                                                autocomplete="off" required />
-
-                                        <span class="mdc-notched-outline">
-                                            <span class="mdc-notched-outline__leading"></span>
-                                            <span class="mdc-notched-outline__notch">
-                                              <span class="mdc-floating-label" th:utext="#{screen.pm.reset.email}">Email</span>
-                                            </span>
-                                            <span class="mdc-notched-outline__trailing"></span>
-                                        </span>
                                     </label>
 
                                 </div>
                             </section>
 
-                            <span class="mdc-card__actions p-4" th:if="${recaptchaForgotUsernameEnabled}">
+                            <span class="mdc-card__actions_actions p-4" th:if="${recaptchaForgotUsernameEnabled}">
                                 <div th:replace="fragments/recaptcha :: recaptchaToken" />
                             </span>
 
-                            <div class="mdc-card__actions p-4">
+                            <div class="mdc-card__actions_actions p-4">
                                 <button
-                                    class="mdc-button mdc-button--raised mdc-card__action mdc-card__action--button mr-2"
+                                    class="mdc-button mdc-button--raised btn btn-primary mdc-card__actions_action mdc-card__actions_action--button mr-2"
                                     accesskey="s" th:value="#{screen.pm.button.submit}" type="submit" value="SUBMIT">
                                     <span class="mdc-button__label" th:text="#{screen.pm.button.submit}">Submit</span>
                                 </button>
-                                <button class="mdc-button mdc-button--outlined mdc-card__action mdc-card__action--button"
+                                <button class="mdc-button mdc-button--outline btn btn-outline-secondary mdc-card__actions_action mdc-card__actions_action--button"
                                     name="cancel" accesskey="c" th:value="#{screen.pm.button.cancel}" type="button"
                                     onclick="location.href = location.href;" value="CANCEL">
                                     <span class="mdc-button__label" th:text="#{screen.pm.button.cancel}">CANCEL</span>

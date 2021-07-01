@@ -12,15 +12,22 @@
 <body>
     <main role="main" class="container mt-3 mb-3">
         <div layout:fragment="content" id="login" class="d-flex justify-content-center">
-            <div class="mdc-card mdc-card-content w-lg-50 p-4">
+            <div class="mdc-card card mdc-card-content w-lg-50 p-4">
                 <form method="post" id="fm1" th:action="@{/login}">
                     <input type="hidden" name="_eventId_submit" value="LOGIN" />
                     <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
-                    <div class="cas-field my-3">
+                    <div class="cas-field form-group my-3">
                         <div class="w-100">
 
-                            <label for="username" class="mdc-text-field mdc-text-field--outlined">
-                                <input class="mdc-text-field__input"
+                            <label for="username" class="mdc-text-field mdc-text-field--outlined control-label">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label" th:utext="#{screen.welcome.label.netid}">Username</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control"
                                        name="username"
                                        id="username"
                                        size="25"
@@ -28,19 +35,11 @@
                                        autocapitalize="none"
                                        spellcheck="false"
                                        autocomplete="username" required />
-
-                                <span class="mdc-notched-outline">
-                                    <span class="mdc-notched-outline__leading"></span>
-                                    <span class="mdc-notched-outline__notch">
-                                      <span class="mdc-floating-label" th:utext="#{screen.welcome.label.netid}">Username</span>
-                                    </span>
-                                    <span class="mdc-notched-outline__trailing"></span>
-                                </span>
                             </label>
 
                         </div>
                     </div>
-                    <button class="mdc-button mdc-button--raised" accesskey="l" type="submit">
+                    <button class="mdc-button mdc-button--raised btn btn-primary" accesskey="l" type="submit">
                         <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
                     </button>
 

@@ -9,7 +9,7 @@
 
    <body>
       <main role="main" class="container mt-3 mb-3">
-         <div layout:fragment="content" class="loginMessageView mdc-card p-4 w-lg-66 m-auto">
+         <div layout:fragment="content" class="loginMessageView mdc-card card p-4 w-lg-66 m-auto">
             <h1 class="m-0" th:text="#{screen.authentication.warning}">Authentication Succeeded with Warnings</h1>
             <ul class="mdc-list">
                <li class="mdc-list-item text-warn" tabindex="0" th:each="message : ${messages}">
@@ -17,11 +17,11 @@
                   adipiscing elit.</span>
                </li>
             </ul>
-            <div class="cas-field d-flex">
+            <div class="cas-field form-group d-flex">
                <form method="post" id="form" class="mr-2" th:action="@{/login}">
                   <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
                   <input type="hidden" name="_eventId" value="proceed" />
-                  <button class="mdc-button mdc-button--raised mdc-card__action mdc-card__action--button"
+                  <button class="mdc-button mdc-button--raised mdc-card__action mdc-card__action--button btn btn-primary"
                      type="submit" name="continue" accesskey="l" th:value="#{screen.button.continue}" value="Continue">
                      <span class="mdc-button__label" th:text="#{screen.button.continue}">Continue</span>
                   </button>
@@ -31,7 +31,7 @@
                   th:if="${passwordManagementEnabled} AND ${passwordExpirationWarningFound}">
                   <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
                   <input type="hidden" name="_eventId" value="changePassword" />
-                  <button class="mdc-button mdc-button--raised mdc-card__action mdc-card__action--button"
+                  <button class="mdc-button mdc-button--raised btn btn-primary mdc-card__actions_action mdc-card__actions_action--button"
                      name="changePassword" accesskey="l" th:value="#{screen.button.changePassword}"
                      id="changePassword" value="Change Password">
                   <span class="mdc-button__label" th:text="#{screen.button.changePassword}">Change Password</span>

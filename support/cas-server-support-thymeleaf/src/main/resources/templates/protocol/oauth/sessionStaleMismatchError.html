@@ -6,7 +6,7 @@
 </head>
 
 <body id="cas">
-    <div layout:fragment="content" class="banner banner-danger mdc-card p-4 m-auto w-lg-66 text-justify">
+    <div layout:fragment="content" class="banner banner-danger alert alert-danger mdc-card card p-4 m-auto w-lg-66 text-justify">
         <h2 th:utext="#{cas.oauth.error.header}">Unable to Proceed</h2>
         <p th:if="${rootCauseException != null and rootCauseException.code != null}"
             th:utext="#{${rootCauseException.code}}">
