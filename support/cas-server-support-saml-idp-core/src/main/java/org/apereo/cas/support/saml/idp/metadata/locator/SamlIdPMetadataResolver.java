@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
@@ -27,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link SamlIdPMetadataResolver}.
@@ -59,9 +59,10 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
 
         setResolveViaPredicatesOnly(true);
 
+        val idp = casProperties.getAuthn().getSamlIdp();
         this.metadataCache = Caffeine.newBuilder()
             .maximumSize(1_000)
-            .expireAfterWrite(1, TimeUnit.DAYS)
+            .expireAfterAccess(Beans.newDuration(idp.getMetadata().getCore().getCacheExpiration()))
             .build();
     }
 
