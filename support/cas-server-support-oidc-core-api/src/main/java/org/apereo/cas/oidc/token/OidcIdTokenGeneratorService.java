@@ -97,7 +97,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
 
         val claims = new JwtClaims();
 
-        val jwtId = getJwtId(accessToken.getTicketGrantingTicket());
+        val tgt = accessToken.getTicketGrantingTicket();
+        val jwtId = getJwtId(tgt);
         claims.setJwtId(jwtId);
         claims.setClaim(OidcConstants.CLAIM_SESSIOND_ID, DigestUtils.sha(jwtId));
 
@@ -124,7 +125,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         }
 
         claims.setStringClaim(OAuth20Constants.CLIENT_ID, service.getClientId());
-        claims.setClaim(OidcConstants.CLAIM_AUTH_TIME, accessToken.getAuthentication().getAuthenticationDate().toEpochSecond());
+        claims.setClaim(OidcConstants.CLAIM_AUTH_TIME, tgt.getAuthentication().getAuthenticationDate().toEpochSecond());
 
         if (attributes.containsKey(OAuth20Constants.STATE)) {
             claims.setClaim(OAuth20Constants.STATE, attributes.get(OAuth20Constants.STATE).get(0));
