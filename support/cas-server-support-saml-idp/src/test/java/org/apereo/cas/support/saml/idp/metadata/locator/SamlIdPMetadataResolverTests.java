@@ -11,6 +11,8 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.criterion.EntityIdCriterion;
+import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
+import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.test.context.TestPropertySource;
@@ -44,6 +46,15 @@ public class SamlIdPMetadataResolverTests extends BaseSamlIdPConfigurationTests 
         assertEquals(Iterables.size(result1), Iterables.size(result2));
     }
 
+    @RepeatedTest(2)
+    public void verifyOperationWithoutEntityId() throws Exception {
+        val criteria = new CriteriaSet(new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME));
+        val result1 = casSamlIdPMetadataResolver.resolve(criteria);
+        assertFalse(Iterables.isEmpty(result1));
+        assertEquals(casProperties.getAuthn().getSamlIdp().getCore().getEntityId(),
+            Iterables.getFirst(result1, null).getEntityID());
+    }
+
     @Test
     public void verifyOperationWithService() throws Exception {
         val criteria = new CriteriaSet(
@@ -54,10 +65,9 @@ public class SamlIdPMetadataResolverTests extends BaseSamlIdPConfigurationTests 
         when(locator.shouldGenerateMetadataFor(any())).thenReturn(true);
         when(locator.exists(any())).thenReturn(false);
         when(locator.resolveMetadata(any())).thenReturn(new ByteArrayResource(ArrayUtils.EMPTY_BYTE_ARRAY));
-        val resolver = new SamlIdPMetadataResolver(locator, mock(SamlIdPMetadataGenerator.class), openSamlConfigBean);
+        val resolver = new SamlIdPMetadataResolver(locator, mock(SamlIdPMetadataGenerator.class), openSamlConfigBean, casProperties);
         val result1 = resolver.resolve(criteria);
         assertTrue(Iterables.isEmpty(result1));
-
     }
 
     @RepeatedTest(2)
@@ -65,12 +75,5 @@ public class SamlIdPMetadataResolverTests extends BaseSamlIdPConfigurationTests 
         val criteria = new CriteriaSet(new EntityIdCriterion("https://example.com"));
         val result = casSamlIdPMetadataResolver.resolve(criteria);
         assertTrue(Iterables.isEmpty(result));
-    }
-
-    @RepeatedTest(2)
-    public void verifyOperationFail() {
-        val criteria = mock(CriteriaSet.class);
-        when(criteria.get(any())).thenThrow(IllegalArgumentException.class);
-        assertThrows(IllegalArgumentException.class, () -> casSamlIdPMetadataResolver.resolve(criteria));
     }
 }

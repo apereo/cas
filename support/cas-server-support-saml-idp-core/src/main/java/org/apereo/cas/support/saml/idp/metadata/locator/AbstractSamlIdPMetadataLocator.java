@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 
@@ -40,7 +41,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
     private final Cache<String, SamlIdPMetadataDocument> metadataCache;
 
     private static Resource getResource(final String data) {
-        return new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8));
+        return new ByteArrayResource(StringUtils.defaultString(data).getBytes(StandardCharsets.UTF_8));
     }
 
     private static String buildCacheKey(final Optional<SamlRegisteredService> registeredService) {
