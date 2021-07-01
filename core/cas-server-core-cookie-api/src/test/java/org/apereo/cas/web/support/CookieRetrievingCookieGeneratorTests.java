@@ -10,6 +10,9 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.mock.web.MockCookie;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -135,5 +138,76 @@ public class CookieRetrievingCookieGeneratorTests {
         val cookie = response.getCookie(ctx.getName());
         assertNotNull(cookie);
         assertEquals(ctx.getRememberMeMaxAge(), cookie.getMaxAge());
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 13_0_0 like Mac OS X) AppleWebKit/604.1.28 (KHTML, like Gecko) Version/13.0.0 Mobile/14A403 Safari/604.1.28",
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 13_4_5 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) FxiOS/1.0 Mobile/12F69 Safari/600.1.4",
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0_0 like Mac OS X) AppleWebKit/604.1.28 (KHTML, like Gecko) Version/11.0.0 Mobile/14A403 Safari/604.1.28",
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 11_4_5 like Mac OS X) AppleWebKit/604.1.28 (KHTML, like Gecko) CriOS/60.0.0.0 Mobile/14E5239e Safari/602.1",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_4) AppleWebKit/604.1.28 (KHTML, like Gecko) Version/11.4.0 Safari/604.1.28",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13) AppleWebKit/604.1.28 (KHTML, like Gecko) Version/10.13.1 Safari/604.1.28",
+            "Mozilla/5.0 (Windows NT 6.4) AppleWebKit/537.36.0 (KHTML, like Gecko) Chrome/50.0.0.0 Safari/537.36.0",
+            "Mozilla/5.0 (Windows NT 6.4) AppleWebKit/537.36.0 (KHTML, like Gecko) Chrome/67.0.8.15 Safari/537.36.0",
+            "Mozilla/5.0 (Windows NT 6.4) AppleWebKit/537.36.0 (KHTML, like Gecko) Chrome/91.0.0.0 Safari/537.36.0",
+            "Mozilla/5.0 (Linux; Android 7.0.0; Pixel Build/Unknown; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/50.0.0.0 Mobile Safari/537.36",
+            "Mozilla/5.0 (Linux; Android 8.0.0; Pixel Build/Unknown; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/67.0.0.0 Mobile Safari/537.36",
+            "Mozilla/5.0 (Linux; Android 9.0.0; Pixel Build/Unknown; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/91.0.0.0 Mobile Safari/537.36"
+    })
+    public void verifyCookieSameSiteNoneWithCompatibleUserAgent(String userAgent) {
+        val ctx = getCookieGenerationContext();
+        ctx.setSameSitePolicy("none");
+
+        val gen = new CookieRetrievingCookieGenerator(ctx);
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        // Header value must not be null
+        if (userAgent != null) {
+            request.addHeader("User-Agent", userAgent);
+        }
+
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        gen.addCookie(request, response, false, "CAS-Cookie-Value");
+        val cookie = (MockCookie) response.getCookie(ctx.getName());
+        assertNotNull(cookie);
+        assertEquals("None", cookie.getSameSite());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            // iOS 12 will treat None as Strict for all browsers
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 12_0_0 like Mac OS X) AppleWebKit/604.1.28 (KHTML, like Gecko) Version/12.0.0 Mobile/14A403 Safari/604.1.28",
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 12_0_1 like Mac OS X) AppleWebKit/604.1.28 (KHTML, like Gecko) Version/12.0.1 Mobile/14A403 Safari/604.1.28",
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 12_4_5 like Mac OS X) AppleWebKit/604.1.28 (KHTML, like Gecko) CriOS/60.0.0.0 Mobile/14E5239e Safari/602.1",
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 12_4_5 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) FxiOS/1.0 Mobile/12F69 Safari/600.1.4",
+            // MacOS 10.14 will treat None as Strict
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14) AppleWebKit/604.1.28 (KHTML, like Gecko) Version/10.14.0 Safari/604.1.28",
+            // Chrome version >= 51 <=66 will reject cookie with SameSite=None
+            "Mozilla/5.0 (Windows NT 6.4) AppleWebKit/537.36.0 (KHTML, like Gecko) Chrome/51.0.0.0 Safari/537.36.0",
+            "Mozilla/5.0 (Windows NT 6.4) AppleWebKit/537.36.0 (KHTML, like Gecko) Chrome/52.0.8.15 Safari/537.36.0",
+            "Mozilla/5.0 (Windows NT 6.4) AppleWebKit/537.36.0 (KHTML, like Gecko) Chrome/66.0.0.0 Safari/537.36.0",
+            // Android webview uses Chrome an will also reject cookie with SameSite=None for chrome version >= 51 <=66
+            "Mozilla/5.0 (Linux; Android 6.0.0; Pixel Build/Unknown; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/51.0.0.0 Mobile Safari/537.36",
+            "Mozilla/5.0 (Linux; Android 6.0.0; Pixel Build/Unknown; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/60.0.0.0 Mobile Safari/537.36",
+            "Mozilla/5.0 (Linux; Android 6.0.0; Pixel Build/Unknown; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.0.0 Mobile Safari/537.36",
+    })
+    public void verifyCookieSameSiteNoneWithIncompatibleUserAgent(String userAgent) {
+        val ctx = getCookieGenerationContext();
+        ctx.setSameSitePolicy("none");
+
+        val gen = new CookieRetrievingCookieGenerator(ctx);
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        request.addHeader("User-Agent", userAgent);
+
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        gen.addCookie(request, response, false, "CAS-Cookie-Value");
+        val cookie = (MockCookie) response.getCookie(ctx.getName());
+        assertNotNull(cookie);
+        assertNull(cookie.getSameSite());
     }
 }
