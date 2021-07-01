@@ -34,7 +34,6 @@ import org.springframework.web.servlet.view.RedirectView;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,21 +56,8 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     @Qualifier("authorizeController")
     private OAuth20AuthorizeEndpointController oAuth20AuthorizeEndpointController;
 
-    protected static OAuthRegisteredService getRegisteredService(final String serviceId, final String name) {
-        val service = new OAuthRegisteredService();
-        service.setName(name);
-        service.setServiceId(serviceId);
-        service.setClientId(CLIENT_ID);
-        service.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(List.of(FIRST_NAME_ATTRIBUTE)));
-        return service;
-    }
-
-    private static void assertEqualsWithDelta(final long expected, final long actual, final long delta) {
-        assertTrue(Math.abs(expected - actual) <= delta);
-    }
-
     @Test
-    public void verifyNoClientId() {
+    public void verifyNoClientId() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         val mockResponse = new MockHttpServletResponse();
@@ -79,26 +65,26 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     }
 
     @Test
-    public void verifyNoRedirectUri() {
+    public void verifyNoRedirectUri() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         val mockResponse = new MockHttpServletResponse();
 
-        assertThrows(NoSuchElementException.class, () -> oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse));
+        assertThrows(IllegalArgumentException.class, () -> oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse));
     }
 
     @Test
-    public void verifyNoResponseType() {
+    public void verifyNoResponseType() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         val mockResponse = new MockHttpServletResponse();
-        assertThrows(IllegalArgumentException.class,
-            () -> oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse));
+
+        assertThrows(IllegalArgumentException.class, () -> oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse));
     }
 
     @Test
-    public void verifyBadResponseType() {
+    public void verifyBadResponseType() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -117,7 +103,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     }
 
     @Test
-    public void verifyNoCasService() {
+    public void verifyNoCasService() throws Exception {
         clearAllServices();
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
@@ -128,7 +114,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     }
 
     @Test
-    public void verifyRedirectUriDoesNotStartWithServiceId() {
+    public void verifyRedirectUriDoesNotStartWithServiceId() throws Exception {
         clearAllServices();
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
@@ -136,12 +122,11 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val mockResponse = new MockHttpServletResponse();
 
         this.servicesManager.save(getRegisteredService(OTHER_REDIRECT_URI, CLIENT_ID));
-
-        assertThrows(NoSuchElementException.class, () -> oAuth20AuthorizeEndpointController.handleRequestPost(mockRequest, mockResponse));
+        assertThrows(IllegalArgumentException.class, () -> oAuth20AuthorizeEndpointController.handleRequestPost(mockRequest, mockResponse));
     }
 
     @Test
-    public void verifyCodeNoProfile() {
+    public void verifyCodeNoProfile() throws Exception {
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
@@ -160,11 +145,11 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val session = new MockHttpSession();
         mockRequest.setSession(session);
 
-        assertThrows(NoSuchElementException.class, () -> oAuth20AuthorizeEndpointController.handleRequestPost(mockRequest, mockResponse));
+        assertThrows(IllegalArgumentException.class, () -> oAuth20AuthorizeEndpointController.handleRequestPost(mockRequest, mockResponse));
     }
 
     @Test
-    public void verifyMissingTicketGrantingTicket() {
+    public void verifyMissingTicketGrantingTicket() throws Exception {
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
@@ -195,7 +180,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     }
 
     @Test
-    public void verifyServiceAccessDenied() {
+    public void verifyServiceAccessDenied() throws Exception {
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
@@ -230,7 +215,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     }
 
     @Test
-    public void verifyCodeRedirectToClient() {
+    public void verifyCodeRedirectToClient() throws Exception {
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
@@ -290,7 +275,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     }
 
     @Test
-    public void verifyTokenRedirectToClient() {
+    public void verifyTokenRedirectToClient() throws Exception {
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
@@ -348,7 +333,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     }
 
     @Test
-    public void verifyPerServiceExpiration() {
+    public void verifyPerServiceExpiration() throws Exception {
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
@@ -401,14 +386,14 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         assertEqualsWithDelta(Long.parseLong(expirationPolicy.getMaxTimeToLive()),
             jwt.getExpirationTime().getValue() - jwt.getIssuedAt().getValue(),
             DELTA
-        );
+                             );
 
         val expiresIn = StringUtils.substringAfter(redirectUrl, "&expires_in=");
         assertEquals(expirationPolicy.getMaxTimeToLive(), expiresIn);
     }
 
     @Test
-    public void verifyCodeRedirectToClientWithState() {
+    public void verifyCodeRedirectToClientWithState() throws Exception {
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
@@ -461,7 +446,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     }
 
     @Test
-    public void verifyTokenRedirectToClientWithState() {
+    public void verifyTokenRedirectToClientWithState() throws Exception {
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
@@ -516,7 +501,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     }
 
     @Test
-    public void verifyCodeRedirectToClientApproved() {
+    public void verifyCodeRedirectToClientApproved() throws Exception {
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
@@ -568,7 +553,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     }
 
     @Test
-    public void verifyTokenRedirectToClientApproved() {
+    public void verifyTokenRedirectToClientApproved() throws Exception {
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
@@ -620,7 +605,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     }
 
     @Test
-    public void verifyRedirectToApproval() {
+    public void verifyRedirectToApproval() throws Exception {
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT
@@ -661,7 +646,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     }
 
     @Test
-    public void verifyTokenRedirectToClientApprovedWithJwtToken() {
+    public void verifyTokenRedirectToClientApprovedWithJwtToken() throws Exception {
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
@@ -721,9 +706,22 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
     }
 
+    protected static OAuthRegisteredService getRegisteredService(final String serviceId, final String name) {
+        val service = new OAuthRegisteredService();
+        service.setName(name);
+        service.setServiceId(serviceId);
+        service.setClientId(CLIENT_ID);
+        service.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(List.of(FIRST_NAME_ATTRIBUTE)));
+        return service;
+    }
+
     @Override
     protected void clearAllServices() {
         val col = this.servicesManager.getAllServices();
         col.forEach(r -> this.servicesManager.delete(r.getId()));
+    }
+
+    private static void assertEqualsWithDelta(final long expected, final long actual, final long delta) {
+        assertTrue(Math.abs(expected - actual) <= delta);
     }
 }
