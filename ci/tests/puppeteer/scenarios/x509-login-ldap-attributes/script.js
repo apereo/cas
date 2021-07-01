@@ -5,6 +5,19 @@ const fs = require('fs');
 const request = require('request');
 
 (async () => {
+    const browserldap = await puppeteer.launch(cas.browserOptions());
+    const pageldap = await cas.newPage(browserldap);
+    await pageldap.goto("https://localhost:8443/cas/login");
+    await cas.loginWith(pageldap, "aburr", "P@ssw0rd");
+    await cas.assertTicketGrantingCookie(pageldap);
+    const headerldap = await cas.innerText(pageldap, '#content div h2');
+    assert(headerldap === "Log In Successful")
+    const attributesldap = await cas.innerText(pageldap, '#attribute-tab-0 table#attributesTable tbody');
+    assert(attributesldap.includes("aburr"))
+    assert(attributesldap.includes("someattribute"))
+    assert(attributesldap.includes("ldap-dn"))
+    await browserldap.close();
+
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
@@ -56,6 +69,8 @@ const request = require('request');
 
     const attributes = await cas.innerText(page, '#attribute-tab-0 table#attributesTable tbody');
     assert(attributes.includes("casuserx509"))
+    assert(attributes.includes("someattribute"))
+    assert(attributes.includes("user-account-control"))
 
     await browser.close();
 })();
