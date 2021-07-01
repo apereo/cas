@@ -13,13 +13,13 @@ import org.springframework.context.ApplicationContext;
 import java.util.Optional;
 
 /**
- * This is {@link OidcServiceJsonWebKeystoreCacheLoader}.
+ * This is {@link OidcRegisteredServiceJsonWebKeystoreCacheLoader}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @RequiredArgsConstructor
-public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OAuthRegisteredService, Optional<PublicJsonWebKey>> {
+public class OidcRegisteredServiceJsonWebKeystoreCacheLoader implements CacheLoader<OAuthRegisteredService, Optional<PublicJsonWebKey>> {
     private final ApplicationContext applicationContext;
 
     @Override

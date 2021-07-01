@@ -1,6 +1,8 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -47,6 +49,26 @@ public class DefaultCasDelegatingWebflowEventResolverTests extends BaseCasWebflo
 
         val event = initialAuthenticationAttemptWebflowEventResolver.resolveSingle(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, event.getId());
+    }
+
+    @Test
+    public void verifyAuthFails() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+
+        val id = UUID.randomUUID().toString();
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService(id));
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(id);
+        servicesManager.save(registeredService);
+        WebUtils.putCredential(context, RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword(id));
+        val event = initialAuthenticationAttemptWebflowEventResolver.resolveSingle(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, event.getId());
+        assertTrue(event.getAttributes().contains(Credential.class.getName()));
+        assertTrue(event.getAttributes().contains(WebApplicationService.class.getName()));
     }
 
     @Test

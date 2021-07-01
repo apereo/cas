@@ -91,7 +91,8 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      * @return the registered service
      * @throws Exception the exception
      */
-    @Operation(summary = "Fetch service either by numeric id or service id pattern", parameters = {@Parameter(name = "id")})
+    @Operation(summary = "Fetch service either by numeric id or service id pattern",
+        parameters = {@Parameter(name = "id", required = true)})
     @GetMapping(path = "{id}", produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<String> fetchService(@PathVariable final String id) throws Exception {
         val service = NumberUtils.isDigits(id)
@@ -110,7 +111,7 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      * @return the registered service
      * @throws Exception the exception
      */
-    @Operation(summary = "Delete registered service by id", parameters = {@Parameter(name = "id")})
+    @Operation(summary = "Delete registered service by id", parameters = {@Parameter(name = "id", required = true)})
     @DeleteMapping(path = "{id}", produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<String> deleteService(@PathVariable final String id) throws Exception {
         if (NumberUtils.isDigits(id)) {
@@ -140,7 +141,8 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
         ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml",
         MediaType.APPLICATION_JSON_VALUE
     })
-    @Operation(summary = "Import registered services as a JSON document or a zip file")
+    @Operation(summary = "Import registered services as a JSON document or a zip file",
+        parameters = {@Parameter(name = "request", required = true)})
     public ResponseEntity<RegisteredService> importService(final HttpServletRequest request) throws Exception {
         val contentType = request.getContentType();
         if (StringUtils.equalsAnyIgnoreCase(MediaType.APPLICATION_OCTET_STREAM_VALUE, contentType)) {

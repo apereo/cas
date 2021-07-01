@@ -75,9 +75,9 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
      */
     @ReadOperation
     @Operation(summary = "Handle validation request and produce saml1 payload.", parameters = {
-        @Parameter(name = "username"),
-        @Parameter(name = "password"),
-        @Parameter(name = "service")
+        @Parameter(name = "username", required = true),
+        @Parameter(name = "password", required = true),
+        @Parameter(name = "service", required = true)
     })
     public Map<String, Object> handle(final String username, final String password, final String service) {
         val credential = new UsernamePasswordCredential(username, password);

@@ -1,10 +1,13 @@
 package org.apereo.cas.oidc.token;
 
+import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.PublicJsonWebKey;
@@ -21,6 +24,7 @@ import java.util.Optional;
  */
 @Getter
 @RequiredArgsConstructor
+@Slf4j
 public class OidcJwtAccessTokenCipherExecutor extends BaseStringCipherExecutor {
     /**
      * The default keystore for OIDC tokens.
@@ -30,7 +34,7 @@ public class OidcJwtAccessTokenCipherExecutor extends BaseStringCipherExecutor {
     /**
      * OIDC issuer.
      */
-    protected final String issuer;
+    protected final OidcIssuerService oidcIssuerService;
 
     @Override
     public String getName() {
@@ -62,6 +66,8 @@ public class OidcJwtAccessTokenCipherExecutor extends BaseStringCipherExecutor {
     }
 
     private Optional<PublicJsonWebKey> getPublicJsonWebKey() {
-        return Objects.requireNonNull(defaultJsonWebKeystoreCache.get(this.issuer));
+        val issuer = oidcIssuerService.determineIssuer(Optional.empty());
+        LOGGER.trace("Determined issuer [{}] to fetch the public JSON web key", issuer);
+        return Objects.requireNonNull(defaultJsonWebKeystoreCache.get(issuer));
     }
 }

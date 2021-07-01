@@ -15,6 +15,7 @@ import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -46,6 +47,10 @@ public class TokenCoreConfiguration {
     @Autowired
     @Qualifier("webApplicationServiceFactory")
     private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
+
+    @Autowired
+    @Qualifier("authenticationAttributeReleasePolicy")
+    private ObjectProvider<AuthenticationAttributeReleasePolicy> authenticationAttributeReleasePolicy;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -91,7 +96,7 @@ public class TokenCoreConfiguration {
     @ConditionalOnMissingBean(name = "tokenTicketValidator")
     public TicketValidator tokenTicketValidator() {
         return new InternalTicketValidator(centralAuthenticationService.getObject(),
-            webApplicationServiceFactory.getObject());
+            webApplicationServiceFactory.getObject(), authenticationAttributeReleasePolicy.getObject(), servicesManager.getObject());
     }
 
     @RefreshScope

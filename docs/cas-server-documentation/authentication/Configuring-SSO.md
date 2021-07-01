@@ -27,14 +27,11 @@ to appropriate decrypt and encrypt the cookie value and will prevent successful 
 current collection of active SSO sessions,
 and determine if CAS itself maintains an active SSO session. See <a href="../monitoring/Monitoring-Statistics.html">this page</a>.</p></div>
 
-## Administrative Endpoints
+## Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `ssoSessions`                 | Review the current single sign-on sessions established with CAS and manage each session remotely. A `GET` operation produces a list of current SSO sessions that are filtered by a provided `type` parameter with values `ALL`, `PROXIED` or `DIRECT`. A `DELETE` operation without specifying a ticket id will attempt to destroy all SSO sessions. Specifying a ticket-granting ticket identifier in the URL as a placeholder/selector will attempt to destroy the session controlled by that ticket. (i.e. `ssoSessions/{ticket}`). A `DELETE` operation with a `username` parameter will destroy all SSO sessions for the given user. A `DELETE` operation with a `type` parameter will destroy SSO sessions of the given type.
-| `sso`                         | Indicate the current status of the single sign-on session tied to the browser session and the SSO cookie. 
+
+{% include actuators.html endpoints="ssoSessions,sso" casModule="cas-server-support-reports" %}
 
 ## Configuration
 

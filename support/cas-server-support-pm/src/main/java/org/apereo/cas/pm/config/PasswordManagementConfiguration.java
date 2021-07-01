@@ -95,7 +95,7 @@ public class PasswordManagementConfiguration implements InitializingBean {
         return new AmnesiacPasswordHistoryService();
     }
 
-    @ConditionalOnMissingBean(name = "passwordChangeService")
+    @ConditionalOnMissingBean(name = PasswordManagementService.DEFAULT_BEAN_NAME)
     @RefreshScope
     @Bean
     public PasswordManagementService passwordChangeService() {

@@ -14,8 +14,8 @@ import java.io.Serializable;
  * This is {@link OpenIdProperties}.
  *
  * @author Misagh Moayyed
- * @deprecated 6.2
  * @since 5.0.0
+ * @deprecated 6.2
  */
 @RequiresModule(name = "cas-server-support-openid-webflow")
 @Getter

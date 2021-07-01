@@ -21,14 +21,11 @@ Duo offers several options for authenticating users:
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-duo" %}
 
 
-## Administrative Endpoints
-
+## Actuator Endpoints
+      
 The following endpoints are provided by CAS:
- 
-| Endpoint     | Description
-|--------------|-----------------------------------------------------------------------------------------------------------
-| `duoPing`    | Pings the Duo Security API to check for service availability. Can accept an optional `providerId` parameter. 
-| `duoAccountStatus/${username}`    | Fetch the account status for the requested username. Can accept an optional `providerId` parameter. 
+
+{% include actuators.html endpoints="duoPing,duoAccountStatus"  %}
 
 ## Multiple Instances
 

@@ -66,7 +66,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
      * @return the collection
      */
     @GetMapping(path = "{principal}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get consent decisions for principal", parameters = {@Parameter(name = "principal")})
+    @Operation(summary = "Get consent decisions for principal", parameters = {@Parameter(name = "principal", required = true)})
     public Collection<Map<String, Object>> consentDecisions(@PathVariable final String principal) {
         val result = new HashSet<Map<String, Object>>();
         LOGGER.debug("Fetching consent decisions for principal [{}]", principal);
@@ -114,7 +114,8 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
      * @throws Exception the exception
      */
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Import a consent decision as a JSON document")
+    @Operation(summary = "Import a consent decision as a JSON document",
+        parameters = {@Parameter(name = "request", required = true)})
     public HttpStatus importAccount(final HttpServletRequest request) throws Exception {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.trace("Submitted account: [{}]", requestBody);
@@ -134,7 +135,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
      */
     @DeleteMapping(path = "{principal}/{decisionId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Delete a consent decision for principal using a decision id",
-        parameters = {@Parameter(name = "principal"), @Parameter(name = "decisionId")})
+        parameters = {@Parameter(name = "principal"), @Parameter(name = "decisionId", required = true)})
     public boolean revokeConsents(@PathVariable final String principal,
                                   @PathVariable final long decisionId) {
         LOGGER.debug("Deleting consent decisions for principal [{}].", principal);

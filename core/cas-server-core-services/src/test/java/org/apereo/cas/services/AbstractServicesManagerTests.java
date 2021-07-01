@@ -3,9 +3,12 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.util.RandomUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
@@ -16,6 +19,8 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -26,6 +31,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     private static final String TEST = "test";
 
@@ -141,6 +147,42 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         r.setExpirationPolicy(expirationPolicy);
         servicesManager.save(r);
         assertNull(servicesManager.findServiceBy(serviceFactory.createService(r.getServiceId())));
+    }
+
+    /**
+     * Attempts to make sure service lookup operations
+     * are valid based on the existing cache, specially if load
+     * takes a long time.
+     *
+     * @throws Exception in case threads cannot be started or joined.
+     */
+    @Test
+    public void verifyServiceCanBeFoundDuringLoadWithoutCacheInvalidation() throws Exception {
+        val service = new RegexRegisteredService();
+        service.setId(RandomUtils.nextLong());
+        service.setName(UUID.randomUUID().toString());
+        service.setServiceId("https://test.edu.*");
+        assertFalse(isServiceInCache(null, service.getId()));
+        serviceRegistry.save(service);
+        servicesManager.load();
+        assertNotNull(servicesManager.findServiceBy(service.getId()));
+        assertTrue(isServiceInCache(null, service.getId()));
+
+        val loadingThread = new Thread(Unchecked.runnable(() -> {
+            LOGGER.debug("Loading services manager...");
+            Thread.sleep(1000);
+            servicesManager.load();
+            Thread.sleep(1000);
+            LOGGER.debug("Loaded services manager...");
+        }));
+        loadingThread.start();
+
+        val testService = serviceFactory.createService("https://test.edu/path/");
+        IntStream.rangeClosed(1, 5).forEach(i -> {
+            LOGGER.debug("Checking for previously-saved service attempt [{}]", i);
+            assertNotNull(servicesManager.findServiceBy(testService));
+        });
+        loadingThread.join();
     }
 
     protected ServicesManager getServicesManagerInstance() {

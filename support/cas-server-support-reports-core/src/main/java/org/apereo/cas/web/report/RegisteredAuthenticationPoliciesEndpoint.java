@@ -62,7 +62,7 @@ public class RegisteredAuthenticationPoliciesEndpoint extends BaseCasActuatorEnd
      */
     @ReadOperation(produces = {
         ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "Get available authentication policy by name", parameters = {@Parameter(name = "name")})
+    @Operation(summary = "Get available authentication policy by name", parameters = {@Parameter(name = "name", required = true)})
     public AuthenticationPolicyDetails fetchPolicy(@Selector final String name) {
         return this.authenticationEventExecutionPlan.getAuthenticationPolicies()
             .stream()

@@ -11,8 +11,8 @@ import lombok.ToString;
 
 /**
  * @author Scott Battaglia
- * @deprecated 6.2
  * @since 3.1
+ * @deprecated 6.2
  */
 @ToString
 @Setter

@@ -328,6 +328,12 @@ public interface CasWebflowConstants {
     String STATE_ID_FINISH_MFA_TRUSTED_AUTH = "finishMfaTrustedAuth";
 
     /**
+     * 'getSecurityQuestionsView' state id.
+     */
+    String STATE_ID_SECURITY_QUESTIONS_VIEW = "getSecurityQuestionsView";
+
+
+    /**
      * The transition state 'initialAuthenticationRequestValidationCheck'.
      */
     String STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK = "initialAuthenticationRequestValidationCheck";
@@ -643,6 +649,11 @@ public interface CasWebflowConstants {
     String STATE_ID_REGISTER_DEVICE_VIEW = "registerDeviceView";
 
     /**
+     * State id 'verifyPasswordResetRequest'.
+     */
+    String STATE_ID_VERIFY_PASSWORD_RESET_REQUEST = "verifyPasswordResetRequest";
+
+    /**
      * The state id 'spnego'.
      */
     String STATE_ID_SPNEGO = "spnego";
@@ -716,6 +727,10 @@ public interface CasWebflowConstants {
      * State id 'casMustChangePassView'.
      */
     String STATE_ID_MUST_CHANGE_PASSWORD = "casMustChangePassView";
+    /**
+     * State id 'verifySecurityQuestions'.
+     */
+    String STATE_ID_VERIFY_SECURITY_QUESTIONS = "verifySecurityQuestions";
 
     /**
      * State id 'casExpiredPassView'.
@@ -756,6 +771,11 @@ public interface CasWebflowConstants {
      * State id 'saveRegistration'.
      */
     String STATE_ID_SAVE_REGISTRATION = "saveRegistration";
+
+    /**
+     * State id 'initPasswordReset'.
+     */
+    String STATE_ID_INIT_PASSWORD_RESET = "initPasswordReset";
 
     /*
      ****************************************
@@ -906,6 +926,10 @@ public interface CasWebflowConstants {
      */
     String ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA = "forgotUsernameInitializeCaptchaAction";
 
+    /**
+     * Action id 'initPasswordChangeAction .
+     */
+    String ACTION_ID_INIT_PASSWORD_CHANGE = "initPasswordChangeAction";
 
     /**
      * Action id 'renderLoginFormAction'.
@@ -1108,4 +1132,6 @@ public interface CasWebflowConstants {
      * Action id 'duoUniversalPromptPrepareLoginAction .
      */
     String ACTION_ID_MFA_PREPARE_TRUST_DEVICE_VIEW_ACTION = "mfaPrepareTrustDeviceViewAction";
+
+
 }

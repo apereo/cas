@@ -107,7 +107,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.ofNullable(registeredService));
         assertNotNull(claims);
         assertTrue(claims.hasClaim(OIDC_CLAIM_EMAIL));
-        assertTrue(claims.hasClaim(OidcConstants.CLAIM_AUTH_TIME));
+        assertEquals(authentication.getAuthenticationDate().toEpochSecond(), (long) claims.getClaimValue(OidcConstants.CLAIM_AUTH_TIME));
         assertTrue(claims.hasClaim(OIDC_CLAIM_NAME));
         assertTrue(claims.hasClaim(OIDC_CLAIM_PHONE_NUMBER));
         assertEquals("casuser@example.org", claims.getStringClaimValue(OIDC_CLAIM_EMAIL));

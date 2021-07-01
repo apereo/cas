@@ -64,9 +64,27 @@ contribute to the properties of the authentication request sent off to a delegat
 requested SAML2 authentication context class can now be passed to an external SAML2 identity provider using
 [delegated authentication](../integration/Delegate-Authentication-SAML.html).
 
+### OpenID Connect Dynamic Issuers
+
+Modifying the [OpenID Connect](../protocol/OIDC-Protocol.html) issuer setting to include dynamic path segments is now possible,
+where CAS can now allow specification of issuer values that would match `https://sso.example.org/cas/custom/oidc/issuer/value-here`.
+All applications can now be given a custom issuer to locate the OpenID Connect discovery document and looks for appropriate URLs.
+Applications that have hardcoded the OpenID Connect URL endpoints 
+such as `authorization_endpoint` or `token_endpoint`, etc need to revisit and update those values.
+
+### Actuator Endpoints Documentation
+
+Actuator endpoints that provided by either CAS or third-party frameworks such as Spring Boot or Spring Cloud 
+are now automatically documented. [This](../monitoring/Monitoring-Statistics.html) would be a good example.
+
+### Test Coverage
+
+CAS test coverage stands steady at `92%`. The collection of browser/functional tests has now grown to ~130 scenarios.
+
 ## Other Stuff
        
 - Service registry lookup enforcements to ensure located service definition types can be supported by the enabled protocols.
+- [Ignite Ticket Registry](../ticketing/Ignite-Ticket-Registry.html) is able to delete expired tickets correctly.
 - Evaluation of [authentication policies](../authentication/Configuring-Authentication-Policy.html) is now 
   able to consider the entire authentication history.
 - Person Directory [principal resolution](../authentication/Configuring-Authentication-PrincipalResolution.html) now 
@@ -74,6 +92,7 @@ requested SAML2 authentication context class can now be passed to an external SA
 - JDBC attribute repositories are able to specify query attributes for advanced `WHERE` clauses in query builders.
 - Execution order of [authentication throttlers](../authentication/Configuring-Authentication-Throttling.html) for 
   OAuth and OpenID Connect protocols is now restored and corrected.
+- OpenID Connect id tokens can now accurately report back the `auth_time` claim by referring to the original authentication timestamp.
 - Scheduled jobs can now be activated conditionally using a regular expression matched against the running CAS node hostname.
 
 ## Library Upgrades
@@ -86,4 +105,6 @@ requested SAML2 authentication context class can now be passed to an external SA
 - Azure DocumentDb
 - Amazon SDK
 - Lettuce
+- Hazelcast
+- Pac4j
 - Spring Session

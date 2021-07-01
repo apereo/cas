@@ -50,7 +50,7 @@ public class MultifactorAuthenticationTrustReportEndpoint extends BaseCasActuato
      * @return the set
      */
     @ReadOperation
-    @Operation(summary = "Get collection of trusted devices for the user", parameters = @Parameter(name = "username"))
+    @Operation(summary = "Get collection of trusted devices for the user", parameters = @Parameter(name = "username", required = true))
     public Set<? extends MultifactorAuthenticationTrustRecord> devicesForUser(@Selector final String username) {
         expireRecords();
         return this.mfaTrustEngine.get(username);
@@ -62,7 +62,7 @@ public class MultifactorAuthenticationTrustReportEndpoint extends BaseCasActuato
      * @param key the key
      * @return the integer
      */
-    @Operation(summary = "Remove trusted device using its key", parameters = {@Parameter(name = "key")})
+    @Operation(summary = "Remove trusted device using its key", parameters = {@Parameter(name = "key", required = true)})
     @DeleteOperation
     public Integer revoke(@Selector final String key) {
         this.mfaTrustEngine.remove(key);

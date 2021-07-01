@@ -25,18 +25,20 @@ import org.springframework.webflow.execution.RequestContext;
  * not entered by the user.
  *
  * @author Scott Battaglia
- * @deprecated 6.2
  * @since 3.1
+ * @deprecated 6.2
  */
 @Deprecated(since = "6.2.0")
 public class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsAction {
 
     private final TicketRegistrySupport ticketRegistrySupport;
+
     private OpenIdUserNameExtractor extractor = new DefaultOpenIdUserNameExtractor();
 
     public OpenIdSingleSignOnAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                     final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-                                    final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy, final OpenIdUserNameExtractor extractor,
+                                    final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
+                                    final OpenIdUserNameExtractor extractor,
                                     final TicketRegistrySupport ticketRegistrySupport) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
         this.extractor = extractor;

@@ -27,10 +27,8 @@ Examples of reported items include:
 
 Note that this capability and endpoint is turned off by default and its access is controlled similar to all other CAS administrative endpoints. Once the endpoint is turned on, you will need to ensure proper access is granted only to authorized parties via appropriate [security options provided by CAS](../monitoring/Monitoring-Statistics.html).
 
-## Administrative Endpoints
+## Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `discoveryProfile`       | Provides a JSON representation of the [CAS configuration and capabilities](Configuration-Discovery.html).
+
+{% include actuators.html endpoints="discoveryProfile" %}
