@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import lombok.extern.slf4j.Slf4j;
@@ -73,7 +74,7 @@ public class CasCoreAuthenticationConfiguration {
     public AuthenticationManager casAuthenticationManager() {
         return new DefaultAuthenticationManager(
             authenticationEventExecutionPlan.getObject(),
-            casProperties.getPersonDirectory().isPrincipalResolutionFailureFatal(),
+            casProperties.getPersonDirectory().getPrincipalResolutionFailureFatal() == TriStateBoolean.TRUE,
             applicationContext
         );
     }
