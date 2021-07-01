@@ -48,6 +48,8 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
 
     private final CookieGenerationContext cookieGenerationContext;
 
+    private final CookieSameSiteNoneChecker cookieSameSiteNoneChecker;
+
     public CookieRetrievingCookieGenerator(final CookieGenerationContext context) {
         this(context, NoOpCookieValueManager.INSTANCE);
     }
@@ -63,6 +65,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
 
         this.cookieGenerationContext = context;
         this.casCookieValueManager = casCookieValueManager;
+        this.cookieSameSiteNoneChecker = new CookieSameSiteNoneChecker();
     }
 
     /**
@@ -191,7 +194,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
             case "none":
             default:
                 var userAgent = request.getHeader("User-Agent");
-                if (userAgent == null || !new CookieSameSiteNoneChecker().isSameSiteNoneIncompatible(userAgent)) {
+                if (userAgent == null || !cookieSameSiteNoneChecker.isSameSiteNoneIncompatible(userAgent)) {
                     builder.append(" SameSite=None;");
                 }
                 break;
