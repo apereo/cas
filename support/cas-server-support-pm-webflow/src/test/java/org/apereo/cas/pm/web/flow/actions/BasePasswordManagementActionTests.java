@@ -31,6 +31,7 @@ import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
