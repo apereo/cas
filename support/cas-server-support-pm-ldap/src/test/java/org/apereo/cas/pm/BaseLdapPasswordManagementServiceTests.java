@@ -27,6 +27,6 @@ import org.springframework.test.annotation.DirtiesContext;
 @DirtiesContext
 public abstract class BaseLdapPasswordManagementServiceTests {
     @Autowired
-    @Qualifier("passwordChangeService")
+    @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
     protected PasswordManagementService passwordChangeService;
 }

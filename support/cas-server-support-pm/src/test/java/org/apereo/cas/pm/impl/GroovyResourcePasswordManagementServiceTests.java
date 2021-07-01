@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GroovyResourcePasswordManagementServiceTests {
 
     @Autowired
-    @Qualifier("passwordChangeService")
+    @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
     private PasswordManagementService passwordChangeService;
 
     @Test

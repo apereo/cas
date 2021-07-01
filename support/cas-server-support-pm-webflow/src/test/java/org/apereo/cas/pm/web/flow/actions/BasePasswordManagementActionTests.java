@@ -105,7 +105,7 @@ public class BasePasswordManagementActionTests {
     protected CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
-    @Qualifier("passwordChangeService")
+    @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
     protected PasswordManagementService passwordManagementService;
 
     @Autowired
@@ -117,7 +117,7 @@ public class BasePasswordManagementActionTests {
     protected Action initPasswordResetAction;
 
     @Autowired
-    @Qualifier("initPasswordChangeAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_INIT_PASSWORD_CHANGE)
     protected Action initPasswordChangeAction;
 
     @Autowired
