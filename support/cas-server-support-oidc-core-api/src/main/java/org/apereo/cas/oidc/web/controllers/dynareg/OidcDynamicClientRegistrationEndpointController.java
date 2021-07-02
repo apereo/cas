@@ -93,8 +93,10 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
      * @param response  the response
      * @return the model and view
      */
-    @PostMapping(value = "/**/" + OidcConstants.REGISTRATION_URL,
-        consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = {
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REGISTRATION_URL,
+        "/**/" + OidcConstants.REGISTRATION_URL
+    }, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity handleRequestInternal(@RequestBody final String jsonInput,
                                                 final HttpServletRequest request,
                                                 final HttpServletResponse response) {

@@ -33,6 +33,16 @@ import static org.mockito.Mockito.*;
 @Tag("OIDC")
 public class OidcRequestSupportTests {
 
+    protected static JEEContext getContextForEndpoint(final String endpoint) {
+        val request = new MockHttpServletRequest();
+        request.setScheme("https");
+        request.setServerName("sso.example.org");
+        request.setServerPort(8443);
+        request.setRequestURI("/cas/oidc/" + endpoint);
+        val response = new MockHttpServletResponse();
+        return new JEEContext(request, response);
+    }
+
     @Test
     public void verifyRemovePrompt() {
         val url = "https://tralala.whapi.com/something?" + OidcConstants.PROMPT + '=' + OidcConstants.PROMPT_CONSENT;
@@ -126,5 +136,30 @@ public class OidcRequestSupportTests {
         val originalRedirectUrl = "https://www.example.org";
         val expectedUrlWithError = originalRedirectUrl + "?error=login_required";
         assertEquals(expectedUrlWithError, OidcRequestSupport.getRedirectUrlWithError(originalRedirectUrl, OidcConstants.LOGIN_REQUIRED));
+    }
+
+    @Test
+    public void validateStaticIssuer() {
+        val issuerService = mock(OidcIssuerService.class);
+        val staticIssuer = "https://sso.example.org:8443/cas/oidc";
+        when(issuerService.determineIssuer(any())).thenReturn(staticIssuer);
+        val support = new OidcRequestSupport(mock(CasCookieBuilder.class),
+            mock(TicketRegistrySupport.class), issuerService);
+        assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("authorize"), "authorize"));
+        assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("profile"), "profile"));
+        assertFalse(support.isValidIssuerForEndpoint(getContextForEndpoint("/realms/authorize"), "authorize"));
+    }
+
+    @Test
+    public void validateDynamicIssuer() {
+        val issuerService = mock(OidcIssuerService.class);
+        val staticIssuer = "https://sso.example.org:8443/cas/oidc/custom/fawnoos/issuer";
+        when(issuerService.determineIssuer(any())).thenReturn(staticIssuer);
+        val support = new OidcRequestSupport(mock(CasCookieBuilder.class),
+            mock(TicketRegistrySupport.class), issuerService);
+        assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("custom/fawnoos/issuer/authorize"), "authorize"));
+        assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("custom/fawnoos/issuer/profile"), "profile"));
+        assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("custom/fawnoos/issuer/oidcAuthorize"), "oidcAuthorize"));
+        assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("custom/fawnoos/issuer"), "unknown"));
     }
 }

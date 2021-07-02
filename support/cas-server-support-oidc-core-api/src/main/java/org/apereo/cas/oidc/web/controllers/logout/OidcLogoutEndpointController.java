@@ -59,7 +59,10 @@ public class OidcLogoutEndpointController extends BaseOidcController {
      * @param response              the response
      * @return the response entity
      */
-    @GetMapping(value = "/**/" + OidcConstants.LOGOUT_URL)
+    @GetMapping(value = {
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.LOGOUT_URL,
+        "/**/" + OidcConstants.LOGOUT_URL
+    })
     @SneakyThrows
     public ResponseEntity<HttpStatus> handleRequestInternal(
         @RequestParam(value = "post_logout_redirect_uri", required = false) final String postLogoutRedirectUrl,

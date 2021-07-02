@@ -38,7 +38,10 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
      * @return the response entity
      */
     @GetMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE,
-        value = "/**/" + OidcConstants.INTROSPECTION_URL)
+        value = {
+            '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL,
+            "/**/" + OidcConstants.INTROSPECTION_URL
+        })
     @Override
     public ResponseEntity<OAuth20IntrospectionAccessTokenResponse> handleRequest(final HttpServletRequest request,
                                                                                         final HttpServletResponse response) {
@@ -57,7 +60,10 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
      * @return the response entity
      */
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE,
-        value = "/**/" + OidcConstants.INTROSPECTION_URL)
+        value = {
+            '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL,
+            "/**/" + OidcConstants.INTROSPECTION_URL
+        })
     @Override
     public ResponseEntity<OAuth20IntrospectionAccessTokenResponse> handlePostRequest(final HttpServletRequest request,
                                                                                          final HttpServletResponse response) {
