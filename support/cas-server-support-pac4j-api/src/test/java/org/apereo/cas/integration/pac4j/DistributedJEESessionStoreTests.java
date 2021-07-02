@@ -43,7 +43,7 @@ public class DistributedJEESessionStoreTests {
     private TicketFactory ticketFactory;
 
     @Test
-    public void verifyOperation() {
+    public void verifyTracking() {
         val cookie = casProperties.getSessionReplication().getCookie();
         val cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
 
@@ -58,8 +58,22 @@ public class DistributedJEESessionStoreTests {
         assertFalse(store.renewSession(context));
         assertTrue(store.buildFromTrackableSession(context, "trackable-session").isPresent());
         assertTrue(store.getTrackableSession(context).isPresent());
+    }
 
+    @Test
+    public void verifySetGet() {
+        val cookie = casProperties.getSessionReplication().getCookie();
+        val cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
+
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+
+        val store = new DistributedJEESessionStore(centralAuthenticationService, ticketFactory, cookieGenerator);
+        val context = new JEEContext(request, response);
+
+        assertTrue(store.getSessionId(context, false).isEmpty());
         store.set(context, "attribute", "test");
+        assertTrue(store.getSessionId(context, false).isPresent());
         var value = store.get(context, "attribute");
         assertTrue(value.isPresent());
         assertEquals("test", value.get());
