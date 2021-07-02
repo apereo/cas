@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link OidcRequestSupport}.
@@ -41,6 +42,15 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class OidcRequestSupport {
+    private static final String PATTERN_VALID_ISSUER_ENDPOINTS = Stream.of(
+        OAuth20Constants.ACCESS_TOKEN_URL,
+        OAuth20Constants.TOKEN_URL,
+        OAuth20Constants.AUTHORIZE_URL,
+        OAuth20Constants.INTROSPECTION_URL,
+        OAuth20Constants.PROFILE_URL,
+        OAuth20Constants.REVOCATION_URL)
+        .collect(Collectors.joining("|"));
+
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     private final TicketRegistrySupport ticketRegistrySupport;
@@ -239,9 +249,14 @@ public class OidcRequestSupport {
         val requestUrl = webContext.getNativeRequest().getRequestURL().toString();
         val issuer = StringUtils.remove(requestUrl, '/' + endpoint);
         val definedIssuer = this.oidcIssuerService.determineIssuer(Optional.empty());
-        val result = definedIssuer.equalsIgnoreCase(issuer);
+        
+        val issuerPattern = StringUtils.appendIfMissing(definedIssuer, "/")
+            .concat("(")
+            .concat(PATTERN_VALID_ISSUER_ENDPOINTS)
+            .concat(")");
+        val result = definedIssuer.equalsIgnoreCase(issuer) || issuer.matches(issuerPattern);
         FunctionUtils.doIf(!result,
-            o -> LOGGER.warn("Server issuer [{}] does not match the request [{}]", o, issuer))
+            o -> LOGGER.warn("Issuer [{}] defined in CAS configuration does not match the request issuer [{}]", o, issuer))
             .accept(definedIssuer);
         return result;
     }

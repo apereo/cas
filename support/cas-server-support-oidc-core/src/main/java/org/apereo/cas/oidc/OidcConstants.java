@@ -100,23 +100,23 @@ public interface OidcConstants {
     /**
      * JWKS Endpoint url.
      */
-    String JWKS_URL = "oidcJwks";
+    String JWKS_URL = "jwks";
     /**
      * Revocation Endpoint url.
      */
-    String REVOCATION_URL = "oidcRevoke";
+    String REVOCATION_URL = "revoke";
     /**
      * Registration endpoint URL.
      */
-    String REGISTRATION_URL = "oidcRegister";
+    String REGISTRATION_URL = "register";
     /**
      * Client configuration endpoint URL.
      */
-    String CLIENT_CONFIGURATION_URL = "oidcClientConfig";
+    String CLIENT_CONFIGURATION_URL = "clientConfig";
     /**
      * The introspection url.
      */
-    String INTROSPECTION_URL = "oidcIntrospect";
+    String INTROSPECTION_URL = "introspect";
     /**
      * Indicates authentication is required and could not be performed.
      */

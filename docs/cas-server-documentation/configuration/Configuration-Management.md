@@ -61,15 +61,23 @@ are considered in the following order:
 the CAS configuration, you should configure access
 to <a href="../monitoring/Monitoring-Statistics.html">CAS administration panels.</a></p></div>
 
+## Actuator Endpoints
+
+The following endpoints are provided:
+
+{% include actuators.html endpoints="configProps,env,beans,conditions" %}
+
 ## Configuration Server
 
 CAS provides a built-in configuration server that is responsible for bootstrapping the configuration
 environment and loading of externalized settings in a distributed system. You may have a central
-place to manage external properties for CAS nodes across all environments. To learn more about how to manage the CAS configuration, please [review this guide](Configuration-Server-Management.html).
+place to manage external properties for CAS nodes across all environments. To learn 
+more about how to manage the CAS configuration, please [review this guide](Configuration-Server-Management.html).
 
 ## Extending CAS Configuration
 
-To learn more about how to extend and customize the CAS configuration, please [review this guide](Configuration-Management-Extensions.html).
+To learn more about how to extend and customize the CAS 
+configuration, please [review this guide](Configuration-Management-Extensions.html).
 
 ## Custom CAS Settings
 

@@ -49,7 +49,10 @@ public class OidcJwksEndpointController extends BaseOidcController {
      * @param model    the model
      * @return the jwk set
      */
-    @GetMapping(value = "/**/" + OidcConstants.JWKS_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = {
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.JWKS_URL,
+        "/**/" + OidcConstants.JWKS_URL
+    }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> handleRequestInternal(final HttpServletRequest request,
                                                         final HttpServletResponse response,
                                                         final Model model) {

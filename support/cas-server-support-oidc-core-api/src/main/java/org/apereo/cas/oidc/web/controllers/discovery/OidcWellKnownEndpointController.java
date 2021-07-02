@@ -40,7 +40,10 @@ public class OidcWellKnownEndpointController extends BaseOidcController {
      * @param response the response
      * @return the well known discovery configuration
      */
-    @GetMapping(value = "/**/" + OidcConstants.WELL_KNOWN_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = {
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_URL,
+        "/**/" + OidcConstants.WELL_KNOWN_URL
+    }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OidcServerDiscoverySettings> getWellKnownDiscoveryConfiguration(final HttpServletRequest request,
                                                                                           final HttpServletResponse response) {
         return getOidcServerDiscoveryResponse(request, response, OidcConstants.WELL_KNOWN_URL);
@@ -53,7 +56,9 @@ public class OidcWellKnownEndpointController extends BaseOidcController {
      * @param response the response
      * @return the well known discovery configuration
      */
-    @GetMapping(value = "/**/" + OidcConstants.WELL_KNOWN_OPENID_CONFIGURATION_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = {
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_OPENID_CONFIGURATION_URL,
+        "/**/" + OidcConstants.WELL_KNOWN_OPENID_CONFIGURATION_URL}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OidcServerDiscoverySettings> getWellKnownOpenIdDiscoveryConfiguration(final HttpServletRequest request,
                                                                                                 final HttpServletResponse response) {
         return getOidcServerDiscoveryResponse(request, response, OidcConstants.WELL_KNOWN_OPENID_CONFIGURATION_URL);
