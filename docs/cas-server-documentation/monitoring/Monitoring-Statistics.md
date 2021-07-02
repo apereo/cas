@@ -15,7 +15,7 @@ exposed over the endpoint `/actuator`.
 
 The following endpoints are provided:
 
-{% include actuators.html endpoints="info,startup,threaddump,health,metrics,httptrace,mappings,scheduledtasks,shutdown,restart,heapdump,prometheus,caches,quartz" %}
+{% include actuators.html endpoints="info,startup,threaddump,health,metrics,httptrace,mappings,scheduledtasks,heapdump,prometheus,quartz" %}
 
 ## Metrics
 
