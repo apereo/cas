@@ -147,6 +147,7 @@ public class OidcRequestSupportTests {
             mock(TicketRegistrySupport.class), issuerService);
         assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("authorize"), "authorize"));
         assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("profile"), "profile"));
+        assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("logout"), "logout"));
         assertFalse(support.isValidIssuerForEndpoint(getContextForEndpoint("/realms/authorize"), "authorize"));
     }
 

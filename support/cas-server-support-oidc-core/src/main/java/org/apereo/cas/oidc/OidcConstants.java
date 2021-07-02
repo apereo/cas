@@ -75,7 +75,7 @@ public interface OidcConstants {
     /**
      * Logout url.
      */
-    String LOGOUT_URL = "logout";
+    String LOGOUT_URL = "oidcLogout";
 
     /**
      * Oidc authorize url path segment url.

@@ -6,6 +6,7 @@ import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
 import org.apereo.cas.oidc.web.controllers.BaseOidcController;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,6 +24,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class OidcWellKnownEndpointController extends BaseOidcController {
 
     private final OidcWebFingerDiscoveryService webFingerDiscoveryService;
@@ -85,6 +87,7 @@ public class OidcWellKnownEndpointController extends BaseOidcController {
             val discovery = this.webFingerDiscoveryService.getDiscovery();
             return new ResponseEntity<>(discovery, HttpStatus.OK);
         }
+        LOGGER.warn("Unable to accept request; issuer for endpoint [{}] is invalid", endpoint);
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

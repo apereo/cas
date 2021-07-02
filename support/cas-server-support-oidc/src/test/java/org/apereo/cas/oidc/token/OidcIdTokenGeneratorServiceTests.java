@@ -211,6 +211,9 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         assertNotNull(claims);
         assertTrue(claims.hasClaim(OidcConstants.CLAIM_AT_HASH));
         assertTrue(claims.hasClaim(OidcConstants.CLAIM_AUTH_TIME));
+        val issuer = oidcIssuerService.determineIssuer(Optional.of(registeredService));
+        assertEquals(issuer, claims.getIssuer());
+        
         val hash = claims.getClaimValue(OidcConstants.CLAIM_AT_HASH, String.class);
         val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
             .accessToken(accessToken)
@@ -218,6 +221,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
             .service(accessToken.getService())
             .casProperties(casProperties)
             .accessTokenJwtBuilder(oidcAccessTokenJwtBuilder)
+            .issuer(issuer)
             .build()
             .encode();
         val newHash = OAuth20AccessTokenAtHashGenerator.builder()
