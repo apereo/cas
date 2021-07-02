@@ -33,7 +33,7 @@ public class OidcUserProfileDataCreatorTests extends AbstractOidcTests {
         val accessToken = getAccessToken();
         val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
         assertFalse(data.isEmpty());
-        assertTrue(data.containsKey(OidcConstants.CLAIM_AUTH_TIME));
+        assertEquals(accessToken.getTicketGrantingTicket().getAuthentication().getAuthenticationDate().toEpochSecond(), (long) data.get(OidcConstants.CLAIM_AUTH_TIME));
         assertTrue(data.containsKey(OidcConstants.CLAIM_SUB));
         assertTrue(data.containsKey(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID));
         assertTrue(data.containsKey(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_CLIENT_ID));
