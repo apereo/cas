@@ -61,6 +61,7 @@ public class OidcLogoutEndpointController extends BaseOidcController {
      */
     @GetMapping(value = {
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.LOGOUT_URL,
+        '/' + OidcConstants.BASE_OIDC_URL + "/logout",
         "/**/" + OidcConstants.LOGOUT_URL
     })
     @SneakyThrows

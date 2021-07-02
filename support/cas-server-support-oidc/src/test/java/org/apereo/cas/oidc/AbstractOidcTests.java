@@ -40,6 +40,7 @@ import org.apereo.cas.oidc.config.OidcConfiguration;
 import org.apereo.cas.oidc.config.OidcThrottleConfiguration;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
+import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
@@ -129,6 +130,10 @@ import static org.mockito.Mockito.*;
 public abstract class AbstractOidcTests {
 
     protected static final String TGT_ID = "TGT-0";
+
+    @Autowired
+    @Qualifier("oidcIssuerService")
+    protected OidcIssuerService oidcIssuerService;
 
     @Autowired
     @Qualifier("singleLogoutServiceLogoutUrlBuilder")
