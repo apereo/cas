@@ -29,7 +29,7 @@ and produce an example metadata for review and study.
         
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="samlIdPRegisteredServiceMetadataCache" %}
+{% include actuators.html endpoints="samlIdPRegisteredServiceMetadataCache,caches" %}
 
 
 ## Metadata Aggregates

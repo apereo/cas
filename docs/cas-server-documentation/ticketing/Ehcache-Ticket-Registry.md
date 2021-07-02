@@ -15,6 +15,12 @@ Ehcache 3.x integration is enabled by including the following dependency in the 
 This registry stores tickets using the [Ehcache 3.x](http://ehcache.org/) caching library 
 and [an optional Terracotta cluster](https://www.ehcache.org/documentation/3.3/clustered-cache.html).
 
+## Actuator Endpoints
+
+The following endpoints are provided:
+
+{% include actuators.html endpoints="caches" %}
+
 ## In-memory store with disk persistence
 
 Ehcache 3.x doesn't support distributing caching without Terracotta so using it without pointing at a Terracotta 
@@ -36,7 +42,8 @@ docker run --rm --name tc-server -p 9410:9410 -d \
 terracotta/terracotta-server-oss:5.6.4
 ```
 
-Running a Terracotta cluster on Kubernetes can be done easily using the Terracotta [helm chart](https://github.com/helm/charts/tree/master/stable/terracotta).
+Running a Terracotta cluster on Kubernetes can be done easily using the 
+Terracotta [helm chart](https://github.com/helm/charts/tree/master/stable/terracotta).
 
 #### Configuration
 
