@@ -86,7 +86,7 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
         val saml2Client = new SAML2Client(saml2Configuration);
         saml2Client.setCallbackUrl("http://callback.example.org");
         saml2Client.init();
-        
+
         saml2MessageContext = new SAML2MessageContext();
         saml2MessageContext.setSaml2Configuration(saml2Configuration);
         saml2MessageContext.setWebContext(new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()));
@@ -132,10 +132,10 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
 
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
-        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser",
-            CollectionUtils.wrap("eduPersonPrincipalName", "casuser")),
-            CoreAuthenticationTestUtils.getService(), registeredService);
-        assertTrue(attributes.isEmpty());
+        assertThrows(IllegalArgumentException.class,
+            () -> filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser",
+                CollectionUtils.wrap("eduPersonPrincipalName", "casuser")),
+                CoreAuthenticationTestUtils.getService(), registeredService));
     }
 
     @Test
@@ -156,8 +156,13 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
             val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
             val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
             val context = new JEEContext(request, response);
-            
+
             samlIdPDistributedSessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
+            val messageContext = new MessageContext();
+            messageContext.setMessage(authnRequest);
+            samlIdPDistributedSessionStore.set(context, MessageContext.class.getName(),
+                SamlIdPAuthenticationContext.from(messageContext).encode());
+
             val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("eduPersonPrincipalName", "casuser")),
                 CoreAuthenticationTestUtils.getService(), registeredService);
@@ -187,7 +192,7 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
         requestAttribute.setName("givenName");
         extensions.getUnknownXMLObjects().add(requestAttribute);
         authnRequest.setExtensions(extensions);
-        
+
         try (val writer = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest)) {
             val samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
 
@@ -196,6 +201,11 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
             val context = new JEEContext(request, response);
 
             samlIdPDistributedSessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
+            val messageContext = new MessageContext();
+            messageContext.setMessage(authnRequest);
+            samlIdPDistributedSessionStore.set(context, MessageContext.class.getName(),
+                SamlIdPAuthenticationContext.from(messageContext).encode());
+
             val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("eduPersonPrincipalName", "casuser", "givenName", "CAS")),
                 CoreAuthenticationTestUtils.getService(), registeredService);
@@ -238,7 +248,7 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
             messageContext.setMessage(authnRequest);
             samlIdPDistributedSessionStore.set(context, MessageContext.class.getName(),
                 SamlIdPAuthenticationContext.from(messageContext).encode());
-            
+
             val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("eduPersonPrincipalName", "casuser", "givenName", "CAS")),
                 CoreAuthenticationTestUtils.getService(), registeredService);
