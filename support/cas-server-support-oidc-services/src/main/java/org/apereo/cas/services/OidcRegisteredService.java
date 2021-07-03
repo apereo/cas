@@ -55,6 +55,8 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private String idTokenEncryptionEncoding;
 
+    private String idTokenIssuer;
+
     private String sectorIdentifierUri;
     
     private String applicationType = "web";
