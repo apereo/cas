@@ -9,7 +9,11 @@ category: Protocols
 
 Allow CAS to act as an [OpenId Connect Provider (OP)](http://openid.net/connect/).
 
-<div class="alert alert-info"><strong>Remember</strong><p>OpenId Connect is a continuation of the <a href="OAuth-Authentication.html">OAuth protocol</a> with some additional variations. If you enable OpenId Connect, you will have automatically enabled OAuth as well. Options and behaviors that are documented for the <a href="OAuth-OpenId-Authentication.html">OAuth protocol</a> support may apply here just the same.</p></div>
+<div class="alert alert-info"><strong>Remember</strong><p>OpenId Connect is a continuation of 
+the <a href="OAuth-Authentication.html">OAuth protocol</a> with some additional variations. If 
+you enable OpenId Connect, you will have automatically enabled OAuth as well. Options and 
+behaviors that are documented for the <a href="OAuth-OpenId-Authentication.html">OAuth protocol</a> 
+support may apply here just the same.</p></div>
 
 Support is enabled by including the following dependency in the WAR overlay:
 
@@ -27,6 +31,11 @@ The current implementation provides support for:
 - Administration and registration of [OIDC clients and relying parties](../services/Service-Management.html) via [Dynamic Client Registration protocol](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01).
 - Ability to [resolve, map and release claims](../integration/Attribute-Release-Policies.html).
 - Ability to configure expiration policies for various tokens.
+
+<div class="alert alert-warning"><strong>Use Discovery</strong><p>The paths of the above endpoints
+is not strictly part of the OpenID Connect specification. The CAS software may choose to change URL endpoints
+at any point in time. Do <strong>NOT</strong> hardcode these endpoints in your application configuration.
+Instead, use the Dynamic Discovery endpoint and parse the discovery document to discover the endpoints.</p></div>
 
 ## Endpoints
 
