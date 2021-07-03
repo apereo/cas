@@ -41,6 +41,8 @@ public class OAuth20JwtAccessTokenEncoder {
 
     private final CasConfigurationProperties casProperties;
 
+    private final String issuer;
+
     /**
      * Encode access token as JWT.
      *
@@ -110,7 +112,7 @@ public class OAuth20JwtAccessTokenEncoder {
             .validUntilDate(DateTimeUtils.dateOf(dt))
             .attributes(attributes)
             .registeredService(oAuthRegisteredService)
-            .issuer(casProperties.getServer().getPrefix())
+            .issuer(StringUtils.defaultIfBlank(this.issuer, casProperties.getServer().getPrefix()))
             .build();
     }
 

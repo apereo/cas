@@ -4,8 +4,6 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Optional;
 
@@ -19,10 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 public class OidcDefaultIssuerServiceTests extends AbstractOidcTests {
-    @Autowired
-    @Qualifier("oidcIssuerService")
-    private OidcIssuerService oidcIssuerService;
-
     @Test
     public void verifyOperation() {
         assertNotNull(oidcIssuerService.determineIssuer(Optional.empty()));

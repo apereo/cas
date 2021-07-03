@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.web.controllers.token;
 
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20RevocationEndpointController;
 
@@ -27,7 +28,10 @@ public class OidcRevocationEndpointController extends OAuth20RevocationEndpointC
         super(configurationContext);
     }
 
-    @PostMapping(value = "/**/" + OidcConstants.REVOCATION_URL,
+    @PostMapping(value = {
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.REVOCATION_URL,
+        "/**/" + OidcConstants.REVOCATION_URL
+    },
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
     public ModelAndView handleRequest(final HttpServletRequest request,

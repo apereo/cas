@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.web.controllers.profile;
 
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
 
 import lombok.val;
@@ -27,8 +28,10 @@ public class OidcUserProfileEndpointController extends OAuth20UserProfileEndpoin
         super(configurationContext);
     }
 
-    @GetMapping(value = "/**/" + OidcConstants.PROFILE_URL,
-        produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = {
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.PROFILE_URL,
+        "/**/" + OidcConstants.PROFILE_URL
+    }, produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
     public ResponseEntity<String> handleGetRequest(final HttpServletRequest request,
                                                    final HttpServletResponse response) throws Exception {
@@ -39,7 +42,10 @@ public class OidcUserProfileEndpointController extends OAuth20UserProfileEndpoin
         return super.handleGetRequest(request, response);
     }
 
-    @PostMapping(value = "/**/" + OidcConstants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = {
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.PROFILE_URL,
+        "/**/" + OidcConstants.PROFILE_URL
+    }, produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
     public ResponseEntity<String> handlePostRequest(final HttpServletRequest request,
                                                     final HttpServletResponse response) throws Exception {
