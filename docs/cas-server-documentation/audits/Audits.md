@@ -24,7 +24,7 @@ to both a database and a REST endpoint as well as any number of logger-based des
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="auditLog" casModule="cas-server-support-reports" %}
+{% include actuators.html endpoints="auditLog,auditevents" casModule="cas-server-support-reports" %}
      
 ## Storage
 

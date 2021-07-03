@@ -72,8 +72,8 @@ public class MessageBundleProperties implements Serializable {
      * The associated resource bundles will be checked sequentially when resolving a message code.
      * Note that message definitions in a previous resource bundle will override ones in a later bundle, due to the sequential lookup.
      */
-    private List<String> baseNames = Stream.of("classpath:custom_messages", "classpath:messages",
-        "file:/etc/cas/config/custom_messages").collect(Collectors.toList());
+    private List<String> baseNames = Stream.of("file:/etc/cas/config/custom_messages",
+        "classpath:custom_messages", "classpath:messages").collect(Collectors.toList());
 
     /**
      * A list of strings representing common names for this message bundle.

@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.services.OidcRegisteredService;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 
@@ -19,6 +20,6 @@ public class OidcDefaultIssuerService implements OidcIssuerService {
 
     @Override
     public String determineIssuer(final Optional<OidcRegisteredService> registeredService) {
-        return properties.getCore().getIssuer();
+        return StringUtils.removeEnd(properties.getCore().getIssuer(), "/");
     }
 }

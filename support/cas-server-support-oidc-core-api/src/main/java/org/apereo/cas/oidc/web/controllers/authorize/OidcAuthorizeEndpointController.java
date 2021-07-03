@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.web.controllers.authorize;
 
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
 
@@ -28,7 +29,10 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
         super(configurationContext);
     }
 
-    @GetMapping(value = "/**/" + OidcConstants.AUTHORIZE_URL)
+    @GetMapping(value = {
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.AUTHORIZE_URL,
+        "/**/" + OidcConstants.AUTHORIZE_URL
+    })
     @Override
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val webContext = new JEEContext(request, response);
@@ -45,7 +49,10 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
         return super.handleRequest(request, response);
     }
 
-    @PostMapping(value = "/**/" + OidcConstants.AUTHORIZE_URL)
+    @PostMapping(value = {
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.AUTHORIZE_URL,
+        "/**/" + OidcConstants.AUTHORIZE_URL
+    })
     @Override
     public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return handleRequest(request, response);

@@ -36,7 +36,10 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
      * @param response the response
      * @return the response entity
      */
-    @GetMapping(value = "/**/" + OidcConstants.CLIENT_CONFIGURATION_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = {
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CLIENT_CONFIGURATION_URL,
+        "/**/" + OidcConstants.CLIENT_CONFIGURATION_URL
+    }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity handleRequestInternal(
         @RequestParam(name = OidcConstants.CLIENT_REGISTRATION_CLIENT_ID) final String clientId,
         final HttpServletRequest request, final HttpServletResponse response) {
@@ -45,7 +48,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         if (!getConfigurationContext().getOidcRequestSupport().isValidIssuerForEndpoint(webContext, OidcConstants.CLIENT_CONFIGURATION_URL)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        
+
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
         if (service instanceof OidcRegisteredService) {
             val prefix = getConfigurationContext().getCasProperties().getServer().getPrefix();

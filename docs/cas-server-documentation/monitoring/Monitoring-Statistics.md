@@ -13,9 +13,9 @@ exposed over the endpoint `/actuator`.
 
 ## Actuator Endpoints
 
-The following endpoints are provided by Spring Boot:
+The following endpoints are provided:
 
-{% include actuators.html endpoints="beans,conditions,configprops,startup,threaddump,env,health,info,metrics,loggers,httptrace,mappings,scheduledtasks,integrationgraph,shutdown,restart,heapdump,jolokia,logfile,prometheus,auditevents,pause,resume,caches,flyway,sessions,liquibase,channels,consul,serviceregistry,quartz" %}
+{% include actuators.html endpoints="info,startup,threaddump,health,metrics,httptrace,mappings,scheduledtasks,heapdump,prometheus,quartz" %}
 
 ## Metrics
 
