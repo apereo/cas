@@ -272,7 +272,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                 fileName, this.serviceFileNamePattern.pattern());
         }
 
-        LOGGER.trace("Attempting to read and parse [{}]", file.getCanonicalFile());
+        LOGGER.debug("Attempting to read and parse [{}]", file.getCanonicalFile());
         try (val in = Files.newBufferedReader(file.toPath())) {
             return this.registeredServiceSerializers
                 .stream()
