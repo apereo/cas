@@ -24,8 +24,9 @@ const cas = require('../../cas.js');
     await cas.loginWith(page1, "casuser", "Mellon");
     await page1.waitForTimeout(1000)
 
+    let result = new URL(page1.url());
     console.log(page1.url())
-    assert(page1.url().toString() === "https://localhost:8443/cas/login");
+    assert(result.searchParams.has("service") === false);
 
     await browser1.close();
     await browser2.close();
