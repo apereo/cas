@@ -72,7 +72,7 @@ public class DistributedJEESessionStore implements SessionStore {
         if (value instanceof Serializable) {
             properties.put(key, (Serializable) value);
         } else if (value != null) {
-            LOGGER.trace("Object value [{}] assigned to [{}] is not serializable and may not be part of the ticket [{}]", value, key, sessionId);
+            LOGGER.warn("Object value [{}] assigned to [{}] is not serializable and may not be part of the ticket [{}]", value, key, sessionId);
         }
 
         var ticket = getTransientSessionTicketForSession(context);
