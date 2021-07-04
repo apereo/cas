@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @deprecated Since 6.2.0
  */
 @Deprecated(since = "6.2.0")
-@Tag("MFA")
+@Tag("MFATrustedDevices")
 public class LegacyMultifactorAuthenticationTrustRecordKeyGeneratorTests {
     @Test
     public void verifyOperation() {
