@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.trusted.device-fingerprint.cookie.crypto.encryption.key=3RXtt06xYUAli7uU-Z915ZGe0MRBFw3uDjWgOEf1GT8",
         "cas.authn.mfa.trusted.device-fingerprint.cookie.crypto.signing.key=jIFR-fojN0vOIUcT0hDRXHLVp07CV-YeU8GnjICsXpu65lfkJbiKP028pT74Iurkor38xDGXNcXk_Y1V4rNDqw"
     })
-@Tag("MFA")
+@Tag("MFATrustedDevices")
 public class MultifactorAuthnTrustedDeviceFingerprintConfigurationTests {
     @Autowired
     @Qualifier(DeviceFingerprintStrategy.DEFAULT_BEAN_NAME)

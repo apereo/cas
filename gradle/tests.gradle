@@ -39,6 +39,7 @@ enum TestCategories {
     Metrics,
     MFA,
     MFATrigger,
+    MFATrustedDevices,
     MongoDb,
     MsSqlServer,
     MySQL,

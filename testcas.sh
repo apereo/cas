@@ -207,6 +207,9 @@ while (( "$#" )); do
             mfatrigger)
                 task+="testMFATrigger "
                 ;;
+            mfatrusteddevices|mfadevices|trusteddevices)
+                task+="testMFATrustedDevices "
+                ;;
             saml2sp|samlsp|samlserviceprovider)
                 task+="testSAMLServiceProvider "
                 ;;
