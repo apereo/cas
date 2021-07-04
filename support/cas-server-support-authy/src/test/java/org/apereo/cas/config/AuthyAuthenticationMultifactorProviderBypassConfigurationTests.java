@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.authy.bypass.groovy.location=classpath:GroovyBypass.groovy",
         "cas.authn.mfa.authy.bypass.rest.url=http://localhost:8080/bypass"
     })
-@Tag("MFA")
+@Tag("MFATrigger")
 public class AuthyAuthenticationMultifactorProviderBypassConfigurationTests {
     @Autowired
     @Qualifier("authyBypassEvaluator")

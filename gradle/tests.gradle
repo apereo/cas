@@ -38,6 +38,7 @@ enum TestCategories {
     Memcached,
     Metrics,
     MFA,
+    MFATrigger,
     MongoDb,
     MsSqlServer,
     MySQL,

@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("MFA")
+@Tag("MFATrigger")
 @DirtiesContext
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
