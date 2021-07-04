@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -38,6 +39,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -60,35 +62,6 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
     private OAuth20TokenRequestValidator validator;
 
     private TicketRegistry mockingTicketRegistry;
-
-    private void registerTicket(final String name, final OAuthRegisteredService service) {
-        val builder = new OAuth20CasAuthenticationBuilder(
-            PrincipalFactoryUtils.newPrincipalFactory(),
-            new WebApplicationServiceFactory(),
-            new DefaultOAuth20ProfileScopeToAttributesFilter(),
-            new CasConfigurationProperties());
-        val oauthCasAuthenticationBuilderService = builder.buildService(service, null, false);
-        val expirationPolicy = new ExpirationPolicyBuilder() {
-            private static final long serialVersionUID = 3911344031977989503L;
-
-            @Override
-            public ExpirationPolicy buildTicketExpirationPolicy() {
-                return new OAuth20CodeExpirationPolicy(1, 60);
-            }
-
-            @Override
-            public Class getTicketType() {
-                return OAuth20Code.class;
-            }
-        };
-
-        val oauthCode = new OAuth20DefaultOAuthCodeFactory(expirationPolicy, mock(ServicesManager.class))
-            .create(oauthCasAuthenticationBuilderService, RegisteredServiceTestUtils.getAuthentication(),
-                new MockTicketGrantingTicket("casuser"), new HashSet<>(),
-                null, null, "clientid12345",
-                new HashMap<>());
-        when(mockingTicketRegistry.getTicket(eq(name), (Class<Ticket>) any())).thenReturn(oauthCode);
-    }
 
     @BeforeEach
     public void before() {
@@ -117,11 +90,9 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
         registerTicket(NON_SUPPORTING_SERVICE_TICKET, nonSupportingService);
         registerTicket(PROMISCUOUS_SERVICE_TICKET, promiscuousService);
 
-        when(serviceManager.getAllServices()).thenReturn(
-            CollectionUtils.wrapList(
-                supportingService,
-                nonSupportingService,
-                promiscuousService));
+        val services = (List) CollectionUtils.wrapList(supportingService, nonSupportingService, promiscuousService);
+        when(serviceManager.getAllServicesOfType(any())).thenReturn(services);
+        when(serviceManager.getAllServices()).thenReturn(services);
 
         val context = OAuth20ConfigurationContext.builder()
             .servicesManager(serviceManager)
@@ -225,5 +196,34 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
         session.setAttribute(Pac4jConstants.USER_PROFILES,
             CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
         assertTrue(this.validator.validate(new JEEContext(request, response)));
+    }
+
+    private void registerTicket(final String name, final OAuthRegisteredService service) {
+        val builder = new OAuth20CasAuthenticationBuilder(
+            PrincipalFactoryUtils.newPrincipalFactory(),
+            new WebApplicationServiceFactory(),
+            new DefaultOAuth20ProfileScopeToAttributesFilter(),
+            new CasConfigurationProperties());
+        val oauthCasAuthenticationBuilderService = builder.buildService(service, null, false);
+        val expirationPolicy = new ExpirationPolicyBuilder() {
+            private static final long serialVersionUID = 3911344031977989503L;
+
+            @Override
+            public ExpirationPolicy buildTicketExpirationPolicy() {
+                return new OAuth20CodeExpirationPolicy(1, 60);
+            }
+
+            @Override
+            public Class getTicketType() {
+                return OAuth20Code.class;
+            }
+        };
+
+        val oauthCode = new OAuth20DefaultOAuthCodeFactory(expirationPolicy, mock(ServicesManager.class))
+            .create(oauthCasAuthenticationBuilderService, RegisteredServiceTestUtils.getAuthentication(),
+                new MockTicketGrantingTicket("casuser"), new HashSet<>(),
+                null, null, "clientid12345",
+                new HashMap<>());
+        when(mockingTicketRegistry.getTicket(eq(name), (Class<Ticket>) any())).thenReturn(oauthCode);
     }
 }

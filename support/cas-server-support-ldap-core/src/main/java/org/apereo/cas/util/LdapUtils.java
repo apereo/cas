@@ -1132,7 +1132,7 @@ public class LdapUtils {
     }
 
     private static AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyContext>
-    createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l, final ApplicationContext applicationContext) {
+        createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l, final ApplicationContext applicationContext) {
         if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
             LOGGER.debug("Created LDAP password policy handling strategy based on blocked authentication result codes");
             return new RejectResultCodeLdapPasswordPolicyHandlingStrategy();
