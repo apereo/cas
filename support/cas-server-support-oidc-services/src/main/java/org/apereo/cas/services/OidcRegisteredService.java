@@ -33,6 +33,8 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private String jwks;
 
+    private String jwksKeyId;
+    
     private long jwksCacheDuration;
 
     private String jwksCacheTimeUnit;

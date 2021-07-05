@@ -19,18 +19,20 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @RequiredArgsConstructor
-public class OidcRegisteredServiceJsonWebKeystoreCacheLoader implements CacheLoader<OAuthRegisteredService, Optional<PublicJsonWebKey>> {
+public class OidcRegisteredServiceJsonWebKeystoreCacheLoader implements
+    CacheLoader<OAuthRegisteredService, Optional<PublicJsonWebKey>> {
     private final ApplicationContext applicationContext;
 
     @Override
     public Optional<PublicJsonWebKey> load(final @NonNull OAuthRegisteredService service) {
         if (service instanceof OidcRegisteredService) {
-            val svc = (OidcRegisteredService) service;
-            val jwks = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(svc, applicationContext);
+            val oidcService = (OidcRegisteredService) service;
+            val jwks = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(oidcService, applicationContext);
             if (jwks.isEmpty() || jwks.get().getJsonWebKeys().isEmpty()) {
                 return Optional.empty();
             }
-            val key = OidcJsonWebKeyStoreUtils.getJsonWebKeyFromJsonWebKeySet(jwks.get());
+            val requestedKid = Optional.ofNullable(oidcService.getJwksKeyId());
+            val key = OidcJsonWebKeyStoreUtils.getJsonWebKeyFromJsonWebKeySet(jwks.get(), requestedKid);
             if (key == null) {
                 return Optional.empty();
             }
