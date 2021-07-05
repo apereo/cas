@@ -72,6 +72,18 @@ All applications can now be given a custom issuer to locate the OpenID Connect d
 Applications that have hardcoded the OpenID Connect URL endpoints 
 such as `authorization_endpoint` or `token_endpoint`, etc need to revisit and update those values.
 
+### OpenID Connect Relying Parties
+
+The registration of [OpenID Connect relying parties](../authentication/OIDC-Authentication-Clients.html)
+is now able to specify and override the ID token's issuer. Furthermore, the registration entry can specify a `kid`
+that could be used to locate the proper key in the keystore for crypto operations, mainly useful for key rotation scenarios.
+
+<div class="alert alert-warning"><strong>Be Careful</strong><p>
+You should only override the ID Token's issuer when absolutely necessary, and only in special circumstances
+after careful evaluation and consideration. Do <strong>NOT</strong> use this setting carelessly as the 
+ID token's issuer <strong>MUST ALWAYS</strong> match the identity provider's issuer.
+</p></div>
+
 ### Actuator Endpoints Documentation
 
 Actuator endpoints that provided by either CAS or third-party frameworks such as Spring Boot or Spring Cloud 
