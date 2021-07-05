@@ -10,7 +10,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -108,4 +110,10 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
     @DurationCapable
     private String tokenExpirationAdvance;
 
+    /**
+     * List arbitrary mappings of claims when fetching user profiles.
+     * Uses a "directed list" where the allowed
+     * syntax would be {@code claim->attribute}.
+     */
+    private List<String> mappedClaims = new ArrayList<>();
 }

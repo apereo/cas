@@ -212,22 +212,19 @@ allprojects {
 }
 
 subprojects {
+    /**
     task dependencyCheckAnalyze(type: org.owasp.dependencycheck.gradle.tasks.Analyze) {
-        /* 
          Disable analyze in cas-server-core-api and cas-server-core because
          support and webapp sub-projects will include their dependencies transitively.
-        */
         enabled = !"${project.name}".contains("cas-server-core")
     }
-
     task allDependenciesInsight(type: DependencyInsightReportTask,
             description: "Produce insight information for all dependencies") {
-        doLast {}
     }
     task allDependencies(type: DependencyReportTask,
             description: "Display a graph of all project dependencies") {
-        doLast {}
     }
+    **/
 
     if (projectShouldBePublished(project)) {
         apply plugin: "maven-publish"
@@ -246,38 +243,39 @@ subprojects {
         provided
     }
 
-    jacocoTestReport {
-        reports {
-            xml.required.set(true)
-            html.required.set(true)
+    if (gradle.startParameter.taskNames.any {task -> task.startsWith("jacoco") }) {
+        jacocoTestReport {
+            reports {
+                xml.required.set(true)
+                html.required.set(true)
+            }
+            afterEvaluate {
+                classDirectories.setFrom(files(classDirectories.files.collect {
+                    fileTree(dir: it, include: ['**/*.*'], exclude: rootProject.excludedFilesFromTestCoverage)
+                }))
+            }
+            sourceSets sourceSets.main
+            getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/*.exec"))
         }
-        afterEvaluate {
-            classDirectories.setFrom(files(classDirectories.files.collect {
-                fileTree(dir: it, include: ['**/*.*'], exclude: rootProject.excludedFilesFromTestCoverage)
-            }))
-        }
-        sourceSets sourceSets.main
-        getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/*.exec"))
-    }
 
-
-    jacocoTestCoverageVerification {
-        getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/*.exec"))
-        afterEvaluate {
-            classDirectories.setFrom(files(classDirectories.files.collect {
-                fileTree(dir: it, include: ['**/*.*'], exclude: rootProject.excludedFilesFromTestCoverage)
-            }))
-        }
-        violationRules {
-            rule {
-                element = 'CLASS'
-                limit {
-                    minimum = 0.80
+        jacocoTestCoverageVerification {
+            getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/*.exec"))
+            afterEvaluate {
+                classDirectories.setFrom(files(classDirectories.files.collect {
+                    fileTree(dir: it, include: ['**/*.*'], exclude: rootProject.excludedFilesFromTestCoverage)
+                }))
+            }
+            violationRules {
+                rule {
+                    element = 'CLASS'
+                    limit {
+                        minimum = 0.80
+                    }
                 }
             }
         }
     }
-
+    
     apply from: rootProject.file("gradle/overrides.gradle")
 
     /**
@@ -471,16 +469,18 @@ subprojects {
         apply from: rootProject.file("gradle/spotbugs.gradle")
     }
 
-    apply plugin: "com.github.jk1.dependency-license-report"
-    licenseReport {
-        outputDir = "$projectDir/build/licenses"
-        projects = project
-        excludeOwnGroup = true
-        configurations = ['runtimeClasspath']
-        filters = [new com.github.jk1.license.filter.ExcludeTransitiveDependenciesFilter()]
-        allowedLicensesFile = new File("$rootProject.projectDir/etc/allowed-licenses.json")
+    if (gradle.startParameter.taskNames.any {task -> task.equalsIgnoreCase("checkLicense") }) {
+        apply plugin: "com.github.jk1.dependency-license-report"
+        licenseReport {
+            outputDir = "$projectDir/build/licenses"
+            projects = project
+            excludeOwnGroup = true
+            configurations = ['runtimeClasspath']
+            filters = [new com.github.jk1.license.filter.ExcludeTransitiveDependenciesFilter()]
+            allowedLicensesFile = new File("$rootProject.projectDir/etc/allowed-licenses.json")
+        }
+        checkLicense.finalizedBy outputDependenciesWithoutLicense
     }
-    checkLicense.finalizedBy outputDependenciesWithoutLicense
     
     dependencies {
         
@@ -531,22 +531,26 @@ subprojects {
     }
 }
 
-tasks.withType(Javadoc) {
-    source subprojects.collect { project -> project.sourceSets.main.allJava }
-    destinationDir = new File(buildDir, "javadoc")
-    classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
-    options.addBooleanOption('html5', true)
-    failOnError = providers.systemProperty("ignoreJavadocFailures").forUseAtConfigurationTime().present
+if (!gradle.startParameter.excludedTaskNames.contains("javadoc")) {
+    tasks.withType(Javadoc) {
+        source subprojects.collect { project -> project.sourceSets.main.allJava }
+        destinationDir = new File(buildDir, "javadoc")
+        classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
+        options.addBooleanOption('html5', true)
+        failOnError = providers.systemProperty("ignoreJavadocFailures").forUseAtConfigurationTime().present
+    }
+
+    task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc, description: "Aggregate all Javadocs into a single directory") {
+        archiveClassifier.set("javadoc")
+        from javadoc
+    }
 }
 
-task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc, description: "Aggregate all Javadocs into a single directory") {
-    archiveClassifier.set("javadoc")
-    from javadoc
-}
-
-task rootSourcesJar(type: Jar, description: "Build JAR for the root CAS module") {
-    archiveBaseName.set("${project.archivesBaseName}")
-    from rootProject.file("src")
+if (rootProject.publishReleases || rootProject.publishSnapshots) {
+    task rootSourcesJar(type: Jar, description: "Build JAR for the root CAS module") {
+        archiveBaseName.set("${project.archivesBaseName}")
+        from rootProject.file("src")
+    }
 }
 
 task gradleHome(description: "Display GRADLE_HOME environment variable") {
@@ -562,44 +566,45 @@ if (rootProject.publishReleases || rootProject.publishSnapshots) {
     }
 }
 
-
-task jacocoMerge(type: JacocoMerge) {
-    subprojects.each { subproject ->
-        executionData subproject.tasks.withType(Test)
-        dependsOn tasks.withType(Test)
-    }
-    doFirst {
-        executionData = files(executionData.findAll { it.exists() })
-    }
-}
-
-task jacocoRootReport(type: JacocoReport) {
-    description = 'Generates an aggregate report from all projects'
-
-    subprojects.each {
-        if (!it.path.contains(":docs")) {
-            it.tasks.withType(Test).each { task -> dependsOn(task) }
+if (gradle.startParameter.taskNames.any {task -> task.startsWith("jacoco") }) {
+    task jacocoMerge(type: JacocoMerge) {
+        subprojects.each { subproject ->
+            executionData subproject.tasks.withType(Test)
+            dependsOn tasks.withType(Test)
+        }
+        doFirst {
+            executionData = files(executionData.findAll { it.exists() })
         }
     }
 
-    dependsOn jacocoMerge
-    
-    additionalSourceDirs.setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
-    sourceDirectories.setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
-    classDirectories.setFrom(
-            files(subprojects.sourceSets.main.output).collect {
-                fileTree(dir: it,
-                        include: ['**/*.*'],
-                        exclude: rootProject.excludedFilesFromTestCoverage
-                        )
-            })
-    //executionData.setFrom(files(subprojects.jacocoTestReport.executionData))
-    executionData jacocoMerge.destinationFile
+    task jacocoRootReport(type: JacocoReport) {
+        description = 'Generates an aggregate report from all projects'
 
-    reports {
-        html.required.set(true)
-        xml.required.set(true)
-        csv.required.set(true)
+        subprojects.each {
+            if (!it.path.contains(":docs")) {
+                it.tasks.withType(Test).each { task -> dependsOn(task) }
+            }
+        }
+
+        dependsOn jacocoMerge
+
+        additionalSourceDirs.setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
+        sourceDirectories.setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
+        classDirectories.setFrom(
+                files(subprojects.sourceSets.main.output).collect {
+                    fileTree(dir: it,
+                            include: ['**/*.*'],
+                            exclude: rootProject.excludedFilesFromTestCoverage
+                    )
+                })
+        //executionData.setFrom(files(subprojects.jacocoTestReport.executionData))
+        executionData jacocoMerge.destinationFile
+
+        reports {
+            html.required.set(true)
+            xml.required.set(true)
+            csv.required.set(true)
+        }
     }
 }
 
