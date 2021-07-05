@@ -120,8 +120,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
      */
     protected void trackSessionIdForOidcClient(final WebContext webContext, final OidcClient client,
                                                final TransientSessionTicket ticket) {
-        val oidcClient = client;
-        val config = oidcClient.getConfiguration();
+        val config = client.getConfiguration();
         config.setWithState(true);
         config.setStateGenerator(new StaticValueGenerator(ticket.getId()));
     }

@@ -34,6 +34,38 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Delegation")
 public class DefaultDelegatedClientFactoryTests {
 
+    private static Pac4jSamlClientProperties getPac4jSamlClientProperties(final String sessionFactory) throws Exception {
+        val saml = new Pac4jSamlClientProperties();
+        saml.setKeystorePath(new File(FileUtils.getTempDirectoryPath(), "keystore.jks").getCanonicalPath());
+        saml.setKeystoreAlias("alias1");
+        saml.setCallbackUrlType(Pac4jBaseClientProperties.CallbackUrlTypes.NONE);
+        saml.setKeystorePassword("1234567890");
+        saml.setPrivateKeyPassword("1234567890");
+        saml.setIdentityProviderMetadataPath("classpath:idp-metadata.xml");
+        saml.setServiceProviderMetadataPath(new File(FileUtils.getTempDirectoryPath(), "sp.xml").getCanonicalPath());
+        saml.setServiceProviderEntityId("test-entityid");
+        saml.setForceKeystoreGeneration(true);
+        saml.setMessageStoreFactory(sessionFactory);
+        saml.setPrincipalIdAttribute("givenName");
+        saml.setAssertionConsumerServiceIndex(1);
+        saml.setAuthnContextClassRef(List.of("classRef1"));
+        saml.setNameIdPolicyFormat("transient");
+        saml.setBlockedSignatureSigningAlgorithms(List.of("sha-1"));
+        saml.setSignatureAlgorithms(List.of("sha-256"));
+        saml.setSignatureReferenceDigestMethods(List.of("sha-256"));
+        saml.getRequestedAttributes().add(
+            new Pac4jSamlClientProperties.ServiceProviderRequestedAttribute()
+                .setName("requestedAttribute")
+                .setFriendlyName("friendlyRequestedName"));
+        saml.setMappedAttributes(List.of("attr1->givenName"));
+        return saml;
+    }
+
+    private static void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {
+        props.setId("TestId");
+        props.setSecret("TestSecret");
+    }
+
     @Test
     public void verifyFactoryForIdentifiableClients() {
         val props = new Pac4jDelegatedAuthenticationProperties();
@@ -197,6 +229,7 @@ public class DefaultDelegatedClientFactoryTests {
         oidc1.getGeneric().setTokenExpirationAdvance("PT5S");
         oidc1.getGeneric().setPreferredJwsAlgorithm(JWSAlgorithm.RS256.getName());
         oidc1.getGeneric().setDiscoveryUri("https://dev-425954.oktapreview.com/.well-known/openid-configuration");
+        oidc1.getGeneric().getMappedClaims().add("claim1->attribute1");
         props.getOidc().add(oidc1);
 
         val oidc2 = new Pac4jOidcClientProperties();
@@ -220,38 +253,5 @@ public class DefaultDelegatedClientFactoryTests {
         val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
         val clients = factory.build();
         assertEquals(4, clients.size());
-    }
-
-    private static Pac4jSamlClientProperties getPac4jSamlClientProperties(final String sessionFactory) throws Exception {
-        val saml = new Pac4jSamlClientProperties();
-        saml.setKeystorePath(new File(FileUtils.getTempDirectoryPath(), "keystore.jks").getCanonicalPath());
-        saml.setKeystoreAlias("alias1");
-        saml.setCallbackUrlType(Pac4jBaseClientProperties.CallbackUrlTypes.NONE);
-        saml.setKeystorePassword("1234567890");
-        saml.setPrivateKeyPassword("1234567890");
-        saml.setIdentityProviderMetadataPath("classpath:idp-metadata.xml");
-        saml.setServiceProviderMetadataPath(new File(FileUtils.getTempDirectoryPath(), "sp.xml").getCanonicalPath());
-        saml.setServiceProviderEntityId("test-entityid");
-        saml.setForceKeystoreGeneration(true);
-        saml.setMessageStoreFactory(sessionFactory);
-        saml.setPrincipalIdAttribute("givenName");
-        saml.setAssertionConsumerServiceIndex(1);
-        saml.setAuthnContextClassRef(List.of("classRef1"));
-        saml.setNameIdPolicyFormat("transient");
-        saml.setBlockedSignatureSigningAlgorithms(List.of("sha-1"));
-        saml.setSignatureAlgorithms(List.of("sha-256"));
-        saml.setSignatureReferenceDigestMethods(List.of("sha-256"));
-        saml.getRequestedAttributes().add(
-            new Pac4jSamlClientProperties.ServiceProviderRequestedAttribute()
-                .setName("requestedAttribute")
-                .setFriendlyName("friendlyRequestedName"));
-        saml.getMappedAttributes().add(
-            new Pac4jSamlClientProperties.ServiceProviderMappedAttribute().setName("attr1").setMappedTo("givenName"));
-        return saml;
-    }
-
-    private static void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {
-        props.setId("TestId");
-        props.setSecret("TestSecret");
     }
 }

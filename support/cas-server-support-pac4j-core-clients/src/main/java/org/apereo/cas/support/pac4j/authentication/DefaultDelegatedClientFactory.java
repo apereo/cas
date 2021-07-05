@@ -5,8 +5,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
-import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
@@ -67,7 +67,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultDelegatedClientFactory}.
@@ -86,6 +85,44 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
     private final Collection<DelegatedClientFactoryCustomizer> customizers;
 
     private final Set<IndirectClient> clients = new LinkedHashSet<>();
+
+    @SneakyThrows
+    private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc,
+                                                                                 final Class<T> clazz) {
+        val cfg = clazz.getDeclaredConstructor().newInstance();
+        if (StringUtils.isNotBlank(oidc.getScope())) {
+            cfg.setScope(oidc.getScope());
+        }
+        cfg.setUseNonce(oidc.isUseNonce());
+        cfg.setDisablePkce(oidc.isDisablePkce());
+        cfg.setSecret(oidc.getSecret());
+        cfg.setClientId(oidc.getId());
+        cfg.setReadTimeout((int) Beans.newDuration(oidc.getReadTimeout()).toMillis());
+        cfg.setConnectTimeout((int) Beans.newDuration(oidc.getConnectTimeout()).toMillis());
+        if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
+            cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
+        }
+        cfg.setMaxClockSkew(oidc.getMaxClockSkew());
+        cfg.setDiscoveryURI(oidc.getDiscoveryUri());
+        cfg.setCustomParams(oidc.getCustomParams());
+        cfg.setLogoutUrl(oidc.getLogoutUrl());
+
+        cfg.setExpireSessionWithToken(oidc.isExpireSessionWithToken());
+        if (StringUtils.isNotBlank(oidc.getTokenExpirationAdvance())) {
+            cfg.setTokenExpirationAdvance((int) Beans.newDuration(oidc.getTokenExpirationAdvance()).toSeconds());
+        }
+
+        if (StringUtils.isNotBlank(oidc.getResponseMode())) {
+            cfg.setResponseMode(oidc.getResponseMode());
+        }
+        if (StringUtils.isNotBlank(oidc.getResponseType())) {
+            cfg.setResponseType(oidc.getResponseType());
+        }
+        if (!oidc.getMappedClaims().isEmpty()) {
+            cfg.setMappedClaims(CollectionUtils.convertDirectedListToMap(oidc.getMappedClaims()));
+        }
+        return cfg;
+    }
 
     @Override
     public Collection<IndirectClient> build() {
@@ -477,11 +514,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
 
                 val mappedAttributes = saml.getMappedAttributes();
                 if (!mappedAttributes.isEmpty()) {
-                    val results = mappedAttributes
-                        .stream()
-                        .collect(Collectors.toMap(Pac4jSamlClientProperties.ServiceProviderMappedAttribute::getName,
-                            Pac4jSamlClientProperties.ServiceProviderMappedAttribute::getMappedTo));
-                    cfg.setMappedAttributes(results);
+                    cfg.setMappedAttributes(CollectionUtils.convertDirectedListToMap(mappedAttributes));
                 }
 
                 val client = new SAML2Client(cfg);
@@ -656,40 +689,5 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
             return oc;
         }
         return null;
-    }
-
-    @SneakyThrows
-    private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc,
-                                                                                 final Class<T> clazz) {
-        val cfg = clazz.getDeclaredConstructor().newInstance();
-        if (StringUtils.isNotBlank(oidc.getScope())) {
-            cfg.setScope(oidc.getScope());
-        }
-        cfg.setUseNonce(oidc.isUseNonce());
-        cfg.setDisablePkce(oidc.isDisablePkce());
-        cfg.setSecret(oidc.getSecret());
-        cfg.setClientId(oidc.getId());
-        cfg.setReadTimeout((int) Beans.newDuration(oidc.getReadTimeout()).toMillis());
-        cfg.setConnectTimeout((int) Beans.newDuration(oidc.getConnectTimeout()).toMillis());
-        if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
-            cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
-        }
-        cfg.setMaxClockSkew(oidc.getMaxClockSkew());
-        cfg.setDiscoveryURI(oidc.getDiscoveryUri());
-        cfg.setCustomParams(oidc.getCustomParams());
-        cfg.setLogoutUrl(oidc.getLogoutUrl());
-
-        cfg.setExpireSessionWithToken(oidc.isExpireSessionWithToken());
-        if (StringUtils.isNotBlank(oidc.getTokenExpirationAdvance())) {
-            cfg.setTokenExpirationAdvance((int) Beans.newDuration(oidc.getTokenExpirationAdvance()).toSeconds());
-        }
-
-        if (StringUtils.isNotBlank(oidc.getResponseMode())) {
-            cfg.setResponseMode(oidc.getResponseMode());
-        }
-        if (StringUtils.isNotBlank(oidc.getResponseType())) {
-            cfg.setResponseType(oidc.getResponseType());
-        }
-        return cfg;
     }
 }
