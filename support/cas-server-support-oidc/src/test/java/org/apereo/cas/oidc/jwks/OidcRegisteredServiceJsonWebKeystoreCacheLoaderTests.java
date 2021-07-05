@@ -29,4 +29,15 @@ public class OidcRegisteredServiceJsonWebKeystoreCacheLoaderTests extends Abstra
         assertTrue(oidcServiceJsonWebKeystoreCache.get(service).isEmpty());
         assertTrue(oidcServiceJsonWebKeystoreCache.get(service).isEmpty());
     }
+
+    @Test
+    public void verifyOperationWithKidPerService() {
+        val service = getOidcRegisteredService();
+        service.setJwksKeyId("myCustomKey");
+        assertTrue(oidcServiceJsonWebKeystoreCache.get(service).isEmpty());
+
+        service.setJwksKeyId("1234567890");
+        assertTrue(oidcServiceJsonWebKeystoreCache.get(service).isPresent());
+    }
+
 }
