@@ -45,50 +45,6 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties, mfaFlowDefinitionRegistry, mfaFlowCustomizers);
     }
 
-    private void createRegisterDeviceView(final Flow flow) {
-        val prepareAction = createActionState(flow, CasWebflowConstants.STATE_ID_PREPARE_REGISTER_TRUSTED_DEVICE,
-            CasWebflowConstants.ACTION_ID_MFA_PREPARE_TRUST_DEVICE_VIEW_ACTION);
-        createTransitionForState(prepareAction, CasWebflowConstants.TRANSITION_ID_SKIP, CasWebflowConstants.STATE_ID_SUCCESS);
-        createTransitionForState(prepareAction, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_REGISTER_DEVICE_VIEW);
-        createTransitionForState(prepareAction, CasWebflowConstants.TRANSITION_ID_STORE, CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE);
-
-        createFlowVariable(flow, CasWebflowConstants.VAR_ID_MFA_TRUST_RECORD, MultifactorAuthenticationTrustBean.class);
-        val fields = Arrays.stream(MultifactorAuthenticationTrustBean.class.getDeclaredFields())
-            .map(Field::getName)
-            .collect(Collectors.toList());
-        val binder = createStateBinderConfiguration(fields);
-        val viewRegister = createViewState(flow, CasWebflowConstants.STATE_ID_REGISTER_DEVICE_VIEW, "mfa-trusted-devices/casMfaRegisterDeviceView", binder);
-        createStateModelBinding(viewRegister, CasWebflowConstants.VAR_ID_MFA_TRUST_RECORD, MultifactorAuthenticationTrustBean.class);
-        createTransitionForState(viewRegister, CasWebflowConstants.TRANSITION_ID_SUBMIT,
-            CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
-        createTransitionForState(viewRegister, CasWebflowConstants.TRANSITION_ID_SKIP, CasWebflowConstants.STATE_ID_SUCCESS,
-            Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
-    }
-
-    private void validateFlowDefinitionConfiguration() {
-        this.multifactorAuthenticationFlowDefinitionRegistries.forEach(registry -> {
-            if (registry.getFlowDefinitionCount() <= 0) {
-                throw new IllegalArgumentException("Flow definition registry "
-                    + Arrays.toString(registry.getFlowDefinitionIds()) + " has no flow definitions");
-            }
-
-            val msg = "CAS application context cannot find bean [%s]. "
-                + "This typically indicates that configuration is attempting to activate trusted-devices functionality for "
-                + "multifactor authentication, yet the configuration modules that auto-configure the webflow are absent "
-                + "from the CAS application runtime. If you have no need for trusted-devices functionality and wish to let the "
-                + "multifactor authentication provider (and not CAS) remember and record trusted devices for you, you need to "
-                + "turn this behavior off.";
-
-            if (!applicationContext.containsBean(CasWebflowConstants.ACTION_ID_MFA_SET_TRUST_ACTION)) {
-                throw new IllegalArgumentException(String.format(msg, CasWebflowConstants.ACTION_ID_MFA_SET_TRUST_ACTION));
-            }
-
-            if (!applicationContext.containsBean(CasWebflowConstants.ACTION_ID_MFA_VERIFY_TRUST_ACTION)) {
-                throw new IllegalArgumentException(String.format(msg, CasWebflowConstants.ACTION_ID_MFA_VERIFY_TRUST_ACTION));
-            }
-        });
-    }
-
     /**
      * Register multifactor trusted authentication into webflow.
      */
@@ -154,5 +110,42 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         val finishedTransition = createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS);
         finishMfaTrustedAuth.getTransitionSet().add(finishedTransition);
         createStateDefaultTransition(finishMfaTrustedAuth, CasWebflowConstants.STATE_ID_SUCCESS);
+    }
+
+    private void createRegisterDeviceView(final Flow flow) {
+        val prepareAction = createActionState(flow, CasWebflowConstants.STATE_ID_PREPARE_REGISTER_TRUSTED_DEVICE,
+            CasWebflowConstants.ACTION_ID_MFA_PREPARE_TRUST_DEVICE_VIEW_ACTION);
+        createTransitionForState(prepareAction, CasWebflowConstants.TRANSITION_ID_SKIP, CasWebflowConstants.STATE_ID_SUCCESS);
+        createTransitionForState(prepareAction, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_REGISTER_DEVICE_VIEW);
+        createTransitionForState(prepareAction, CasWebflowConstants.TRANSITION_ID_STORE, CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE);
+
+        createFlowVariable(flow, CasWebflowConstants.VAR_ID_MFA_TRUST_RECORD, MultifactorAuthenticationTrustBean.class);
+        val fields = Arrays.stream(MultifactorAuthenticationTrustBean.class.getDeclaredFields())
+            .map(Field::getName)
+            .collect(Collectors.toList());
+        val binder = createStateBinderConfiguration(fields);
+        val viewRegister = createViewState(flow, CasWebflowConstants.STATE_ID_REGISTER_DEVICE_VIEW, "mfa-trusted-devices/casMfaRegisterDeviceView", binder);
+        createStateModelBinding(viewRegister, CasWebflowConstants.VAR_ID_MFA_TRUST_RECORD, MultifactorAuthenticationTrustBean.class);
+        createTransitionForState(viewRegister, CasWebflowConstants.TRANSITION_ID_SUBMIT,
+            CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
+        createTransitionForState(viewRegister, CasWebflowConstants.TRANSITION_ID_SKIP, CasWebflowConstants.STATE_ID_SUCCESS,
+            Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
+    }
+
+    private void validateFlowDefinitionConfiguration() {
+        this.multifactorAuthenticationFlowDefinitionRegistries.forEach(registry -> {
+            val msg = "CAS application context cannot find bean [%s] or [%s]. "
+                + "This typically indicates that configuration is attempting to activate trusted-devices functionality for "
+                + "multifactor authentication, yet the configuration modules that auto-configure the webflow are absent "
+                + "from the CAS application runtime. If you have no need for trusted-devices functionality and wish to let the "
+                + "multifactor authentication provider (and not CAS) remember and record trusted devices for you, you need to "
+                + "turn this behavior off.";
+
+            if (!applicationContext.containsBean(CasWebflowConstants.ACTION_ID_MFA_SET_TRUST_ACTION)
+                || !applicationContext.containsBean(CasWebflowConstants.ACTION_ID_MFA_VERIFY_TRUST_ACTION)) {
+                throw new IllegalArgumentException(String.format(msg, CasWebflowConstants.ACTION_ID_MFA_SET_TRUST_ACTION,
+                    CasWebflowConstants.ACTION_ID_MFA_VERIFY_TRUST_ACTION));
+            }
+        });
     }
 }
