@@ -25,6 +25,60 @@ public class HazelcastCoreClusterProperties implements Serializable {
     private static final long serialVersionUID = -8374968308106013185L;
 
     /**
+     * Used when replication is turned on with {@link #isReplicated()}.
+     *
+     * <p>
+     * If a new member joins the cluster, there are two ways you can handle the initial
+     * provisioning that is executed to replicate all existing values to the new member.
+     * Each involves how you configure the async fill up.
+     * <ul>
+     * <li>First, you can configure async fill up to true, which does not block reads while
+     * the fill up operation is underway. That way, you have immediate access on the
+     * new member, but it will take time until all the values are eventually accessible.
+     * Not yet replicated values are returned as non-existing (null). </li>
+     * <li>Second, you can configure for a synchronous initial fill up (by configuring the
+     * async fill up to false), which blocks every read or write access to the map
+     * until the fill up operation is finished. Use this with caution since
+     * it might block your application from operating.</li>
+     * </ul>
+     */
+    private boolean asyncFillup = true;
+
+    /**
+     * A Replicated Map is a distributed key-value data structure where the data is replicated
+     * to all members in the cluster. It provides full replication of
+     * entries to all members for high speed access. A Replicated Map does not partition data
+     * (it does not spread data to different cluster members); instead, it replicates the data to all members.
+     * Replication leads to higher memory consumption. However, a Replicated Map has faster
+     * read and write access since the data is available on all members.
+     * Writes could take place on local/remote members in order to provide
+     * write-order, eventually being replicated to all other members.
+     *
+     * <br><p>
+     * If you have a large cluster or very high occurrences of updates, the Replicated Map may not
+     * scale linearly as expected since it has to replicate update operations to all members in the cluster.
+     * Since the replication of updates is performed in an asynchronous manner, Hazelcast recommends you
+     * enable back pressure in case your system has high occurrences of updates.
+     *
+     * Note that Replicated Map does not guarantee eventual consistency because there are
+     * some edge cases that fail to provide consistency.
+     *
+     * <br><p>
+     * Replicated Map uses the internal partition system of Hazelcast in order to
+     * serialize updates happening on the same key at the same time. This happens by
+     * sending updates of the same key to the same Hazelcast member in the cluster.
+     *
+     * <br><p>
+     * Due to the asynchronous nature of replication, a Hazelcast member could die before successfully
+     * replicating a "write" operation to other members after sending the "write completed"
+     * response to its caller during the write process. In this scenario, Hazelcast’s internal
+     * partition system promotes one of the replicas of the partition as the primary one.
+     * The new primary partition does not have the latest "write" since the
+     * dead member could not successfully replicate the update.
+     */
+    private boolean replicated;
+
+    /**
      * With {@code PartitionGroupConfig}, you can control how primary and backup partitions are mapped to physical Members.
      * Hazelcast will always place partitions on different partition groups so as to provide redundancy.
      * Accepted value are: {@code PER_MEMBER, HOST_AWARE, CUSTOM, ZONE_AWARE, SPI}.
@@ -167,5 +221,5 @@ public class HazelcastCoreClusterProperties implements Serializable {
      * CP Subsystem must have at least 3 CP members.
      */
     private int cpMemberCount;
-    
+
 }
