@@ -74,7 +74,10 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
         val context = new JEEContext(request, response);
 
         val result = SamlIdPUtils.retrieveSamlRequest(context, sessionStore, openSamlConfigBean, AuthnRequest.class);
-        return Optional.of(AuthnRequest.class.cast(result.getKey()));
+        val authnRequest = (AuthnRequest) result
+            .orElseThrow(() -> new IllegalArgumentException("SAML request could not be determined from session store"))
+            .getLeft();
+        return Optional.of(authnRequest);
     }
 
     @Override

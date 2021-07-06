@@ -55,6 +55,7 @@ import java.util.zip.InflaterInputStream;
 @UtilityClass
 public class SamlIdPUtils {
 
+
     /**
      * Retrieve authn request authn request.
      *
@@ -64,23 +65,20 @@ public class SamlIdPUtils {
      * @param clazz              the clazz
      * @return the request
      */
-    public static Pair<? extends RequestAbstractType, MessageContext> retrieveSamlRequest(final WebContext context,
-                                                                                          final SessionStore sessionStore,
-                                                                                          final OpenSamlConfigBean openSamlConfigBean,
-                                                                                          final Class<? extends RequestAbstractType> clazz) {
+    public static Optional<Pair<? extends RequestAbstractType, MessageContext>> retrieveSamlRequest(final WebContext context,
+                                                                                                    final SessionStore sessionStore,
+                                                                                                    final OpenSamlConfigBean openSamlConfigBean,
+                                                                                                    final Class<? extends RequestAbstractType> clazz) {
         LOGGER.trace("Retrieving authentication request from scope");
-        val requestValue = sessionStore
+        val authnContext = sessionStore
             .get(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST)
             .map(String.class::cast)
-            .orElseThrow(() -> new IllegalArgumentException("SAML request could not be determined from session store"));
-        val authnRequest = retrieveSamlRequest(openSamlConfigBean, clazz, requestValue);
-        val messageContext = sessionStore
-            .get(context, MessageContext.class.getName())
-            .map(String.class::cast)
-            .map(result -> SamlIdPAuthenticationContext.decode(result).toMessageContext(authnRequest))
-            .orElseThrow(() -> new IllegalArgumentException("SAML message context could not be determined from from session store"));
-
-        return Pair.of(authnRequest, messageContext);
+            .map(value -> retrieveSamlRequest(openSamlConfigBean, clazz, value))
+            .flatMap(authnRequest -> sessionStore
+                .get(context, MessageContext.class.getName())
+                .map(String.class::cast)
+                .map(result -> SamlIdPAuthenticationContext.decode(result).toMessageContext(authnRequest)));
+        return authnContext.map(ctx -> Pair.of((AuthnRequest) ctx.getMessage(), ctx));
     }
 
     /**
