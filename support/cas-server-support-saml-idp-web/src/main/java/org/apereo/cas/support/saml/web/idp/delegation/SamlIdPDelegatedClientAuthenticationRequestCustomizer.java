@@ -82,7 +82,7 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
                 saml2Client.getIdentityProviderResolvedEntityId(), providerList);
             return providerList.isEmpty() || providerList.contains(saml2Client.getIdentityProviderResolvedEntityId());
         }
-        return false;
+        return true;
     }
 
     @Override
