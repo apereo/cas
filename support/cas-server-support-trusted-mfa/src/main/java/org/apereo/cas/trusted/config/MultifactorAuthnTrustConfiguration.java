@@ -148,9 +148,7 @@ public class MultifactorAuthnTrustConfiguration {
     @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
     @Bean
     public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner() {
-        return new MultifactorAuthenticationTrustStorageCleaner(
-            casProperties.getAuthn().getMfa().getTrusted(),
-            mfaTrustEngine());
+        return new MultifactorAuthenticationTrustStorageCleaner(mfaTrustEngine());
     }
 
     @Bean
