@@ -21,6 +21,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-rest")
     testImplementation project(":support:cas-server-support-themes")
 
     testImplementation project(path: ":support:cas-server-support-surrogate-authentication", configuration: "tests")
