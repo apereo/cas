@@ -58,9 +58,6 @@ public class CasServicesStreamingHazelcastConfiguration {
         val hzConfig = stream.getConfig();
         val duration = Beans.newDuration(stream.getDuration()).toMillis();
         val mapConfig = HazelcastConfigurationFactory.buildMapConfig(hzConfig, name, TimeUnit.MILLISECONDS.toSeconds(duration));
-
-        val hazelcastInstance = Hazelcast.newHazelcastInstance(HazelcastConfigurationFactory.build(hzConfig));
-        hazelcastInstance.getConfig().addMapConfig(mapConfig);
-        return hazelcastInstance;
+        return Hazelcast.newHazelcastInstance(HazelcastConfigurationFactory.build(hzConfig, mapConfig));
     }
 }

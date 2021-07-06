@@ -67,7 +67,8 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends 
         when(saml2Client.getIdentityProviderResolvedEntityId()).thenReturn(providerId);
         setAuthnRequestFor(webContext, providerId);
         assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService));
-        assertFalse(customizer.isAuthorized(webContext, new CasClient(), webApplicationService));
+
+        assertTrue(customizer.isAuthorized(webContext, new CasClient(), webApplicationService));
     }
 
     private void storeRequest(final AuthnRequest authnRequest, final JEEContext webContext) throws Exception {

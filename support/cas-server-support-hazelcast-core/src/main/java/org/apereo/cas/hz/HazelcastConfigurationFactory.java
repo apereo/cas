@@ -62,6 +62,17 @@ public class HazelcastConfigurationFactory {
      */
     public static Config build(final BaseHazelcastProperties hz, final NamedConfig mapConfig) {
         val config = build(hz);
+        setConfigMap(mapConfig, config);
+        return finalizeConfig(config, hz);
+    }
+
+    /**
+     * Sets config map.
+     *
+     * @param mapConfig the map config
+     * @param config    the config
+     */
+    public static void setConfigMap(final NamedConfig mapConfig, final Config config) {
         if (mapConfig instanceof MapConfig) {
             val maps = new HashMap<String, MapConfig>();
             maps.put(mapConfig.getName(), (MapConfig) mapConfig);
@@ -71,7 +82,6 @@ public class HazelcastConfigurationFactory {
             maps.put(mapConfig.getName(), (ReplicatedMapConfig) mapConfig);
             config.setReplicatedMapConfigs(maps);
         }
-        return finalizeConfig(config, hz);
     }
 
     /**
