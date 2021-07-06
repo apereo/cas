@@ -7,7 +7,6 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,6 +44,19 @@ public class RestfulSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
     }
 
     @Override
+    @SneakyThrows
+    public Pair<String, String> buildSelfSignedEncryptionCert(final Optional<SamlRegisteredService> registeredService) {
+        return generateCertificateAndKey();
+    }
+
+    @Override
+    @SneakyThrows
+    public Pair<String, String> buildSelfSignedSigningCert(final Optional<SamlRegisteredService> registeredService) {
+        return generateCertificateAndKey();
+    }
+
+    @Override
+    @SneakyThrows
     protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
                                                                final Optional<SamlRegisteredService> registeredService) {
         doc.setAppliesTo(SamlIdPMetadataGenerator.getAppliesToFor(registeredService));
@@ -70,23 +82,9 @@ public class RestfulSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
                     return doc;
                 }
             }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
         return null;
-    }
-
-    @Override
-    @SneakyThrows
-    public Pair<String, String> buildSelfSignedEncryptionCert(final Optional<SamlRegisteredService> registeredService) {
-        return generateCertificateAndKey();
-    }
-
-    @Override
-    @SneakyThrows
-    public Pair<String, String> buildSelfSignedSigningCert(final Optional<SamlRegisteredService> registeredService) {
-        return generateCertificateAndKey();
     }
 }

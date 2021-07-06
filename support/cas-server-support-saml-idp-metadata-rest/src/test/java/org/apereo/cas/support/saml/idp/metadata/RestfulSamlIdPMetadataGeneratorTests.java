@@ -9,8 +9,6 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,6 +21,9 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link RestfulSamlIdPMetadataGeneratorTests}.
@@ -43,31 +44,40 @@ public class RestfulSamlIdPMetadataGeneratorTests extends BaseRestfulSamlMetadat
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
-    private static MockWebServer SERVER;
-
     @Autowired
     @Qualifier("samlIdPMetadataGenerator")
     protected SamlIdPMetadataGenerator samlIdPMetadataGenerator;
 
-    @BeforeAll
-    public static void setup() throws Exception {
-        val entity = MAPPER.writeValueAsString(new SamlIdPMetadataDocument());
-        val resource = new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "Output");
-        SERVER = new MockWebServer(9453, resource, HttpStatus.OK);
-        SERVER.start();
-    }
-
-    @AfterAll
-    public static void tearDown() {
-        SERVER.close();
-    }
-
     @Test
-    public void verifyOperation() {
-        samlIdPMetadataGenerator.generate(Optional.empty());
-        val service = new SamlRegisteredService();
-        service.setName("TestShib");
-        service.setId(1000);
-        samlIdPMetadataGenerator.generate(Optional.of(service));
+    public void verifyOperation() throws Exception {
+        var document = new SamlIdPMetadataDocument();
+        var entity = MAPPER.writeValueAsString(document);
+        try (val webServer = new MockWebServer(9453,
+            new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
+            webServer.start();
+            assertNotNull(samlIdPMetadataGenerator.generate(Optional.empty()));
+        }
+
+        document.setEncryptionCertificate(UUID.randomUUID().toString());
+        document.setSigningKey(UUID.randomUUID().toString());
+        document.setSigningCertificate(UUID.randomUUID().toString());
+        document.setEncryptionKey(UUID.randomUUID().toString());
+        document.setMetadata(UUID.randomUUID().toString());
+
+        entity = MAPPER.writeValueAsString(document);
+        try (val webServer = new MockWebServer(9453,
+            new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
+            webServer.start();
+            val service = new SamlRegisteredService();
+            service.setName("TestShib");
+            service.setId(1000);
+            assertNotNull(samlIdPMetadataGenerator.generate(Optional.of(service)));
+        }
+
+        try (val webServer = new MockWebServer(9453,
+            new ByteArrayResource("___".getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
+            webServer.start();
+            assertNotNull(samlIdPMetadataGenerator.generate(Optional.empty()));
+        }
     }
 }
