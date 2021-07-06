@@ -416,7 +416,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @return the boolean
      */
     protected Optional<Authentication> singleSignOnSessionExists(final Pair<? extends SignableSAMLObject, MessageContext> pair,
-                                                                 final HttpServletRequest request, final HttpServletResponse response) {
+                                                                 final HttpServletRequest request,
+                                                                 final HttpServletResponse response) {
         val authnRequest = AuthnRequest.class.cast(pair.getLeft());
         if (authnRequest.isForceAuthn()) {
             LOGGER.trace("Authentication request asks for forced authn. Ignoring existing single sign-on session, if any");
@@ -668,7 +669,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
         val webContext = new JEEContext(request, response);
         return SamlIdPUtils.retrieveSamlRequest(webContext, configurationContext.getSessionStore(),
-            configurationContext.getOpenSamlConfigBean(), AuthnRequest.class);
+            configurationContext.getOpenSamlConfigBean(), AuthnRequest.class)
+            .orElseThrow(() -> new IllegalArgumentException("SAML request or context could not be determined from session store"));
     }
 
     /**

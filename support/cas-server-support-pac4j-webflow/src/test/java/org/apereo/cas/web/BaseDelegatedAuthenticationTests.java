@@ -39,6 +39,7 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
@@ -179,8 +180,12 @@ public abstract class BaseDelegatedAuthenticationTests {
             when(mockClientNoCredentials.getCredentials(any(), any())).thenThrow(new OkAction(StringUtils.EMPTY));
             when(mockClientNoCredentials.isInitialized()).thenReturn(true);
 
+            val failingClient = mock(IndirectClient.class);
+            when(failingClient.getName()).thenReturn("FailingIndirectClient");
+            doThrow(new IllegalArgumentException("Unable to init")).when(failingClient).init();
+
             return new Clients("https://cas.login.com", List.of(saml2Client, casClient,
-                facebookClient, oidcClient, mockClientNoCredentials));
+                facebookClient, oidcClient, mockClientNoCredentials, failingClient));
         }
     }
 }
