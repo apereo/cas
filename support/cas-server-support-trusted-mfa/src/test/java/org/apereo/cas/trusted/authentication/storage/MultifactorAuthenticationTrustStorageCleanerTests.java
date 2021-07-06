@@ -32,6 +32,7 @@ public class MultifactorAuthenticationTrustStorageCleanerTests extends AbstractM
 
     @Test
     public void verifyAction() {
+        assertNotNull(mfaTrustStorageCleaner.getStorage());
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {

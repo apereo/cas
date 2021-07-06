@@ -40,7 +40,6 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
 import java.util.ServiceLoader;
 import java.util.UUID;
 
@@ -52,6 +51,19 @@ import java.util.UUID;
  */
 @Slf4j
 public class HazelcastConfigurationFactory {
+    /**
+     * Sets config map.
+     *
+     * @param mapConfig the map config
+     * @param config    the config
+     */
+    public static void setConfigMap(final NamedConfig mapConfig, final Config config) {
+        if (mapConfig instanceof MapConfig) {
+            config.addMapConfig((MapConfig) mapConfig);
+        } else if (mapConfig instanceof ReplicatedMapConfig) {
+            config.addReplicatedMapConfig((ReplicatedMapConfig) mapConfig);
+        }
+    }
 
     /**
      * Build config.
@@ -64,24 +76,6 @@ public class HazelcastConfigurationFactory {
         val config = build(hz);
         setConfigMap(mapConfig, config);
         return finalizeConfig(config, hz);
-    }
-
-    /**
-     * Sets config map.
-     *
-     * @param mapConfig the map config
-     * @param config    the config
-     */
-    public static void setConfigMap(final NamedConfig mapConfig, final Config config) {
-        if (mapConfig instanceof MapConfig) {
-            val maps = new HashMap<String, MapConfig>();
-            maps.put(mapConfig.getName(), (MapConfig) mapConfig);
-            config.setMapConfigs(maps);
-        } else if (mapConfig instanceof ReplicatedMapConfig) {
-            val maps = new HashMap<String, ReplicatedMapConfig>();
-            maps.put(mapConfig.getName(), (ReplicatedMapConfig) mapConfig);
-            config.setReplicatedMapConfigs(maps);
-        }
     }
 
     /**
