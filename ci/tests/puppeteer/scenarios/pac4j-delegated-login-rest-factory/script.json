@@ -1,0 +1,7 @@
+{
+  "dependencies": "pac4j-webflow",
+  "properties": [
+    "--cas.authn.pac4j.rest.url=https://demo5926981.mockable.io/delegatedauthn",
+    "--logging.level.org.apereo.cas=debug"
+  ]
+}
