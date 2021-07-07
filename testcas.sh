@@ -1,5 +1,11 @@
 #!/bin/bash
 
+RED="\e[31m"
+GREEN="\e[32m"
+YELLOW="\e[33m"
+CYAN="\e[36m"
+ENDCOLOR="\e[0m"
+
 clear
 
 hasDocker() {
@@ -9,7 +15,7 @@ hasDocker() {
     return 1
   fi
   dockerserver=$(docker version --format '{{json .Server.Os}}')
-  echo "Docker server is ${dockerserver}."
+  echo -n "Docker server is ${dockerserver}."
   if [[ $dockerserver =~ "linux" ]]; then
     return 0
   fi
@@ -19,9 +25,9 @@ hasDocker() {
 
 printHelp() {
     hasDocker
-    echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-watch] [--no-wrapper] [--no-retry] [--debug] [--no-parallel] [--dry-run] [--info] [--with-coverage] [--no-build-cache] \n"
-    echo -e "To see what test categories are available, use:\n"
-    echo -e "\t./gradlew -q testCategories"
+    printf "\nUsage: ${CYAN}./testcas.sh${ENDCOLOR} --category [category1,category2,...] [--help] [--test TestClass]\n\t[--ignore-failures] [--no-watch] [--no-wrapper] [--no-retry] [--debug] [--no-parallel]\n\t[--dry-run][--info] [--with-coverage] [--no-build-cache] \n"
+    printf "\nTo see what test categories are available, use:\n"
+    printf "\t${GREEN}./gradlew -q testCategories${ENDCOLOR}\n"
     echo -e "\nPlease see the test script for details."
 }
 
@@ -105,7 +111,7 @@ while (( "$#" )); do
             webapp)
                 task+="testWebApp "
                 ;;
-            throttling|bucket4j|authenticationthrottling)
+            throttle|throttling|bucket4j|authenticationthrottling)
                 task+="testAuthenticationThrottling "
                 ;;
             authnhandler|authenticationhandler)
@@ -350,7 +356,7 @@ while (( "$#" )); do
                 task+="testJMS "
                 ;;
             *)
-                echo -e "Unable to recognize test category: ${item}"
+                printf "${RED}Unable to recognize test category: ${item}${ENDCOLOR}\n"
                 printHelp
                 exit 1
                 ;;
@@ -359,7 +365,7 @@ while (( "$#" )); do
         shift 2
         ;;
     *)
-        echo -e "Unable to accept parameter: $1"
+        printf "${RED}Unable to accept parameter: $1${ENDCOLOR}\n"
         printHelp
         exit 1
         ;;
@@ -372,19 +378,19 @@ then
   exit 1
 fi
 
-cmdstring="\033[1m$gradleCmd \e[32m$task\e[39m$tests\e[39m $flags ${debug}${dryRun}${info}${parallel}\e[39m\e[32m$coverageTask\e[39m"
-printf "$cmdstring \e[0m\n"
+cmd="$gradleCmd ${GREEN}$task $tests${ENDCOLOR}${flags}${debug}${dryRun}${info}${parallel}${GREEN}$coverageTask${ENDCOLOR}"
+printf "${cmd}\n"
 
 cmd="$gradleCmd $task $tests $flags ${debug} ${parallel} ${dryRun} ${info} ${coverageTask}"
 eval "$cmd"
 retVal=$?
 echo -e "***************************************************************************************"
-echo -e "Gradle build finished at `date` with exit code $retVal"
+printf "${CYAN}Gradle build finished at `date` with exit code $retVal ${ENDCOLOR}\n"
 echo -e "***************************************************************************************"
 
 if [ $retVal == 0 ]; then
-    echo "Gradle build finished successfully."
+    printf "${GREEN}Gradle build finished successfully.${ENDCOLOR}\n"
 else
-    echo "Gradle build did NOT finish successfully."
+    printf "${RED}Gradle build did NOT finish successfully.${ENDCOLOR}"
     exit $retVal
 fi
