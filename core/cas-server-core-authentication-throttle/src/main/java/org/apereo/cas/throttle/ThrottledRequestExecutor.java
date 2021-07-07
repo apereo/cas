@@ -12,6 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 public interface ThrottledRequestExecutor {
 
     /**
+     * Default implementation bean name.
+     */
+    String DEFAULT_BEAN_NAME = "throttledRequestExecutor";
+
+    /**
      * Attempts to pre-handle and throttle/stifle the requests
      * based on capacity and configured pools.
      *
