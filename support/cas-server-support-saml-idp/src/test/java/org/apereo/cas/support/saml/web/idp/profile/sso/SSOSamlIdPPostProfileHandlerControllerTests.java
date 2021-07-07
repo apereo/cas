@@ -129,7 +129,7 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     public void verifyPostRequestWithSso() throws Exception {
         val response = new MockHttpServletResponse();
         val tgt = new MockTicketGrantingTicket("casuser");
@@ -150,7 +150,7 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
     }
 
     @Test
-    @Order(4)
+    @Order(6)
     public void verifyPostRequestWithSsoForcedAuthn() throws Exception {
         val response = new MockHttpServletResponse();
         val tgt = new MockTicketGrantingTicket("casuser");
@@ -169,6 +169,23 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
         assertEquals(HttpStatus.FOUND, mv.getStatus());
     }
 
+    @Test
+    @Order(7)
+    public void verifyPostRequestWithUnknownCookie() throws Exception {
+        val response = new MockHttpServletResponse();
+        val tgt = new MockTicketGrantingTicket("casuser");
+        ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());
+        val request = new MockHttpServletRequest();
+        request.setCookies(response.getCookies());
+        request.setMethod("POST");
+        val authnRequest = getAuthnRequest();
+        val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
+        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
+        samlIdPDistributedSessionStore.set(new JEEContext(request, response),
+            SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "relay-state");
+        val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
+        assertEquals(HttpStatus.FOUND, mv.getStatus());
+    }
 
     @SneakyThrows
     private AuthnRequest signAuthnRequest(final HttpServletRequest request,

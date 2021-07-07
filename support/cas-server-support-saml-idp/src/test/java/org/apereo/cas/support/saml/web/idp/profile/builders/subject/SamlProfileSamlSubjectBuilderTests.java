@@ -28,6 +28,7 @@ public class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfiguration
         val response = new MockHttpServletResponse();
 
         val service = getSamlRegisteredServiceForTestShib(true, true);
+        service.setSkewAllowance(1000);
         service.setSkipGeneratingAssertionNameId(true);
         service.setSkipGeneratingSubjectConfirmationNotOnOrAfter(true);
         service.setSkipGeneratingSubjectConfirmationNameId(true);
@@ -43,5 +44,29 @@ public class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfiguration
             SAMLConstants.SAML2_POST_BINDING_URI,
             new MessageContext());
         assertNotNull(result);
+    }
+
+    @Test
+    public void verifySubjectWithSkewedConfData() {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+
+        val service = getSamlRegisteredServiceForTestShib(true, true);
+        service.setSkewAllowance(1000);
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+            samlRegisteredServiceCachingMetadataResolver,
+            service, service.getServiceId()).get();
+
+        val authnRequest = getAuthnRequestFor(service);
+        val assertion = getAssertion();
+
+        val result = samlProfileSamlSubjectBuilder.build(authnRequest, request, response,
+            assertion, service, adaptor,
+            SAMLConstants.SAML2_POST_BINDING_URI,
+            new MessageContext());
+        assertNotNull(result);
+
+        var subjectData = result.getSubjectConfirmations().get(0).getSubjectConfirmationData();
+        assertEquals(assertion.getValidFromDate().toInstant().plusSeconds(service.getSkewAllowance()), subjectData.getNotOnOrAfter());
     }
 }

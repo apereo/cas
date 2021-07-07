@@ -687,7 +687,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val webContext = new JEEContext(request, response);
         SamlIdPUtils.storeSamlRequest(webContext, configurationContext.getOpenSamlConfigBean(),
             configurationContext.getSessionStore(), context);
-
     }
 
     /**
@@ -711,12 +710,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val entityId = facade.getEntityId();
         LOGGER.debug("Checking metadata for [{}] to see if binding [{}] is supported", entityId, binding);
         val svc = facade.getAssertionConsumerService(binding);
-        if (svc != null) {
-            LOGGER.debug("Binding [{}] is supported by [{}]", svc.getBinding(), entityId);
-            return binding;
-        }
-        LOGGER.warn("Checking determine profile binding for [{}]", entityId);
-        return null;
+        LOGGER.debug("Binding [{}] is supported by [{}]", svc.getBinding(), entityId);
+        return binding;
     }
 }
 
