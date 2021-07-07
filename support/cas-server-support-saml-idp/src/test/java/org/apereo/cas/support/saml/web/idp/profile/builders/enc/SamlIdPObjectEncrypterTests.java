@@ -9,6 +9,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.NameID;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,6 +36,7 @@ public class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
             .get(samlRegisteredServiceCachingMetadataResolver, registeredService,
                 registeredService.getServiceId()).get();
         assertNull(samlIdPObjectEncrypter.encode(mock(Assertion.class), registeredService, adaptor));
+        assertNull(samlIdPObjectEncrypter.encode(mock(NameID.class), registeredService, adaptor));
     }
 
     @Test
