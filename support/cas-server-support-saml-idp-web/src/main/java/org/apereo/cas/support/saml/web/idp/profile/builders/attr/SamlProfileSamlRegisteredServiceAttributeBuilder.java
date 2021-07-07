@@ -30,7 +30,7 @@ public class SamlProfileSamlRegisteredServiceAttributeBuilder extends DefaultSam
     @Override
     @SneakyThrows
     public void build(final AttributeStatement attrStatement, final Attribute attribute) {
-        if (!service.isEncryptAttributes() || !shouldEncryptAttribute(attribute)) {
+        if (!service.isEncryptAttributes() || !shouldEncryptAttribute(attribute) || service.isEncryptAssertions()) {
             LOGGER.debug("Service [{}] is configured to not encrypt attributes for [{}]", service.getName(), attribute.getName());
             super.build(attrStatement, attribute);
             return;
