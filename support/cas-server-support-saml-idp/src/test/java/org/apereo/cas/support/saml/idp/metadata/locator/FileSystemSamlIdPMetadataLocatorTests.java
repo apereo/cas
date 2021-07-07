@@ -30,7 +30,7 @@ public class FileSystemSamlIdPMetadataLocatorTests extends BaseSamlIdPConfigurat
 
     @Test
     public void verifyUnknownDirectory() {
-        val locator = new FileSystemSamlIdPMetadataLocator(new File("/##"), mock(Cache.class));
+        val locator = new FileSystemSamlIdPMetadataLocator(new File("/#**??#"), mock(Cache.class));
         assertThrows(IllegalArgumentException.class, locator::initialize);
     }
 
