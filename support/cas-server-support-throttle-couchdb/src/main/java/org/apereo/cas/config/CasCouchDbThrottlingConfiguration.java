@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.audit.AuditActionContextCouchDbRepository;
 import org.apereo.cas.web.support.CouchDbThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext;
+import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class CasCouchDbThrottlingConfiguration {
     @ConditionalOnMissingBean(name = "couchDbAuthenticationThrottle")
     @Bean
     @RefreshScope
-    public CouchDbThrottledSubmissionHandlerInterceptorAdapter authenticationThrottle() {
+    public ThrottledSubmissionHandlerInterceptor authenticationThrottle() {
         return new CouchDbThrottledSubmissionHandlerInterceptorAdapter(
             authenticationThrottlingConfigurationContext.getObject(), couchDbRepository.getObject());
     }
