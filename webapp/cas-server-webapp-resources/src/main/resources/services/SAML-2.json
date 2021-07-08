@@ -1,0 +1,28 @@
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "mmoayyed.unicon.net.*",
+  "name": "SAML",
+  "id": 2,
+  "evaluationOrder": 3,
+//  "logoutUrl" : "https://github.com/apereo/cas",
+  "metadataLocation": "/Users/Misagh/Workspace/GitWorkspace/shibboleth-sample-java-sp/src/main/resources/metadata/sp-metadata.xml",
+//  "authenticationPolicy" : {
+//    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
+//    "requiredAuthenticationHandlers" : ["java.util.TreeSet", [ "JSON" ]],
+//    "criteria": {
+//      "@class": "org.apereo.cas.services.AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria"
+//    }
+//  },
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [
+      "java.util.ArrayList",
+      [
+        {
+          "@class": "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+          "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "sn" ] ]
+        }
+      ]
+    ]
+  }
+}

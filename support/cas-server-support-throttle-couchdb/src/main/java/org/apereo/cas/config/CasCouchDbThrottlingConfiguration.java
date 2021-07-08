@@ -50,7 +50,7 @@ public class CasCouchDbThrottlingConfiguration {
     @ConditionalOnMissingBean(name = "couchDbAuthenticationThrottle")
     @Bean
     @RefreshScope
-    public CouchDbThrottledSubmissionHandlerInterceptorAdapter authenticationThrottle() {
+    public ThrottledSubmissionHandlerInterceptor authenticationThrottle() {
         val throttle = casProperties.getAuthn().getThrottle();
         val failure = throttle.getFailure();
         val context = ThrottledSubmissionHandlerConfigurationContext.builder()
