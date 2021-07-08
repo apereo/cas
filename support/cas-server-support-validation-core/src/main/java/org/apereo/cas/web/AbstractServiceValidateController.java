@@ -269,7 +269,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param service         the service
      * @return true/false
      */
-    private boolean validateAssertion(final HttpServletRequest request, final String serviceTicketId, final Assertion assertion, final Service service) {
+    private boolean validateAssertion(final HttpServletRequest request, final String serviceTicketId,
+                                      final Assertion assertion, final Service service) {
         for (val spec : serviceValidateConfigurationContext.getValidationSpecifications()) {
             spec.reset();
             val binder = new ServletRequestDataBinder(spec, "validationSpecification");

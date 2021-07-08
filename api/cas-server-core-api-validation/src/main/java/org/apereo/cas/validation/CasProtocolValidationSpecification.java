@@ -33,4 +33,12 @@ public interface CasProtocolValidationSpecification extends Ordered {
     default int getOrder() {
         return 0;
     }
+
+    /**
+     * Sets renew.
+     *
+     * @param value the value
+     */
+    default void setRenew(boolean value) {
+    }
 }
