@@ -4,10 +4,13 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.security.credential.BasicCredential;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link BasicResourceCredentialFactoryBeanTests}.
@@ -46,6 +49,15 @@ public class BasicResourceCredentialFactoryBeanTests {
     public void verifyNoKeys() {
         val factory = new BasicResourceCredentialFactoryBean();
         assertThrows(BeanCreationException.class, factory::getObject);
+    }
+
+    @Test
+    public void verifyNoKeyInfo() {
+        val factory = new BasicResourceCredentialFactoryBean();
+        factory.setPrivateKeyInfo(null);
+        assertThrows(FatalBeanException.class, factory::getObject);
+        factory.setPublicKeyInfo(mock(Resource.class));
+        assertThrows(FatalBeanException.class, factory::getPublicKey);
     }
 
     @Test
