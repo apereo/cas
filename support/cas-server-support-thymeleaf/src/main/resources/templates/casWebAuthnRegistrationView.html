@@ -105,6 +105,8 @@
                         name="registerButton" id="registerButton" accesskey="r" type="button">
                     <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register Device</span>
                 </button>
+                <input type="hidden" id="registerCsrfToken" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
                 <!--
                 <button class="mdc-button mdc-button--raised mr-2"
                         id="logoutButton" disabled="disabled" name="logout"
@@ -132,13 +134,15 @@
         </form>
 
         <script type="text/javascript">
+            const csrfToken = $('#registerCsrfToken').val();
+
             document.getElementById("credentialNickname").value = randomWord();
             var btn = document.getElementById('registerButton');
             btn.addEventListener('click', function (event) {
                 const username = '[[${principal.id}]]';
                 const displayName = '[[${displayName}]]';
                 const credentialNickname = $('#credentialNickname').val();
-                register(username, displayName, credentialNickname);
+                register(username, displayName, credentialNickname, csrfToken);
             }, false);
         </script>
 

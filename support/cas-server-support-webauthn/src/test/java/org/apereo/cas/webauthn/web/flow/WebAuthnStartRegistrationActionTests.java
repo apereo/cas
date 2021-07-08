@@ -33,6 +33,7 @@ public class WebAuthnStartRegistrationActionTests {
     @Qualifier("webAuthnStartRegistrationAction")
     private Action webAuthnStartRegistrationAction;
 
+
     @Test
     public void verifyOperation() throws Exception {
         val context = new MockRequestContext();
@@ -47,6 +48,7 @@ public class WebAuthnStartRegistrationActionTests {
         assertNull(webAuthnStartRegistrationAction.execute(context));
         assertTrue(context.getFlowScope().contains(WebAuthnStartRegistrationAction.FLOW_SCOPE_WEB_AUTHN_APPLICATION_ID));
         assertTrue(context.getFlowScope().contains("displayName"));
+        assertTrue(context.getFlowScope().contains("_csrf"));
     }
 
 }
