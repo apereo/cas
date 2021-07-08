@@ -5,7 +5,9 @@ dependencies {
     api project(":api:cas-server-core-api-mfa")
 
     implementation libraries.webauthn
-
+    implementation libraries.springsecurityconfig
+    implementation libraries.springsecurityweb
+    
     compileOnlyApi  project(":support:cas-server-support-trusted-mfa")
     
     implementation project(":support:cas-server-support-trusted-mfa-core")

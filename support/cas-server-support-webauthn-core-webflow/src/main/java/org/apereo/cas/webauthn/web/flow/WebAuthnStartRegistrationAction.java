@@ -10,8 +10,11 @@ import com.yubico.core.RegistrationStorage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link WebAuthnStartRegistrationAction}.
@@ -32,10 +35,11 @@ public class WebAuthnStartRegistrationAction extends AbstractMultifactorAuthenti
 
     private final CasConfigurationProperties casProperties;
 
+    private final CsrfTokenRepository csrfTokenRepository;
+
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn().getCore();
-
         val authn = WebUtils.getAuthentication(requestContext);
         val principal = resolvePrincipal(authn.getPrincipal());
         val attributes = principal.getAttributes();
@@ -48,6 +52,17 @@ public class WebAuthnStartRegistrationAction extends AbstractMultifactorAuthenti
             flowScope.put("displayName", principal.getId());
         }
         flowScope.put(FLOW_SCOPE_WEB_AUTHN_APPLICATION_ID, webAuthn.getApplicationId());
+
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+        request.setAttribute(HttpServletResponse.class.getName(), response);
+        
+        var csrfToken = csrfTokenRepository.loadToken(request);
+        if (csrfToken == null) {
+            csrfToken = csrfTokenRepository.generateToken(request);
+            csrfTokenRepository.saveToken(csrfToken, request, response);
+        }
+        flowScope.put(csrfToken.getParameterName(), csrfToken);
         return null;
     }
 }
