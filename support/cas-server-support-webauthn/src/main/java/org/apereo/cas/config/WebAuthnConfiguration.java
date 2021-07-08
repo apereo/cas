@@ -59,6 +59,12 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.net.URL;
 import java.time.Duration;
@@ -95,6 +101,13 @@ public class WebAuthnConfiguration {
     @Autowired
     @Qualifier("webAuthnBypassEvaluator")
     private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> webAuthnBypassEvaluator;
+
+    private static <K, V> Cache<K, V> newCache() {
+        return CacheBuilder.newBuilder()
+            .maximumSize(CACHE_MAX_SIZE)
+            .expireAfterAccess(Duration.ofMinutes(5))
+            .build();
+    }
 
     @ConditionalOnMissingBean(name = "webAuthnController")
     @Bean
@@ -267,13 +280,6 @@ public class WebAuthnConfiguration {
         return new WebAuthnDeviceRepositoryCleanerScheduler(webAuthnCredentialRepository());
     }
 
-    private static <K, V> Cache<K, V> newCache() {
-        return CacheBuilder.newBuilder()
-            .maximumSize(CACHE_MAX_SIZE)
-            .expireAfterAccess(Duration.ofMinutes(5))
-            .build();
-    }
-
     /**
      * The device cleaner scheduler.
      */
@@ -287,6 +293,26 @@ public class WebAuthnConfiguration {
         public void run() {
             LOGGER.debug("Starting to clean expired devices from repository");
             repository.clean();
+        }
+    }
+
+    @Configuration("WebAuthnSecurityConfiguration")
+    @EnableWebSecurity
+    public static class WebAuthnSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+        @Bean
+        public CsrfTokenRepository webAuthnCsrfTokenRepository() {
+            return new HttpSessionCsrfTokenRepository();
+        }
+
+        @Override
+        protected void configure(final HttpSecurity http) throws Exception {
+            http.csrf(customizer -> {
+                val pattern = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
+                customizer
+                    .requireCsrfProtectionMatcher(pattern)
+                    .csrfTokenRepository(webAuthnCsrfTokenRepository());
+            });
         }
     }
 }

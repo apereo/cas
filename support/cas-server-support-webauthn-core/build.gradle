@@ -8,7 +8,10 @@ dependencies {
     api project(":api:cas-server-core-api-validation")
 
     api libraries.webauthn
-    
+
+    implementation libraries.springsecurityconfig
+    implementation libraries.springsecurityweb
+
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")

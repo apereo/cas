@@ -33,6 +33,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowBuilder;
@@ -53,6 +54,10 @@ public class WebAuthnWebflowConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("webAuthnCsrfTokenRepository")
+    private ObjectProvider<CsrfTokenRepository> webAuthnCsrfTokenRepository;
 
     @Autowired
     @Qualifier("webAuthnPrincipalFactory")
@@ -124,7 +129,8 @@ public class WebAuthnWebflowConfiguration {
     @Bean
     @RefreshScope
     public Action webAuthnStartRegistrationAction() {
-        return new WebAuthnStartRegistrationAction(webAuthnCredentialRepository.getObject(), casProperties);
+        return new WebAuthnStartRegistrationAction(webAuthnCredentialRepository.getObject(),
+            casProperties, webAuthnCsrfTokenRepository.getObject());
     }
 
     @ConditionalOnMissingBean(name = "webAuthnCheckAccountRegistrationAction")
