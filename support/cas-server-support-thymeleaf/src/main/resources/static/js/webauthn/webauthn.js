@@ -432,7 +432,6 @@ function register(username, displayName, credentialNickname, csrfToken,
                   requireResidentKey = false,
                   getRequest = getRegisterRequest) {
     let request;
-    alert(csrfToken)
     return performCeremony({
         getWebAuthnUrls,
         getRequest: urls => getRequest(urls, username, displayName, credentialNickname, requireResidentKey),
