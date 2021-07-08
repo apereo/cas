@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc;
 
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -298,6 +299,7 @@ public abstract class AbstractOidcTests {
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,
         CasCoreHttpConfiguration.class,
+        CasCoreAuditConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasWebflowContextConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,

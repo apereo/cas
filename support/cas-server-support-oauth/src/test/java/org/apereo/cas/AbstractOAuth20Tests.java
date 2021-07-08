@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
@@ -708,6 +709,7 @@ public abstract class AbstractOAuth20Tests {
         CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreTicketsConfiguration.class,
+        CasCoreAuditConfiguration.class,
         CasCoreConfiguration.class,
         CasCookieConfiguration.class,
         CasThrottlingConfiguration.class,
