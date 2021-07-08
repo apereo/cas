@@ -20,7 +20,6 @@ public class CasProtocolValidationSpecificationTests {
         val spec = (CasProtocolValidationSpecification) (assertion, request) -> false;
         assertEquals(0, spec.getOrder());
         assertDoesNotThrow(spec::reset);
-
+        assertDoesNotThrow(() -> spec.setRenew(false));
     }
-
 }
