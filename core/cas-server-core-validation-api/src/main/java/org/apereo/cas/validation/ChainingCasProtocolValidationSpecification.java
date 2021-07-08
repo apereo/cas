@@ -26,12 +26,19 @@ public class ChainingCasProtocolValidationSpecification implements CasProtocolVa
 
     private final boolean canBeSatisfiedByAnySpecification;
 
+    private boolean renew;
+    
     @Override
     public boolean isSatisfiedBy(final Assertion assertion, final HttpServletRequest request) {
         if (this.canBeSatisfiedByAnySpecification) {
-            return this.specifications.stream().anyMatch(s -> s.isSatisfiedBy(assertion, request));
+            return this.specifications
+                .stream()
+                .peek(s -> s.setRenew(this.renew))
+                .anyMatch(s -> s.isSatisfiedBy(assertion, request));
         }
-        return this.specifications.stream().allMatch(s -> s.isSatisfiedBy(assertion, request));
+        return this.specifications.stream()
+            .peek(s -> s.setRenew(this.renew))
+            .allMatch(s -> s.isSatisfiedBy(assertion, request));
     }
 
     /**
@@ -65,4 +72,6 @@ public class ChainingCasProtocolValidationSpecification implements CasProtocolVa
     public void reset() {
         this.specifications.forEach(CasProtocolValidationSpecification::reset);
     }
+
+    
 }
