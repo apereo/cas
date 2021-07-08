@@ -107,7 +107,7 @@ exports.newPage = async(browser) => {
 exports.assertTicketParameter = async(page) => {
     let result = new URL(page.url());
     let ticket = result.searchParams.get("ticket");
-    console.log(ticket);
+    console.log("Ticket: " + ticket);
     assert(ticket != null);
     return ticket;
 }
