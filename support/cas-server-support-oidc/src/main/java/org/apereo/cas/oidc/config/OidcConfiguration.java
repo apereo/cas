@@ -120,7 +120,7 @@ import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.validation.CasProtocolViewFactory;
-import org.apereo.cas.web.ProtocolEndpointConfigurer;
+import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -356,9 +356,14 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     @ConditionalOnMissingBean(name = "oidcProtocolEndpointConfigurer")
     @RefreshScope
-    public ProtocolEndpointConfigurer oidcProtocolEndpointConfigurer() {
+    public ProtocolEndpointWebSecurityConfigurer<Void> oidcProtocolEndpointConfigurer() {
         val baseEndpoint = getOidcBaseEndpoint();
-        return () -> List.of(baseEndpoint);
+        return new ProtocolEndpointWebSecurityConfigurer<>() {
+            @Override
+            public List<String> getBaseEndpoints() {
+                return List.of(baseEndpoint);
+            }
+        };
     }
 
     @Bean
