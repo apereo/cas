@@ -5,6 +5,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.security.CasWebSecurityConfigurerAdapter;
 import org.apereo.cas.web.security.CasWebSecurityExpressionHandler;
 import org.apereo.cas.web.security.CasWebSecurityJdbcConfigurerAdapter;
+import org.apereo.cas.web.security.flow.PopulateSpringSecurityContextAction;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
@@ -23,6 +24,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.webflow.execution.Action;
 
 /**
  * This is {@link CasWebAppSecurityConfiguration}.
@@ -73,6 +75,12 @@ public class CasWebAppSecurityConfiguration implements WebMvcConfigurer {
         return () -> SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_GLOBAL);
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_POPULATE_SECURITY_CONTEXT)
+    public Action populateSpringSecurityContextAction() {
+        return new PopulateSpringSecurityContextAction();
+    }
+    
     @Override
     public void addViewControllers(final ViewControllerRegistry registry) {
         registry.addViewController(CasWebSecurityConfigurerAdapter.ENDPOINT_URL_ADMIN_FORM_LOGIN)
