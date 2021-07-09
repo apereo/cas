@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.web.controllers.logout;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -29,6 +30,15 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcLogoutEndpointController")
     protected OidcLogoutEndpointController oidcLogoutEndpointController;
+
+    @Autowired
+    @Qualifier("oidcProtocolEndpointConfigurer")
+    private ProtocolEndpointWebSecurityConfigurer<Void> oidcProtocolEndpointConfigurer;
+
+    @Test
+    public void verifyEndpoints() {
+        assertFalse(oidcProtocolEndpointConfigurer.getBaseEndpoints().isEmpty());
+    }
 
     @Test
     public void verifyBadEndpointRequest() {
