@@ -61,11 +61,12 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             if (credential != null) {
                 val builder = getWebflowEventResolutionConfigurationContext().getAuthenticationSystemSupport()
                     .handleInitialAuthenticationTransaction(service, credential);
-                if (builder.getInitialAuthentication().isPresent()) {
+                builder.getInitialAuthentication().ifPresent(authn -> {
                     WebUtils.putAuthenticationResultBuilder(builder, context);
-                    WebUtils.putAuthentication(builder.getInitialAuthentication().get(), context);
-                }
+                    WebUtils.putAuthentication(authn, context);
+                });
             }
+
             val registeredService = determineRegisteredServiceForEvent(context, service);
             LOGGER.trace("Attempting to resolve candidate authentication events for service [{}]", service);
             val resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
