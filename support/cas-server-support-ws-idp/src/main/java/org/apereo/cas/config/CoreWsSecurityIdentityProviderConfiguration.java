@@ -177,7 +177,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     public ProtocolEndpointWebSecurityConfigurer<Void> wsFederationProtocolEndpointConfigurer() {
         return new ProtocolEndpointWebSecurityConfigurer<>() {
             @Override
-            public List<String> getBaseEndpoints() {
+            public List<String> getIgnoredEndpoints() {
                 return List.of(
                     StringUtils.prependIfMissing(WSFederationConstants.BASE_ENDPOINT_IDP, "/"),
                     StringUtils.prependIfMissing(WSFederationConstants.BASE_ENDPOINT_STS, "/"));

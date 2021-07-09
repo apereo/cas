@@ -168,7 +168,7 @@ public class CasRestConfiguration {
     public ProtocolEndpointWebSecurityConfigurer<Void> restProtocolEndpointConfigurer() {
         return new ProtocolEndpointWebSecurityConfigurer<>() {
             @Override
-            public List<String> getBaseEndpoints() {
+            public List<String> getIgnoredEndpoints() {
                 return List.of(StringUtils.prependIfMissing(RestProtocolConstants.BASE_ENDPOINT, "/"));
             }
         };

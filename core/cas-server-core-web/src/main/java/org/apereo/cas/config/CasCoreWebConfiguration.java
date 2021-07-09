@@ -122,7 +122,7 @@ public class CasCoreWebConfiguration {
     public ProtocolEndpointWebSecurityConfigurer<Void> casProtocolEndpointConfigurer() {
         return new ProtocolEndpointWebSecurityConfigurer<>() {
             @Override
-            public List<String> getBaseEndpoints() {
+            public List<String> getIgnoredEndpoints() {
                 return List.of(
                     StringUtils.prependIfMissing(CasProtocolConstants.ENDPOINT_LOGIN, "/"),
                     StringUtils.prependIfMissing(CasProtocolConstants.ENDPOINT_LOGOUT, "/"),

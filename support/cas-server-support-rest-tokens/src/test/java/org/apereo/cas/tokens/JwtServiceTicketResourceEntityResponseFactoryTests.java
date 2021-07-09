@@ -30,7 +30,7 @@ public class JwtServiceTicketResourceEntityResponseFactoryTests extends BaseTick
 
     @Test
     public void verifyEndpoints() {
-        assertFalse(restProtocolEndpointConfigurer.getBaseEndpoints().isEmpty());
+        assertFalse(restProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
     
     @Test
