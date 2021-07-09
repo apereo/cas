@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
@@ -120,7 +121,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
 
             val skewAllowance = service.getSkewAllowance() > 0
                 ? service.getSkewAllowance()
-                : casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance();
+                : Beans.newDuration(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()).toSeconds();
             statement.setSessionNotOnOrAfter(dt.plusSeconds(skewAllowance).toInstant());
         }
         val subjectLocality = buildSubjectLocality(assertion, authnRequest, adaptor, binding, service);
