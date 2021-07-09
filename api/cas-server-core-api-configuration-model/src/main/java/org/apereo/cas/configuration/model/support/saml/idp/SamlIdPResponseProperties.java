@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -40,7 +41,8 @@ public class SamlIdPResponseProperties implements Serializable {
      * Time unit in seconds used to skew authentication dates such
      * as valid-from and valid-until elements.
      */
-    private int skewAllowance = 15;
+    @DurationCapable
+    private String skewAllowance = "PT30S";
 
     /**
      * Whether error responses should be signed.

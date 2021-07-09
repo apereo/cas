@@ -31,13 +31,14 @@ const cas = require('../../cas.js');
     // await page.waitForTimeout(1000)
 
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.waitForTimeout(5000)
+    await page.waitForTimeout(3000)
+    
+    const header = await cas.textContent(page, "div.entry-content p");
+    assert(header.startsWith("Your browser has completed the full SAML 2.0 round-trip"));
     
     let metadataDir = path.join(__dirname, '/saml-md');
     fs.rmdirSync(metadataDir, { recursive: true });
 
-    const header = await cas.textContent(page, "div.entry-content p");
-    assert(header.startsWith("Your browser has completed the full SAML 2.0 round-trip"));
 
     const endpoints = ["health", "samlIdPRegisteredServiceMetadataCache?serviceId=Sample&entityId=https://samltest.id/saml/sp"];
     const baseUrl = "https://localhost:8443/cas/actuator/"

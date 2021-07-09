@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -27,7 +28,8 @@ public class SamlCoreProperties implements Serializable {
     /**
      * Skew allowance that controls the issue instance of the authentication.
      */
-    private int skewAllowance = 5;
+    @DurationCapable
+    private String skewAllowance = "PT30S";
 
     /**
      * Issue length that controls the validity period of the assertion.

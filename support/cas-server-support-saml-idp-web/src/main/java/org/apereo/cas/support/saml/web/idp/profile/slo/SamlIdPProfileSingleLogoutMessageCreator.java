@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
@@ -91,7 +92,7 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
         val samlService = (SamlRegisteredService) request.getRegisteredService();
         val skewAllowance = samlService.getSkewAllowance() > 0
             ? samlService.getSkewAllowance()
-            : samlIdPProperties.getResponse().getSkewAllowance();
+            : Beans.newDuration(samlIdPProperties.getResponse().getSkewAllowance()).toSeconds();
 
         val issueInstant = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(skewAllowance);
 
