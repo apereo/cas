@@ -114,6 +114,7 @@ public class WebAuthnController {
      * @return the response entity
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_REGISTER + WEBAUTHN_ENDPOINT_FINISH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Object> finishRegistration(@RequestBody final String responseJson) {
         val result = server.finishRegistration(responseJson);
         return finishResponse(result, responseJson);
