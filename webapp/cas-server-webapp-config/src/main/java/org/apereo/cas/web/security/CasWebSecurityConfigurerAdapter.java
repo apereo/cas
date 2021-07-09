@@ -5,7 +5,8 @@ import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointPropertie
 import org.apereo.cas.configuration.model.core.monitor.JaasSecurityActuatorEndpointsMonitorProperties;
 import org.apereo.cas.configuration.model.core.monitor.LdapSecurityActuatorEndpointsMonitorProperties;
 import org.apereo.cas.util.LdapUtils;
-import org.apereo.cas.web.ProtocolEndpointConfigurer;
+import org.apereo.cas.web.CasWebSecurityConstants;
+import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.security.authentication.EndpointLdapAuthenticationProvider;
 
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ import java.util.stream.Collectors;
  * @since 6.0.0
  */
 @Slf4j
-@Order(1000)
+@Order(CasWebSecurityConstants.SECURITY_CONFIGURATION_ORDER)
 @RequiredArgsConstructor
 public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter implements DisposableBean {
     /**
@@ -72,10 +73,10 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      */
     @Override
     public void configure(final WebSecurity web) {
-        val beans = getApplicationContext().getBeansOfType(ProtocolEndpointConfigurer.class, false, true).values();
+        val beans = getApplicationContext().getBeansOfType(ProtocolEndpointWebSecurityConfigurer.class, false, true).values();
         val patterns = beans.stream()
-            .map(ProtocolEndpointConfigurer::getBaseEndpoints)
-            .flatMap(List::stream)
+            .map(ProtocolEndpointWebSecurityConfigurer::getIgnoredEndpoints)
+            .flatMap(List<String>::stream)
             .map(endpoint -> StringUtils.prependIfMissing(endpoint, "/").concat("/**"))
             .collect(Collectors.toList());
 
@@ -133,6 +134,9 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         }));
         configureEndpointAccessToDenyUndefined(http, requests);
         configureEndpointAccessForStaticResources(requests);
+
+        val beans = getApplicationContext().getBeansOfType(ProtocolEndpointWebSecurityConfigurer.class, false, true).values();
+        beans.forEach(cfg -> cfg.configure(http));
     }
 
     /**
