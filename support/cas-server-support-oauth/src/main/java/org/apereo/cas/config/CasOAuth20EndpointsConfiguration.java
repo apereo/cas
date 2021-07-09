@@ -125,7 +125,7 @@ public class CasOAuth20EndpointsConfiguration {
     public ProtocolEndpointWebSecurityConfigurer<Void> oauth20ProtocolEndpointConfigurer() {
         return new ProtocolEndpointWebSecurityConfigurer<>() {
             @Override
-            public List<String> getBaseEndpoints() {
+            public List<String> getIgnoredEndpoints() {
                 return List.of(StringUtils.prependIfMissing(OAuth20Constants.BASE_OAUTH20_URL, "/"));
             }
         };

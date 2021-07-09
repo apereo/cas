@@ -204,7 +204,7 @@ public class SamlConfiguration {
     public ProtocolEndpointWebSecurityConfigurer<Void> samlProtocolEndpointConfigurer() {
         return new ProtocolEndpointWebSecurityConfigurer<>() {
             @Override
-            public List<String> getBaseEndpoints() {
+            public List<String> getIgnoredEndpoints() {
                 return List.of(StringUtils.prependIfMissing(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE, "/"));
             }
         };

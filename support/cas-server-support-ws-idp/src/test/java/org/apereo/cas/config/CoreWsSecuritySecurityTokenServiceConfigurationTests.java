@@ -39,7 +39,7 @@ public class CoreWsSecuritySecurityTokenServiceConfigurationTests extends BaseCo
 
     @Test
     public void verifyEndpoints() {
-        assertFalse(wsFederationProtocolEndpointConfigurer.getBaseEndpoints().isEmpty());
+        assertFalse(wsFederationProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
 
     @Test

@@ -22,6 +22,6 @@ public class ProtocolEndpointWebSecurityConfigurerTests {
         };
         assertEquals(cfg, cfg.configure(new Object()));
         assertEquals(Ordered.LOWEST_PRECEDENCE, cfg.getOrder());
-        assertTrue(cfg.getBaseEndpoints().isEmpty());
+        assertTrue(cfg.getIgnoredEndpoints().isEmpty());
     }
 }

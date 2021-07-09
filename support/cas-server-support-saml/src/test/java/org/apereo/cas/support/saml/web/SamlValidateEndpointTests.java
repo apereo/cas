@@ -52,11 +52,11 @@ public class SamlValidateEndpointTests extends AbstractCasEndpointTests {
 
     @Autowired
     @Qualifier("samlProtocolEndpointConfigurer")
-    protected ProtocolEndpointWebSecurityConfigurer<Void> samlProtocolEndpointConfigurer;
+    private ProtocolEndpointWebSecurityConfigurer<Void> samlProtocolEndpointConfigurer;
 
     @Test
     public void verifyEndpoints() {
-        assertFalse(samlProtocolEndpointConfigurer.getBaseEndpoints().isEmpty());
+        assertFalse(samlProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
     
     @Test

@@ -68,6 +68,6 @@ public class WSFederationIdentityProviderWebflowConfigurerTests extends BaseWebf
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
-        assertFalse(wsFederationProtocolEndpointConfigurer.getBaseEndpoints().isEmpty());
+        assertFalse(wsFederationProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
 }

@@ -360,7 +360,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
         val baseEndpoint = getOidcBaseEndpoint();
         return new ProtocolEndpointWebSecurityConfigurer<>() {
             @Override
-            public List<String> getBaseEndpoints() {
+            public List<String> getIgnoredEndpoints() {
                 return List.of(baseEndpoint);
             }
         };

@@ -26,7 +26,7 @@ public interface ProtocolEndpointWebSecurityConfigurer<T> extends Ordered {
      *
      * @return the base endpoint
      */
-    default List<String> getBaseEndpoints() {
+    default List<String> getIgnoredEndpoints() {
         return List.of();
     }
 

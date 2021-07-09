@@ -76,7 +76,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
     public void configure(final WebSecurity web) {
         val beans = getApplicationContext().getBeansOfType(ProtocolEndpointWebSecurityConfigurer.class, false, true).values();
         val patterns = beans.stream()
-            .map(ProtocolEndpointWebSecurityConfigurer::getBaseEndpoints)
+            .map(ProtocolEndpointWebSecurityConfigurer::getIgnoredEndpoints)
             .flatMap(List<String>::stream)
             .map(endpoint -> StringUtils.prependIfMissing(endpoint, "/").concat("/**"))
             .toArray(String[]::new);

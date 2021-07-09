@@ -25,7 +25,7 @@ public class SamlIdPWebflowConfigurerTests extends BaseSamlIdPWebflowTests {
 
     @Test
     public void verifyEndpoints() {
-        assertFalse(samlIdPProtocolEndpointConfigurer.getBaseEndpoints().isEmpty());
+        assertFalse(samlIdPProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
     
     @Test

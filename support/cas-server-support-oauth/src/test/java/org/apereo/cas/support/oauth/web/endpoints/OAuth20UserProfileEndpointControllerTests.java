@@ -125,7 +125,7 @@ public class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Te
 
     @Test
     public void verifyEndpoints() {
-        assertFalse(oauth20ProtocolEndpointConfigurer.getBaseEndpoints().isEmpty());
+        assertFalse(oauth20ProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
 
     @Test

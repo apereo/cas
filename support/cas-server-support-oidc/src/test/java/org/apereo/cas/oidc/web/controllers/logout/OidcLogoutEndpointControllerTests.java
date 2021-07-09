@@ -37,7 +37,7 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
 
     @Test
     public void verifyEndpoints() {
-        assertFalse(oidcProtocolEndpointConfigurer.getBaseEndpoints().isEmpty());
+        assertFalse(oidcProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
 
     @Test

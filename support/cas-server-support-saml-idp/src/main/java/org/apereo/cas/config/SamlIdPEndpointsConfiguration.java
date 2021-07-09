@@ -480,7 +480,7 @@ public class SamlIdPEndpointsConfiguration {
     public ProtocolEndpointWebSecurityConfigurer<Void> samlIdPProtocolEndpointConfigurer() {
         return new ProtocolEndpointWebSecurityConfigurer<>() {
             @Override
-            public List<String> getBaseEndpoints() {
+            public List<String> getIgnoredEndpoints() {
                 return List.of(StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML1, "/"),
                     StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML2, "/"));
             }

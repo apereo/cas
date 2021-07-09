@@ -97,6 +97,6 @@ public class CasCoreLogoutConfigurationTests {
                 .httpServletRequest(Optional.of(new MockHttpServletRequest()))
             .build());
         assertFalse(results.isEmpty());
-        assertFalse(casProtocolEndpointConfigurer.getBaseEndpoints().isEmpty());
+        assertFalse(casProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
 }
