@@ -102,6 +102,7 @@ import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
 
@@ -155,6 +156,11 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasOAuth20Configuration {
+
+    @Autowired
+    @Qualifier("authenticationAttributeReleasePolicy")
+    private ObjectProvider<AuthenticationAttributeReleasePolicy> authenticationAttributeReleasePolicy;
+    
     @Autowired
     @Qualifier("defaultPrincipalResolver")
     private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
@@ -257,7 +263,9 @@ public class CasOAuth20Configuration {
         val server = casProperties.getServer();
 
         val cfg = new CasConfiguration(server.getLoginUrl());
-        val validator = new InternalTicketValidator(centralAuthenticationService.getObject(), webApplicationServiceFactory.getObject());
+        val validator = new InternalTicketValidator(centralAuthenticationService.getObject(),
+            webApplicationServiceFactory.getObject(), authenticationAttributeReleasePolicy.getObject(),
+            servicesManager.getObject());
         cfg.setDefaultTicketValidator(validator);
 
         val oauthCasClient = new CasClient(cfg);

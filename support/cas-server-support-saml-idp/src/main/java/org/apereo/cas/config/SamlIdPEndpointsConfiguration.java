@@ -52,6 +52,7 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.ProtocolEndpointConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
@@ -95,6 +96,10 @@ import java.util.List;
 public class SamlIdPEndpointsConfiguration {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("authenticationAttributeReleasePolicy")
+    private ObjectProvider<AuthenticationAttributeReleasePolicy> authenticationAttributeReleasePolicy;
 
     @Autowired
     @Qualifier("authenticationEventExecutionPlan")
@@ -451,7 +456,9 @@ public class SamlIdPEndpointsConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "samlIdPTicketValidator")
     public TicketValidator samlIdPTicketValidator() {
-        return new InternalTicketValidator(centralAuthenticationService.getObject(), samlIdPServiceFactory.getObject());
+        return new InternalTicketValidator(centralAuthenticationService.getObject(),
+            samlIdPServiceFactory.getObject(), authenticationAttributeReleasePolicy.getObject(),
+            servicesManager.getObject());
     }
 
     private SamlProfileHandlerConfigurationContext.SamlProfileHandlerConfigurationContextBuilder getSamlProfileHandlerConfigurationContextBuilder() {
