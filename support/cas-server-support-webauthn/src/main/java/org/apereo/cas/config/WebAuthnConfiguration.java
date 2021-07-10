@@ -15,6 +15,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.web.ProtocolEndpointConfigurer;
 import org.apereo.cas.webauthn.WebAuthnAuthenticationHandler;
 import org.apereo.cas.webauthn.WebAuthnCredential;
 import org.apereo.cas.webauthn.WebAuthnCredentialRegistrationCipherExecutor;
@@ -44,6 +45,7 @@ import com.yubico.webauthn.data.AttestationConveyancePreference;
 import com.yubico.webauthn.data.RelyingPartyIdentity;
 import com.yubico.webauthn.extension.appid.AppId;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -60,8 +62,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -70,6 +70,7 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 /**
  * This is {@link WebAuthnConfiguration}.
@@ -296,22 +297,32 @@ public class WebAuthnConfiguration {
     }
 
     @Configuration("WebAuthnSecurityConfiguration")
-    @EnableWebSecurity
-    public static class WebAuthnSecurityConfiguration extends WebSecurityConfigurerAdapter {
+    public static class WebAuthnSecurityConfiguration {
 
         @Bean
         public CsrfTokenRepository webAuthnCsrfTokenRepository() {
             return new HttpSessionCsrfTokenRepository();
         }
 
-        @Override
-        protected void configure(final HttpSecurity http) throws Exception {
-            http.csrf(customizer -> {
-                val pattern = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
-                customizer
-                    .requireCsrfProtectionMatcher(pattern)
-                    .csrfTokenRepository(webAuthnCsrfTokenRepository());
-            });
+        @Bean
+        public ProtocolEndpointConfigurer<HttpSecurity> webAuthnProtocolEndpointConfigurer() {
+            return new ProtocolEndpointConfigurer<>() {
+                @Override
+                public List<String> getBaseEndpoints() {
+                    return List.of();
+                }
+
+                @Override
+                @SneakyThrows
+                public void configure(final HttpSecurity http) {
+                    http.csrf(customizer -> {
+                        val pattern = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
+                        customizer
+                            .requireCsrfProtectionMatcher(pattern)
+                            .csrfTokenRepository(webAuthnCsrfTokenRepository());
+                    });
+                }
+            };
         }
     }
 }
