@@ -11,6 +11,10 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -60,13 +64,16 @@ public class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfiguration
         val authnRequest = getAuthnRequestFor(service);
         val assertion = getAssertion();
 
-        val result = samlProfileSamlSubjectBuilder.build(authnRequest, request, response,
+        val now = ZonedDateTime.now(ZoneOffset.UTC)
+            .plusSeconds(service.getSkewAllowance()).toInstant().truncatedTo(ChronoUnit.SECONDS);
+
+        val subject = samlProfileSamlSubjectBuilder.build(authnRequest, request, response,
             assertion, service, adaptor,
             SAMLConstants.SAML2_POST_BINDING_URI,
             new MessageContext());
-        assertNotNull(result);
+        assertNotNull(subject);
 
-        var subjectData = result.getSubjectConfirmations().get(0).getSubjectConfirmationData();
-        assertEquals(assertion.getValidFromDate().toInstant().plusSeconds(service.getSkewAllowance()), subjectData.getNotOnOrAfter());
+        val subjectData = subject.getSubjectConfirmations().get(0).getSubjectConfirmationData();
+        assertEquals(now, subjectData.getNotOnOrAfter().truncatedTo(ChronoUnit.SECONDS));
     }
 }
