@@ -7,6 +7,7 @@ import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 import org.apereo.cas.web.support.CouchDbThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext;
+import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
