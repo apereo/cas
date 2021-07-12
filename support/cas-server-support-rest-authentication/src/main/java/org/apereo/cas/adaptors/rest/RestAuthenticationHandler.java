@@ -80,8 +80,8 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         var response = (HttpResponse) null;
         try {
             val exec = HttpUtils.HttpExecutionRequest.builder()
-                .basicAuthPassword(credential.getUsername())
-                .basicAuthUsername(credential.getPassword())
+                .basicAuthUsername(credential.getUsername())
+                .basicAuthPassword(credential.getPassword())
                 .method(HttpMethod.POST)
                 .url(properties.getUri())
                 .build();
