@@ -48,7 +48,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * This is {@link BaseCasWebflowMultifactorAuthenticationTests}.
@@ -93,7 +92,6 @@ import org.springframework.test.annotation.DirtiesContext;
     AdaptiveMultifactorAuthenticationPolicyEventResolverTests.GeoLocationServiceTestConfiguration.class
 })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@DirtiesContext
 @EnableScheduling
 public abstract class BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired

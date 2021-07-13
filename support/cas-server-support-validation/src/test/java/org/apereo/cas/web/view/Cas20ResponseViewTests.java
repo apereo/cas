@@ -37,7 +37,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.support.RequestContext;
@@ -56,7 +55,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@DirtiesContext
 @SpringBootTest(classes = {
     Cas20ResponseViewTests.Cas20ResponseViewTestConfiguration.class,
     BaseCasCoreTests.SharedTestConfiguration.class,

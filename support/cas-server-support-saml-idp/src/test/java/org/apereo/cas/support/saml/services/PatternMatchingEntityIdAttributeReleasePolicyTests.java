@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DirtiesContext
 public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
 
     @Autowired
