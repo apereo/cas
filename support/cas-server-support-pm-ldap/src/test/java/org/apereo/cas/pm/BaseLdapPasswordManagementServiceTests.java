@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * This is {@link BaseLdapPasswordManagementServiceTests}.
@@ -24,7 +23,6 @@ import org.springframework.test.annotation.DirtiesContext;
     CasCoreAuditConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-@DirtiesContext
 public abstract class BaseLdapPasswordManagementServiceTests {
     @Autowired
     @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)

@@ -21,7 +21,6 @@ import org.ldaptive.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -48,7 +47,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.ldap[0].bind-credential=P@ssw0rd",
     "cas.authn.attribute-repository.ldap[0].attributes.sn=surname"
 })
-@DirtiesContext
 @Tag("Ldap")
 @EnabledIfPortOpen(port = 11389)
 public class PersonDirectoryPrincipalResolverOpenLdapTests {
