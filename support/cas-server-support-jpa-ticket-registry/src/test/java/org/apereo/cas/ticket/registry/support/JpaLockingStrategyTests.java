@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -50,7 +49,6 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = JpaTicketRegistryTests.SharedTestConfiguration.class,
     properties = "cas.ticket.registry.cleaner.schedule.enabled=false")
-@DirtiesContext
 @Slf4j
 @Tag("JDBC")
 public class JpaLockingStrategyTests {

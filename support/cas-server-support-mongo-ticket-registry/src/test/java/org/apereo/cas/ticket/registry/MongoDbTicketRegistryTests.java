@@ -45,7 +45,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -93,7 +92,6 @@ import static org.mockito.Mockito.*;
     "cas.ticket.registry.mongo.password=secret"
 })
 @EnableScheduling
-@DirtiesContext
 @EnabledIfPortOpen(port = 27017)
 @Getter
 public class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {

@@ -31,7 +31,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.MultiValueMap;
@@ -52,7 +51,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 5.3.0
  */
 @ExtendWith(MockitoExtension.class)
-@DirtiesContext
 @Tag("RestfulApi")
 public class UserAuthenticationResourceTests {
     private static final String TICKETS_RESOURCE_URL = "/cas/v1/users";
