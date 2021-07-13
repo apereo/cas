@@ -43,6 +43,7 @@ classes/
 out
 ajcore.*
 reports
+apache-jmeter-*
 
 *.asc
 /.nb-gradle/
