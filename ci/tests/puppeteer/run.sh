@@ -5,6 +5,7 @@
 
 echo "Installing Puppeteer"
 npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer
+npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer jsonwebtoken axios request
 
 echo "Creating overlay work directory"
 rm -Rf "$PWD"/ci/tests/puppeteer/overlay

@@ -1,0 +1,19 @@
+{
+  "dependencies": "oidc",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--logging.level.org.apereo.cas=debug",
+    
+    "--cas.authn.oidc.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.claims=sub,name,cn,given-name",
+    "--cas.authn.oidc.jwks.jwks-file=file:/tmp/keystore.jwks",
+
+    "--cas.service-registry.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/oidc-clientcredentials-scopefree/services"
+  ]
+}
+
+
+
