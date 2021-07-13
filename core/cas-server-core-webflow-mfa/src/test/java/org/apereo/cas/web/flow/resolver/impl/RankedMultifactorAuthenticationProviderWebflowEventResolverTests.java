@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.resolver.impl;
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
@@ -20,6 +21,9 @@ import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -42,6 +46,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("WebflowEvents")
+@Import(RankedMultifactorAuthenticationProviderWebflowEventResolverTests.MultifactorTestConfiguration.class)
 public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("rankedAuthenticationProviderWebflowEventResolver")
@@ -53,6 +58,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests ex
 
     @BeforeEach
     public void setup() {
+        super.setup();
         this.servicesManager.deleteAll();
     }
     
@@ -205,6 +211,14 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests ex
         assertEquals(TestMultifactorAuthenticationProvider.ID, resolver.resolveSingle(context).getId());
     }
 
+    @TestConfiguration("MultifactorTestConfiguration")
+    public static class MultifactorTestConfiguration {
+        @Bean
+        public MultifactorAuthenticationProvider dummyProvider() {
+            return new TestMultifactorAuthenticationProvider();
+        }
+    }
+    
     @Test
     public void verifyAddDelegate() {
         assertDoesNotThrow(new Executable() {

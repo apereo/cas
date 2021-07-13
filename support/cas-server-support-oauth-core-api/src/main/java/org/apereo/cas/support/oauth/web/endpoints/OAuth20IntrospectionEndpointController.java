@@ -46,6 +46,37 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
     }
 
     /**
+     * Build unauthorized response entity.
+     *
+     * @param code the code
+     * @return the response entity
+     */
+    private static ResponseEntity<OAuth20IntrospectionAccessTokenResponse> buildUnauthorizedResponseEntity(final String code,
+                                                                                                           final boolean isAuthenticationFailure) {
+        val map = new LinkedMultiValueMap<String, String>(1);
+        map.add(OAuth20Constants.ERROR, code);
+        val value = OAuth20Utils.toJson(map);
+        val headers = new LinkedMultiValueMap<String, String>();
+        if (isAuthenticationFailure) {
+            headers.add(HttpHeaders.WWW_AUTHENTICATE, "Basic");
+        }
+        return new ResponseEntity(value, headers, HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
+     * Build bad request response entity.
+     *
+     * @param code the code
+     * @return the response entity
+     */
+    private static ResponseEntity<OAuth20IntrospectionAccessTokenResponse> buildBadRequestResponseEntity(final String code) {
+        val map = new LinkedMultiValueMap<String, String>(1);
+        map.add(OAuth20Constants.ERROR, code);
+        val value = OAuth20Utils.toJson(map);
+        return (ResponseEntity<OAuth20IntrospectionAccessTokenResponse>) new ResponseEntity(value, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
      * Handle request.
      *
      * @param request  the request
@@ -56,7 +87,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
         produces = MediaType.APPLICATION_JSON_VALUE,
         value = '/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL)
     public ResponseEntity<OAuth20IntrospectionAccessTokenResponse> handleRequest(final HttpServletRequest request,
-        final HttpServletResponse response) {
+                                                                                 final HttpServletResponse response) {
         return handlePostRequest(request, response);
     }
 
@@ -71,7 +102,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
         produces = MediaType.APPLICATION_JSON_VALUE,
         value = '/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL)
     public ResponseEntity<OAuth20IntrospectionAccessTokenResponse> handlePostRequest(final HttpServletRequest request,
-        final HttpServletResponse response) {
+                                                                                     final HttpServletResponse response) {
         ResponseEntity<OAuth20IntrospectionAccessTokenResponse> result;
         try {
             val authExtractor = new BasicAuthExtractor();
@@ -80,6 +111,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
             val credentialsResult = authExtractor.extract(context, getConfigurationContext().getSessionStore());
 
             if (credentialsResult.isEmpty()) {
+                LOGGER.warn("Unable to locate and extract credentials from the request");
                 return buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_CLIENT, true);
             }
 
@@ -87,6 +119,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
             val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(
                 getConfigurationContext().getServicesManager(), credentials.getUsername());
             if (service == null) {
+                LOGGER.warn("Unable to locate service definition by client id [{}]", credentials.getUsername());
                 return buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_CLIENT, true);
             }
 
@@ -119,13 +152,13 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
     /**
      * Create introspection response OAuth introspection access token response.
      *
-     * @param ticket  the ticket
+     * @param ticket the ticket
      * @return the OAuth introspection access token response
      */
     protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(final OAuth20AccessToken ticket) {
         val introspect = new OAuth20IntrospectionAccessTokenResponse();
         introspect.setScope("CAS");
-        
+
         if (ticket != null) {
             introspect.setClientId(ticket.getClientId());
             introspect.setAud(ticket.getService().getId());
@@ -164,6 +197,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
             || HttpRequestUtils.doesParameterExist(request, OAuth20Constants.ACCESS_TOKEN);
 
         if (!tokenExists) {
+            LOGGER.warn("Access token cannot be found in the request");
             return Optional.of(buildBadRequestResponseEntity(OAuth20Constants.MISSING_ACCESS_TOKEN));
         }
 
@@ -179,37 +213,8 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
                 ? Optional.of(buildUnauthorizedResponseEntity(OAuth20Constants.UNAUTHORIZED_CLIENT, false))
                 : Optional.empty();
         }
+        LOGGER.warn("Unable to match client secret for registered service [{}] with client id [{}]",
+            registeredService.getName(), registeredService.getClientId());
         return Optional.of(buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_CLIENT, true));
-    }
-
-    /**
-     * Build unauthorized response entity.
-     *
-     * @param code the code
-     * @return the response entity
-     */
-    private static ResponseEntity<OAuth20IntrospectionAccessTokenResponse> buildUnauthorizedResponseEntity(final String code,
-        final boolean isAuthenticationFailure) {
-        val map = new LinkedMultiValueMap<String, String>(1);
-        map.add(OAuth20Constants.ERROR, code);
-        val value = OAuth20Utils.toJson(map);
-        val headers = new LinkedMultiValueMap<String, String>();
-        if (isAuthenticationFailure) {
-            headers.add(HttpHeaders.WWW_AUTHENTICATE, "Basic");
-        }
-        return (ResponseEntity<OAuth20IntrospectionAccessTokenResponse>) new ResponseEntity(value, headers, HttpStatus.UNAUTHORIZED);
-    }
-
-    /**
-     * Build bad request response entity.
-     *
-     * @param code the code
-     * @return the response entity
-     */
-    private static ResponseEntity<OAuth20IntrospectionAccessTokenResponse> buildBadRequestResponseEntity(final String code) {
-        val map = new LinkedMultiValueMap<String, String>(1);
-        map.add(OAuth20Constants.ERROR, code);
-        val value = OAuth20Utils.toJson(map);
-        return (ResponseEntity<OAuth20IntrospectionAccessTokenResponse>) new ResponseEntity(value, HttpStatus.BAD_REQUEST);
     }
 }

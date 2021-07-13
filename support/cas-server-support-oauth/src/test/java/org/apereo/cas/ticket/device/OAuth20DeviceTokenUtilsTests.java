@@ -27,6 +27,7 @@ public class OAuth20DeviceTokenUtilsTests extends AbstractOAuth20Tests {
 
     @BeforeEach
     public void setup() {
+        super.setup();
         this.servicesManager.deleteAll();
     }
 

@@ -74,7 +74,7 @@ while (( "$#" )); do
         exit 0
         ;;
     --debug)
-        debug="--debug-jvm "
+        debug=" --debug-jvm "
         parallel=""
         shift
         ;;
