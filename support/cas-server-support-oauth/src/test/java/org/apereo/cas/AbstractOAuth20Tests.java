@@ -85,6 +85,7 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -95,6 +96,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.BeforeEach;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
@@ -115,6 +117,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -266,7 +269,6 @@ public abstract class AbstractOAuth20Tests {
     @Qualifier("requiresAuthenticationAccessTokenInterceptor")
     protected HandlerInterceptor requiresAuthenticationInterceptor;
 
-    @Autowired
     protected ConfigurableApplicationContext applicationContext;
 
     @Autowired
@@ -656,12 +658,21 @@ public abstract class AbstractOAuth20Tests {
         return Beans.newDuration(seconds).getSeconds();
     }
 
+    @BeforeEach
+    public void setup() {
+        this.applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, CasConfigurationProperties.class,
+            CasConfigurationProperties.class.getSimpleName());
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+    }
+
     @TestConfiguration("OAuth20TestConfiguration")
     @Lazy(false)
     public static class OAuth20TestConfiguration implements ComponentSerializationPlanConfigurer {
         @Autowired
         protected ApplicationContext applicationContext;
-        
+
         @Bean
         public List inMemoryRegisteredServices() {
             val svc1 = (OAuthRegisteredService)

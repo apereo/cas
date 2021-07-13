@@ -34,7 +34,6 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,7 +49,6 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("OAuth")
-@DirtiesContext
 public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends AbstractOAuth20Tests {
     private static final String SUPPORTING_SERVICE_TICKET = "OC-SUPPORTING";
 

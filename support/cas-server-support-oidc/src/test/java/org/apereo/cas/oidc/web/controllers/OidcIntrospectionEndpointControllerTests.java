@@ -43,6 +43,7 @@ public class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests 
         request.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
 
         val accessToken = getAccessToken();
+        servicesManager.save(getOidcRegisteredService());
         this.ticketRegistry.addTicket(accessToken);
         request.addParameter(OAuth20Constants.TOKEN, accessToken.getId());
         val result = oidcIntrospectionEndpointController.handleRequest(request, response);
@@ -70,8 +71,10 @@ public class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests 
         request.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
 
         val accessToken = getAccessToken();
+        servicesManager.save(getOidcRegisteredService());
         request.addParameter(OAuth20Constants.TOKEN, accessToken.getId());
         val result = oidcIntrospectionEndpointController.handleRequest(request, response);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
         assertNotNull(result.getBody());
         assertFalse(result.getBody().isActive());
     }

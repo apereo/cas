@@ -43,6 +43,7 @@ public class DuoSecurityDirectAuthenticationActionTests extends BaseCasWebflowMu
 
     @BeforeEach
     public void setup() {
+        super.setup();
         context = BaseDuoSecurityTests.getMockRequestContext(applicationContext);
     }
 

@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
@@ -26,7 +25,6 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("MFATrigger")
-@DirtiesContext
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test

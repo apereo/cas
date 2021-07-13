@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.stream.Stream;
 
@@ -37,7 +36,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @EnableScheduling
-@DirtiesContext
 @SpringBootTest(classes = {
     LdapServiceRegistryConfiguration.class,
     CasCoreServicesConfiguration.class,

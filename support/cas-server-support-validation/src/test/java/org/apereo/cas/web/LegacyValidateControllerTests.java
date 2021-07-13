@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * This is {@link LegacyValidateControllerTests}.
@@ -21,7 +20,6 @@ import org.springframework.test.annotation.DirtiesContext;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@DirtiesContext
 @SpringBootTest(classes = {
     BaseCasCoreTests.SharedTestConfiguration.class,
     CasThemesConfiguration.class,

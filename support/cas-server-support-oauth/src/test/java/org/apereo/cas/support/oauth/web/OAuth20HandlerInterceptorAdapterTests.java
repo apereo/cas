@@ -6,6 +6,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
@@ -27,6 +28,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @Tag("OAuth")
 public class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests {
+    @BeforeEach
+    public void setup() {
+        super.setup();
+        servicesManager.deleteAll();
+    }
+
     @Test
     public void verifyAuthorizationAuth() throws Exception {
         val request = new MockHttpServletRequest();
@@ -38,7 +45,7 @@ public class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests 
         request.setParameter(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org");
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
 
-        val service = getRegisteredService(CLIENT_ID, CLIENT_SECRET);
+        val service = getRegisteredService("https://oauth.example.org", CLIENT_ID, CLIENT_SECRET);
         servicesManager.save(service);
         assertFalse(oauthHandlerInterceptorAdapter.preHandle(request, response, new Object()));
         assertFalse(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());

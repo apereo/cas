@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -11,6 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -36,11 +40,11 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.mfa.triggers.authentication.global-authentication-attribute-value-regex=mfa.*"
 })
 @Tag("WebflowEvents")
+@Import(AuthenticationAttributeMultifactorAuthenticationPolicyEventResolverTests.AuthenticationAttributeTestConfiguration.class)
 public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("authenticationAttributeAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver authenticationAttributeMultifactorAuthenticationPolicyEventResolver;
-
 
     @Test
     public void verifyOperation() {
@@ -74,4 +78,13 @@ public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver
         assertEquals(1, results.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, results.iterator().next().getId());
     }
+
+    @TestConfiguration("AuthenticationAttributeTestConfiguration")
+    public static class AuthenticationAttributeTestConfiguration {
+        @Bean
+        public MultifactorAuthenticationProvider dummyProvider() {
+            return new TestMultifactorAuthenticationProvider();
+        }
+    }
+
 }

@@ -3,6 +3,7 @@ package org.apereo.cas.uma.web.controllers.resource;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
@@ -22,6 +23,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("UMA")
 public class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
+
+    @BeforeEach
+    public void beforeEach() {
+        umaResourceSetRepository.removeAll();
+    }
 
     @Test
     public void verifyOperation() throws Exception {

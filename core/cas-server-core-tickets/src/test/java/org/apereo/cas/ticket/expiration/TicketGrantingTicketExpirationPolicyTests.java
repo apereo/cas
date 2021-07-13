@@ -12,7 +12,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author William G. Thompson, Jr.
  * @since 3.4.10
  */
-@DirtiesContext
 @Tag("Tickets")
 public class TicketGrantingTicketExpirationPolicyTests {
 

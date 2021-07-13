@@ -8,11 +8,8 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
@@ -35,14 +32,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("WebflowEvents")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
     private CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver;
 
     @Test
-    @Order(100)
     public void verifyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -71,7 +66,6 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests
     }
 
     @Test
-    @Order(100)
     public void verifyEmptyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -97,7 +91,6 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests
     }
 
     @Test
-    @Order(1)
     public void verifyNoProvider() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

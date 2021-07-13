@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.temporal.ChronoUnit;
 
@@ -29,13 +28,12 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = BaseConsentRepositoryTests.SharedTestConfiguration.class)
-@DirtiesContext
 @Tag("Simple")
 public class DefaultConsentEngineTests {
     @Autowired
     @Qualifier("consentEngine")
     private ConsentEngine consentEngine;
-    
+
     @BeforeAll
     public static void beforeAll() {
         val request = new MockHttpServletRequest();

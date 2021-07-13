@@ -8,6 +8,7 @@ import org.apereo.cas.uma.claim.UmaResourceSetClaimPermissionExaminer;
 import org.apereo.cas.uma.discovery.UmaServerDiscoverySettings;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicyPermission;
+import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.controllers.authz.UmaAuthorizationRequestEndpointController;
 import org.apereo.cas.uma.web.controllers.claims.UmaRequestingPartyClaimsCollectionEndpointController;
 import org.apereo.cas.uma.web.controllers.discovery.UmaWellKnownEndpointController;
@@ -136,6 +137,10 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     @Autowired
     @Qualifier("umaResourceSetClaimPermissionExaminer")
     protected UmaResourceSetClaimPermissionExaminer umaResourceSetClaimPermissionExaminer;
+
+    @Autowired
+    @Qualifier("umaResourceSetRepository")
+    protected ResourceSetRepository umaResourceSetRepository;
 
     protected Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithProtectionScope() {
         return authenticateUmaRequestWithScope(OAuth20Constants.UMA_PROTECTION_SCOPE, umaRequestingPartyTokenSecurityInterceptor);

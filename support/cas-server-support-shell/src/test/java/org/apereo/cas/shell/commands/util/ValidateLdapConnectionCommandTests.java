@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.shell.Input;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableAutoConfiguration
 @EnableScheduling
-@DirtiesContext
 @Tag("Ldap")
 @EnabledIfPortOpen(port = 10389)
 public class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests {
