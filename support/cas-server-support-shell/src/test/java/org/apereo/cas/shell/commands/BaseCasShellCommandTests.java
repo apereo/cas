@@ -12,7 +12,6 @@ import org.springframework.shell.Shell;
 import org.springframework.shell.SpringShellAutoConfiguration;
 import org.springframework.shell.jline.JLineShellAutoConfiguration;
 import org.springframework.shell.standard.StandardAPIAutoConfiguration;
-import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * This is {@link BaseCasShellCommandTests}.
@@ -29,7 +28,6 @@ import org.springframework.test.annotation.DirtiesContext;
 }, properties = "spring.shell.interactive.enabled=false")
 @ComponentScan(basePackages = "org.apereo.cas.shell.commands")
 @EnableAutoConfiguration
-@DirtiesContext
 public abstract class BaseCasShellCommandTests {
     @Autowired
     @Qualifier("shell")

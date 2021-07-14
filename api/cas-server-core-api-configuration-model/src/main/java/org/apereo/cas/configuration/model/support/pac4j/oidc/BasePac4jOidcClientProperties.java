@@ -66,7 +66,8 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
     /**
      * Clock skew in order to account for drift, when validating id tokens.
      */
-    private int maxClockSkew;
+    @DurationCapable
+    private String maxClockSkew = "PT5S";
 
     /**
      * Custom parameters to send along in authZ requests, etc.

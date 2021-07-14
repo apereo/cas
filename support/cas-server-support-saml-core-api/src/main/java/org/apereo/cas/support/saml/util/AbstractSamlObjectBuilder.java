@@ -104,8 +104,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         val doc = constructDocumentFromXml(samlResponse);
 
         if (doc != null) {
-            val signedElement = signSamlElement(doc.getRootElement(),
-                privateKey, publicKey);
+            val signedElement = signSamlElement(doc.getRootElement(), privateKey, publicKey);
             doc.setRootElement(signedElement.detach());
             return new XMLOutputter().outputString(doc);
         }
@@ -131,17 +130,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             LoggingUtils.error(LOGGER, e);
             return null;
         }
-    }
-
-    /**
-     * Generate a secure random id.
-     *
-     * @return the secure id string
-     */
-    public String generateSecureRandomId() {
-        val random = new HexRandomStringGenerator(RANDOM_ID_SIZE);
-        val hex = random.getNewString();
-        return '_' + hex;
     }
 
     /**
@@ -222,43 +210,36 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         return nodeListStatus.item(nodeListStatus.getLength() - 1);
     }
 
-    /**
-     * Convert the received jdom element to an Element.
-     *
-     * @param element the element
-     * @return the org.w3c.dom. element
-     */
-    private static Element toDom(final org.jdom2.Element element) {
+    private static Element toDom(final org.jdom2.Element element) throws Exception {
         return Objects.requireNonNull(toDom(element.getDocument())).getDocumentElement();
     }
 
-    /**
-     * Convert the received jdom doc to a Document element.
-     *
-     * @param doc the doc
-     * @return the org.w3c.dom. document
-     */
-    private static org.w3c.dom.Document toDom(final Document doc) {
-        try {
-            LOGGER.trace("Creating document from: [{}]", doc);
-            val xmlOutputter = new XMLOutputter();
-            val elemStrWriter = new StringWriter();
-            xmlOutputter.output(doc, elemStrWriter);
-            val xmlBytes = elemStrWriter.toString().getBytes(Charset.defaultCharset());
-            val dbf = DocumentBuilderFactory.newInstance();
-            dbf.setNamespaceAware(true);
-            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            dbf.setFeature("http://apache.org/xml/features/validation/schema/normalized-value", false);
-            dbf.setFeature("http://javax.xml.XMLConstants/feature/secure-processing", true);
-            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+    private static org.w3c.dom.Document toDom(final Document doc) throws Exception {
+        LOGGER.trace("Creating document from: [{}]", doc);
+        val xmlOutputter = new XMLOutputter();
+        val elemStrWriter = new StringWriter();
+        xmlOutputter.output(doc, elemStrWriter);
+        val xmlBytes = elemStrWriter.toString().getBytes(Charset.defaultCharset());
+        val dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        dbf.setFeature("http://apache.org/xml/features/validation/schema/normalized-value", false);
+        dbf.setFeature("http://javax.xml.XMLConstants/feature/secure-processing", true);
+        dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        return dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xmlBytes));
+    }
 
-            return dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xmlBytes));
-        } catch (final Exception e) {
-            LOGGER.trace("Caught error during creation of org.w3c.dom.Document: e.getMessage()", e);
-            return null;
-        }
+    /**
+     * Generate a secure random id.
+     *
+     * @return the secure id string
+     */
+    public String generateSecureRandomId() {
+        val random = new HexRandomStringGenerator(RANDOM_ID_SIZE);
+        val hex = random.getNewString();
+        return '_' + hex;
     }
 
     /**

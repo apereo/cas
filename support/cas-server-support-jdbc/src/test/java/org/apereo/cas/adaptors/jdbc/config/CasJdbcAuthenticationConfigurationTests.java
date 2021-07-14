@@ -34,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -78,7 +77,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.jdbc.query[0].sql=SELECT * FROM users WHERE uid=?",
     "cas.authn.jdbc.query[0].field-password=psw"
 })
-@DirtiesContext
 @Tag("JDBC")
 public class CasJdbcAuthenticationConfigurationTests {
     @Autowired

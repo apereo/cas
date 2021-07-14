@@ -65,7 +65,7 @@ public class OidcJwksEndpointController extends BaseOidcController {
             val resource = oidcJsonWebKeystoreGeneratorService.generate();
             val jsonJwks = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
             val jsonWebKeySet = new JsonWebKeySet(jsonJwks);
-
+            
             val servicesManager = getConfigurationContext().getServicesManager();
             servicesManager.getAllServicesOfType(OidcRegisteredService.class)
                 .stream()

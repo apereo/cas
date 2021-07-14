@@ -30,15 +30,26 @@ import org.pac4j.core.context.session.SessionStore;
 @Builder
 public class UmaConfigurationContext {
     private final OAuth20TokenSigningAndEncryptionService signingService;
+
     private final ServicesManager servicesManager;
+
     private final TicketRegistry ticketRegistry;
+
     private final OAuth20TokenGenerator accessTokenGenerator;
+
     private final JwtBuilder accessTokenJwtBuilder;
+
     private final UmaPermissionTicketFactory umaPermissionTicketFactory;
+
     private final ResourceSetRepository umaResourceSetRepository;
+
     private final CasConfigurationProperties casProperties;
+
     private final UmaResourceSetClaimPermissionExaminer claimPermissionExaminer;
+
     private final IdTokenGeneratorService requestingPartyTokenGenerator;
+
     private final SessionStore sessionStore;
+
     private final CentralAuthenticationService centralAuthenticationService;
 }

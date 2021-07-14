@@ -243,7 +243,7 @@ public class CasCoreServicesConfiguration {
         val builder = Caffeine.newBuilder();
         val duration = Beans.newDuration(cacheProperties.getDuration());
         return builder
-            .initialCapacity(cacheProperties.getCacheCapacity())
+            .initialCapacity(cacheProperties.getInitialCapacity())
             .maximumSize(cacheProperties.getCacheSize())
             .expireAfterWrite(duration)
             .build();

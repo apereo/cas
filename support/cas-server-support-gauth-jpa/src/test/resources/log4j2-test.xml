@@ -6,7 +6,7 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="error"  />
+        <Logger name="org.apereo.cas" level="warn"  />
         <Logger name="org.hibernate" level="warn" />
         <Root level="off">
             <AppenderRef ref="console"/>

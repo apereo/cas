@@ -1004,6 +1004,12 @@ public interface CasWebflowConstants {
      * Action id 'finishLogoutAction'.
      */
     String ACTION_ID_FINISH_LOGOUT = "finishLogoutAction";
+
+    /**
+     * Action id 'populateSpringSecurityContextAction'.
+     */
+    String ACTION_ID_POPULATE_SECURITY_CONTEXT = "populateSpringSecurityContextAction";
+
     /**
      * Action id 'logoutAction'.
      */

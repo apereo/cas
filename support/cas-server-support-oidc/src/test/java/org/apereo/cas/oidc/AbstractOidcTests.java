@@ -1,6 +1,8 @@
 package org.apereo.cas.oidc;
 
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -35,6 +37,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.config.OidcComponentSerializationConfiguration;
 import org.apereo.cas.oidc.config.OidcConfiguration;
 import org.apereo.cas.oidc.config.OidcThrottleConfiguration;
@@ -73,6 +76,7 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
@@ -98,9 +102,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.webflow.execution.Action;
 
@@ -110,6 +114,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 
@@ -125,11 +130,14 @@ import static org.mockito.Mockito.*;
         "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc",
         "cas.authn.oidc.jwks.jwks-file=classpath:keystore.jwks"
     })
-@DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class AbstractOidcTests {
 
     protected static final String TGT_ID = "TGT-0";
+
+    @Autowired
+    @Qualifier("oidcMultifactorAuthenticationTrigger")
+    protected MultifactorAuthenticationTrigger oidcMultifactorAuthenticationTrigger;
 
     @Autowired
     @Qualifier("oidcIssuerService")
@@ -139,7 +147,6 @@ public abstract class AbstractOidcTests {
     @Qualifier("singleLogoutServiceLogoutUrlBuilder")
     protected SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
 
-    @Autowired
     protected ConfigurableApplicationContext applicationContext;
 
     @Autowired
@@ -249,6 +256,10 @@ public abstract class AbstractOidcTests {
     protected OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator;
 
     @Autowired
+    @Qualifier(OidcAttributeToScopeClaimMapper.DEFAULT_BEAN_NAME)
+    private OidcAttributeToScopeClaimMapper oidcAttributeToScopeClaimMapper;
+
+    @Autowired
     @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
@@ -274,7 +285,16 @@ public abstract class AbstractOidcTests {
 
     @BeforeEach
     public void initialize() {
+        this.applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, casProperties,
+            CasConfigurationProperties.class.getSimpleName());
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, oidcAttributeToScopeClaimMapper,
+            OidcAttributeToScopeClaimMapper.DEFAULT_BEAN_NAME);
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+
         servicesManager.save(getOidcRegisteredService());
+        ticketRegistry.deleteAll();
     }
 
     @ImportAutoConfiguration({
@@ -298,6 +318,7 @@ public abstract class AbstractOidcTests {
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,
         CasCoreHttpConfiguration.class,
+        CasCoreAuditConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasWebflowContextConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
@@ -417,7 +438,7 @@ public abstract class AbstractOidcTests {
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication(principal));
         when(accessToken.getService()).thenReturn(RegisteredServiceTestUtils.getService("https://oauth.example.org"));
-        when(accessToken.getId()).thenReturn("AT-123456");
+        when(accessToken.getId()).thenReturn("AT-" + UUID.randomUUID());
         when(accessToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
         when(accessToken.getClientId()).thenReturn(clientId);

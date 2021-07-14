@@ -80,8 +80,8 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         var response = (HttpResponse) null;
         try {
             val exec = HttpUtils.HttpExecutionRequest.builder()
-                .basicAuthPassword(credential.getUsername())
-                .basicAuthUsername(credential.getPassword())
+                .basicAuthUsername(credential.getUsername())
+                .basicAuthPassword(credential.getPassword())
                 .method(HttpMethod.POST)
                 .url(properties.getUri())
                 .build();
@@ -141,9 +141,9 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     protected List<MessageDescriptor> getWarnings(final HttpResponse authenticationResponse) {
         val messageDescriptors = new ArrayList<MessageDescriptor>(2);
 
-        val passwordExpirationDate = authenticationResponse.getFirstHeader(HEADER_NAME_CAS_PASSWORD_EXPIRATION_DATE).getValue();
+        val passwordExpirationDate = authenticationResponse.getFirstHeader(HEADER_NAME_CAS_PASSWORD_EXPIRATION_DATE);
         if (passwordExpirationDate != null) {
-            val days = Duration.between(Instant.now(Clock.systemUTC()), DateTimeUtils.convertToZonedDateTime(passwordExpirationDate)).toDays();
+            val days = Duration.between(Instant.now(Clock.systemUTC()), DateTimeUtils.convertToZonedDateTime(passwordExpirationDate.getValue())).toDays();
             messageDescriptors.add(new PasswordExpiringWarningMessageDescriptor(null, days));
         }
 
