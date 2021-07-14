@@ -257,7 +257,7 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     @Qualifier(OidcAttributeToScopeClaimMapper.DEFAULT_BEAN_NAME)
-    private OidcAttributeToScopeClaimMapper oidcAttributeToScopeClaimMapper;
+    protected OidcAttributeToScopeClaimMapper oidcAttributeToScopeClaimMapper;
 
     @Autowired
     @Qualifier("ticketRegistry")
