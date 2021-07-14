@@ -33,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
@@ -70,7 +69,6 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = "cas.ticket.registry.hazelcast.cluster.core.instance-name=samplelocalhostinstance")
 @Slf4j
 @Tag("Hazelcast")
-@DirtiesContext
 public class DefaultHazelcastInstanceConfigurationTests {
     @Autowired
     @Qualifier("casTicketRegistryHazelcastInstance")
