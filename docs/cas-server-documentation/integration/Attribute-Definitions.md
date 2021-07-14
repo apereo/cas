@@ -59,6 +59,7 @@ The following settings can be specified by an attribute definition:
 | `attribute`             | (Optional) The source attribute to provide values for the attribute definition itself, replacing that of the original source.
 | `patternFormat`         | (Optional) Template used in a `java.text.MessageFormat` to decorate the attribute values.
 | `script`                | (Optional) Groovy script, external or embedded to process and produce attributes values.
+| `canonicalizationMode`  | (Optional) Control transformation of attribute values; allowed values are `UPPER`, `LOWER` or `NONE`.
 
 The following operations in the order given should take place, if an attribute definition is to produce values:
 
@@ -67,6 +68,7 @@ The following operations in the order given should take place, if an attribute d
 - Produce attribute values based on the `scoped` setting specified in the attribute definition, if any.
 - Produce attribute values based on the `patternFormat` setting specified in the attribute definition, if any.
 - Produce attribute values based on the `encrypted` setting specified in the attribute definition, if any.
+- Produce attribute values based on the `canonicalizationMode` setting specified in the attribute definition, if any.
 
 ## Examples
 
