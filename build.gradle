@@ -34,19 +34,23 @@ buildscript {
 ext {
     srcTagMap = new ConcurrentHashMap<File, Set<String>>()
 
-    sonatypeUsername = providers.systemProperty("sonatypeUsername").forUseAtConfigurationTime().getOrNull()
-    sonatypePassword = providers.systemProperty("sonatypePassword").forUseAtConfigurationTime().getOrNull()
+    repositoryUsername = providers.systemProperty("repositoryUsername").forUseAtConfigurationTime().getOrNull()
+    repositoryPassword = providers.systemProperty("repositoryPassword").forUseAtConfigurationTime().getOrNull()
 
     publishSnapshots = providers.systemProperty("publishSnapshots").forUseAtConfigurationTime().present
     publishReleases = providers.systemProperty("publishReleases").forUseAtConfigurationTime().present
-    
+
+    publishFlag = publishSnapshots || publishReleases
+
     skipBootifulArtifact = providers.systemProperty("skipBootifulArtifact").forUseAtConfigurationTime().present
     skipErrorProneCompiler = providers.systemProperty("skipErrorProneCompiler").forUseAtConfigurationTime().present
+
+    skipArtifactSigning = providers.systemProperty("skipArtifactSigning").forUseAtConfigurationTime().present
 
     enableRemoteDebugging = providers.systemProperty("enableRemoteDebugging").forUseAtConfigurationTime().present
     remoteDebuggingSuspend = providers.systemProperty("remoteDebuggingSuspend")
             .forUseAtConfigurationTime().getOrElse("false") == "true" ? "y" : "n"
-    generateGitProperties = publishReleases || publishSnapshots
+    generateGitProperties = publishFlag
             || providers.systemProperty("generateGitProperties").forUseAtConfigurationTime().present
 
     ci = System.getenv("CI") || providers.systemProperty("CI").forUseAtConfigurationTime().present
@@ -69,13 +73,13 @@ ext {
 }
 
 def isArtifactSigningRequired = {
-    return publishReleases
+    return publishReleases && !skipArtifactSigning
 }
 
 apply plugin: "io.codearte.nexus-staging"
 nexusStaging {
-    username = "${sonatypeUsername}"
-    password = "${sonatypePassword}"
+    username = "${repositoryUsername}"
+    password = "${repositoryPassword}"
     packageGroup = "org.apereo"
     stagingProfileId = "11d1ddbbdeae9d"
     numberOfRetries = 60
@@ -323,27 +327,27 @@ subprojects {
                 repositories {
                     if (rootProject.publishReleases) {
                         maven {
-                            name "Sonatype-Releases"
-                            url "${sonatypeRepositoryUrl}"
+                            name "CAS-Releases"
+                            url "${releaseRepositoryUrl}"
                             mavenContent {
                                 releasesOnly()
                             }
                             credentials {
-                                username "${sonatypeUsername}"
-                                password "${sonatypePassword}"
+                                username "${repositoryUsername}"
+                                password "${repositoryPassword}"
                             }
                         }
                     }
                     if (rootProject.publishSnapshots) {
                         maven {
-                            name "Sonatype-Snapshots"
-                            url "${sonatypeSnapshotsRepositoryUrl}"
+                            name "CAS-Snapshots"
+                            url "${snapshotsRepositoryUrl}"
                             mavenContent {
                                 snapshotsOnly()
                             }
                             credentials {
-                                username "${sonatypeUsername}"
-                                password "${sonatypePassword}"
+                                username "${repositoryUsername}"
+                                password "${repositoryPassword}"
                             }
                         }
                     }
@@ -359,7 +363,7 @@ subprojects {
 
     artifacts {
         tests testJar
-        if (rootProject.publishReleases || rootProject.publishSnapshots) {
+        if (rootProject.publishFlag) {
             archives sourcesJar
             archives javadocJar
             archives resourcesJar
@@ -531,7 +535,7 @@ subprojects {
     }
 }
 
-if (!gradle.startParameter.excludedTaskNames.contains("javadoc") || rootProject.publishReleases || rootProject.publishSnapshots) {
+if (!gradle.startParameter.excludedTaskNames.contains("javadoc") || rootProject.publishFlag) {
     tasks.withType(Javadoc) {
         source subprojects.collect { project -> project.sourceSets.main.allJava }
         destinationDir = new File(buildDir, "javadoc")
@@ -546,7 +550,7 @@ if (!gradle.startParameter.excludedTaskNames.contains("javadoc") || rootProject.
     }
 }
 
-if (rootProject.publishReleases || rootProject.publishSnapshots) {
+if (rootProject.publishFlag) {
     task rootSourcesJar(type: Jar, description: "Build JAR for the root CAS module") {
         archiveBaseName.set("${project.archivesBaseName}")
         from rootProject.file("src")
@@ -559,7 +563,7 @@ task gradleHome(description: "Display GRADLE_HOME environment variable") {
     }
 }
 
-if (rootProject.publishReleases || rootProject.publishSnapshots) {
+if (rootProject.publishFlag) {
     artifacts {
         archives aggregateJavadocsIntoJar
         archives rootSourcesJar
