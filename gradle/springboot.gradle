@@ -1,6 +1,6 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 
-if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootProject.publishSnapshots && !rootProject.skipBootifulArtifact)) {
+if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProject.skipBootifulArtifact)) {
     //logger.info "Applying Spring Boot plugin to bootify web application artifact for project $project.name..."
 
     apply plugin: "org.springframework.boot"
