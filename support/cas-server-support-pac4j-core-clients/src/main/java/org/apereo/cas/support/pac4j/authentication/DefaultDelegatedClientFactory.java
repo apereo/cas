@@ -676,7 +676,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
         if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
             cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
         }
-        cfg.setMaxClockSkew(oidc.getMaxClockSkew());
+        cfg.setMaxClockSkew(Long.valueOf(Beans.newDuration(oidc.getMaxClockSkew()).toSeconds()).intValue());
         cfg.setDiscoveryURI(oidc.getDiscoveryUri());
         cfg.setCustomParams(oidc.getCustomParams());
         cfg.setLogoutUrl(oidc.getLogoutUrl());

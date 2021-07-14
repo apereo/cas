@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.pac4j.oidc;
 
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jIdentifiableClientProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -63,7 +64,8 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
     /**
      * Clock skew in order to account for drift, when validating id tokens.
      */
-    private int maxClockSkew;
+    @DurationCapable
+    private String maxClockSkew = "PT5S";
 
     /**
      * Custom parameters to send along in authZ requests, etc.

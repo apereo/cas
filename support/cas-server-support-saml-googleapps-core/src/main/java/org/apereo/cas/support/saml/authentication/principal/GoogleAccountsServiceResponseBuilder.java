@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
@@ -58,7 +59,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     private PublicKey publicKey;
     private GoogleSaml20ObjectBuilder samlObjectBuilder;
 
-    private int skewAllowance;
+    private String skewAllowance;
 
     private String casServerPrefix;
 
@@ -67,7 +68,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
                                                 final String publicKeyLocation, final String keyAlgorithm,
                                                 final ServicesManager servicesManager,
                                                 final GoogleSaml20ObjectBuilder samlObjectBuilder,
-                                                final int skewAllowance, final String casServerPrefix) {
+                                                final String skewAllowance, final String casServerPrefix) {
         super(servicesManager);
         this.privateKeyLocation = privateKeyLocation;
         this.publicKeyLocation = publicKeyLocation;
@@ -123,12 +124,13 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         val assertion = this.samlObjectBuilder.newAssertion(authnStatement, casServerPrefix,
             notBeforeIssueInstant, this.samlObjectBuilder.generateSecureRandomId());
 
+        val skew = Beans.newDuration(this.skewAllowance).toSeconds();
         val conditions = this.samlObjectBuilder.newConditions(notBeforeIssueInstant,
-            currentDateTime.plusSeconds(this.skewAllowance), service.getId());
+            currentDateTime.plusSeconds(skew), service.getId());
         assertion.setConditions(conditions);
 
         val subject = this.samlObjectBuilder.newSubject(NameID.EMAIL, userId,
-            service.getId(), currentDateTime.plusSeconds(this.skewAllowance), service.getRequestId(), null);
+            service.getId(), currentDateTime.plusSeconds(skew), service.getRequestId(), null);
         assertion.setSubject(subject);
 
         response.getAssertions().add(assertion);

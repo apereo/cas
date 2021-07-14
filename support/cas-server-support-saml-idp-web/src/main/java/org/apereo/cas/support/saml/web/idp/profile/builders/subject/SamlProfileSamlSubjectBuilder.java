@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.subject;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
@@ -74,7 +75,7 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
                                  final MessageContext messageContext) throws SamlException {
 
         val assertion = Assertion.class.cast(casAssertion);
-        val validFromDate = ZonedDateTime.now(Clock.systemUTC());
+        val validFromDate = ZonedDateTime.now(ZoneOffset.UTC);
         LOGGER.trace("Locating the assertion consumer service url for binding [{}]", binding);
         val acs = SamlIdPUtils.determineEndpointForRequest(authnRequest, adaptor, binding);
         val location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
@@ -91,7 +92,7 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
             ? null
             : validFromDate.plusSeconds(service.getSkewAllowance() > 0
                 ? service.getSkewAllowance()
-                : casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance());
+                : Beans.newDuration(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()).toSeconds());
 
         val subject = newSubject(subjectNameId, subjectConfNameId,
             service.isSkipGeneratingSubjectConfirmationRecipient() ? null : location,
