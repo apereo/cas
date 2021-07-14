@@ -84,6 +84,8 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
      * <li>{@code LOWER}: Transform the value into lowercase characters.</li>
      * <li>{@code NONE}: Do nothing.</li>
      * </ul>
+     *
+     * @return the canonicalization mode
      */
     String getCanonicalizationMode();
 
