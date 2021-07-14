@@ -214,4 +214,4 @@ environment and load balancers accordingly.
 
 ## Sample Client Applications
 
-- [OAuth2 Sample Webapp](https://github.com/cas-projects/oauth2-sample-java-webapp)
+- [OAuth2 Sample Webapp](https://github.com/apereo/oauth2-sample-java-webapp)
