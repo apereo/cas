@@ -4,8 +4,8 @@ env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   TERM: xterm-256color
-  SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
-  SONATYPE_PWD: ${{ secrets.SONATYPE_PWD }}
+  REPOSITORY_USER: ${{ secrets.REPOSITORY_USER }}
+  REPOSITORY_PWD: ${{ secrets.REPOSITORY_PWD }}
   GH_PAGES_TOKEN: ${{ secrets.GH_PAGES_TOKEN }}
   GRADLE_BUILDCACHE_USER: ${{ secrets.GRADLE_BUILDCACHE_USER }}
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
@@ -96,8 +96,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Publish SNAPSHOTs
-        if: ${{ env.SONATYPE_USER != null && env.SONATYPE_PWD != null }}
-        run: ./gradlew -DpublishSnapshots=true --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
+        if: ${{ env.REPOSITORY_USER != null && env.REPOSITORY_PWD != null }}
+        run: ./gradlew -DpublishSnapshots=true --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DrepositoryUsername="${REPOSITORY_USER}" -DrepositoryPassword="${REPOSITORY_PWD}"
 
           
 ##########################################################################
