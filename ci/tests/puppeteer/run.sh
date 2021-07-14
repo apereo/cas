@@ -4,7 +4,6 @@
 #sudo apt-get install jq
 
 echo "Installing Puppeteer"
-npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer
 npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer jsonwebtoken axios request
 
 echo "Creating overlay work directory"
@@ -40,7 +39,9 @@ initScript=$(cat "${config}" | jq -j '.initScript // empty')
 
 properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
 echo -e "\nLaunching CAS with properties [${properties}] and dependencies [${dependencies}]"
-java -jar "$PWD"/cas.war ${properties} --spring.profiles.active=none --server.ssl.key-store="$keystore" &
+runArgs="-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"
+
+java -jar ${runArgs} "$PWD"/cas.war ${properties} --spring.profiles.active=none --server.ssl.key-store="$keystore" &
 pid=$!
 echo -e "\nWaiting for CAS under process id ${pid}"
 until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
