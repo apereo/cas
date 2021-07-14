@@ -69,7 +69,7 @@ You will need to configure your deployment environment and load-balancers accord
 
 ## Sample Client Applications
 
-- [MITREid Sample Java Webapp](https://github.com/cas-projects/oidc-sample-java-webapp)
+- [MITREid Sample Java Webapp](https://github.com/apereo/oidc-sample-java-webapp)
 
 ## Authentication Context Class
 
