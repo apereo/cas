@@ -106,7 +106,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         if (service.isSignResponses()) {
             LOGGER.debug("SAML entity id [{}] indicates that SAML responses should be signed", adaptor.getEntityId());
             val samlResponseSigned = getConfigurationContext().getSamlObjectSigner()
-                .encode(samlResponse, service, adaptor, response, request, binding, authnRequest);
+                .encode(samlResponse, service, adaptor, response, request, binding, authnRequest, messageContext);
             SamlUtils.logSamlObject(openSamlConfigBean, samlResponseSigned);
             return samlResponseSigned;
         }

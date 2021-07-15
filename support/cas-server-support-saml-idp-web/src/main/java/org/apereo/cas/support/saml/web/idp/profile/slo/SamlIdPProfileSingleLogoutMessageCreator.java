@@ -22,6 +22,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.LogoutRequest;
@@ -119,7 +120,7 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
             val httpRequest = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
             val httpResponse = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
             samlObjectSigner.encode(samlLogoutRequest, samlService, adaptor,
-                httpResponse, httpRequest, binding, samlLogoutRequest);
+                httpResponse, httpRequest, binding, samlLogoutRequest, new MessageContext());
         }
 
         if (SAMLConstants.SAML2_SOAP11_BINDING_URI.equalsIgnoreCase(binding)) {

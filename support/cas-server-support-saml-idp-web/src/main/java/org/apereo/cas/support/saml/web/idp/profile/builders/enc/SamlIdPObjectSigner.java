@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
@@ -25,14 +26,15 @@ public interface SamlIdPObjectSigner {
     /**
      * Encode a given saml object by invoking a number of outbound security handlers on the context.
      *
-     * @param <T>          the type parameter
-     * @param samlObject   the saml object
-     * @param service      the service
-     * @param adaptor      the adaptor
-     * @param response     the response
-     * @param request      the request
-     * @param binding      the binding
-     * @param authnRequest the authn request
+     * @param <T>            the type parameter
+     * @param samlObject     the saml object
+     * @param service        the service
+     * @param adaptor        the adaptor
+     * @param response       the response
+     * @param request        the request
+     * @param binding        the binding
+     * @param authnRequest   the authn request
+     * @param messageContext the message context
      * @return the saml object
      * @throws Exception the saml exception
      */
@@ -42,7 +44,8 @@ public interface SamlIdPObjectSigner {
                                     HttpServletResponse response,
                                     HttpServletRequest request,
                                     String binding,
-                                    RequestAbstractType authnRequest) throws Exception;
+                                    RequestAbstractType authnRequest,
+                                    MessageContext messageContext) throws Exception;
 
     /**
      * Gets saml idp metadata resolver.
