@@ -12,6 +12,7 @@ import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.event.EventListener;
@@ -29,6 +30,7 @@ import java.time.Instant;
  */
 @RequiredArgsConstructor
 @Getter
+@Slf4j
 public class DefaultCasEventListener {
 
     private final CasEventRepository casEventRepository;
@@ -41,11 +43,15 @@ public class DefaultCasEventListener {
         dto.setCreationTime(dt.toString());
 
         val clientInfo = ClientInfoHolder.getClientInfo();
-        dto.putClientIpAddress(clientInfo.getClientIpAddress());
-        dto.putServerIpAddress(clientInfo.getServerIpAddress());
-        dto.putAgent(clientInfo.getUserAgent());
-        val location = HttpRequestUtils.getHttpServletRequestGeoLocation(clientInfo.getGeoLocation());
-        dto.putGeoLocation(location);
+        if (clientInfo != null) {
+            dto.putClientIpAddress(clientInfo.getClientIpAddress());
+            dto.putServerIpAddress(clientInfo.getServerIpAddress());
+            dto.putAgent(clientInfo.getUserAgent());
+            val location = HttpRequestUtils.getHttpServletRequestGeoLocation(clientInfo.getGeoLocation());
+            dto.putGeoLocation(location);
+        } else {
+            LOGGER.trace("No client information is available. The final event cannot track client location, user agent or IP addresses");
+        }
         return dto;
     }
 
