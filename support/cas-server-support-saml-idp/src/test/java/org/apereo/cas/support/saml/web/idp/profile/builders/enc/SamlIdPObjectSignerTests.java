@@ -7,6 +7,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -40,7 +41,7 @@ public class SamlIdPObjectSignerTests extends BaseSamlIdPConfigurationTests {
 
         val authnRequest = SamlIdPTestUtils.getAuthnRequest(openSamlConfigBean, samlRegisteredService);
         assertNotNull(samlIdPObjectSigner.encode(authnRequest, samlRegisteredService, adaptor, response, request,
-            SAMLConstants.SAML2_POST_BINDING_URI, authnRequest));
+            SAMLConstants.SAML2_POST_BINDING_URI, authnRequest, new MessageContext()));
 
     }
 }

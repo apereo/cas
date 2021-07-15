@@ -106,15 +106,14 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
                                            final HttpServletResponse response,
                                            final HttpServletRequest request,
                                            final String binding,
-                                           final RequestAbstractType authnRequest) throws Exception {
-
+                                           final RequestAbstractType authnRequest,
+                                           final MessageContext messageContext) throws Exception {
         LOGGER.trace("Attempting to encode [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
-        val outboundContext = new MessageContext();
-        prepareOutboundContext(samlObject, adaptor, outboundContext, binding, authnRequest);
-        prepareSecurityParametersContext(adaptor, outboundContext, service);
-        prepareEndpointURLSchemeSecurityHandler(outboundContext);
-        prepareSamlOutboundDestinationHandler(outboundContext);
-        prepareSamlOutboundProtocolMessageSigningHandler(outboundContext);
+        prepareOutboundContext(samlObject, adaptor, messageContext, binding, authnRequest);
+        prepareSecurityParametersContext(adaptor, messageContext, service);
+        prepareEndpointURLSchemeSecurityHandler(messageContext);
+        prepareSamlOutboundDestinationHandler(messageContext);
+        prepareSamlOutboundProtocolMessageSigningHandler(messageContext);
         return samlObject;
     }
 

@@ -151,7 +151,7 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
             .get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService,
                 samlRegisteredService.getServiceId()).get();
         return samlIdPObjectSigner.encode(authnRequest, samlRegisteredService,
-            adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest);
+            adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest, new MessageContext());
     }
 
     private AuthnRequest getAuthnRequest() {

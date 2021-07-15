@@ -20,6 +20,7 @@ import lombok.val;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.xml.util.XMLObjectSupport;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.ext.saml2aslo.Asynchronous;
 import org.opensaml.saml.saml2.core.LogoutRequest;
@@ -252,7 +253,8 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
         if (configurationContext.getCasProperties().getAuthn().getSamlIdp().getLogout().isSignLogoutResponse()) {
             LOGGER.trace("Signing logout request for service provider [{}]", adaptor.getEntityId());
             val logoutResponseSigned = configurationContext.getSamlObjectSigner()
-                .encode(logoutResponse, registeredService, adaptor, response, request, sloService.getBinding(), logoutRequest);
+                .encode(logoutResponse, registeredService, adaptor, response,
+                    request, sloService.getBinding(), logoutRequest, new MessageContext());
             SamlUtils.logSamlObject(configurationContext.getOpenSamlConfigBean(), logoutResponseSigned);
             return logoutResponseSigned;
         }
