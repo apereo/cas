@@ -22,10 +22,9 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.hjson.JsonValue;
-import org.hjson.Stringify;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -134,20 +133,18 @@ public class JwtBuilder {
             .subject(payload.getSubject());
 
         payload.getAttributes().forEach((k, v) -> {
-            if (v.size() == 1) {
-                claims.claim(k, CollectionUtils.firstElement(v).get());
-            } else {
-                claims.claim(k, v);
+            var claimValue = v.size() == 1 ? CollectionUtils.firstElement(v).get() : v;
+            if (claimValue instanceof ZonedDateTime) {
+                claimValue = claimValue.toString();
             }
+            claims.claim(k, claimValue);
         });
         claims.expirationTime(payload.getValidUntilDate());
 
         val claimsSet = claims.build();
-        val jwtJson = claimsSet.toJSONObject().toJSONString();
+        val jwtJson = claimsSet.toString();
+        LOGGER.debug("Generated JWT [{}]", jwtJson);
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Generated JWT [{}]", JsonValue.readJSON(jwtJson).toString(Stringify.FORMATTED));
-        }
         LOGGER.trace("Locating service [{}] in service registry", serviceAudience);
         val registeredService = payload.getRegisteredService().isEmpty()
             ? locateRegisteredService(serviceAudience)
