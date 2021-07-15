@@ -114,7 +114,7 @@ pattern-based layouts to format log messages. The following alternative layouts 
 | `HTMLLayout`                  | Generates an HTML page and adds each LogEvent to a row in a table
 | `JSONLayout`                  | Creates log events in well-formed or fragmented JSON.
 | `PatternLayout`               | Formats the log even based on a conversion pattern.
-| `RFC5424Layout`               | Formats log events in accordance with [RFC 5424](http://tools.ietf.org/html/rfc5424), the enhanced Syslog specification.
+| `RFC5424Layout`               | Formats log events in accordance with [RFC 5424](https://tools.ietf.org/html/rfc5424), the enhanced Syslog specification.
 | `SerializedLayout`            | Log events are transformed into byte arrays useful in JMS or socket connections.
 | `SyslogLayout`                | Formats log events as BSD Syslog records.
 | `XMLLayout`                   | Creates log events in well-formed or fragmented XML.

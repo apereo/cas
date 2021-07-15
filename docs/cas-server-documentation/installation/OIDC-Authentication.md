@@ -39,7 +39,7 @@ The current implementation provides support for:
 |-------------------------------------------|-------------------------------------------------------
 | `/oidc/.well-known`                       | The discovery endpoint used to query for CAS OIDC configuration information and metadata.
 | `/oidc/.well-known/openid-configuration`  | Same as `.well-known` discovery endpoint.
-| `/oidc/.well-known/webfinger`             | [WebFinger](http://tools.ietf.org/html/rfc7033) discovery endpoint
+| `/oidc/.well-known/webfinger`             | [WebFinger](https://tools.ietf.org/html/rfc7033) discovery endpoint
 | `/oidc/jwks`                              | Contains the server’s public signing keys, which clients may use to verify the digital signatures of access tokens and ID tokens issued by CAS.
 | `/oidc/authorize`                         | Authorization requests are handled here.
 | `/oidc/profile`                           | User profile requests are handled here.
