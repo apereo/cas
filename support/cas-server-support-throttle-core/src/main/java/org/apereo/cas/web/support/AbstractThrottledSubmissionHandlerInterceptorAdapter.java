@@ -59,8 +59,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     @Override
     public final boolean preHandle(final HttpServletRequest request,
                                    final HttpServletResponse response, final Object handler) throws Exception {
-        if (!configurationContext.getAuthenticationThrottlingExecutionPlan().getAuthenticationThrottleFilter().supports(request, response)) {
-            LOGGER.trace("Letting the request through unthrottled; No request filters support it");
+        if (isRequestIgnoredForThrottling(request, response)) {
+            LOGGER.trace("Letting the request through without throttling; No request filters support it");
             return true;
         }
 
@@ -79,11 +79,11 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     @Override
     public final void postHandle(final HttpServletRequest request, final HttpServletResponse response,
                                  final Object handler, final ModelAndView modelAndView) {
-        if (!configurationContext.getAuthenticationThrottlingExecutionPlan().getAuthenticationThrottleFilter().supports(request, response)) {
+        if (isRequestIgnoredForThrottling(request, response)) {
             LOGGER.trace("Skipping authentication throttling for requests; no filters support it.");
             return;
         }
-        
+
         val recordEvent = shouldResponseBeRecordedAsFailure(response);
         if (recordEvent) {
             LOGGER.debug("Recording submission failure for [{}]", request.getRequestURI());
@@ -195,5 +195,9 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             clientInfo.getServerIpAddress());
         LOGGER.debug("Recording throttled audit action [{}]", context);
         configurationContext.getAuditTrailExecutionPlan().record(context);
+    }
+
+    private boolean isRequestIgnoredForThrottling(final HttpServletRequest request, final HttpServletResponse response) {
+        return !configurationContext.getAuthenticationThrottlingExecutionPlan().getAuthenticationThrottleFilter().supports(request, response);
     }
 }
