@@ -76,7 +76,7 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
         val assertion = Assertion.class.cast(casAssertion);
         val validFromDate = ZonedDateTime.now(Clock.systemUTC());
         LOGGER.trace("Locating the assertion consumer service url for binding [{}]", binding);
-        val acs = SamlIdPUtils.determineEndpointForRequest(authnRequest, adaptor, binding);
+        val acs = SamlIdPUtils.determineEndpointForRequest(authnRequest, adaptor, binding, messageContext);
         val location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
         if (StringUtils.isBlank(location)) {
             LOGGER.warn("Subject recipient is not defined from either authentication request or metadata for [{}]", adaptor.getEntityId());

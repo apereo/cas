@@ -77,14 +77,15 @@ public class SamlIdPObjectSigner {
     /**
      * Encode a given saml object by invoking a number of outbound security handlers on the context.
      *
-     * @param <T>          the type parameter
-     * @param samlObject   the saml object
-     * @param service      the service
-     * @param adaptor      the adaptor
-     * @param response     the response
-     * @param request      the request
-     * @param binding      the binding
-     * @param authnRequest the authn request
+     * @param <T>            the type parameter
+     * @param samlObject     the saml object
+     * @param service        the service
+     * @param adaptor        the adaptor
+     * @param response       the response
+     * @param request        the request
+     * @param binding        the binding
+     * @param authnRequest   the authn request
+     * @param messageContext the message context
      * @return the t
      * @throws SamlException the saml exception
      */
@@ -95,15 +96,15 @@ public class SamlIdPObjectSigner {
         final HttpServletResponse response,
         final HttpServletRequest request,
         final String binding,
-        final RequestAbstractType authnRequest) throws SamlException {
+        final RequestAbstractType authnRequest,
+        final MessageContext messageContext) throws SamlException {
 
         LOGGER.trace("Attempting to encode [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
-        val outboundContext = new MessageContext();
-        prepareOutboundContext(samlObject, adaptor, outboundContext, binding, authnRequest);
-        prepareSecurityParametersContext(adaptor, outboundContext, service);
-        prepareEndpointURLSchemeSecurityHandler(outboundContext);
-        prepareSamlOutboundDestinationHandler(outboundContext);
-        prepareSamlOutboundProtocolMessageSigningHandler(outboundContext);
+        prepareOutboundContext(samlObject, adaptor, messageContext, binding, authnRequest);
+        prepareSecurityParametersContext(adaptor, messageContext, service);
+        prepareEndpointURLSchemeSecurityHandler(messageContext);
+        prepareSamlOutboundDestinationHandler(messageContext);
+        prepareSamlOutboundProtocolMessageSigningHandler(messageContext);
         return samlObject;
     }
 
@@ -184,7 +185,7 @@ public class SamlIdPObjectSigner {
 
         LOGGER.trace("Outbound saml object to use is [{}]", samlObject.getClass().getName());
         outboundContext.setMessage(samlObject);
-        SamlIdPUtils.preparePeerEntitySamlEndpointContext(authnRequest, outboundContext, adaptor, binding);
+        SamlIdPUtils.preparePeerEntitySamlEndpointContext(authnRequest, outboundContext, adaptor, binding, outboundContext);
     }
 
     /**

@@ -41,6 +41,8 @@ import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.BindingDescriptor;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
+import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
+import org.opensaml.saml.common.messaging.context.SAMLProtocolContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder;
 import org.opensaml.saml.saml2.core.Attribute;
@@ -51,6 +53,7 @@ import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.impl.AttributeBuilder;
 import org.opensaml.saml.saml2.core.impl.AttributeValueBuilder;
 import org.opensaml.saml.saml2.core.impl.ExtensionsBuilder;
+import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.pac4j.core.context.JEEContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -339,22 +342,36 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                                          final HttpServletResponse response,
                                          final Pair<? extends SignableSAMLObject, MessageContext> pair) throws SamlException {
         val authnRequest = (AuthnRequest) pair.getLeft();
+        val builder = new URLBuilder(configurationContext.getCallbackService().getId());
+        builder.getQueryParams().add(
+            new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID,
+                SamlIdPUtils.getIssuerFromSamlObject(authnRequest)));
+        val url = builder.buildURL();
+
+        storeSamlAuthnRequest(request, response, pair);
+
+        LOGGER.trace("Built service callback url [{}]", url);
+        return CommonUtils.constructServiceUrl(request, response,
+            url,
+            this.configurationContext.getCasProperties().getServer().getName(),
+            CasProtocolConstants.PARAMETER_SERVICE,
+            CasProtocolConstants.PARAMETER_TICKET, false);
+    }
+
+    @SneakyThrows
+    private void storeSamlAuthnRequest(final HttpServletRequest request,
+                                       final HttpServletResponse response,
+                                       final Pair<? extends SignableSAMLObject, MessageContext> pair) {
+        val authnRequest = (AuthnRequest) pair.getLeft();
         val messageContext = pair.getRight();
-
         try (val writer = SamlUtils.transformSamlObject(configurationContext.getOpenSamlConfigBean(), authnRequest)) {
-            val builder = new URLBuilder(configurationContext.getCallbackService().getId());
-
-            builder.getQueryParams().add(
-                new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID,
-                    SamlIdPUtils.getIssuerFromSamlObject(authnRequest)));
-
             val samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
             val context = new JEEContext(request, response);
             this.configurationContext.getSessionStore()
                 .set(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
             this.configurationContext.getSessionStore()
-                .set(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, SAMLBindingSupport.getRelayState(messageContext));
-
+                .set(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE,
+                    SAMLBindingSupport.getRelayState(messageContext));
             val messageContextMap = new LinkedHashMap<String, Object>();
             if (messageContext.containsSubcontext(SAMLBindingContext.class)) {
                 val binding = Objects.requireNonNull(messageContext.getSubcontext(SAMLBindingContext.class));
@@ -363,17 +380,9 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             }
             LOGGER.debug("Tracking SAML authentication context extension for [{}]", messageContextMap);
             configurationContext.getSessionStore().set(context, MessageContext.class.getName(), messageContextMap);
-            val url = builder.buildURL();
-
-            LOGGER.trace("Built service callback url [{}]", url);
-            return CommonUtils.constructServiceUrl(request, response,
-                url,
-                this.configurationContext.getCasProperties().getServer().getName(),
-                CasProtocolConstants.PARAMETER_SERVICE,
-                CasProtocolConstants.PARAMETER_TICKET, false);
         }
     }
-
+    
     /**
      * Initiate authentication request.
      *
@@ -428,16 +437,30 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                 }
 
                 if (buildResponseFromSso) {
+                    storeSamlAuthnRequest(request, response, pair);
+
                     val assertion = buildCasAssertion(authentication, service, registeredService, Map.of());
                     LOGGER.debug("Building CAS assertion [{}] for issuer [{}]", assertion, issuer);
+                    val messageContext = Objects.requireNonNull(pair.getRight());
                     val authenticationContext = buildAuthenticationContextPair(request, response, authnRequest);
+                    
+                    var bindingContext = messageContext.getSubcontext(SAMLBindingContext.class, true);
+                    authenticationContext.getValue().addSubcontext(bindingContext, true);
+
+                    var peerContext = messageContext.getSubcontext(SAMLPeerEntityContext.class, true);
+                    authenticationContext.getValue().addSubcontext(peerContext, true);
+
+                    var securityParamsContext = messageContext.getSubcontext(SecurityParametersContext.class, true);
+                    authenticationContext.getValue().addSubcontext(securityParamsContext, true);
+
+                    var protocolContext = messageContext.getSubcontext(SAMLProtocolContext.class, true);
+                    authenticationContext.getValue().addSubcontext(protocolContext, true);
+
                     val binding = determineProfileBinding(authenticationContext, assertion);
                     LOGGER.debug("Using profile binding [{}] for service [{}]", binding, registeredService.getName());
-                    val messageContext = pair.getRight();
                     val relayState = SAMLBindingSupport.getRelayState(messageContext);
                     LOGGER.debug("Using relay-state value [{}]", relayState);
                     SAMLBindingSupport.setRelayState(authenticationContext.getRight(), relayState);
-
                     response.reset();
                     buildSamlResponse(response, request, authenticationContext, assertion, binding);
                     return;
@@ -621,7 +644,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      */
     protected String determineProfileBinding(final Pair<AuthnRequest, MessageContext> authenticationContext,
                                              final Assertion assertion) {
-
         val authnRequest = authenticationContext.getKey();
         val pair = getRegisteredServiceAndFacade(authnRequest);
         val facade = pair.getValue();
@@ -646,7 +668,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val messageContext = new MessageContext();
         val jeeContext = new JEEContext(request, response);
         val relayState = this.configurationContext.getSessionStore()
-            .get(jeeContext, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE).orElse(StringUtils.EMPTY).toString();
+            .get(jeeContext, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE)
+            .orElse(StringUtils.EMPTY).toString();
         LOGGER.trace("Relay state is [{}]", relayState);
         SAMLBindingSupport.setRelayState(messageContext, relayState);
         return messageContext;

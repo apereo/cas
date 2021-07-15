@@ -42,14 +42,15 @@ public class SamlResponseArtifactEncoder extends BaseHttpServletAwareSamlObjectE
     protected void finalizeEncode(final RequestAbstractType authnRequest,
                                   final BaseSAML2MessageEncoder e,
                                   final Response samlResponse,
-                                  final String relayState) throws Exception {
+                                  final String relayState,
+                                  final MessageContext messageContext) throws Exception {
         val encoder = (HTTPArtifactEncoder) e;
         encoder.setArtifactMap(this.samlArtifactMap);
 
-        val ctx = getEncoderMessageContext(authnRequest, samlResponse, relayState);
+        val ctx = getEncoderMessageContext(authnRequest, samlResponse, relayState, messageContext);
         prepareArtifactContext(samlResponse, ctx);
         encoder.setMessageContext(ctx);
-        super.finalizeEncode(authnRequest, encoder, samlResponse, relayState);
+        super.finalizeEncode(authnRequest, encoder, samlResponse, relayState, messageContext);
     }
 
     @Override

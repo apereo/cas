@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -118,7 +119,8 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
             .get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService,
                 samlRegisteredService.getServiceId()).get();
         return samlIdPObjectSigner.encode(authnRequest, samlRegisteredService,
-            adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest);
+            adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest,
+            new MessageContext());
     }
 
     private AuthnRequest getAuthnRequest() {

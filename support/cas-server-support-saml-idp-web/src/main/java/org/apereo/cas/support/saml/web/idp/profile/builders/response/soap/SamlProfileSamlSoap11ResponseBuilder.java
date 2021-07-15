@@ -103,7 +103,8 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
                               final String relayState,
                               final String binding,
                               final RequestAbstractType authnRequest,
-                              final Object assertion) throws SamlException {
+                              final Object assertion,
+                              final MessageContext messageContext) throws SamlException {
         val result = new MessageContext();
         val ctx = result.getSubcontext(SOAP11Context.class, true);
         ctx.setEnvelope(envelope);

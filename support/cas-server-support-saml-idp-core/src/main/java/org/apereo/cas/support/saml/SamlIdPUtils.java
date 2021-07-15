@@ -19,6 +19,7 @@ import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -92,12 +93,14 @@ public class SamlIdPUtils {
      * @param outboundContext the outbound context
      * @param adaptor         the adaptor
      * @param binding         the binding
+     * @param messageContext  the message context
      * @throws SamlException the saml exception
      */
     public static void preparePeerEntitySamlEndpointContext(final RequestAbstractType request,
                                                             final MessageContext outboundContext,
                                                             final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                            final String binding) throws SamlException {
+                                                            final String binding,
+                                                            final MessageContext messageContext) throws SamlException {
         val entityId = adaptor.getEntityId();
         if (!adaptor.containsAssertionConsumerServices()) {
             throw new SamlException("No assertion consumer service could be found for entity " + entityId);
@@ -114,7 +117,7 @@ public class SamlIdPUtils {
             throw new SamlException("SAMLEndpointContext could not be defined for entity " + entityId);
         }
 
-        val endpoint = determineEndpointForRequest(request, adaptor, binding);
+        val endpoint = determineEndpointForRequest(request, adaptor, binding, messageContext);
         LOGGER.debug("Configured peer entity endpoint to be [{}] with binding [{}]", endpoint.getLocation(), endpoint.getBinding());
         endpointContext.setEndpoint(endpoint);
     }
@@ -122,21 +125,24 @@ public class SamlIdPUtils {
     /**
      * Determine assertion consumer service assertion consumer service.
      *
-     * @param authnRequest the authn request
-     * @param adaptor      the adaptor
-     * @param binding      the binding
+     * @param authnRequest   the authn request
+     * @param adaptor        the adaptor
+     * @param binding        the binding
+     * @param messageContext the message context
      * @return the assertion consumer service
      */
     public static Endpoint determineEndpointForRequest(final RequestAbstractType authnRequest,
                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                       final String binding) {
+                                                       final String binding,
+                                                       final MessageContext messageContext) {
         var endpoint = (Endpoint) null;
         if (authnRequest instanceof LogoutRequest) {
             endpoint = adaptor.getSingleLogoutService(binding);
         } else {
             val acsEndpointFromReq = getAssertionConsumerServiceFromRequest(authnRequest, binding, adaptor);
             val acsEndpointFromMetadata = adaptor.getAssertionConsumerService(binding);
-            endpoint = determineEndpointForRequest(authnRequest, adaptor, binding, acsEndpointFromReq, acsEndpointFromMetadata);
+            endpoint = determineEndpointForRequest(authnRequest, adaptor, binding,
+                acsEndpointFromReq, acsEndpointFromMetadata, messageContext);
         }
 
         if (endpoint == null || StringUtils.isBlank(endpoint.getBinding())) {
@@ -157,10 +163,13 @@ public class SamlIdPUtils {
                                                                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                                         final String binding,
                                                                         final AssertionConsumerService acsFromRequest,
-                                                                        final AssertionConsumerService acsFromMetadata) {
+                                                                        final AssertionConsumerService acsFromMetadata,
+                                                                        final MessageContext messageContext) {
         if (acsFromRequest != null) {
-
-            var requestSigned = authnRequest.isSigned();
+            var requestSigned = authnRequest.isSigned()
+                || (messageContext.containsSubcontext(SAMLBindingContext.class)
+                    && messageContext.getSubcontext(SAMLBindingContext.class).hasBindingSignature());
+            
             if (!requestSigned && authnRequest.getExtensions() != null && authnRequest.getExtensions().getUnknownXMLObjects() != null) {
                 LOGGER.debug("Checking SAML authentication extensions [{}]", authnRequest.getExtensions().getUnknownXMLObjects());
                 requestSigned = authnRequest.getExtensions().getUnknownXMLObjects()
