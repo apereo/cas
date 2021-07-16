@@ -55,6 +55,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     private String requiredNameIdFormat;
 
+    @ExpressionLanguageCapable
     private String metadataSignatureLocation;
 
     private boolean logoutResponseEnabled = true;

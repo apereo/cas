@@ -1,10 +1,7 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
-import org.apereo.cas.throttle.ThrottledRequestExecutor;
-import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 import org.apereo.cas.web.support.RedisThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
@@ -32,17 +29,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.audit.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasRedisThrottlingConfiguration {
-
     @Autowired
     private CasConfigurationProperties casProperties;
-
+    
     @Autowired
-    @Qualifier("throttledRequestResponseHandler")
-    private ObjectProvider<ThrottledRequestResponseHandler> throttledRequestResponseHandler;
-
-    @Autowired
-    @Qualifier("throttledRequestExecutor")
-    private ObjectProvider<ThrottledRequestExecutor> throttledRequestExecutor;
+    @Qualifier("authenticationThrottlingConfigurationContext")
+    private ObjectProvider<ThrottledSubmissionHandlerConfigurationContext> authenticationThrottlingConfigurationContext;
 
     @Bean
     @ConditionalOnMissingBean(name = "redisThrottleConnectionFactory")
@@ -60,21 +52,8 @@ public class CasRedisThrottlingConfiguration {
     @Autowired
     @Bean
     @RefreshScope
-    public ThrottledSubmissionHandlerInterceptor authenticationThrottle(
-        @Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailExecutionPlan) {
-        val throttle = casProperties.getAuthn().getThrottle();
-        val failure = throttle.getFailure();
-
-        val context = ThrottledSubmissionHandlerConfigurationContext.builder()
-            .failureThreshold(failure.getThreshold())
-            .failureRangeInSeconds(failure.getRangeSeconds())
-            .usernameParameter(throttle.getUsernameParameter())
-            .authenticationFailureCode(failure.getCode())
-            .auditTrailExecutionPlan(auditTrailExecutionPlan)
-            .applicationCode(throttle.getAppCode())
-            .throttledRequestResponseHandler(throttledRequestResponseHandler.getObject())
-            .throttledRequestExecutor(throttledRequestExecutor.getObject())
-            .build();
-        return new RedisThrottledSubmissionHandlerInterceptorAdapter(context, throttleRedisTemplate());
+    public ThrottledSubmissionHandlerInterceptor authenticationThrottle() {
+        return new RedisThrottledSubmissionHandlerInterceptorAdapter(
+            authenticationThrottlingConfigurationContext.getObject(), throttleRedisTemplate());
     }
 }

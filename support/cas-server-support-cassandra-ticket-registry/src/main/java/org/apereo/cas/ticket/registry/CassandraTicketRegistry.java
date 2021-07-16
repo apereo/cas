@@ -77,7 +77,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
 
 
     @Override
-    public void addTicket(final Ticket ticket) {
+    public void addTicketInternal(final Ticket ticket) {
         try {
             addTicketToCassandra(ticket, true);
         } catch (final Exception e) {

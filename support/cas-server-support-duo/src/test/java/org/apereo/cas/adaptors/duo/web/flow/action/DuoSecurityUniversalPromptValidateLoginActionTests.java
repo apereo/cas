@@ -8,6 +8,7 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationPro
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
@@ -15,6 +16,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -28,6 +30,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -71,6 +74,9 @@ public class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasW
     @Qualifier("duoUniversalPromptPrepareLoginAction")
     private Action duoUniversalPromptPrepareLoginAction;
 
+    @Autowired
+    private ConfigurableApplicationContext configurableApplicationContext;
+
     @Test
     public void verifySkip() throws Exception {
         val context = new MockRequestContext();
@@ -113,6 +119,9 @@ public class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasW
         val identifier = casProperties.getAuthn().getMfa().getDuo().get(0).getId();
         val provider = TestMultifactorAuthenticationProvider
             .registerProviderIntoApplicationContext(applicationContext, new TestMultifactorAuthenticationProvider(identifier));
+
+        configurableApplicationContext.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class)
+            .forEach((key, value) -> ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, value, key));
 
         val authentication = RegisteredServiceTestUtils.getAuthentication();
         WebUtils.putAuthentication(authentication, context);

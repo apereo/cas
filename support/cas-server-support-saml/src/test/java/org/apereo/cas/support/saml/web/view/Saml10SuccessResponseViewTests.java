@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
 import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -73,13 +74,15 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
             .applicationContext(appCtx)
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())
+            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
             .build();
         val mgmr = new DefaultServicesManager(context);
         mgmr.load();
 
         val protocolAttributeEncoder = new DefaultCasProtocolAttributeEncoder(mgmr, CipherExecutor.noOpOfStringToString());
         val builder = new Saml10ObjectBuilder(configBean);
-        val samlResponseBuilder = new SamlResponseBuilder(builder, "testIssuer", "whatever", 1000, 30,
+        val samlResponseBuilder = new SamlResponseBuilder(builder, "testIssuer",
+            "whatever", 1000, "PT30S",
             new NoOpProtocolAttributeEncoder(), mgmr);
         this.response = new Saml10SuccessResponseView(protocolAttributeEncoder,
             mgmr,

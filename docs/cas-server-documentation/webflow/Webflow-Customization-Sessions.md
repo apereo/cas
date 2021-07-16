@@ -13,6 +13,8 @@ authentication sequence. Spring Webflow provides a pluggable architecture whereb
 decisions and operations throughout the primary authentication workflow can be easily controlled
 and navigated. In order for this navigation to work, some form of conversational session state must be maintained.
 
+{% include actuators.html endpoints="sessions" %}     
+
 ## Client-side Sessions
 
 CAS provides a facility for storing flow execution state on the client in Spring Webflow. Flow state is stored as an encoded byte

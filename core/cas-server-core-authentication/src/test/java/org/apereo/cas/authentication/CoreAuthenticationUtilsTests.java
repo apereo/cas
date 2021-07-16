@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.GroovyAuthenticationPolicyProperties;
@@ -8,6 +9,7 @@ import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPri
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.configuration.model.core.authentication.RestAuthenticationPolicyProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +26,7 @@ import org.springframework.core.io.ClassPathResource;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -261,5 +264,66 @@ public class CoreAuthenticationUtilsTests {
         public boolean test(final Credential credential) {
             return true;
         }
+    }
+
+    @Test
+    public void verifyPersonDirectoryOverrides() {
+        val principal = new PersonDirectoryPrincipalResolverProperties();
+        val personDirectory = new PersonDirectoryPrincipalResolverProperties();
+        val principalResolutionContext = CoreAuthenticationUtils.buildPrincipalResolutionContext(
+            PrincipalFactoryUtils.newPrincipalFactory(),
+            new StubPersonAttributeDao(Collections.EMPTY_MAP),
+            CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD),
+            principal, personDirectory);
+        assertFalse(principalResolutionContext.isUseCurrentPrincipalId());
+        assertTrue(principalResolutionContext.isResolveAttributes());
+        assertFalse(principalResolutionContext.isReturnNullIfNoAttributes());
+        assertTrue(principalResolutionContext.getActiveAttributeRepositoryIdentifiers().isEmpty());
+        assertTrue(principalResolutionContext.getPrincipalAttributeNames().isEmpty());
+
+        personDirectory.setUseExistingPrincipalId(TriStateBoolean.TRUE);
+        personDirectory.setAttributeResolutionEnabled(TriStateBoolean.TRUE);
+        personDirectory.setReturnNull(TriStateBoolean.TRUE);
+        personDirectory.setAttributeResolutionEnabled(TriStateBoolean.FALSE);
+        personDirectory.setActiveAttributeRepositoryIds("test1,test2");
+        personDirectory.setPrincipalAttribute("principalAttribute");
+        val principalResolutionContext2 = CoreAuthenticationUtils.buildPrincipalResolutionContext(
+            PrincipalFactoryUtils.newPrincipalFactory(),
+            new StubPersonAttributeDao(Collections.EMPTY_MAP),
+            CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD),
+            principal, personDirectory);
+        assertTrue(principalResolutionContext2.isUseCurrentPrincipalId());
+        assertFalse(principalResolutionContext2.isResolveAttributes());
+        assertTrue(principalResolutionContext2.isReturnNullIfNoAttributes());
+        assertTrue(principalResolutionContext2.getActiveAttributeRepositoryIdentifiers().size()==2);
+        assertEquals("principalAttribute", principalResolutionContext2.getPrincipalAttributeNames());
+
+        principal.setUseExistingPrincipalId(TriStateBoolean.FALSE);
+        principal.setAttributeResolutionEnabled(TriStateBoolean.FALSE);
+        principal.setReturnNull(TriStateBoolean.FALSE);
+        principal.setAttributeResolutionEnabled(TriStateBoolean.TRUE);
+        principal.setActiveAttributeRepositoryIds("test1,test2,test3");
+        principal.setPrincipalAttribute("principalAttribute2");
+        val principalResolutionContext3 = CoreAuthenticationUtils.buildPrincipalResolutionContext(
+            PrincipalFactoryUtils.newPrincipalFactory(),
+            new StubPersonAttributeDao(Collections.EMPTY_MAP),
+            CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD),
+            principal, personDirectory);
+        assertFalse(principalResolutionContext3.isUseCurrentPrincipalId());
+        assertTrue(principalResolutionContext3.isResolveAttributes());
+        assertFalse(principalResolutionContext3.isReturnNullIfNoAttributes());
+        assertTrue(principalResolutionContext3.getActiveAttributeRepositoryIdentifiers().size()==3);
+        assertEquals("principalAttribute2", principalResolutionContext3.getPrincipalAttributeNames());
+
+        val principalResolutionContext4 = CoreAuthenticationUtils.buildPrincipalResolutionContext(
+            PrincipalFactoryUtils.newPrincipalFactory(),
+            new StubPersonAttributeDao(Collections.EMPTY_MAP),
+            CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD),
+            personDirectory);
+        assertTrue(principalResolutionContext4.isUseCurrentPrincipalId());
+        assertFalse(principalResolutionContext4.isResolveAttributes());
+        assertTrue(principalResolutionContext4.isReturnNullIfNoAttributes());
+        assertTrue(principalResolutionContext4.getActiveAttributeRepositoryIdentifiers().size()==2);
+        assertEquals("principalAttribute", principalResolutionContext4.getPrincipalAttributeNames());
     }
 }

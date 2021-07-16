@@ -109,6 +109,8 @@
                     <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register Device</span>
                 </button>
 
+                <input type="hidden" id="registerCsrfToken" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
                 <section id="residentKeysPanel" class="cas-field my-3 mdc-input-group">
                     <p>
                         You may also register your device using <i>Discoverable Credentials / Resident Keys</i>.
@@ -150,13 +152,15 @@
         </form>
 
         <script type="text/javascript">
+            const csrfToken = $('#registerCsrfToken').val();
+
             document.getElementById("credentialNickname").value = randomWord();
             var btn = document.getElementById('registerButton');
             btn.addEventListener('click', function (event) {
                 const username = '[[${principal.id}]]';
                 const displayName = '[[${displayName}]]';
                 const credentialNickname = $('#credentialNickname').val();
-                register(username, displayName, credentialNickname);
+                register(username, displayName, credentialNickname, csrfToken);
             }, false);
 
             var btnResident = document.getElementById('registerDiscoverableCredentialButton');
@@ -164,7 +168,7 @@
                 const username = '[[${principal.id}]]';
                 const displayName = '[[${displayName}]]';
                 const credentialNickname = $('#credentialNickname').val();
-                register(username, displayName, credentialNickname, true);
+                register(username, displayName, credentialNickname, csrfToken, true);
             }, false);
 
         </script>

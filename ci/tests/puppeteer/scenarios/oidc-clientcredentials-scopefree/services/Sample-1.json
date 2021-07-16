@@ -7,6 +7,7 @@
   "id": 1,
   "evaluationOrder" : 10,
   "generateRefreshToken": "true",
+  "jwtAccessToken": "true",
   "supportedGrantTypes": [ "java.util.HashSet", [ "client_credentials" ] ],
   "scopes" : [ "java.util.HashSet", ["openid"]],
   "attributeReleasePolicy" : {

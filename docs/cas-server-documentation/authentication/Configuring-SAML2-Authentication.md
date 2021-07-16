@@ -61,13 +61,11 @@ repositories {
 
 {% include casproperties.html properties="cas.authn.saml-idp.core,cas.client,cas.session-replication" %}
 
-### Administrative Endpoints
+### Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint          | Description
-|-------------------|-------------------------------------------------------------------------------------------------------
-| `samlPostProfileResponse` | Obtain a SAML2 response payload by supplying a `username`, `password`, `entityId` and `encrypt` as parameters.
+
+{% include actuators.html endpoints="samlPostProfileResponse" %}
 
 ### SAML Services
 
@@ -120,7 +118,7 @@ For Java-based applications, the following frameworks may be used to integrate y
 
 ## Sample Client Applications
 
-- [Spring Security SAML Sample Webapp](https://github.com/cas-projects/saml2-sample-java-webapp)
+- [Spring Security SAML Sample Webapp](https://github.com/apereo/saml2-sample-java-webapp)
 - [Okta](https://developer.okta.com/standards/SAML/setting_up_a_saml_application_in_okta)
 
 ## Troubleshooting

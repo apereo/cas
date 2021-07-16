@@ -5,7 +5,6 @@ import org.apereo.cas.config.DatabaseAuthenticationTestConfiguration;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * This is {@link BaseDatabaseAuthenticationHandlerTests}.
@@ -18,6 +17,5 @@ import org.springframework.test.annotation.DirtiesContext;
     CasHibernateJpaConfiguration.class,
     DatabaseAuthenticationTestConfiguration.class
 })
-@DirtiesContext
 public abstract class BaseDatabaseAuthenticationHandlerTests {
 }

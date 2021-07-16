@@ -101,7 +101,7 @@ public class CasReportsConfiguration {
     private ObjectProvider<PrincipalFactory> principalFactory;
 
     @Autowired
-    @Qualifier("authenticationEventExecutionPlan")
+    @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
     private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
 
     @Bean

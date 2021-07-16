@@ -14,6 +14,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.Client;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 
 /**
@@ -33,10 +34,12 @@ public class DelegatedAuthenticationAccessStrategyHelper {
      *
      * @param client  the client
      * @param service the service
-     * @return true/false
+     * @param request the request
+     * @return true /false
      */
-    public boolean isDelegatedClientAuthorizedForService(final Client client, final Service service) {
-        return isDelegatedClientAuthorizedFor(client.getName(), service);
+    public boolean isDelegatedClientAuthorizedForService(final Client client, final Service service,
+                                                         final HttpServletRequest request) {
+        return isDelegatedClientAuthorizedFor(client.getName(), service, request);
     }
 
     /**
@@ -44,12 +47,14 @@ public class DelegatedAuthenticationAccessStrategyHelper {
      *
      * @param authentication the authentication
      * @param service        the service
-     * @return true/false
+     * @param request        the request
+     * @return true /false
      */
     public boolean isDelegatedClientAuthorizedForAuthentication(final Authentication authentication,
-                                                                final Service service) {
+                                                                final Service service,
+                                                                final HttpServletRequest request) {
         val clientName = getClientNameFromAuthentication(authentication);
-        return isDelegatedClientAuthorizedFor(clientName, service);
+        return isDelegatedClientAuthorizedFor(clientName, service, request);
     }
 
     /**
@@ -69,9 +74,11 @@ public class DelegatedAuthenticationAccessStrategyHelper {
      *
      * @param clientName the client name
      * @param service    the service
-     * @return true/false
+     * @param request    the request
+     * @return true /false
      */
-    public boolean isDelegatedClientAuthorizedFor(final String clientName, final Service service) {
+    public boolean isDelegatedClientAuthorizedFor(final String clientName, final Service service,
+                                                  final HttpServletRequest request) {
         if (service == null || StringUtils.isBlank(service.getId())) {
             LOGGER.debug("Can not evaluate delegated authentication policy without a service");
             return true;

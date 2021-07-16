@@ -33,6 +33,8 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private String jwks;
 
+    private String jwksKeyId;
+    
     private long jwksCacheDuration;
 
     private String jwksCacheTimeUnit;
@@ -54,6 +56,8 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     private String userInfoEncryptedResponseEncoding;
 
     private String idTokenEncryptionEncoding;
+
+    private String idTokenIssuer;
 
     private String sectorIdentifierUri;
     

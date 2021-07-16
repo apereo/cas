@@ -10,11 +10,8 @@ const cas = require('../../cas.js');
     // await page.waitForTimeout(1000)
     
     await cas.assertVisibility(page, '#loginProviders')
-
     await cas.assertVisibility(page, 'li #TwitterClient')
-
     await cas.assertVisibility(page, 'li #CasClient')
-
     await cas.assertVisibility(page, 'li #GitHubClient')
 
     await page.goto("https://localhost:8443/cas/login?error=Fail&error_description=Error&error_code=400&error_reason=Reason");
@@ -28,9 +25,7 @@ const cas = require('../../cas.js');
     assert(header.startsWith("Either the authentication request was rejected/cancelled"));
 
     await cas.assertVisibility(page, '#errorTable')
-
     await cas.assertVisibility(page, '#loginLink')
-
     await cas.assertVisibility(page, '#appLink')
 
     await browser.close();

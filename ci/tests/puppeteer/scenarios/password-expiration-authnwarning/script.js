@@ -21,7 +21,7 @@ const cas = require('../../cas.js');
 
     header = await cas.textContent(page, "#pwdmain h3");
 
-    assert(header === "You must change your password.")
+    assert(header === "Hello, casuser. You must change your password.")
 
     await typePassword(page, "123456", "123456")
     await page.waitForTimeout(1000)
@@ -55,8 +55,7 @@ const cas = require('../../cas.js');
     let element = await cas.innerText(page, '#content div h2');
     assert(element === "Log In Successful")
 
-    let tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
+    await cas.assertTicketGrantingCookie(page);
 
     await page.waitForTimeout(1000)
     await browser.close();

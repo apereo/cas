@@ -17,12 +17,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -67,10 +70,13 @@ public class WebAuthnController {
      * @param credentialNickname the credential nickname
      * @param requireResidentKey the require resident key
      * @param sessionTokenBase64 the session token base 64
+     * @param request            the request
+     * @param response           the response
      * @return the response entity
      * @throws Exception the exception
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_REGISTER, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Object> startRegistration(
         @NonNull
         @RequestParam("username")
@@ -83,7 +89,9 @@ public class WebAuthnController {
         @RequestParam(value = "requireResidentKey", required = false)
         final boolean requireResidentKey,
         @RequestParam(value = "sessionToken", required = false, defaultValue = StringUtils.EMPTY)
-        final String sessionTokenBase64)
+        final String sessionTokenBase64,
+        final HttpServletRequest request,
+        final HttpServletResponse response)
         throws Exception {
 
         val result = server.startRegistration(
@@ -106,6 +114,7 @@ public class WebAuthnController {
      * @return the response entity
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_REGISTER + WEBAUTHN_ENDPOINT_FINISH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Object> finishRegistration(@RequestBody final String responseJson) {
         val result = server.finishRegistration(responseJson);
         return finishResponse(result, responseJson);

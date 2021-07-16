@@ -42,7 +42,7 @@ public class DistributedJEESessionStore implements SessionStore {
     @Override
     public Optional<String> getSessionId(final WebContext webContext, final boolean create) {
         var sessionId = fetchSessionIdFromContext(webContext);
-        if (StringUtils.isBlank(sessionId)) {
+        if (StringUtils.isBlank(sessionId) && create) {
             sessionId = UUID.randomUUID().toString();
             LOGGER.trace("Generated session id: [{}]", sessionId);
             
@@ -50,7 +50,7 @@ public class DistributedJEESessionStore implements SessionStore {
             cookieGenerator.addCookie(context.getNativeRequest(), context.getNativeResponse(), sessionId);
             context.setRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE, sessionId);
         }
-        return Optional.of(sessionId);
+        return Optional.ofNullable(sessionId);
     }
 
     @Override
@@ -66,13 +66,13 @@ public class DistributedJEESessionStore implements SessionStore {
     @Override
     public void set(final WebContext context, final String key, final Object value) {
         LOGGER.trace("Setting key: [{}]", key);
-        val sessionId = fetchSessionIdFromContext(context);
+        val sessionId = getSessionId(context, true).get();
 
         val properties = new HashMap<String, Serializable>();
         if (value instanceof Serializable) {
             properties.put(key, (Serializable) value);
         } else if (value != null) {
-            LOGGER.trace("Object value [{}] assigned to [{}] is not serializable and may not be part of the ticket [{}]", value, key, sessionId);
+            LOGGER.warn("Object value [{}] assigned to [{}] is not serializable and may not be part of the ticket [{}]", value, key, sessionId);
         }
 
         var ticket = getTransientSessionTicketForSession(context);
@@ -92,12 +92,14 @@ public class DistributedJEESessionStore implements SessionStore {
     @Override
     public boolean destroySession(final WebContext webContext) {
         val sessionId = fetchSessionIdFromContext(webContext);
-        val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
-        this.centralAuthenticationService.deleteTicket(ticketId);
+        if (sessionId != null) {
+            val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
+            this.centralAuthenticationService.deleteTicket(ticketId);
 
-        val context = JEEContext.class.cast(webContext);
-        cookieGenerator.removeCookie(context.getNativeResponse());
-        LOGGER.trace("Removes session cookie and ticket: [{}]", ticketId);
+            val context = JEEContext.class.cast(webContext);
+            cookieGenerator.removeCookie(context.getNativeResponse());
+            LOGGER.trace("Removes session cookie and ticket: [{}]", ticketId);
+        }
         return true;
     }
 
@@ -105,7 +107,7 @@ public class DistributedJEESessionStore implements SessionStore {
     public Optional getTrackableSession(final WebContext context) {
         val sessionId = fetchSessionIdFromContext(context);
         LOGGER.trace("Track sessionId: [{}]", sessionId);
-        return Optional.of(sessionId);
+        return Optional.ofNullable(sessionId);
     }
 
     @Override
@@ -132,17 +134,19 @@ public class DistributedJEESessionStore implements SessionStore {
             val context = JEEContext.class.cast(webContext);
             sessionId = cookieGenerator.retrieveCookieValue(context.getNativeRequest());
         }
-        LOGGER.trace("Generated session id: [{}]", sessionId);
+        LOGGER.trace("Fetched session id: [{}]", sessionId);
         return sessionId;
     }
 
     private TransientSessionTicket getTransientSessionTicketForSession(final WebContext context) {
         try {
             val sessionId = fetchSessionIdFromContext(context);
-            val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
+            if (sessionId != null) {
+                val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
 
-            LOGGER.trace("fetching ticket: [{}]", ticketId);
-            return centralAuthenticationService.getTicket(ticketId, TransientSessionTicket.class);
+                LOGGER.trace("fetching ticket: [{}]", ticketId);
+                return centralAuthenticationService.getTicket(ticketId, TransientSessionTicket.class);
+            }
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }

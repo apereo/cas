@@ -21,6 +21,18 @@ import java.util.stream.Collectors;
 public interface AuthenticationEventExecutionPlan {
 
     /**
+     * Default bean name.
+     */
+    String DEFAULT_BEAN_NAME = "authenticationEventExecutionPlan";
+
+    /**
+     * Gets authentication system support.
+     *
+     * @return the authentication system support
+     */
+    AuthenticationSystemSupport getAuthenticationSystemSupport();
+
+    /**
      * Register authentication handler.
      *
      * @param handler the handler

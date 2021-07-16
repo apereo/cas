@@ -1,6 +1,5 @@
 package org.apereo.cas.web.report;
 
-import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.spi.MockAuditTrailManager;
@@ -54,7 +53,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * This is {@link AbstractCasEndpointTests}.
@@ -65,7 +63,6 @@ import org.springframework.test.annotation.DirtiesContext;
 @SpringBootTest(classes = AbstractCasEndpointTests.SharedTestConfiguration.class,
     properties = "management.endpoints.web.exposure.include=*")
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@DirtiesContext
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class AbstractCasEndpointTests {
@@ -74,9 +71,9 @@ public abstract class AbstractCasEndpointTests {
     protected ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("authenticationEventExecutionPlan")
+    @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
     protected AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
-    
+
     @TestConfiguration
     @Lazy(false)
     public static class AuditTestConfiguration implements AuditTrailExecutionPlanConfigurer {
@@ -96,7 +93,6 @@ public abstract class AbstractCasEndpointTests {
         CasReportsConfiguration.class,
         CasLoggingConfiguration.class,
         CasCoreAuditConfiguration.class,
-        AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
         AbstractCasEndpointTests.AuditTestConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreServicesConfiguration.class,

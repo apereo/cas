@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -36,7 +37,8 @@ public class OidcCoreProperties implements Serializable {
     /**
      * Skew value used to massage the authentication issue instance.
      */
-    private int skew = 5;
+    @DurationCapable
+    private String skew = "PT5M";
 
     /**
      * Whether dynamic registration operates in {@code OPEN} or {@code PROTECTED} mode.

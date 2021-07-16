@@ -168,7 +168,18 @@ public class OAuth20Utils {
      * @return the model and view
      */
     public static ModelAndView produceUnauthorizedErrorView() {
-        return produceErrorView(new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY));
+        return produceUnauthorizedErrorView(HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
+     * Produce unauthorized error view.
+     *
+     * @param status the status
+     * @return the model and view
+     */
+    public static ModelAndView produceUnauthorizedErrorView(final HttpStatus status) {
+        val ex = new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        return produceErrorView(ex, status);
     }
 
     /**
@@ -178,7 +189,20 @@ public class OAuth20Utils {
      * @return the model and view
      */
     public static ModelAndView produceErrorView(final Exception e) {
-        return new ModelAndView(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, CollectionUtils.wrap("rootCauseException", e));
+        return produceErrorView(e, HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
+     * Produce error view.
+     *
+     * @param e      the exception
+     * @param status the status
+     * @return the model and view
+     */
+    public static ModelAndView produceErrorView(final Exception e, final HttpStatus status) {
+        val mv = new ModelAndView(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, CollectionUtils.wrap("rootCauseException", e));
+        mv.setStatus(status);
+        return mv;
     }
 
     /**

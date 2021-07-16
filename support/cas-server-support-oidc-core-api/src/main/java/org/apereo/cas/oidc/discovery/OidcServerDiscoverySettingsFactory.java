@@ -1,10 +1,13 @@
 package org.apereo.cas.oidc.discovery;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.oidc.issuer.OidcIssuerService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.beans.factory.FactoryBean;
+
+import java.util.Optional;
 
 /**
  * This is {@link OidcServerDiscoverySettingsFactory}.
@@ -15,11 +18,12 @@ import org.springframework.beans.factory.FactoryBean;
 @RequiredArgsConstructor
 public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServerDiscoverySettings> {
     private final CasConfigurationProperties casProperties;
+    private final OidcIssuerService issuerService;
 
     @Override
     public OidcServerDiscoverySettings getObject() {
         val oidc = casProperties.getAuthn().getOidc();
-        val discovery = new OidcServerDiscoverySettings(casProperties, oidc.getCore().getIssuer());
+        val discovery = new OidcServerDiscoverySettings(issuerService.determineIssuer(Optional.empty()));
         discovery.setClaimsSupported(oidc.getDiscovery().getClaims());
         discovery.setScopesSupported(oidc.getDiscovery().getScopes());
         discovery.setResponseTypesSupported(oidc.getDiscovery().getResponseTypesSupported());

@@ -81,6 +81,7 @@ jobs:
           - tomcat
           - jetty
           - undertow
+    name: locust - ${{ matrix.category }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -115,6 +116,7 @@ jobs:
           - tomcat
           - jetty
           - undertow
+    name: jmeter - ${{ matrix.category }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

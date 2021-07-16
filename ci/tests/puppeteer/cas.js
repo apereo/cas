@@ -2,10 +2,10 @@ const assert = require('assert');
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
-    headless: process.env.CI === "true",
+    headless: process.env.CI === "true" || process.env.HEADLESS === "true",
     devtools: process.env.CI !== "true",
     defaultViewport: null,
-    slowMo: process.env.CI === "true" ? 0 : 15,
+    slowMo: process.env.CI === "true" ? 0 : 10,
     args: ['--start-maximized', "--window-size=1920,1080"]
 };
 
@@ -50,10 +50,12 @@ exports.inputValue = async(page, selector) => {
     return text;
 }
 
-exports.loginWith = async(page, user, password) => {
+exports.loginWith = async(page, user, password,
+                          usernameField = "#username",
+                          passwordField = "#password") => {
     console.log(`Logging in with ${user} and ${password}`);
-    await this.type(page, '#username', user);
-    await this.type(page, '#password', password);
+    await this.type(page, usernameField, user);
+    await this.type(page, passwordField, password);
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 }
@@ -70,6 +72,18 @@ exports.assertInvisibility = async(page, selector) => {
     assert(element == null || await element.boundingBox() == null);
 }
 
+exports.assertTicketGrantingCookie = async(page) => {
+    let tgc = (await page.cookies()).filter(value => value.name === "TGC");
+    console.log(`Asserting ticket-granting cookie: ${tgc}`);
+    assert(tgc.length !== 0);
+}
+
+exports.assertNoTicketGrantingCookie = async(page) => {
+    let tgc = (await page.cookies()).filter(value => value.name === "TGC");
+    console.log(`Asserting no ticket-granting cookie: ${tgc}`);
+    assert(tgc.length === 0);
+}
+
 exports.submitForm = async(page, selector) => {
     await page.$eval(selector, form => form.submit());
     await page.waitForTimeout(2500)
@@ -81,8 +95,20 @@ exports.type = async(page, selector, value) => {
 }
 
 exports.newPage = async(browser) => {
-    const page = (await browser.pages())[0];
+    let page = (await browser.pages())[0];
+    if (page === undefined) {
+        page = await browser.newPage();
+    }
     await page.setDefaultNavigationTimeout(0);
     await page.bringToFront();
     return page;
 }
+
+exports.assertTicketParameter = async(page) => {
+    let result = new URL(page.url());
+    let ticket = result.searchParams.get("ticket");
+    console.log("Ticket: " + ticket);
+    assert(ticket != null);
+    return ticket;
+}
+

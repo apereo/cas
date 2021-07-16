@@ -107,7 +107,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.ofNullable(registeredService));
         assertNotNull(claims);
         assertTrue(claims.hasClaim(OIDC_CLAIM_EMAIL));
-        assertTrue(claims.hasClaim(OidcConstants.CLAIM_AUTH_TIME));
+        assertEquals(authentication.getAuthenticationDate().toEpochSecond(), (long) claims.getClaimValue(OidcConstants.CLAIM_AUTH_TIME));
         assertTrue(claims.hasClaim(OIDC_CLAIM_NAME));
         assertTrue(claims.hasClaim(OIDC_CLAIM_PHONE_NUMBER));
         assertEquals("casuser@example.org", claims.getStringClaimValue(OIDC_CLAIM_EMAIL));
@@ -211,6 +211,9 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         assertNotNull(claims);
         assertTrue(claims.hasClaim(OidcConstants.CLAIM_AT_HASH));
         assertTrue(claims.hasClaim(OidcConstants.CLAIM_AUTH_TIME));
+        val issuer = oidcIssuerService.determineIssuer(Optional.of(registeredService));
+        assertEquals(issuer, claims.getIssuer());
+        
         val hash = claims.getClaimValue(OidcConstants.CLAIM_AT_HASH, String.class);
         val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
             .accessToken(accessToken)
@@ -218,6 +221,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
             .service(accessToken.getService())
             .casProperties(casProperties)
             .accessTokenJwtBuilder(oidcAccessTokenJwtBuilder)
+            .issuer(issuer)
             .build()
             .encode();
         val newHash = OAuth20AccessTokenAtHashGenerator.builder()

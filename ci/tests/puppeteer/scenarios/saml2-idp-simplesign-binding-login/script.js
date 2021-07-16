@@ -29,7 +29,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(1000)
 
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.waitForTimeout(5000)
+    await page.waitForTimeout(5500)
 
     let metadataDir = path.join(__dirname, '/saml-md');
     fs.rmdirSync(metadataDir, { recursive: true });

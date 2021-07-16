@@ -14,11 +14,10 @@ import org.apereo.cas.util.crypto.CipherExecutor;
  * @since 6.1.0
  */
 public class OAuth20JwtBuilder extends JwtBuilder {
-    public OAuth20JwtBuilder(final String casSeverPrefix,
-                             final CipherExecutor defaultTokenCipherExecutor,
+    public OAuth20JwtBuilder(final CipherExecutor defaultTokenCipherExecutor,
                              final ServicesManager servicesManager,
                              final RegisteredServiceCipherExecutor registeredServiceCipherExecutor) {
-        super(casSeverPrefix, defaultTokenCipherExecutor, servicesManager, registeredServiceCipherExecutor);
+        super(defaultTokenCipherExecutor, servicesManager, registeredServiceCipherExecutor);
     }
 
     @Override

@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 
 import lombok.Cleanup;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.AfterEach;
@@ -36,8 +35,7 @@ public abstract class BaseJdbcAttributeRepositoryTests {
     private CasConfigurationProperties casProperties;
 
     @BeforeEach
-    @SneakyThrows
-    public void setupDatabase() {
+    public void setupDatabase() throws Exception {
         this.dataSource = JpaBeans.newDataSource(casProperties.getAuthn().getAttributeRepository().getJdbc().get(0));
         @Cleanup
         val c = dataSource.getConnection();
@@ -47,17 +45,20 @@ public abstract class BaseJdbcAttributeRepositoryTests {
         prepareDatabaseTable(s);
     }
 
-    public abstract void prepareDatabaseTable(Statement statement);
+    public abstract void prepareDatabaseTable(Statement statement) throws Exception;
 
     @AfterEach
-    @SneakyThrows
-    public void cleanup() {
+    public void cleanup() throws Exception {
         @Cleanup
         val c = dataSource.getConnection();
         @Cleanup
         val s = c.createStatement();
         c.setAutoCommit(true);
-        s.execute("delete from table_users;");
-        s.execute("drop table table_users;");
+        s.execute(String.format("delete from %s;", getTableName()));
+        s.execute(String.format("drop table %s;", getTableName()));
+    }
+
+    protected String getTableName() {
+        return "table_users";
     }
 }

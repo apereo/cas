@@ -27,12 +27,9 @@ in a distributed deployment. Spring Cloud Bus links nodes of a distributed syste
 
 {% include casproperties.html thirdPartyStartsWith="spring.cloud.bus" %}
 
-The following endpoints are secured and exposed by the Spring Cloud Config Bus:
+The following endpoints are provided by Spring Cloud:
 
-| Parameter                         | Description
-|-----------------------------------|------------------------------------------
-| `/actuator/bus-refresh`                    | Reload the configuration of all CAS nodes in the cluster if the cloud bus is turned on.
-| `/actuator/bus-env`                        | Sends key/values pairs to update each CAS node if the cloud bus is turned on.
+{% include actuators.html endpoints="features,refresh,busenv,bus-refresh,busrefresh,serviceregistry" %}
 
 The transport mechanism for the bus to broadcast events is handled via one of the following components.
 

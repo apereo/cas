@@ -68,7 +68,7 @@ public class HazelcastTicketRegistryConfiguration {
             .map(TicketDefinition::getProperties)
             .peek(p -> LOGGER.debug("Created Hazelcast map configuration for [{}]", p))
             .map(p -> HazelcastConfigurationFactory.buildMapConfig(hz, p.getStorageName(), p.getStorageTimeout()))
-            .forEach(m -> hazelcastInstance.getConfig().addMapConfig(m));
+            .forEach(map -> HazelcastConfigurationFactory.setConfigMap(map, hazelcastInstance.getConfig()));
         return hazelcastInstance;
     }
 

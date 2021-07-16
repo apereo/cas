@@ -81,7 +81,7 @@ public class SamlIdPAuthenticationContext implements Serializable {
      */
     public MessageContext toMessageContext(final Object message) {
         val messageContext = new MessageContext();
-        messageContext.setMessage(messageContext);
+        messageContext.setMessage(message);
         if (contexts.containsKey(SAMLBindingContext.class.getName())) {
             val binding = contexts.get(SAMLBindingContext.class.getName());
             val subcontext = messageContext.getSubcontext(SAMLBindingContext.class, true);

@@ -125,7 +125,7 @@ public class SamlIdPMetadataConfiguration {
     public MetadataResolver casSamlIdPMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
         val resolver = new SamlIdPMetadataResolver(samlIdPMetadataLocator(),
-            samlIdPMetadataGenerator(), openSamlConfigBean.getObject());
+            samlIdPMetadataGenerator(), openSamlConfigBean.getObject(), casProperties);
         resolver.setFailFastInitialization(idp.getMetadata().getCore().isFailFast());
         resolver.setRequireValidMetadata(idp.getMetadata().getCore().isRequireValidMetadata());
         resolver.setId(idp.getCore().getEntityId());

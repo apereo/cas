@@ -19,6 +19,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.pac4j.RefreshableDelegatedClients;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.DefaultDelegatedClientFactory;
 import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactory;
@@ -49,8 +50,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
-import java.util.ArrayList;
 
 /**
  * This is {@link Pac4jAuthenticationEventExecutionPlanConfiguration}.
@@ -127,14 +126,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "builtClients")
     public Clients builtClients() {
-        val clients = pac4jDelegatedClientFactory().build();
-        LOGGER.debug("The following clients are built: [{}]", clients);
-        if (clients.isEmpty()) {
-            LOGGER.warn("No delegated authentication clients are defined and/or configured");
-        } else {
-            LOGGER.info("Located and prepared [{}] delegated authentication client(s)", clients.size());
-        }
-        return new Clients(casProperties.getServer().getLoginUrl(), new ArrayList<>(clients));
+        return new RefreshableDelegatedClients(casProperties.getServer().getLoginUrl(), pac4jDelegatedClientFactory());
     }
 
     @ConditionalOnMissingBean(name = "clientPrincipalFactory")

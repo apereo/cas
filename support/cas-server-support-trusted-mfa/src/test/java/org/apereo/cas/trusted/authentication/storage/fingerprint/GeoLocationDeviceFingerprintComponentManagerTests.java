@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Simple")
+@Tag("MFATrustedDevices")
 public class GeoLocationDeviceFingerprintComponentManagerTests {
     @Test
     public void verifyGeoLocationDevice() {

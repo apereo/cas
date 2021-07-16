@@ -274,6 +274,7 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     public void addInterceptors(final InterceptorRegistry registry) {
         registry
             .addInterceptor(umaRequestingPartyTokenSecurityInterceptor())
+            .order(100)
             .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_PERMISSION_URL).concat("*"))
             .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL).concat("*"))
             .addPathPatterns(BASE_OAUTH20_URL.concat("/*/").concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
@@ -282,6 +283,7 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
 
         registry
             .addInterceptor(umaAuthorizationApiTokenSecurityInterceptor())
+            .order(100)
             .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL).concat("*"));
     }
 
