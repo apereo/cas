@@ -433,7 +433,7 @@ subprojects {
         project.buildDate != null || !project.buildJarFile.exists()
     }
 
-    if (projectShouldBePublished(project)) {
+    if (projectRequiresLombok(project)) {
         apply plugin: "io.franzbecker.gradle-lombok"
         lombok {
             version = "$lombokVersion"
@@ -640,7 +640,15 @@ task verifyRequiredJavaVersion {
 boolean projectShouldBePublished(Project project) {
     def publishable = !["api", "core", "docs", "support", "webapp"].contains(project.name)
             && !project.getPath().contains("cas-server-documentation")
+    if ("${releaseRepositoryUrl}".contains("github.com") && project.getPath().contains("cas-server-support-shell")) {
+        // shell is too big for github
+        publishable = false
+    }
     project.ext.publishable = publishable
 }
 
+boolean projectRequiresLombok(Project project) {
+    return !["api", "core", "docs", "support", "webapp"].contains(project.name)
+            && !project.getPath().contains("cas-server-documentation")
+}
 
