@@ -26,7 +26,7 @@ import org.apereo.cas.support.rest.resources.TicketStatusResource;
 import org.apereo.cas.support.rest.resources.UserAuthenticationResource;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.web.ProtocolEndpointConfigurer;
+import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -165,8 +165,13 @@ public class CasRestConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "restProtocolEndpointConfigurer")
-    public ProtocolEndpointConfigurer restProtocolEndpointConfigurer() {
-        return () -> List.of(StringUtils.prependIfMissing(RestProtocolConstants.BASE_ENDPOINT, "/"));
+    public ProtocolEndpointWebSecurityConfigurer<Void> restProtocolEndpointConfigurer() {
+        return new ProtocolEndpointWebSecurityConfigurer<>() {
+            @Override
+            public List<String> getIgnoredEndpoints() {
+                return List.of(StringUtils.prependIfMissing(RestProtocolConstants.BASE_ENDPOINT, "/"));
+            }
+        };
     }
 
     /**
@@ -188,7 +193,9 @@ public class CasRestConfiguration {
         public void addInterceptors(final InterceptorRegistry registry) {
             val plan = authenticationThrottlingExecutionPlan.getObject();
             LOGGER.debug("Activating authentication throttling for REST endpoints...");
-            plan.getAuthenticationThrottleInterceptors().forEach(handler -> registry.addInterceptor(handler).addPathPatterns("/v1/**"));
+            plan.getAuthenticationThrottleInterceptors().forEach(handler -> registry.addInterceptor(handler)
+                .order(0)
+                .addPathPatterns("/v1/**"));
         }
     }
 }

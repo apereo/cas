@@ -5,7 +5,6 @@ import org.apereo.cas.util.HttpRequestUtilsTests;
 import org.apereo.cas.util.HttpUtilsTests;
 import org.apereo.cas.util.InetAddressUtilsTests;
 import org.apereo.cas.util.LoggingUtilsTests;
-import org.apereo.cas.util.SchedulingUtilsTests;
 import org.apereo.cas.util.SocketUtilsTests;
 import org.apereo.cas.util.cache.DistributedCacheManagerTests;
 import org.apereo.cas.util.cache.DistributedCacheObjectTests;
@@ -27,6 +26,7 @@ import org.apereo.cas.util.spring.ConvertersTests;
 import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolatorTests;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolverTests;
 import org.apereo.cas.util.spring.boot.BeanDefinitionStoreFailureAnalyzerTests;
+import org.apereo.cas.util.spring.boot.ConditionalOnMatchingHostnameTests;
 import org.apereo.cas.util.spring.boot.DefaultCasBannerTests;
 import org.apereo.cas.util.ssl.CompositeX509KeyManagerTests;
 import org.apereo.cas.util.ssl.CompositeX509TrustManagerTests;
@@ -58,8 +58,8 @@ import org.junit.platform.suite.api.Suite;
     SpringAwareMessageMessageInterpolatorTests.class,
     HttpUtilsTests.class,
     ConvertersTests.class,
-    SchedulingUtilsTests.class,
     BeanDefinitionStoreFailureAnalyzerTests.class,
+    ConditionalOnMatchingHostnameTests.class,
     SimpleHttpClientFactoryBeanTests.class,
     GroovyScriptResourceCacheManagerTests.class,
     LoggingUtilsTests.class,

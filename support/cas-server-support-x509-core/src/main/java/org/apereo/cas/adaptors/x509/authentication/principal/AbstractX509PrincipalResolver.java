@@ -86,22 +86,22 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
             return null;
         }
         val optionalAttribute = CollectionUtils.firstElement(attribute);
-        if (optionalAttribute.isEmpty()) {
-            LOGGER.debug("Alternate attribute list for [{}] was empty.", alternatePrincipalAttribute);
-            return null;
-        }
-        val alternatePrincipal = optionalAttribute.get().toString();
-        if (StringUtils.isNotEmpty(alternatePrincipal)) {
-            LOGGER.debug("Using alternate principal attribute [{}]", alternatePrincipal);
-            return alternatePrincipal;
-        }
-        LOGGER.trace("Returning null principal id...");
-        return null;
+        return optionalAttribute
+            .map(Object::toString)
+            .filter(StringUtils::isNotEmpty)
+            .map(alternatePrincipal -> {
+                LOGGER.debug("Using alternate principal attribute [{}]", alternatePrincipal);
+                return alternatePrincipal;
+            }).orElseGet(() -> {
+                LOGGER.trace("Returning null principal id...");
+                return null;
+            });
     }
 
     /**
      * Extract various attributes from the certificate about the person.
      * This method is here for backwards compatibility with deployments that overrode this method.
+     *
      * @param certificate X509 Certificate
      * @return Map of the attributes
      */

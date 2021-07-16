@@ -83,11 +83,12 @@ public abstract class BaseActionTests {
 
         service = mock(InweboService.class);
 
-        val authenticationEventExecutionPlan = new DefaultAuthenticationEventExecutionPlan();
+        val authenticationEventExecutionPlan = new DefaultAuthenticationEventExecutionPlan(CoreAuthenticationTestUtils.getAuthenticationSystemSupport());
         authenticationEventExecutionPlan.registerAuthenticationHandler(new InweboAuthenticationHandler(mock(ServicesManager.class),
                 PrincipalFactoryUtils.newPrincipalFactory(), new InweboMultifactorAuthenticationProperties(), service));
         authenticationEventExecutionPlan.registerAuthenticationMetadataPopulator(new InweboAuthenticationDeviceMetadataPopulator());
-        val authenticationManager = new DefaultAuthenticationManager(authenticationEventExecutionPlan, true, mock(ConfigurableApplicationContext.class));
+        val authenticationManager = new DefaultAuthenticationManager(authenticationEventExecutionPlan,
+            true, mock(ConfigurableApplicationContext.class));
         val authenticationTransactionManager = new DefaultAuthenticationTransactionManager(mock(ApplicationEventPublisher.class), authenticationManager);
         val authenticationSystemSupport = new DefaultAuthenticationSystemSupport(authenticationTransactionManager, new DefaultPrincipalElectionStrategy(),
             new DefaultAuthenticationResultBuilderFactory(), new DefaultAuthenticationTransactionFactory());

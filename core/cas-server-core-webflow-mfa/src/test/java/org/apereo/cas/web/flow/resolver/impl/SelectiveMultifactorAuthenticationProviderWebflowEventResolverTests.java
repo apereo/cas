@@ -8,18 +8,14 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Transition;
@@ -36,15 +32,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("WebflowEvents")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DirtiesContext
 public class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
     private CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver;
 
     @Test
-    @Order(100)
     public void verifyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -73,7 +66,6 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests
     }
 
     @Test
-    @Order(100)
     public void verifyEmptyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -99,7 +91,6 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests
     }
 
     @Test
-    @Order(1)
     public void verifyNoProvider() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

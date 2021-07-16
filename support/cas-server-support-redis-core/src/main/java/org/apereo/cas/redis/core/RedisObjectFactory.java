@@ -9,6 +9,7 @@ import io.lettuce.core.SocketOptions;
 import io.lettuce.core.TimeoutOptions;
 import io.lettuce.core.cluster.ClusterClientOptions;
 import io.lettuce.core.cluster.ClusterTopologyRefreshOptions;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @Slf4j
+@UtilityClass
 public class RedisObjectFactory {
 
     /**

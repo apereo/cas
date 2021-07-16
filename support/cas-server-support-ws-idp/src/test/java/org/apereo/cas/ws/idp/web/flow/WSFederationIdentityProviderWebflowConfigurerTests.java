@@ -7,7 +7,7 @@ import org.apereo.cas.config.CoreWsSecurityIdentityProviderConfiguration;
 import org.apereo.cas.config.CoreWsSecurityIdentityProviderWebflowConfiguration;
 import org.apereo.cas.config.CoreWsSecuritySecurityTokenServiceConfiguration;
 import org.apereo.cas.config.CoreWsSecuritySecurityTokenTicketConfiguration;
-import org.apereo.cas.web.ProtocolEndpointConfigurer;
+import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
@@ -61,13 +61,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class WSFederationIdentityProviderWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier("wsFederationProtocolEndpointConfigurer")
-    private ProtocolEndpointConfigurer wsFederationProtocolEndpointConfigurer;
+    private ProtocolEndpointWebSecurityConfigurer wsFederationProtocolEndpointConfigurer;
     
     @Test
     public void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
-        assertFalse(wsFederationProtocolEndpointConfigurer.getBaseEndpoints().isEmpty());
+        assertFalse(wsFederationProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
 }

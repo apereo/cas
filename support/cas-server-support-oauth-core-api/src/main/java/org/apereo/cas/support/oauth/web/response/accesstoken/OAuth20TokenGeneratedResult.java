@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 
 import lombok.Builder;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.util.LinkedHashMap;
@@ -20,25 +21,26 @@ import java.util.Optional;
  * @since 6.0.0
  */
 @SuperBuilder
+@ToString(doNotUseGetters = true, exclude = "registeredService")
 public class OAuth20TokenGeneratedResult {
     private static final int MAP_SIZE = 8;
 
-    private OAuth20AccessToken accessToken;
+    private final OAuth20AccessToken accessToken;
 
-    private OAuth20RefreshToken refreshToken;
+    private final OAuth20RefreshToken refreshToken;
 
-    private OAuth20ResponseTypes responseType;
+    private final OAuth20ResponseTypes responseType;
 
-    private OAuth20GrantTypes grantType;
+    private final OAuth20GrantTypes grantType;
 
-    private RegisteredService registeredService;
+    private final RegisteredService registeredService;
 
-    private String deviceCode;
+    private final String deviceCode;
 
-    private String userCode;
+    private final String userCode;
 
     @Builder.Default
-    private Map<String, Object> details = new LinkedHashMap<>(MAP_SIZE);
+    private final Map<String, Object> details = new LinkedHashMap<>(MAP_SIZE);
 
     public Optional<OAuth20AccessToken> getAccessToken() {
         return Optional.ofNullable(accessToken);

@@ -16,8 +16,7 @@ const cas = require('../../cas.js');
     assert(result.searchParams.has("ticket"));
 
     await page.goto("https://localhost:8443/cas");
-    const tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
+    await cas.assertTicketGrantingCookie(page);
 
     await browser.close();
 })();

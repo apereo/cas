@@ -26,9 +26,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RegisteredService")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasServiceRegistryInitializationConfiguration.class
 },

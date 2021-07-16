@@ -99,6 +99,7 @@ jobs:
         os: [ubuntu-latest]
         category: ${{fromJSON(needs.testcategories.outputs.categories)}}
     runs-on: ${{ matrix.os }}
+    name: ${{ matrix.category }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

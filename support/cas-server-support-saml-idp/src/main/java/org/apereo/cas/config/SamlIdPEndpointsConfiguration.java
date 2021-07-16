@@ -54,7 +54,8 @@ import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.web.ProtocolEndpointConfigurer;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.support.CookieUtils;
@@ -162,7 +163,7 @@ public class SamlIdPEndpointsConfiguration {
     private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
-    @Qualifier("samlObjectSigner")
+    @Qualifier(SamlIdPObjectSigner.DEFAULT_BEAN_NAME)
     private ObjectProvider<SamlIdPObjectSigner> samlObjectSigner;
 
     @Autowired
@@ -188,6 +189,10 @@ public class SamlIdPEndpointsConfiguration {
     @Autowired
     @Qualifier("samlProfileSamlArtifactFaultResponseBuilder")
     private ObjectProvider<SamlProfileObjectBuilder<Response>> samlProfileSamlArtifactFaultResponseBuilder;
+
+    @Autowired
+    @Qualifier("authenticationAttributeReleasePolicy")
+    private ObjectProvider<AuthenticationAttributeReleasePolicy> authenticationAttributeReleasePolicy;
 
     @Autowired
     @Qualifier("samlProfileSamlAttributeQueryResponseBuilder")
@@ -426,7 +431,8 @@ public class SamlIdPEndpointsConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "samlIdPTicketValidator")
     public TicketValidator samlIdPTicketValidator() {
-        return new InternalTicketValidator(centralAuthenticationService.getObject(), samlIdPServiceFactory.getObject());
+        return new InternalTicketValidator(centralAuthenticationService.getObject(),
+            samlIdPServiceFactory.getObject(), authenticationAttributeReleasePolicy.getObject(), servicesManager.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlLogoutBuilder")
@@ -471,9 +477,14 @@ public class SamlIdPEndpointsConfiguration {
     }
 
     @Bean
-    public ProtocolEndpointConfigurer samlIdPProtocolEndpointConfigurer() {
-        return () -> List.of(StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML1, "/"),
-            StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML2, "/"));
+    public ProtocolEndpointWebSecurityConfigurer<Void> samlIdPProtocolEndpointConfigurer() {
+        return new ProtocolEndpointWebSecurityConfigurer<>() {
+            @Override
+            public List<String> getIgnoredEndpoints() {
+                return List.of(StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML1, "/"),
+                    StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML2, "/"));
+            }
+        };
     }
 
     private SamlProfileHandlerConfigurationContext.SamlProfileHandlerConfigurationContextBuilder getSamlProfileHandlerConfigurationContextBuilder() {

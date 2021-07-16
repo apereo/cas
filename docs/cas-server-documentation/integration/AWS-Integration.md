@@ -17,13 +17,11 @@ including the following dependency in the overlay:
 
 {% include casproperties.html properties="cas.amazon-sts." %}
 
-## Administrative Endpoints
+## Actuator Endpoints
 
 The following endpoints are provided by CAS:
 
-| Endpoint                 | Description
-|--------------------------|--------------------------------------------------------
-| `awsSts`                 | Obtain temporary AWS access credentials via `POST`. Can accept a `duration` parameter to specify the expiration policy for the credentials. User credentials can be provided in the `POST` request body via `username` and `password` parameters similar to the [CAS REST protocol](../protocol/REST-Protocol.html). The endpoint support all available [multifactor authentication triggers](../mfa/Configuring-Multifactor-Authentication-Triggers.html). When using roles, a `roleArn` parameter can pre-select the role for the authenticated principal, if more than one role attribute value is found and resolved.
+{% include actuators.html endpoints="awsSts" %}
 
 ## Temporary Security Credentials
 

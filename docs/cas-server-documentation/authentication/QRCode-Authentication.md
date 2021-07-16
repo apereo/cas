@@ -23,15 +23,11 @@ Support is enabled by including the following dependency in the WAR overlay:
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-qrlogin" %}
 
 
-## Administrative Endpoints
+## Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                                | Description
-|-----------------------------------------|----------------------------------------------------------------------------
-| `qrDevices/{username}`                  | `GET` request to fetch device for the user.
-| `qrDevices/{username}/{device}`         | `POST` request to register a device with CAS.
-| `qrDevices/{username}/{device}`         | `DELETE` request to delete a device for the user.
+
+{% include actuators.html endpoints="qrDevices"  %}
 
 ## Configuration
 

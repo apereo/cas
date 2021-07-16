@@ -65,7 +65,7 @@ public class RestPasswordManagementServiceTests {
     @SuppressWarnings("ClassCanBeStatic")
     public class UndefinedConfigurationOperations {
         @Autowired
-        @Qualifier("passwordChangeService")
+        @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
         private PasswordManagementService passwordChangeService;
 
         @Test
@@ -93,7 +93,7 @@ public class RestPasswordManagementServiceTests {
     @SuppressWarnings("ClassCanBeStatic")
     public class BasicOperations {
         @Autowired
-        @Qualifier("passwordChangeService")
+        @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
         private PasswordManagementService passwordChangeService;
 
         @Autowired

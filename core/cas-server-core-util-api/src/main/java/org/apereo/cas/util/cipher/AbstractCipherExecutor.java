@@ -176,7 +176,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * @return the signing algorithm for
      */
     protected String getSigningAlgorithmFor(final Key signingKey) {
-        return "RSA".equalsIgnoreCase(this.signingKey.getAlgorithm())
+        return "RSA".equalsIgnoreCase(signingKey.getAlgorithm())
             ? AlgorithmIdentifiers.RSA_USING_SHA512
             : AlgorithmIdentifiers.HMAC_SHA512;
     }

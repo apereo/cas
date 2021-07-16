@@ -1,6 +1,8 @@
 package org.apereo.cas.ws.idp.services;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
@@ -20,8 +22,7 @@ public class WsFederationServicesManagerRegisteredServiceLocator extends Default
         setOrder(Ordered.HIGHEST_PRECEDENCE);
         setRegisteredServiceFilter(
             (registeredService, service) -> {
-                var match = service.getAttributes().containsKey(WSFederationConstants.WREPLY)
-                    && registeredService instanceof WSFederationRegisteredService;
+                var match = supports(registeredService, service);
                 if (match) {
                     val wsfedService = (WSFederationRegisteredService) registeredService;
                     LOGGER.trace("Attempting to locate service [{}] via [{}]", service, wsfedService);
@@ -32,6 +33,12 @@ public class WsFederationServicesManagerRegisteredServiceLocator extends Default
                 }
                 return match;
             });
+    }
+
+    @Override
+    public boolean supports(final RegisteredService registeredService, final Service service) {
+        return service.getAttributes().containsKey(WSFederationConstants.WREPLY)
+            && registeredService instanceof WSFederationRegisteredService;
     }
 }
 

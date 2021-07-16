@@ -11,8 +11,8 @@ import lombok.RequiredArgsConstructor;
  * Contains common implementations of ticket definition builders shared across various
  * ticket registries catalog configurations.
  *
- * @since 6.1.0
  * @author Dmitriy Kopylenko
+ * @since 6.1.0
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseTicketDefinitionBuilderSupportConfiguration extends CasCoreTicketCatalogConfiguration {

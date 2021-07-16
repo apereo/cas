@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.registry.queue.UpdateTicketMessageQueueCommand;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -32,8 +33,8 @@ public class JmsTicketRegistry extends DefaultTicketRegistry {
     }
 
     @Override
-    public void addTicket(final Ticket ticket) {
-        super.addTicket(ticket);
+    public void addTicketInternal(final @NonNull Ticket ticket) {
+        super.addTicketInternal(ticket);
         LOGGER.trace("Publishing add command for id [{}] and ticket [{}]", id, ticket.getId());
         ticketPublisher.publishMessageToQueue(new AddTicketMessageQueueCommand(id, ticket));
     }

@@ -1,0 +1,12 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : ".+",
+  "name" : "Sample",
+  "id" : 1,
+  "evaluationOrder" : 1,
+  "requireSignedRoot": true,
+  "metadataSignatureLocation": "file:${#systemProperties['java.io.tmpdir']}/inc-md-cert-mdq.pem",
+  "metadataLocation" : "https://mdq.incommon.org/entities"
+}
+
+

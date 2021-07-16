@@ -16,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
@@ -40,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.u2f.json.location=file:src/test/resources/u2f-accounts.json"
     }
 )
-@DirtiesContext
 @Tag("MFA")
 public class U2FAuthenticationHandlerTests {
     @Autowired

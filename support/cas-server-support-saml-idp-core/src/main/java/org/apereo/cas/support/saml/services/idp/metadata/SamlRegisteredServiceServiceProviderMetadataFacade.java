@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.metadata.support.SAML2MetadataSupport;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.ContactPerson;
@@ -221,7 +222,9 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
      * @return the assertion consumer service
      */
     public AssertionConsumerService getAssertionConsumerService(final String binding) {
-        return getAssertionConsumerServices().stream().filter(acs -> acs.getBinding().equalsIgnoreCase(binding)).findFirst().orElse(null);
+        val acsList = getAssertionConsumerServices().stream()
+                .filter(acs -> acs.getBinding().equalsIgnoreCase(binding)).collect(Collectors.toList());
+        return SAML2MetadataSupport.getDefaultIndexedEndpoint(acsList);
     }
 
     /**

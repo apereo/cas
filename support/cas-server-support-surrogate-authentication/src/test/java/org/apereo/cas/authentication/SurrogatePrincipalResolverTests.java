@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @ExtendWith(MockitoExtension.class)
-@Tag("Simple")
+@Tag("Impersonation")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SurrogatePrincipalResolverTests {

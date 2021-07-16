@@ -13,8 +13,7 @@ const assert = require('assert');
     await page.waitForTimeout(1000);
     await cas.loginWith(page, "casuser", "Mellon");
 
-    let result = new URL(page.url());
-    let ticket = result.searchParams.get("ticket");
+    let ticket = await cas.assertTicketParameter(page);
 
     let options = {
         protocol: 'https:',

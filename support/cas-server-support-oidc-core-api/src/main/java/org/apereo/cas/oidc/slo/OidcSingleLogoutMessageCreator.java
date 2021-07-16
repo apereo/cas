@@ -3,10 +3,10 @@ package org.apereo.cas.oidc.slo;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
+import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.util.DigestUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwt.JwtClaims;
 
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -28,7 +29,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OidcSingleLogoutMessageCreator implements SingleLogoutMessageCreator {
 
-    private final OAuth20ConfigurationContext configurationContext;
+    private final OidcConfigurationContext configurationContext;
 
     @Override
     public SingleLogoutMessage create(final SingleLogoutRequestContext request) {
@@ -52,11 +53,8 @@ public class OidcSingleLogoutMessageCreator implements SingleLogoutMessageCreato
      */
     protected JwtClaims buildJwtClaims(final SingleLogoutRequestContext request) {
 
-        val oidc = configurationContext.getCasProperties().getAuthn().getOidc();
-
         val claims = new JwtClaims();
-
-        claims.setIssuer(oidc.getCore().getIssuer());
+        claims.setIssuer(this.configurationContext.getIssuerService().determineIssuer(Optional.empty()));
         claims.setSubject(request.getExecutionRequest().getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
         claims.setAudience(((OidcRegisteredService) request.getRegisteredService()).getClientId());
         claims.setIssuedAtToNow();
@@ -64,7 +62,8 @@ public class OidcSingleLogoutMessageCreator implements SingleLogoutMessageCreato
         val events = new HashMap<String, Object>();
         events.put("http://schemas.openid.net/event/backchannel-logout", new HashMap<>());
         claims.setClaim("events", events);
-        claims.setClaim(OidcConstants.CLAIM_SESSIOND_ID, DigestUtils.sha(request.getExecutionRequest().getTicketGrantingTicket().getId()));
+        claims.setClaim(OidcConstants.CLAIM_SESSIOND_ID,
+            DigestUtils.sha(request.getExecutionRequest().getTicketGrantingTicket().getId()));
 
         return claims;
     }

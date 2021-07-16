@@ -134,6 +134,7 @@ jobs:
           - tomcat
           - jetty
           - undertow
+    name: embedded - ${{ matrix.category }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -166,6 +167,7 @@ jobs:
           - config-server
           - discovery-server
           - bootadmin-server
+    name: external - ${{ matrix.category }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

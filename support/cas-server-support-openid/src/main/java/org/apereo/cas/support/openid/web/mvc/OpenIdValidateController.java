@@ -31,7 +31,7 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
     private final ServerManager serverManager;
 
     public OpenIdValidateController(final ServiceValidateConfigurationContext serviceValidateConfigurationContext,
-        final ServerManager serverManager) {
+                                    final ServerManager serverManager) {
         super(serviceValidateConfigurationContext);
         this.serverManager = serverManager;
     }

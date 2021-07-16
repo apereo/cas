@@ -3,6 +3,7 @@ package org.apereo.cas.discovery;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,7 +15,9 @@ import java.util.Set;
  */
 @Getter
 @Setter
-public class CasServerProfile {
+public class CasServerProfile implements Serializable {
+
+    private static final long serialVersionUID = 1804693559797898008L;
 
     /**
      * The type of registered services that <i>are</i> supported by this CAS instance.
@@ -40,4 +43,9 @@ public class CasServerProfile {
      * List of user defined OIDC scopes.
      */
     private Set<String> userDefinedScopes;
+
+    /**
+     * Collection of available authentication handlers.
+     */
+    private Set<String> availableAuthenticationHandlers;
 }

@@ -13,6 +13,8 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -42,8 +44,11 @@ import java.util.stream.StreamSupport;
 @Endpoint(id = "samlIdPRegisteredServiceMetadataCache", enableByDefault = false)
 public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuatorEndpoint {
     private final SamlRegisteredServiceCachingMetadataResolver cachingMetadataResolver;
+
     private final ServicesManager servicesManager;
+
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+
     private final OpenSamlConfigBean openSamlConfigBean;
 
     public SamlRegisteredServiceCachedMetadataEndpoint(final CasConfigurationProperties casProperties,
@@ -64,6 +69,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
      * @param serviceId the service id
      */
     @DeleteOperation
+    @Operation(summary = "Invalidate SAML2 metadata cache using an entity id.", parameters = {@Parameter(name = "serviceId")})
     public void invalidate(@Nullable final String serviceId) {
         if (StringUtils.isBlank(serviceId)) {
             cachingMetadataResolver.invalidate();
@@ -84,6 +90,10 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
      * @return the cached metadata object
      */
     @ReadOperation
+    @Operation(summary = "Get SAML2 cached metadata", parameters = {
+        @Parameter(name = "serviceId", required = true),
+        @Parameter(name = "entityId")
+    })
     public Map<String, Object> getCachedMetadataObject(final String serviceId, @Nullable final String entityId) {
         try {
             val registeredService = findRegisteredService(serviceId);

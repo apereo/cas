@@ -77,7 +77,10 @@ public class CasPersonDirectoryJdbcConfiguration implements PersonDirectoryAttri
                 val jdbcDao = createJdbcPersonAttributeDao(jdbc);
                 FunctionUtils.doIfNotNull(jdbc.getId(), jdbcDao::setId);
 
-                jdbcDao.setQueryAttributeMapping(CollectionUtils.wrap("username", jdbc.getUsername()));
+                val queryAttributes = CollectionUtils.wrap("username", jdbc.getUsername());
+                queryAttributes.putAll(jdbc.getQueryAttributes());
+                jdbcDao.setQueryAttributeMapping(queryAttributes);
+
                 val mapping = jdbc.getAttributes();
                 if (mapping != null && !mapping.isEmpty()) {
                     LOGGER.debug("Configured result attribute mapping for [{}] to be [{}]", jdbc.getUrl(), jdbc.getAttributes());
@@ -100,7 +103,7 @@ public class CasPersonDirectoryJdbcConfiguration implements PersonDirectoryAttri
         plan.registerAttributeRepositories(jdbcAttributeRepositories());
     }
 
-    private AbstractJdbcPersonAttributeDao createJdbcPersonAttributeDao(final JdbcPrincipalAttributesProperties jdbc) {
+    private static AbstractJdbcPersonAttributeDao createJdbcPersonAttributeDao(final JdbcPrincipalAttributesProperties jdbc) {
         val url = SpringExpressionLanguageValueResolver.getInstance().resolve(jdbc.getUrl());
         if (jdbc.isSingleRow()) {
             LOGGER.debug("Configured single-row JDBC attribute repository for [{}]", url);

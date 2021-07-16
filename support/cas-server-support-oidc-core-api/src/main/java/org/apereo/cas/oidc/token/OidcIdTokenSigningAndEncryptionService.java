@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
+import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
@@ -25,9 +26,9 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
 
     public OidcIdTokenSigningAndEncryptionService(final LoadingCache<String, Optional<PublicJsonWebKey>> defaultJsonWebKeystoreCache,
                                                   final LoadingCache<OAuthRegisteredService, Optional<PublicJsonWebKey>> serviceJsonWebKeystoreCache,
-                                                  final String issuer,
+                                                  final OidcIssuerService issuerService,
                                                   final OidcServerDiscoverySettings discoverySettings) {
-        super(defaultJsonWebKeystoreCache, serviceJsonWebKeystoreCache, issuer);
+        super(defaultJsonWebKeystoreCache, serviceJsonWebKeystoreCache, issuerService);
         this.discoverySettings = discoverySettings;
     }
 

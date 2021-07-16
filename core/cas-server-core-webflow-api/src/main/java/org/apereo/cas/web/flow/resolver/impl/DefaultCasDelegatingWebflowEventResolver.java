@@ -2,10 +2,13 @@ package org.apereo.cas.web.flow.resolver.impl;
 
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -14,9 +17,11 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpStatus;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -49,18 +54,19 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
+        val credential = getCredentialFromContext(context);
+        val service = WebUtils.getService(context);
         try {
-            val credential = getCredentialFromContext(context);
-            val service = WebUtils.getService(context);
 
             if (credential != null) {
                 val builder = getWebflowEventResolutionConfigurationContext().getAuthenticationSystemSupport()
                     .handleInitialAuthenticationTransaction(service, credential);
-                if (builder.getInitialAuthentication().isPresent()) {
+                builder.getInitialAuthentication().ifPresent(authn -> {
                     WebUtils.putAuthenticationResultBuilder(builder, context);
-                    WebUtils.putAuthentication(builder.getInitialAuthentication().get(), context);
-                }
+                    WebUtils.putAuthentication(authn, context);
+                });
             }
+
             val registeredService = determineRegisteredServiceForEvent(context, service);
             LOGGER.trace("Attempting to resolve candidate authentication events for service [{}]", service);
             val resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
@@ -82,12 +88,14 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
                 throw new IllegalArgumentException(new AuthenticationException(msg));
             }
             return CollectionUtils.wrapSet(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
-        } catch (final Exception e) {
-            var event = returnAuthenticationExceptionEventIfNeeded(e);
+        } catch (final Exception exception) {
+            var event = returnAuthenticationExceptionEventIfNeeded(exception, credential, service);
             if (event == null) {
-                LOGGER.warn(e.getMessage());
-                LOGGER.debug(e.getMessage(), e);
-                event = newEvent(CasWebflowConstants.TRANSITION_ID_ERROR, e);
+                FunctionUtils.doIf(LOGGER.isDebugEnabled(),
+                    e -> LOGGER.debug(exception.getMessage(), exception),
+                    e -> LOGGER.warn(exception.getMessage()))
+                    .accept(exception);
+                event = newEvent(CasWebflowConstants.TRANSITION_ID_ERROR, exception);
             }
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -107,6 +115,28 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
         if (r != null) {
             orderedResolvers.add(index, r);
         }
+    }
+
+    /**
+     * Resolve candidate authentication events set.
+     *
+     * @param context           the context
+     * @param service           the service
+     * @param registeredService the registered service
+     * @return the set
+     */
+    protected Collection<Event> resolveCandidateAuthenticationEvents(final RequestContext context,
+                                                                     final Service service,
+                                                                     final RegisteredService registeredService) {
+        return this.orderedResolvers
+            .stream()
+            .map(resolver -> {
+                LOGGER.debug("Resolving candidate authentication event for service [{}] using [{}]", service, resolver.getName());
+                return resolver.resolveSingle(context);
+            })
+            .filter(Objects::nonNull)
+            .sorted(Comparator.comparing(Event::getId))
+            .collect(Collectors.toList());
     }
 
     private RegisteredService determineRegisteredServiceForEvent(final RequestContext context, final Service service) {
@@ -138,41 +168,26 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
         return registeredService;
     }
 
-    private Event returnAuthenticationExceptionEventIfNeeded(final Exception e) {
-        val result = (e instanceof AuthenticationException || e instanceof AbstractTicketException)
-            ? Optional.of(e)
-            : (e.getCause() instanceof AuthenticationException || e.getCause() instanceof AbstractTicketException)
-            ? Optional.of(e.getCause())
+    private Event returnAuthenticationExceptionEventIfNeeded(final Exception exception,
+                                                             final Credential credential,
+                                                             final WebApplicationService service) {
+        val result = (exception instanceof AuthenticationException || exception instanceof AbstractTicketException)
+            ? Optional.of(exception)
+            : (exception.getCause() instanceof AuthenticationException || exception.getCause() instanceof AbstractTicketException)
+            ? Optional.of(exception.getCause())
             : Optional.empty();
         return result
             .map(Exception.class::cast)
             .map(ex -> {
-                LOGGER.warn(ex.getMessage());
-                LOGGER.debug(ex.getMessage(), ex);
-                return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
+                FunctionUtils.doIf(LOGGER.isDebugEnabled(),
+                    e -> LOGGER.debug(ex.getMessage(), ex),
+                    e -> LOGGER.warn(ex.getMessage()))
+                    .accept(exception);
+                val attributes = new LocalAttributeMap<Serializable>(CasWebflowConstants.TRANSITION_ID_ERROR, ex);
+                attributes.put(Credential.class.getName(), credential);
+                attributes.put(WebApplicationService.class.getName(), service);
+                return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, attributes);
             })
             .orElse(null);
-    }
-
-    /**
-     * Resolve candidate authentication events set.
-     *
-     * @param context           the context
-     * @param service           the service
-     * @param registeredService the registered service
-     * @return the set
-     */
-    protected Collection<Event> resolveCandidateAuthenticationEvents(final RequestContext context,
-                                                                     final Service service,
-                                                                     final RegisteredService registeredService) {
-        return this.orderedResolvers
-            .stream()
-            .map(resolver -> {
-                LOGGER.debug("Resolving candidate authentication event for service [{}] using [{}]", service, resolver.getName());
-                return resolver.resolveSingle(context);
-            })
-            .filter(Objects::nonNull)
-            .sorted(Comparator.comparing(Event::getId))
-            .collect(Collectors.toList());
     }
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -15,6 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -40,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.adaptive.policy.require-timed-multifactor[0].on-days=Saturday,Sunday,Monday,Tuesday,Wednesday,Thursday,Friday"
 })
 @Tag("WebflowEvents")
+@Import(TimedMultifactorAuthenticationPolicyEventResolverTests.TimedMultifactorTestConfiguration.class)
 public class TimedMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
     @Autowired
@@ -76,5 +81,13 @@ public class TimedMultifactorAuthenticationPolicyEventResolverTests extends Base
         val event = resolver.resolve(context);
         assertEquals(1, event.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());
+    }
+
+    @TestConfiguration("TimedMultifactorTestConfiguration")
+    public static class TimedMultifactorTestConfiguration {
+        @Bean
+        public MultifactorAuthenticationProvider dummyProvider() {
+            return new TestMultifactorAuthenticationProvider();
+        }
     }
 }

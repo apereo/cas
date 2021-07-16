@@ -75,7 +75,28 @@ public interface OidcConstants {
     /**
      * Logout url.
      */
-    String LOGOUT_URL = "logout";
+    String LOGOUT_URL = "oidcLogout";
+
+    /**
+     * Oidc authorize url path segment url.
+     */
+    String AUTHORIZE_URL = "oidcAuthorize";
+
+    /**
+     * Oidc access token url path segment url.
+     */
+    String ACCESS_TOKEN_URL = "oidcAccessToken";
+
+    /**
+     * Oidc token url path segment url.
+     */
+    String TOKEN_URL = "oidcToken";
+
+    /**
+     * Oidc profile url path segment url.
+     */
+    String PROFILE_URL = "oidcProfile";
+
     /**
      * JWKS Endpoint url.
      */
@@ -108,6 +129,16 @@ public interface OidcConstants {
      * Rel value for webfinger protocol.
      */
     String WEBFINGER_REL = "http://openid.net/specs/connect/1.0/issuer";
+
+    /**
+     * .well-known path url.
+     */
+    String WELL_KNOWN_URL = ".well-known";
+
+    /**
+     * .well-known/openid-configuration path url.
+     */
+    String WELL_KNOWN_OPENID_CONFIGURATION_URL = WELL_KNOWN_URL + "/openid-configuration";
 
     /**
      * Scope assigned to access token internally

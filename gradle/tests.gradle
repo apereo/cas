@@ -11,16 +11,20 @@ enum TestCategories {
     CAS,
     CasConfiguration,
     Cassandra,
+    Cookie,
     CosmosDb,
     Couchbase,
     CouchDb,
+    Delegation,
     DynamoDb,
     Ehcache,
     ExpirationPolicy,
+    Events,
     FileSystem,
     Groovy,
     Hazelcast,
     Ignite,
+    Impersonation,
     Infinispan,
     InfluxDb,
     JDBC,
@@ -34,6 +38,8 @@ enum TestCategories {
     Memcached,
     Metrics,
     MFA,
+    MFATrigger,
+    MFATrustedDevices,
     MongoDb,
     MsSqlServer,
     MySQL,
@@ -87,7 +93,8 @@ if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
     rootProject.tasks.create(name: "puppeteerScenarios", description: "Display all available puppeteer scenarios") {
         doLast {
             def scenarios = new TreeSet<String>()
-            rootProject.file("ci/tests/puppeteer/scenarios").eachDir {
+            def scenarioMatchPattern = System.getenv().get("SCENARIO_REGEX") ?: ".*"
+            rootProject.file("ci/tests/puppeteer/scenarios").eachDirMatch(~scenarioMatchPattern) {
                 scenarios += it.getName()
             }
             println(groovy.json.JsonOutput.toJson(scenarios))
@@ -121,9 +128,9 @@ test {
 tasks.withType(Test) {
     scanForTestClasses = false
     ignoreFailures = providers.systemProperty("ignoreTestFailures").forUseAtConfigurationTime().present
-    forkEvery = 1000
+    forkEvery = 2000
     doFirst {
-        maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 2)
+        maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 4)
         if (maxParallelForks != 2) {
             logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
         }

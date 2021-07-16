@@ -60,6 +60,11 @@ echo -e "Copied project documentation to $PWD/gh-pages/...\n"
 echo -e "Generating documentation site data...\n"
 rm -Rf $PWD/gh-pages/_data/"$branchVersion" > /dev/null
 ./gradlew :docs:cas-server-documentation-processor:build --no-daemon -x check -x test -x javadoc --configure-on-demand
+if [ $? -eq 1 ]; then
+  echo "Unable to build the documentation processor. Aborting..."
+  exit 1
+fi
+
 docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
 chmod +x ${docgen}
 ${docgen} "$PWD/gh-pages/_data" "$branchVersion" "$PWD"

@@ -80,7 +80,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("FileSystem")
 public class JsonResourcePasswordManagementServiceTests {
     @Autowired
-    @Qualifier("passwordChangeService")
+    @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
     private PasswordManagementService passwordChangeService;
 
     @Autowired

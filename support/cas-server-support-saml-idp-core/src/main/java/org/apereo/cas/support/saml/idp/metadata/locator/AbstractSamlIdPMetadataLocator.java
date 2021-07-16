@@ -41,11 +41,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
     private final Cache<String, SamlIdPMetadataDocument> metadataCache;
 
     private static Resource getResource(final String data) {
-        if (StringUtils.isBlank(data)) {
-            LOGGER.warn("Cannot determine resource based on blank/empty data");
-            return ResourceUtils.EMPTY_RESOURCE;
-        }
-        return new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8));
+        return new ByteArrayResource(StringUtils.defaultString(data).getBytes(StandardCharsets.UTF_8));
     }
 
     private static String buildCacheKey(final Optional<SamlRegisteredService> registeredService) {

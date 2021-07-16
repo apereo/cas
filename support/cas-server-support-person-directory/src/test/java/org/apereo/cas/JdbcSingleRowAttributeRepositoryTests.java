@@ -1,6 +1,5 @@
 package org.apereo.cas;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.junit.jupiter.api.Tag;
@@ -60,8 +59,7 @@ public class JdbcSingleRowAttributeRepositoryTests extends BaseJdbcAttributeRepo
     }
     
     @Override
-    @SneakyThrows
-    public void prepareDatabaseTable(final Statement s) {
+    public void prepareDatabaseTable(final Statement s) throws Exception {
         s.execute("create table table_users (uid VARCHAR(255),displayName VARCHAR(255),cn VARCHAR(255));");
         s.execute("insert into table_users (uid, displayName, cn) values('casuser', 'CAS Display Name', 'CAS Common Name');");
     }

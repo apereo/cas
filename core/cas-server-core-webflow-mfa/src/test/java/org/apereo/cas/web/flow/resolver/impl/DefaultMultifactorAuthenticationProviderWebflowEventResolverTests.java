@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
@@ -38,7 +37,6 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("WebflowEvents")
-@DirtiesContext
 @TestPropertySource(properties = "cas.authn.mfa.triggers.global.global-provider-id=mfa-test")
 public class DefaultMultifactorAuthenticationProviderWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
@@ -47,6 +45,7 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolverTests e
         
     @BeforeEach
     public void setup() {
+        super.setup();
         servicesManager.deleteAll();
     }
 

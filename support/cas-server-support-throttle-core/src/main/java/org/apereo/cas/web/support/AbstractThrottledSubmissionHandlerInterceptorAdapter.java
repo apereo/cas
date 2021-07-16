@@ -14,7 +14,6 @@ import org.apache.http.HttpStatus;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -59,9 +58,9 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
     @Override
     public final boolean preHandle(final HttpServletRequest request,
-        final HttpServletResponse response, final Object o) throws Exception {
-        if (!HttpMethod.POST.name().equals(request.getMethod())) {
-            LOGGER.trace("Letting the request through given http method is [{}]", request.getMethod());
+                                   final HttpServletResponse response, final Object handler) throws Exception {
+        if (isRequestIgnoredForThrottling(request, response)) {
+            LOGGER.trace("Letting the request through without throttling; No request filters support it");
             return true;
         }
 
@@ -79,11 +78,12 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
     @Override
     public final void postHandle(final HttpServletRequest request, final HttpServletResponse response,
-        final Object o, final ModelAndView modelAndView) {
-        if (!HttpMethod.POST.name().equals(request.getMethod())) {
-            LOGGER.trace("Skipping authentication throttling for requests other than POST");
+                                 final Object handler, final ModelAndView modelAndView) {
+        if (isRequestIgnoredForThrottling(request, response)) {
+            LOGGER.trace("Skipping authentication throttling for requests; no filters support it.");
             return;
         }
+
         val recordEvent = shouldResponseBeRecordedAsFailure(response);
         if (recordEvent) {
             LOGGER.debug("Recording submission failure for [{}]", request.getRequestURI());
@@ -107,8 +107,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * @return true if the request is throttled. False otherwise, letting it proceed.
      */
     protected boolean throttleRequest(final HttpServletRequest request, final HttpServletResponse response) {
-        return configurationContext.getThrottledRequestExecutor() != null
-            && configurationContext.getThrottledRequestExecutor().throttle(request, response);
+        val executor = configurationContext.getThrottledRequestExecutor();
+        return executor != null && executor.throttle(request, response);
     }
 
     /**
@@ -195,5 +195,9 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             clientInfo.getServerIpAddress());
         LOGGER.debug("Recording throttled audit action [{}]", context);
         configurationContext.getAuditTrailExecutionPlan().record(context);
+    }
+
+    private boolean isRequestIgnoredForThrottling(final HttpServletRequest request, final HttpServletResponse response) {
+        return !configurationContext.getAuthenticationThrottlingExecutionPlan().getAuthenticationThrottleFilter().supports(request, response);
     }
 }

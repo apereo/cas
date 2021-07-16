@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 
-@Tag("MFA")
+@Tag("MFATrigger")
 public class CredentialMultifactorAuthenticationProviderBypassEvaluatorTests {
     @Test
     public void verifyOperation() {

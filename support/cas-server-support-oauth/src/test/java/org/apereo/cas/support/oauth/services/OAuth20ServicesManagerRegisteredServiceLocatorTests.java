@@ -41,6 +41,7 @@ public class OAuth20ServicesManagerRegisteredServiceLocatorTests extends Abstrac
 
     @BeforeEach
     public void setup() {
+        super.setup();
         servicesManager.deleteAll();
     }
     

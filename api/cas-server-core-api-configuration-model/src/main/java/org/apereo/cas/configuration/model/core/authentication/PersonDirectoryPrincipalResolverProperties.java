@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.util.model.TriStateBoolean;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -34,14 +35,14 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
     /**
      * Return a null principal object if no attributes can be found for the principal.
      */
-    private boolean returnNull;
+    private TriStateBoolean returnNull = TriStateBoolean.UNDEFINED;
 
     /**
      * When true, throws an error back indicating that principal resolution
      * has failed and no principal can be found based on the authentication requirements.
      * Otherwise, logs the condition as an error without raising a catastrophic error.
      */
-    private boolean principalResolutionFailureFatal;
+    private TriStateBoolean principalResolutionFailureFatal = TriStateBoolean.UNDEFINED;
 
     /**
      * Uses an existing principal id that may have already
@@ -50,13 +51,13 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
      * authentication is delegated to an external identity provider
      * and a principal is first established to then query an attribute source.
      */
-    private boolean useExistingPrincipalId;
+    private TriStateBoolean useExistingPrincipalId = TriStateBoolean.UNDEFINED;
 
     /**
      * Whether attribute repositories should be contacted
-     * to fetch person attributes.
+     * to fetch person attributes. Defaults to true if not set.
      */
-    private boolean attributeResolutionEnabled = true;
+    private TriStateBoolean attributeResolutionEnabled = TriStateBoolean.UNDEFINED;
 
     /**
      * Activated attribute repository identifiers

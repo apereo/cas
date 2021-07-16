@@ -19,6 +19,7 @@ import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -90,6 +91,7 @@ public class RegisteredServiceAuthenticationPolicyResolverTests {
             .applicationContext(appCtx)
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())
+            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
             .build();
         this.servicesManager = new DefaultServicesManager(context);
         this.servicesManager.load();

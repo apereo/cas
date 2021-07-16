@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(2000)
     const header = await cas.innerText(page, '#pwdmain h3');
 
-    assert(header === "You must change your password.")
+    assert(header === "Hello, mustchangepassword. You must change your password.")
 
     await cas.type(page,'#password', "Jv!e0mKD&dCNl^Q");
     await cas.type(page,'#confirmedPassword', "Jv!e0mKD&dCNl^Q");

@@ -21,6 +21,7 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -47,7 +48,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the event
      */
     protected Event newEvent(final String id, final Throwable error) {
-        return newEvent(id, new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
+        return newEvent(id, new LocalAttributeMap<Serializable>(CasWebflowConstants.TRANSITION_ID_ERROR, error));
     }
 
     /**

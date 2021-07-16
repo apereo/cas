@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.web.UrlValidator;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,12 +26,14 @@ public class SamlServiceResponseBuilder extends AbstractWebApplicationServiceRes
 
     private static final long serialVersionUID = -4584738964007702003L;
 
-    public SamlServiceResponseBuilder(final ServicesManager servicesManager) {
-        super(servicesManager);
+    public SamlServiceResponseBuilder(final ServicesManager servicesManager,
+                                      final UrlValidator urlValidator) {
+        super(servicesManager, urlValidator);
     }
 
     @Override
-    public Response build(final WebApplicationService service, final String ticketId, final Authentication authentication) {
+    public Response build(final WebApplicationService service, final String ticketId,
+                          final Authentication authentication) {
         val parameters = new HashMap<String, String>();
         parameters.put(SamlProtocolConstants.CONST_PARAM_ARTIFACT, ticketId);
         return buildRedirect(service, parameters);

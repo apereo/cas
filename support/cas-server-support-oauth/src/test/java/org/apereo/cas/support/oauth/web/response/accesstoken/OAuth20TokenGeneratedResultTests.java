@@ -31,5 +31,6 @@ public class OAuth20TokenGeneratedResultTests extends AbstractOAuth20Tests {
         assertTrue(results.getGrantType().isPresent());
         assertTrue(results.getRegisteredService().isPresent());
         assertTrue(results.getDetails().isEmpty());
+        assertNotNull(results.toString());
     }
 }

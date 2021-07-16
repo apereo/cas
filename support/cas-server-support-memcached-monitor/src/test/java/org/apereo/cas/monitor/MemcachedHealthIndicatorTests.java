@@ -15,7 +15,6 @@ import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
@@ -41,7 +40,6 @@ import static org.mockito.Mockito.*;
     "cas.monitor.memcached.locator-type=ARRAY_MOD",
     "cas.monitor.memcached.hash-algorithm=FNV1A_64_HASH"
 })
-@DirtiesContext
 @Tag("Memcached")
 @EnabledIfPortOpen(port = 11211)
 public class MemcachedHealthIndicatorTests {

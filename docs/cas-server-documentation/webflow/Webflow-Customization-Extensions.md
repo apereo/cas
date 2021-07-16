@@ -76,7 +76,7 @@ public class SomethingWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     @Override
     protected void doInitialize() throws Exception {
-        final Flow flow = super.getLoginFlow();
+        var flow = super.getLoginFlow();
         // Magic happens; Call 'super' to see 
         // what you have access to and alter the flow.
     }

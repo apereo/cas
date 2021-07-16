@@ -10,6 +10,8 @@ import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.data.ByteArray;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -57,6 +59,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      * @param username the username
      * @return the collection
      */
+    @Operation(summary = "Fetch registered devices for username", parameters = {@Parameter(name = "username", required = true)})
     @GetMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<? extends CredentialRegistration> fetch(@PathVariable final String username) {
         return registrationStorage.getRegistrationsByUsername(username);
@@ -71,6 +74,8 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      * @throws Exception the exception
      */
     @PostMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Add device registration for username",
+        parameters = {@Parameter(name = "username", required = true), @Parameter(name = "record", required = true)})
     public boolean write(@PathVariable final String username, @RequestParam final String record) throws Exception {
         val json = EncodingUtils.decodeBase64ToString(record);
         val registration = WebAuthnUtils.getObjectMapper().readValue(json, CredentialRegistration.class);
@@ -82,6 +87,8 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      *
      * @param username the username
      */
+    @Operation(summary = "Remove device registrations for username",
+        parameters = {@Parameter(name = "username", required = true)})
     @DeleteMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@PathVariable final String username) {
         registrationStorage.removeAllRegistrations(username);
@@ -94,6 +101,8 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      * @param credentialId the credential id
      * @throws Exception the exception
      */
+    @Operation(summary = "Remove device registration for username and credential id",
+        parameters = {@Parameter(name = "username", required = true), @Parameter(name = "credentialId", required = true)})
     @DeleteMapping(path = "{username}/{credentialId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@PathVariable final String username, @PathVariable final String credentialId) throws Exception {
         val ba = ByteArray.fromBase64Url(credentialId);
@@ -107,6 +116,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      * @return the response entity
      */
     @GetMapping(path = "/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @Operation(summary = "Export device registrations as a zip file")
     @ResponseBody
     public ResponseEntity<Resource> export() {
         val resource = CompressionUtils.toZipFile(registrationStorage.stream(),
@@ -131,6 +141,8 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      * @return the http status
      * @throws Exception the exception
      */
+    @Operation(summary = "Import a device registration as a JSON document",
+        parameters = {@Parameter(name = "request", required = true)})
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus importAccount(final HttpServletRequest request) throws Exception {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);

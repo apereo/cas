@@ -1,10 +1,13 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.NeverAllowMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -12,6 +15,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -30,10 +37,14 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("WebflowMfaActions")
+@Import(MultifactorAuthenticationBypassActionTests.MultifactorAuthenticationTestConfiguration.class)
 public class MultifactorAuthenticationBypassActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("mfaBypassAction")
     private Action mfaBypassAction;
+
+    @Autowired
+    private ConfigurableApplicationContext configurableApplicationContext;
 
     @Test
     public void verifyOperations() throws Exception {
@@ -48,9 +59,12 @@ public class MultifactorAuthenticationBypassActionTests extends BaseCasWebflowMu
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        configurableApplicationContext.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class)
+            .forEach((key, value) -> ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, value, key));
+
         provider.setBypassEvaluator(NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance());
         WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
-        
+
         val transition = mock(Transition.class);
         when(transition.getId()).thenReturn(CasWebflowConstants.TRANSITION_ID_BYPASS);
         context.setCurrentTransition(transition);
@@ -67,5 +81,14 @@ public class MultifactorAuthenticationBypassActionTests extends BaseCasWebflowMu
         provider.setBypassEvaluator(eval);
         event = mfaBypassAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_YES, event.getId());
+    }
+
+
+    @TestConfiguration("MultifactorAuthenticationTestConfiguration")
+    public static class MultifactorAuthenticationTestConfiguration {
+        @Bean
+        public MultifactorAuthenticationProvider dummyProvider() {
+            return new TestMultifactorAuthenticationProvider();
+        }
     }
 }

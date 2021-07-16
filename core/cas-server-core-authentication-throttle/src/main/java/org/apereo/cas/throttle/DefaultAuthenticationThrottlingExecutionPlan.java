@@ -12,12 +12,28 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Getter
 public class DefaultAuthenticationThrottlingExecutionPlan implements AuthenticationThrottlingExecutionPlan {
-    private final List<HandlerInterceptor> authenticationThrottleInterceptors = new ArrayList<>(0);
+    @Getter
+    private final List<HandlerInterceptor> authenticationThrottleInterceptors = new ArrayList<>();
+
+    private final List<ThrottledRequestFilter> authenticationThrottleFilters = new ArrayList<>();
 
     @Override
-    public void registerAuthenticationThrottleInterceptor(final HandlerInterceptor handler) {
+    public AuthenticationThrottlingExecutionPlan registerAuthenticationThrottleInterceptor(final HandlerInterceptor handler) {
         this.authenticationThrottleInterceptors.add(handler);
+        return this;
+    }
+
+    @Override
+    public AuthenticationThrottlingExecutionPlan registerAuthenticationThrottleFilter(final ThrottledRequestFilter filter) {
+        this.authenticationThrottleFilters.add(filter);
+        return this;
+    }
+
+    @Override
+    public ThrottledRequestFilter getAuthenticationThrottleFilter() {
+        return (request, response) -> authenticationThrottleFilters
+            .stream()
+            .anyMatch(filter -> filter.supports(request, response));
     }
 }

@@ -39,7 +39,8 @@ public class InMemoryCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    public void saveInternal(final CasEvent event) {
+    public CasEvent saveInternal(final CasEvent event) {
         cache.put(UUID.randomUUID().toString(), event);
+        return event;
     }
 }

@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -50,14 +51,17 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
     @SneakyThrows
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
-                                                                   final HttpServletRequest request, final Service service) {
+                                                                   final HttpServletRequest request,
+                                                                   final Service service) {
         var acr = request.getParameter(OAuth20Constants.ACR_VALUES);
         if (StringUtils.isBlank(acr)) {
             val url = request.getRequestURL() + "?" + request.getQueryString();
-            var builderContext = new URIBuilder(url);
-            val idx = builderContext.getQueryParams().stream().filter(p -> p.getName().equals(CasProtocolConstants.PARAMETER_SERVICE)).findFirst();
+            var builderContext = new URIBuilder(UriComponentsBuilder.fromUriString(url).build().toUri());
+            val idx = builderContext.getQueryParams().stream()
+                .filter(p -> p.getName().equals(CasProtocolConstants.PARAMETER_SERVICE)).findFirst();
             if (idx.isPresent()) {
-                builderContext = new URIBuilder(idx.get().getValue());
+                val serviceValue = UriComponentsBuilder.fromUriString(idx.get().getValue()).build().toUri();
+                builderContext = new URIBuilder(serviceValue);
             }
 
             val parameter = builderContext.getQueryParams()

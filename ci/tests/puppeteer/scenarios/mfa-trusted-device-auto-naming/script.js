@@ -45,8 +45,7 @@ const httpGet = (options) => {
     let element = await cas.innerText(page, '#content div h2');
     assert(element === "Log In Successful")
 
-    let tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
+    await cas.assertTicketGrantingCookie(page);
 
     options1 = {
         protocol: "https:",

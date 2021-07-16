@@ -14,6 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
  */
 @Getter
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
-@Tag("MFA")
+@Tag("MFATrustedDevices")
 public class InMemoryMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 }

@@ -26,6 +26,7 @@ import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPri
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.validation.Assertion;
 
 import com.google.common.base.Splitter;
@@ -58,6 +59,7 @@ import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -364,31 +366,49 @@ public class CoreAuthenticationUtils {
         final IAttributeMerger attributeMerger,
         final Class<T> resolverClass,
         final PersonDirectoryPrincipalResolverProperties... personDirectory) {
-
-        val context = PrincipalResolutionContext.builder()
-            .attributeRepository(attributeRepository)
-            .attributeMerger(attributeMerger)
-            .principalFactory(principalFactory)
-            .returnNullIfNoAttributes(Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isReturnNull))
-            .principalAttributeNames(Arrays.stream(personDirectory)
-                .filter(p -> StringUtils.isNotBlank(p.getPrincipalAttribute()))
-                .map(PersonDirectoryPrincipalResolverProperties::getPrincipalAttribute)
-                .findFirst()
-                .orElse(StringUtils.EMPTY))
-            .principalNameTransformer(formUserId -> formUserId)
-            .useCurrentPrincipalId(Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isUseExistingPrincipalId))
-            .resolveAttributes(Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isAttributeResolutionEnabled))
-            .activeAttributeRepositoryIdentifiers(Arrays.stream(personDirectory)
-                .filter(p -> StringUtils.isNotBlank(p.getActiveAttributeRepositoryIds()))
-                .map(p -> org.springframework.util.StringUtils.commaDelimitedListToSet(p.getActiveAttributeRepositoryIds()))
-                .flatMap(Set::stream)
-                .collect(Collectors.toSet()))
-            .build();
+        val context = buildPrincipalResolutionContext(principalFactory, attributeRepository, attributeMerger, personDirectory);
 
         val ctor = resolverClass.getDeclaredConstructor(PrincipalResolutionContext.class);
         return ctor.newInstance(context);
     }
 
+    /**
+     * New PrincipalResolutionContext.
+     *
+     * @param principalFactory    the principal factory
+     * @param attributeRepository the attribute repository
+     * @param attributeMerger     the attribute merger
+     * @param personDirectory     the person directory properties
+     * @return the resolver
+     */
+    public static PrincipalResolutionContext buildPrincipalResolutionContext(final PrincipalFactory principalFactory,
+                                                                             final IPersonAttributeDao attributeRepository,
+                                                                             final IAttributeMerger attributeMerger,
+                                                                             final PersonDirectoryPrincipalResolverProperties... personDirectory) {
+        return PrincipalResolutionContext.builder()
+            .attributeRepository(attributeRepository)
+            .attributeMerger(attributeMerger)
+            .principalFactory(principalFactory)
+            .returnNullIfNoAttributes(Arrays.stream(personDirectory).filter(p -> p.getReturnNull() != TriStateBoolean.UNDEFINED)
+                .map(p -> p.getReturnNull().toBoolean()).findFirst().orElse(Boolean.FALSE))
+            .principalAttributeNames(Arrays.stream(personDirectory)
+                .map(PersonDirectoryPrincipalResolverProperties::getPrincipalAttribute)
+                .filter(StringUtils::isNotBlank)
+                .findFirst()
+                .orElse(StringUtils.EMPTY))
+            .principalNameTransformer(formUserId -> formUserId)
+            .useCurrentPrincipalId(Arrays.stream(personDirectory).filter(p -> p.getUseExistingPrincipalId() != TriStateBoolean.UNDEFINED)
+                .map(p -> p.getUseExistingPrincipalId().toBoolean()).findFirst().orElse(Boolean.FALSE))
+            .resolveAttributes(Arrays.stream(personDirectory).filter(p -> p.getAttributeResolutionEnabled() != TriStateBoolean.UNDEFINED)
+                .map(p -> p.getAttributeResolutionEnabled().toBoolean()).findFirst().orElse(Boolean.TRUE))
+            .activeAttributeRepositoryIdentifiers(Arrays.stream(personDirectory)
+                .filter(p -> StringUtils.isNotBlank(p.getActiveAttributeRepositoryIds()))
+                .map(p -> org.springframework.util.StringUtils.commaDelimitedListToSet(p.getActiveAttributeRepositoryIds()))
+                .filter(p -> !p.isEmpty())
+                .findFirst()
+                .orElse(Collections.EMPTY_SET))
+            .build();
+    }
 
     /**
      * New authentication policy collection.

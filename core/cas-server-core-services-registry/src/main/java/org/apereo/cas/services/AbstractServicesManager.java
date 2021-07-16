@@ -20,6 +20,7 @@ import org.springframework.context.ApplicationEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -132,23 +133,31 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .stream()
             .map(locator -> locator.locate(candidates, service))
             .filter(Objects::nonNull)
-            .findFirst()
-            .orElse(null);
+            .findFirst();
 
-        if (foundService == null) {
+        if (foundService.isEmpty()) {
             val serviceRegistry = configurationContext.getServiceRegistry();
             LOGGER.trace("Service [{}] is not cached; Searching [{}]", service.getId(), serviceRegistry.getName());
-            foundService = serviceRegistry.findServiceBy(service.getId());
-            if (foundService != null) {
-                configurationContext.getServicesCache().put(foundService.getId(), foundService);
-                LOGGER.trace("Service [{}] is found in [{}] and cached", service, serviceRegistry.getName());
+            foundService = Optional.ofNullable(serviceRegistry.findServiceBy(service.getId()));
+            if (foundService.isPresent()) {
+                val registeredService = foundService.get();
+                foundService = configurationContext.getRegisteredServiceLocators()
+                    .stream()
+                    .filter(locator -> locator.supports(registeredService, service))
+                    .findFirst()
+                    .map(locator -> {
+                        LOGGER.debug("Service [{}] is found in service registry and can be supported by [{}]",
+                            registeredService, locator.getName());
+                        configurationContext.getServicesCache().put(registeredService.getId(), registeredService);
+                        LOGGER.trace("Service [{}] is now cached from [{}]", service, serviceRegistry.getName());
+                        return Optional.of(registeredService);
+                    })
+                    .orElse(Optional.empty());
             }
         }
 
-        if (foundService != null) {
-            foundService.initialize();
-        }
-        return validateRegisteredService(foundService);
+        foundService.ifPresent(RegisteredService::initialize);
+        return validateRegisteredService(foundService.orElse(null));
     }
 
     @Override
@@ -271,11 +280,16 @@ public abstract class AbstractServicesManager implements ServicesManager {
         return configurationContext.getServiceRegistry().getServicesStream();
     }
 
+    /**
+     * For the duration of the read, the cache store should not remain empty.
+     * Otherwise, lookup operations during that loading time window might produce
+     * unauthorized failure errors. Invalidation attempts must happen after the load
+     * to minimize chances of faliures.
+     */
     @Override
-    public Collection<RegisteredService> load() {
+    public synchronized Collection<RegisteredService> load() {
         LOGGER.trace("Loading services from [{}]", configurationContext.getServiceRegistry().getName());
-        configurationContext.getServicesCache().invalidateAll();
-        configurationContext.getServicesCache().putAll(configurationContext.getServiceRegistry().load()
+        val servicesMap = configurationContext.getServiceRegistry().load()
             .stream()
             .filter(this::supports)
             .peek(this::loadInternal)
@@ -283,7 +297,9 @@ public abstract class AbstractServicesManager implements ServicesManager {
                 LOGGER.trace("Adding registered service [{}] with name [{}] and internal identifier [{}]",
                     r.getServiceId(), r.getName(), r.getId());
                 return r.getId();
-            }, Function.identity(), (r, s) -> s)));
+            }, Function.identity(), (r, s) -> s));
+        configurationContext.getServicesCache().invalidateAll();
+        configurationContext.getServicesCache().putAll(servicesMap);
         loadInternal();
         publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices()));
         evaluateExpiredServiceDefinitions();

@@ -21,7 +21,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -38,11 +37,11 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CachingPrincipalAttributesRepositoryTests.CachingPrincipalAttributeRepositoryTestConfiguration.class
 })
-@DirtiesContext
 @Tag("Attributes")
 public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPrincipalAttributesRepositoryTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "cachingPrincipalAttributesRepository.json");
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -55,12 +54,6 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
         ApplicationContextProvider.getPrincipalAttributesRepositoryCache().ifPresent(PrincipalAttributesRepositoryCache::invalidate);
     }
 
-    @Override
-    protected AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(final String unit, final long duration) {
-        ApplicationContextProvider.registerBeanIntoApplicationContext(this.applicationContext, this.dao, PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY);
-        return new CachingPrincipalAttributesRepository(unit, duration);
-    }
-
     @Test
     @SneakyThrows
     public void verifySerializeACachingPrincipalAttributesRepositoryToJson() {
@@ -69,6 +62,12 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
         MAPPER.writeValue(JSON_FILE, repositoryWritten);
         val repositoryRead = MAPPER.readValue(JSON_FILE, CachingPrincipalAttributesRepository.class);
         assertEquals(repositoryWritten, repositoryRead);
+    }
+
+    @Override
+    protected AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(final String unit, final long duration) {
+        ApplicationContextProvider.registerBeanIntoApplicationContext(this.applicationContext, this.dao, PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY);
+        return new CachingPrincipalAttributesRepository(unit, duration);
     }
 
     @TestConfiguration("CachingPrincipalAttributeRepositoryTestConfiguration")

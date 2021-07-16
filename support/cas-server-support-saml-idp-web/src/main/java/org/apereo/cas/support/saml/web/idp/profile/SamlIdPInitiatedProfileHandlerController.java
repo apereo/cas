@@ -119,7 +119,7 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
         val ctx = new MessageContext();
         if (facade.isAuthnRequestsSigned() || registeredService.isSignUnsolicitedAuthnRequest()) {
             getConfigurationContext().getSamlObjectSigner().encode(authnRequest, registeredService,
-                facade, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest);
+                facade, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest, ctx);
         }
         ctx.setMessage(authnRequest);
         val bindingContext = ctx.getSubcontext(SAMLBindingContext.class, true);

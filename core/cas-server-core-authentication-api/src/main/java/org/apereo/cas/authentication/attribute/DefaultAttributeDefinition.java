@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.jooq.lambda.Unchecked;
 
 import java.nio.charset.StandardCharsets;
@@ -63,6 +64,8 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
 
     private String script;
 
+    private String canonicalizationMode;
+    
     @Override
     public int compareTo(final AttributeDefinition o) {
         return new CompareToBuilder()
@@ -88,6 +91,13 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
         }
         if (isEncrypted()) {
             currentValues = encryptValues(currentValues, registeredService);
+        }
+        if (StringUtils.isNotBlank(this.canonicalizationMode)) {
+            val mode = CaseCanonicalizationMode.valueOf(this.canonicalizationMode.toUpperCase());
+            currentValues = currentValues
+                .stream()
+                .map(value -> mode.canonicalize(value.toString()))
+                .collect(Collectors.toList());
         }
         LOGGER.trace("Resolved values [{}] for attribute definition [{}]", currentValues, this);
         return currentValues;

@@ -24,7 +24,7 @@ const path = require('path');
     await page.waitForNavigation();
     await page.waitForTimeout(2000)
 
-    const url = "https://localhost:8443/cas/oidc/authorize?" +
+    const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
         "client_id=client&" +
         "redirect_uri=https%3A%2F%2Foidcdebugger.com%2Fdebug&" +
         "scope=openid%20email%20profile%20address%20phone&" +

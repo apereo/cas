@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -53,7 +52,6 @@ import static org.mockito.Mockito.*;
     CasCoreTicketCatalogConfiguration.class,
     CasCoreServicesConfiguration.class
 })
-@DirtiesContext
 @Tag("AuthenticationPolicy")
 public class UniquePrincipalAuthenticationPolicyTests {
     @Autowired

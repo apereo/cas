@@ -52,7 +52,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     private final TicketSerializationManager ticketSerializationManager;
 
     @Override
-    public void addTicket(final Ticket ticket) {
+    public void addTicketInternal(final Ticket ticket) {
         try {
             LOGGER.debug("Adding ticket [{}]", ticket.getId());
             val holder = buildTicketAsDocument(ticket);

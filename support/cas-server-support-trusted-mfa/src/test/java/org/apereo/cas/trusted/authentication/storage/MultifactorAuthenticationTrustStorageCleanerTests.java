@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Getter
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
-@Tag("MFA")
+@Tag("MFATrustedDevices")
 public class MultifactorAuthenticationTrustStorageCleanerTests extends AbstractMultifactorAuthenticationTrustStorageTests {
     @Autowired
     @Qualifier("mfaTrustStorageCleaner")
@@ -32,6 +32,7 @@ public class MultifactorAuthenticationTrustStorageCleanerTests extends AbstractM
 
     @Test
     public void verifyAction() {
+        assertNotNull(mfaTrustStorageCleaner.getStorage());
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {

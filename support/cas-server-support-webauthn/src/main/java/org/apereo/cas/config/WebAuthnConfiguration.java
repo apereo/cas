@@ -15,6 +15,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.web.CasWebSecurityConstants;
+import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.webauthn.WebAuthnAuthenticationHandler;
 import org.apereo.cas.webauthn.WebAuthnCredential;
 import org.apereo.cas.webauthn.WebAuthnCredentialRegistrationCipherExecutor;
@@ -44,6 +46,7 @@ import com.yubico.webauthn.data.AttestationConveyancePreference;
 import com.yubico.webauthn.data.RelyingPartyIdentity;
 import com.yubico.webauthn.extension.appid.AppId;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -58,7 +61,12 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.net.URL;
 import java.time.Duration;
@@ -95,6 +103,13 @@ public class WebAuthnConfiguration {
     @Autowired
     @Qualifier("webAuthnBypassEvaluator")
     private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> webAuthnBypassEvaluator;
+
+    private static <K, V> Cache<K, V> newCache() {
+        return CacheBuilder.newBuilder()
+            .maximumSize(CACHE_MAX_SIZE)
+            .expireAfterAccess(Duration.ofMinutes(5))
+            .build();
+    }
 
     @ConditionalOnMissingBean(name = "webAuthnController")
     @Bean
@@ -267,13 +282,6 @@ public class WebAuthnConfiguration {
         return new WebAuthnDeviceRepositoryCleanerScheduler(webAuthnCredentialRepository());
     }
 
-    private static <K, V> Cache<K, V> newCache() {
-        return CacheBuilder.newBuilder()
-            .maximumSize(CACHE_MAX_SIZE)
-            .expireAfterAccess(Duration.ofMinutes(5))
-            .build();
-    }
-
     /**
      * The device cleaner scheduler.
      */
@@ -287,6 +295,34 @@ public class WebAuthnConfiguration {
         public void run() {
             LOGGER.debug("Starting to clean expired devices from repository");
             repository.clean();
+        }
+    }
+
+    @Configuration("WebAuthnSecurityConfiguration")
+    @Order(CasWebSecurityConstants.SECURITY_CONFIGURATION_ORDER - 1)
+    public static class WebAuthnSecurityConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "webAuthnCsrfTokenRepository")
+        public CsrfTokenRepository webAuthnCsrfTokenRepository() {
+            return new HttpSessionCsrfTokenRepository();
+        }
+
+        @Bean
+        public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> webAuthnProtocolEndpointConfigurer() {
+            return new ProtocolEndpointWebSecurityConfigurer<>() {
+                @Override
+                @SneakyThrows
+                public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) {
+                    http.csrf(customizer -> {
+                        val pattern = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
+                        customizer
+                            .requireCsrfProtectionMatcher(pattern)
+                            .csrfTokenRepository(webAuthnCsrfTokenRepository());
+                    });
+                    return this;
+                }
+            };
         }
     }
 }

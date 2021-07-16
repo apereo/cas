@@ -14,14 +14,13 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 import java.util.Map;
@@ -39,11 +38,7 @@ import static org.mockito.Mockito.*;
     AopAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@DirtiesContext
 public abstract class BaseMultifactorAuthenticationTriggerTests {
-    @Autowired
-    protected ConfigurableApplicationContext applicationContext;
-
     protected GeoLocationService geoLocationService;
 
     protected Authentication authentication;
@@ -54,8 +49,12 @@ public abstract class BaseMultifactorAuthenticationTriggerTests {
 
     protected TestMultifactorAuthenticationProvider multifactorAuthenticationProvider;
 
+    protected ConfigurableApplicationContext applicationContext;
+    
     @BeforeEach
     public void setup(final TestInfo info) {
+        this.applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
 
         if (!info.getTags().contains("DisableProviderRegistration")) {
@@ -80,6 +79,7 @@ public abstract class BaseMultifactorAuthenticationTriggerTests {
         this.httpRequest.setRemoteAddr("185.86.151.11");
         this.httpRequest.setLocalAddr("185.88.151.12");
         this.httpRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
-        ClientInfoHolder.setClientInfo(new ClientInfo(this.httpRequest));
+        var clientInfo = new ClientInfo(this.httpRequest);
+        ClientInfoHolder.setClientInfo(clientInfo);
     }
 }

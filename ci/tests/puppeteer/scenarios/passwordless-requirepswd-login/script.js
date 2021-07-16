@@ -29,8 +29,7 @@ const cas = require('../../cas.js');
 
     // await page.waitForTimeout(10000)
 
-    const tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
+    await cas.assertTicketGrantingCookie(page);
     
     await browser.close();
 })();

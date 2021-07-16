@@ -20,7 +20,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.UUID;
 
@@ -34,7 +33,6 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("OAuth")
-@DirtiesContext
 public class OAuth20ClientIdClientSecretAuthenticatorTests {
 
     @TestConfiguration("NullPrincipalTestConfiguration")

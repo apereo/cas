@@ -1,6 +1,8 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.scopes.DefaultOidcAttributeReleasePolicyFactory;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -12,9 +14,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.test.annotation.DirtiesContext;
-
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@DirtiesContext
 @Tag("JDBC")
 @Import(JpaServiceRegistryOidcTests.OidcJpaServiceRegistryTestConfiguration.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -62,7 +60,7 @@ public class JpaServiceRegistryOidcTests extends JpaServiceRegistryTests {
     public static class OidcJpaServiceRegistryTestConfiguration {
         @Bean
         public ServiceRegistryListener oidcServiceRegistryListener() {
-            return new OidcServiceRegistryListener(new ArrayList<>());
+            return new OidcServiceRegistryListener(new DefaultOidcAttributeReleasePolicyFactory(new CasConfigurationProperties()));
         }
     }
 }

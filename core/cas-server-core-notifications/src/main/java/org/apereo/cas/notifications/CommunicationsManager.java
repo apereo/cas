@@ -33,6 +33,11 @@ public class CommunicationsManager {
 
     private final NotificationSender notificationSender;
 
+    private static Optional<Object> getFirstAttributeByName(final Principal principal, final String attribute) {
+        val value = principal.getAttributes().get(attribute);
+        return CollectionUtils.firstElement(value);
+    }
+
     public boolean isMailSenderDefined() {
         return this.mailSender != null;
     }
@@ -67,9 +72,9 @@ public class CommunicationsManager {
      * @return true /false
      */
     public boolean email(final Principal principal,
-        final String attribute,
-        final EmailProperties emailProperties,
-        final String body) {
+                         final String attribute,
+                         final EmailProperties emailProperties,
+                         final String body) {
         if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isMailSenderDefined()) {
             val to = getFirstAttributeByName(principal, attribute);
             if (to.isPresent()) {
@@ -91,7 +96,7 @@ public class CommunicationsManager {
     public boolean email(final EmailProperties emailProperties, final String to, final String body) {
         try {
             LOGGER.trace("Attempting to send email [{}] to [{}]", body, to);
-            
+
             if (!isMailSenderDefined() || emailProperties.isUndefined() || StringUtils.isBlank(to)) {
                 throw new IllegalAccessException("Could not send email; from/to/subject/text or email settings are undefined.");
             }
@@ -136,8 +141,8 @@ public class CommunicationsManager {
      * @return true/false
      */
     public boolean sms(final Principal principal,
-        final String attribute,
-        final String text, final String from) {
+                       final String attribute,
+                       final String text, final String from) {
         if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isSmsSenderDefined()) {
             val to = getFirstAttributeByName(principal, attribute);
             if (to.isPresent()) {
@@ -180,11 +185,6 @@ public class CommunicationsManager {
             LOGGER.info("CAS is unable to send notifications given no providers are defined to handle messages, etc");
         }
 
-        return isMailSenderDefined() || isSmsSenderDefined();
-    }
-
-    private static Optional<Object> getFirstAttributeByName(final Principal principal, final String attribute) {
-        val value = principal.getAttributes().get(attribute);
-        return CollectionUtils.firstElement(value);
+        return isMailSenderDefined() || isSmsSenderDefined() || isNotificationSenderDefined();
     }
 }

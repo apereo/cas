@@ -26,10 +26,11 @@ import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
-import org.apereo.cas.web.ProtocolEndpointConfigurer;
+import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.ServiceValidationViewFactory;
 import org.apereo.cas.web.ServiceValidationViewFactoryConfigurer;
+import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 
@@ -103,6 +104,10 @@ public class SamlConfiguration {
     private ObjectProvider<AuthenticationAttributeReleasePolicy> authenticationAttributeReleasePolicy;
 
     @Autowired
+    @Qualifier("urlValidator")
+    private ObjectProvider<UrlValidator> urlValidator;
+    
+    @Autowired
     @Qualifier("requestedContextValidator")
     private ObjectProvider<RequestedAuthenticationContextValidator> requestedContextValidator;
 
@@ -167,7 +172,7 @@ public class SamlConfiguration {
     @ConditionalOnMissingBean(name = "samlServiceResponseBuilder")
     @Bean
     public ResponseBuilder samlServiceResponseBuilder() {
-        return new SamlServiceResponseBuilder(servicesManager.getObject());
+        return new SamlServiceResponseBuilder(servicesManager.getObject(), urlValidator.getObject());
     }
 
     @ConditionalOnMissingBean(name = "saml10ObjectBuilder")
@@ -196,8 +201,13 @@ public class SamlConfiguration {
     }
 
     @Bean
-    public ProtocolEndpointConfigurer samlProtocolEndpointConfigurer() {
-        return () -> List.of(StringUtils.prependIfMissing(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE, "/"));
+    public ProtocolEndpointWebSecurityConfigurer<Void> samlProtocolEndpointConfigurer() {
+        return new ProtocolEndpointWebSecurityConfigurer<>() {
+            @Override
+            public List<String> getIgnoredEndpoints() {
+                return List.of(StringUtils.prependIfMissing(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE, "/"));
+            }
+        };
     }
 
     @Bean

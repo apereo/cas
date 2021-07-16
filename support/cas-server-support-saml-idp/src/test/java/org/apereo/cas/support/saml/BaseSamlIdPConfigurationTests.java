@@ -40,6 +40,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataCustomizer;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
@@ -138,7 +139,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected VelocityEngine velocityEngine;
 
     @Autowired
-    @Qualifier("samlObjectSigner")
+    @Qualifier(SamlIdPObjectSigner.DEFAULT_BEAN_NAME)
     protected SamlIdPObjectSigner samlIdPObjectSigner;
 
     @Autowired
@@ -199,6 +200,10 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlArtifactMap")
     protected SAMLArtifactMap samlArtifactMap;
+
+    @Autowired
+    @Qualifier("samlIdPServicesManagerRegisteredServiceLocator")
+    protected ServicesManagerRegisteredServiceLocator samlIdPServicesManagerRegisteredServiceLocator;
 
     protected static Assertion getAssertion() {
         return getAssertion(Map.of());

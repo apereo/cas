@@ -203,12 +203,11 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         val value = StringUtils.removeEndIgnoreCase(builder.toString(), ";");
         LOGGER.trace("Adding cookie header as [{}]", value);
 
-        val currentHeader = response.getHeader("Set-Cookie");
-        if (StringUtils.containsAnyIgnoreCase(currentHeader, cookie.getName().concat("="))) {
-            response.setHeader("Set-Cookie", value);
-        } else {
-            response.addHeader("Set-Cookie", value);
-        }
+        val setCookieHeaders = response.getHeaders("Set-Cookie");
+        response.setHeader("Set-Cookie", value);
+        setCookieHeaders.stream()
+            .filter(header -> !header.startsWith(cookie.getName() + "="))
+            .forEach(header -> response.addHeader("Set-Cookie", header));
         return cookie;
     }
 }

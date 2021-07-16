@@ -9,6 +9,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPHttpRedirectDeflateEncoder;
 import org.apereo.cas.util.EncodingUtils;
 
+import lombok.SneakyThrows;
 import lombok.val;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -128,7 +130,7 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     public void verifyPostRequestWithSso() throws Exception {
         val response = new MockHttpServletResponse();
         val tgt = new MockTicketGrantingTicket("casuser");
@@ -149,7 +151,7 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
     }
 
     @Test
-    @Order(4)
+    @Order(6)
     public void verifyPostRequestWithSsoForcedAuthn() throws Exception {
         val response = new MockHttpServletResponse();
         val tgt = new MockTicketGrantingTicket("casuser");
@@ -168,7 +170,25 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
         assertEquals(HttpStatus.FOUND, mv.getStatus());
     }
 
+    @Test
+    @Order(7)
+    public void verifyPostRequestWithUnknownCookie() throws Exception {
+        val response = new MockHttpServletResponse();
+        val tgt = new MockTicketGrantingTicket("casuser");
+        ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());
+        val request = new MockHttpServletRequest();
+        request.setCookies(response.getCookies());
+        request.setMethod("POST");
+        val authnRequest = getAuthnRequest();
+        val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
+        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
+        samlIdPDistributedSessionStore.set(new JEEContext(request, response),
+            SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "relay-state");
+        val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
+        assertEquals(HttpStatus.FOUND, mv.getStatus());
+    }
 
+    @SneakyThrows
     private AuthnRequest signAuthnRequest(final HttpServletRequest request,
                                           final HttpServletResponse response,
                                           final AuthnRequest authnRequest) {
@@ -176,7 +196,7 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
             .get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService,
                 samlRegisteredService.getServiceId()).get();
         return samlIdPObjectSigner.encode(authnRequest, samlRegisteredService,
-            adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest);
+            adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest, new MessageContext());
     }
 
     private AuthnRequest getAuthnRequest() {

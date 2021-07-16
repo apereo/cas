@@ -11,9 +11,8 @@ const cas = require('../../cas.js');
 
     await page.goto("https://localhost:8443/cas/login");
     // await page.waitForTimeout(1000)
-    
-    let tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
+
+    await cas.assertTicketGrantingCookie(page);
 
     await page.goto("https://localhost:8443/cas/logout");
     // await page.waitForTimeout(5000)
@@ -36,9 +35,7 @@ const cas = require('../../cas.js');
 
     // await page.waitForTimeout(20000)
 
-    tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    console.log(tgc)
-    assert(tgc.length === 0);
+    await cas.assertNoTicketGrantingCookie(page);
 
     await browser.close();
 })();

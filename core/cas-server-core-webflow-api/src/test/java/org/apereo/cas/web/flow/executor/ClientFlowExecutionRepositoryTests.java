@@ -17,7 +17,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.config.FlowBuilderServicesBuilder;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -47,7 +46,6 @@ import static org.mockito.Mockito.*;
     ClientFlowExecutionRepositoryTests.WebflowTestConfiguration.class,
     RefreshAutoConfiguration.class
 })
-@DirtiesContext
 @Tag("Webflow")
 public class ClientFlowExecutionRepositoryTests {
 

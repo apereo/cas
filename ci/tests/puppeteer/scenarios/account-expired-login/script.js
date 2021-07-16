@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
     
     const header = await cas.innerText(page, '#pwdmain h3');
 
-    assert(header === "Your password has expired.")
+    assert(header === "Hello, expired. Your password has expired.")
 
     let pwddesc = await cas.innerText(page, '#pwddesc');
     assert(pwddesc === "Please change your password.")

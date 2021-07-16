@@ -29,10 +29,10 @@ import javax.servlet.http.HttpServletResponse;
  * @since 3.5.0
  */
 @Slf4j
-public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller {
+public class OAuth20UserProfileEndpointController<T extends OAuth20ConfigurationContext> extends BaseOAuth20Controller<T> {
     private final ResponseEntity<String> expiredAccessTokenResponseEntity;
 
-    public OAuth20UserProfileEndpointController(final OAuth20ConfigurationContext configurationContext) {
+    public OAuth20UserProfileEndpointController(final T configurationContext) {
         super(configurationContext);
         this.expiredAccessTokenResponseEntity = buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
     }
@@ -85,7 +85,7 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
             LOGGER.error("Missing [{}] from the request", OAuth20Constants.ACCESS_TOKEN);
             return buildUnauthorizedResponseEntity(OAuth20Constants.MISSING_ACCESS_TOKEN);
         }
-        val accessTokenTicket = getOAuthConfigurationContext().getTicketRegistry()
+        val accessTokenTicket = getConfigurationContext().getTicketRegistry()
             .getTicket(accessToken, OAuth20AccessToken.class);
 
         if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
@@ -94,8 +94,8 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
         }
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(accessTokenTicket.getAuthentication());
         updateAccessTokenUsage(accessTokenTicket);
-        val map = getOAuthConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket, context);
-        return getOAuthConfigurationContext().getUserProfileViewRenderer().render(map, accessTokenTicket, response);
+        val map = getConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket, context);
+        return getConfigurationContext().getUserProfileViewRenderer().render(map, accessTokenTicket, response);
     }
 
     /**
@@ -107,9 +107,9 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
         val accessTokenState = TicketState.class.cast(accessTokenTicket);
         accessTokenState.update();
         if (accessTokenTicket.isExpired()) {
-            getOAuthConfigurationContext().getTicketRegistry().deleteTicket(accessTokenTicket.getId());
+            getConfigurationContext().getTicketRegistry().deleteTicket(accessTokenTicket.getId());
         } else {
-            getOAuthConfigurationContext().getTicketRegistry().updateTicket(accessTokenTicket);
+            getConfigurationContext().getTicketRegistry().updateTicket(accessTokenTicket);
         }
     }
 

@@ -3,6 +3,7 @@ package org.apereo.cas.discovery;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.val;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.http.MediaType;
@@ -22,13 +23,6 @@ import java.util.Map;
 public class CasServerDiscoveryProfileEndpoint extends BaseCasActuatorEndpoint {
     private final CasServerProfileRegistrar casServerProfileRegistrar;
 
-    /**
-     * Instantiates a new mvc endpoint.
-     * Endpoints are by default sensitive.
-     *
-     * @param casProperties             the cas properties
-     * @param casServerProfileRegistrar the cas server profile registrar
-     */
     public CasServerDiscoveryProfileEndpoint(final CasConfigurationProperties casProperties,
                                              final CasServerProfileRegistrar casServerProfileRegistrar) {
         super(casProperties);
@@ -42,6 +36,7 @@ public class CasServerDiscoveryProfileEndpoint extends BaseCasActuatorEndpoint {
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
+    @Operation(summary = "Produce CAS discovery profile")
     public Map<String, Object> discovery() {
         val results = new HashMap<String, Object>();
         results.put("profile", casServerProfileRegistrar.getProfile());

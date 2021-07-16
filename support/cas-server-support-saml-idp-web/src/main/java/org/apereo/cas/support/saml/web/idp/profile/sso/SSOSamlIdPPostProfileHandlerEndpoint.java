@@ -20,6 +20,8 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.beanutils.BeanUtils;
@@ -98,6 +100,12 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
      */
     @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseBody
+    @Operation(summary = "Produce SAML2 response entity", parameters = {
+        @Parameter(name = "username", required = true),
+        @Parameter(name = "password", required = true),
+        @Parameter(name = SamlProtocolConstants.PARAMETER_ENTITY_ID, required = true),
+        @Parameter(name = "encrypt")
+    })
     public ResponseEntity<Object> produceGet(final HttpServletRequest request, final HttpServletResponse response) {
 
         val username = request.getParameter("username");
@@ -117,10 +125,15 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
      */
     @PostMapping(produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseBody
+    @Operation(summary = "Produce SAML2 response entity", parameters = {
+        @Parameter(name = "username", required = true),
+        @Parameter(name = "password", required = true),
+        @Parameter(name = SamlProtocolConstants.PARAMETER_ENTITY_ID, required = true),
+        @Parameter(name = "encrypt")
+    })
     public ResponseEntity<Object> producePost(final HttpServletRequest request,
                                               final HttpServletResponse response,
                                               final @RequestBody Map<String, String> map) {
-
         val username = map.get("username");
         val password = map.get("password");
         val entityId = map.get(SamlProtocolConstants.PARAMETER_ENTITY_ID);

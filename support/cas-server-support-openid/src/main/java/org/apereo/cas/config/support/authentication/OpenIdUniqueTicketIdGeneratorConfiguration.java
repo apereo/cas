@@ -16,8 +16,8 @@ import org.springframework.context.annotation.Configuration;
  * This is {@link OpenIdUniqueTicketIdGeneratorConfiguration}.
  *
  * @author Misagh Moayyed
- * @deprecated 6.2
  * @since 5.1.0
+ * @deprecated 6.2
  */
 @Configuration(value = "openIdUniqueTicketIdGeneratorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)

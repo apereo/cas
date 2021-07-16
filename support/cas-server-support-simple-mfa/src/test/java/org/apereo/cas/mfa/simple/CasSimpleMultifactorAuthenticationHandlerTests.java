@@ -2,6 +2,7 @@ package org.apereo.cas.mfa.simple;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
@@ -96,6 +97,8 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
         ticketRegistry.addTicket(ticket);
         val credential = new CasSimpleMultifactorTokenCredential(ticket.getId());
         assertThrows(FailedLoginException.class, () -> casSimpleMultifactorAuthenticationHandler.authenticate(credential));
+        assertFalse(casSimpleMultifactorAuthenticationHandler.supports(new UsernamePasswordCredential()));
+        assertFalse(casSimpleMultifactorAuthenticationHandler.supports(UsernamePasswordCredential.class));
     }
 
     @Test

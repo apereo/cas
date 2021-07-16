@@ -2,9 +2,11 @@ package org.apereo.cas.adaptors.duo.web.flow.action;
 
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
 import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -45,6 +48,9 @@ public class DuoSecurityUniversalPromptPrepareLoginActionTests extends BaseCasWe
     @Qualifier("duoUniversalPromptPrepareLoginAction")
     private Action duoUniversalPromptPrepareLoginAction;
 
+    @Autowired
+    private ConfigurableApplicationContext configurableApplicationContext;
+
     @Test
     public void verifyOperation() throws Exception {
         val context = new MockRequestContext();
@@ -57,6 +63,9 @@ public class DuoSecurityUniversalPromptPrepareLoginActionTests extends BaseCasWe
         val identifier = casProperties.getAuthn().getMfa().getDuo().get(0).getId();
         val provider = TestMultifactorAuthenticationProvider
             .registerProviderIntoApplicationContext(applicationContext, new TestMultifactorAuthenticationProvider(identifier));
+        
+        configurableApplicationContext.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class)
+            .forEach((key, value) -> ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, value, key));
 
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
         WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());

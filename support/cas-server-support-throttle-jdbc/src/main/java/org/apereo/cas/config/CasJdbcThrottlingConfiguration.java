@@ -1,10 +1,7 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.apereo.cas.throttle.ThrottledRequestExecutor;
-import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 import org.apereo.cas.web.support.JdbcThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
@@ -28,25 +25,17 @@ import javax.sql.DataSource;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casJdbcThrottlingConfiguration")
+@Configuration(value = "casJdbcThrottlingConfiguration", proxyBeanMethods = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(CasThrottlingConfiguration.class)
 public class CasJdbcThrottlingConfiguration {
 
     @Autowired
-    @Qualifier("auditTrailExecutionPlan")
-    private ObjectProvider<AuditTrailExecutionPlan> auditTrailManager;
-
-    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("throttledRequestResponseHandler")
-    private ObjectProvider<ThrottledRequestResponseHandler> throttledRequestResponseHandler;
-
-    @Autowired
-    @Qualifier("throttledRequestExecutor")
-    private ObjectProvider<ThrottledRequestExecutor> throttledRequestExecutor;
+    @Qualifier("authenticationThrottlingConfigurationContext")
+    private ObjectProvider<ThrottledSubmissionHandlerConfigurationContext> authenticationThrottlingConfigurationContext;
 
     @RefreshScope
     @Bean
@@ -59,20 +48,8 @@ public class CasJdbcThrottlingConfiguration {
     @RefreshScope
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle() {
         val throttle = casProperties.getAuthn().getThrottle();
-        val failure = throttle.getFailure();
-
-        val context = ThrottledSubmissionHandlerConfigurationContext.builder()
-            .failureThreshold(failure.getThreshold())
-            .failureRangeInSeconds(failure.getRangeSeconds())
-            .usernameParameter(throttle.getUsernameParameter())
-            .authenticationFailureCode(failure.getCode())
-            .auditTrailExecutionPlan(auditTrailManager.getObject())
-            .applicationCode(throttle.getAppCode())
-            .throttledRequestResponseHandler(throttledRequestResponseHandler.getObject())
-            .throttledRequestExecutor(throttledRequestExecutor.getObject())
-            .build();
-
-        return new JdbcThrottledSubmissionHandlerInterceptorAdapter(context, inspektrThrottleDataSource(),
-            throttle.getJdbc().getAuditQuery());
+        return new JdbcThrottledSubmissionHandlerInterceptorAdapter(
+            authenticationThrottlingConfigurationContext.getObject(),
+            inspektrThrottleDataSource(), throttle.getJdbc().getAuditQuery());
     }
 }

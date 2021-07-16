@@ -10,14 +10,12 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContext;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.DigestUtils;
-import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -58,7 +56,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
@@ -170,6 +167,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                 "Could not verify/locate SAML registered service since no serviceId is provided");
         }
         val service = configurationContext.getWebApplicationServiceFactory().createService(serviceId);
+        service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(serviceId));
         LOGGER.debug("Checking service access in CAS service registry for [{}]", service);
         val registeredService = configurationContext.getServicesManager().findServiceBy(service, SamlRegisteredService.class);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
@@ -376,7 +374,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val authnRequest = (AuthnRequest) context.getLeft();
         val id = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
         val service = configurationContext.getWebApplicationServiceFactory().createService(id);
-        val registeredService = configurationContext.getServicesManager().findServiceBy(service);
+        service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(id));
+        val registeredService = configurationContext.getServicesManager().findServiceBy(service, SamlRegisteredService.class);
 
         val assertion = buildCasAssertion(authentication, service, registeredService, Map.of());
         val authenticationContext = buildAuthenticationContextPair(request, response, context);
@@ -417,7 +416,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @return the boolean
      */
     protected Optional<Authentication> singleSignOnSessionExists(final Pair<? extends SignableSAMLObject, MessageContext> pair,
-                                                                 final HttpServletRequest request, final HttpServletResponse response) {
+                                                                 final HttpServletRequest request,
+                                                                 final HttpServletResponse response) {
         val authnRequest = AuthnRequest.class.cast(pair.getLeft());
         if (authnRequest.isForceAuthn()) {
             LOGGER.trace("Authentication request asks for forced authn. Ignoring existing single sign-on session, if any");
@@ -561,7 +561,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param request the request
      * @return the registered service and facade
      */
-    protected Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> getRegisteredServiceAndFacade(final AuthnRequest request) {
+    protected Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> getRegisteredServiceAndFacade(
+        final AuthnRequest request) {
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(request);
         LOGGER.debug("Located issuer [{}] from authentication context", issuer);
 
@@ -668,7 +669,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
         val webContext = new JEEContext(request, response);
         return SamlIdPUtils.retrieveSamlRequest(webContext, configurationContext.getSessionStore(),
-            configurationContext.getOpenSamlConfigBean(), AuthnRequest.class);
+            configurationContext.getOpenSamlConfigBean(), AuthnRequest.class)
+            .orElseThrow(() -> new IllegalArgumentException("SAML request or context could not be determined from session store"));
     }
 
     /**
@@ -676,24 +678,15 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      *
      * @param request  the request
      * @param response the response
-     * @param pair     the pair
+     * @param context  the pair
      * @throws Exception the exception
      */
     @Synchronized
     protected void storeAuthenticationRequest(final HttpServletRequest request, final HttpServletResponse response,
-                                              final Pair<? extends SignableSAMLObject, MessageContext> pair) throws Exception {
-        val authnRequest = (AuthnRequest) pair.getLeft();
-        val messageContext = pair.getValue();
-        try (val writer = SamlUtils.transformSamlObject(configurationContext.getOpenSamlConfigBean(), authnRequest)) {
-            val samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
-            val sessionStore = configurationContext.getSessionStore();
-            val context = new JEEContext(request, response);
-            sessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
-            sessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, SAMLBindingSupport.getRelayState(messageContext));
-
-            val authnContext = SamlIdPAuthenticationContext.from(messageContext).encode();
-            sessionStore.set(context, MessageContext.class.getName(), authnContext);
-        }
+                                              final Pair<? extends SignableSAMLObject, MessageContext> context) throws Exception {
+        val webContext = new JEEContext(request, response);
+        SamlIdPUtils.storeSamlRequest(webContext, configurationContext.getOpenSamlConfigBean(),
+            configurationContext.getSessionStore(), context);
     }
 
     /**
@@ -717,12 +710,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val entityId = facade.getEntityId();
         LOGGER.debug("Checking metadata for [{}] to see if binding [{}] is supported", entityId, binding);
         val svc = facade.getAssertionConsumerService(binding);
-        if (svc != null) {
-            LOGGER.debug("Binding [{}] is supported by [{}]", svc.getBinding(), entityId);
-            return binding;
-        }
-        LOGGER.warn("Checking determine profile binding for [{}]", entityId);
-        return null;
+        LOGGER.debug("Binding [{}] is supported by [{}]", svc.getBinding(), entityId);
+        return binding;
     }
 }
 

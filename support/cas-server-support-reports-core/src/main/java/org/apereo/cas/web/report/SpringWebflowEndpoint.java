@@ -4,6 +4,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -66,6 +68,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
      * @return JSON representing the current state of SWF.
      */
     @ReadOperation
+    @Operation(summary = "Get Spring webflow report using an optional flow id", parameters = {@Parameter(name = "flowId")})
     public Map<?, ?> getReport(@Nullable final String flowId) {
         val jsonMap = new LinkedHashMap<String, Object>();
         val map = this.applicationContext.getBeansOfType(FlowDefinitionRegistry.class, false, true);

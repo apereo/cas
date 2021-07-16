@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.support;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.zaxxer.hikari.HikariDataSource;
@@ -131,5 +132,21 @@ public class JpaBeans {
         }
         bean.getJpaPropertyMap().putAll(config.getJpaProperties());
         return bean;
+    }
+
+    /**
+     * Is valid data source connection.
+     *
+     * @param ds      the ds
+     * @param timeout the timeout
+     * @return the boolean
+     */
+    public static boolean isValidDataSourceConnection(final CloseableDataSource ds, final int timeout) {
+        try (val con = ds.getConnection()) {
+            return con.isValid(timeout);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return false;
     }
 }

@@ -21,6 +21,7 @@ import org.apereo.cas.web.DelegatingController;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.ServiceValidationViewFactory;
 import org.apereo.cas.web.ServiceValidationViewFactoryConfigurer;
+import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -80,6 +81,10 @@ public class OpenIdConfiguration {
     private ObjectProvider<ArgumentExtractor> argumentExtractor;
 
     @Autowired
+    @Qualifier("urlValidator")
+    private ObjectProvider<UrlValidator> urlValidator;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
@@ -132,7 +137,7 @@ public class OpenIdConfiguration {
         val openIdPrefixUrl = casProperties.getServer().getPrefix().concat("/openid");
         return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager(),
             centralAuthenticationService.getObject(),
-            servicesManager.getObject());
+            servicesManager.getObject(), urlValidator.getObject());
     }
 
     @Bean

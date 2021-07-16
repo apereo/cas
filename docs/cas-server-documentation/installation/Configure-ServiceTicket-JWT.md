@@ -46,13 +46,11 @@ are only left in charge of validating the JWT itself. Do not confuse this with O
 cannot be refreshed and must be obtained again once you deem it expired. If you need more, consider using the OpenID Connect protocol instead. 
 Note that the responsibility of validating the JWT is pushed onto <b>the client</b> and NOT the CAS server itself.</p></div>
 
-## Administrative Endpoints
+## Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `jwtTicketSigningPublicKey`  | Exposes the signing public key, accepting an optional `service` parameter.
+
+{% include actuators.html endpoints="jwtTicketSigningPublicKey" %}
 
 ## Configuration
 

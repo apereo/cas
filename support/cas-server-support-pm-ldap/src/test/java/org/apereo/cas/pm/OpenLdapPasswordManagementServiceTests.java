@@ -15,7 +15,6 @@ import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.Credential;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,7 +37,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap[0].trust-manager=ANY",
     "cas.authn.pm.ldap[0].security-questions-attributes.registeredAddress=roomNumber"
 })
-@DirtiesContext
 @EnabledIfPortOpen(port = 11389)
 public class OpenLdapPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
     private static final int LDAP_PORT = 11389;

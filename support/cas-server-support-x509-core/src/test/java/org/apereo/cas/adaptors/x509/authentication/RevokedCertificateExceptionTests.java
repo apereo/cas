@@ -32,5 +32,6 @@ public class RevokedCertificateExceptionTests {
         when(entry.getExtensionValue(anyString())).thenReturn("3".getBytes(StandardCharsets.UTF_8));
         val results = new RevokedCertificateException(entry);
         assertNotNull(results.getReason());
+        assertNotNull(results.getMessage());
     }
 }

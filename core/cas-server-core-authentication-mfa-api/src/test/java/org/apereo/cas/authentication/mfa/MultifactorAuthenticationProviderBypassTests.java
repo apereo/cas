@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 
-@Tag("MFA")
+@Tag("MFATrigger")
 public class MultifactorAuthenticationProviderBypassTests {
 
     @Test

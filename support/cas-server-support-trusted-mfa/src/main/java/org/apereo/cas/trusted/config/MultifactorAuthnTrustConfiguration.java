@@ -22,6 +22,7 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.boot.ConditionalOnMatchingHostname;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Expiry;
@@ -142,13 +143,12 @@ public class MultifactorAuthnTrustConfiguration {
         return CipherExecutor.noOp();
     }
 
+    @ConditionalOnMatchingHostname(name = "cas.authn.mfa.trusted.cleaner.schedule.enabled-on-host")
     @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
     @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
     @Bean
     public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner() {
-        return new MultifactorAuthenticationTrustStorageCleaner(
-            casProperties.getAuthn().getMfa().getTrusted(),
-            mfaTrustEngine());
+        return new MultifactorAuthenticationTrustStorageCleaner(mfaTrustEngine());
     }
 
     @Bean

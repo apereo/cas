@@ -26,6 +26,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.authn.AuthnContextCl
 import org.apereo.cas.support.saml.web.idp.profile.builders.authn.DefaultAuthnContextClassRefBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.authn.SamlProfileSamlAuthNStatementBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.conditions.SamlProfileSamlConditionsBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.DefaultSamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSamlNameIdBuilder;
@@ -232,7 +233,7 @@ public class SamlIdPConfiguration {
             .build();
         return new SamlProfileSamlSoap11ResponseBuilder(context);
     }
-    
+
     @ConditionalOnMissingBean(name = "samlProfileSamlArtifactFaultResponseBuilder")
     @Bean
     @RefreshScope
@@ -281,12 +282,12 @@ public class SamlIdPConfiguration {
     public SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder() {
         return new SamlProfileSamlAssertionBuilder(
             openSamlConfigBean.getObject(),
-            casProperties,
             samlProfileSamlAuthNStatementBuilder(),
             samlProfileSamlAttributeStatementBuilder(),
             samlProfileSamlSubjectBuilder(),
             samlProfileSamlConditionsBuilder(),
-            samlObjectSigner());
+            samlObjectSigner(),
+            casSamlIdPMetadataResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlAuthNStatementBuilder")
@@ -315,11 +316,11 @@ public class SamlIdPConfiguration {
         return new SamlIdPObjectEncrypter(casProperties.getAuthn().getSamlIdp());
     }
 
-    @ConditionalOnMissingBean(name = "samlObjectSigner")
+    @ConditionalOnMissingBean(name = SamlIdPObjectSigner.DEFAULT_BEAN_NAME)
     @Bean
     @RefreshScope
     public SamlIdPObjectSigner samlObjectSigner() {
-        return new SamlIdPObjectSigner(
+        return new DefaultSamlIdPObjectSigner(
             casSamlIdPMetadataResolver.getObject(),
             casProperties,
             samlIdPMetadataLocator.getObject());
@@ -392,6 +393,7 @@ public class SamlIdPConfiguration {
         SamlProfileSamlResponseBuilderConfigurationContextBuilder getSamlResponseBuilderConfigurationContextBuilder() {
 
         return SamlProfileSamlResponseBuilderConfigurationContext.builder()
+            .samlIdPMetadataResolver(casSamlIdPMetadataResolver.getObject())
             .openSamlConfigBean(openSamlConfigBean.getObject())
             .samlObjectSigner(samlObjectSigner())
             .velocityEngineFactory(velocityEngineFactory.getObject())

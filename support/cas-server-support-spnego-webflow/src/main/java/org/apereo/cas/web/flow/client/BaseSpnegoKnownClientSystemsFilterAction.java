@@ -66,7 +66,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
             LOGGER.info("Spnego should be activated for [{}]", remoteIp);
             return yes();
         }
-        LOGGER.info("Spnego should is skipped for [{}]", remoteIp);
+        LOGGER.info("Spnego is skipped for [{}]", remoteIp);
         return no();
     }
 

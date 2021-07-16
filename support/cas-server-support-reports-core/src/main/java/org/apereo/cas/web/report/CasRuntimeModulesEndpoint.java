@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.SystemUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -32,6 +33,7 @@ public class CasRuntimeModulesEndpoint extends BaseCasActuatorEndpoint {
      * @return the list
      */
     @ReadOperation
+    @Operation(summary = "Get all available CAS runtime module descriptors")
     public List<SystemUtils.CasRuntimeModule> reportModules() {
         return SystemUtils.getRuntimeModules(applicationContext);
     }

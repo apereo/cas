@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.yubikey.bypass.groovy.location=classpath:GroovyBypass.groovy",
         "cas.authn.mfa.yubikey.bypass.rest.url=http://localhost:8080/bypass"
     })
-@Tag("MFA")
+@Tag("MFATrigger")
 public class YubiKeyAuthenticationMultifactorProviderBypassConfigurationTests {
     @Autowired
     @Qualifier("yubikeyBypassEvaluator")

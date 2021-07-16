@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
+import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -248,5 +249,11 @@ public class CoreAuthenticationTestUtils {
             builder.addCredential(new BasicCredentialMetaData(credential));
         });
         return builder;
+    }
+
+    public static AuthenticationSystemSupport getAuthenticationSystemSupport() {
+        val authSupport = mock(AuthenticationSystemSupport.class);
+        when(authSupport.getPrincipalElectionStrategy()).thenReturn(new DefaultPrincipalElectionStrategy());
+        return authSupport;
     }
 }

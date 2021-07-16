@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -24,11 +25,13 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.UserProfile;
+import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,7 +42,7 @@ import java.util.stream.Stream;
  * @since 5.0.0
  */
 @Slf4j
-public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
+public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<OidcConfigurationContext> {
 
     public OidcIdTokenGeneratorService(final OidcConfigurationContext configurationContext) {
         super(configurationContext);
@@ -52,11 +55,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
                            final long timeoutInSeconds,
                            final OAuth20ResponseTypes responseType,
                            final OAuthRegisteredService registeredService) {
-
-        if (!(registeredService instanceof OidcRegisteredService)) {
-            throw new IllegalArgumentException("Registered service instance is not an OIDC service");
-        }
-
+        Assert.isAssignable(OidcRegisteredService.class, registeredService.getClass(), "Registered service instance is not an OIDC service");
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
         val context = new JEEContext(request, response);
         LOGGER.trace("Attempting to produce claims for the id token [{}]", accessToken);
@@ -66,11 +65,6 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
             oidcRegisteredService, authenticatedProfile, context, responseType);
 
         return encodeAndFinalizeToken(claims, oidcRegisteredService, accessToken);
-    }
-
-    @Override
-    public OidcConfigurationContext getConfigurationContext() {
-        return (OidcConfigurationContext) super.getConfigurationContext();
     }
 
     /**
@@ -101,18 +95,19 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
 
         val claims = new JwtClaims();
 
-        val jwtId = getJwtId(accessToken.getTicketGrantingTicket());
+        val tgt = accessToken.getTicketGrantingTicket();
+        val jwtId = getJwtId(tgt);
         claims.setJwtId(jwtId);
         claims.setClaim(OidcConstants.CLAIM_SESSIOND_ID, DigestUtils.sha(jwtId));
 
-        claims.setIssuer(oidc.getCore().getIssuer());
+        claims.setIssuer(getConfigurationContext().getIssuerService().determineIssuer(Optional.empty()));
         claims.setAudience(accessToken.getClientId());
 
         val expirationDate = NumericDate.now();
         expirationDate.addSeconds(timeoutInSeconds);
         claims.setExpirationTime(expirationDate);
         claims.setIssuedAtToNow();
-        claims.setNotBeforeMinutesInThePast(oidc.getCore().getSkew());
+        claims.setNotBeforeMinutesInThePast((float) Beans.newDuration(oidc.getCore().getSkew()).toMinutes());
         claims.setSubject(principal.getId());
 
         val mfa = getConfigurationContext().getCasProperties().getAuthn().getMfa();
@@ -128,7 +123,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         }
 
         claims.setStringClaim(OAuth20Constants.CLIENT_ID, service.getClientId());
-        claims.setClaim(OidcConstants.CLAIM_AUTH_TIME, accessToken.getAuthentication().getAuthenticationDate().toEpochSecond());
+        claims.setClaim(OidcConstants.CLAIM_AUTH_TIME, tgt.getAuthentication().getAuthenticationDate().toEpochSecond());
 
         if (attributes.containsKey(OAuth20Constants.STATE)) {
             claims.setClaim(OAuth20Constants.STATE, attributes.get(OAuth20Constants.STATE).get(0));
@@ -241,6 +236,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
             .service(accessToken.getService())
             .accessTokenJwtBuilder(getConfigurationContext().getAccessTokenJwtBuilder())
             .casProperties(getConfigurationContext().getCasProperties())
+            .issuer(getConfigurationContext().getIssuerService().determineIssuer(Optional.of(registeredService)))
             .build()
             .encode();
 

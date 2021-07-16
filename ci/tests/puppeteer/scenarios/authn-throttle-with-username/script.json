@@ -1,0 +1,21 @@
+{
+  "dependencies": "throttle",
+  "properties": [
+    "--cas.authn.throttle.core.username-parameter=username",
+    "--cas.authn.throttle.failure.threshold=2",
+    "--cas.authn.throttle.failure.range-seconds=10",
+    "--cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",
+
+    "--logging.level.org.apereo.cas=info",
+    
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=throttles",
+    "--management.endpoint.health.show-details=always",
+    "--management.endpoints.enabled-by-default=true"
+  ]
+}
+
+
+
+
+

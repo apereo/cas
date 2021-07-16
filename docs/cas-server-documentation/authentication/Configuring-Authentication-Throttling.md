@@ -44,46 +44,29 @@ Enable the following module in your configuration overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle" %}
 
-### Administrative Endpoints
-
-The following endpoints are provided by CAS:
- 
-| Endpoint                     | Description
-|------------------------------|---------------------------------------------
-| `throttles`                  | `GET` request to fetch throttled records.
-
-### IP Address
-
-Uses a memory map to prevent successive failed login attempts from the same IP address.
-
-### IP Address and Username
-
-Uses a memory map to prevent successive failed login attempts for
-a particular username from the same IP address.
-
-### JDBC
-
-Please [see this guide](Configuring-Authentication-Throttling-JDBC.html) for more info.
-
-### MongoDb
-
-Please [see this guide](Configuring-Authentication-Throttling-MongoDb.html) for more info.
-
-### Redis
-
-Please [see this guide](Configuring-Authentication-Throttling-Redis.html) for more info.
-
-### Hazelcast
-
-Please [see this guide](Configuring-Authentication-Throttling-Hazelcast.html) for more info.
-
-### CouchDb
-
-Please [see this guide](Configuring-Authentication-Throttling-CouchDb.html) for more info.
-
 ## Configuration
 
-{% include casproperties.html properties="cas.authn.throttle" %}
+{% include casproperties.html properties="cas.authn.throttle.core,cas.authn.throttle.schedule,cas.authn.throttle.failure" %}
+
+### Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include actuators.html endpoints="throttles" %}
+
+### Throttling Strategies
+      
+The following throttling strategies are offered by CAS.
+
+| Storage          | Description                                         
+|--------------------------------------------------------------------------------------------------------------------------
+| IP Address       | Uses a memory map to prevent successive failed login attempts from the same IP address.
+| IP Address and Username | Uses a memory map to prevent successive failed login attempts for a username from the same IP address.
+| JDBC             | [See this guide](Configuring-Authentication-Throttling-JDBC.html).
+| MongoDb          | [See this guide](Configuring-Authentication-Throttling-MongoDb.html).
+| Redis            | [See this guide](Configuring-Authentication-Throttling-Redis.html).
+| Hazelcast        | [See this guide](Configuring-Authentication-Throttling-Hazelcast.html).
+| CouchDb          | [See this guide](Configuring-Authentication-Throttling-CouchDb.html).
 
 ## High Availability
 

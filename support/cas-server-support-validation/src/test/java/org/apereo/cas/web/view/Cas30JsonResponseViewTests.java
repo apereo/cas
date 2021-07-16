@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.servlet.View;
 
 import java.util.HashMap;
@@ -30,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@DirtiesContext
 @Tag("CAS")
 public class Cas30JsonResponseViewTests extends Cas30ResponseViewTests {
     @Override

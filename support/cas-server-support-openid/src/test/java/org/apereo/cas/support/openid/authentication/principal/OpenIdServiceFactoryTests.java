@@ -14,8 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * Test cases for {@link OpenIdServiceFactory}.
  *
  * @author Misagh Moayyed
- * @deprecated 6.2
  * @since 4.2
+ * @deprecated 6.2
  */
 @Deprecated(since = "6.2.0")
 @Tag("Simple")

@@ -201,7 +201,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 LOGGER.debug("Setting path for cookies for distributed session cookie generator to: [{}]", cookiePath);
                 configContext.getDelegatedClientDistributedSessionCookieGenerator().setCookiePath(cookiePath);
             } else {
-                LOGGER.trace("Delegated authentication cookie domain is [{}] with path [{}]", configContext.getDelegatedClientDistributedSessionCookieGenerator().getCookieDomain(), path);
+                LOGGER.trace("Delegated authentication cookie domain is [{}] with path [{}]",
+                    configContext.getDelegatedClientDistributedSessionCookieGenerator().getCookieDomain(), path);
             }
         }
         return super.doPreExecute(context);
@@ -277,7 +278,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         LOGGER.debug("Delegated authentication client is [{}] with service [{}]", client, service);
         if (service != null) {
             request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
-            if (!isDelegatedClientAuthorizedForService(client, service)) {
+            if (!isDelegatedClientAuthorizedForService(client, service, request)) {
                 LOGGER.warn("Delegated client [{}] is not authorized by service [{}]", client, service);
                 throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
             }
@@ -335,9 +336,11 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     protected boolean singleSignOnSessionAuthorizedForService(final RequestContext requestContext) {
         val resolvedService = resolveServiceFromRequestContext(requestContext);
         val authentication = getSingleSignOnAuthenticationFrom(requestContext);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+
         val authorized = authentication
             .map(authn -> configContext.getDelegatedAuthenticationAccessStrategyHelper()
-                .isDelegatedClientAuthorizedForAuthentication(authn, resolvedService))
+                .isDelegatedClientAuthorizedForAuthentication(authn, resolvedService, request))
             .orElse(Boolean.FALSE);
         val strategy = configContext.getSingleSignOnParticipationStrategy();
         val ssoRequest = SingleSignOnParticipationRequest.builder()
@@ -393,8 +396,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     }
 
     private boolean isDelegatedClientAuthorizedForService(final Client client,
-                                                          final Service service) {
+                                                          final Service service,
+                                                          final HttpServletRequest request) {
         return configContext.getDelegatedAuthenticationAccessStrategyHelper()
-            .isDelegatedClientAuthorizedForService(client, service);
+            .isDelegatedClientAuthorizedForService(client, service, request);
     }
 }

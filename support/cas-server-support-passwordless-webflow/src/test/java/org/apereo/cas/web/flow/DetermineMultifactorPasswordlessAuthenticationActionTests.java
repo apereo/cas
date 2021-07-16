@@ -23,7 +23,6 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Flow;
@@ -62,7 +61,6 @@ public class DetermineMultifactorPasswordlessAuthenticationActionTests {
         "cas.authn.passwordless.core.multifactor-authentication-activated=true"
     })
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @DirtiesContext
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     public class WithoutMultifactorAuthenticationTrigger extends BasePasswordlessAuthenticationActionTests {
@@ -95,7 +93,6 @@ public class DetermineMultifactorPasswordlessAuthenticationActionTests {
         "cas.authn.mfa.triggers.global.global-provider-id=" + TestMultifactorAuthenticationProvider.ID
     })
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @DirtiesContext
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     public class WithMultifactorAuthenticationTrigger extends BasePasswordlessAuthenticationActionTests {

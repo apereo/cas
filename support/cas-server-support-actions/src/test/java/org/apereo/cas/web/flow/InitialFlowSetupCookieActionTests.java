@@ -51,7 +51,7 @@ public class InitialFlowSetupCookieActionTests extends AbstractWebflowActionsTes
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     @Autowired
-    @Qualifier("authenticationEventExecutionPlan")
+    @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
     private AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     private InitialFlowSetupAction action;

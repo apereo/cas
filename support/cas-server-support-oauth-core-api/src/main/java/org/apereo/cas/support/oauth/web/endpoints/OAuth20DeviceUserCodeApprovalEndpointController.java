@@ -25,7 +25,7 @@ import java.util.Map;
  * @since 6.0.0
  */
 @Slf4j
-public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20Controller {
+public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20Controller<OAuth20ConfigurationContext> {
     /**
      * User code parameter name.
      */
@@ -62,14 +62,14 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
         if (StringUtils.isBlank(userCode)) {
             return codeNotfound;
         }
-        val codeId = getOAuthConfigurationContext().getDeviceUserCodeFactory().generateDeviceUserCode(userCode);
+        val codeId = getConfigurationContext().getDeviceUserCodeFactory().generateDeviceUserCode(userCode);
         try {
-            val deviceUserCode = getOAuthConfigurationContext().getCentralAuthenticationService().getTicket(codeId, OAuth20DeviceUserCode.class);
+            val deviceUserCode = getConfigurationContext().getCentralAuthenticationService().getTicket(codeId, OAuth20DeviceUserCode.class);
             if (deviceUserCode.isUserCodeApproved()) {
                 return getModelAndViewForFailure("codeapproved");
             }
             deviceUserCode.approveUserCode();
-            getOAuthConfigurationContext().getTicketRegistry().updateTicket(deviceUserCode);
+            getConfigurationContext().getTicketRegistry().updateTicket(deviceUserCode);
             return new ModelAndView(OAuth20Constants.DEVICE_CODE_APPROVED_VIEW, HttpStatus.OK);
         } catch (final InvalidTicketException e) {
             LoggingUtils.warn(LOGGER, e);

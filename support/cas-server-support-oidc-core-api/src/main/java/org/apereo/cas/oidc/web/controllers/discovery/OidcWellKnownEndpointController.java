@@ -4,13 +4,19 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
-import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
+import org.apereo.cas.oidc.web.controllers.BaseOidcController;
 
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * This is {@link OidcWellKnownEndpointController}.
@@ -18,34 +24,46 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class OidcWellKnownEndpointController extends BaseOAuth20Controller {
+@Slf4j
+public class OidcWellKnownEndpointController extends BaseOidcController {
 
     private final OidcWebFingerDiscoveryService webFingerDiscoveryService;
 
-    public OidcWellKnownEndpointController(final OidcConfigurationContext oAuthConfigurationContext,
+    public OidcWellKnownEndpointController(final OidcConfigurationContext configurationContext,
                                            final OidcWebFingerDiscoveryService webFingerDiscoveryService) {
-        super(oAuthConfigurationContext);
+        super(configurationContext);
         this.webFingerDiscoveryService = webFingerDiscoveryService;
     }
 
     /**
      * Gets well known discovery configuration.
      *
+     * @param request  the request
+     * @param response the response
      * @return the well known discovery configuration
      */
-    @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OidcServerDiscoverySettings> getWellKnownDiscoveryConfiguration() {
-        return new ResponseEntity(this.webFingerDiscoveryService.getDiscovery(), HttpStatus.OK);
+    @GetMapping(value = {
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_URL,
+        "/**/" + OidcConstants.WELL_KNOWN_URL
+    }, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<OidcServerDiscoverySettings> getWellKnownDiscoveryConfiguration(final HttpServletRequest request,
+                                                                                          final HttpServletResponse response) {
+        return getOidcServerDiscoveryResponse(request, response, OidcConstants.WELL_KNOWN_URL);
     }
 
     /**
      * Gets well known openid discovery configuration.
      *
+     * @param request  the request
+     * @param response the response
      * @return the well known discovery configuration
      */
-    @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known/openid-configuration", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OidcServerDiscoverySettings> getWellKnownOpenIdDiscoveryConfiguration() {
-        return getWellKnownDiscoveryConfiguration();
+    @GetMapping(value = {
+        '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_OPENID_CONFIGURATION_URL,
+        "/**/" + OidcConstants.WELL_KNOWN_OPENID_CONFIGURATION_URL}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<OidcServerDiscoverySettings> getWellKnownOpenIdDiscoveryConfiguration(final HttpServletRequest request,
+                                                                                                final HttpServletResponse response) {
+        return getOidcServerDiscoveryResponse(request, response, OidcConstants.WELL_KNOWN_OPENID_CONFIGURATION_URL);
     }
 
     /**
@@ -55,9 +73,21 @@ public class OidcWellKnownEndpointController extends BaseOAuth20Controller {
      * @param rel      the rel
      * @return the web finger response
      */
-    @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known/webfinger", produces = "application/jrd+json")
-    public ResponseEntity getWebFingerResponse(@RequestParam("resource") final String resource,
-                                               @RequestParam(value = "rel", required = false) final String rel) {
+    @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_URL + "/webfinger",
+        produces = "application/jrd+json")
+    public ResponseEntity<Map> getWebFingerResponse(@RequestParam("resource") final String resource,
+                                                    @RequestParam(value = "rel", required = false) final String rel) {
         return webFingerDiscoveryService.handleWebFingerDiscoveryRequest(resource, rel);
+    }
+
+    private ResponseEntity<OidcServerDiscoverySettings> getOidcServerDiscoveryResponse(final HttpServletRequest request,
+                                                                                       final HttpServletResponse response,
+                                                                                       final String endpoint) {
+        if (isIssuerValidForEndpoint(request, response, endpoint)) {
+            val discovery = this.webFingerDiscoveryService.getDiscovery();
+            return new ResponseEntity<>(discovery, HttpStatus.OK);
+        }
+        LOGGER.warn("Unable to accept request; issuer for endpoint [{}] is invalid", endpoint);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

@@ -14,7 +14,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20RevocationEndpointContr
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
 import org.apereo.cas.support.oauth.web.mgmt.OAuth20TokenManagementEndpoint;
 import org.apereo.cas.token.JwtBuilder;
-import org.apereo.cas.web.ProtocolEndpointConfigurer;
+import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
@@ -66,9 +66,9 @@ public class CasOAuth20EndpointsConfiguration {
     @ConditionalOnMissingBean(name = "introspectionEndpointController")
     @Bean
     @Autowired
-    public OAuth20IntrospectionEndpointController introspectionEndpointController(
+    public OAuth20IntrospectionEndpointController<OAuth20ConfigurationContext> introspectionEndpointController(
         @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
-        return new OAuth20IntrospectionEndpointController(context);
+        return new OAuth20IntrospectionEndpointController<>(context);
     }
 
     @ConditionalOnMissingBean(name = "accessTokenController")
@@ -122,7 +122,12 @@ public class CasOAuth20EndpointsConfiguration {
     }
 
     @Bean
-    public ProtocolEndpointConfigurer oauth20ProtocolEndpointConfigurer() {
-        return () -> List.of(StringUtils.prependIfMissing(OAuth20Constants.BASE_OAUTH20_URL, "/"));
+    public ProtocolEndpointWebSecurityConfigurer<Void> oauth20ProtocolEndpointConfigurer() {
+        return new ProtocolEndpointWebSecurityConfigurer<>() {
+            @Override
+            public List<String> getIgnoredEndpoints() {
+                return List.of(StringUtils.prependIfMissing(OAuth20Constants.BASE_OAUTH20_URL, "/"));
+            }
+        };
     }
 }

@@ -3,6 +3,7 @@ package org.apereo.cas.web.view;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.view.ThymeleafView;
 
@@ -16,42 +17,24 @@ import java.util.Locale;
  */
 public class CasProtocolView extends ThymeleafView {
 
-    /**
-     * Instantiates a new CAS protocol view.
-     *
-     * @param templateName       the template name
-     * @param applicationContext the application context
-     * @param templateEngine     the template engine
-     * @param properties         the properties
-     * @param contentType        the content type
-     */
     public CasProtocolView(final String templateName, final ApplicationContext applicationContext,
                            final SpringTemplateEngine templateEngine, final ThymeleafProperties properties, final String contentType) {
         super(templateName);
         setApplicationContext(applicationContext);
         setTemplateEngine(templateEngine);
         setCharacterEncoding(properties.getEncoding().displayName());
-        setLocale(Locale.getDefault());
         if (StringUtils.isNotBlank(contentType)) {
             setContentType(contentType);
         }
     }
 
-    /**
-     * Instantiates a new CAS protocol view.
-     *
-     * @param templateName       the template name
-     * @param applicationContext the application context
-     * @param templateEngine     the template engine
-     * @param properties         the properties
-     */
-    public CasProtocolView(final String templateName, final ApplicationContext applicationContext,
-                           final SpringTemplateEngine templateEngine, final ThymeleafProperties properties) {
-        this(templateName, applicationContext, templateEngine, properties, null);
-    }
-
     @Override
     public String toString() {
         return getTemplateName();
+    }
+
+    @Override
+    protected Locale getLocale() {
+        return LocaleContextHolder.getLocale();
     }
 }
