@@ -101,6 +101,7 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
         if (StringUtils.isBlank(username)) {
             return getErrorEvent("username.missing", "No username could be located for the given email address", requestContext);
         }
+        query.username(username);
         if (sendForgotUsernameEmailToAccount(query, requestContext)) {
             return success();
         }
