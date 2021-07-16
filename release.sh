@@ -26,6 +26,11 @@ clear
 java -version
 
 casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
+if [[ "${casVersion}" == v* ]] ;
+then
+    echo "CAS version ${} is incorrect and likely a tag."
+    exit 1
+fi
 
 echo -e "\n"
 echo "***************************************************************"
