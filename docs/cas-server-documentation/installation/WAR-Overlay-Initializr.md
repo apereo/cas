@@ -67,7 +67,7 @@ The project selection is indicated using a `type` parameter. The following types
 | `cas-bootadmin-server-overlay`          | Generates a WAR Overlay for the [Spring Boot Admin Server](../monitoring/Configuring-Monitoring-Administration.html).
 | `cas-config-server-overlay`             | Generates a WAR Overlay for the [Spring Cloud Configuration Server](../configuration/Configuration-Server-Management.html).
 | `cas-discovery-server-overlay`          | Generates a WAR Overlay for the [Service Discovery Server](../installation/Service-Discovery-Guide-Eureka.html).
-| `cas-mgmt-overlay`                      | Generates a WAR Overlay for the [CAS Management Web Application](../services/Installing-ServicesMgmt-Webapp.html).
+| `cas-management-overlay`                 | Generates a WAR Overlay for the [CAS Management Web Application](../services/Installing-ServicesMgmt-Webapp.html).
 
 ## Project Versions
 
