@@ -9,7 +9,10 @@ import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.web.servlet.View;
+import org.springframework.web.util.ContentCachingRequestWrapper;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,10 +51,20 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
     protected void renderMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
                                            final HttpServletResponse response) {
 
+        val requestWrapper = new ContentCachingRequestWrapper(request);
+        val responseWrapper = new ContentCachingResponseWrapper(response);
         LOGGER.debug("Preparing the output model [{}] to render view [{}]", model.keySet(), getClass().getSimpleName());
         prepareMergedOutputModel(model, request, response);
         LOGGER.trace("Prepared output model with objects [{}]. Now rendering view...", model.keySet().toArray());
-        this.view.render(model, request, response);
+        try {
+            getView().render(model, requestWrapper, responseWrapper);
+        } finally {
+            val responseArray = responseWrapper.getContentAsByteArray();
+            val output = new String(responseArray, responseWrapper.getCharacterEncoding());
+            val message = String.format("Final CAS response for [%s] is:%n%s%n", getView().toString(), output);
+            LOGGER.debug(message);
+            responseWrapper.copyBodyToResponse();
+        }
     }
 
     /**
