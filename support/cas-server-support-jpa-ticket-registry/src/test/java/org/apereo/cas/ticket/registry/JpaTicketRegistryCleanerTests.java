@@ -22,6 +22,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -122,7 +123,7 @@ public class JpaTicketRegistryCleanerTests {
         assertTrue(ticketRegistry.getTickets().isEmpty());
     }
 
-    @Test
+    @RepeatedTest(2)
     @Order(1)
     public void verifyOauthOperation() {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
