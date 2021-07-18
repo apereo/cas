@@ -122,8 +122,8 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
         val credential = new BasicIdentifiableCredential();
         credential.setId(query.getUsername());
         val person = principalResolver.resolve(credential);
-        FunctionUtils.throwIf(person instanceof NullPrincipal, () -> new IllegalArgumentException("Unable to resolve the principal"));
-        FunctionUtils.doIfNotNull(person, principal -> parameters.put("principal", principal));
+        FunctionUtils.doIf(person != null && !person.getClass().equals(NullPrincipal.class),
+            principal -> parameters.put("principal", principal)).accept(person);
         val reset = casProperties.getAuthn().getPm().getForgotUsername().getMail();
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val body = EmailMessageBodyBuilder.builder().properties(reset)

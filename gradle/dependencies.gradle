@@ -2204,6 +2204,8 @@ ext.libraries = [
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
                 },
                 dependencies.create("net.minidev:json-smart:$jsonSmartVersion") {
+                },
+                dependencies.create("com.github.stephenc.jcip:jcip-annotations:1.0-1") {
                 }
         ],
         pac4jcouchdb            : [
