@@ -28,6 +28,7 @@ enum TestCategories {
     Infinispan,
     InfluxDb,
     JDBC,
+    JDBCAuthentication,
     JMS,
     JMX,
     Kafka,

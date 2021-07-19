@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.jdbc[1].sql=SELECT * FROM table_ext_users WHERE {0}",
     "cas.authn.attribute-repository.jdbc[1].username=uid"
 })
-@Tag("JDBC")
+@Tag("JDBCAuthentication")
 public class JdbcMultiRowAttributeRepositoryTests extends BaseJdbcAttributeRepositoryTests {
 
     @Test

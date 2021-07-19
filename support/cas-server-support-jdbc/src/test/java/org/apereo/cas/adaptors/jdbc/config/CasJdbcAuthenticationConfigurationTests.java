@@ -77,7 +77,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.jdbc.query[0].sql=SELECT * FROM users WHERE uid=?",
     "cas.authn.jdbc.query[0].field-password=psw"
 })
-@Tag("JDBC")
+@Tag("JDBCAuthentication")
 public class CasJdbcAuthenticationConfigurationTests {
     @Autowired
     private CasConfigurationProperties casProperties;

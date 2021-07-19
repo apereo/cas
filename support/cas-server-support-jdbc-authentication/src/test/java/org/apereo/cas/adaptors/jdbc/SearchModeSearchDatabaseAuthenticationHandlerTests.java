@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @SuppressWarnings("JDBCExecuteWithNonConstantString")
-@Tag("JDBC")
+@Tag("JDBCAuthentication")
 @Import(SearchModeSearchDatabaseAuthenticationHandlerTests.DatabaseTestConfiguration.class)
 public class SearchModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
     private SearchModeSearchDatabaseAuthenticationHandler handler;

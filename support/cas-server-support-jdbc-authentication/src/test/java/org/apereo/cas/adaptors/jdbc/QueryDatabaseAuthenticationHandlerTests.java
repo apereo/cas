@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @SuppressWarnings("JDBCExecuteWithNonConstantString")
-@Tag("JDBC")
+@Tag("JDBCAuthentication")
 @Import(QueryDatabaseAuthenticationHandlerTests.DatabaseTestConfiguration.class)
 public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
     private static final String SQL = "SELECT * FROM casusers where username=?";

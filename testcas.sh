@@ -201,6 +201,9 @@ while (( "$#" )); do
             jdbc|jpa|database|db|hibernate|rdbms|hsql)
                 task+="testJDBC "
                 ;;
+            jdbcauthentication|jdbcauthn)
+                task+="testJDBCAuthentication "
+                ;;
             oauth)
                 task+="testOAuth "
                 ;;
