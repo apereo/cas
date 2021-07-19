@@ -71,7 +71,6 @@ public class ChainingCasProtocolValidationSpecification implements CasProtocolVa
     @Override
     public void reset() {
         this.specifications.forEach(CasProtocolValidationSpecification::reset);
+        setRenew(false);
     }
-
-    
 }
