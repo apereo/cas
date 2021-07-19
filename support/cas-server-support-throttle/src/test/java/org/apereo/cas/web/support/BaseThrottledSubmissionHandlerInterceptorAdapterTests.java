@@ -83,6 +83,13 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     @Qualifier("casAuthenticationManager")
     protected AuthenticationManager authenticationManager;
 
+    private static UsernamePasswordCredential badCredentials(final String username) {
+        val credentials = new UsernamePasswordCredential();
+        credentials.setUsername(username);
+        credentials.setPassword("badpassword");
+        return credentials;
+    }
+
     @BeforeEach
     public void initialize() {
         val request = new MockHttpServletRequest();
@@ -149,15 +156,10 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         } catch (final AuthenticationException e) {
             getThrottle().postHandle(request, response, null, null);
             return response;
+        } finally {
+            getThrottle().afterCompletion(request, response, null, null);
         }
         throw new AssertionError("Expected AbstractAuthenticationException");
-    }
-
-    private static UsernamePasswordCredential badCredentials(final String username) {
-        val credentials = new UsernamePasswordCredential();
-        credentials.setUsername(username);
-        credentials.setPassword("badpassword");
-        return credentials;
     }
 
     @ImportAutoConfiguration({
