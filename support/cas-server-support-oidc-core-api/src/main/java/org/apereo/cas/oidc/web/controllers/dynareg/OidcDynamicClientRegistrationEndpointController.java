@@ -146,6 +146,9 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
             } else {
                 val jwks = registrationRequest.getJwks();
                 if (jwks != null && !jwks.getJsonWebKeys().isEmpty()) {
+                    jwks.getJsonWebKeys().stream()
+                        .filter(key -> StringUtils.isBlank(key.getKeyId()))
+                        .forEach(key -> key.setKeyId(RandomUtils.randomAlphabetic(6)));
                     registeredService.setJwks(jwks.toJson());
                 }
             }
