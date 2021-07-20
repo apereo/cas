@@ -14,6 +14,18 @@
     "client_secret": "secret2"
   },
   "server": {
-    "discoveryUrl": "https://localhost:8446/cas/oidc/.well-known/openid-configuration"
-  }
+    "discoveryUrl": "https://cas-oidc-cert.herokuapp.com/cas/oidc/.well-known/openid-configuration"
+  },
+  "browser": [{
+    "match": "https://cas-oidc-cert.herokuapp.com/cas/oidc/oidcAuthorize*",
+    "tasks": [{
+            "task": "Initial Login",
+            "commands": [
+                ["text", "id", "username", "casuser"],
+                ["text", "id", "password", "Mellon"],
+                ["click", "name", "submit"]
+            ]
+        }
+    ]
+  }]
 }

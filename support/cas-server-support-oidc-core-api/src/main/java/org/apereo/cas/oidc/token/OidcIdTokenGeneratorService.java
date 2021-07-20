@@ -69,6 +69,10 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
 
     /**
      * Produce claims as jwt.
+     * As per OpenID Connect Core section 5.4, 'The Claims requested by the profile,
+     * email, address, and phone scope values are returned from the UserInfo Endpoint',
+     * except for response_type=id_token, where they are returned in the id_token
+     * (as there is no access token issued that could be used to access the userinfo endpoint).
      *
      * @param request          the request
      * @param accessToken      the access token
@@ -132,26 +136,31 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             claims.setClaim(OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).get(0));
         }
         generateAccessTokenHash(accessToken, service, claims);
-        LOGGER.trace("Comparing principal attributes [{}] with supported claims [{}]",
-            principal.getAttributes(), oidc.getDiscovery().getClaims());
 
-        principal.getAttributes()
-            .entrySet()
-            .stream()
-            .filter(entry -> {
-                if (oidc.getDiscovery().getClaims().contains(entry.getKey())) {
-                    LOGGER.trace("Found supported claim [{}]", entry.getKey());
-                    return true;
-                }
-                LOGGER.warn("Claim [{}] is not defined as a supported claim among [{}]. Skipping...",
-                    entry.getKey(), oidc.getDiscovery().getClaims());
-                return false;
-            })
-            .forEach(entry -> handleMappedClaimOrDefault(entry.getKey(), principal, claims, entry.getValue()));
+        if (responseType != OAuth20ResponseTypes.CODE) {
+            LOGGER.trace("Comparing principal attributes [{}] with supported claims [{}]",
+                principal.getAttributes(), oidc.getDiscovery().getClaims());
+            principal.getAttributes()
+                .entrySet()
+                .stream()
+                .filter(entry -> {
+                    if (oidc.getDiscovery().getClaims().contains(entry.getKey())) {
+                        LOGGER.trace("Found supported claim [{}]", entry.getKey());
+                        return true;
+                    }
+                    LOGGER.warn("Claim [{}] is not defined as a supported claim among [{}]. Skipping...",
+                        entry.getKey(), oidc.getDiscovery().getClaims());
+                    return false;
+                })
+                .forEach(entry -> handleMappedClaimOrDefault(entry.getKey(), principal, claims, entry.getValue()));
 
-        if (!claims.hasClaim(OidcConstants.CLAIM_PREFERRED_USERNAME)) {
-            handleMappedClaimOrDefault(OidcConstants.CLAIM_PREFERRED_USERNAME,
-                principal, claims, principal.getId());
+            if (!claims.hasClaim(OidcConstants.CLAIM_PREFERRED_USERNAME)) {
+                handleMappedClaimOrDefault(OidcConstants.CLAIM_PREFERRED_USERNAME,
+                    principal, claims, principal.getId());
+            }
+        } else {
+            LOGGER.trace("Individual claims requested by OpenID scopes such as profile, email, address, etc. are only put "
+                + "into the OpenID Connect ID token when the response type is set to id_token");
         }
 
         return claims;
@@ -186,7 +195,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                 return Objects.requireNonNullElse(bool, value);
             })
             .collect(Collectors.toCollection(ArrayList::new));
-        
+
         if (collectionValues.size() == 1) {
             claims.setClaim(attribute, collectionValues.get(0));
         } else if (collectionValues.size() > 1) {

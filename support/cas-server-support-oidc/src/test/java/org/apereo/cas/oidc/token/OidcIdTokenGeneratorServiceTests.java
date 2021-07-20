@@ -85,6 +85,63 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap(
             OIDC_CLAIM_EMAIL, List.of("casuser@example.org"),
             OIDC_CLAIM_PHONE_NUMBER, phoneValues,
+            "color", List.of("yellow"),
+            OIDC_CLAIM_NAME, List.of("casuser")));
+
+        var authentication = CoreAuthenticationTestUtils.getAuthentication(principal,
+            CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
+                OAuth20Constants.NONCE, List.of("some-nonce")));
+        when(tgt.getAuthentication()).thenReturn(authentication);
+
+        val accessToken = mock(OAuth20AccessToken.class);
+        when(accessToken.getAuthentication()).thenReturn(authentication);
+        when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
+        when(accessToken.getId()).thenReturn(getClass().getSimpleName());
+        when(accessToken.getScopes()).thenReturn(Set.of(OPENID.getScope(), PROFILE.getScope(), EMAIL.getScope(), PHONE.getScope()));
+
+        val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid");
+        registeredService.setScopes(CollectionUtils.wrapSet(EMAIL.getScope(), PROFILE.getScope(), PHONE.getScope()));
+        val idToken = oidcIdTokenGenerator.generate(request, response, accessToken, 30,
+            OAuth20ResponseTypes.ID_TOKEN, registeredService);
+        assertNotNull(idToken);
+
+        val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.ofNullable(registeredService));
+        assertNotNull(claims);
+        assertTrue(claims.hasClaim(OIDC_CLAIM_EMAIL));
+        assertEquals(authentication.getAuthenticationDate().toEpochSecond(), (long) claims.getClaimValue(OidcConstants.CLAIM_AUTH_TIME));
+        assertTrue(claims.hasClaim(OIDC_CLAIM_NAME));
+        assertTrue(claims.hasClaim(OIDC_CLAIM_PHONE_NUMBER));
+        assertEquals("casuser@example.org", claims.getStringClaimValue(OIDC_CLAIM_EMAIL));
+        assertEquals("casuser", claims.getStringClaimValue(OIDC_CLAIM_NAME));
+        assertEquals(phoneValues, claims.getStringListClaimValue(OIDC_CLAIM_PHONE_NUMBER));
+    }
+
+    @Test
+    public void verifyTokenGenerationWithOutClaimsForCodeResponseType() throws Exception {
+        val request = new MockHttpServletRequest();
+        val profile = new CommonProfile();
+        profile.setClientName("OIDC");
+        profile.setId("casuser");
+
+        request.setAttribute(Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+
+        val response = new MockHttpServletResponse();
+
+        val tgt = mock(TicketGrantingTicket.class);
+        when(tgt.getId()).thenReturn(TGT_ID);
+        val callback = casProperties.getServer().getPrefix()
+            + OAuth20Constants.BASE_OAUTH20_URL + '/'
+            + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+
+        val service = new WebApplicationServiceFactory().createService(callback);
+        when(tgt.getServices()).thenReturn(CollectionUtils.wrap("service", service));
+
+        val phoneValues = List.of("123456789", "4805553241");
+        val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap(
+            OIDC_CLAIM_EMAIL, List.of("casuser@example.org"),
+            "color", List.of("yellow"),
+            OIDC_CLAIM_PHONE_NUMBER, phoneValues,
             OIDC_CLAIM_NAME, List.of("casuser")));
 
         var authentication = CoreAuthenticationTestUtils.getAuthentication(principal,
@@ -106,13 +163,9 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
 
         val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.ofNullable(registeredService));
         assertNotNull(claims);
-        assertTrue(claims.hasClaim(OIDC_CLAIM_EMAIL));
-        assertEquals(authentication.getAuthenticationDate().toEpochSecond(), (long) claims.getClaimValue(OidcConstants.CLAIM_AUTH_TIME));
-        assertTrue(claims.hasClaim(OIDC_CLAIM_NAME));
-        assertTrue(claims.hasClaim(OIDC_CLAIM_PHONE_NUMBER));
-        assertEquals("casuser@example.org", claims.getStringClaimValue(OIDC_CLAIM_EMAIL));
-        assertEquals("casuser", claims.getStringClaimValue(OIDC_CLAIM_NAME));
-        assertEquals(phoneValues, claims.getStringListClaimValue(OIDC_CLAIM_PHONE_NUMBER));
+        assertFalse(claims.hasClaim(OIDC_CLAIM_EMAIL));
+        assertFalse(claims.hasClaim(OIDC_CLAIM_NAME));
+        assertFalse(claims.hasClaim(OIDC_CLAIM_PHONE_NUMBER));
     }
 
     @Test
@@ -201,7 +254,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
             new DefaultRegisteredServiceProperty("false"),
             RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_SIGNING_ENABLED.getPropertyName(),
             new DefaultRegisteredServiceProperty(repetitionInfo.getCurrentRepetition() % 2 == 0 ? "false" : "true")
-                                              ));
+        ));
 
         this.servicesManager.save(registeredService);
         val idToken = oidcIdTokenGenerator.generate(request, response,
@@ -213,7 +266,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         assertTrue(claims.hasClaim(OidcConstants.CLAIM_AUTH_TIME));
         val issuer = oidcIssuerService.determineIssuer(Optional.of(registeredService));
         assertEquals(issuer, claims.getIssuer());
-        
+
         val hash = claims.getClaimValue(OidcConstants.CLAIM_AT_HASH, String.class);
         val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
             .accessToken(accessToken)
