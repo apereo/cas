@@ -129,12 +129,14 @@ public class OidcRequestSupport {
      *
      * @param originalRedirectUrl the original redirect url
      * @param errorCode           the error code
+     * @param webContext          the web context
      * @return the redirect url with error
      */
     @SneakyThrows
-    public static String getRedirectUrlWithError(final String originalRedirectUrl, final String errorCode) {
-        val uriBuilder = new URIBuilder(originalRedirectUrl)
-            .addParameter(OAuth20Constants.ERROR, errorCode);
+    public static String getRedirectUrlWithError(final String originalRedirectUrl, final String errorCode,
+                                                 final WebContext webContext) {
+        val uriBuilder = new URIBuilder(originalRedirectUrl).addParameter(OAuth20Constants.ERROR, errorCode);
+        webContext.getRequestParameter(OAuth20Constants.STATE).ifPresent(st -> uriBuilder.addParameter(OAuth20Constants.STATE, st));
         return uriBuilder.build().toASCIIString();
     }
 

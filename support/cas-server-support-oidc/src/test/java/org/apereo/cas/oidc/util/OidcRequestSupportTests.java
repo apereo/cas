@@ -133,9 +133,15 @@ public class OidcRequestSupportTests {
 
     @Test
     public void verifyGetRedirectUrlWithError() {
-        val originalRedirectUrl = "https://www.example.org";
-        val expectedUrlWithError = originalRedirectUrl + "?error=login_required";
-        assertEquals(expectedUrlWithError, OidcRequestSupport.getRedirectUrlWithError(originalRedirectUrl, OidcConstants.LOGIN_REQUIRED));
+        val request = new MockHttpServletRequest();
+        request.setScheme("https");
+        request.setServerName("example.org");
+        request.addParameter("state", "123456");
+        request.setServerPort(443);
+        val context = new JEEContext(request, new MockHttpServletResponse());
+        val expectedUrlWithError = context.getRequestURL() + "?error=login_required&state=123456";
+        assertEquals(expectedUrlWithError,
+            OidcRequestSupport.getRedirectUrlWithError(context.getRequestURL(), OidcConstants.LOGIN_REQUIRED, context));
     }
 
     @Test
