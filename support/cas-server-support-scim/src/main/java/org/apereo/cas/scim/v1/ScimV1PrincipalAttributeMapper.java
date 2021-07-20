@@ -15,7 +15,9 @@ import lombok.val;
  *
  * @author Misagh Moayyed
  * @since 5.1.0
+ * @deprecated since 6.4.0
  */
+@Deprecated(since = "6.4.0")
 public class ScimV1PrincipalAttributeMapper {
 
     /**
