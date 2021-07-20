@@ -40,7 +40,8 @@ public class OidcUserProfileDataCreator extends DefaultOAuth20UserProfileDataCre
                 if (!map.containsKey(OidcConstants.CLAIM_SUB)) {
                     map.put(OidcConstants.CLAIM_SUB, principal.getId());
                 }
-                map.put(OidcConstants.CLAIM_AUTH_TIME, accessToken.getTicketGrantingTicket().getAuthentication().getAuthenticationDate().toEpochSecond());
+                map.put(OidcConstants.CLAIM_AUTH_TIME,
+                    accessToken.getTicketGrantingTicket().getAuthentication().getAuthenticationDate().toEpochSecond());
             } else {
                 map.keySet().retainAll(CollectionUtils.wrapList(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES));
             }

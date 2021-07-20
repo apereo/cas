@@ -242,7 +242,8 @@ public class CasOAuth20Configuration {
     @Bean
     @RefreshScope
     public UrlResolver casCallbackUrlResolver() {
-        return new OAuth20CasCallbackUrlResolver(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()));
+        val callbackUrl = OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix());
+        return new OAuth20CasCallbackUrlResolver(callbackUrl);
     }
 
     @Bean

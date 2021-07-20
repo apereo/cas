@@ -21,9 +21,11 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 5.3.0
+ * @deprecated Since 6.4.0
  */
 @Tag("Attributes")
 @SuppressWarnings("JavaUtilDate")
+@Deprecated(since = "6.4.0")
 public class ScimV1PrincipalAttributeMapperTests {
     @Test
     public void verifyAction() throws Exception {

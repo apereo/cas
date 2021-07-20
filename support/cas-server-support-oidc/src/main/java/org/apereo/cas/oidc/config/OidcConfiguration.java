@@ -58,6 +58,7 @@ import org.apereo.cas.oidc.token.OidcJwtAccessTokenCipherExecutor;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutor;
 import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.oidc.web.OidcAccessTokenResponseGenerator;
+import org.apereo.cas.oidc.web.OidcAuthenticationAuthorizeSecurityLogic;
 import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolver;
 import org.apereo.cas.oidc.web.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolver;
@@ -381,6 +382,15 @@ public class OidcConfiguration implements WebMvcConfigurer {
         return new OidcCasClientRedirectActionBuilder(oidcRequestSupport());
     }
 
+    @Bean
+    public HandlerInterceptor requiresAuthenticationAuthorizeInterceptor() {
+        val interceptor = new SecurityInterceptor(oauthSecConfig.getObject(),
+            Authenticators.CAS_OAUTH_CLIENT, JEEHttpActionAdapter.INSTANCE);
+        interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
+        interceptor.setSecurityLogic(new OidcAuthenticationAuthorizeSecurityLogic());
+        return interceptor;
+    }
+    
     @Bean
     public HandlerInterceptor requiresAuthenticationDynamicRegistrationInterceptor() {
         val clients = String.join(",",
