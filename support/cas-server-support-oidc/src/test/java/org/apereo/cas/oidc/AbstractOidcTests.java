@@ -304,9 +304,6 @@ public abstract class AbstractOidcTests {
     })
     @SpringBootConfiguration
     @Import({
-        OidcConfiguration.class,
-        OidcThrottleConfiguration.class,
-        OidcComponentSerializationConfiguration.class,
         CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreUtilConfiguration.class,
@@ -341,7 +338,10 @@ public abstract class AbstractOidcTests {
         CasMultifactorAuthenticationWebflowConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        OidcConfiguration.class,
+        OidcThrottleConfiguration.class,
+        OidcComponentSerializationConfiguration.class
     })
     public static class SharedTestConfiguration {
     }
