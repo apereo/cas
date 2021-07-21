@@ -51,7 +51,7 @@ public class DefaultCasEventListener {
             val location = HttpRequestUtils.getHttpServletRequestGeoLocation(clientInfo.getGeoLocation());
             dto.putGeoLocation(location);
         } else {
-            LOGGER.debug("No client information is available. The final event cannot track client location, user agent or IP addresses");
+            LOGGER.trace("No client information is available. The final event cannot track client location, user agent or IP addresses");
         }
         return dto;
     }

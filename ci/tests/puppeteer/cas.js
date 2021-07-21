@@ -2,7 +2,7 @@ const assert = require('assert');
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
-    headless: process.env.CI === "true",
+    headless: process.env.CI === "true" || process.env.HEADLESS === "true",
     devtools: process.env.CI !== "true",
     defaultViewport: null,
     slowMo: process.env.CI === "true" ? 0 : 10,
@@ -107,7 +107,7 @@ exports.newPage = async(browser) => {
 exports.assertTicketParameter = async(page) => {
     let result = new URL(page.url());
     let ticket = result.searchParams.get("ticket");
-    console.log(ticket);
+    console.log("Ticket: " + ticket);
     assert(ticket != null);
     return ticket;
 }

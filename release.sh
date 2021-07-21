@@ -8,12 +8,12 @@ TIMEOUT=640000
 function build {
     ./gradlew clean --parallel
     echo -e "\n${GREEN}Building CAS. Please be patient as this might take a while...${NORMAL}\n"
-    ./gradlew assemble -x test -x check --no-watch-fs -DpublishReleases=true -DsonatypeUsername="$1" -DsonatypePassword="$2"
+    ./gradlew assemble -x test -x check --no-watch-fs -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2"
 }
 
 function publish {
     echo -e "\n${GREEN}Publishing CAS. Please be patient as this might take a while...${NORMAL}\n"
-    ./gradlew publish closeAndReleaseRepository --no-watch-fs -DpublishReleases=true -DsonatypeUsername="$1" -DsonatypePassword="$2" \
+    ./gradlew publish closeAndReleaseRepository --no-watch-fs -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2" \
     -Dorg.gradle.internal.http.socketTimeout="${TIMEOUT}" -Dorg.gradle.internal.http.connectionTimeout="${TIMEOUT}"  \
     -Dorg.gradle.internal.publish.checksums.insecure=true
 }
@@ -26,6 +26,11 @@ clear
 java -version
 
 casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
+if [[ "${casVersion}" == v* ]] ;
+then
+    echo "CAS version ${} is incorrect and likely a tag."
+    exit 1
+fi
 
 echo -e "\n"
 echo "***************************************************************"

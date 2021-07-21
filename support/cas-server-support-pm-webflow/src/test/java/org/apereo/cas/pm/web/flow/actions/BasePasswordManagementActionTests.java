@@ -31,6 +31,7 @@ import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
@@ -105,7 +106,7 @@ public class BasePasswordManagementActionTests {
     protected CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
-    @Qualifier("passwordChangeService")
+    @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
     protected PasswordManagementService passwordManagementService;
 
     @Autowired
@@ -117,7 +118,7 @@ public class BasePasswordManagementActionTests {
     protected Action initPasswordResetAction;
 
     @Autowired
-    @Qualifier("initPasswordChangeAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_INIT_PASSWORD_CHANGE)
     protected Action initPasswordChangeAction;
 
     @Autowired

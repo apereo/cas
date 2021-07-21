@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
@@ -41,7 +42,7 @@ public class SamlResponseBuilder {
 
     private final int issueLength;
 
-    private final int skewAllowance;
+    private final String skewAllowance;
 
     private final ProtocolAttributeEncoder protocolAttributeEncoder;
 
@@ -55,9 +56,10 @@ public class SamlResponseBuilder {
      * @return the response
      */
     public Response createResponse(final String serviceId, final WebApplicationService service) {
+        val skew = Beans.newDuration(this.skewAllowance).toSeconds();
         return this.samlObjectBuilder.newResponse(
             this.samlObjectBuilder.generateSecureRandomId(),
-            ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(this.skewAllowance), serviceId, service);
+            ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(skew), serviceId, service);
     }
 
     /**

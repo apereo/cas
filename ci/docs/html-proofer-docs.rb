@@ -26,6 +26,7 @@ end
 # url_ignore - ignore links content not in branch
 # file_ignore - ignore CAS spec b/c it has lots of bad anchor links, only *.html files are processed
 options = {
+  :typhoeus => { followlocation: true },
   :file_ignore =>  [
     %r{.*/CAS-Protocol-Specification.html},
     %r{.*/sidebar.html}

@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.token.JwtBuilderTests;
 import org.apereo.cas.token.JwtTokenCipherSigningPublicKeyEndpointTests;
 import org.apereo.cas.token.JwtTokenTicketBuilderTests;
 import org.apereo.cas.token.JwtTokenTicketBuilderWithoutCryptoTests;
@@ -20,6 +21,7 @@ import org.junit.platform.suite.api.Suite;
     JwtTicketCipherExecutorTests.class,
     JwtTokenCipherSigningPublicKeyEndpointTests.class,
     JwtTokenTicketBuilderTests.class,
+    JwtBuilderTests.class,
     RegisteredServiceJwtTicketCipherExecutorTests.class,
     JwtTokenTicketBuilderWithoutCryptoTests.class,
     JwtTokenTicketBuilderWithoutEncryptionTests.class

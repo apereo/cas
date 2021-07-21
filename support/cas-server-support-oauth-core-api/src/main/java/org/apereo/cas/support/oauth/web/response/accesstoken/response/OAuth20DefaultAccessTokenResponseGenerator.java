@@ -41,6 +41,14 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
 
     private final CasConfigurationProperties casProperties;
 
+    private static boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
+        val generatedToken = result.getGeneratedToken();
+        return OAuth20ResponseTypes.DEVICE_CODE == result.getResponseType()
+            && generatedToken.getDeviceCode().isPresent()
+            && generatedToken.getUserCode().isPresent()
+            && generatedToken.getAccessToken().isEmpty();
+    }
+
     @Audit(action = AuditableActions.OAUTH2_ACCESS_TOKEN_RESPONSE,
         actionResolverName = AuditActionResolvers.OAUTH2_ACCESS_TOKEN_RESPONSE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OAUTH2_ACCESS_TOKEN_RESPONSE_RESOURCE_RESOLVER)
@@ -53,14 +61,6 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         }
 
         return generateResponseForAccessToken(request, response, result);
-    }
-
-    private static boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
-        val generatedToken = result.getGeneratedToken();
-        return OAuth20ResponseTypes.DEVICE_CODE == result.getResponseType()
-            && generatedToken.getDeviceCode().isPresent()
-            && generatedToken.getUserCode().isPresent()
-            && generatedToken.getAccessToken().isEmpty();
     }
 
     /**
@@ -147,13 +147,23 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
      */
     protected String encodeAccessToken(final OAuth20AccessToken accessToken,
                                        final OAuth20AccessTokenResponseResult result) {
+        return getAccessTokenBuilder(accessToken, result).build().encode();
+    }
+
+    /**
+     * Gets access token builder.
+     *
+     * @param accessToken the access token
+     * @param result      the result
+     * @return the jwt access token builder
+     */
+    protected OAuth20JwtAccessTokenEncoder.OAuth20JwtAccessTokenEncoderBuilder getAccessTokenBuilder(
+        final OAuth20AccessToken accessToken, final OAuth20AccessTokenResponseResult result) {
         return OAuth20JwtAccessTokenEncoder.builder()
             .accessToken(accessToken)
             .registeredService(result.getRegisteredService())
             .service(result.getService())
             .accessTokenJwtBuilder(accessTokenJwtBuilder)
-            .casProperties(casProperties)
-            .build()
-            .encode();
+            .casProperties(casProperties);
     }
 }

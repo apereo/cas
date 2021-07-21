@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
@@ -21,6 +22,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.LogoutRequest;
@@ -91,7 +93,7 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
         val samlService = (SamlRegisteredService) request.getRegisteredService();
         val skewAllowance = samlService.getSkewAllowance() > 0
             ? samlService.getSkewAllowance()
-            : samlIdPProperties.getResponse().getSkewAllowance();
+            : Beans.newDuration(samlIdPProperties.getResponse().getSkewAllowance()).toSeconds();
 
         val issueInstant = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(skewAllowance);
 
@@ -118,7 +120,7 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
             val httpRequest = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
             val httpResponse = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
             samlObjectSigner.encode(samlLogoutRequest, samlService, adaptor,
-                httpResponse, httpRequest, binding, samlLogoutRequest);
+                httpResponse, httpRequest, binding, samlLogoutRequest, new MessageContext());
         }
 
         if (SAMLConstants.SAML2_SOAP11_BINDING_URI.equalsIgnoreCase(binding)) {

@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Tag;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.ByteArrayInputStream;
@@ -35,7 +34,6 @@ import java.util.UUID;
     "cas.authn.ldap[0].bind-credential=P@ssw0rd",
     "cas.authn.ldap[0].principal-attribute-list=sn,cn,homePostalAddress:homePostalAddress;"
 })
-@DirtiesContext
 @Tag("Ldap")
 @EnabledIfPortOpen(port = 11389)
 public class OpenLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {

@@ -106,15 +106,14 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
                                            final HttpServletResponse response,
                                            final HttpServletRequest request,
                                            final String binding,
-                                           final RequestAbstractType authnRequest) throws Exception {
-
+                                           final RequestAbstractType authnRequest,
+                                           final MessageContext messageContext) throws Exception {
         LOGGER.trace("Attempting to encode [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
-        val outboundContext = new MessageContext();
-        prepareOutboundContext(samlObject, adaptor, outboundContext, binding, authnRequest);
-        prepareSecurityParametersContext(adaptor, outboundContext, service);
-        prepareEndpointURLSchemeSecurityHandler(outboundContext);
-        prepareSamlOutboundDestinationHandler(outboundContext);
-        prepareSamlOutboundProtocolMessageSigningHandler(outboundContext);
+        prepareOutboundContext(samlObject, adaptor, messageContext, binding, authnRequest);
+        prepareSecurityParametersContext(adaptor, messageContext, service);
+        prepareEndpointURLSchemeSecurityHandler(messageContext);
+        prepareSamlOutboundDestinationHandler(messageContext);
+        prepareSamlOutboundProtocolMessageSigningHandler(messageContext);
         return samlObject;
     }
 
@@ -258,8 +257,7 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
         mdCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
         mdCredentialResolver.setKeyInfoCredentialResolver(DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
         mdCredentialResolver.initialize();
-
-
+        
         val criteriaSet = new CriteriaSet();
         criteriaSet.add(new SignatureSigningConfigurationCriterion(config));
         criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
@@ -271,26 +269,27 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
         val entityId = Objects.requireNonNull(samlIdPMetadataResolver.resolveSingle(entityIdCriteriaSet)).getEntityID();
         LOGGER.trace("Resolved entity id from SAML2 IdP metadata is [{}]", entityId);
         criteriaSet.add(new EntityIdCriterion(entityId));
-
         criteriaSet.add(new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME));
         criteriaSet.add(new SamlIdPSamlRegisteredServiceCriterion(service));
 
+        LOGGER.trace("Resolved signing credentials based on criteria [{}]", criteriaSet);
         val credentials = Sets.newLinkedHashSet(mdCredentialResolver.resolve(criteriaSet));
-        val creds = new ArrayList<Credential>(2);
+        LOGGER.trace("Resolved [{}] signing credentials", credentials.size());
 
+        val finalCredentials = new ArrayList<Credential>();
         credentials.stream()
             .map(c -> getResolvedSigningCredential(c, privateKey, service))
             .filter(Objects::nonNull)
             .filter(c -> doesCredentialFingerprintMatch(c, service))
-            .forEach(creds::add);
+            .forEach(finalCredentials::add);
 
-        if (creds.isEmpty()) {
+        if (finalCredentials.isEmpty()) {
             LOGGER.error("Unable to locate any signing credentials for service [{}]", service.getName());
             throw new IllegalArgumentException("Unable to locate signing credentials");
         }
 
-        config.setSigningCredentials(creds);
-        LOGGER.trace("Signature signing credentials configured with [{}] credentials", creds.size());
+        config.setSigningCredentials(finalCredentials);
+        LOGGER.trace("Signature signing credentials configured with [{}] credentials", finalCredentials.size());
         return config;
     }
 

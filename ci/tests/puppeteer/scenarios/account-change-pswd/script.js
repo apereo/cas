@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
     await cas.loginWith(page, "mustchangepswd", "mustchangepswd");
 
     const header = await cas.innerText(page, '#pwdmain h3');
-    assert(header === "You must change your password.")
+    assert(header === "Hello, mustchangepswd. You must change your password.")
 
     let pwddesc = await cas.innerText(page, '#pwddesc');
     assert(pwddesc === "Please change your password.")

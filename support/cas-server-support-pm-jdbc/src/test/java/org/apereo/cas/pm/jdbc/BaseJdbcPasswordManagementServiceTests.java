@@ -85,7 +85,7 @@ import javax.sql.DataSource;
 @EnableTransactionManagement(proxyTargetClass = true)
 public abstract class BaseJdbcPasswordManagementServiceTests {
     @Autowired
-    @Qualifier("passwordChangeService")
+    @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
     protected PasswordManagementService passwordChangeService;
 
     @Autowired

@@ -9,7 +9,11 @@ category: Protocols
 
 Allow CAS to act as an [OpenId Connect Provider (OP)](http://openid.net/connect/).
 
-<div class="alert alert-info"><strong>Remember</strong><p>OpenId Connect is a continuation of the <a href="OAuth-Authentication.html">OAuth protocol</a> with some additional variations. If you enable OpenId Connect, you will have automatically enabled OAuth as well. Options and behaviors that are documented for the <a href="OAuth-OpenId-Authentication.html">OAuth protocol</a> support may apply here just the same.</p></div>
+<div class="alert alert-info"><strong>Remember</strong><p>OpenId Connect is a continuation of 
+the <a href="OAuth-Authentication.html">OAuth protocol</a> with some additional variations. If 
+you enable OpenId Connect, you will have automatically enabled OAuth as well. Options and 
+behaviors that are documented for the <a href="OAuth-OpenId-Authentication.html">OAuth protocol</a> 
+support may apply here just the same.</p></div>
 
 Support is enabled by including the following dependency in the WAR overlay:
 
@@ -34,7 +38,7 @@ The current implementation provides support for:
 |-------------------------------------------|-------------------------------------------------------
 | `/oidc/.well-known`                       | The discovery endpoint used to query for CAS OIDC configuration information and metadata.
 | `/oidc/.well-known/openid-configuration`  | Same as `.well-known` discovery endpoint.
-| `/oidc/.well-known/webfinger`             | [WebFinger](http://tools.ietf.org/html/rfc7033) discovery endpoint
+| `/oidc/.well-known/webfinger`             | [WebFinger](https://tools.ietf.org/html/rfc7033) discovery endpoint
 | `/oidc/jwks`                              | Contains the server’s public signing keys, which clients may use to verify the digital signatures of access tokens and ID tokens issued by CAS.
 | `/oidc/authorize`                         | Authorization requests are handled here.
 | `/oidc/profile`                           | User profile requests are handled here.
@@ -43,6 +47,11 @@ The current implementation provides support for:
 | `/oidc/accessToken`, `/oidc/token`        | Produces authorized access tokens.
 | `/oidc/revoke`                            | [Revoke](https://tools.ietf.org/html/rfc7009) access or refresh tokens. This endpoint expects HTTP basic authentication with OIDC service `client_id` and `client_secret` associated as username and password.
 | `/oidc/register`                          | Register clients via the [dynamic client registration](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01) protocol.
+
+<div class="alert alert-warning"><strong>Use Discovery</strong><p>The above endpoints
+are not strictly defined in the OpenID Connect specification. The CAS software may choose to change URL endpoints
+at any point in time. Do <strong>NOT</strong> hardcode these endpoints in your application configuration.
+Instead, use the Dynamic Discovery endpoint and parse the discovery document to discover the endpoints.</p></div>
 
 ## Configuration
 
@@ -60,7 +69,7 @@ You will need to configure your deployment environment and load-balancers accord
 
 ## Sample Client Applications
 
-- [MITREid Sample Java Webapp](https://github.com/cas-projects/oidc-sample-java-webapp)
+- [MITREid Sample Java Webapp](https://github.com/apereo/oidc-sample-java-webapp)
 
 ## Authentication Context Class
 

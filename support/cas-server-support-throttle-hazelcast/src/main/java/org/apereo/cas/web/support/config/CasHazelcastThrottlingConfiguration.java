@@ -43,7 +43,7 @@ public class CasHazelcastThrottlingConfiguration {
         LOGGER.debug("Creating [{}] to record failed logins for throttling with timeout set to [{}]", MAP_KEY, timeout);
         val ipMapConfig = HazelcastConfigurationFactory.buildMapConfig(hz, MAP_KEY, timeout);
         val hazelcastInstance = this.casTicketRegistryHazelcastInstance.getObject();
-        hazelcastInstance.getConfig().addMapConfig(ipMapConfig);
+        HazelcastConfigurationFactory.setConfigMap(ipMapConfig, hazelcastInstance.getConfig());
         return hazelcastInstance.getMap(MAP_KEY);
     }
 }

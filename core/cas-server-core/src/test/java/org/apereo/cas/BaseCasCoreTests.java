@@ -47,7 +47,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * This is {@link BaseCasCoreTests}.
@@ -57,7 +56,6 @@ import org.springframework.test.annotation.DirtiesContext;
  */
 @SpringBootTest(classes = BaseCasCoreTests.SharedTestConfiguration.class)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@DirtiesContext
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseCasCoreTests {

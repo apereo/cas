@@ -134,6 +134,35 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
         }
     }
 
+    @SuperBuilder
+    @Getter
+    public static class IdPMetadataTemplateContext implements Serializable {
+        private static final long serialVersionUID = -8084689071916142718L;
+
+        private final String entityId;
+
+        private final String scope;
+
+        private final String endpointUrl;
+
+        private final String encryptionCertificate;
+
+        private final String signingCertificate;
+
+        private final boolean ssoServicePostBindingEnabled;
+
+        private final boolean ssoServicePostSimpleSignBindingEnabled;
+
+        private final boolean ssoServiceRedirectBindingEnabled;
+
+        private final boolean ssoServiceSoapBindingEnabled;
+
+        private final boolean sloServicePostBindingEnabled;
+
+        private final boolean sloServiceRedirectBindingEnabled;
+
+    }
+
     private String getIdPEndpointUrl() {
         val resolver = SpringExpressionLanguageValueResolver.getInstance();
         return resolver.resolve(configurationContext.getCasProperties().getServer().getPrefix().concat("/idp"));
@@ -148,10 +177,9 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
      * @param registeredService registered service
      * @return the metadata
      */
-    @SneakyThrows
     private String buildMetadataGeneratorParameters(final Pair<String, String> signing,
                                                     final Pair<String, String> encryption,
-                                                    final Optional<SamlRegisteredService> registeredService) {
+                                                    final Optional<SamlRegisteredService> registeredService) throws Exception {
 
         val signingCert = SamlIdPMetadataGenerator.cleanCertificate(signing.getKey());
         val encryptionCert = SamlIdPMetadataGenerator.cleanCertificate(encryption.getKey());
@@ -198,26 +226,6 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
             writeMetadata(metadata, registeredService);
             return metadata;
         }
-    }
-
-    @SuperBuilder
-    @Getter
-    public static class IdPMetadataTemplateContext implements Serializable {
-        private static final long serialVersionUID = -8084689071916142718L;
-        private final String entityId;
-        private final String scope;
-        private final String endpointUrl;
-        private final String encryptionCertificate;
-        private final String signingCertificate;
-
-        private final boolean ssoServicePostBindingEnabled;
-        private final boolean ssoServicePostSimpleSignBindingEnabled;
-        private final boolean ssoServiceRedirectBindingEnabled;
-        private final boolean ssoServiceSoapBindingEnabled;
-
-        private final boolean sloServicePostBindingEnabled;
-        private final boolean sloServiceRedirectBindingEnabled;
-
     }
 
 }

@@ -27,8 +27,11 @@
 
             /*]]>*/
         </script>
-        <h3 th:utext="${expiredPass} ? #{screen.expiredpass.heading} : #{screen.mustchangepass.heading}">Change
-            Password Heading</h3>
+        <h3 th:utext="${expiredPass}
+        ? #{screen.expiredpass.heading(${credential.id})}
+        : #{screen.mustchangepass.heading(${credential.id})}">
+            Change Password Heading</h3>
+
         <form id="passwordManagementForm" th:if="${passwordManagementEnabled}" method="post"
               th:object="${password}">
             <div class="banner banner-danger alert alert-danger banner-dismissible my-4" th:if="${#fields.hasErrors('*')}">

@@ -53,7 +53,7 @@ Register clients in the CAS service registry:
 
 ## Sample Client Applications
 
-- [OpenID Client Webapp](https://github.com/cas-projects/openid-sample-java-webapp)
+- [OpenID Client Webapp](https://github.com/apereo/openid-sample-java-webapp)
 
 # OpenID Provider Delegation
 

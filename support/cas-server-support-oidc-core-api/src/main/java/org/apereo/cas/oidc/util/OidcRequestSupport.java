@@ -3,9 +3,11 @@ package org.apereo.cas.oidc.util;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.NonNull;
@@ -29,19 +31,41 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
- * This is {@link OidcAuthorizationRequestSupport}.
+ * This is {@link OidcRequestSupport}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class OidcAuthorizationRequestSupport {
+public class OidcRequestSupport {
+    private static final String PATTERN_VALID_ISSUER_ENDPOINTS = Stream.of(
+        OidcConstants.LOGOUT_URL,
+        OidcConstants.JWKS_URL,
+        OidcConstants.ACCESS_TOKEN_URL,
+        OidcConstants.TOKEN_URL,
+        OidcConstants.PROFILE_URL,
+        OidcConstants.AUTHORIZE_URL,
+        OidcConstants.INTROSPECTION_URL,
+        OidcConstants.CLIENT_CONFIGURATION_URL,
+        OidcConstants.REVOCATION_URL,
+        OidcConstants.REGISTRATION_URL,
+        OAuth20Constants.ACCESS_TOKEN_URL,
+        OAuth20Constants.TOKEN_URL,
+        OAuth20Constants.AUTHORIZE_URL,
+        OAuth20Constants.INTROSPECTION_URL,
+        OAuth20Constants.PROFILE_URL,
+        OAuth20Constants.REVOCATION_URL)
+        .collect(Collectors.joining("|"));
+
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     private final TicketRegistrySupport ticketRegistrySupport;
+
+    private final OidcIssuerService oidcIssuerService;
 
     /**
      * Gets oidc prompt from authorization request.
@@ -224,4 +248,26 @@ public class OidcAuthorizationRequestSupport {
     }
 
 
+    /**
+     * Is valid issuer for endpoint.
+     *
+     * @param webContext the web context
+     * @param endpoint   the endpoint
+     * @return true /false
+     */
+    public boolean isValidIssuerForEndpoint(final JEEContext webContext, final String endpoint) {
+        val requestUrl = webContext.getNativeRequest().getRequestURL().toString();
+        val issuer = StringUtils.removeEnd(StringUtils.remove(requestUrl, '/' + endpoint), "/");
+        val definedIssuer = this.oidcIssuerService.determineIssuer(Optional.empty());
+        
+        val issuerPattern = StringUtils.appendIfMissing(definedIssuer, "/")
+            .concat("(")
+            .concat(PATTERN_VALID_ISSUER_ENDPOINTS)
+            .concat(")");
+        val result = definedIssuer.equalsIgnoreCase(issuer) || issuer.matches(issuerPattern);
+        FunctionUtils.doIf(!result,
+            o -> LOGGER.warn("Issuer [{}] defined in CAS configuration does not match the request issuer [{}]", o, issuer))
+            .accept(definedIssuer);
+        return result;
+    }
 }

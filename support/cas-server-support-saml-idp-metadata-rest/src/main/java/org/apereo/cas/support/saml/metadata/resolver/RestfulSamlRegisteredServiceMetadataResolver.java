@@ -24,6 +24,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -70,7 +71,7 @@ public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
         } finally {
             HttpUtils.close(response);
         }
-        return null;
+        return new ArrayList<>(0);
     }
 
     @Override

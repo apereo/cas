@@ -118,7 +118,7 @@ For Java-based applications, the following frameworks may be used to integrate y
 
 ## Sample Client Applications
 
-- [Spring Security SAML Sample Webapp](https://github.com/cas-projects/saml2-sample-java-webapp)
+- [Spring Security SAML Sample Webapp](https://github.com/apereo/saml2-sample-java-webapp)
 - [Okta](https://developer.okta.com/standards/SAML/setting_up_a_saml_application_in_okta)
 
 ## Troubleshooting

@@ -35,4 +35,6 @@ public abstract class BaseSamlIdPServicesTests {
 
     @Autowired
     protected CasConfigurationProperties casProperties;
+
+
 }

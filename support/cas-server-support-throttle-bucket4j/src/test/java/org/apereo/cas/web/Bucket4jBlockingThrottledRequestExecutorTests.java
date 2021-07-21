@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("AuthenticationThrottling")
 public class Bucket4jBlockingThrottledRequestExecutorTests {
     @Autowired
-    @Qualifier("throttledRequestExecutor")
+    @Qualifier(ThrottledRequestExecutor.DEFAULT_BEAN_NAME)
     private ThrottledRequestExecutor throttledRequestExecutor;
 
     @Test

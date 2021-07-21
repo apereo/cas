@@ -17,7 +17,7 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.web.ProtocolEndpointConfigurer;
+import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.authentication.WSFederationAuthenticationServiceSelectionStrategy;
@@ -174,10 +174,15 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     }
 
     @Bean
-    public ProtocolEndpointConfigurer wsFederationProtocolEndpointConfigurer() {
-        return () -> List.of(
-            StringUtils.prependIfMissing(WSFederationConstants.BASE_ENDPOINT_IDP, "/"),
-            StringUtils.prependIfMissing(WSFederationConstants.BASE_ENDPOINT_STS, "/"));
+    public ProtocolEndpointWebSecurityConfigurer<Void> wsFederationProtocolEndpointConfigurer() {
+        return new ProtocolEndpointWebSecurityConfigurer<>() {
+            @Override
+            public List<String> getIgnoredEndpoints() {
+                return List.of(
+                    StringUtils.prependIfMissing(WSFederationConstants.BASE_ENDPOINT_IDP, "/"),
+                    StringUtils.prependIfMissing(WSFederationConstants.BASE_ENDPOINT_STS, "/"));
+            }
+        };
     }
 
     @Bean

@@ -48,12 +48,17 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
 
     private MockHttpServletRequest httpServletRequest;
 
+    private MockHttpServletResponse httpServletResponse;
+
     @BeforeEach
     public void setup() {
         val service = RegisteredServiceTestUtils.getService();
+
+        httpServletResponse = new MockHttpServletResponse();
+
         httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
-        context = new JEEContext(httpServletRequest, new MockHttpServletResponse());
+        context = new JEEContext(httpServletRequest, httpServletResponse);
 
         requestContext = new MockRequestContext();
         requestContext.setExternalContext(new ServletExternalContext(new MockServletContext(),
@@ -69,5 +74,13 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
         val results = delegatedClientIdentityProviderConfigurationProducer.produce(requestContext);
         assertFalse(results.isEmpty());
         assertNotNull(WebUtils.getDelegatedAuthenticationProviderPrimary(requestContext));
+    }
+
+    @Test
+    public void verifyProduceFailingClient() {
+        delegatedAuthenticationCookieGenerator.addCookie(context.getNativeRequest(),
+            context.getNativeResponse(), "FailingClient");
+        val results = delegatedClientIdentityProviderConfigurationProducer.produce(requestContext);
+        assertFalse(results.isEmpty());
     }
 }

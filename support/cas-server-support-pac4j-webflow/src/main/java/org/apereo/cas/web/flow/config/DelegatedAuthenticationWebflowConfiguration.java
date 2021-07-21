@@ -278,7 +278,8 @@ public class DelegatedAuthenticationWebflowConfiguration {
             builtClients.getObject(),
             helper,
             casProperties,
-            delegatedAuthenticationCookieGenerator());
+            delegatedAuthenticationCookieGenerator(),
+            delegatedClientAuthenticationRequestCustomizers());
     }
 
     @ConditionalOnMissingBean(name = "delegatedAuthenticationCookieGenerator")

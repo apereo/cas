@@ -44,7 +44,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.support.RequestContext;
@@ -63,7 +62,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@DirtiesContext
 @Slf4j
 @SpringBootTest(properties = {
     "cas.clearpass.cache-credential=true",

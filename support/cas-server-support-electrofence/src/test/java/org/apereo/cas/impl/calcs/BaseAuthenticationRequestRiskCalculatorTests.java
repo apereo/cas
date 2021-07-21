@@ -54,7 +54,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * This is {@link BaseAuthenticationRequestRiskCalculatorTests}.
@@ -63,7 +62,6 @@ import org.springframework.test.annotation.DirtiesContext;
  * @since 5.3.0
  */
 @SpringBootTest(classes = BaseAuthenticationRequestRiskCalculatorTests.SharedTestConfiguration.class)
-@DirtiesContext
 @EnableScheduling
 public abstract class BaseAuthenticationRequestRiskCalculatorTests {
     @Autowired

@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandlerTests;
 import org.apereo.cas.authentication.BasicCredentialMetaDataTests;
 import org.apereo.cas.authentication.CacheCredentialsMetaDataPopulatorTests;
+import org.apereo.cas.authentication.ClientInfoAuthenticationMetaDataPopulatorTests;
 import org.apereo.cas.authentication.CoreAuthenticationUtilsTests;
 import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlanTests;
 import org.apereo.cas.authentication.DefaultAuthenticationManagerTests;
@@ -70,6 +71,7 @@ import org.junit.platform.suite.api.Suite;
     AllAuthenticationHandlersSucceededAuthenticationPolicyTests.class,
     BasicCredentialMetaDataTests.class,
     DefaultAuthenticationManagerTests.class,
+    ClientInfoAuthenticationMetaDataPopulatorTests.class,
     CasCoreAuthenticationSupportConfigurationTests.class,
     ChainingPrincipalElectionStrategyTests.class,
     UsernamePasswordCredentialTests.class,

@@ -34,7 +34,6 @@ import org.springframework.web.servlet.view.RedirectView;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -71,7 +70,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         val mockResponse = new MockHttpServletResponse();
 
-        assertThrows(NoSuchElementException.class, () -> oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse));
+        assertThrows(IllegalArgumentException.class, () -> oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse));
     }
 
     @Test
@@ -81,7 +80,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         val mockResponse = new MockHttpServletResponse();
 
-        assertThrows(NoSuchElementException.class, () -> oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse));
+        assertThrows(IllegalArgumentException.class, () -> oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse));
     }
 
     @Test
@@ -123,8 +122,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val mockResponse = new MockHttpServletResponse();
 
         this.servicesManager.save(getRegisteredService(OTHER_REDIRECT_URI, CLIENT_ID));
-
-        assertThrows(NoSuchElementException.class, () -> oAuth20AuthorizeEndpointController.handleRequestPost(mockRequest, mockResponse));
+        assertThrows(IllegalArgumentException.class, () -> oAuth20AuthorizeEndpointController.handleRequestPost(mockRequest, mockResponse));
     }
 
     @Test
@@ -147,7 +145,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val session = new MockHttpSession();
         mockRequest.setSession(session);
 
-        assertThrows(NoSuchElementException.class, () -> oAuth20AuthorizeEndpointController.handleRequestPost(mockRequest, mockResponse));
+        assertThrows(IllegalArgumentException.class, () -> oAuth20AuthorizeEndpointController.handleRequestPost(mockRequest, mockResponse));
     }
 
     @Test

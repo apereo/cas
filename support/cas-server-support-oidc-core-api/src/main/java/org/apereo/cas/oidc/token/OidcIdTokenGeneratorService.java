@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -106,7 +107,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         expirationDate.addSeconds(timeoutInSeconds);
         claims.setExpirationTime(expirationDate);
         claims.setIssuedAtToNow();
-        claims.setNotBeforeMinutesInThePast(oidc.getCore().getSkew());
+        claims.setNotBeforeMinutesInThePast((float) Beans.newDuration(oidc.getCore().getSkew()).toMinutes());
         claims.setSubject(principal.getId());
 
         val mfa = getConfigurationContext().getCasProperties().getAuthn().getMfa();
@@ -235,6 +236,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             .service(accessToken.getService())
             .accessTokenJwtBuilder(getConfigurationContext().getAccessTokenJwtBuilder())
             .casProperties(getConfigurationContext().getCasProperties())
+            .issuer(getConfigurationContext().getIssuerService().determineIssuer(Optional.of(registeredService)))
             .build()
             .encode();
 

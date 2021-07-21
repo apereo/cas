@@ -72,7 +72,7 @@ public class PasswordManagementForgotUsernameConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    @Qualifier("passwordChangeService")
+    @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
     private ObjectProvider<PasswordManagementService> passwordManagementService;
 
     @Autowired

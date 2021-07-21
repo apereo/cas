@@ -121,7 +121,7 @@ public class PasswordManagementWebflowConfiguration {
     private ObjectProvider<PasswordValidationService> passwordValidationService;
 
     @Autowired
-    @Qualifier("passwordChangeService")
+    @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
     private ObjectProvider<PasswordManagementService> passwordManagementService;
 
     @Bean
@@ -156,7 +156,7 @@ public class PasswordManagementWebflowConfiguration {
         return handler;
     }
 
-    @ConditionalOnMissingBean(name = "initPasswordChangeAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INIT_PASSWORD_CHANGE)
     @RefreshScope
     @Bean
     public Action initPasswordChangeAction() {
@@ -235,7 +235,6 @@ public class PasswordManagementWebflowConfiguration {
     public CasWebflowExecutionPlanConfigurer passwordManagementCasWebflowExecutionPlanConfigurer() {
         return plan -> plan.registerWebflowConfigurer(passwordManagementWebflowConfigurer());
     }
-
 
     @ConditionalOnProperty(prefix = "cas.authn.pm.google-recaptcha", name = "enabled", havingValue = "true")
     @Configuration(value = "passwordManagementCaptchaConfiguration", proxyBeanMethods = false)

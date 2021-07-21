@@ -26,7 +26,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.support.StaticApplicationContext;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +45,6 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
     properties = "cas.authn.attribute-repository.core.default-attributes-to-release=cn,mail")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@DirtiesContext
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ReturnAllowedAttributeReleasePolicyTests {
 

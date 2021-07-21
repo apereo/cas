@@ -111,7 +111,7 @@ public class SamlIdentityProviderDiscoveryFeedController {
 
         val webContext = new JEEContext(httpServletRequest, httpServletResponse);
         val service = this.argumentExtractor.extractService(httpServletRequest);
-        if (delegatedAuthenticationAccessStrategyHelper.isDelegatedClientAuthorizedForService(samlClient, service)) {
+        if (delegatedAuthenticationAccessStrategyHelper.isDelegatedClientAuthorizedForService(samlClient, service, httpServletRequest)) {
             val provider = DelegatedClientIdentityProviderConfigurationFactory.builder()
                 .service(service)
                 .client(samlClient)

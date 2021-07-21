@@ -14,7 +14,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("MFA")
+@Tag("MFATrigger")
 public class MultifactorAuthenticationTriggerTests {
     @Test
     public void verifyOperation() {

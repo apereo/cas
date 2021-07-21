@@ -113,20 +113,21 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
             casAssertion, service, adaptor, binding, messageContext));
         assertion.setConditions(this.samlProfileSamlConditionsBuilder.build(authnRequest,
             request, response, casAssertion, service, adaptor, binding, messageContext));
-        signAssertion(assertion, request, response, service, adaptor, binding, authnRequest);
+        signAssertion(assertion, request, response, service, adaptor, binding, authnRequest, messageContext);
         return assertion;
     }
 
     /**
      * Sign assertion.
      *
-     * @param assertion    the assertion
-     * @param request      the request
-     * @param response     the response
-     * @param service      the service
-     * @param adaptor      the adaptor
-     * @param binding      the binding
-     * @param authnRequest the authn request
+     * @param assertion      the assertion
+     * @param request        the request
+     * @param response       the response
+     * @param service        the service
+     * @param adaptor        the adaptor
+     * @param binding        the binding
+     * @param authnRequest   the authn request
+     * @param messageContext the message context
      */
     @SneakyThrows
     protected void signAssertion(final Assertion assertion,
@@ -135,11 +136,12 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
                                  final SamlRegisteredService service,
                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                  final String binding,
-                                 final RequestAbstractType authnRequest) {
+                                 final RequestAbstractType authnRequest,
+                                 final MessageContext messageContext) {
 
         if (service.isSignAssertions()) {
             LOGGER.debug("SAML registered service [{}] requires assertions to be signed", adaptor.getEntityId());
-            samlObjectSigner.encode(assertion, service, adaptor, response, request, binding, authnRequest);
+            samlObjectSigner.encode(assertion, service, adaptor, response, request, binding, authnRequest, messageContext);
         } else {
             LOGGER.debug("SAML registered service [{}] does not require assertions to be signed", adaptor.getEntityId());
         }

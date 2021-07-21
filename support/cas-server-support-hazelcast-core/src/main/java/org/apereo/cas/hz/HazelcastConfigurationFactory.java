@@ -10,14 +10,17 @@ import com.hazelcast.config.DiscoveryConfig;
 import com.hazelcast.config.DiscoveryStrategyConfig;
 import com.hazelcast.config.EvictionConfig;
 import com.hazelcast.config.EvictionPolicy;
+import com.hazelcast.config.InMemoryFormat;
 import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.ManagementCenterConfig;
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.config.MaxSizePolicy;
 import com.hazelcast.config.MergePolicyConfig;
 import com.hazelcast.config.MulticastConfig;
+import com.hazelcast.config.NamedConfig;
 import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.config.PartitionGroupConfig;
+import com.hazelcast.config.ReplicatedMapConfig;
 import com.hazelcast.config.TcpIpConfig;
 import com.hazelcast.config.WanAcknowledgeType;
 import com.hazelcast.config.WanBatchPublisherConfig;
@@ -37,8 +40,6 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.UUID;
 
@@ -50,18 +51,18 @@ import java.util.UUID;
  */
 @Slf4j
 public class HazelcastConfigurationFactory {
-
     /**
-     * Build config.
+     * Sets config map.
      *
-     * @param hz         the hz
-     * @param mapConfigs the map configs
-     * @return the config
+     * @param mapConfig the map config
+     * @param config    the config
      */
-    public static Config build(final BaseHazelcastProperties hz, final Map<String, MapConfig> mapConfigs) {
-        val cfg = build(hz);
-        cfg.setMapConfigs(mapConfigs);
-        return finalizeConfig(cfg, hz);
+    public static void setConfigMap(final NamedConfig mapConfig, final Config config) {
+        if (mapConfig instanceof MapConfig) {
+            config.addMapConfig((MapConfig) mapConfig);
+        } else if (mapConfig instanceof ReplicatedMapConfig) {
+            config.addReplicatedMapConfig((ReplicatedMapConfig) mapConfig);
+        }
     }
 
     /**
@@ -71,10 +72,10 @@ public class HazelcastConfigurationFactory {
      * @param mapConfig the map config
      * @return the config
      */
-    public static Config build(final BaseHazelcastProperties hz, final MapConfig mapConfig) {
-        val cfg = new HashMap<String, MapConfig>();
-        cfg.put(mapConfig.getName(), mapConfig);
-        return build(hz, cfg);
+    public static Config build(final BaseHazelcastProperties hz, final NamedConfig mapConfig) {
+        val config = build(hz);
+        setConfigMap(mapConfig, config);
+        return finalizeConfig(config, hz);
     }
 
     /**
@@ -103,7 +104,7 @@ public class HazelcastConfigurationFactory {
             StringUtils.commaDelimitedListToSet(cluster.getNetwork().getNetworkInterfaces())
                 .forEach(faceIp -> networkConfig.getInterfaces().addInterface(faceIp));
         }
-        
+
         if (StringUtils.hasText(cluster.getNetwork().getLocalAddress())) {
             config.setProperty(BaseHazelcastProperties.HAZELCAST_LOCAL_ADDRESS_PROP, cluster.getNetwork().getLocalAddress());
         }
@@ -258,7 +259,7 @@ public class HazelcastConfigurationFactory {
      * @param timeoutSeconds the timeoutSeconds
      * @return the map config
      */
-    public static MapConfig buildMapConfig(final BaseHazelcastProperties hz, final String mapName, final long timeoutSeconds) {
+    public static NamedConfig buildMapConfig(final BaseHazelcastProperties hz, final String mapName, final long timeoutSeconds) {
         val cluster = hz.getCluster();
 
         val evictionPolicy = EvictionPolicy.valueOf(cluster.getCore().getEvictionPolicy());
@@ -296,8 +297,18 @@ public class HazelcastConfigurationFactory {
             }
         }
 
+        if (cluster.getCore().isReplicated()) {
+            return new ReplicatedMapConfig()
+                .setName(mapName)
+                .setStatisticsEnabled(true)
+                .setAsyncFillup(cluster.getCore().isAsyncFillup())
+                .setInMemoryFormat(InMemoryFormat.BINARY)
+                .setSplitBrainProtectionName(mapName.concat("-SplitBrainProtection"))
+                .setMergePolicyConfig(mergePolicyConfig);
+        }
         return new MapConfig()
             .setName(mapName)
+            .setStatisticsEnabled(true)
             .setMergePolicyConfig(mergePolicyConfig)
             .setMaxIdleSeconds((int) timeoutSeconds)
             .setBackupCount(cluster.getCore().getBackupCount())

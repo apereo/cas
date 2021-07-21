@@ -11,6 +11,11 @@ category: Monitoring & Statistics
 Actuator endpoints used to monitor and diagnose the internal configuration of the CAS server are typically
 exposed over the endpoint `/actuator`.
 
+## Actuator Endpoints
+
+The following endpoints are provided:
+
+{% include actuators.html endpoints="info,startup,threaddump,health,metrics,httptrace,mappings,scheduledtasks,heapdump,prometheus,quartz" %}
 
 ## Metrics
 

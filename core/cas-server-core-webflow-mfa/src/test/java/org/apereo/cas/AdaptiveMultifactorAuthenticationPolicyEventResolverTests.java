@@ -1,9 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
-import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
-import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -20,7 +18,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -32,7 +30,6 @@ import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link AdaptiveMultifactorAuthenticationPolicyEventResolverTests}.
@@ -42,6 +39,7 @@ import static org.mockito.Mockito.*;
  */
 @TestPropertySource(properties = "cas.authn.adaptive.policy.require-multifactor.mfa-dummy=MSIE")
 @Tag("WebflowEvents")
+@Import(AdaptiveMultifactorAuthenticationPolicyEventResolverTests.AdaptiveMultifactorTestConfiguration.class)
 public class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicyWebflowEventResolver")
@@ -91,17 +89,11 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends B
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());
     }
 
-    @TestConfiguration("GeoLocationServiceTestConfiguration")
-    @Lazy(false)
-    public static class GeoLocationServiceTestConfiguration {
+    @TestConfiguration("AdaptiveMultifactorTestConfiguration")
+    public static class AdaptiveMultifactorTestConfiguration {
         @Bean
-        public GeoLocationService geoLocationService() {
-            val service = mock(GeoLocationService.class);
-            val response = new GeoLocationResponse();
-            response.addAddress("MSIE");
-            when(service.locate(anyString(), any(GeoLocationRequest.class))).thenReturn(response);
-            return service;
+        public MultifactorAuthenticationProvider dummyProvider() {
+            return new TestMultifactorAuthenticationProvider();
         }
-
     }
 }

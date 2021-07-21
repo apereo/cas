@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @NoArgsConstructor
-@Tag("Simple")
+@Tag("MFATrustedDevices")
 public class ClientIpDeviceFingerprintComponentManagerTests {
 
     @Test
