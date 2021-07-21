@@ -67,7 +67,8 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         try {
             if (!verifyAccessTokenRequest(request, response)) {
-                throw new IllegalArgumentException("Access token validation failed");
+                LoggingUtils.error(LOGGER, "Access token validation failed");
+                return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_GRANT);
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
