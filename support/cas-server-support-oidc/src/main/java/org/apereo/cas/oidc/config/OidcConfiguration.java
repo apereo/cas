@@ -62,11 +62,11 @@ import org.apereo.cas.oidc.web.OidcAccessTokenResponseGenerator;
 import org.apereo.cas.oidc.web.OidcAuthenticationAuthorizeSecurityLogic;
 import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolver;
 import org.apereo.cas.oidc.web.OidcCasClientRedirectActionBuilder;
-import org.apereo.cas.oidc.web.OidcCasLocaleChangeInterceptor;
 import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolver;
 import org.apereo.cas.oidc.web.OidcHandlerInterceptorAdapter;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAuthorizationResponseBuilder;
+import org.apereo.cas.oidc.web.OidcLocaleChangeInterceptor;
 import org.apereo.cas.oidc.web.controllers.authorize.OidcAuthorizeEndpointController;
 import org.apereo.cas.oidc.web.controllers.discovery.OidcWellKnownEndpointController;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientConfigurationEndpointController;
@@ -905,7 +905,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean(name = "oidcLocaleChangeInterceptor")
     @RefreshScope
     public HandlerInterceptor oidcLocaleChangeInterceptor() {
-        val interceptor = new OidcCasLocaleChangeInterceptor(
+        val interceptor = new OidcLocaleChangeInterceptor(
             casProperties.getLocale(), argumentExtractor.getObject());
         interceptor.setParamName(OidcConstants.UI_LOCALES);
         return interceptor;
