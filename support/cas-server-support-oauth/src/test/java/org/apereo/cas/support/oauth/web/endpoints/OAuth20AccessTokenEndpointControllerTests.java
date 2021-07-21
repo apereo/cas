@@ -85,7 +85,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get("error"));
+        assertEquals(OAuth20Constants.INVALID_GRANT, mv.getModel().get("error"));
     }
 
     @Test
@@ -103,7 +103,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get("error"));
+        assertEquals(OAuth20Constants.INVALID_GRANT, mv.getModel().get("error"));
     }
 
 
@@ -161,7 +161,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get("error"));
+        assertEquals(OAuth20Constants.INVALID_GRANT, mv.getModel().get("error"));
     }
 
     @Test
@@ -179,7 +179,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get("error"));
+        assertEquals(OAuth20Constants.INVALID_GRANT, mv.getModel().get("error"));
     }
 
     @Test
@@ -198,7 +198,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.INVALID_GRANT, mv.getModel().get(OAuth20Constants.ERROR));
     }
 
     @ParameterizedTest
@@ -217,7 +217,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.INVALID_GRANT, mv.getModel().get(OAuth20Constants.ERROR));
     }
 
     @ParameterizedTest
@@ -238,7 +238,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.INVALID_GRANT, mv.getModel().get(OAuth20Constants.ERROR));
     }
 
     @ParameterizedTest
@@ -258,7 +258,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.INVALID_GRANT, mv.getModel().get(OAuth20Constants.ERROR));
     }
 
     @Test
@@ -320,7 +320,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.INVALID_GRANT, mv.getModel().get(OAuth20Constants.ERROR));
     }
 
     @Test
@@ -363,7 +363,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.INVALID_GRANT, mv.getModel().get(OAuth20Constants.ERROR));
     }
 
     @ParameterizedTest
@@ -398,7 +398,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.INVALID_GRANT, mv.getModel().get(OAuth20Constants.ERROR));
     }
 
     @ParameterizedTest
@@ -541,7 +541,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.INVALID_GRANT, mv.getModel().get(OAuth20Constants.ERROR));
     }
 
     @Test
@@ -555,7 +555,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.INVALID_GRANT, mv.getModel().get(OAuth20Constants.ERROR));
     }
 
     @Test
@@ -572,7 +572,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.INVALID_GRANT, mv.getModel().get(OAuth20Constants.ERROR));
     }
 
     @Test
@@ -588,7 +588,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.INVALID_GRANT, mv.getModel().get(OAuth20Constants.ERROR));
     }
 
     @Test
@@ -648,7 +648,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.INVALID_GRANT, mv.getModel().get(OAuth20Constants.ERROR));
     }
 
     @Test
@@ -667,7 +667,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_UNAUTHORIZED, mockResponse.getStatus());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.INVALID_GRANT, mv.getModel().get(OAuth20Constants.ERROR));
     }
 
     @Test
@@ -701,7 +701,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get(OAuth20Constants.ERROR));
+        assertEquals(OAuth20Constants.INVALID_GRANT, mv.getModel().get(OAuth20Constants.ERROR));
     }
 
     @Test

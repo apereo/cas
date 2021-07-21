@@ -36,19 +36,17 @@ const jwt = require('jsonwebtoken');
         })
     });
 
-    let params = "client_id=client&";
-    params += "client_secret=secret&";
-    params += "grant_type=authorization_code&";
-    params += "redirect_uri=" + redirectUrl;
-    params += "&code=" + code;
+    let accessTokenParms = "client_id=client&";
+    accessTokenParms += "client_secret=secret&";
+    accessTokenParms += "grant_type=authorization_code&";
+    accessTokenParms += "redirect_uri=" + redirectUrl;
 
-    url = 'https://localhost:8443/cas/oidc/token?' + params;
-    console.log("Calling " + url);
+    let accessTokenUrl = 'https://localhost:8443/cas/oidc/token?' + accessTokenParms + "&code=" + code;
+    console.log("Calling " + accessTokenUrl);
 
     let accessToken = null;
-
     await instance
-        .post(url, new URLSearchParams(), {
+        .post(accessTokenUrl, new URLSearchParams(), {
             headers: {
                 'Content-Type': "application/json"
             }
@@ -73,12 +71,10 @@ const jwt = require('jsonwebtoken');
 
     assert(accessToken != null, "Access Token cannot be null")
 
-    params = "access_token=" + accessToken;
-    url = 'https://localhost:8443/cas/oidc/profile?' + params;
-    console.log("Calling profile " + url);
-
+    let profileUrl = "https://localhost:8443/cas/oidc/profile?access_token=" + accessToken;
+    console.log("Calling user profile " + profileUrl);
     instance
-        .post(url, new URLSearchParams(), {
+        .post(profileUrl, new URLSearchParams(), {
             headers: {
                 'Content-Type': "application/json"
             }
@@ -92,6 +88,21 @@ const jwt = require('jsonwebtoken');
         })
         .catch(error => {
             throw 'Operation failed: ' + error;
+        })
+
+    console.log("Trying to re-use OAuth code " + accessTokenUrl);
+    await instance
+        .post(accessTokenUrl, new URLSearchParams(), {
+            headers: {
+                'Content-Type': "application/json"
+            }
+        })
+        .then(res => {
+            throw 'OAuth code ' + code + ' cannot be used again';
+        })
+        .catch(error => {
+            console.log(error.response.data)
+            assert(error.response.data.error === 'invalid_grant')
         })
 
     await browser.close();
