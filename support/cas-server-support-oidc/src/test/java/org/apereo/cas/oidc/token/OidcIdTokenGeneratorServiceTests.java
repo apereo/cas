@@ -10,6 +10,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -102,7 +103,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid");
         registeredService.setScopes(CollectionUtils.wrapSet(EMAIL.getScope(), PROFILE.getScope(), PHONE.getScope()));
         val idToken = oidcIdTokenGenerator.generate(request, response, accessToken, 30,
-            OAuth20ResponseTypes.ID_TOKEN, registeredService);
+            OAuth20ResponseTypes.ID_TOKEN, OAuth20GrantTypes.NONE, registeredService);
         assertNotNull(idToken);
 
         val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.ofNullable(registeredService));
@@ -158,7 +159,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid");
         registeredService.setScopes(CollectionUtils.wrapSet(EMAIL.getScope(), PROFILE.getScope(), PHONE.getScope()));
         val idToken = oidcIdTokenGenerator.generate(request, response, accessToken, 30,
-            OAuth20ResponseTypes.CODE, registeredService);
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE, registeredService);
         assertNotNull(idToken);
 
         val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.ofNullable(registeredService));
@@ -198,7 +199,8 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         when(accessToken.getId()).thenReturn(getClass().getSimpleName());
 
         val idToken = oidcIdTokenGenerator.generate(request, response, accessToken, 30,
-            OAuth20ResponseTypes.CODE, OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid"));
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE,
+            OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid"));
         assertNotNull(idToken);
     }
 
@@ -209,7 +211,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
             val response = new MockHttpServletResponse();
             val accessToken = mock(OAuth20AccessToken.class);
             oidcIdTokenGenerator.generate(request, response, accessToken, 30,
-                OAuth20ResponseTypes.CODE,
+                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE,
                 OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid"));
         });
     }
@@ -221,8 +223,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
             val response = new MockHttpServletResponse();
             val accessToken = mock(OAuth20AccessToken.class);
             oidcIdTokenGenerator.generate(request, response, accessToken, 30,
-                OAuth20ResponseTypes.CODE,
-                new MockOAuthRegisteredService());
+                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE, new MockOAuthRegisteredService());
         });
     }
 
@@ -258,7 +259,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
 
         this.servicesManager.save(registeredService);
         val idToken = oidcIdTokenGenerator.generate(request, response,
-            accessToken, 30, OAuth20ResponseTypes.CODE, registeredService);
+            accessToken, 30, OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE, registeredService);
         assertNotNull(idToken);
         val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.of(registeredService));
         assertNotNull(claims);

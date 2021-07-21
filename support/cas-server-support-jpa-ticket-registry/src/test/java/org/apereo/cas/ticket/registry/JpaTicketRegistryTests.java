@@ -12,6 +12,8 @@ import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.OAuth20ProtocolTicketCatalogConfiguration;
 import org.apereo.cas.configuration.support.CloseableDataSource;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.DefaultSecurityTokenTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
@@ -134,7 +136,8 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
 
         val oAuthCode = oAuthCodeFactory.create(RegisteredServiceTestUtils.getService(),
             originalAuthn, tgt, Collections.emptySet(), "challenge", "challenge_method",
-            "client_id", Collections.emptyMap());
+            "client_id", Collections.emptyMap(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
 
         this.newTicketRegistry.addTicket(oAuthCode);
 

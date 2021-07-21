@@ -10,6 +10,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
@@ -220,7 +221,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
             .create(oauthCasAuthenticationBuilderService, RegisteredServiceTestUtils.getAuthentication(),
                 new MockTicketGrantingTicket("casuser"), new HashSet<>(),
                 null, null, "clientid12345",
-                new HashMap<>());
+                new HashMap<>(), OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         when(mockingTicketRegistry.getTicket(eq(name), (Class<Ticket>) any())).thenReturn(oauthCode);
     }
 }
