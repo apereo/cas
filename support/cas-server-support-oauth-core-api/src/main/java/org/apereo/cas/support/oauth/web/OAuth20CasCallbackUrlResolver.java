@@ -12,6 +12,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.http.url.UrlResolver;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -24,6 +26,26 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OAuth20CasCallbackUrlResolver implements UrlResolver {
     private final String callbackUrl;
+
+    @SneakyThrows
+    private static Optional<NameValuePair> getQueryParameter(final WebContext context, final String name) {
+        val builderContext = new URIBuilder(context.getFullRequestURL());
+        val result = builderContext.getQueryParams()
+            .stream()
+            .filter(p -> p.getName().equalsIgnoreCase(name))
+            .findFirst();
+        if (result.isEmpty()) {
+            val value = context.getRequestParameter(name);
+            return value.map(v -> new BasicNameValuePair(name, v));
+        }
+        return result;
+    }
+
+    private static void addUrlParameter(final WebContext context, final URIBuilder builder, final String parameterName) {
+        val parameter = getQueryParameter(context, parameterName);
+        parameter.ifPresent(basicNameValuePair ->
+            builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
+    }
 
     @Override
     @SneakyThrows
@@ -45,29 +67,20 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
         addUrlParameter(context, builder, OAuth20Constants.STATE);
         addUrlParameter(context, builder, OAuth20Constants.NONCE);
 
+        getIncludeParameterNames().forEach(param -> addUrlParameter(context, builder, param));
+
         val callbackResolved = builder.build().toString();
 
         LOGGER.debug("Final resolved callback URL is [{}]", callbackResolved);
         return callbackResolved;
     }
 
-    @SneakyThrows
-    private static Optional<NameValuePair> getQueryParameter(final WebContext context, final String name) {
-        val builderContext = new URIBuilder(context.getFullRequestURL());
-        val result = builderContext.getQueryParams()
-            .stream()
-            .filter(p -> p.getName().equalsIgnoreCase(name))
-            .findFirst();
-        if (result.isEmpty()) {
-            val value = context.getRequestParameter(name);
-            return value.map(v -> new BasicNameValuePair(name, v));
-        }
-        return result;
-    }
-
-    private static void addUrlParameter(final WebContext context, final URIBuilder builder, final String parameterName) {
-        val parameter = getQueryParameter(context, parameterName);
-        parameter.ifPresent(basicNameValuePair ->
-            builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
+    /**
+     * Gets include parameter names.
+     *
+     * @return the include parameter names
+     */
+    protected List<String> getIncludeParameterNames() {
+        return new ArrayList<>(0);
     }
 }

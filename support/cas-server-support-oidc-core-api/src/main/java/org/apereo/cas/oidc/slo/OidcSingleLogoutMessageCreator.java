@@ -62,7 +62,7 @@ public class OidcSingleLogoutMessageCreator implements SingleLogoutMessageCreato
         val events = new HashMap<String, Object>();
         events.put("http://schemas.openid.net/event/backchannel-logout", new HashMap<>());
         claims.setClaim("events", events);
-        claims.setClaim(OidcConstants.CLAIM_SESSIOND_ID,
+        claims.setClaim(OidcConstants.CLAIM_SESSION_ID,
             DigestUtils.sha(request.getExecutionRequest().getTicketGrantingTicket().getId()));
 
         return claims;

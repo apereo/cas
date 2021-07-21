@@ -54,7 +54,7 @@ public interface OidcConstants {
     /**
      * The session identifier claim.
      */
-    String CLAIM_SESSIOND_ID = "sid";
+    String CLAIM_SESSION_ID = "sid";
     /**
      * The id token.
      */
@@ -67,6 +67,14 @@ public interface OidcConstants {
      * The prompt parameter.
      */
     String PROMPT = "prompt";
+
+    /**
+     * The {@code ui_locales} parameter.
+     * End-User's preferred languages and scripts for the user interface, represented
+     * as a space-separated list of language tag values, ordered by preference.
+     */
+    String UI_LOCALES = "ui_locales";
+
     /**
      * Base OIDC URL.
      */

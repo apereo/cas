@@ -19,6 +19,7 @@ import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticator;
+import org.apereo.cas.oidc.authn.OidcCasCallbackUrlResolver;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcClientSecretJwtAuthenticator;
 import org.apereo.cas.oidc.authn.OidcPrivateKeyJwtAuthenticator;
@@ -61,6 +62,7 @@ import org.apereo.cas.oidc.web.OidcAccessTokenResponseGenerator;
 import org.apereo.cas.oidc.web.OidcAuthenticationAuthorizeSecurityLogic;
 import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolver;
 import org.apereo.cas.oidc.web.OidcCasClientRedirectActionBuilder;
+import org.apereo.cas.oidc.web.OidcCasLocaleChangeInterceptor;
 import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolver;
 import org.apereo.cas.oidc.web.OidcHandlerInterceptorAdapter;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder;
@@ -130,6 +132,7 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderWebflowEventResolver;
+import org.apereo.cas.web.support.ArgumentExtractor;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -145,6 +148,7 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.credentials.extractor.BearerAuthExtractor;
 import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
+import org.pac4j.core.http.url.UrlResolver;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.http.client.direct.HeaderClient;
 import org.pac4j.springframework.web.SecurityInterceptor;
@@ -232,6 +236,10 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Autowired
     @Qualifier("oauthCasAuthenticationBuilder")
     private ObjectProvider<OAuth20CasAuthenticationBuilder> authenticationBuilder;
+
+    @Autowired
+    @Qualifier("argumentExtractor")
+    private ObjectProvider<ArgumentExtractor> argumentExtractor;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -893,10 +901,29 @@ public class OidcConfiguration implements WebMvcConfigurer {
             accessTokenJwtBuilder());
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "oidcLocaleChangeInterceptor")
+    @RefreshScope
+    public HandlerInterceptor oidcLocaleChangeInterceptor() {
+        val interceptor = new OidcCasLocaleChangeInterceptor(
+            casProperties.getLocale(), argumentExtractor.getObject());
+        interceptor.setParamName(OidcConstants.UI_LOCALES);
+        return interceptor;
+    }
+
+    @Bean
+    @RefreshScope
+    public UrlResolver casCallbackUrlResolver() {
+        return new OidcCasCallbackUrlResolver(casProperties);
+    }
+    
     @ConditionalOnMissingBean(name = "oidcCasWebflowExecutionPlanConfigurer")
     @Bean
     public CasWebflowExecutionPlanConfigurer oidcCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(oidcWebflowConfigurer());
+        return plan -> {
+            plan.registerWebflowConfigurer(oidcWebflowConfigurer());
+            plan.registerWebflowInterceptor(oidcLocaleChangeInterceptor());
+        };
     }
 
     @ConditionalOnMissingBean(name = "oidcUserProfileViewRenderer")

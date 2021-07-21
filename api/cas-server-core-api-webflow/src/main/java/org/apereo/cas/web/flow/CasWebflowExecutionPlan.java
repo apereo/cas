@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import org.springframework.web.servlet.HandlerInterceptor;
+
 import java.util.Collection;
 
 /**
@@ -18,11 +20,25 @@ public interface CasWebflowExecutionPlan {
     void registerWebflowConfigurer(CasWebflowConfigurer cfg);
 
     /**
+     * Register webflow interceptor.
+     *
+     * @param interceptor the interceptor
+     */
+    void registerWebflowInterceptor(HandlerInterceptor interceptor);
+
+    /**
      * Gets webflow configurers.
      *
      * @return the webflow configurers
      */
     Collection<CasWebflowConfigurer> getWebflowConfigurers();
+
+    /**
+     * Gets webflow interceptors.
+     *
+     * @return the webflow interceptors
+     */
+    Collection<HandlerInterceptor> getWebflowInterceptors();
 
     /**
      * Execute the plan.
