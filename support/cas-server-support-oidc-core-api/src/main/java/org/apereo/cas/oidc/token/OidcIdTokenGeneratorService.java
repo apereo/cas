@@ -7,6 +7,7 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenAtHashGenerator;
@@ -54,6 +55,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                            final OAuth20AccessToken accessToken,
                            final long timeoutInSeconds,
                            final OAuth20ResponseTypes responseType,
+                           final OAuth20GrantTypes grantType,
                            final OAuthRegisteredService registeredService) {
         Assert.isAssignable(OidcRegisteredService.class, registeredService.getClass(), "Registered service instance is not an OIDC service");
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
@@ -62,7 +64,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         val authenticatedProfile = getAuthenticatedProfile(request, response);
         LOGGER.debug("Current user profile to use for ID token is [{}]", authenticatedProfile);
         val claims = buildJwtClaims(request, accessToken, timeoutInSeconds,
-            oidcRegisteredService, authenticatedProfile, context, responseType);
+            oidcRegisteredService, authenticatedProfile, context, responseType, grantType);
 
         return encodeAndFinalizeToken(claims, oidcRegisteredService, accessToken);
     }
@@ -81,6 +83,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
      * @param profile          the user profile
      * @param context          the context
      * @param responseType     the response type
+     * @param grantType        the grant type
      * @return the jwt claims
      */
     protected JwtClaims buildJwtClaims(final HttpServletRequest request,
@@ -89,7 +92,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                                        final OidcRegisteredService service,
                                        final UserProfile profile,
                                        final JEEContext context,
-                                       final OAuth20ResponseTypes responseType) {
+                                       final OAuth20ResponseTypes responseType,
+                                       final OAuth20GrantTypes grantType) {
         val authentication = accessToken.getAuthentication();
 
         val principal = this.getConfigurationContext().getProfileScopeToAttributesFilter()
@@ -137,7 +141,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         }
         generateAccessTokenHash(accessToken, service, claims);
 
-        if (responseType != OAuth20ResponseTypes.CODE) {
+        if (responseType != OAuth20ResponseTypes.CODE && grantType != OAuth20GrantTypes.AUTHORIZATION_CODE) {
             LOGGER.trace("Comparing principal attributes [{}] with supported claims [{}]",
                 principal.getAttributes(), oidc.getDiscovery().getClaims());
             principal.getAttributes()
