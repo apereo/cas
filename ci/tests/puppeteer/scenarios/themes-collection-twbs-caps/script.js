@@ -1,25 +1,18 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: false,
-        devtools: true,
-        slowMo: 500
-    });
-    const page = await browser.newPage();
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/login");
 
     await page.keyboard.press('CapsLock');
     await page.type('#password', "M");
-    
-    const isNotHidden = await page.$eval('.caps-warn', (elem) => {
-        return elem.style.display !== 'none';
-    });
-    console.log(`Caps warning is NOT hidden: ${isNotHidden ? 'TRUE' : 'FALSE'}`);
-    assert(isNotHidden === true);
 
+    await cas.assertVisibility(page, '.caps-warn');
+    const caps = await page.$('.caps-warn');
+    console.log(`Caps warning is ${caps !== null ? 'NOT' : ''} hidden`);
 
     await browser.close();
 })();
