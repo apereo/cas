@@ -1,7 +1,7 @@
 <script type="text/javascript" th:src="@{#{webjars.jquery.js}}"></script>
 <span th:remove="tag" th:if="${'true' == #strings.defaultString(#themes.code('cas.js.core.enabled'), 'true')}">
-    <span th:replace="fragments/theme :: javascript">
-        <a href="fragments/theme.html">Theme</a> fragment will go here
+    <span th:replace="fragments/includes :: javascript">
+        <a href="fragments/includes.html">Theme</a> fragment will go here
     </span>
 </span>
 

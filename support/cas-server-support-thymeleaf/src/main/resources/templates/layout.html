@@ -12,8 +12,8 @@
 
     <!--/* Core CAS CSS */-->
     <span th:remove="tag" th:if="${'true' == #strings.defaultString(#themes.code('cas.css.core.enabled'), 'true')}">
-        <span th:replace="fragments/theme :: stylesheets">
-            <a href="fragments/theme.html">Theme</a> stylesheet fragment will go here
+        <span th:replace="fragments/includes :: stylesheets">
+            <a href="fragments/includes.html">Theme</a> stylesheet fragment will go here
         </span>
     </span>
 
