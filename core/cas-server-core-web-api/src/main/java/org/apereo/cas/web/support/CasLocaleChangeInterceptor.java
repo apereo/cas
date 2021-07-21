@@ -35,6 +35,7 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
         val localeResolver = RequestContextUtils.getLocaleResolver(request);
         if (localeResolver != null) {
             localeResolver.setLocale(request, response, locale);
+            request.setAttribute(Locale.class.getName(), locale);
         }
     }
 

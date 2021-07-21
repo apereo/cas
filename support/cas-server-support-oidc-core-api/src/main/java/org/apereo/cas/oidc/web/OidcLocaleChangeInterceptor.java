@@ -30,19 +30,18 @@ public class OidcLocaleChangeInterceptor extends CasLocaleChangeInterceptor {
     public boolean preHandle(final HttpServletRequest request,
                              final HttpServletResponse response,
                              final Object handler) {
-        return handleForcedLocale(request, response) || resolveUiLocale(request, response);
+        resolveUiLocale(request, response);
+        return true;
     }
 
-    private boolean resolveUiLocale(final HttpServletRequest request,
-                                    final HttpServletResponse response) {
+    private void resolveUiLocale(final HttpServletRequest request,
+                                 final HttpServletResponse response) {
         val service = argumentExtractor.extractService(request);
         if (service != null) {
             val newLocale = service.getAttributes().get(OidcConstants.UI_LOCALES);
             if (newLocale != null && !newLocale.isEmpty()) {
                 configureLocale(request, response, new Locale((String) newLocale.get(0)));
-                return true;
             }
         }
-        return false;
     }
 }
