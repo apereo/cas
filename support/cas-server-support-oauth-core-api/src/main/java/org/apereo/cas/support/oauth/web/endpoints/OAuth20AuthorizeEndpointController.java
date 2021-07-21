@@ -208,22 +208,20 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
                                                         final String clientId,
                                                         final Service service,
                                                         final Authentication authentication) {
-        val configContext = getConfigurationContext();
-
-        val builder = configContext.getOauthAuthorizationResponseBuilders()
+        val builder = getConfigurationContext().getOauthAuthorizationResponseBuilders()
             .stream()
             .filter(b -> b.supports(context))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Could not build the callback url. Response type likely not supported"));
 
         var ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
-            configContext.getTicketGrantingTicketCookieGenerator(),
-            configContext.getTicketRegistry(), context.getNativeRequest());
+            getConfigurationContext().getTicketGrantingTicketCookieGenerator(),
+            getConfigurationContext().getTicketRegistry(), context.getNativeRequest());
 
         if (ticketGrantingTicket == null) {
-            ticketGrantingTicket = configContext.getSessionStore()
+            ticketGrantingTicket = getConfigurationContext().getSessionStore()
                 .get(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
-                .map(ticketId -> configContext.getCentralAuthenticationService().getTicket(ticketId.toString(), TicketGrantingTicket.class))
+                .map(ticketId -> getConfigurationContext().getCentralAuthenticationService().getTicket(ticketId.toString(), TicketGrantingTicket.class))
                 .orElse(null);
         }
         if (ticketGrantingTicket == null) {

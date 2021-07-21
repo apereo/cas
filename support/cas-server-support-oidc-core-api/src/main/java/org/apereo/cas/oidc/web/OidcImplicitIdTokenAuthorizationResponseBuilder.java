@@ -64,7 +64,7 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilder extends OAuth20Toke
                                                         final JEEContext context) throws Exception {
         val idToken = this.idTokenGenerator.generate(context.getNativeRequest(),
             context.getNativeResponse(), accessToken, idTokenExpirationPolicy.buildTicketExpirationPolicy().getTimeToLive(),
-            OAuth20ResponseTypes.ID_TOKEN, holder.getRegisteredService());
+            OAuth20ResponseTypes.ID_TOKEN, holder.getGrantType(), holder.getRegisteredService());
         LOGGER.debug("Generated id token [{}]", idToken);
         params.add(new BasicNameValuePair(OidcConstants.ID_TOKEN, idToken));
         return super.buildCallbackUrlResponseType(holder, redirectUri, accessToken, params, refreshToken, context);

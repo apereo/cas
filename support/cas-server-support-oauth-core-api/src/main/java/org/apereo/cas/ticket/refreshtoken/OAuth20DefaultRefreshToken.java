@@ -2,6 +2,8 @@ package org.apereo.cas.ticket.refreshtoken;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.code.OAuth20DefaultCode;
@@ -40,10 +42,13 @@ public class OAuth20DefaultRefreshToken extends OAuth20DefaultCode implements OA
                                       final String codeChallengeMethod,
                                       final String clientId,
                                       final String accessToken,
-                                      final Map<String, Map<String, Object>> requestClaims) {
+                                      final Map<String, Map<String, Object>> requestClaims,
+                                      final OAuth20ResponseTypes responseType,
+                                      final OAuth20GrantTypes grantType) {
         super(id, service, authentication, expirationPolicy,
             ticketGrantingTicket, scopes,
-            codeChallenge, codeChallengeMethod, clientId, requestClaims);
+            codeChallenge, codeChallengeMethod, clientId,
+            requestClaims, responseType, grantType);
         this.accessTokens.add(accessToken);
     }
 
@@ -54,9 +59,12 @@ public class OAuth20DefaultRefreshToken extends OAuth20DefaultCode implements OA
                                       final Collection<String> scopes,
                                       final String clientId,
                                       final String accessToken,
-                                      final Map<String, Map<String, Object>> requestClaims) {
+                                      final Map<String, Map<String, Object>> requestClaims,
+                                      final OAuth20ResponseTypes responseType,
+                                      final OAuth20GrantTypes grantType) {
         this(id, service, authentication, expirationPolicy,
-            ticketGrantingTicket, scopes, null, null, clientId, accessToken, requestClaims);
+            ticketGrantingTicket, scopes, null, null,
+            clientId, accessToken, requestClaims, responseType, grantType);
     }
 
     @Override

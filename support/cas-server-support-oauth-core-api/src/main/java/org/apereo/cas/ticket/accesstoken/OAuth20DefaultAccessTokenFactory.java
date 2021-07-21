@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -62,14 +64,16 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
     public OAuth20AccessToken create(final Service service, final Authentication authentication,
                                      final TicketGrantingTicket ticketGrantingTicket,
                                      final Collection<String> scopes, final String clientId,
-                                     final Map<String, Map<String, Object>> requestClaims) {
+                                     final Map<String, Map<String, Object>> requestClaims,
+                                     final OAuth20ResponseTypes responseType,
+                                     final OAuth20GrantTypes grantType) {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), clientId);
         val expirationPolicyToUse = determineExpirationPolicyForService(registeredService);
         val accessTokenId = this.accessTokenIdGenerator.getNewTicketId(OAuth20AccessToken.PREFIX);
 
         val at = new OAuth20DefaultAccessToken(accessTokenId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket, scopes,
-            clientId, requestClaims);
+            clientId, requestClaims, responseType, grantType);
         if (ticketGrantingTicket != null) {
             ticketGrantingTicket.getDescendantTickets().add(at.getId());
         }
@@ -79,13 +83,15 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
     @Override
     public OAuth20AccessToken create(final Service service, final Authentication authentication,
                                      final Collection<String> scopes, final String clientId,
-                                     final Map<String, Map<String, Object>> requestClaims) {
+                                     final Map<String, Map<String, Object>> requestClaims,
+                                     final OAuth20ResponseTypes responseType,
+                                     final OAuth20GrantTypes grantType) {
         val accessTokenId = this.accessTokenIdGenerator.getNewTicketId(OAuth20AccessToken.PREFIX);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), clientId);
         val expirationPolicyToUse = determineExpirationPolicyForService(registeredService);
         return new OAuth20DefaultAccessToken(accessTokenId, service, authentication,
             expirationPolicyToUse, null,
-            scopes, clientId, requestClaims);
+            scopes, clientId, requestClaims, responseType, grantType);
     }
 
     private ExpirationPolicy determineExpirationPolicyForService(final OAuthRegisteredService registeredService) {

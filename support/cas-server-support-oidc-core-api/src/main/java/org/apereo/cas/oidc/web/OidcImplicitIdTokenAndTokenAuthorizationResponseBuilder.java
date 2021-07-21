@@ -57,7 +57,8 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder extends OAu
 
         val idToken = this.idTokenGenerator.generate(context.getNativeRequest(),
             context.getNativeResponse(), accessToken, idTokenExpirationPolicy.buildTicketExpirationPolicy().getTimeToLive(),
-            OAuth20ResponseTypes.IDTOKEN_TOKEN, holder.getRegisteredService());
+            OAuth20ResponseTypes.IDTOKEN_TOKEN, holder.getGrantType(),
+            holder.getRegisteredService());
         LOGGER.debug("Generated id token [{}]", idToken);
         params.add(new BasicNameValuePair(OidcConstants.ID_TOKEN, idToken));
         return super.buildCallbackUrlResponseType(holder, redirectUri, accessToken, params, refreshToken, context);

@@ -12,6 +12,8 @@ import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.OidcSubjectTypes;
 import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -279,7 +281,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
                 authn,
                 List.of(OidcConstants.CLIENT_REGISTRATION_SCOPE),
                 registeredService.getClientId(),
-                new HashMap<>(0));
+                new HashMap<>(0),
+                OAuth20ResponseTypes.NONE, OAuth20GrantTypes.NONE);
         getConfigurationContext().getTicketRegistry().addTicket(accessToken);
         return accessToken;
     }
