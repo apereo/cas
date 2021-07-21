@@ -102,7 +102,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         val tgt = accessToken.getTicketGrantingTicket();
         val jwtId = getJwtId(tgt);
         claims.setJwtId(jwtId);
-        claims.setClaim(OidcConstants.CLAIM_SESSIOND_ID, DigestUtils.sha(jwtId));
+        claims.setClaim(OidcConstants.CLAIM_SESSION_ID, DigestUtils.sha(jwtId));
 
         claims.setIssuer(getConfigurationContext().getIssuerService().determineIssuer(Optional.empty()));
         claims.setAudience(accessToken.getClientId());

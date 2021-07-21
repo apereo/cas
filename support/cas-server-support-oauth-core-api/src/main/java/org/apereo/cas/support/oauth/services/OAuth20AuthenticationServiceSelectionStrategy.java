@@ -36,10 +36,41 @@ public class OAuth20AuthenticationServiceSelectionStrategy extends BaseAuthentic
     private final String callbackUrl;
 
     public OAuth20AuthenticationServiceSelectionStrategy(final ServicesManager servicesManager,
-        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-        final String callbackUrl) {
+                                                         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+                                                         final String callbackUrl) {
         super(servicesManager, webApplicationServiceFactory);
         this.callbackUrl = callbackUrl;
+    }
+
+    private static Optional<NameValuePair> resolveClientIdFromService(final Service service) {
+        try {
+            val builder = new URIBuilder(service.getId());
+            return builder.getQueryParams()
+                .stream()
+                .filter(p -> p.getName().equals(OAuth20Constants.CLIENT_ID))
+                .findFirst();
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return Optional.empty();
+    }
+
+    @SneakyThrows
+    private static Optional<NameValuePair> resolveRedirectUri(final Service service) {
+        val builder = new URIBuilder(service.getId());
+        return builder.getQueryParams()
+            .stream()
+            .filter(p -> p.getName().equals(OAuth20Constants.REDIRECT_URI))
+            .findFirst();
+    }
+
+    @SneakyThrows
+    private static Optional<NameValuePair> resolveGrantType(final Service service) {
+        val builder = new URIBuilder(service.getId());
+        return builder.getQueryParams()
+            .stream()
+            .filter(p -> p.getName().equals(OAuth20Constants.GRANT_TYPE))
+            .findFirst();
     }
 
     @Override
@@ -78,36 +109,5 @@ public class OAuth20AuthenticationServiceSelectionStrategy extends BaseAuthentic
             BooleanUtils.toString(res, StringUtils.EMPTY, " not"));
         LOGGER.trace(msg);
         return res;
-    }
-
-    private static Optional<NameValuePair> resolveClientIdFromService(final Service service) {
-        try {
-            val builder = new URIBuilder(service.getId());
-            return builder.getQueryParams()
-                .stream()
-                .filter(p -> p.getName().equals(OAuth20Constants.CLIENT_ID))
-                .findFirst();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return Optional.empty();
-    }
-
-    @SneakyThrows
-    private static Optional<NameValuePair> resolveRedirectUri(final Service service) {
-        val builder = new URIBuilder(service.getId());
-        return builder.getQueryParams()
-            .stream()
-            .filter(p -> p.getName().equals(OAuth20Constants.REDIRECT_URI))
-            .findFirst();
-    }
-
-    @SneakyThrows
-    private static Optional<NameValuePair> resolveGrantType(final Service service) {
-        val builder = new URIBuilder(service.getId());
-        return builder.getQueryParams()
-            .stream()
-            .filter(p -> p.getName().equals(OAuth20Constants.GRANT_TYPE))
-            .findFirst();
     }
 }

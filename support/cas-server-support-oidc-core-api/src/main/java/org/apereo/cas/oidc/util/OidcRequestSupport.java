@@ -268,7 +268,7 @@ public class OidcRequestSupport {
             .concat(")");
         val result = definedIssuer.equalsIgnoreCase(issuer) || issuer.matches(issuerPattern);
         FunctionUtils.doIf(!result,
-            o -> LOGGER.warn("Issuer [{}] defined in CAS configuration does not match the request issuer [{}]", o, issuer))
+            o -> LOGGER.trace("Issuer [{}] defined in CAS configuration does not match the request issuer [{}]", o, issuer))
             .accept(definedIssuer);
         return result;
     }
