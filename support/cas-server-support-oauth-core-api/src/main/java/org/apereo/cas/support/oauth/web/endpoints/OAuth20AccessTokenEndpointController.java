@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenException;
@@ -141,6 +142,7 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
             .responseType(result.getResponseType().orElse(OAuth20ResponseTypes.NONE))
             .casProperties(getConfigurationContext().getCasProperties())
             .generatedToken(result)
+            .grantType(result.getGrantType().orElse(OAuth20GrantTypes.NONE))
             .build();
         return getConfigurationContext().getAccessTokenResponseGenerator().generate(request, response, tokenResult);
     }

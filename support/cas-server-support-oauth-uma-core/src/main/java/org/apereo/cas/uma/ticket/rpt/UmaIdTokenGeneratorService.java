@@ -1,6 +1,7 @@
 package org.apereo.cas.uma.ticket.rpt;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
@@ -38,6 +39,7 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService<OAut
                            final OAuth20AccessToken accessToken,
                            final long timeoutInSeconds,
                            final OAuth20ResponseTypes responseType,
+                           final OAuth20GrantTypes grantType,
                            final OAuthRegisteredService registeredService) {
 
         val context = new JEEContext(request, response);

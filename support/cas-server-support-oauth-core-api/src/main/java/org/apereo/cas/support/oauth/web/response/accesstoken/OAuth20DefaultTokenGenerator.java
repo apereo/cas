@@ -166,7 +166,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         val ticketGrantingTicket = holder.getTicketGrantingTicket();
         val accessToken = this.accessTokenFactory.create(holder.getService(),
             authentication, ticketGrantingTicket, holder.getScopes(),
-            clientId, holder.getClaims());
+            clientId, holder.getClaims(), holder.getResponseType(), holder.getGrantType());
 
         LOGGER.debug("Created access token [{}]", accessToken);
         addTicketToRegistry(accessToken, ticketGrantingTicket);
@@ -239,7 +239,8 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      * @param accessToken    the related Access token
      * @return the refresh token
      */
-    protected OAuth20RefreshToken generateRefreshToken(final AccessTokenRequestDataHolder responseHolder, final OAuth20AccessToken accessToken) {
+    protected OAuth20RefreshToken generateRefreshToken(final AccessTokenRequestDataHolder responseHolder,
+                                                       final OAuth20AccessToken accessToken) {
         LOGGER.debug("Creating refresh token for [{}]", responseHolder.getService());
         val refreshToken = this.refreshTokenFactory.create(responseHolder.getService(),
             responseHolder.getAuthentication(),
@@ -247,7 +248,9 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             responseHolder.getScopes(),
             responseHolder.getRegisteredService().getClientId(),
             accessToken.getId(),
-            responseHolder.getClaims());
+            responseHolder.getClaims(),
+            responseHolder.getResponseType(),
+            responseHolder.getGrantType());
         LOGGER.debug("Adding refresh token [{}] to the registry", refreshToken);
         addTicketToRegistry(refreshToken, responseHolder.getTicketGrantingTicket());
         if (responseHolder.isExpireOldRefreshToken()) {
