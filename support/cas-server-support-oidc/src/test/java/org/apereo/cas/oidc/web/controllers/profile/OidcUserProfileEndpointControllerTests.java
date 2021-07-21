@@ -6,6 +6,8 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 
 import lombok.val;
@@ -55,7 +57,8 @@ public class OidcUserProfileEndpointControllerTests extends AbstractOidcTests {
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", map);
         val authentication = RegisteredServiceTestUtils.getAuthentication(principal);
         val accessToken = accessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
-            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null, new HashMap<>());
+            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null, new HashMap<>(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         ticketRegistry.addTicket(accessToken);
 
         val mockRequest = getHttpRequestForEndpoint(OidcConstants.PROFILE_URL);
