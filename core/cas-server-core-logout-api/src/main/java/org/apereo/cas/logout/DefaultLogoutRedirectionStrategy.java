@@ -44,14 +44,16 @@ public class DefaultLogoutRedirectionStrategy implements LogoutRedirectionStrate
         LOGGER.trace("Located target service [{}] for redirection after logout", service);
 
         val authorizedRedirectUrlFromRequest = WebUtils.getLogoutRedirectUrl(request, String.class);
-        if (StringUtils.isNotBlank(service) && logoutProperties.isFollowServiceRedirects()) {
+        if (StringUtils.isNotBlank(service)) {
             val webAppService = webApplicationServiceFactory.createService(service);
-            if (singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(webAppService, Optional.of(request))) {
+            if (!singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(webAppService, Optional.of(request))) {
+                LOGGER.warn("Cannot redirect to [{}] given the service is unauthorized to use CAS. "
+                    + "Ensure the service is registered with CAS and is enabled to allow access", service);
+            } else if (logoutProperties.isFollowServiceRedirects()) {
                 LOGGER.debug("Redirecting to logout URL [{}]", service);
                 WebUtils.putLogoutRedirectUrl(requestContext, service);
             } else {
-                LOGGER.warn("Cannot redirect to [{}] given the service is unauthorized to use CAS. "
-                    + "Ensure the service is registered with CAS and is enabled to allow access", service);
+                WebUtils.putServiceIntoFlowScope(requestContext, webAppService);
             }
         } else if (StringUtils.isNotBlank(authorizedRedirectUrlFromRequest)) {
             WebUtils.putLogoutRedirectUrl(requestContext, authorizedRedirectUrlFromRequest);
