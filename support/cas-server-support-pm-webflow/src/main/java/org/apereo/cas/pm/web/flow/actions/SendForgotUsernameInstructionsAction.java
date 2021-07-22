@@ -6,6 +6,7 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.NullPrincipal;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
@@ -123,7 +124,10 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
         credential.setId(query.getUsername());
         val person = principalResolver.resolve(credential);
         FunctionUtils.doIf(person != null && !person.getClass().equals(NullPrincipal.class),
-            principal -> parameters.put("principal", principal)).accept(person);
+            principal -> {
+                parameters.put("principal", principal);
+                requestContext.getFlashScope().put(Principal.class.getName(), person);
+            }).accept(person);
         val reset = casProperties.getAuthn().getPm().getForgotUsername().getMail();
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val body = EmailMessageBodyBuilder.builder().properties(reset)
