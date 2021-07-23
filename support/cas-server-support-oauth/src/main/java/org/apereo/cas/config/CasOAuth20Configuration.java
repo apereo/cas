@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
@@ -182,7 +183,7 @@ public class CasOAuth20Configuration {
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
-    private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
+    private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
 
     @Autowired
     @Qualifier("defaultTicketFactory")

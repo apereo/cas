@@ -194,7 +194,8 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
 
     private LogoutAction getLogoutAction(final LogoutProperties properties) {
         val plan = mock(LogoutExecutionPlan.class);
-        when(plan.getLogoutRedirectionStrategies()).thenReturn(List.of(new DefaultLogoutRedirectionStrategy(getWebApplicationServiceFactory(), properties,
+        when(plan.getLogoutRedirectionStrategies())
+            .thenReturn(List.of(new DefaultLogoutRedirectionStrategy(getArgumentExtractor(), properties,
             new DefaultSingleLogoutServiceLogoutUrlBuilder(serviceManager, SimpleUrlValidator.getInstance()))));
         return new LogoutAction(plan);
     }

@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.authenticator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -86,7 +87,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
-    protected ServiceFactory serviceFactory;
+    protected ServiceFactory<WebApplicationService> serviceFactory;
 
     @Autowired
     @Qualifier("accessTokenJwtBuilder")

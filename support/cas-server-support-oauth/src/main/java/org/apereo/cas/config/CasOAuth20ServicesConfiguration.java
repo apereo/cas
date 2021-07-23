@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -40,7 +41,7 @@ public class CasOAuth20ServicesConfiguration {
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
-    private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
+    private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
 
     @Bean
     public Service oauthCallbackService() {
