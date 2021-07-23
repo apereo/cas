@@ -44,6 +44,7 @@ public class SendForgotUsernameInstructionsActionEmailMessageBodyTests extends B
         val context = mock(RequestContext.class);
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
+        when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
 
