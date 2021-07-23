@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -71,6 +72,16 @@ public class MultifactorAuthenticationUtils {
         return context.map(ctx -> {
             LOGGER.trace("Reviewing current state [{}], event [{}] and transition [{}]",
                 ctx.getCurrentState(), ctx.getCurrentEvent(), ctx.getCurrentTransition());
+            val authentication = WebUtils.getAuthentication(ctx);
+            val authAttributes = authentication.getAttributes();
+            val ctxAttr = authAttributes.get("authnContextClass");
+            if (ctxAttr != null) {
+                val contexts = CollectionUtils.toCollection(ctxAttr);
+                val authnCtx = CollectionUtils.firstElement(contexts).get().toString();
+                if (authnCtx != null) {
+                        return new Event(authnCtx, authnCtx, attributesMap);
+                }
+            }
             val def = ctx.getMatchingTransition(event.getId());
             if (def == null) {
                 val msg = String.format("State [%s:%s:%s] does not have a matching transition for %s",
