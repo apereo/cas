@@ -1,16 +1,21 @@
 package org.apereo.cas.web.flow.logout;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.LogoutExecutionPlan;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Confirm logout action once the confirmation view is displayed.
@@ -18,21 +23,21 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@RequiredArgsConstructor
-public class ConfirmLogoutAction extends AbstractAction {
+public class ConfirmLogoutAction extends AbstractLogoutAction {
 
-    /**
-     * The cas service.
-     */
-    protected final CentralAuthenticationService centralAuthenticationService;
-
-    /**
-     * The TGT cookie generator.
-     */
-    protected final CasCookieBuilder ticketGrantingTicketCookieGenerator;
+    public ConfirmLogoutAction(final CentralAuthenticationService centralAuthenticationService,
+                               final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+                               final ArgumentExtractor argumentExtractor,
+                               final ServicesManager servicesManager,
+                               final LogoutExecutionPlan logoutExecutionPlan,
+                               final CasConfigurationProperties casProperties) {
+        super(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
+            argumentExtractor, servicesManager, logoutExecutionPlan, casProperties);
+    }
 
     @Override
-    public Event doExecute(final RequestContext requestContext) {
+    protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
+                                      final RequestContext requestContext) {
         val tgtId = getTicketGrantingTicket(requestContext);
         if (StringUtils.isNotBlank(tgtId)) {
             val ticket = centralAuthenticationService.getTicket(tgtId, TicketGrantingTicket.class);

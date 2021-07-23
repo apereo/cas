@@ -74,7 +74,7 @@ public class CasSupportActionsConfiguration {
     @Autowired
     @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
     private ObjectProvider<LogoutManager> logoutManager;
-    
+
     @Autowired
     @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
     private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
@@ -142,6 +142,14 @@ public class CasSupportActionsConfiguration {
     @Qualifier("principalElectionStrategy")
     private ObjectProvider<PrincipalElectionStrategy> principalElectionStrategy;
 
+    @Autowired
+    @Qualifier("argumentExtractor")
+    private ObjectProvider<ArgumentExtractor> argumentExtractor;
+
+    @Autowired
+    @Qualifier("logoutExecutionPlan")
+    private ObjectProvider<LogoutExecutionPlan> logoutExecutionPlan;
+
     @Bean
     @RefreshScope
     public HandlerExceptionResolver errorHandlerResolver() {
@@ -186,15 +194,18 @@ public class CasSupportActionsConfiguration {
     @Bean
     @RefreshScope
     public Action finishLogoutAction() {
-        return new FinishLogoutAction();
+        return new FinishLogoutAction(centralAuthenticationService.getObject(),
+            ticketGrantingTicketCookieGenerator.getObject(), argumentExtractor.getObject(),
+            servicesManager.getObject(), logoutExecutionPlan.getObject(), casProperties);
     }
 
-    @Autowired
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_LOGOUT)
-    public Action logoutAction(@Qualifier("logoutExecutionPlan") final LogoutExecutionPlan logoutExecutionPlan) {
-        return new LogoutAction(logoutExecutionPlan);
+    public Action logoutAction() {
+        return new LogoutAction(centralAuthenticationService.getObject(),
+            ticketGrantingTicketCookieGenerator.getObject(), argumentExtractor.getObject(),
+            servicesManager.getObject(), logoutExecutionPlan.getObject(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)
@@ -220,10 +231,10 @@ public class CasSupportActionsConfiguration {
 
     @RefreshScope
     @Bean
-    @Autowired
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP)
-    public Action initialFlowSetupAction(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
-        return new InitialFlowSetupAction(CollectionUtils.wrap(argumentExtractor),
+    public Action initialFlowSetupAction() {
+        return new InitialFlowSetupAction(
+            CollectionUtils.wrap(argumentExtractor.getObject()),
             servicesManager.getObject(),
             authenticationRequestServiceSelectionStrategies.getObject(),
             ticketGrantingTicketCookieGenerator.getObject(),
@@ -289,11 +300,12 @@ public class CasSupportActionsConfiguration {
             authenticationRequestServiceSelectionStrategies.getObject());
     }
 
-    @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "frontChannelLogoutAction")
-    public Action frontChannelLogoutAction(@Qualifier("logoutExecutionPlan") final LogoutExecutionPlan logoutExecutionPlan) {
-        return new FrontChannelLogoutAction(logoutExecutionPlan, casProperties.getSlo().isDisabled());
+    public Action frontChannelLogoutAction() {
+        return new FrontChannelLogoutAction(centralAuthenticationService.getObject(),
+            ticketGrantingTicketCookieGenerator.getObject(), argumentExtractor.getObject(),
+            servicesManager.getObject(), logoutExecutionPlan.getObject(), casProperties);
     }
 
     @Bean
@@ -319,14 +331,17 @@ public class CasSupportActionsConfiguration {
     @RefreshScope
     public Action confirmLogoutAction() {
         return new ConfirmLogoutAction(centralAuthenticationService.getObject(),
-            ticketGrantingTicketCookieGenerator.getObject());
+            ticketGrantingTicketCookieGenerator.getObject(), argumentExtractor.getObject(),
+            servicesManager.getObject(), logoutExecutionPlan.getObject(), casProperties);
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_LOGOUT_VIEW_SETUP)
     public Action logoutViewSetupAction() {
-        return new LogoutViewSetupAction(casProperties);
+        return new LogoutViewSetupAction(centralAuthenticationService.getObject(),
+            ticketGrantingTicketCookieGenerator.getObject(), argumentExtractor.getObject(),
+            servicesManager.getObject(), logoutExecutionPlan.getObject(), casProperties);
     }
 
     @Bean
