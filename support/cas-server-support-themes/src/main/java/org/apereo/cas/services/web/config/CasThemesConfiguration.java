@@ -60,7 +60,7 @@ public class CasThemesConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private ObjectProvider<ThymeleafProperties> properties;
+    private ObjectProvider<ThymeleafProperties> thymeleafProperties;
 
     @Autowired
     private WebProperties webProperties;
@@ -139,11 +139,12 @@ public class CasThemesConfiguration {
                         period -> registration.setCachePeriod((int) period.getSeconds()));
                     registration.setCacheControl(webProperties.getResources().getCache().getCachecontrol().toHttpCacheControl());
                     registration.setUseLastModified(true);
-                    val cache = properties.getIfAvailable() != null && properties.getObject().isCache();
+                    val cache = thymeleafProperties.getIfAvailable() != null && thymeleafProperties.getObject().isCache();
                     val chainRegistration = registration.resourceChain(cache);
                     val resolver = new PathResourceResolver();
                     resolver.setAllowedLocations(resources);
                     chainRegistration.addResolver(resolver);
+
                 }
             }
         };
