@@ -18,15 +18,24 @@ const cas = require('../../cas.js');
     console.log(logo)
     assert(logo === "/cas/themes/example/images/logo.png")
 
-    await page.goto("https://localhost:8443/cas/logout");
+    console.log("Logging out...")
+    await page.goto("https://localhost:8443/cas/logout?service=https://github.com/apereo/cas");
     await page.waitForTimeout(1000)
+
+    await cas.assertVisibility(page, '#twitter-link')
+    await cas.assertVisibility(page, '#youtube-link')
     
     await cas.assertVisibility(page, '#logoutButton')
     await cas.submitForm(page, "#fm1");
+
+    await page.waitForTimeout(1000)
     const url = await page.url()
     console.log(`Page url: ${url}`)
-    assert(url === "https://localhost:8443/cas/logout")
+    assert(url.toString().startsWith("https://localhost:8443/cas/logout"))
     await cas.assertNoTicketGrantingCookie(page);
 
+    await cas.assertVisibility(page, '#twitter-link')
+    await cas.assertVisibility(page, '#youtube-link')
+    
     await browser.close();
 })();
