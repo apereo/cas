@@ -1,0 +1,19 @@
+{
+  "dependencies": "yubikey,gauth",
+  "properties": [
+    "--cas.authn.mfa.yubikey.client-id=18420",
+    "--cas.authn.mfa.yubikey.secret-key=iBIehjui22aK8x82oe6qzGeb0As=",
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.authn.mfa.provider-selection-enabled=true",
+    "--cas.authn.mfa.global-provider-id=mfa-gauth,mfa-yubikey",
+
+    "--logging.level.org.apereo.cas=debug",
+    "--cas.service-registry.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/mfa-global-multiple-providers/services",
+    "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/mfa-global-multiple-providers/accounts.json"
+  ]
+}
+
+
+
