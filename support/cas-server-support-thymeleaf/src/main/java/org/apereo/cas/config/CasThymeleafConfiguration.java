@@ -38,6 +38,7 @@ import org.springframework.util.MimeType;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.ViewResolver;
+import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.dialect.IPostProcessorDialect;
 import org.thymeleaf.postprocessor.IPostProcessor;
 import org.thymeleaf.postprocessor.PostProcessor;
@@ -49,6 +50,7 @@ import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
 import org.thymeleaf.templateresolver.AbstractTemplateResolver;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -100,23 +102,13 @@ public class CasThymeleafConfiguration {
     public AbstractTemplateResolver chainingTemplateViewResolver() {
         val chain = new ChainingTemplateViewResolver();
 
-        val cpResolver = new ClassLoaderTemplateResolver();
-        configureTemplateViewResolver(cpResolver);
-        cpResolver.setPrefix("thymeleaf/templates/");
-        chain.addResolver(cpResolver);
-
-        val themeCp = new ThemeClassLoaderTemplateResolver(casProperties);
-        configureTemplateViewResolver(themeCp);
-        themeCp.setPrefix("templates/%s/");
-        chain.addResolver(themeCp);
-
         val rest = casProperties.getView().getRest();
         if (StringUtils.isNotBlank(rest.getUrl())) {
-            val url = new RestfulUrlTemplateResolver(casProperties);
+            val url = new RestfulUrlTemplateResolver(casProperties, themeResolver.getObject());
             configureTemplateViewResolver(url);
             chain.addResolver(url);
         }
-
+        
         val templatePrefixes = casProperties.getView().getTemplatePrefixes();
         templatePrefixes.forEach(prefix -> {
             try {
@@ -124,8 +116,8 @@ public class CasThymeleafConfiguration {
                 val viewPath = StringUtils.appendIfMissing(prefixPath, "/");
 
                 val theme = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)
-                    ? new ThemeClassLoaderTemplateResolver(casProperties)
-                    : new ThemeFileTemplateResolver(casProperties);
+                    ? new ThemeClassLoaderTemplateResolver(themeResolver.getObject())
+                    : new ThemeFileTemplateResolver(casProperties, themeResolver.getObject());
                 configureTemplateViewResolver(theme);
                 theme.setPrefix(viewPath + "themes/%s/");
                 chain.addResolver(theme);
@@ -141,6 +133,16 @@ public class CasThymeleafConfiguration {
             }
         });
 
+        val themeCp = new ThemeClassLoaderTemplateResolver(themeResolver.getObject());
+        configureTemplateViewResolver(themeCp);
+        themeCp.setPrefix("templates/%s/");
+        chain.addResolver(themeCp);
+
+        val cpResolver = new ClassLoaderTemplateResolver();
+        configureTemplateViewResolver(cpResolver);
+        cpResolver.setPrefix("thymeleaf/templates/");
+        chain.addResolver(cpResolver);
+        
         chain.initialize();
         return chain;
     }
@@ -256,5 +258,18 @@ public class CasThymeleafConfiguration {
         resolver.setOrder(0);
         resolver.setSuffix(".html");
         resolver.setTemplateMode(props.getMode());
+    }
+
+    @Bean
+    public SpringTemplateEngine templateEngine(final ThymeleafProperties properties,
+                                        final ObjectProvider<ITemplateResolver> templateResolvers,
+                                        final ObjectProvider<IDialect> dialects) {
+        val engine = new SpringTemplateEngine();
+        engine.setEnableSpringELCompiler(properties.isEnableSpringElCompiler());
+        engine.setRenderHiddenMarkersBeforeCheckboxes(properties.isRenderHiddenMarkersBeforeCheckboxes());
+        templateResolvers.orderedStream().forEach(engine::addTemplateResolver);
+        dialects.orderedStream().forEach(engine::addDialect);
+        
+        return engine;
     }
 }

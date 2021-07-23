@@ -85,11 +85,13 @@ exports.assertNoTicketGrantingCookie = async(page) => {
 }
 
 exports.submitForm = async(page, selector) => {
+    console.log("Submitting form " + selector);
     await page.$eval(selector, form => form.submit());
     await page.waitForTimeout(2500)
 }
 
 exports.type = async(page, selector, value) => {
+    console.log(`Typing ${value} in field ${selector}`);
     await page.$eval(selector, el => el.value = '');
     await page.type(selector, value);
 }
@@ -105,7 +107,9 @@ exports.newPage = async(browser) => {
 }
 
 exports.assertTicketParameter = async(page) => {
+    console.log("Page URL: " + page.url())
     let result = new URL(page.url());
+    assert(result.searchParams.has("ticket"))
     let ticket = result.searchParams.get("ticket");
     console.log("Ticket: " + ticket);
     assert(ticket != null);
