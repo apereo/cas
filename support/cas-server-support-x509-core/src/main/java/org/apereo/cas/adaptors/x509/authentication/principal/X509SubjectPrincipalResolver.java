@@ -50,18 +50,9 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * Sets the descriptor that describes for format of the principal ID to
      * create from X.509 subject DN attributes.  The descriptor is made up of
      * common X.509 attribute names prefixed by "$", which are replaced by
-     * attribute values extracted from DN attribute values.
-     * <p>
-     * EXAMPLE:
-     * </p>
-     * {@code
-     * {@code
-     * <bean class="X509SubjectPrincipalResolver"
-     * p:descriptor="$UID@$DC.$DC"
-     * }
-     * }**
-     * <p>
-     * The above bean when applied to a certificate with the DN
+     * attribute values extracted from DN attribute values. (i.e. $UID@$DC.$DC)
+     *
+     * The resolver when applied to a certificate with the DN
      * <p>
      * <b>DC=edu, DC=vt/UID=jacky, CN=Jascarnella Ellagwonto</b></p>
      * <p>
