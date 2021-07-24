@@ -10,7 +10,6 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -78,7 +77,8 @@ public class MultifactorAuthenticationUtils {
                 val msg = String.format("State [%s:%s:%s] does not have a matching transition for %s",
                     ctx.getCurrentState().getId(),
                     ctx.getCurrentEvent() != null ? ctx.getCurrentEvent().getId() : "N/A",
-                    ctx.getCurrentTransition().getId(), event.getId());
+                    ctx.getCurrentTransition() != null ? ctx.getCurrentTransition().getId() : "N/A",
+                    event.getId());
                 LoggingUtils.error(LOGGER, msg);
                 throw new AuthenticationException(msg);
             }
