@@ -42,7 +42,7 @@ const httpGet = (options) => {
     console.log("Select mfa-gauth");
     await cas.assertVisibility(page, '#mfa-gauth');
 
-    await page.$eval('#mfa-gauth > form[name=fm1]', form => form.submit());
+    await cas.submitForm(page, "#mfa-gauth > form[name=fm1]")
     await page.waitForTimeout(1000);
 
     console.log("Using scratch code " + scratch + " to login...");

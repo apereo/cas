@@ -184,6 +184,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_POST = "post";
 
     /**
+     * Transition id 'mfa-composite'.
+     */
+    String TRANSITION_ID_MFA_COMPOSITE = "mfa-composite";
+
+    /**
      * Transition id 'skip' .
      */
     String TRANSITION_ID_SKIP = "skip";
@@ -629,6 +634,11 @@ public interface CasWebflowConstants {
     String STATE_ID_MFA_CHECK_BYPASS = "mfaCheckBypass";
 
     /**
+     * State if for MFA composite events.
+     */
+    String STATE_ID_MFA_COMPOSITE = "mfa-composite";
+        
+    /**
      * State that can be used by MFA providers that offer preAuth endpoints.
      */
     String STATE_ID_MFA_PRE_AUTH = "mfaPreAuth";
@@ -777,6 +787,11 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_INIT_PASSWORD_RESET = "initPasswordReset";
 
+    /**
+     * State id 'compositeMfaProviderSelectedAction'.
+     */
+    String STATE_ID_MFA_PROVIDER_SELECTED = "compositeMfaProviderSelectedAction";
+
     /*
      ****************************************
      * Views.
@@ -872,6 +887,11 @@ public interface CasWebflowConstants {
      */
 
     /**
+     * Action id 'multifactorProviderSelectedAction'.
+     */
+    String ACTION_ID_MULTIFACTOR_PROVIDER_SELECTED = "multifactorProviderSelectedAction";
+
+    /**
      * Action id 'injectResponseHeadersAction'.
      */
     String ACTION_ID_INJECT_RESPONSE_HEADERS = "injectResponseHeadersAction";
@@ -940,11 +960,6 @@ public interface CasWebflowConstants {
      * Action id 'authenticationViaFormAction'.
      */
     String ACTION_ID_AUTHENTICATION_VIA_FORM_ACTION = "authenticationViaFormAction";
-
-    /**
-     * Action id 'compositeMfaProviderSelectedAction'.
-     */
-    String ACTION_ID_MFA_PROVIDER_SELECTED = "compositeMfaProviderSelectedAction";
 
     /**
      * Action id 'initialFlowSetupAction'.
@@ -1098,6 +1113,11 @@ public interface CasWebflowConstants {
      * Action id 'inquireInterruptAction .
      */
     String ACTION_ID_INQUIRE_INTERRUPT = "inquireInterruptAction";
+
+    /**
+     * Action id 'prepareMultifactorProviderSelectionAction'.
+     */
+    String ACTION_ID_PREPARE_MULTIFACTOR_PROVIDER_SELECTION = "prepareMultifactorProviderSelectionAction";
 
     /**
      * Action id 'finalizeInterruptFlowAction .

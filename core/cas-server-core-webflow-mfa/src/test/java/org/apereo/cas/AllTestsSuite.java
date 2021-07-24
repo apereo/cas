@@ -15,6 +15,7 @@ import org.apereo.cas.web.flow.resolver.impl.CompositeProviderSelectionMultifact
 import org.apereo.cas.web.flow.resolver.impl.DefaultCasDelegatingWebflowEventResolverTests;
 import org.apereo.cas.web.flow.resolver.impl.DefaultMultifactorAuthenticationProviderWebflowEventResolverTests;
 import org.apereo.cas.web.flow.resolver.impl.RankedMultifactorAuthenticationProviderWebflowEventResolverTests;
+import org.apereo.cas.web.flow.resolver.impl.RankedMultifactorAuthenticationProviderWebflowEventResolverWithCompositeTests;
 import org.apereo.cas.web.flow.resolver.impl.SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests;
 import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolverTests;
 
@@ -37,6 +38,7 @@ import org.junit.platform.suite.api.Suite;
     AuthenticationAttributeMultifactorAuthenticationPolicyEventResolverTests.class,
     AdaptiveMultifactorAuthenticationPolicyEventResolverTests.class,
     MultifactorAuthenticationTests.class,
+    RankedMultifactorAuthenticationProviderWebflowEventResolverWithCompositeTests.class,
     DefaultMultifactorAuthenticationProviderWebflowEventResolverTests.class,
     MultifactorProviderSelectedActionTests.class,
     DefaultCasDelegatingWebflowEventResolverTests.class,
