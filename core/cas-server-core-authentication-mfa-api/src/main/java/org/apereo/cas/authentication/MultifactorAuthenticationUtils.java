@@ -3,12 +3,14 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -74,8 +76,10 @@ public class MultifactorAuthenticationUtils {
             val def = ctx.getMatchingTransition(event.getId());
             if (def == null) {
                 val msg = String.format("State [%s:%s:%s] does not have a matching transition for %s",
-                    ctx.getCurrentState().getId(), ctx.getCurrentEvent().getId(),
+                    ctx.getCurrentState().getId(),
+                    ctx.getCurrentEvent() != null ? ctx.getCurrentEvent().getId() : "N/A",
                     ctx.getCurrentTransition().getId(), event.getId());
+                LoggingUtils.error(LOGGER, msg);
                 throw new AuthenticationException(msg);
             }
             return event;

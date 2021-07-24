@@ -18,8 +18,6 @@ const httpGet = (options) => {
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-
-
     console.log("Fetching Scratch codes from /cas/actuator...");
 
     let options1 = {
