@@ -63,8 +63,7 @@ public class JaasAuthenticationHandlerSystemConfigurationTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyWithValidCredentials() {
+    public void verifyWithValidCredentials() throws Exception {
         assertNotNull(handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 

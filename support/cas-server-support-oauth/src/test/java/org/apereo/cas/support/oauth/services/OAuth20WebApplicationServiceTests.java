@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
@@ -27,8 +26,7 @@ public class OAuth20WebApplicationServiceTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    @SneakyThrows
-    public void verifySerializeACompletePrincipalToJson() {
+    public void verifySerializeACompletePrincipalToJson() throws Exception {
         val service = new OAuthRegisteredService();
         service.setName("checkCloning");
         service.setServiceId("testId");

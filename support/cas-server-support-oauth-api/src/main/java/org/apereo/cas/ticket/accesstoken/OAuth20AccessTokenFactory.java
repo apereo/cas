@@ -27,6 +27,8 @@ public interface OAuth20AccessTokenFactory extends TicketFactory {
      * @param scopes               the scopes
      * @param clientId             the client id
      * @param requestClaims        the request claims
+     * @param responseType         the response type
+     * @param grantType            the grant type
      * @return the access token
      */
     OAuth20AccessToken create(Service service,

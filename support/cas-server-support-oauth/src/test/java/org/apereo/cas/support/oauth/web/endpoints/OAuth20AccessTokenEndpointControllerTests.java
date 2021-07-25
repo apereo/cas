@@ -60,7 +60,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         return Stream.of(
             getRegisteredService(REDIRECT_URI, CLIENT_SECRET, CollectionUtils.wrapSet(OAuth20GrantTypes.AUTHORIZATION_CODE)),
             getRegisteredService(REDIRECT_URI, CLIENT_SECRET, new HashSet<>())
-                        );
+        );
     }
 
     @BeforeEach

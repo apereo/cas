@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.handler.support;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCredential;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -45,8 +44,7 @@ public class SimpleTestUsernamePasswordHandlerTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyValidUsernamePassword() {
+    public void verifyValidUsernamePassword() throws Exception {
         val result =
             authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertEquals("SimpleTestUsernamePasswordAuthenticationHandler", result.getHandlerName());

@@ -6,7 +6,6 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
-import lombok.SneakyThrows;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -44,13 +43,11 @@ public class MongoDbSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
     }
 
     @Override
-    @SneakyThrows
     public Pair<String, String> buildSelfSignedEncryptionCert(final Optional<SamlRegisteredService> registeredService) {
         return generateCertificateAndKey();
     }
 
     @Override
-    @SneakyThrows
     public Pair<String, String> buildSelfSignedSigningCert(final Optional<SamlRegisteredService> registeredService) {
         return generateCertificateAndKey();
     }

@@ -19,7 +19,6 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.LoggingUtils;
 
 import com.google.common.base.Supplier;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
@@ -63,7 +62,6 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
         OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,
         OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.TOKEN_URL},
         produces = MediaType.APPLICATION_JSON_VALUE)
-    @SneakyThrows
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         try {
             if (!verifyAccessTokenRequest(request, response)) {

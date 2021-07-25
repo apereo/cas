@@ -429,7 +429,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @RefreshScope
     @ConditionalOnMissingBean(name = "oidcIdTokenGenerator")
     @Bean
-    public IdTokenGeneratorService oidcIdTokenGenerator() {
+    public IdTokenGeneratorService oidcIdTokenGenerator() throws Exception {
         val context = oidcConfigurationContext();
         context.setIdTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService());
         return new OidcIdTokenGeneratorService(context);
@@ -438,7 +438,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean(name = "oidcAccessTokenResponseGenerator")
     @Bean
     @RefreshScope
-    public OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator() {
+    public OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator() throws Exception {
         return new OidcAccessTokenResponseGenerator(oidcIdTokenGenerator(), accessTokenJwtBuilder(),
             casProperties, oidcIssuerService());
     }
@@ -572,9 +572,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @RefreshScope
     @Bean
-    @SneakyThrows
     @ConditionalOnMissingBean(name = "oidcWebFingerDiscoveryService")
-    public OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService() {
+    public OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService() throws Exception {
         return new OidcWebFingerDiscoveryService(oidcWebFingerUserInfoRepository(),
             oidcServerDiscoverySettingsFactory().getObject());
     }
@@ -664,19 +663,17 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "oidcTokenSigningAndEncryptionService")
-    @SneakyThrows
-    public OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() {
+    public OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() throws Exception {
         return new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),
             oidcIssuerService(),
             oidcServerDiscoverySettingsFactory().getObject());
     }
 
-    @SneakyThrows
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "oidcUserProfileSigningAndEncryptionService")
-    public OAuth20TokenSigningAndEncryptionService oidcUserProfileSigningAndEncryptionService() {
+    public OAuth20TokenSigningAndEncryptionService oidcUserProfileSigningAndEncryptionService() throws Exception {
         return new OidcUserProfileSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),
             oidcIssuerService(),
@@ -704,7 +701,6 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    @SneakyThrows
     @ConditionalOnMissingBean(name = "oidcDefaultJsonWebKeystoreCacheLoader")
     @RefreshScope
     public CacheLoader<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCacheLoader() {
@@ -755,7 +751,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "oidcImplicitIdTokenCallbackUrlBuilder")
-    public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenCallbackUrlBuilder() {
+    public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenCallbackUrlBuilder() throws Exception {
         return new OidcImplicitIdTokenAuthorizationResponseBuilder(
             oidcIdTokenGenerator(),
             oauthTokenGenerator.getObject(),
@@ -768,7 +764,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "oidcImplicitIdTokenAndTokenCallbackUrlBuilder")
-    public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenAndTokenCallbackUrlBuilder() {
+    public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenAndTokenCallbackUrlBuilder() throws Exception {
         return new OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder(
             oidcIdTokenGenerator(),
             oauthTokenGenerator.getObject(),
@@ -781,7 +777,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "oidcResourceOwnerCredentialsResponseBuilder")
-    public OAuth20AuthorizationResponseBuilder oidcResourceOwnerCredentialsResponseBuilder() {
+    public OAuth20AuthorizationResponseBuilder oidcResourceOwnerCredentialsResponseBuilder() throws Exception {
         return new OAuth20ResourceOwnerCredentialsResponseBuilder(
             oidcAccessTokenResponseGenerator(),
             oauthTokenGenerator.getObject(),
@@ -791,7 +787,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "oidcClientCredentialsResponseBuilder")
-    public OAuth20AuthorizationResponseBuilder oidcClientCredentialsResponseBuilder() {
+    public OAuth20AuthorizationResponseBuilder oidcClientCredentialsResponseBuilder() throws Exception {
         return new OAuth20ClientCredentialsResponseBuilder(
             oidcAccessTokenResponseGenerator(),
             oauthTokenGenerator.getObject(),
@@ -895,7 +891,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public Authenticator oAuthAccessTokenAuthenticator() {
+    public Authenticator oAuthAccessTokenAuthenticator() throws Exception {
         return new OidcAccessTokenAuthenticator(ticketRegistry.getObject(),
             oidcTokenSigningAndEncryptionService(), servicesManager.getObject(),
             accessTokenJwtBuilder());
@@ -929,7 +925,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean(name = "oidcUserProfileViewRenderer")
     @Bean
     @RefreshScope
-    public OAuth20UserProfileViewRenderer oidcUserProfileViewRenderer() {
+    public OAuth20UserProfileViewRenderer oidcUserProfileViewRenderer() throws Exception {
         return new OidcUserProfileViewRenderer(casProperties.getAuthn().getOauth(),
             servicesManager.getObject(),
             oidcUserProfileSigningAndEncryptionService());
@@ -985,6 +981,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @Bean
     @ConditionalOnMissingBean(name = "oidcConfigurationContext")
+    @SneakyThrows
     public OidcConfigurationContext oidcConfigurationContext() {
         return (OidcConfigurationContext) OidcConfigurationContext.builder()
             .oidcRequestSupport(oidcRequestSupport())

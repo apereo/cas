@@ -7,7 +7,6 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
@@ -62,7 +61,6 @@ public class CasCoreHttpConfiguration {
 
     @ConditionalOnMissingBean(name = "sslContext")
     @Bean
-    @SneakyThrows
     public SSLContext sslContext() {
         val casSslContext = casSslContext();
         if (casSslContext != null) {

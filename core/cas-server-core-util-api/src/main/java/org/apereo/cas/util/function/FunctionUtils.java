@@ -344,4 +344,18 @@ public class FunctionUtils {
             throw throwable.get();
         }
     }
+
+    /**
+     * Do and return.
+     *
+     * @param <T>       the type parameter
+     * @param condition the condition
+     * @param trueTask  the true task
+     * @param falseTask the false task
+     * @return the ticket
+     */
+    public static <T> T doAndReturn(final boolean condition, final Supplier<T> trueTask,
+                                    final Supplier<T> falseTask) {
+        return condition ? trueTask.get() : falseTask.get();
+    }
 }

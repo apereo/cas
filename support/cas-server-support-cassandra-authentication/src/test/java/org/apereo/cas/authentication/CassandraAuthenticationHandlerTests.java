@@ -19,7 +19,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -86,8 +85,7 @@ public class CassandraAuthenticationHandlerTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyUser() {
+    public void verifyUser() throws Exception {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         val result = cassandraAuthenticationHandler.authenticate(c);
         assertNotNull(result);

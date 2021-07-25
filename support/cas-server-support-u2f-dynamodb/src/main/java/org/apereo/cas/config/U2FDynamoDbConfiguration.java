@@ -9,7 +9,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
@@ -52,7 +51,6 @@ public class U2FDynamoDbConfiguration {
 
     @RefreshScope
     @Bean
-    @SneakyThrows
     @ConditionalOnMissingBean(name = "u2fDynamoDbClient")
     public DynamoDbClient u2fDynamoDbClient() {
         val db = casProperties.getAuthn().getMfa().getU2f().getDynamoDb();

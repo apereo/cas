@@ -8,7 +8,6 @@ import org.apereo.cas.notifications.push.NotificationSenderExecutionPlanConfigur
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,8 +41,7 @@ public class GoogleFirebaseCloudMessagingConfiguration {
         return () -> firebaseCloudMessagingNotificationSender;
     }
 
-    @SneakyThrows
-    private GoogleCredentials getCredentials() {
+    private GoogleCredentials getCredentials() throws Exception {
         try {
             return GoogleCredentials.getApplicationDefault();
         } catch (final Exception e) {
@@ -60,7 +58,7 @@ public class GoogleFirebaseCloudMessagingConfiguration {
         @Bean
         @RefreshScope
         @ConditionalOnMissingBean(name = "firebaseCloudMessagingNotificationSender")
-        public NotificationSender firebaseCloudMessagingNotificationSender() {
+        public NotificationSender firebaseCloudMessagingNotificationSender() throws Exception {
             val firebase = casProperties.getGoogleFirebaseMessaging();
             val options = new FirebaseOptions.Builder()
                 .setCredentials(getCredentials())

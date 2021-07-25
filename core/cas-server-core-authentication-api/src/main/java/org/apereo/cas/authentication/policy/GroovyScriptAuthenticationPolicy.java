@@ -68,7 +68,6 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
     }
 
     @Override
-    @SneakyThrows
     public boolean shouldResumeOnFailure(final Throwable failure) {
         initializeWatchableScriptIfNeeded();
         val args = CollectionUtils.wrap("failure", failure, "logger", LOGGER);

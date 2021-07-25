@@ -47,6 +47,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -170,10 +171,10 @@ public class CasCoreServicesConfiguration {
     public ServiceRegistryExecutionPlan serviceRegistryExecutionPlan() {
         val configurers = applicationContext.getBeansOfType(ServiceRegistryExecutionPlanConfigurer.class, false, true);
         val plan = new DefaultServiceRegistryExecutionPlan();
-        configurers.values().forEach(c -> {
+        configurers.values().forEach(Unchecked.consumer(c -> {
             LOGGER.trace("Configuring service registry [{}]", c.getName());
             c.configureServiceRegistry(plan);
-        });
+        }));
         return plan;
     }
 
