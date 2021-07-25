@@ -37,6 +37,8 @@ public class DefaultCasSSLContext {
 
     private final TrustManager[] trustManagers;
 
+    private final KeyManager[] keyManagers;
+
     @SneakyThrows
     public DefaultCasSSLContext(final Resource trustStoreFile, final String trustStorePassword, final String trustStoreType) {
         val casTrustStore = KeyStore.getInstance(trustStoreType);
@@ -54,12 +56,13 @@ public class DefaultCasSSLContext {
         val customTrustManager = getTrustManager(ALG_NAME_PKIX, casTrustStore);
         val jvmTrustManagers = getTrustManager(defaultTrustAlgorithm, null);
 
-        val keyManagers = new KeyManager[]{
+        this.keyManagers = new KeyManager[]{
             new CompositeX509KeyManager(CollectionUtils.wrapList(jvmKeyManager, customKeyManager))
         };
         val allManagers = new ArrayList<>(customTrustManager);
         allManagers.addAll(jvmTrustManagers);
         this.trustManagers = new TrustManager[]{new CompositeX509TrustManager(allManagers)};
+        
         this.sslContext = SSLContexts.custom().setProtocol("SSL").build();
         this.sslContext.init(keyManagers, trustManagers, null);
     }

@@ -10,6 +10,7 @@ import org.apereo.cas.adaptors.radius.server.RadiusServerConfigurationContext;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAccessChallengedMultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.DefaultCasSSLContext;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -74,6 +75,10 @@ public class RadiusConfiguration {
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
+
+    @Autowired
+    @Qualifier("casSslContext")
+    private ObjectProvider<DefaultCasSSLContext> casSslContext;
 
     @Autowired
     @Qualifier("defaultPrincipalResolver")
@@ -161,18 +166,25 @@ public class RadiusConfiguration {
     @RefreshScope
     @Bean
     public CasWebflowEventResolver radiusAccessChallengedAuthenticationWebflowEventResolver() {
-        val r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(casWebflowConfigurationContext.getObject(),
+        val resolver = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(casWebflowConfigurationContext.getObject(),
             radiusAccessChallengedMultifactorAuthenticationTrigger());
         LOGGER.debug("Activating MFA event resolver based on RADIUS...");
-        this.initialAuthenticationAttemptWebflowEventResolver.getObject().addDelegate(r);
-        return r;
+        this.initialAuthenticationAttemptWebflowEventResolver.getObject().addDelegate(resolver);
+        return resolver;
     }
 
-    private static AbstractRadiusServer getSingleRadiusServer(final RadiusClientProperties client,
-                                                              final RadiusServerProperties server,
-                                                              final String clientInetAddress) {
-        val factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(),
-            client.getSocketTimeout(), clientInetAddress, client.getSharedSecret());
+    private AbstractRadiusServer getSingleRadiusServer(final RadiusClientProperties client,
+                                                       final RadiusServerProperties server,
+                                                       final String clientInetAddress) {
+        val factory = RadiusClientFactory.builder()
+            .authenticationPort(client.getAccountingPort())
+            .authenticationPort(client.getAuthenticationPort())
+            .socketTimeout(client.getSocketTimeout())
+            .inetAddress(clientInetAddress)
+            .sharedSecret(client.getSharedSecret())
+            .sslContext(casSslContext.getObject())
+            .transportType(client.getTransportType())
+            .build();
 
         val protocol = RadiusProtocol.valueOf(server.getProtocol());
         val context = RadiusServerConfigurationContext.builder()
