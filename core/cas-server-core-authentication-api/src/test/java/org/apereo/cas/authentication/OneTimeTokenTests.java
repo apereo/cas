@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -16,9 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("MFA")
 public class OneTimeTokenTests {
 
-    @SneakyThrows
     @Test
-    public void verifyComparisonWorks() {
+    public void verifyComparisonWorks() throws Exception {
         val otp1 = new OneTimeToken(123456, "casuser");
         Thread.sleep(1);
         val otp2 = new OneTimeToken(123456, "casuser");

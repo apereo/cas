@@ -7,7 +7,6 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,8 +54,7 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
     }
 
     @Test
-    @SneakyThrows
-    public void verifySerializeACachingPrincipalAttributesRepositoryToJson() {
+    public void verifySerializeACachingPrincipalAttributesRepositoryToJson() throws Exception {
         val repositoryWritten = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.toString(), 1);
         repositoryWritten.setAttributeRepositoryIds(CollectionUtils.wrapSet("1", "2", "3"));
         MAPPER.writeValue(JSON_FILE, repositoryWritten);

@@ -12,7 +12,6 @@ import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -64,14 +63,12 @@ public class SamlIdPRestfulIdPMetadataConfiguration {
     }
 
     @Bean
-    @SneakyThrows
     @RefreshScope
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         return new RestfulSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext.getObject());
     }
 
     @Bean
-    @SneakyThrows
     @RefreshScope
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
         val idp = casProperties.getAuthn().getSamlIdp();

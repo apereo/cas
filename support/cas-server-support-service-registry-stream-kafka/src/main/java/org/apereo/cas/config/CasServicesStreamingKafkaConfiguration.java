@@ -10,7 +10,6 @@ import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -70,7 +69,7 @@ public class CasServicesStreamingKafkaConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "registeredServiceKafkaDistributedCacheListener")
-    public RegisteredServiceKafkaDistributedCacheListener registeredServiceKafkaDistributedCacheListener() {
+    public RegisteredServiceKafkaDistributedCacheListener registeredServiceKafkaDistributedCacheListener() throws Exception {
         return new RegisteredServiceKafkaDistributedCacheListener(
             casRegisteredServiceStreamPublisherIdentifier.getObject(),
             registeredServiceDistributedCacheManager());
@@ -92,11 +91,10 @@ public class CasServicesStreamingKafkaConfiguration {
         return factory.getKafkaTemplate(new StringSerializer(), new JsonSerializer<>(mapper));
     }
 
-    @SneakyThrows
     @Bean
     @RefreshScope
     public DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier>
-        registeredServiceDistributedCacheManager() {
+        registeredServiceDistributedCacheManager() throws Exception {
 
         val kafka = casProperties.getServiceRegistry().getStream().getKafka();
         val factory = new KafkaObjectFactory<String, DistributedCacheObject<RegisteredService>>(kafka.getBootstrapAddress());

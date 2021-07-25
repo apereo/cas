@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.LdapPasswordSynchronizationAuthenticationPo
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.passwordsync.LdapPasswordSynchronizationProperties;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
@@ -37,7 +36,6 @@ public class LdapPasswordSynchronizationConfiguration {
 
 
     @Bean
-    @SneakyThrows
     public ListFactoryBean ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean() {
         val bean = new ListFactoryBean() {
             @Override
@@ -54,10 +52,9 @@ public class LdapPasswordSynchronizationConfiguration {
     @ConditionalOnMissingBean(name = "ldapPasswordSynchronizationAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @Autowired
-    @SneakyThrows
     public AuthenticationEventExecutionPlanConfigurer ldapPasswordSynchronizationAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean")
-        final ListFactoryBean ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean) {
+        final ListFactoryBean ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean) throws Exception {
         val postProcessorList = Objects.requireNonNull(ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean.getObject());
 
         return plan -> {

@@ -18,7 +18,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
@@ -72,7 +71,6 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "authyAuthenticationHandler")
     @RefreshScope
     @Bean
-    @SneakyThrows
     public AuthenticationHandler authyAuthenticationHandler() {
         val authy = casProperties.getAuthn().getMfa().getAuthy();
         val forceVerification = authy.isForceVerification();

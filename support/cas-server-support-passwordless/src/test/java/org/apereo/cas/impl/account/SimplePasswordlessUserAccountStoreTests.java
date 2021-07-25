@@ -3,7 +3,6 @@ package org.apereo.cas.impl.account;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ public class SimplePasswordlessUserAccountStoreTests extends BasePasswordlessUse
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
     @Test
-    @SneakyThrows
     public void verifyAction() {
         assertTrue(passwordlessUserAccountStore.findUser("casuser").isPresent());
         assertTrue(passwordlessUserAccountStore.findUser("other").isEmpty());

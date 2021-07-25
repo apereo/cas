@@ -1,6 +1,5 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -39,7 +38,6 @@ public class JcifsConfigTests {
     }
 
     @Test
-    @SneakyThrows
     public void verifyJcifsConfig() {
         assertDoesNotThrow(new Executable() {
             @Override

@@ -253,7 +253,6 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      * @param service          the service
      * @return the backup metadata filename prefix
      */
-    @SneakyThrows
     protected String getBackupMetadataFilenamePrefix(final AbstractResource metadataResource, final SamlRegisteredService service) {
         val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
         val fileName = SamlUtils.isDynamicMetadataQueryConfigured(metadataLocation)

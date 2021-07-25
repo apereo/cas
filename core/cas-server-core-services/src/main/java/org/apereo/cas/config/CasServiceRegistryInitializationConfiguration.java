@@ -83,7 +83,7 @@ public class CasServiceRegistryInitializationConfiguration {
 
     @Lazy(false)
     @Bean
-    public ServiceRegistryInitializer serviceRegistryInitializer() {
+    public ServiceRegistryInitializer serviceRegistryInitializer() throws Exception {
         val serviceRegistryInstance = serviceRegistry.getObject();
         val initializer = new ServiceRegistryInitializer(embeddedJsonServiceRegistry(),
             serviceRegistryInstance, servicesManager.getObject());
@@ -93,15 +93,14 @@ public class CasServiceRegistryInitializationConfiguration {
     }
 
     @Bean
-    public ServiceRegistryInitializerEventListener serviceRegistryInitializerConfigurationEventListener() {
+    public ServiceRegistryInitializerEventListener serviceRegistryInitializerConfigurationEventListener() throws Exception {
         return new ServiceRegistryInitializerEventListener(serviceRegistryInitializer());
     }
 
     @RefreshScope
     @Bean
-    @SneakyThrows
     @Lazy(false)
-    public ServiceRegistry embeddedJsonServiceRegistry() {
+    public ServiceRegistry embeddedJsonServiceRegistry() throws Exception {
         val location = getServiceRegistryInitializerServicesDirectoryResource();
         val registry = new EmbeddedResourceBasedServiceRegistry(applicationContext, location,
             serviceRegistryListeners.getObject(), WatcherService.noOp());

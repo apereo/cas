@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.model.support.jdbc.authn.SearchJdbcAuthenticationProperties;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,15 +83,13 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests extends BaseData
     }
 
     @Test
-    @SneakyThrows
-    public void verifyFoundUser() {
+    public void verifyFoundUser() throws Exception {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3");
         assertNotNull(handler.authenticate(c));
     }
 
     @Test
-    @SneakyThrows
-    public void verifyMultipleUsersFound() {
+    public void verifyMultipleUsersFound() throws Exception {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0");
         assertNotNull(this.handler.authenticate(c));
     }

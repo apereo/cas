@@ -44,7 +44,6 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.velocity.app.VelocityEngine;
@@ -122,8 +121,7 @@ public class SamlIdPMetadataConfiguration {
     @Lazy
     @Bean(initMethod = "initialize", destroyMethod = "destroy")
     @DependsOn("samlIdPMetadataGenerator")
-    @SneakyThrows
-    public MetadataResolver casSamlIdPMetadataResolver() {
+    public MetadataResolver casSamlIdPMetadataResolver() throws Exception {
         val idp = casProperties.getAuthn().getSamlIdp();
         val resolver = new SamlIdPMetadataResolver(samlIdPMetadataLocator(),
             samlIdPMetadataGenerator(), openSamlConfigBean.getObject(), casProperties);
@@ -136,7 +134,7 @@ public class SamlIdPMetadataConfiguration {
     @Lazy
     @Bean
     @RefreshScope
-    public SamlIdPMetadataController samlIdPMetadataController() {
+    public SamlIdPMetadataController samlIdPMetadataController() throws Exception {
         return new SamlIdPMetadataController(samlIdPMetadataGenerator(),
             samlIdPMetadataLocator(), servicesManager.getObject(),
             webApplicationServiceFactory.getObject());
@@ -144,15 +142,13 @@ public class SamlIdPMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataGenerator")
     @Bean
-    @SneakyThrows
-    public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
+    public SamlIdPMetadataGenerator samlIdPMetadataGenerator() throws Exception {
         return new FileSystemSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext());
     }
 
     @ConditionalOnMissingBean(name = "samlSelfSignedCertificateWriter")
     @Bean
-    @SneakyThrows
-    public SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter() {
+    public SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter() throws Exception {
         val url = new URL(casProperties.getServer().getPrefix());
         val generator = new DefaultSamlIdPCertificateAndKeyWriter();
         generator.setHostname(url.getHost());
@@ -162,8 +158,7 @@ public class SamlIdPMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataLocator")
     @Bean
-    @SneakyThrows
-    public SamlIdPMetadataLocator samlIdPMetadataLocator() {
+    public SamlIdPMetadataLocator samlIdPMetadataLocator() throws Exception {
         val idp = casProperties.getAuthn().getSamlIdp();
         val location = SpringExpressionLanguageValueResolver.getInstance()
             .resolve(idp.getMetadata().getFileSystem().getLocation());
@@ -264,7 +259,7 @@ public class SamlIdPMetadataConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "samlIdPMetadataGeneratorConfigurationContext")
-    public SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext() {
+    public SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext() throws Exception {
         return SamlIdPMetadataGeneratorConfigurationContext.builder()
             .samlIdPMetadataLocator(samlIdPMetadataLocator())
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter())

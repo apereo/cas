@@ -13,7 +13,7 @@ public interface ServiceRegistryExecutionPlanConfigurer {
      *
      * @param plan the plan
      */
-    void configureServiceRegistry(ServiceRegistryExecutionPlan plan);
+    void configureServiceRegistry(ServiceRegistryExecutionPlan plan) throws Exception;
 
     /**
      * Gets name.

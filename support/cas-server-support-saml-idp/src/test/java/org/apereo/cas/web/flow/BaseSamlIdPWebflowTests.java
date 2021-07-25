@@ -12,7 +12,6 @@ import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -64,9 +63,8 @@ public abstract class BaseSamlIdPWebflowTests extends BaseWebflowConfigurerTests
         @Qualifier("samlIdPMetadataCache")
         private Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache;
 
-        @SneakyThrows
         @Bean
-        public SamlIdPMetadataLocator samlIdPMetadataLocator() {
+        public SamlIdPMetadataLocator samlIdPMetadataLocator() throws Exception {
             return new FileSystemSamlIdPMetadataLocator(
                 new FileSystemResource(FileUtils.getTempDirectory()),
                 samlIdPMetadataCache);
