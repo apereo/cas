@@ -10,7 +10,7 @@ import org.apereo.cas.adaptors.radius.server.RadiusServerConfigurationContext;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAccessChallengedMultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.DefaultCasSSLContext;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -78,7 +78,7 @@ public class RadiusConfiguration {
 
     @Autowired
     @Qualifier("casSslContext")
-    private ObjectProvider<DefaultCasSSLContext> casSslContext;
+    private ObjectProvider<CasSSLContext> casSslContext;
 
     @Autowired
     @Qualifier("defaultPrincipalResolver")

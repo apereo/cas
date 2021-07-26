@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @Getter
-public class DefaultCasSSLContext {
+public class DefaultCasSSLContext implements CasSSLContext {
     private static final String ALG_NAME_PKIX = "PKIX";
 
     private final SSLContext sslContext;
@@ -39,8 +39,9 @@ public class DefaultCasSSLContext {
 
     private final KeyManager[] keyManagers;
 
-    @SneakyThrows
-    public DefaultCasSSLContext(final Resource trustStoreFile, final String trustStorePassword, final String trustStoreType) {
+    public DefaultCasSSLContext(final Resource trustStoreFile,
+                                final String trustStorePassword,
+                                final String trustStoreType) throws Exception {
         val casTrustStore = KeyStore.getInstance(trustStoreType);
         val trustStorePasswordCharArray = trustStorePassword.toCharArray();
 
@@ -62,7 +63,7 @@ public class DefaultCasSSLContext {
         val allManagers = new ArrayList<>(customTrustManager);
         allManagers.addAll(jvmTrustManagers);
         this.trustManagers = new TrustManager[]{new CompositeX509TrustManager(allManagers)};
-        
+
         this.sslContext = SSLContexts.custom().setProtocol("SSL").build();
         this.sslContext.init(keyManagers, trustManagers, null);
     }
@@ -83,5 +84,4 @@ public class DefaultCasSSLContext {
             .map(X509TrustManager.class::cast)
             .collect(Collectors.toList());
     }
-
 }

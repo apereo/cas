@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.radius;
 
-import org.apereo.cas.authentication.DefaultCasSSLContext;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 
 import lombok.Builder;
@@ -41,7 +41,7 @@ public class RadiusClientFactory implements Serializable {
 
     private final String sharedSecret;
 
-    private final DefaultCasSSLContext sslContext;
+    private final CasSSLContext sslContext;
 
     @Builder.Default
     private final RadiusClientProperties.RadiusClientTransportTypes transportType
