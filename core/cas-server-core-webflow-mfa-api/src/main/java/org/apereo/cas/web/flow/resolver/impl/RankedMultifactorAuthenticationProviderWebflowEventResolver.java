@@ -82,14 +82,14 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
             LOGGER.trace("Ticket-granting ticket is blank; proceed with flow normally.");
             return resumeFlow();
         }
-        val authentication = getWebflowEventResolutionConfigurationContext().getTicketRegistrySupport().getAuthenticationFrom(tgt);
+        val authentication = getConfigurationContext().getTicketRegistrySupport().getAuthenticationFrom(tgt);
         if (authentication == null) {
             LOGGER.trace("Ticket-granting ticket has no authentication and is blank; proceed with flow normally.");
             return resumeFlow();
         }
 
         val credential = WebUtils.getCredential(context);
-        val builder = getWebflowEventResolutionConfigurationContext().getAuthenticationSystemSupport()
+        val builder = getConfigurationContext().getAuthenticationSystemSupport()
             .establishAuthenticationContextFromInitial(authentication, credential);
 
         LOGGER.trace("Recording and tracking initial authentication results in the request context");
