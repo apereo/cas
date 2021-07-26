@@ -65,6 +65,7 @@ public class CasAcmeConfiguration {
      * Handle application ready event.
      *
      * @param event the event
+     * @throws Exception the exception
      */
     @EventListener
     public void handleApplicationReadyEvent(final ApplicationReadyEvent event) throws Exception {
