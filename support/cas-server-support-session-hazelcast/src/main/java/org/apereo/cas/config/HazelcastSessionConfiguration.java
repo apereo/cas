@@ -32,6 +32,7 @@ public class HazelcastSessionConfiguration {
      * of this bean must be left untouched.
      *
      * @return the hazelcast instance
+     * @throws Exception the exception
      */
     @Bean(destroyMethod = "shutdown")
     public HazelcastInstance hazelcastInstance() throws Exception {
