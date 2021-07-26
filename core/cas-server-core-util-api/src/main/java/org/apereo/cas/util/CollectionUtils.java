@@ -598,6 +598,19 @@ public class CollectionUtils {
         return mappings;
     }
 
+    /**
+     * Wrap collection.
+     *
+     * @param <T>    the type parameter
+     * @param source the source
+     * @return the collection
+     */
+    public static <T> Collection<T> wrapCollection(final T... source) {
+        val list = new LinkedHashSet<T>(MAP_SIZE);
+        addToCollection(list, source);
+        return list;
+    }
+    
     private static <T> void addToCollection(final Collection<T> list, final T[] source) {
         if (source != null) {
             Arrays.stream(source).forEach(s -> {

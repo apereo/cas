@@ -32,7 +32,7 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
     protected RegisteredService resolveRegisteredServiceInRequestContext(final RequestContext requestContext) {
         val resolvedService = resolveServiceFromAuthenticationRequest(requestContext);
         if (resolvedService != null) {
-            val service = getWebflowEventResolutionConfigurationContext().getServicesManager().findServiceBy(resolvedService);
+            val service = getConfigurationContext().getServicesManager().findServiceBy(resolvedService);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(resolvedService, service);
             return service;
         }
