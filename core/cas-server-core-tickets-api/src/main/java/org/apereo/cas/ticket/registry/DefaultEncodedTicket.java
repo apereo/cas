@@ -13,7 +13,6 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,7 +41,6 @@ public class DefaultEncodedTicket implements EncodedTicket {
 
     private String prefix;
 
-    @SneakyThrows
     @JsonCreator
     public DefaultEncodedTicket(@JsonProperty("encoded") final String encodedTicket,
                                 @JsonProperty("id") final String encodedTicketId,

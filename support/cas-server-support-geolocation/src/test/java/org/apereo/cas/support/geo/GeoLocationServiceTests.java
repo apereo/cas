@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.net.InetAddress;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link GeoLocationServiceTests}.
@@ -24,6 +25,15 @@ public class GeoLocationServiceTests {
         val svc = new DummyGeoLocationService();
         assertNotNull(svc.locate("1.2.3.4", new GeoLocationRequest(1, 1)));
         assertNotNull(svc.locate(new GeoLocationRequest(1, 1)));
+    }
+
+    @Test
+    public void verifyLocateFails() {
+        val svc = mock(AbstractGeoLocationService.class);
+        when(svc.locate(anyString())).thenReturn(null);
+        when(svc.locate(anyString(), any(GeoLocationRequest.class))).thenCallRealMethod();
+        when(svc.locate(anyDouble(), anyDouble())).thenReturn(new GeoLocationResponse());
+        assertNotNull(svc.locate("1.2.3.4", new GeoLocationRequest(1, 1)));
     }
 
     private static class DummyGeoLocationService extends AbstractGeoLocationService {
