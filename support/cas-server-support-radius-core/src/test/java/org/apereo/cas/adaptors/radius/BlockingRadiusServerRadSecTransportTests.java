@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.radius;
 
-import org.apereo.cas.authentication.DefaultCasSSLContext;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BlockingRadiusServerRadSecTransportTests {
     @Autowired
     @Qualifier("casSslContext")
-    private DefaultCasSSLContext casSslContext;
+    private CasSSLContext casSslContext;
 
     @Test
     public void verifyOperation() {

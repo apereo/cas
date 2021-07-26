@@ -11,7 +11,7 @@ import org.apereo.cas.adaptors.radius.server.RadiusServerConfigurationContext;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.DefaultCasSSLContext;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
@@ -67,7 +67,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     @Qualifier("casSslContext")
-    private ObjectProvider<DefaultCasSSLContext> casSslContext;
+    private ObjectProvider<CasSSLContext> casSslContext;
 
     @RefreshScope
     @Bean

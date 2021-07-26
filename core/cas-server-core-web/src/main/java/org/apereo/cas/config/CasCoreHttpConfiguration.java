@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.DefaultCasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -45,23 +46,23 @@ public class CasCoreHttpConfiguration {
 
     @ConditionalOnMissingBean(name = "trustStoreSslSocketFactory")
     @Bean
-    public SSLConnectionSocketFactory trustStoreSslSocketFactory() {
+    public SSLConnectionSocketFactory trustStoreSslSocketFactory() throws Exception {
         return new SSLConnectionSocketFactory(sslContext(), hostnameVerifier());
     }
 
     @ConditionalOnMissingBean(name = "casSslContext")
     @Bean
-    public DefaultCasSSLContext casSslContext() {
+    public CasSSLContext casSslContext() throws Exception {
         val client = casProperties.getHttpClient().getTruststore();
         if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
             return new DefaultCasSSLContext(client.getFile(), client.getPsw(), client.getType());
         }
-        return null;
+        return CasSSLContext.system();
     }
 
     @ConditionalOnMissingBean(name = "sslContext")
     @Bean
-    public SSLContext sslContext() {
+    public SSLContext sslContext() throws Exception {
         val casSslContext = casSslContext();
         if (casSslContext != null) {
             return casSslContext.getSslContext();
@@ -72,19 +73,19 @@ public class CasCoreHttpConfiguration {
 
     @ConditionalOnMissingBean(name = "httpClient")
     @Bean(destroyMethod = "destroy")
-    public FactoryBean<SimpleHttpClient> httpClient() {
+    public FactoryBean<SimpleHttpClient> httpClient() throws Exception {
         return buildHttpClientFactoryBean();
     }
 
     @ConditionalOnMissingBean(name = "noRedirectHttpClient")
     @Bean(destroyMethod = "destroy")
-    public HttpClient noRedirectHttpClient() {
+    public HttpClient noRedirectHttpClient() throws Exception {
         return getHttpClient(false);
     }
 
     @ConditionalOnMissingBean(name = "supportsTrustStoreSslSocketFactoryHttpClient")
     @Bean(destroyMethod = "destroy")
-    public HttpClient supportsTrustStoreSslSocketFactoryHttpClient() {
+    public HttpClient supportsTrustStoreSslSocketFactoryHttpClient() throws Exception {
         return getHttpClient(true);
     }
 
@@ -97,7 +98,7 @@ public class CasCoreHttpConfiguration {
         return new DefaultHostnameVerifier();
     }
 
-    private HttpClient getHttpClient(final boolean redirectEnabled) {
+    private HttpClient getHttpClient(final boolean redirectEnabled) throws Exception {
         val c = buildHttpClientFactoryBean();
         c.setRedirectsEnabled(redirectEnabled);
         c.setCircularRedirectsAllowed(redirectEnabled);
@@ -105,7 +106,7 @@ public class CasCoreHttpConfiguration {
         return c.getObject();
     }
 
-    private SimpleHttpClientFactoryBean buildHttpClientFactoryBean() {
+    private SimpleHttpClientFactoryBean buildHttpClientFactoryBean() throws Exception {
         val c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
 
         val httpClient = casProperties.getHttpClient();
