@@ -4,7 +4,6 @@ import org.apereo.cas.influxdb.InfluxDbConnectionFactory;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.util.LoggingUtils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -110,11 +109,6 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
         return events;
     }
 
-
-    /**
-     * Stops the database client.
-     */
-    @SneakyThrows
     @Override
     public void destroy() {
         this.influxDbConnectionFactory.close();
