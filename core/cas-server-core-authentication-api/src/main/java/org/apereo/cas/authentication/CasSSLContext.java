@@ -9,6 +9,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import java.security.KeyStore;
 
 /**
  * This is {@link CasSSLContext}.
@@ -33,6 +34,7 @@ public interface CasSSLContext {
             public TrustManager[] getTrustManagers() {
                 return Unchecked.supplier(() -> {
                     val factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                    factory.init((KeyStore) null);
                     return factory.getTrustManagers();
                 }).get();
             }
@@ -41,6 +43,7 @@ public interface CasSSLContext {
             public KeyManager[] getKeyManagers() {
                 return Unchecked.supplier(() -> {
                     val factory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+                    factory.init(null, null);
                     return factory.getKeyManagers();
                 }).get();
             }
