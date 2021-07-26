@@ -67,7 +67,7 @@ exports.isVisible = async(page, selector) => {
 }
 
 exports.assertVisibility = async(page, selector) => {
-    assert(this.isVisible(page, selector));
+    assert(await this.isVisible(page, selector));
 }
 
 exports.assertInvisibility = async(page, selector) => {
