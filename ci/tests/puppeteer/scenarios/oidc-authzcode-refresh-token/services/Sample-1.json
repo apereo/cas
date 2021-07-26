@@ -1,0 +1,12 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId": "https://github.com/apereo/cas.*",
+  "name": "Sample",
+  "id": 1,
+  "description": "Sample Service",
+  "evaluationOrder": 10000,
+  "scopes" : [ "java.util.HashSet", [ "openid", "profile", "email", "offline_access"] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ]
+}
