@@ -50,11 +50,14 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
             val tst = centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
             val token = tst.getProperties().get(PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN).toString();
             val username = passwordManagementService.parseToken(token);
-            centralAuthenticationService.deleteTicket(tst.getId());
+            val pm = casProperties.getAuthn().getPm();
+
+            if (pm.getReset().isSingleUseLink()) {
+                centralAuthenticationService.deleteTicket(tst.getId());
+            }
 
             val query = PasswordManagementQuery.builder().username(username).build();
             PasswordManagementWebflowUtils.putPasswordResetToken(requestContext, token);
-            val pm = casProperties.getAuthn().getPm();
             if (pm.getReset().isSecurityQuestionsEnabled()) {
                 val questions = canonicalizeSecurityQuestions(passwordManagementService.getSecurityQuestions(query));
                 if (questions.isEmpty()) {
