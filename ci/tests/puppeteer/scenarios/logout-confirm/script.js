@@ -15,7 +15,6 @@ const cas = require('../../cas.js');
     await cas.assertTicketGrantingCookie(page);
 
     await page.goto("https://localhost:8443/cas/logout");
-    await page.waitForTimeout(1000)
 
     const header = await cas.innerText(page, '#content h2');
     assert(header === "Do you, casuser, want to log out completely?")

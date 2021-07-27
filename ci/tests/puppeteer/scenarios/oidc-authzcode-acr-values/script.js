@@ -105,21 +105,21 @@ async function exchangeCode(page, code, successHandler) {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    // let code = await fetchCode(page, "1%202");
-
     console.log("Fetching code for MFA based on ACR mfa-gauth")
     let code = await fetchCode(page, "mfa-gauth");
     await exchangeCode(page, code, function (idToken) {
         assert(idToken.sub !== null)
-        assert(idToken.acr === "mfa-gauth")
+        assert(idToken.acr === "https://refeds.org/profile/mfa")
         assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"))
     })
-    
+
+    await page.goto("https://localhost:8443/cas/logout");
+
     console.log("Fetching code for MFA based on ACR 1 mapped in configuration to mfa-gauth")
-    code = await fetchCode(page, "1%202");
+    code = await fetchCode(page, "https://refeds.org/profile/mfa%20something-else");
     await exchangeCode(page, code, function (idToken) {
         assert(idToken.sub !== null)
-        assert(idToken.acr === "1")
+        assert(idToken.acr === "https://refeds.org/profile/mfa")
         assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"))
     })
     await browser.close();

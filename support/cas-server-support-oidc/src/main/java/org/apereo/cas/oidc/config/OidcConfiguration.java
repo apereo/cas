@@ -398,7 +398,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
         interceptor.setSecurityLogic(new OidcAuthenticationAuthorizeSecurityLogic());
         return interceptor;
     }
-    
+
     @Bean
     public HandlerInterceptor requiresAuthenticationDynamicRegistrationInterceptor() {
         val clients = String.join(",",
@@ -912,7 +912,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     public UrlResolver casCallbackUrlResolver() {
         return new OidcCasCallbackUrlResolver(casProperties);
     }
-    
+
     @ConditionalOnMissingBean(name = "oidcCasWebflowExecutionPlanConfigurer")
     @Bean
     public CasWebflowExecutionPlanConfigurer oidcCasWebflowExecutionPlanConfigurer() {

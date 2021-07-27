@@ -61,7 +61,8 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
     }
 
     @Override
-    public OAuth20AccessToken create(final Service service, final Authentication authentication,
+    public OAuth20AccessToken create(final Service service,
+                                     final Authentication authentication,
                                      final TicketGrantingTicket ticketGrantingTicket,
                                      final Collection<String> scopes, final String clientId,
                                      final Map<String, Map<String, Object>> requestClaims,
