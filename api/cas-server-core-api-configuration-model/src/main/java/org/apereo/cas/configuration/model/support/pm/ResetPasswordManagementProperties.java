@@ -68,6 +68,11 @@ public class ResetPasswordManagementProperties implements Serializable {
      */
     private long expirationMinutes = 1;
 
+    /**
+     * Should the password expiration links be single use.
+     */
+    private boolean singleUseLink = true;
+    
     public ResetPasswordManagementProperties() {
         mail.setAttributeName("mail");
         mail.setText("Reset your password via this link: %s");
