@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.profile.BasicUserProfile;
 import org.pac4j.core.profile.UserProfile;
 
 import java.time.ZoneOffset;
@@ -112,7 +113,13 @@ public class OAuth20CasAuthenticationBuilder {
         val nonce = context.getRequestParameter(OAuth20Constants.NONCE).map(String::valueOf).orElse(StringUtils.EMPTY);
         LOGGER.debug("OAuth [{}] is [{}], and [{}] is [{}]", OAuth20Constants.STATE, state, OAuth20Constants.NONCE, nonce);
 
-        return DefaultAuthenticationBuilder.newInstance()
+        val builder = DefaultAuthenticationBuilder.newInstance();
+        if (profile instanceof BasicUserProfile) {
+            val authenticationAttributes = ((BasicUserProfile) profile).getAuthenticationAttributes();
+            builder.addAttributes(authenticationAttributes);
+        }
+
+        return builder
             .addAttribute("permissions", new LinkedHashSet<>(profile.getPermissions()))
             .addAttribute("roles", new LinkedHashSet<>(profile.getRoles()))
             .addAttribute("scopes", scopes)

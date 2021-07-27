@@ -121,11 +121,11 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @return AuthenticationBuilder new AuthenticationBuilder instance.
      */
     public static AuthenticationBuilder of(final Principal principal,
-        final PrincipalFactory principalFactory,
-        final Map<String, List<Object>> principalAttributes,
-        final Service service,
-        final RegisteredService registeredService,
-        final Authentication authentication) {
+                                           final PrincipalFactory principalFactory,
+                                           final Map<String, List<Object>> principalAttributes,
+                                           final Service service,
+                                           final RegisteredService registeredService,
+                                           final Authentication authentication) {
 
         val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
         val newPrincipal = principalFactory.createPrincipal(principalId, principalAttributes);
@@ -184,6 +184,12 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     public AuthenticationBuilder setSuccesses(final @NonNull Map<String, AuthenticationHandlerExecutionResult> successes) {
         this.successes.clear();
         return addSuccesses(successes);
+    }
+
+    @Override
+    public AuthenticationBuilder addAttributes(final Map<String, Object> attributes) {
+        attributes.forEach(this::addAttribute);
+        return this;
     }
 
     @Override
