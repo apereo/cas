@@ -64,5 +64,13 @@ const httpGet = (options) => {
     console.log(`Authentication context class ${context}`);
     assert(context === "[mfa-gauth]")
 
+    await page.goto("https://localhost:8443/cas/login?service=https://github.com/apereo/cas");
+    await page.waitForTimeout(500);
+    await page.waitForNavigation();
+
+    const url2 = await page.url()
+    console.log(`Page url: ${url2}`)
+    await cas.assertTicketParameter(page);
+
     await browser.close();
 })();
