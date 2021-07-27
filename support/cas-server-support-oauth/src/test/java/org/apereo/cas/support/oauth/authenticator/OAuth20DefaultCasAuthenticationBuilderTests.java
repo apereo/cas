@@ -19,13 +19,13 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link OAuth20CasAuthenticationBuilderTests}.
+ * This is {@link OAuth20DefaultCasAuthenticationBuilderTests}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
  */
 @Tag("OAuth")
-public class OAuth20CasAuthenticationBuilderTests extends BaseOAuth20AuthenticatorTests {
+public class OAuth20DefaultCasAuthenticationBuilderTests extends BaseOAuth20AuthenticatorTests {
 
     @Autowired
     @Qualifier("oauthCasAuthenticationBuilder")
@@ -50,6 +50,7 @@ public class OAuth20CasAuthenticationBuilderTests extends BaseOAuth20Authenticat
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.STATE, UUID.randomUUID().toString());
         request.addParameter(OAuth20Constants.NONCE, UUID.randomUUID().toString());
+        request.addParameter(OAuth20Constants.ACR_VALUES, "mfa-dummy");
         request.addHeader("X-".concat(CasProtocolConstants.PARAMETER_SERVICE), service.getServiceId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         val result = authenticationBuilder.build(profile, service,

@@ -13,6 +13,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.EncodingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -62,11 +63,11 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
                     .filter(p -> p.getName().equals(OAuth20Constants.ACR_VALUES))
                     .findFirst();
                 if (parameter.isPresent()) {
-                    return parameter.get().getValue();
+                    return EncodingUtils.urlDecode(parameter.get().getValue());
                 }
             }
         }
-        return acr;
+        return EncodingUtils.urlDecode(acr);
     }
 
     @Override
@@ -93,6 +94,7 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
             .stream()
             .map(acrValue -> mappings.getOrDefault(acrValue, acrValue))
             .collect(Collectors.toList());
+        LOGGER.debug("Mapped ACR values are [{}] to compare against [{}]", mappedAcrValues, providerMap.values());
         return providerMap.values()
             .stream()
             .filter(v -> mappedAcrValues.contains(v.getId()))

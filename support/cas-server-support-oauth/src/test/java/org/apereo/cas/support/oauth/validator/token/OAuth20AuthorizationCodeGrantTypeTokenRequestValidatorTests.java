@@ -12,7 +12,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
-import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
+import org.apereo.cas.support.oauth.authenticator.OAuth20DefaultCasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
@@ -197,7 +197,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
     }
 
     private void registerTicket(final String name, final OAuthRegisteredService service) {
-        val builder = new OAuth20CasAuthenticationBuilder(
+        val builder = new OAuth20DefaultCasAuthenticationBuilder(
             PrincipalFactoryUtils.newPrincipalFactory(),
             new WebApplicationServiceFactory(),
             new DefaultOAuth20ProfileScopeToAttributesFilter(),
