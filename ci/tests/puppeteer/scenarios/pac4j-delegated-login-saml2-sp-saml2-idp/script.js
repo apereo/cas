@@ -78,8 +78,7 @@ const https = require('https');
 
     console.log("Checking for page URL...")
     console.log(await page.url())
-    await page.waitForTimeout(3000)
-
+    await page.waitForSelector('div.entry-content p', { visible: true });
     const header = await cas.textContent(page, "div.entry-content p");
     assert(header.startsWith("Your browser has completed the full SAML 2.0 round-trip"));
 

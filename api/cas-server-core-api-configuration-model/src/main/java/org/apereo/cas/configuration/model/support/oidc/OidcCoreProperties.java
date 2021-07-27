@@ -10,7 +10,9 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,4 +59,14 @@ public class OidcCoreProperties implements Serializable {
      * that should take its place and value.
      */
     private Map<String, String> claimsMap = new HashMap<>(0);
+
+    /**
+     * A mapping of authentication context refs (ACR) values.
+     * This is where specific authentication context classes
+     * are referenced and mapped to providers that CAS may support
+     * mainly for MFA purposes.
+     * <p>
+     * Example might be {@code acr-value->mfa-duo}.
+     */
+    private List<String> authenticationContextReferenceMappings = new ArrayList<>(0);
 }
