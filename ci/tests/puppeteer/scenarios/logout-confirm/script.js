@@ -35,7 +35,6 @@ const cas = require('../../cas.js');
     await page.goto("https://localhost:8443/cas/logout?url=https://github.com/apereo/cas");
     await cas.submitForm(page, "#fm1");
     url = await page.url()
-    await page.waitForTimeout(1000)
     console.log(`Page url: ${url}`)
     assert(url === "https://github.com/apereo/cas")
 
