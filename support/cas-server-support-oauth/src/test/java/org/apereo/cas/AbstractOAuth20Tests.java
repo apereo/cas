@@ -545,13 +545,15 @@ public abstract class AbstractOAuth20Tests {
         return refreshToken;
     }
 
-    protected OAuth20AccessToken addAccessToken(final Principal principal, final OAuthRegisteredService registeredService) {
+    protected OAuth20AccessToken addAccessToken(final Principal principal,
+                                                final OAuthRegisteredService registeredService) {
+        val code = addCode(principal, registeredService);
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getServiceId());
         val accessToken = defaultAccessTokenFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"),
-            new ArrayList<>(), registeredService.getClientId(), new HashMap<>(),
+            new ArrayList<>(), code.getId(), registeredService.getClientId(), new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.ticketRegistry.addTicket(accessToken);
         return accessToken;

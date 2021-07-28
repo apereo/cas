@@ -22,18 +22,23 @@ import java.util.Map;
  * @since 5.0.0
  */
 @NoArgsConstructor
-@Setter
-@Getter
 public class OAuth20DefaultAccessToken extends OAuth20DefaultCode implements OAuth20AccessToken {
 
     private static final long serialVersionUID = 2339545346159721563L;
 
+    @Setter
+    @Getter
     private String idToken;
 
-    public OAuth20DefaultAccessToken(final String id, final Service service,
+    @Getter
+    private String token;
+
+    public OAuth20DefaultAccessToken(final String id,
+                                     final Service service,
                                      final Authentication authentication,
                                      final ExpirationPolicy expirationPolicy,
                                      final TicketGrantingTicket ticketGrantingTicket,
+                                     final String token,
                                      final Collection<String> scopes,
                                      final String codeChallenge,
                                      final String codeChallengeMethod,
@@ -45,19 +50,21 @@ public class OAuth20DefaultAccessToken extends OAuth20DefaultCode implements OAu
             ticketGrantingTicket, scopes,
             codeChallenge, codeChallengeMethod,
             clientId, requestClaims, responseType, grantType);
+        this.token = token;
     }
 
     public OAuth20DefaultAccessToken(final String id, final Service service,
                                      final Authentication authentication,
                                      final ExpirationPolicy expirationPolicy,
                                      final TicketGrantingTicket ticketGrantingTicket,
+                                     final String token,
                                      final Collection<String> scopes,
                                      final String clientId,
                                      final Map<String, Map<String, Object>> requestClaims,
                                      final OAuth20ResponseTypes responseType,
                                      final OAuth20GrantTypes grantType) {
         this(id, service, authentication, expirationPolicy,
-            ticketGrantingTicket, scopes, null,
+            ticketGrantingTicket, token, scopes, null,
             null, clientId, requestClaims, responseType, grantType);
     }
 

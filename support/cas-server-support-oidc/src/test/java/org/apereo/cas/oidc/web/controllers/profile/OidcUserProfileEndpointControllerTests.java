@@ -56,8 +56,10 @@ public class OidcUserProfileEndpointControllerTests extends AbstractOidcTests {
 
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", map);
         val authentication = RegisteredServiceTestUtils.getAuthentication(principal);
+        val code = addCode(principal, getOidcRegisteredService());
         val accessToken = accessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
-            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null, new HashMap<>(),
+            new MockTicketGrantingTicket("casuser"), new ArrayList<>(),
+            code.getId(), code.getClientId(), new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         ticketRegistry.addTicket(accessToken);
 

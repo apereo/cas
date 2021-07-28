@@ -31,6 +31,14 @@ public interface OAuth20AccessToken extends OAuth20Token {
     String getIdToken();
 
     /**
+     * Gets token or code that is exchanged
+     * for this access token.
+     *
+     * @return the token
+     */
+    String getToken();
+
+    /**
      * Expiration time of the Access Token in seconds since the response was generated.
      * @return access token expiration in seconds
      */
