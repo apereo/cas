@@ -253,9 +253,8 @@ public class EncodingUtils {
      */
     @SneakyThrows
     public static String urlDecode(final String value) {
-        return URLDecoder.decode(value, StandardCharsets.UTF_8.name());
+        return StringUtils.isBlank(value) ? value : URLDecoder.decode(value, StandardCharsets.UTF_8.name());
     }
-
 
     /**
      * Validates Base64 encoding.

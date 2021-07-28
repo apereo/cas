@@ -9,7 +9,7 @@ const cas = require('../../cas.js');
 
     await page.waitForTimeout(1000)
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(1000)
     await cas.assertVisibility(page, '#userInfoClaims')
     await cas.assertVisibility(page, '#scopes')
     await cas.assertVisibility(page, '#MyCustomScope')
