@@ -22,6 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Utility")
 public class CasEmbeddedContainerUtilsTests {
+    @Test
+    public void verifyMainArgs() {
+        assertTrue(CasEmbeddedContainerUtils.getLoggingInitialization().isPresent());
+    }
 
     @Test
     public void verifyCasBanner() {
@@ -55,13 +59,13 @@ public class CasEmbeddedContainerUtilsTests {
 
     public static class CustomBanner extends AbstractCasBanner {
         @Override
-        protected String getTitle() {
-            return "Custom";
+        public void printBanner(final Environment environment, final Class<?> sourceClass, final PrintStream out) {
+            out.print(getTitle());
         }
 
         @Override
-        public void printBanner(final Environment environment, final Class<?> sourceClass, final PrintStream out) {
-            out.print(getTitle());
+        protected String getTitle() {
+            return "Custom";
         }
     }
 }
