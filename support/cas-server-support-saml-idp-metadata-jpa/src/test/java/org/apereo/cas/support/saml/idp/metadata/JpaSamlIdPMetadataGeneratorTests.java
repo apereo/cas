@@ -26,7 +26,7 @@ public class JpaSamlIdPMetadataGeneratorTests {
         "cas.authn.saml-idp.metadata.jpa.idp-metadata-enabled=true",
         "cas.authn.saml-idp.metadata.jpa.crypto.enabled=false",
         "cas.authn.saml-idp.metadata.jpa.ddl-auto=create-drop",
-        "cas.jdbc.show-sql=true"
+        "cas.jdbc.show-sql=false"
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
@@ -45,7 +45,7 @@ public class JpaSamlIdPMetadataGeneratorTests {
     @TestPropertySource(properties = {
         "cas.authn.saml-idp.metadata.jpa.idp-metadata-enabled=true",
         "cas.authn.saml-idp.metadata.jpa.ddl-auto=create-drop",
-        "cas.jdbc.show-sql=true"
+        "cas.jdbc.show-sql=false"
     })
     @Nested
     @Tag("JDBC")

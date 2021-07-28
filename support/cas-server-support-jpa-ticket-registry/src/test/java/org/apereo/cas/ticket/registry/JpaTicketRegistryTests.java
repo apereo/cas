@@ -37,9 +37,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -61,6 +63,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("JDBC")
 @Getter
+@DirtiesContext
 public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
     private static final int COUNT = 500;
 

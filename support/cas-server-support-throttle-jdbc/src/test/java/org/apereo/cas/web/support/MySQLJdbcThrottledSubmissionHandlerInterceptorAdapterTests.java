@@ -22,7 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     CasHibernateJpaConfiguration.class,
     BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class
 }, properties = {
-    "cas.jdbc.show-sql=true",
+    "cas.jdbc.show-sql=false",
 
     "cas.authn.throttle.core.username-parameter=username",
     "cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",
