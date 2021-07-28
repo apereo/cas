@@ -17,6 +17,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -126,12 +127,12 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             val authnContexts = oidc.getCore().getAuthenticationContextReferenceMappings();
             val mappings = CollectionUtils.convertDirectedListToMap(authnContexts);
             val acrMapped = acrValues.stream().map(acrValue ->
-                mappings.entrySet()
-                    .stream()
-                    .filter(entry -> entry.getValue().equalsIgnoreCase(acrValue.toString()))
-                    .map(Map.Entry::getKey)
-                    .findFirst()
-                    .orElse(acrValue.toString()))
+                    mappings.entrySet()
+                        .stream()
+                        .filter(entry -> entry.getValue().equalsIgnoreCase(acrValue.toString()))
+                        .map(Map.Entry::getKey)
+                        .findFirst()
+                        .orElse(acrValue.toString()))
                 .collect(Collectors.joining(" "));
             LOGGER.debug("ID token acr claim calculated as [{}]", acrMapped);
             claims.setStringClaim(OidcConstants.ACR, acrMapped);
@@ -152,33 +153,51 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         }
         generateAccessTokenHash(accessToken, service, claims);
 
-        if (responseType != OAuth20ResponseTypes.CODE && grantType != OAuth20GrantTypes.AUTHORIZATION_CODE) {
-            LOGGER.trace("Comparing principal attributes [{}] with supported claims [{}]",
-                principal.getAttributes(), oidc.getDiscovery().getClaims());
-            principal.getAttributes()
-                .entrySet()
-                .stream()
-                .filter(entry -> {
-                    if (oidc.getDiscovery().getClaims().contains(entry.getKey())) {
-                        LOGGER.trace("Found supported claim [{}]", entry.getKey());
-                        return true;
-                    }
-                    LOGGER.warn("Claim [{}] is not defined as a supported claim among [{}]. Skipping...",
-                        entry.getKey(), oidc.getDiscovery().getClaims());
-                    return false;
-                })
-                .forEach(entry -> handleMappedClaimOrDefault(entry.getKey(), principal, claims, entry.getValue()));
-
-            if (!claims.hasClaim(OidcConstants.CLAIM_PREFERRED_USERNAME)) {
-                handleMappedClaimOrDefault(OidcConstants.CLAIM_PREFERRED_USERNAME,
-                    principal, claims, principal.getId());
-            }
+        val includeClaims = responseType != OAuth20ResponseTypes.CODE && grantType != OAuth20GrantTypes.AUTHORIZATION_CODE;
+        if (includeClaims || oidc.getCore().isIncludeIdTokenClaims()) {
+            FunctionUtils.doIf(oidc.getCore().isIncludeIdTokenClaims(),
+                    ignore -> LOGGER.warn("Individual claims requested by OpenID scopes are forced to be included in the ID token. "
+                        + "This is a violation of the OpenID Connect specification and a workaround via dedicated CAS configuration. "
+                        + "Claims should be requested from the userinfo/profile endpoints in exchange for an access token."))
+                .accept(claims);
+            collectIdTokenClaims(principal, claims);
         } else {
-            LOGGER.trace("Individual claims requested by OpenID scopes such as profile, email, address, etc. are only put "
-                + "into the OpenID Connect ID token when the response type is set to id_token");
+            LOGGER.debug("Per OpenID Connect specification, individual claims requested by OpenID scopes "
+                + "such as profile, email, address, etc. are only put "
+                + "into the OpenID Connect ID token when the response type is set to id_token.");
         }
 
         return claims;
+    }
+
+    /**
+     * Collect id token claims.
+     *
+     * @param principal the principal
+     * @param claims    the claims
+     */
+    protected void collectIdTokenClaims(final Principal principal, final JwtClaims claims) {
+        val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
+        LOGGER.trace("Comparing principal attributes [{}] with supported claims [{}]",
+            principal.getAttributes(), oidc.getDiscovery().getClaims());
+        principal.getAttributes()
+            .entrySet()
+            .stream()
+            .filter(entry -> {
+                if (oidc.getDiscovery().getClaims().contains(entry.getKey())) {
+                    LOGGER.trace("Found supported claim [{}]", entry.getKey());
+                    return true;
+                }
+                LOGGER.warn("Claim [{}] is not defined as a supported claim among [{}]. Skipping...",
+                    entry.getKey(), oidc.getDiscovery().getClaims());
+                return false;
+            })
+            .forEach(entry -> handleMappedClaimOrDefault(entry.getKey(), principal, claims, entry.getValue()));
+
+        if (!claims.hasClaim(OidcConstants.CLAIM_PREFERRED_USERNAME)) {
+            handleMappedClaimOrDefault(OidcConstants.CLAIM_PREFERRED_USERNAME,
+                principal, claims, principal.getId());
+        }
     }
 
     /**
@@ -230,8 +249,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
 
         val oAuthServiceTicket = Stream.concat(
-            tgt.getServices().entrySet().stream(),
-            tgt.getProxyGrantingTickets().entrySet().stream())
+                tgt.getServices().entrySet().stream(),
+                tgt.getProxyGrantingTickets().entrySet().stream())
             .filter(e -> {
                 val service = getConfigurationContext().getServicesManager().findServiceBy(e.getValue());
                 return service != null && service.getServiceId().equals(oAuthCallbackUrl);
