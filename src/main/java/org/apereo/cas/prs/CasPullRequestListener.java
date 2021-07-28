@@ -6,9 +6,13 @@ import org.apereo.cas.PullRequestListener;
 import org.apereo.cas.github.PullRequest;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.ClassPathResource;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
@@ -64,6 +68,7 @@ public class CasPullRequestListener implements PullRequestListener {
         }
     }
 
+    @SneakyThrows
     private void checkForPullRequestTestCases(final PullRequest pr) {
         if (pr.isTargetBranchOnHeroku()) {
             log.info("Pull request {} is targeted at a Heroku branch", pr);
@@ -71,17 +76,25 @@ public class CasPullRequestListener implements PullRequestListener {
         }
 
         val files = repository.getPullRequestFiles(pr);
-        val modifiesJava = files.stream().anyMatch(file -> !file.getFilename().contains("Tests") && file.getFilename().endsWith(".java"));
+        val modifiesJava = files.stream().anyMatch(file ->
+            !file.getFilename().contains("Tests") && file.getFilename().endsWith(".java"));
         if (modifiesJava) {
-            val hasTests = files.stream().anyMatch(file -> file.getFilename().endsWith("Tests.java"));
+            val hasTests = files.stream().anyMatch(file -> file.getFilename().endsWith("Tests.java")
+                || file.getFilename().matches(".*puppeteer.*scenarios.*script.*"));
             if (!hasTests) {
-                log.info("Pull request {} does not have any tests", pr);
-                if (!pr.isLabeledAs(CasLabels.LABEL_PENDING_NEEDS_TESTS)) {
-                    repository.labelPullRequestAs(pr, CasLabels.LABEL_PENDING_NEEDS_TESTS);
+                var isCommitter = repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
+                if (!isCommitter && !pr.isDraft() && !pr.isWorkInProgress()) {
+                    log.info("Pull request {} does not have any tests", pr);
+                    if (!pr.isLabeledAs(CasLabels.LABEL_PENDING_NEEDS_TESTS)) {
+                        repository.labelPullRequestAs(pr, CasLabels.LABEL_PENDING_NEEDS_TESTS);
+                    }
+                    repository.createStatusForFailure(pr, "Tests", "Missing unit/integration/browser tests.");
+                    repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
+                    repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
+                    var template = IOUtils.toString(new ClassPathResource("template-no-tests.md").getInputStream(), StandardCharsets.UTF_8);
+                    repository.addComment(pr, template);
+                    repository.close(pr);
                 }
-                repository.createStatusForFailure(pr, "Tests",
-                    "Missing unit/integration/browser tests with adequate test coverage. "
-                        + "Pull requests that lack sufficient tests will generally not be accepted.");
             } else {
                 if (pr.isLabeledAs(CasLabels.LABEL_PENDING_NEEDS_TESTS)) {
                     repository.removeLabelFrom(pr, CasLabels.LABEL_PENDING_NEEDS_TESTS);
@@ -91,6 +104,7 @@ public class CasPullRequestListener implements PullRequestListener {
         }
     }
 
+    @SneakyThrows
     private boolean processInvalidPullRequest(final PullRequest pr) {
         val count = repository.getPullRequestFiles(pr).stream()
             .filter(file -> {
@@ -112,15 +126,9 @@ public class CasPullRequestListener implements PullRequestListener {
             log.info("Closing invalid pull request {} with large number of changes", pr);
             repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
             repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
-            repository.addComment(pr, "Thank you very much for submitting this pull request! \n\nThis patch contains "
-                + "a very large number of commits or changed files and is quite impractical to evaluate and review. "
-                + "Please make sure your changes are broken down into smaller pull requests so that members can assist and review "
-                + "as quickly as possible. Furthermore, make sure your patch is based on the appropriate branch, is a feature branch and "
-                + "targets the correct CAS branch here to avoid conflicts. \n"
-                + "If you believe this to be an error, please post your explanation here as a comment and it will be reviewed as quickly as possible. \n"
-                + "For additional details, please review https://apereo.github.io/cas/developer/Contributor-Guidelines.html"
-                + "\n\nIf you are seeking assistance and have a question about your CAS deployment, "
-                + "please visit https://apereo.github.io/cas/Support.html to learn more about support options.");
+
+            var template = IOUtils.toString(new ClassPathResource("template-large-patch.md").getInputStream(), StandardCharsets.UTF_8);
+            repository.addComment(pr, template);
             repository.close(pr);
             return true;
         }
@@ -147,7 +155,7 @@ public class CasPullRequestListener implements PullRequestListener {
         }
     }
 
-
+    @SneakyThrows
     private boolean processLabelSeeMaintenancePolicy(final PullRequest pr) {
         if (!pr.isTargetedAtMasterBranch() && !pr.isLabeledAs(CasLabels.LABEL_SEE_MAINTENANCE_POLICY)
             && !pr.isTargetBranchOnHeroku() && !pr.isWorkInProgress()) {
@@ -157,11 +165,9 @@ public class CasPullRequestListener implements PullRequestListener {
                 log.info("{} is targeted at a branch {} that is no longer maintained. See maintenance policy", pr, pr.getBase());
                 repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_MAINTENANCE_POLICY);
                 repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
-                repository.addComment(pr, "Thank you very much for submitting this pull request! Please note that this patch "
-                    + "is targeted at a CAS branch that is no longer maintained and as such cannot be accepted or merged. "
-                    + "For additional details, please review https://apereo.github.io/cas/developer/Maintenance-Policy.html"
-                    + "\n\nIf you are seeking assistance or have a question about your CAS deployment, "
-                    + "please visit https://apereo.github.io/cas/Support.html for support options.");
+
+                var template = IOUtils.toString(new ClassPathResource("template-maintenance-policy.md").getInputStream(), StandardCharsets.UTF_8);
+                repository.addComment(pr, template);
                 repository.close(pr);
                 return true;
             }
@@ -202,12 +208,21 @@ public class CasPullRequestListener implements PullRequestListener {
         Arrays.stream(CasLabels.values()).forEach(l -> {
             if (!pr.isLabeledAs(l)) {
                 val titlePattern = Pattern.compile("\\b" + l.getTitle().toLowerCase() + ":*\\b", Pattern.CASE_INSENSITIVE);
+                boolean assign = false;
                 if (titlePattern.matcher(pr.getTitle()).find()) {
                     log.info("{} will be assigned the label {}", pr, l);
-                    repository.labelPullRequestAs(pr, l);
+                    assign = true;
                 } else if (l.getKeywords() != null && l.getKeywords().matcher(title).find()) {
                     log.info("{} will be assigned the label {} by keywords", pr, l);
-                    repository.labelPullRequestAs(pr, l);
+                    assign = true;
+                }
+                if (assign) {
+                    val ci = l == CasLabels.LABEL_CI
+                        && repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
+                    if (l != CasLabels.LABEL_CI || ci) {
+                        log.info("Assigning label {} to pr {}", l, pr);
+                        repository.labelPullRequestAs(pr, l);
+                    }
                 }
             }
         });

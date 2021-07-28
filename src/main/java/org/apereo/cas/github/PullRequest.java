@@ -26,7 +26,7 @@ import lombok.ToString;
 import java.util.List;
 
 @Getter
-@ToString(of = {"title", "url"}, includeFieldNames = false)
+@ToString(of = {"title", "url", "user"}, includeFieldNames = false)
 public class PullRequest {
 
     private final String number;

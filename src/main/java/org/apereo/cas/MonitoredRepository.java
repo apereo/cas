@@ -356,7 +356,7 @@ public class MonitoredRepository {
     }
 
     public void removeOldWorkflowRuns() {
-        for (var i = 20; i > 0; i--) {
+        for (var i = 10; i > 0; i--) {
             var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(), i);
             log.info("Found {} workflow runs for page {}", workflowRun.getCount(), i);
 
