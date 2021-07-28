@@ -65,6 +65,11 @@ async function fetchScratch(page) {
     console.log(`Authentication context class ${context}`);
     assert(context === "[mfa-gauth]")
 
+    await page.goto("https://localhost:8443/cas/login?service=https://github.com/apereo/cas");
+    const url = await page.url()
+    console.log(`Page url: ${url}`)
+    assert(url.startsWith("https://github.com/"));
+
     await page.goto("https://localhost:8443/cas/logout");
     await cas.assertNoTicketGrantingCookie(page);
 
