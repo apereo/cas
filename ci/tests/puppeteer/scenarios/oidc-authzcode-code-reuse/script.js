@@ -20,7 +20,7 @@ const jwt = require('jsonwebtoken');
     await page.goto(url);
     await page.waitForTimeout(1000)
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(1000)
     await cas.click(page, "#allow");
     await page.waitForNavigation();
 
@@ -36,12 +36,12 @@ const jwt = require('jsonwebtoken');
         })
     });
 
-    let accessTokenParms = "client_id=client&";
-    accessTokenParms += "client_secret=secret&";
-    accessTokenParms += "grant_type=authorization_code&";
-    accessTokenParms += "redirect_uri=" + redirectUrl;
+    let accessTokenParams = "client_id=client&";
+    accessTokenParams += "client_secret=secret&";
+    accessTokenParams += "grant_type=authorization_code&";
+    accessTokenParams += "redirect_uri=" + redirectUrl;
 
-    let accessTokenUrl = 'https://localhost:8443/cas/oidc/token?' + accessTokenParms + "&code=" + code;
+    let accessTokenUrl = 'https://localhost:8443/cas/oidc/token?' + accessTokenParams + "&code=" + code;
     console.log("Calling " + accessTokenUrl);
 
     let accessToken = null;
@@ -103,6 +103,24 @@ const jwt = require('jsonwebtoken');
         .catch(error => {
             console.log(error.response.data)
             assert(error.response.data.error === 'invalid_grant')
+        })
+
+
+    console.log("Reusing OAuth code " + code + " should have revoked access token " + accessToken);
+    console.log("Calling user profile again with revoked access token: " + profileUrl);
+    instance
+        .post(profileUrl, new URLSearchParams(), {
+            headers: {
+                'Content-Type': "application/json"
+            }
+        })
+        .then(res => {
+            throw 'Access token ' + accessToken + ' should have been removed and rejected with code reused';
+        })
+        .catch(error => {
+            assert(error.response.status === 401)
+            console.log(error.response.data);
+            assert(error.response.data.error === "expired_accessToken");
         })
 
     await browser.close();

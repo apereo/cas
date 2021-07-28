@@ -412,7 +412,7 @@ public class OAuth20Utils {
      */
     public static boolean checkCallbackValid(final @NonNull RegisteredService registeredService,
                                              final String redirectUri) {
-        val matchingStrategy = registeredService.getMatchingStrategy();
+        val matchingStrategy = registeredService != null ? registeredService.getMatchingStrategy() : null;
         if (matchingStrategy == null || !matchingStrategy.matches(registeredService, redirectUri)) {
             LOGGER.error("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
                     + "Service is considered unauthorized. Verify the service matching strategy used in the service "

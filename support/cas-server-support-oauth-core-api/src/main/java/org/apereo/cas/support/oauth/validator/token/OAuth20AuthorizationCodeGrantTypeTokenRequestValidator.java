@@ -6,6 +6,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.util.HttpRequestUtils;
 
@@ -39,12 +40,12 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
         val request = context.getNativeRequest();
         val clientId = uProfile.getId();
         val redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
-        
+
         LOGGER.debug("Locating registered service for client id [{}]", clientId);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
             getConfigurationContext().getServicesManager(), clientId);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
-        
+
         LOGGER.debug("Received grant type [{}] with client id [{}] and redirect URI [{}]", grantType, clientId, redirectUri);
         val valid = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REDIRECT_URI)
             && HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CODE)
@@ -55,6 +56,14 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
                 .map(String::valueOf).orElse(StringUtils.EMPTY);
             val token = getConfigurationContext().getTicketRegistry().getTicket(code, OAuth20Code.class);
             if (token == null || token.isExpired()) {
+                val accessTokensByCode = getConfigurationContext().getTicketRegistry().getTickets(ticket ->
+                    ticket instanceof OAuth20AccessToken
+                        && StringUtils.equalsIgnoreCase(((OAuth20AccessToken) ticket).getToken(), code));
+                accessTokensByCode.forEach(ticket -> {
+                    LOGGER.debug("Removing access token [{}] issued via expired/unknown code [{}]", ticket.getId(), code);
+                    getConfigurationContext().getTicketRegistry().deleteTicket(ticket);
+                });
+
                 LOGGER.warn("Request OAuth code [{}] is not found or has expired", code);
                 return false;
             }
