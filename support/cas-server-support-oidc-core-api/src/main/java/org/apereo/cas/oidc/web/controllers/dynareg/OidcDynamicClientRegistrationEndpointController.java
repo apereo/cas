@@ -106,7 +106,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
         if (!getConfigurationContext().getOidcRequestSupport().isValidIssuerForEndpoint(webContext, OidcConstants.REGISTRATION_URL)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        
+
         try {
             val registrationRequest = (OidcClientRegistrationRequest) getConfigurationContext()
                 .getClientRegistrationRequestSerializer().from(jsonInput);
@@ -181,7 +181,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
 
             if (StringUtils.isNotBlank(registeredService.getUserInfoEncryptedResponseAlg())) {
                 if (StringUtils.isBlank(registrationRequest.getUserInfoEncryptedResponseEncoding())) {
-                    registeredService.setUserInfoEncryptedResponseEncoding(OidcUserProfileSigningAndEncryptionService.USER_INFO_RESPONSE_ENCRYPTION_ENCODING_DEFAULT);
+                    registeredService.setUserInfoEncryptedResponseEncoding(
+                        OidcUserProfileSigningAndEncryptionService.USER_INFO_RESPONSE_ENCRYPTION_ENCODING_DEFAULT);
                 } else {
                     registeredService.setUserInfoEncryptedResponseEncoding(registrationRequest.getUserInfoEncryptedResponseEncoding());
                 }
@@ -277,11 +278,9 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
             getConfigurationContext().getCasProperties().getServer().getPrefix());
         val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(clientConfigUri);
         val accessToken = getConfigurationContext().getAccessTokenFactory()
-            .create(service,
-                authn,
+            .create(service, authn,
                 List.of(OidcConstants.CLIENT_REGISTRATION_SCOPE),
                 registeredService.getClientId(),
-                new HashMap<>(0),
                 OAuth20ResponseTypes.NONE, OAuth20GrantTypes.NONE);
         getConfigurationContext().getTicketRegistry().addTicket(accessToken);
         return accessToken;

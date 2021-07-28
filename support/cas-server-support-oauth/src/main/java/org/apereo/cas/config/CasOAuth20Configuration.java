@@ -563,7 +563,6 @@ public class CasOAuth20Configuration {
         return new AccessTokenGrantAuditableRequestExtractor(accessTokenGrantRequestExtractors());
     }
 
-
     @ConditionalOnMissingBean(name = "oauthUserProfileViewRenderer")
     @Bean
     @RefreshScope

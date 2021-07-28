@@ -35,6 +35,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 
 /**
  * This is {@link OAuth20DefaultTokenGenerator}.
@@ -166,8 +167,10 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         val ticketGrantingTicket = holder.getTicketGrantingTicket();
         val accessToken = this.accessTokenFactory.create(holder.getService(),
             authentication, ticketGrantingTicket, holder.getScopes(),
-            clientId, holder.getClaims(), holder.getResponseType(), holder.getGrantType());
-
+            Optional.ofNullable(holder.getToken()).map(Ticket::getId).orElse(null),
+            clientId, holder.getClaims(),
+            holder.getResponseType(), holder.getGrantType());
+        
         LOGGER.debug("Created access token [{}]", accessToken);
         addTicketToRegistry(accessToken, ticketGrantingTicket);
         LOGGER.debug("Added access token [{}] to registry", accessToken);
