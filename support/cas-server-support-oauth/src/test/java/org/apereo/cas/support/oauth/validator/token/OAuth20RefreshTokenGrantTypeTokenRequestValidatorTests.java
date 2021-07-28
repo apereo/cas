@@ -45,6 +45,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends Abst
 
     @BeforeEach
     public void before() {
+        servicesManager.deleteAll();
         val supportingService = RequestValidatorTestUtils.getService(
             RegisteredServiceTestUtils.CONST_TEST_URL,
             RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
