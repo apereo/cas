@@ -19,8 +19,8 @@ const cas = require('../../cas.js');
 
     await cas.click(page, "#allow");
     await page.waitForNavigation();
-    await page.waitForTimeout(2000)
 
+    await page.waitForSelector('h1.green-text', { visible: true });
     let header = await cas.textContent(page, "h1.green-text");
     assert(header === "Success!")
 

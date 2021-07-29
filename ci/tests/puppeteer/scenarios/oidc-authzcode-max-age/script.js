@@ -17,7 +17,6 @@ async function fetchIdToken(page, maxAge, successHandler) {
 
     console.log("Navigating to " + url);
     await page.goto(url);
-    await page.waitForTimeout(2000)
     await cas.loginWith(page, "casuser", "Mellon");
 
     if (await cas.isVisible(page, "#allow")) {
@@ -79,6 +78,7 @@ async function fetchIdToken(page, maxAge, successHandler) {
     await fetchIdToken(page, -1, function(idToken) {
         time1 = idToken.auth_time
     });
+    await page.waitForTimeout(2000)
     await fetchIdToken(page, 1, function(idToken) {
         time2 = idToken.auth_time;
     });
