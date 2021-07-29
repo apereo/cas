@@ -17,11 +17,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 public class CompositeProviderSelectionMultifactorWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    /**
-     * Webflow event id.
-     */
-    public static final String MFA_COMPOSITE_EVENT_ID = "mfa-composite";
-
     static final String ACTION_ID_PREPARE_MULTIFACTOR_PROVIDER_SELECTION = "prepareMultifactorProviderSelectionAction";
 
     static final String ACTION_ID_MULTIFACTOR_PROVIDER_SELECTED = "multifactorProviderSelectedAction";
@@ -39,9 +34,12 @@ public class CompositeProviderSelectionMultifactorWebflowConfigurer extends Abst
         val flow = getLoginFlow();
         if (flow != null) {
             val realSubmit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
-            createTransitionForState(realSubmit, MFA_COMPOSITE_EVENT_ID, MFA_COMPOSITE_EVENT_ID);
+            createTransitionForState(realSubmit, CasWebflowConstants.TRANSITION_ID_MFA_COMPOSITE, CasWebflowConstants.STATE_ID_MFA_COMPOSITE);
 
-            val viewState = createViewState(flow, MFA_COMPOSITE_EVENT_ID, "casCompositeMfaProviderSelectionView");
+            val initialAuthn = getState(flow, CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
+            createTransitionForState(initialAuthn, CasWebflowConstants.TRANSITION_ID_MFA_COMPOSITE, CasWebflowConstants.STATE_ID_MFA_COMPOSITE);
+
+            val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_MFA_COMPOSITE, "casCompositeMfaProviderSelectionView");
             viewState.getEntryActionList().add(createEvaluateAction(ACTION_ID_PREPARE_MULTIFACTOR_PROVIDER_SELECTION));
 
             createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT,

@@ -74,8 +74,11 @@ public class MultifactorAuthenticationUtils {
             val def = ctx.getMatchingTransition(event.getId());
             if (def == null) {
                 val msg = String.format("State [%s:%s:%s] does not have a matching transition for %s",
-                    ctx.getCurrentState().getId(), ctx.getCurrentEvent().getId(),
-                    ctx.getCurrentTransition().getId(), event.getId());
+                    ctx.getCurrentState().getId(),
+                    ctx.getCurrentEvent() != null ? ctx.getCurrentEvent().getId() : "N/A",
+                    ctx.getCurrentTransition() != null ? ctx.getCurrentTransition().getId() : "N/A",
+                    event.getId());
+                LOGGER.error(msg);
                 throw new AuthenticationException(msg);
             }
             return event;

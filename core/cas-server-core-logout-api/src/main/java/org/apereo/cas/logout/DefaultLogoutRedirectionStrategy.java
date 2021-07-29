@@ -44,9 +44,13 @@ public class DefaultLogoutRedirectionStrategy implements LogoutRedirectionStrate
         LOGGER.trace("Located target service [{}] for redirection after logout", service);
 
         val authorizedRedirectUrlFromRequest = WebUtils.getLogoutRedirectUrl(request, String.class);
-        if (StringUtils.isNotBlank(service) && logoutProperties.isFollowServiceRedirects()) {
+        if (StringUtils.isNotBlank(service)) {
             val webAppService = webApplicationServiceFactory.createService(service);
-            if (singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(webAppService, Optional.of(request))) {
+            val authz = singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(webAppService, Optional.of(request));
+            if (authz) {
+                WebUtils.putServiceIntoFlowScope(requestContext, webAppService);
+            }
+            if (logoutProperties.isFollowServiceRedirects() && authz) {
                 LOGGER.debug("Redirecting to logout URL [{}]", service);
                 WebUtils.putLogoutRedirectUrl(requestContext, service);
             } else {

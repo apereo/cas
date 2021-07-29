@@ -96,7 +96,8 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         LOGGER.trace("Resolved event from the initial authentication leg is [{}]", id);
 
         if (List.of(CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
-            CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS).contains(id)) {
+            CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS,
+            CasWebflowConstants.TRANSITION_ID_MFA_COMPOSITE).contains(id)) {
             LOGGER.trace("Returning webflow event as [{}]", id);
             return CollectionUtils.wrapSet(event);
         }

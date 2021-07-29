@@ -85,6 +85,41 @@ public class TerminateSessionAction extends AbstractAction {
      */
     protected final ConfigurableApplicationContext applicationContext;
 
+    /**
+     * Check if the logout must be confirmed.
+     *
+     * @param requestContext the request context
+     * @return if the logout must be confirmed
+     */
+    protected static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        return request.getParameterMap().containsKey(REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED);
+    }
+
+    /**
+     * Destroy application session.
+     * Also kills all delegated authn profiles via pac4j.
+     *
+     * @param request  the request
+     * @param response the response
+     */
+    @SuppressWarnings("java:S2441")
+    protected static void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
+        LOGGER.trace("Destroying application session");
+        val context = new JEEContext(request, response, new JEESessionStore());
+        val manager = new ProfileManager<>(context);
+        manager.logout();
+
+        val session = request.getSession(false);
+        if (session != null) {
+            val requestedUrl = session.getAttribute(Pac4jConstants.REQUESTED_URL);
+            session.invalidate();
+            if (requestedUrl != null && !requestedUrl.equals(StringUtils.EMPTY)) {
+                request.getSession(true).setAttribute(Pac4jConstants.REQUESTED_URL, requestedUrl);
+            }
+        }
+    }
+
     @Override
     public Event doExecute(final RequestContext requestContext) {
         val terminateSession = FunctionUtils.doIf(logoutProperties.isConfirmLogout(),
@@ -143,41 +178,6 @@ public class TerminateSessionAction extends AbstractAction {
         }
 
         return this.eventFactorySupport.success(this);
-    }
-
-    /**
-     * Check if the logout must be confirmed.
-     *
-     * @param requestContext the request context
-     * @return if the logout must be confirmed
-     */
-    protected static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        return request.getParameterMap().containsKey(REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED);
-    }
-
-    /**
-     * Destroy application session.
-     * Also kills all delegated authn profiles via pac4j.
-     *
-     * @param request  the request
-     * @param response the response
-     */
-    @SuppressWarnings("java:S2441")
-    protected static void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
-        LOGGER.trace("Destroying application session");
-        val context = new JEEContext(request, response, new JEESessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
-        manager.logout();
-
-        val session = request.getSession(false);
-        if (session != null) {
-            val requestedUrl = session.getAttribute(Pac4jConstants.REQUESTED_URL);
-            session.invalidate();
-            if (requestedUrl != null && !requestedUrl.equals(StringUtils.EMPTY)) {
-                request.getSession(true).setAttribute(Pac4jConstants.REQUESTED_URL, requestedUrl);
-            }
-        }
     }
 
     /**
