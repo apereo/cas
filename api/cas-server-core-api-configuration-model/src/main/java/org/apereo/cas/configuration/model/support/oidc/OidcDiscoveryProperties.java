@@ -70,48 +70,48 @@ public class OidcDiscoveryProperties implements Serializable {
      * Supported algorithms for id token signing.
      */
     private List<String> idTokenSigningAlgValuesSupported = Stream.of("none", "RS256", "RS384",
-        "RS512", "PS256", "PS384",
-        "PS512", "ES256", "ES384",
-        "ES512", "HS256", "HS384", "HS512")
+            "RS512", "PS256", "PS384",
+            "PS512", "ES256", "ES384",
+            "ES512", "HS256", "HS384", "HS512")
         .collect(Collectors.toList());
 
     /**
      * Supported algorithms for id token encryption.
      */
     private List<String> idTokenEncryptionAlgValuesSupported = Stream.of("RSA1_5", "RSA-OAEP", "RSA-OAEP-256",
-        "A128KW", "A192KW", "A256KW", "A128GCMKW", "A192GCMKW", "A256GCMKW",
-        "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW")
+            "A128KW", "A192KW", "A256KW", "A128GCMKW", "A192GCMKW", "A256GCMKW",
+            "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW")
         .collect(Collectors.toList());
 
     /**
      * Supported encoding strategies for id token encryption.
      */
     private List<String> idTokenEncryptionEncodingValuesSupported = Stream.of("A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512",
-        "A128GCM", "A192GCM", "A256GCM")
+            "A128GCM", "A192GCM", "A256GCM")
         .collect(Collectors.toList());
 
     /**
      * Supported algorithms for user-info signing.
      */
     private List<String> userInfoSigningAlgValuesSupported = Stream.of("none", "RS256", "RS384",
-        "RS512", "PS256", "PS384",
-        "PS512", "ES256", "ES384",
-        "ES512", "HS256", "HS384", "HS512")
+            "RS512", "PS256", "PS384",
+            "PS512", "ES256", "ES384",
+            "ES512", "HS256", "HS384", "HS512")
         .collect(Collectors.toList());
 
     /**
      * Supported algorithms for user-info encryption.
      */
     private List<String> userInfoEncryptionAlgValuesSupported = Stream.of("RSA1_5", "RSA-OAEP", "RSA-OAEP-256",
-        "A128KW", "A192KW", "A256KW", "A128GCMKW", "A192GCMKW", "A256GCMKW",
-        "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW")
+            "A128KW", "A192KW", "A256KW", "A128GCMKW", "A192GCMKW", "A256GCMKW",
+            "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW")
         .collect(Collectors.toList());
 
     /**
      * Supported encoding strategies for user-info encryption.
      */
     private List<String> userInfoEncryptionEncodingValuesSupported = Stream.of("A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512",
-        "A128GCM", "A192GCM", "A256GCM")
+            "A128GCM", "A192GCM", "A256GCM")
         .collect(Collectors.toList());
 
     /**
@@ -124,4 +124,30 @@ public class OidcDiscoveryProperties implements Serializable {
      * List of PKCE code challenge methods supported.
      */
     private List<String> codeChallengeMethodsSupported = Stream.of("plain", "S256").collect(Collectors.toList());
+
+    /**
+     * Supported algorithms for request object signing.
+     */
+    private List<String> requestObjectSigningAlgValuesSupported = Stream.of("none", "RS256", "RS384",
+            "RS512", "PS256", "PS384",
+            "PS512", "ES256", "ES384",
+            "ES512", "HS256", "HS384",
+            "HS512")
+        .collect(Collectors.toList());
+
+    /**
+     * Supported algorithms for request object encryption.
+     */
+    private List<String> requestObjectEncryptionAlgValuesSupported = Stream.of("RSA1_5", "RSA-OAEP", "RSA-OAEP-256",
+            "A128KW", "A192KW", "A256KW", "A128GCMKW", "A192GCMKW", "A256GCMKW",
+            "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW")
+        .collect(Collectors.toList());
+
+    /**
+     * Supported encoding strategies for request object encryption.
+     */
+    private List<String> requestObjectEncryptionEncodingValuesSupported = Stream.of("A128CBC-HS256",
+            "A192CBC-HS384", "A256CBC-HS512",
+            "A128GCM", "A192GCM", "A256GCM")
+        .collect(Collectors.toList());
 }

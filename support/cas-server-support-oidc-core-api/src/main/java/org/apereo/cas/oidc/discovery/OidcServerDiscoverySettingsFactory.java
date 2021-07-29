@@ -18,33 +18,42 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServerDiscoverySettings> {
     private final CasConfigurationProperties casProperties;
+
     private final OidcIssuerService issuerService;
 
     @Override
     public OidcServerDiscoverySettings getObject() {
         val oidc = casProperties.getAuthn().getOidc();
+        val discoveryConfig = oidc.getDiscovery();
+
         val discovery = new OidcServerDiscoverySettings(issuerService.determineIssuer(Optional.empty()));
-        discovery.setClaimsSupported(oidc.getDiscovery().getClaims());
-        discovery.setScopesSupported(oidc.getDiscovery().getScopes());
-        discovery.setResponseTypesSupported(oidc.getDiscovery().getResponseTypesSupported());
-        discovery.setSubjectTypesSupported(oidc.getDiscovery().getSubjectTypes());
-        discovery.setClaimTypesSupported(oidc.getDiscovery().getClaimTypesSupported());
-        discovery.setIntrospectionSupportedAuthenticationMethods(oidc.getDiscovery().getIntrospectionSupportedAuthenticationMethods());
-        discovery.setGrantTypesSupported(oidc.getDiscovery().getGrantTypesSupported());
-        discovery.setTokenEndpointAuthMethodsSupported(oidc.getDiscovery().getTokenEndpointAuthMethodsSupported());
+
+        discovery.setClaimsSupported(discoveryConfig.getClaims());
+        discovery.setScopesSupported(discoveryConfig.getScopes());
+        discovery.setResponseTypesSupported(discoveryConfig.getResponseTypesSupported());
+        discovery.setSubjectTypesSupported(discoveryConfig.getSubjectTypes());
+        discovery.setClaimTypesSupported(discoveryConfig.getClaimTypesSupported());
+        discovery.setIntrospectionSupportedAuthenticationMethods(discoveryConfig.getIntrospectionSupportedAuthenticationMethods());
+        discovery.setGrantTypesSupported(discoveryConfig.getGrantTypesSupported());
+        discovery.setTokenEndpointAuthMethodsSupported(discoveryConfig.getTokenEndpointAuthMethodsSupported());
         discovery.setClaimsParameterSupported(true);
 
-        discovery.setIdTokenSigningAlgValuesSupported(oidc.getDiscovery().getIdTokenSigningAlgValuesSupported());
-        discovery.setIdTokenEncryptionAlgValuesSupported(oidc.getDiscovery().getIdTokenEncryptionAlgValuesSupported());
-        discovery.setIdTokenEncryptionEncodingValuesSupported(oidc.getDiscovery().getIdTokenEncryptionEncodingValuesSupported());
+        discovery.setIdTokenSigningAlgValuesSupported(discoveryConfig.getIdTokenSigningAlgValuesSupported());
+        discovery.setIdTokenEncryptionAlgValuesSupported(discoveryConfig.getIdTokenEncryptionAlgValuesSupported());
+        discovery.setIdTokenEncryptionEncodingValuesSupported(discoveryConfig.getIdTokenEncryptionEncodingValuesSupported());
 
         discovery.setBackchannelLogoutSupported(oidc.getLogout().isBackchannelLogoutSupported());
         discovery.setFrontchannelLogoutSupported(oidc.getLogout().isFrontchannelLogoutSupported());
 
-        discovery.setUserInfoSigningAlgValuesSupported(oidc.getDiscovery().getUserInfoSigningAlgValuesSupported());
-        discovery.setUserInfoEncryptionAlgValuesSupported(oidc.getDiscovery().getUserInfoEncryptionAlgValuesSupported());
-        discovery.setUserInfoEncryptionEncodingValuesSupported(oidc.getDiscovery().getUserInfoEncryptionEncodingValuesSupported());
-        discovery.setCodeChallengeMethodsSupported(oidc.getDiscovery().getCodeChallengeMethodsSupported());
+        discovery.setUserInfoSigningAlgValuesSupported(discoveryConfig.getUserInfoSigningAlgValuesSupported());
+        discovery.setUserInfoEncryptionAlgValuesSupported(discoveryConfig.getUserInfoEncryptionAlgValuesSupported());
+        discovery.setUserInfoEncryptionEncodingValuesSupported(discoveryConfig.getUserInfoEncryptionEncodingValuesSupported());
+
+        discovery.setCodeChallengeMethodsSupported(discoveryConfig.getCodeChallengeMethodsSupported());
+
+        discovery.setRequestObjectSigningAlgValuesSupported(discoveryConfig.getRequestObjectSigningAlgValuesSupported());
+        discovery.setRequestObjectSigningAlgValuesSupported(discoveryConfig.getRequestObjectEncryptionAlgValuesSupported());
+        discovery.setRequestObjectEncryptionEncodingValuesSupported(discoveryConfig.getRequestObjectEncryptionEncodingValuesSupported());
 
         return discovery;
     }
