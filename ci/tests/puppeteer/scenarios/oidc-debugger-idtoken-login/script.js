@@ -15,11 +15,10 @@ const cas = require('../../cas.js');
     await page.goto(url);
 
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.waitForTimeout(5000)
+    await page.waitForTimeout(3000)
 
     await cas.click(page, "#allow");
     await page.waitForNavigation();
-    await page.waitForTimeout(5000)
 
     let header = await cas.textContent(page, "h1.green-text");
     assert(header === "Success!")
