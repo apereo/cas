@@ -52,7 +52,7 @@ random=$(openssl rand -hex 8)
 
 if [[ ! -d "$PWD"/ci/tests/puppeteer/node_modules/puppeteer ]] ; then
   printgreen "Installing Puppeteer"
-  npm_install_cmd="npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer jsonwebtoken axios request"
+  npm_install_cmd="npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer jsonwebtoken axios request colors"
   eval $npm_install_cmd || eval $npm_install_cmd || eval $npm_install_cmd
 else
   printgreen "Using existing Puppeteer modules..."

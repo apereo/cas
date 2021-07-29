@@ -24,6 +24,7 @@ public class OidcCasCallbackUrlResolver extends OAuth20CasCallbackUrlResolver {
     protected List<String> getIncludeParameterNames() {
         val list = super.getIncludeParameterNames();
         list.add(OidcConstants.UI_LOCALES);
+        list.add(OidcConstants.MAX_AGE);
         return list;
     }
 }

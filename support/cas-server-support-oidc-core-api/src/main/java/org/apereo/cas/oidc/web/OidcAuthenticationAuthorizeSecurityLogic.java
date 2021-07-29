@@ -9,6 +9,8 @@ import org.pac4j.core.client.Client;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.engine.DefaultSecurityLogic;
+import org.pac4j.core.profile.BasicUserProfile;
+import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 
@@ -28,7 +30,14 @@ public class OidcAuthenticationAuthorizeSecurityLogic extends DefaultSecurityLog
                                              final SessionStore sessionStore, final List<Client> clients) {
         val prompts = OidcRequestSupport.getOidcPromptFromAuthorizationRequest(context);
         LOGGER.debug("Located OpenID Connect prompts from request as [{}]", prompts);
-        return prompts.contains(OidcConstants.PROMPT_LOGIN)
+
+        val tooOld = OidcRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context)
+            .map(maxAge -> manager.getProfile(BasicUserProfile.class)
+                .stream()
+                .anyMatch(profile -> OidcRequestSupport.isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, profile)))
+            .orElse(Boolean.FALSE);
+
+        return tooOld || prompts.contains(OidcConstants.PROMPT_LOGIN)
             ? new ArrayList<>(0)
             : super.loadProfiles(manager, context, sessionStore, clients);
     }
