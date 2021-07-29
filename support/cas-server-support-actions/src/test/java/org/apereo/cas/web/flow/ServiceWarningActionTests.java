@@ -46,7 +46,10 @@ public class ServiceWarningActionTests extends AbstractWebflowActionsTests {
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         assertThrows(InvalidTicketException.class, () -> action.execute(context).getId());
 
-        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("https://google.com"));
+        val service = RegisteredServiceTestUtils.getService("https://google.com");
+        getServicesManager().save(RegisteredServiceTestUtils.getRegisteredService(service.getId()));
+        
+        WebUtils.putServiceIntoFlowScope(context, service);
         WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
         getTicketRegistry().addTicket(tgt);
