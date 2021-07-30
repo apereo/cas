@@ -21,10 +21,7 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
         await page.waitForNavigation();
     }
 
-    console.log("Page url " + page.url())
-    let result = new URL(page.url());
-    assert(result.searchParams.has("code"));
-    let code = result.searchParams.get("code");
+    let code = await cas.assertParameter(page, "code");
     console.log("OAuth code " + code);
 
     const instance = axios.create({

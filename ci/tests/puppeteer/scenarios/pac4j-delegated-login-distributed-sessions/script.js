@@ -24,10 +24,8 @@ const cas = require('../../cas.js');
     await cas.loginWith(page1, "casuser", "Mellon");
     await page1.waitForTimeout(1000)
 
-    let result = new URL(page1.url());
-    console.log(page1.url())
-    assert(result.searchParams.has("service") === false);
-
+    await cas.assertMissingParameter(page1, "service");
+``
     await browser1.close();
     await browser2.close();
 })();

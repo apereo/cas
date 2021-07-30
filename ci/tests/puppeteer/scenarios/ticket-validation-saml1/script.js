@@ -11,10 +11,7 @@ const cas = require('../../cas.js');
     await page.goto("https://localhost:8443/cas/login?TARGET=" + service);
     await cas.loginWith(page, "casuser", "Mellon");
 
-    let result = new URL(page.url());
-    let ticket = result.searchParams.get("SAMLart");
-    console.log(ticket);
-    assert(ticket != null);
+    let ticket = await cas.assertParameter(page, "SAMLart");
 
     let request = `<?xml version="1.0" encoding="UTF-8"?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
