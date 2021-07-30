@@ -9,23 +9,21 @@ const jwt = require('jsonwebtoken');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    const redirectUrl = "https://github.com/apereo/cas";
-
-    let url = "https://localhost:8443/cas/oidc/authorize?"
-        + "response_type=code&client_id=client&scope=openid%20email%20profile%20address%20phone&"
-        + "redirect_uri=" + redirectUrl
-        + "&nonce=3d3a7457f9ad3&state=1735fd6c43c14";
+    const redirectUrl = "https://apereo.github.io";
+    let url = "https://localhost:8443/cas/oidc/oidcAuthorize?client_id=client"
+        + "&redirect_uri=" + redirectUrl + "&scope=openid&state=gKK1AT6qfk"
+        + "&nonce=gzpjHPGJpu&response_type=code"
+        + "&claims=%7B%22userinfo%22:%7B%22name%22:%7B%22essential%22:true%7D%7D%7D";
 
     console.log("Navigating to " + url);
     await page.goto(url);
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.waitForTimeout(1000)
     await cas.click(page, "#allow");
     await page.waitForNavigation();
 
     let code = await cas.assertParameter(page, "code");
     console.log("OAuth code " + code);
-    
+
     const instance = axios.create({
         httpsAgent: new https.Agent({
             rejectUnauthorized: false
@@ -57,9 +55,7 @@ const jwt = require('jsonwebtoken');
             console.log("Decoding ID token...");
             let decoded = jwt.decode(res.data.id_token);
             console.log(decoded);
-
             assert(decoded.sub !== null)
-            assert(decoded["preferred_username"] == null)
         })
         .catch(error => {
             throw 'Operation failed to obtain access token: ' + error;
@@ -77,46 +73,11 @@ const jwt = require('jsonwebtoken');
         })
         .then(res => {
             console.log(res.data);
-            assert(res.data.email != null)
-            assert(res.data.gender != null)
             assert(res.data.name != null)
-            assert(res.data["preferred_username"] != null)
+            assert(res.data.sub != null)
         })
         .catch(error => {
             throw 'Operation failed: ' + error;
-        })
-
-    console.log("Trying to re-use OAuth code " + accessTokenUrl);
-    await instance
-        .post(accessTokenUrl, new URLSearchParams(), {
-            headers: {
-                'Content-Type': "application/json"
-            }
-        })
-        .then(res => {
-            throw 'OAuth code ' + code + ' cannot be used again';
-        })
-        .catch(error => {
-            console.log(error.response.data)
-            assert(error.response.data.error === 'invalid_grant')
-        })
-
-
-    console.log("Reusing OAuth code " + code + " should have revoked access token " + accessToken);
-    console.log("Calling user profile again with revoked access token: " + profileUrl);
-    instance
-        .post(profileUrl, new URLSearchParams(), {
-            headers: {
-                'Content-Type': "application/json"
-            }
-        })
-        .then(res => {
-            throw 'Access token ' + accessToken + ' should have been removed and rejected with code reused';
-        })
-        .catch(error => {
-            assert(error.response.status === 401)
-            console.log(error.response.data);
-            assert(error.response.data.error === "expired_accessToken");
         })
 
     await browser.close();
