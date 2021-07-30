@@ -52,7 +52,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discovery.setCodeChallengeMethodsSupported(discoveryConfig.getCodeChallengeMethodsSupported());
 
         discovery.setRequestObjectSigningAlgValuesSupported(discoveryConfig.getRequestObjectSigningAlgValuesSupported());
-        discovery.setRequestObjectSigningAlgValuesSupported(discoveryConfig.getRequestObjectEncryptionAlgValuesSupported());
+        discovery.setRequestObjectEncryptionAlgValuesSupported(discoveryConfig.getRequestObjectEncryptionAlgValuesSupported());
         discovery.setRequestObjectEncryptionEncodingValuesSupported(discoveryConfig.getRequestObjectEncryptionEncodingValuesSupported());
 
         return discovery;
