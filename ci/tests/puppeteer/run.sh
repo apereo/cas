@@ -6,6 +6,8 @@
 echo "Installing Puppeteer"
 npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer jsonwebtoken axios request
 
+random=$(openssl rand -hex 8)
+
 echo "Creating overlay work directory"
 rm -Rf "$PWD"/ci/tests/puppeteer/overlay
 mkdir "$PWD"/ci/tests/puppeteer/overlay
@@ -38,6 +40,8 @@ initScript=$(cat "${config}" | jq -j '.initScript // empty')
 [ -z "$result" ] && echo "Initialization script is: ${initScript}" && eval "$initScript"
 
 properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
+properties="${properties//\%\{random\}/${random}}"
+
 echo -e "\nLaunching CAS with properties [${properties}] and dependencies [${dependencies}]"
 runArgs="-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"
 

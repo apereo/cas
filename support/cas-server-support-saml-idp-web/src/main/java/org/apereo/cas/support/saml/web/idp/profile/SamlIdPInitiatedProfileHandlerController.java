@@ -71,7 +71,7 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
         var shire = request.getParameter(SamlIdPConstants.SHIRE);
         val facade = adaptor.get();
         if (StringUtils.isBlank(shire)) {
-            LOGGER.warn("Resolving service provider assertion consumer service URL for [{}] and binding [{}]",
+            LOGGER.info("Resolving service provider assertion consumer service URL for [{}] and binding [{}]",
                 providerId, SAMLConstants.SAML2_POST_BINDING_URI);
             val acs = facade.getAssertionConsumerService(SAMLConstants.SAML2_POST_BINDING_URI);
             if (acs == null || StringUtils.isBlank(acs.getLocation())) {

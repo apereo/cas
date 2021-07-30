@@ -1,7 +1,7 @@
 {
   "dependencies": "saml-idp",
   "properties": [
-    "--cas.authn.saml-idp.entity-id=https://cas.apereo.org/saml/idp/1",
+    "--cas.authn.saml-idp.entity-id=https://cas.apereo.org/saml/idp/%{random}",
     "--cas.authn.saml-idp.metadata.location=file:${PWD}/ci/tests/puppeteer/scenarios/saml-relay-state-caching/saml-md",
     "--cas.saml-core.skew-allowance=5",
 
@@ -9,10 +9,8 @@
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net",
 
-    "--logging.level.org.apereo.cas=debug",
-
     "--cas.service-registry.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/saml-relay-state-caching/services"
   ],
-  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/saml-relay-caching/init.sh"
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/saml-relay-state-caching/init.sh"
 }
