@@ -53,10 +53,7 @@ async function fetchCode(page, acr) {
         await page.waitForNavigation();
     }
 
-    console.log("Page url " + page.url())
-    let result = new URL(page.url());
-    assert(result.searchParams.has("code"));
-    let code = result.searchParams.get("code");
+    let code = await cas.assertParameter(page, "code");
     console.log("OAuth code " + code);
     return code;
 }

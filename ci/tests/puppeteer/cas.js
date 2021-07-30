@@ -36,23 +36,23 @@ exports.innerText = async (page, selector) => {
     return text;
 }
 
-exports.textContent = async(page, selector) => {
+exports.textContent = async (page, selector) => {
     let element = await page.$(selector);
     let text = await page.evaluate(element => element.textContent.trim(), element);
     console.log(`Text content for selector [${selector}] is: [${text}]`);
     return text;
 }
 
-exports.inputValue = async(page, selector) => {
+exports.inputValue = async (page, selector) => {
     let element = await page.$(selector);
     let text = await page.evaluate(element => element.value, element);
     console.log(`Input value for selector [${selector}] is: [${text}]`);
     return text;
 }
 
-exports.loginWith = async(page, user, password,
-                          usernameField = "#username",
-                          passwordField = "#password") => {
+exports.loginWith = async (page, user, password,
+                           usernameField = "#username",
+                           passwordField = "#password") => {
     console.log(`Logging in with ${user} and ${password}`);
     await this.type(page, usernameField, user);
     await this.type(page, passwordField, password);
@@ -60,47 +60,47 @@ exports.loginWith = async(page, user, password,
     await page.waitForNavigation();
 }
 
-exports.isVisible = async(page, selector) => {
+exports.isVisible = async (page, selector) => {
     let element = await page.$(selector);
     console.log(`Checking visibility for ${selector}`);
     return (element != null && await element.boundingBox() != null);
 }
 
-exports.assertVisibility = async(page, selector) => {
+exports.assertVisibility = async (page, selector) => {
     assert(await this.isVisible(page, selector));
 }
 
-exports.assertInvisibility = async(page, selector) => {
+exports.assertInvisibility = async (page, selector) => {
     let element = await page.$(selector);
     console.log(`Checking invisibility for ${selector}`);
     assert(element == null || await element.boundingBox() == null);
 }
 
-exports.assertTicketGrantingCookie = async(page) => {
+exports.assertTicketGrantingCookie = async (page) => {
     let tgc = (await page.cookies()).filter(value => value.name === "TGC");
     console.log(`Asserting ticket-granting cookie: ${tgc}`);
     assert(tgc.length !== 0);
 }
 
-exports.assertNoTicketGrantingCookie = async(page) => {
+exports.assertNoTicketGrantingCookie = async (page) => {
     let tgc = (await page.cookies()).filter(value => value.name === "TGC");
     console.log(`Asserting no ticket-granting cookie: ${tgc}`);
     assert(tgc.length === 0);
 }
 
-exports.submitForm = async(page, selector) => {
+exports.submitForm = async (page, selector) => {
     console.log("Submitting form " + selector);
     await page.$eval(selector, form => form.submit());
     await page.waitForTimeout(2500)
 }
 
-exports.type = async(page, selector, value) => {
+exports.type = async (page, selector, value) => {
     console.log(`Typing ${value} in field ${selector}`);
     await page.$eval(selector, el => el.value = '');
     await page.type(selector, value);
 }
 
-exports.newPage = async(browser) => {
+exports.newPage = async (browser) => {
     let page = (await browser.pages())[0];
     if (page === undefined) {
         page = await browser.newPage();
@@ -110,7 +110,20 @@ exports.newPage = async(browser) => {
     return page;
 }
 
-exports.assertTicketParameter = async(page) => {
+exports.assertParameter = async (page, param) => {
+    let result = new URL(page.url());
+    let value = result.searchParams.get(param);
+    console.log(`Parameter ${param} with value ${value}`);
+    assert(value != null);
+}
+
+exports.assertMissingParameter = async (page, param) => {
+    let result = new URL(page.url());
+    assert(result.searchParams.has(param) === false);
+}
+
+
+exports.assertTicketParameter = async (page) => {
     console.log("Page URL: " + page.url())
     let result = new URL(page.url());
     assert(result.searchParams.has("ticket"))
