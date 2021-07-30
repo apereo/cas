@@ -20,7 +20,7 @@ layout: null
         *   [Overview](/cas/{{ version }}/installation/WAR-Overlay-Installation.html)
         *   [Bill of Materials](/cas/{{ version }}/installation/BOM-Dependency-Management.html)
         *   [CAS Initializr](/cas/{{ version }}/installation/WAR-Overlay-Initializr.html)
-    *   [Command-line Shell](/cas/{{ version }}/installation/Configuring-Commandline-Shell.html) 
+    *   [Command-line Shell](/cas/{{ version }}/installation/Configuring-Commandline-Shell.html)
     *   [Docker Deployment](/cas/{{ version }}/installation/Docker-Installation.html)
     *   [Kubernetes Helm Deployment](/cas/{{ version }}/installation/Kubernetes-Helm-Deployment.html)
     *   [Servlet Containers](#servletsoverview)
@@ -80,7 +80,7 @@ layout: null
         *   [Apache Syncope](/cas/{{ version }}/authentication/Syncope-Authentication.html)
         *   [JWT](#jwtauthn)
             *   [Overview](/cas/{{ version }}/authentication/JWT-Authentication.html)
-            *   [JWT Service Tickets](/cas/{{ version }}/installation/Configure-ServiceTicket-JWT.html) 
+            *   [JWT Service Tickets](/cas/{{ version }}/installation/Configure-ServiceTicket-JWT.html)
         *   [Rest](/cas/{{ version }}/authentication/Rest-Authentication.html)
         *   [AWS Cloud Directory](/cas/{{ version }}/authentication/AWS-CloudDirectory-Authentication.html)
         *   [AWS Cognito](/cas/{{ version }}/authentication/AWS-Cognito-Authentication.html)
@@ -208,7 +208,7 @@ layout: null
                 * [REST](/cas/{{ version }}/integration/Attribute-Release-Consent-Storage-REST.html)
         *   [Caching](/cas/{{ version }}/integration/Attribute-Release-Caching.html)
         *   [Definitions](/cas/{{ version }}/integration/Attribute-Definitions.html)
-        
+
 * [Multifactor Authentication](#mfaauthn)
     *   [Overview](/cas/{{ version }}/mfa/Configuring-Multifactor-Authentication.html)
     *   [Providers](#mfaproviders)
@@ -291,8 +291,8 @@ layout: null
     *   [Adaptive](#adaptiveauthn)
         *   [Overview](/cas/{{ version }}/mfa/Configuring-Adaptive-Authentication.html)
         *   [GeoTracking](/cas/{{ version }}/authentication/GeoTracking-Authentication-Requests.html)
-    
-*   [SSO & SLO](#ssoandslo) 
+
+*   [SSO & SLO](#ssoandslo)
     *   [SSO Session](/cas/{{ version }}/authentication/Configuring-SSO.html)
     *   [Remember Me](/cas/{{ version }}/authentication/Configuring-LongTerm-Authentication.html)
     *   [Logout & SLO](/cas/{{ version }}/installation/Logout-Single-Signout.html)
@@ -307,11 +307,11 @@ layout: null
         *   [LDAP](/cas/{{ version }}/password_management/Password-Management-LDAP.html)
         *   [JDBC](/cas/{{ version }}/password_management/Password-Management-JDBC.html)
         *   [REST](/cas/{{ version }}/password_management/Password-Management-REST.html)
-        *   [Custom](/cas/{{ version }}/password_management/Password-Management-Custom.html) 
+        *   [Custom](/cas/{{ version }}/password_management/Password-Management-Custom.html)
 
 * [Ticketing](#ticketingconfig)
     *   [Overview](/cas/{{ version }}/ticketing/Configuring-Ticketing-Components.html)
-    *   [JWT Service Tickets](/cas/{{ version }}/installation/Configure-ServiceTicket-JWT.html) 
+    *   [JWT Service Tickets](/cas/{{ version }}/installation/Configure-ServiceTicket-JWT.html)
     *   [Expiration Policies](/cas/{{ version }}/ticketing/Configuring-Ticket-Expiration-Policy.html)
     *   [Storage](#ticketingstorage)
         *   [Default](/cas/{{ version }}/ticketing/Default-Ticket-Registry.html)
@@ -385,9 +385,9 @@ layout: null
         *   [MongoDb](/cas/{{ version }}/audits/Audits-MongoDb.html)
         *   [Redis](/cas/{{ version }}/audits/Audits-Redis.html)
         *   [REST](/cas/{{ version }}/audits/Audits-REST.html)
-    
+
 * [Monitoring & Statistics](#monitoroverview)
-    *   [Overview](/cas/{{ version }}/monitoring/Monitoring-Statistics.html) 
+    *   [Overview](/cas/{{ version }}/monitoring/Monitoring-Statistics.html)
     *   [Administration Server](/cas/{{ version }}/monitoring/Configuring-Monitoring-Administration.html)
     *   [JavaMelody](/cas/{{ version }}/monitoring/Configuring-Monitoring-JavaMelody.html)
     *   [Metrics](#metricsoverview)
@@ -402,7 +402,7 @@ layout: null
         *   [Hazelcast](/cas/{{ version }}/monitoring/Configuring-Monitoring-Hazelcast.html)
         *   [JDBC](/cas/{{ version }}/monitoring/Configuring-Monitoring-JDBC.html)
         *   [LDAP](/cas/{{ version }}/monitoring/Configuring-Monitoring-LDAP.html)
-        
+
 * [User Interface](#user_interface)
     *   [Overview](/cas/{{ version }}/ux/User-Interface-Customization.html)
     *   [CSS & JavaScript](/cas/{{ version }}/ux/User-Interface-Customization-CSSJS.html)
@@ -432,12 +432,12 @@ layout: null
     *   [Groovy](/cas/{{ version }}/webflow/Webflow-Customization-Interrupt-Groovy.html)
     *   [REST](/cas/{{ version }}/webflow/Webflow-Customization-Interrupt-REST.html)
     *   [Custom](/cas/{{ version }}/webflow/Webflow-Customization-Interrupt-Custom.html)
-        
+
 *   [Webflow Management](#webflowmgmt)
-    *   [Overview](/cas/{{ version }}/webflow/Webflow-Customization.html) 
+    *   [Overview](/cas/{{ version }}/webflow/Webflow-Customization.html)
     *   [Error Handling](/cas/{{ version }}/webflow/Webflow-Customization-Exceptions.html)
     *   [Extending Webflow](/cas/{{ version }}/webflow/Webflow-Customization-Extensions.html)
-    *   [Dynamic Decorations](/cas/{{ version }}/webflow/Webflow-Customization-Decorators.html) 
+    *   [Dynamic Decorations](/cas/{{ version }}/webflow/Webflow-Customization-Decorators.html)
     *   [Session Persistence](/cas/{{ version }}/webflow/Webflow-Customization-Sessions.html)
 
 * [High Availability](#highavailability)
@@ -450,7 +450,7 @@ layout: null
         *   [Overview](/cas/{{ version }}/installation/Service-Discovery-Guide.html)
         *   [Eureka Service Discovery](/cas/{{ version }}/installation/Service-Discovery-Guide-Eureka.html)
         *   [Consul Service Discovery](/cas/{{ version }}/installation/Service-Discovery-Guide-Consul.html)
-    
+
 * [Protocols](#protocols)
     *   [Overview](/cas/{{ version }}/protocol/Protocol-Overview.html)
     *   [CAS](#casprotocol)
@@ -514,10 +514,11 @@ layout: null
         *   [Twilio](/cas/{{ version }}/notifications/SMS-Messaging-Configuration-Twilio.html)
         *   [TextMagic](/cas/{{ version }}/notifications/SMS-Messaging-Configuration-TextMagic.html)
         *   [Clickatell](/cas/{{ version }}/notifications/SMS-Messaging-Configuration-Clickatell.html)
+        *   [SmsMode](/cas/{{ version }}/notifications/SMS-Messaging-Configuration-SmsMode.html)
         *   [Amazon SNS](/cas/{{ version }}/notifications/SMS-Messaging-Configuration-AmazonSNS.html)
         *   [Nexmo](/cas/{{ version }}/notifications/SMS-Messaging-Configuration-Nexmo.html)
     *   [Sending Notifications](/cas/{{ version }}/notifications/Notifications-Configuration.html)
-    
+
 * [Integration](#appintegration)
     *   [SAML2 Service Providers](/cas/{{ version }}/integration/Configuring-SAML-SP-Integrations.html)
         *   [Google Apps](/cas/{{ version }}/integration/Google-Apps-Integration.html)
