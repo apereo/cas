@@ -20,7 +20,6 @@ import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
-import org.pac4j.core.context.JEEContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,9 +40,9 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
 
     private final transient SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext;
 
-    protected BaseSamlProfileSamlResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext) {
-        super(samlResponseBuilderConfigurationContext.getOpenSamlConfigBean());
-        this.samlResponseBuilderConfigurationContext = samlResponseBuilderConfigurationContext;
+    protected BaseSamlProfileSamlResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext configurationContext) {
+        super(configurationContext.getOpenSamlConfigBean());
+        this.samlResponseBuilderConfigurationContext = configurationContext;
     }
 
     @Audit(
@@ -96,13 +95,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
         val encodeResponse = (Boolean) map.getOrDefault(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.TRUE);
 
         if (encodeResponse) {
-            val context = new JEEContext(request, response);
-            val relayStateRequest = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
-            val relayStateCache = samlResponseBuilderConfigurationContext.getSessionStore()
-                .get(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE)
-                .map(Object::toString)
-                .orElse(SAMLBindingSupport.getRelayState(messageContext));
-            val relayState = relayStateRequest == null ? relayStateCache : relayStateRequest;
+            val relayState = SAMLBindingSupport.getRelayState(messageContext);
             LOGGER.trace("RelayState is [{}]", relayState);
             return encode(service, finalResponse, response, request, adaptor,
                 relayState, binding, authnRequest, assertion, messageContext);

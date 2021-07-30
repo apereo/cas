@@ -458,10 +458,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
 
                     val binding = determineProfileBinding(authenticationContext, assertion);
                     LOGGER.debug("Using profile binding [{}] for service [{}]", binding, registeredService.getName());
-                    val relayStateRequest = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
-                    val relayState = relayStateRequest == null ? "" : relayStateRequest;
-                    LOGGER.debug("Using relay-state value [{}]", relayState);
-                    SAMLBindingSupport.setRelayState(authenticationContext.getRight(), relayState);
+
                     response.reset();
                     buildSamlResponse(response, request, authenticationContext, assertion, binding);
                     return;
@@ -670,9 +667,9 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val jeeContext = new JEEContext(request, response);
         val relayState = this.configurationContext.getSessionStore()
             .get(jeeContext, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE)
-            .orElse(StringUtils.EMPTY).toString();
+            .orElse(request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));
         LOGGER.trace("Relay state is [{}]", relayState);
-        SAMLBindingSupport.setRelayState(messageContext, relayState);
+        SAMLBindingSupport.setRelayState(messageContext, (String) relayState);
         return messageContext;
     }
 }
