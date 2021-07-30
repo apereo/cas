@@ -67,6 +67,7 @@ public class SmsModeSmsSender implements SmsSender {
 								? Charset.forName(entity.getContentEncoding().getValue())
 								: StandardCharsets.ISO_8859_1;
 						String resp = IOUtils.toString(entity.getContent(), charset);
+						LOGGER.info("Response from SmsMode : '{}'",resp);
 						return StringUtils.startsWith(resp, SMSMODE_SENT_SMS_RESPONSE_CODE);
 					} catch (UnsupportedOperationException | IOException e) {
 						LOGGER.warn("Unable to read smsMode response", e);
