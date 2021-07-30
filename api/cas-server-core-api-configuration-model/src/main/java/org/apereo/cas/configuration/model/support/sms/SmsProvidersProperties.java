@@ -41,6 +41,12 @@ public class SmsProvidersProperties implements Serializable {
     private ClickatellProperties clickatell = new ClickatellProperties();
 
     /**
+     * SmsMode settings.
+     */
+    @NestedConfigurationProperty
+    private SmsModeProperties smsMode = new SmsModeProperties();
+
+    /**
      * SNS settings.
      */
     @NestedConfigurationProperty
