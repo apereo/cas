@@ -42,7 +42,7 @@ const path = require('path');
     await cas.assertTicketGrantingCookie(page);
 
     let metadataDir = path.join(__dirname, '/saml-md');
-    fs.rmdirSync(metadataDir, { recursive: true });
+    fs.rmdir(metadataDir, { recursive: true }, () => {});
     
     await browser.close();
 })();

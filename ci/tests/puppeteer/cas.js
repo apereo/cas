@@ -115,6 +115,7 @@ exports.assertParameter = async (page, param) => {
     let value = result.searchParams.get(param);
     console.log(`Parameter ${param} with value ${value}`);
     assert(value != null);
+    return value;
 }
 
 exports.assertMissingParameter = async (page, param) => {

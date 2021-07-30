@@ -34,7 +34,7 @@ const cas = require('../../cas.js');
     await page.waitForSelector('div.entry-content p', { visible: true });
 
     let metadataDir = path.join(__dirname, '/saml-md');
-    fs.rmdirSync(metadataDir, {recursive: true});
+    fs.rmdir(metadataDir, { recursive: true }, () => {});
 
     const header = await cas.textContent(page, "div.entry-content p");
     assert(header.startsWith("Your browser has completed the full SAML 2.0 round-trip"));
