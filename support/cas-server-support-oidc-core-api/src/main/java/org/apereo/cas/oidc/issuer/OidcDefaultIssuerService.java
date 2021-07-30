@@ -28,7 +28,7 @@ public class OidcDefaultIssuerService implements OidcIssuerService {
             .filter(svc -> StringUtils.isNotBlank(svc.getIdTokenIssuer()))
             .map(OidcRegisteredService::getIdTokenIssuer)
             .orElse(properties.getCore().getIssuer());
-        LOGGER.debug("Determined issuer as [{}] for [{}]", issuer,
+        LOGGER.trace("Determined issuer as [{}] for [{}]", issuer,
             registeredService.map(RegisteredService::getName).orElse("CAS"));
         return StringUtils.removeEnd(issuer, "/");
     }

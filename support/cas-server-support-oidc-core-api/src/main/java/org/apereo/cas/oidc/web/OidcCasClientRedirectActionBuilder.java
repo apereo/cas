@@ -33,8 +33,7 @@ public class OidcCasClientRedirectActionBuilder extends OAuth20DefaultCasClientR
         if (prompts.contains(OidcConstants.PROMPT_NONE)) {
             renew = false;
             gateway = true;
-        } else if (prompts.contains(OidcConstants.PROMPT_LOGIN)
-            || oidcRequestSupport.isCasAuthenticationOldForMaxAgeAuthorizationRequest(context)) {
+        } else if (prompts.contains(OidcConstants.PROMPT_LOGIN) || oidcRequestSupport.isCasAuthenticationOldForMaxAgeAuthorizationRequest(context)) {
             renew = true;
         }
 

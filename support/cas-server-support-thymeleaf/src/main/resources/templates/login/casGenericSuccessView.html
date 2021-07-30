@@ -87,8 +87,8 @@
                 </section>
 
                 <section id="attribute-tab-1" class="d-none attribute-tab tab-pane">
-                    <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divPrincipalAttributes" role="tabpanel" aria-labelledby="attributes-tab">
-                        <table id="attributesTable" class="table table-striped" style="white-space: unset">
+                    <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divAuthenticationAttributes" role="tabpanel" aria-labelledby="attributes-tab">
+                        <table id="attributesTable" class="mdc-data-table__table table table-striped" style="white-space: unset">
                             <thead>
                             <tr class="mdc-data-table__header-row">
                                 <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Attribute</th>
@@ -98,9 +98,10 @@
                             </thead>
                             <tbody class="mdc-data-table__content">
                         
-                            <tr th:each="attribute : ${authentication.attributes}" class="mdc-data-table__row">
-                                <td class="mdc-data-table__cell"><code><span th:utext="${attribute.key}"/></code></td>
-                                <td class="mdc-data-table__cell">
+                            <tr th:attr="id=${attribute.key}"
+                                th:each="attribute : ${authentication.attributes}" class="mdc-data-table__row">
+                                <td class="mdc-data-table__cell attribute-key"><code><span th:utext="${attribute.key}"/></code></td>
+                                <td class="mdc-data-table__cell attribute-value">
                                     <code><kbd th:utext="${#strings.abbreviate(attribute.value, 80)}"/></code>
                                 </td>
                             </tr>
@@ -110,8 +111,8 @@
                 </section>
 
                 <section id="attribute-tab-2" class="d-none attribute-tab tab-pane" th:if="${authorizedServices}">
-                    <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divPrincipalAttributes" role="tabpanel" aria-labelledby="attributes-tab">
-                        <table id="attributesTable" class="table table-striped" style="white-space: unset">
+                    <div class="w-100 mdc-data-table mx-auto my-4" id="divAuthorizedServices" role="tabpanel" aria-labelledby="attributes-tab">
+                        <table id="attributesTable" class="mdc-data-table__table table table-striped" style="white-space: unset">
                             <thead>
                             <tr class="mdc-data-table__header-row">
                                 <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
@@ -153,8 +154,13 @@
         
 
         <script type="text/javascript" th:inline="javascript">
-            let div = document.querySelector('#divPrincipalAttributes');
-
+            let divs = ["divPrincipalAttributes", "divAuthenticationAttributes", "divAuthorizedServices"]
+            divs.forEach(id => {
+                let div = document.querySelector('#' + id);
+                if (div != null) {
+                    new mdc.dataTable.MDCDataTable(div);
+                }
+            });
             $(function() {
                 if (typeof mdc !== 'undefined') {
                     new mdc.dataTable.MDCDataTable(div);

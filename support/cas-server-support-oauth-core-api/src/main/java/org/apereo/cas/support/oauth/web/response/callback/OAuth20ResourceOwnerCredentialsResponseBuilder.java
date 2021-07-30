@@ -39,6 +39,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder implements OAuth20Au
             .responseType(OAuth20Utils.getResponseType(context))
             .casProperties(casProperties)
             .generatedToken(accessTokenResult)
+            .grantType(holder.getGrantType())
             .build();
         accessTokenResponseGenerator.generate(context.getNativeRequest(), context.getNativeResponse(), result);
         return new ModelAndView();

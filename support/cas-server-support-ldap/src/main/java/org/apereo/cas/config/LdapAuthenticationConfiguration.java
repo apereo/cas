@@ -9,7 +9,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -67,10 +66,10 @@ public class LdapAuthenticationConfiguration {
     }
 
     @Bean
-    @SneakyThrows
     @RefreshScope
     public Collection<AuthenticationHandler> ldapAuthenticationHandlers(
-        @Qualifier("ldapAuthenticationHandlerSetFactoryBean") final SetFactoryBean ldapAuthenticationHandlerSetFactoryBean) {
+        @Qualifier("ldapAuthenticationHandlerSetFactoryBean") final SetFactoryBean ldapAuthenticationHandlerSetFactoryBean)
+        throws Exception {
         val handlers = new HashSet<AuthenticationHandler>();
 
         casProperties.getAuthn().getLdap()
@@ -98,7 +97,8 @@ public class LdapAuthenticationConfiguration {
     @Autowired
     @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer ldapAuthenticationEventExecutionPlanConfigurer(
-        @Qualifier("ldapAuthenticationHandlerSetFactoryBean") final SetFactoryBean ldapAuthenticationHandlerSetFactoryBean) {
+        @Qualifier("ldapAuthenticationHandlerSetFactoryBean") final SetFactoryBean ldapAuthenticationHandlerSetFactoryBean)
+        throws Exception {
         return plan -> ldapAuthenticationHandlers(ldapAuthenticationHandlerSetFactoryBean).forEach(handler -> {
             LOGGER.info("Registering LDAP authentication for [{}]", handler.getName());
             plan.registerAuthenticationHandlerWithPrincipalResolver(handler, defaultPrincipalResolver.getObject());

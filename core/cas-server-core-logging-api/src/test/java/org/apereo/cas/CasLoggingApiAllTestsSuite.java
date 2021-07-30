@@ -1,4 +1,8 @@
-package org.apereo.cas.logging;
+package org.apereo.cas;
+
+import org.apereo.cas.logging.CasAppenderTests;
+import org.apereo.cas.logging.ExceptionOnlyFilterTests;
+import org.apereo.cas.logging.Log4jInitializationTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -11,7 +15,8 @@ import org.junit.platform.suite.api.Suite;
  */
 @SelectClasses({
     CasAppenderTests.class,
-    ExceptionOnlyFilterTests.class
+    ExceptionOnlyFilterTests.class,
+    Log4jInitializationTests.class
 })
 @Suite
 public class CasLoggingApiAllTestsSuite {

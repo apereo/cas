@@ -1,8 +1,8 @@
 package org.apereo.cas;
 
 import org.apereo.cas.support.oauth.authenticator.OAuth20AccessTokenAuthenticatorTests;
-import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilderTests;
 import org.apereo.cas.support.oauth.authenticator.OAuth20ClientIdClientSecretAuthenticatorTests;
+import org.apereo.cas.support.oauth.authenticator.OAuth20DefaultCasAuthenticationBuilderTests;
 import org.apereo.cas.support.oauth.authenticator.OAuth20ProofKeyCodeExchangeAuthenticatorTests;
 import org.apereo.cas.support.oauth.authenticator.OAuth20RefreshTokenAuthenticatorTests;
 import org.apereo.cas.support.oauth.authenticator.OAuth20UsernamePasswordAuthenticatorTests;
@@ -145,7 +145,7 @@ import org.junit.platform.suite.api.Suite;
     AccessTokenRefreshTokenGrantRequestExtractorTests.class,
     TokenSigningAndEncryptionServiceTests.class,
     OAuth20DefaultDeviceUserCodeTests.class,
-    OAuth20CasAuthenticationBuilderTests.class,
+    OAuth20DefaultCasAuthenticationBuilderTests.class,
     OAuth20TokenSigningAndEncryptionServiceTests.class,
     UnapprovedOAuth20DeviceUserCodeExceptionTests.class,
     InvalidOAuth20DeviceTokenExceptionTests.class,

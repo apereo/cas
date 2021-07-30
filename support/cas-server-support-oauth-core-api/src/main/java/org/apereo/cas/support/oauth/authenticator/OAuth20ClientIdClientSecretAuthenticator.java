@@ -135,7 +135,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
         if (grantType.isPresent()
             && OAuth20Utils.isGrantType(grantType.get(), OAuth20GrantTypes.REFRESH_TOKEN)
             && context.getRequestParameter(OAuth20Constants.CLIENT_ID).isPresent()
-            && !context.getRequestParameter(OAuth20Constants.CLIENT_SECRET).isPresent()) {
+            && context.getRequestParameter(OAuth20Constants.CLIENT_SECRET).isEmpty()) {
             LOGGER.debug("Skipping client credential authentication to use refresh token authentication");
             return false;
         }

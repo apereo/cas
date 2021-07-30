@@ -50,7 +50,8 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
         val code = oAuthCodeFactory.create(holder.getService(), authentication,
             holder.getTicketGrantingTicket(), holder.getScopes(),
             holder.getCodeChallenge(), holder.getCodeChallengeMethod(),
-            holder.getClientId(), holder.getClaims());
+            holder.getClientId(), holder.getClaims(),
+            holder.getResponseType(), holder.getGrantType());
         LOGGER.debug("Generated OAuth code: [{}]", code);
         this.ticketRegistry.addTicket(code);
         return buildCallbackViewViaRedirectUri(context, clientId, authentication, code);

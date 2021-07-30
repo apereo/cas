@@ -38,11 +38,15 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -52,36 +56,8 @@ import org.springframework.webflow.execution.Action;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    MailSenderAutoConfiguration.class,
-    MailSenderValidatorAutoConfiguration.class,
-    RefreshAutoConfiguration.class,
-    PasswordManagementConfiguration.class,
-    PasswordManagementWebflowConfiguration.class,
-    PasswordManagementForgotUsernameConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreAuthenticationMetadataConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
-    CasCookieConfiguration.class,
-    CasThemesConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasCoreWebflowConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasCoreMultifactorAuthenticationConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
-    CasWebflowContextConfiguration.class
+    BasePasswordManagementActionTests.SharedTestConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class
 }, properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
@@ -140,4 +116,43 @@ public class BasePasswordManagementActionTests {
     @Autowired
     @Qualifier("webApplicationServiceFactory")
     protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
+    @ImportAutoConfiguration({
+        AopAutoConfiguration.class,
+        RefreshAutoConfiguration.class,
+        MailSenderAutoConfiguration.class,
+        MailSenderValidatorAutoConfiguration.class,
+        RefreshAutoConfiguration.class
+    })
+    @SpringBootConfiguration
+    @Import({
+        PasswordManagementConfiguration.class,
+        PasswordManagementWebflowConfiguration.class,
+        PasswordManagementForgotUsernameConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasCookieConfiguration.class,
+        CasThemesConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasCoreWebflowConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
+        CasCoreMultifactorAuthenticationConfiguration.class,
+        CasMultifactorAuthenticationWebflowConfiguration.class,
+        CasWebflowContextConfiguration.class
+    })
+    public static class SharedTestConfiguration {
+    }
 }

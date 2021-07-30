@@ -58,7 +58,8 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
 
         @Override
         protected HttpAction redirectToOriginallyRequestedUrl(final WebContext context,
-                                                              final SessionStore sessionStore, final String defaultUrl) {
+                                                              final SessionStore sessionStore,
+                                                              final String defaultUrl) {
             val result = getSavedRequestHandler().restore(context, sessionStore, defaultUrl);
             if (result instanceof WithLocationAction) {
                 redirectUrl = WithLocationAction.class.cast(result).getLocation();

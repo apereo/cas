@@ -21,7 +21,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.BasicUserProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 
@@ -43,22 +43,22 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class OidcRequestSupport {
     private static final String PATTERN_VALID_ISSUER_ENDPOINTS = Stream.of(
-        OidcConstants.LOGOUT_URL,
-        OidcConstants.JWKS_URL,
-        OidcConstants.ACCESS_TOKEN_URL,
-        OidcConstants.TOKEN_URL,
-        OidcConstants.PROFILE_URL,
-        OidcConstants.AUTHORIZE_URL,
-        OidcConstants.INTROSPECTION_URL,
-        OidcConstants.CLIENT_CONFIGURATION_URL,
-        OidcConstants.REVOCATION_URL,
-        OidcConstants.REGISTRATION_URL,
-        OAuth20Constants.ACCESS_TOKEN_URL,
-        OAuth20Constants.TOKEN_URL,
-        OAuth20Constants.AUTHORIZE_URL,
-        OAuth20Constants.INTROSPECTION_URL,
-        OAuth20Constants.PROFILE_URL,
-        OAuth20Constants.REVOCATION_URL)
+            OidcConstants.LOGOUT_URL,
+            OidcConstants.JWKS_URL,
+            OidcConstants.ACCESS_TOKEN_URL,
+            OidcConstants.TOKEN_URL,
+            OidcConstants.PROFILE_URL,
+            OidcConstants.AUTHORIZE_URL,
+            OidcConstants.INTROSPECTION_URL,
+            OidcConstants.CLIENT_CONFIGURATION_URL,
+            OidcConstants.REVOCATION_URL,
+            OidcConstants.REGISTRATION_URL,
+            OAuth20Constants.ACCESS_TOKEN_URL,
+            OAuth20Constants.TOKEN_URL,
+            OAuth20Constants.AUTHORIZE_URL,
+            OAuth20Constants.INTROSPECTION_URL,
+            OAuth20Constants.PROFILE_URL,
+            OAuth20Constants.REVOCATION_URL)
         .collect(Collectors.joining("|"));
 
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
@@ -101,15 +101,17 @@ public class OidcRequestSupport {
     @SneakyThrows
     public static Optional<Long> getOidcMaxAgeFromAuthorizationRequest(final WebContext context) {
         val builderContext = new URIBuilder(context.getFullRequestURL());
-        val parameter = builderContext.getQueryParams()
-            .stream().filter(p -> OidcConstants.MAX_AGE.equals(p.getName()))
-            .findFirst();
-
-        if (parameter.isPresent()) {
-            val maxAge = NumberUtils.toLong(parameter.get().getValue(), -1);
-            return Optional.of(maxAge);
-        }
-        return Optional.empty();
+        return builderContext.getQueryParams()
+            .stream()
+            .filter(p -> OidcConstants.MAX_AGE.equals(p.getName()))
+            .map(p -> Optional.of(p.getValue()))
+            .findFirst()
+            .orElseGet(() -> context.getRequestParameter(OidcConstants.MAX_AGE))
+            .map(param -> {
+                val maxAge = NumberUtils.toLong(param, -1);
+                return Optional.of(maxAge);
+            })
+            .orElse(Optional.empty());
     }
 
     /**
@@ -129,12 +131,14 @@ public class OidcRequestSupport {
      *
      * @param originalRedirectUrl the original redirect url
      * @param errorCode           the error code
+     * @param webContext          the web context
      * @return the redirect url with error
      */
     @SneakyThrows
-    public static String getRedirectUrlWithError(final String originalRedirectUrl, final String errorCode) {
-        val uriBuilder = new URIBuilder(originalRedirectUrl)
-            .addParameter(OAuth20Constants.ERROR, errorCode);
+    public static String getRedirectUrlWithError(final String originalRedirectUrl, final String errorCode,
+                                                 final WebContext webContext) {
+        val uriBuilder = new URIBuilder(originalRedirectUrl).addParameter(OAuth20Constants.ERROR, errorCode);
+        webContext.getRequestParameter(OAuth20Constants.STATE).ifPresent(st -> uriBuilder.addParameter(OAuth20Constants.STATE, st));
         return uriBuilder.build().toASCIIString();
     }
 
@@ -202,7 +206,7 @@ public class OidcRequestSupport {
      * @return true/false
      */
     public static boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
-                                                                              final CommonProfile profile) {
+                                                                              final BasicUserProfile profile) {
         var authTime = profile.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
         if (authTime == null) {
             authTime = profile.getAuthenticationAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
@@ -259,14 +263,14 @@ public class OidcRequestSupport {
         val requestUrl = webContext.getNativeRequest().getRequestURL().toString();
         val issuer = StringUtils.removeEnd(StringUtils.remove(requestUrl, '/' + endpoint), "/");
         val definedIssuer = this.oidcIssuerService.determineIssuer(Optional.empty());
-        
+
         val issuerPattern = StringUtils.appendIfMissing(definedIssuer, "/")
             .concat("(")
             .concat(PATTERN_VALID_ISSUER_ENDPOINTS)
             .concat(")");
         val result = definedIssuer.equalsIgnoreCase(issuer) || issuer.matches(issuerPattern);
         FunctionUtils.doIf(!result,
-            o -> LOGGER.warn("Issuer [{}] defined in CAS configuration does not match the request issuer [{}]", o, issuer))
+                o -> LOGGER.trace("Issuer [{}] defined in CAS configuration does not match the request issuer [{}]", o, issuer))
             .accept(definedIssuer);
         return result;
     }

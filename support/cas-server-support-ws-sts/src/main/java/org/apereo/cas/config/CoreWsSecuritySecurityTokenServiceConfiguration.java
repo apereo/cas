@@ -21,7 +21,6 @@ import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.sts.STSPropertiesMBean;
@@ -126,8 +125,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
     @ConditionalOnMissingBean(name = "transportSTSProviderBean")
     @Bean
-    @SneakyThrows
-    public SecurityTokenServiceProvider transportSTSProviderBean() {
+    public SecurityTokenServiceProvider transportSTSProviderBean() throws Exception {
         val provider = new SecurityTokenServiceProvider();
         provider.setIssueOperation(transportIssueDelegate());
         provider.setValidateOperation(transportValidateDelegate());

@@ -1,7 +1,6 @@
 const https = require('https');
 const assert = require('assert');
 const axios = require('axios');
-const cas = require('../../cas.js');
 const jwt = require('jsonwebtoken');
 
 (async () => {

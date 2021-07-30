@@ -2,6 +2,8 @@ package org.apereo.cas.logout.config;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.DefaultLogoutExecutionPlan;
 import org.apereo.cas.logout.DefaultLogoutManager;
@@ -11,6 +13,7 @@ import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.LogoutRedirectionStrategy;
+import org.apereo.cas.logout.LogoutWebApplicationServiceFactory;
 import org.apereo.cas.logout.slo.ChainingSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
@@ -20,8 +23,10 @@ import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilderConfigurer;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.UrlValidator;
+import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -52,8 +57,8 @@ import java.util.stream.Collectors;
 public class CasCoreLogoutConfiguration {
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
+    @Qualifier("argumentExtractor")
+    private ObjectProvider<ArgumentExtractor> argumentExtractor;
 
     @Autowired
     @Qualifier("ticketRegistry")
@@ -151,7 +156,7 @@ public class CasCoreLogoutConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "defaultLogoutRedirectionStrategy")
     public LogoutRedirectionStrategy defaultLogoutRedirectionStrategy() {
-        return new DefaultLogoutRedirectionStrategy(webApplicationServiceFactory.getObject(),
+        return new DefaultLogoutRedirectionStrategy(argumentExtractor.getObject(),
             casProperties.getLogout(), singleLogoutServiceLogoutUrlBuilder());
     }
 
@@ -174,4 +179,16 @@ public class CasCoreLogoutConfiguration {
         };
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "logoutWebApplicationServiceFactory")
+    @RefreshScope
+    public ServiceFactory<WebApplicationService> logoutWebApplicationServiceFactory() {
+        return new LogoutWebApplicationServiceFactory(casProperties.getLogout());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "logoutWebApplicationServiceFactoryConfigurer")
+    public ServiceFactoryConfigurer logoutWebApplicationServiceFactoryConfigurer() {
+        return () -> CollectionUtils.wrap(logoutWebApplicationServiceFactory());
+    }
 }

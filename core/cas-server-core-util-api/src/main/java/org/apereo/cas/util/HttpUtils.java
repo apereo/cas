@@ -3,7 +3,6 @@ package org.apereo.cas.util;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import lombok.experimental.SuperBuilder;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -172,7 +171,6 @@ public class HttpUtils {
         return acceptHeaders;
     }
 
-    @SneakyThrows
     private static HttpUriRequest getHttpRequestByMethod(final String method, final String entity, final URI uri) {
         if ("post".equalsIgnoreCase(method)) {
             val request = new HttpPost(uri);

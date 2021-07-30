@@ -12,6 +12,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.http.url.UrlResolver;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -24,30 +26,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OAuth20CasCallbackUrlResolver implements UrlResolver {
     private final String callbackUrl;
-
-    @Override
-    @SneakyThrows
-    public String compute(final String url, final WebContext context) {
-        if (!url.startsWith(callbackUrl)) {
-            return url;
-        }
-
-        val builder = new URIBuilder(url);
-
-        addUrlParameter(context, builder, OAuth20Constants.CLIENT_ID);
-        addUrlParameter(context, builder, OAuth20Constants.REDIRECT_URI);
-        addUrlParameter(context, builder, OAuth20Constants.ACR_VALUES);
-        addUrlParameter(context, builder, OAuth20Constants.RESPONSE_TYPE);
-        addUrlParameter(context, builder, OAuth20Constants.GRANT_TYPE);
-        addUrlParameter(context, builder, OAuth20Constants.RESPONSE_MODE);
-        addUrlParameter(context, builder, OAuth20Constants.CLAIMS);
-        addUrlParameter(context, builder, OAuth20Constants.REQUEST);
-
-        val callbackResolved = builder.build().toString();
-
-        LOGGER.debug("Final resolved callback URL is [{}]", callbackResolved);
-        return callbackResolved;
-    }
 
     @SneakyThrows
     private static Optional<NameValuePair> getQueryParameter(final WebContext context, final String name) {
@@ -67,5 +45,42 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
         val parameter = getQueryParameter(context, parameterName);
         parameter.ifPresent(basicNameValuePair ->
             builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
+    }
+
+    @Override
+    @SneakyThrows
+    public String compute(final String url, final WebContext context) {
+        if (!url.startsWith(callbackUrl)) {
+            return url;
+        }
+
+        val builder = new URIBuilder(url);
+
+        addUrlParameter(context, builder, OAuth20Constants.CLIENT_ID);
+        addUrlParameter(context, builder, OAuth20Constants.REDIRECT_URI);
+        addUrlParameter(context, builder, OAuth20Constants.ACR_VALUES);
+        addUrlParameter(context, builder, OAuth20Constants.RESPONSE_TYPE);
+        addUrlParameter(context, builder, OAuth20Constants.GRANT_TYPE);
+        addUrlParameter(context, builder, OAuth20Constants.RESPONSE_MODE);
+        addUrlParameter(context, builder, OAuth20Constants.CLAIMS);
+        addUrlParameter(context, builder, OAuth20Constants.REQUEST);
+        addUrlParameter(context, builder, OAuth20Constants.STATE);
+        addUrlParameter(context, builder, OAuth20Constants.NONCE);
+
+        getIncludeParameterNames().forEach(param -> addUrlParameter(context, builder, param));
+
+        val callbackResolved = builder.build().toString();
+
+        LOGGER.debug("Final resolved callback URL is [{}]", callbackResolved);
+        return callbackResolved;
+    }
+
+    /**
+     * Gets include parameter names.
+     *
+     * @return the include parameter names
+     */
+    protected List<String> getIncludeParameterNames() {
+        return new ArrayList<>(0);
     }
 }

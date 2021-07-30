@@ -22,38 +22,63 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Radius")
-@EnabledOnOs(OS.LINUX)
+@EnabledOnOs({OS.LINUX, OS.MAC})
 public class BlockingRadiusServerTests extends AbstractRadiusServerTests {
 
     public static final String USERNAME = UUID.randomUUID().toString();
 
     @Test
     public void verifyBadSecret() {
+        val factory = RadiusClientFactory.builder()
+            .authenticationPort(ACCOUNTING_PORT)
+            .authenticationPort(AUTHENTICATION_PORT)
+            .socketTimeout(1)
+            .inetAddress(INET_ADDRESS)
+            .sharedSecret(USERNAME)
+            .build();
+
         assertThrows(TimeoutException.class,
-            () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2,
-                new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, 1, INET_ADDRESS, USERNAME))
-                .authenticate(USERNAME, USERNAME));
+            () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2, factory).authenticate(USERNAME, USERNAME));
     }
 
     @Test
     public void verifyBadPorts() {
+        val factory = RadiusClientFactory.builder()
+            .authenticationPort(1234)
+            .authenticationPort(5678)
+            .socketTimeout(1)
+            .inetAddress(INET_ADDRESS)
+            .sharedSecret(USERNAME)
+            .build();
         assertThrows(TimeoutException.class,
-            () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2, new RadiusClientFactory(1234, 4567, 1, INET_ADDRESS, USERNAME))
-                .authenticate(USERNAME, USERNAME));
+            () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2, factory).authenticate(USERNAME, USERNAME));
     }
 
     @Test
     public void verifyBadAddress() {
+        val factory = RadiusClientFactory.builder()
+            .authenticationPort(1234)
+            .authenticationPort(5678)
+            .socketTimeout(1)
+            .inetAddress("131.211.138.166")
+            .sharedSecret("1234")
+            .build();
         assertThrows(TimeoutException.class,
-            () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2, new RadiusClientFactory(1234, 4567, 1, "131.211.138.166", "1234"))
-                .authenticate(USERNAME, USERNAME));
+            () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2, factory).authenticate(USERNAME, USERNAME));
     }
 
     @Test
     public void verifyNasSettings() {
+        val factory = RadiusClientFactory.builder()
+            .authenticationPort(1234)
+            .authenticationPort(5678)
+            .socketTimeout(1)
+            .inetAddress("131.211.138.166")
+            .sharedSecret("1234")
+            .build();
         val context = RadiusServerConfigurationContext.builder()
             .protocol(RadiusProtocol.MSCHAPv2)
-            .radiusClientFactory(new RadiusClientFactory(1234, 4567, 1, "131.211.138.166", "1234"))
+            .radiusClientFactory(factory)
             .nasIpAddress("3.2.1.0")
             .nasIpv6Address("0:0:0:0:0:ffff:302:100")
             .nasPort(ACCOUNTING_PORT)
@@ -67,7 +92,13 @@ public class BlockingRadiusServerTests extends AbstractRadiusServerTests {
 
     @Override
     public RadiusServer getRadiusServer() {
-        return new BlockingRadiusServer(RadiusProtocol.MSCHAPv2,
-            new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, 1, INET_ADDRESS, SECRET));
+        val factory = RadiusClientFactory.builder()
+            .authenticationPort(ACCOUNTING_PORT)
+            .authenticationPort(AUTHENTICATION_PORT)
+            .socketTimeout(1)
+            .inetAddress(INET_ADDRESS)
+            .sharedSecret(SECRET)
+            .build();
+        return new BlockingRadiusServer(RadiusProtocol.MSCHAPv2, factory);
     }
 }

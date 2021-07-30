@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -46,7 +47,7 @@ import org.springframework.core.Ordered;
 public class TokenCoreConfiguration {
     @Autowired
     @Qualifier("webApplicationServiceFactory")
-    private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
+    private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
 
     @Autowired
     @Qualifier("authenticationAttributeReleasePolicy")

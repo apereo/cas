@@ -10,7 +10,9 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,4 +59,38 @@ public class OidcCoreProperties implements Serializable {
      * that should take its place and value.
      */
     private Map<String, String> claimsMap = new HashMap<>(0);
+
+    /**
+     * A mapping of authentication context refs (ACR) values.
+     * This is where specific authentication context classes
+     * are referenced and mapped to providers that CAS may support
+     * mainly for MFA purposes.
+     * <p>
+     * Example might be {@code acr-value->mfa-duo}.
+     */
+    private List<String> authenticationContextReferenceMappings = new ArrayList<>(0);
+
+    /**
+     * As per OpenID Connect Core section 5.4, "The Claims requested by the profile,
+     * email, address, and phone scope values are returned from
+     * the UserInfo Endpoint", except for response_type=id_token,
+     * where they are returned in the id_token (as there is no
+     * access token issued that could be used to access the userinfo endpoint).
+     * The Claims requested by the profile, email, address, and phone scope values
+     * are returned from the UserInfo Endpoint when a response_type value is
+     * used that results in an Access Token being issued. However, when no
+     * Access Token is issued (which is the case for the response_type
+     * value id_token), the resulting Claims are returned in the ID Token.
+     * <p>
+     * Setting this flag to true will force CAS to include claims in the ID token
+     * regardless of the response type. Note that this setting <strong>MUST ONLY</strong> be used
+     * as a last resort, to stay compliant with the specification as much as possible.
+     * <strong>DO NOT</strong> use this setting without due consideration.
+     * <p>
+     * Note that this setting is mainly provided to preserve backward compatibility with
+     * previous CAS versions. that included claims into the ID token without considering
+     * the response type. The behavior of this setting may change and it may be removed
+     * in future CAS releases.
+     */
+    private boolean includeIdTokenClaims;
 }

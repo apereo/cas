@@ -8,7 +8,6 @@ const cas = require('../../cas.js');
     await page.goto("https://localhost:8443/cas/login?locale=de");
 
     const header = await cas.innerText(page, '#content #fm1 button[name=submit]');
-
-    assert(header == "ANMELDEN")
+    assert(header === "ANMELDEN")
     await browser.close();
 })();

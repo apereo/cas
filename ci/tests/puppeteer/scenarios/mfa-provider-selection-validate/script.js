@@ -18,8 +18,6 @@ const httpGet = (options) => {
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-
-
     console.log("Fetching Scratch codes from /cas/actuator...");
 
     let options1 = {
@@ -44,7 +42,7 @@ const httpGet = (options) => {
     console.log("Select mfa-gauth");
     await cas.assertVisibility(page, '#mfa-gauth');
 
-    await page.$eval('#mfa-gauth > form[name=fm1]', form => form.submit());
+    await cas.submitForm(page, "#mfa-gauth > form[name=fm1]")
     await page.waitForTimeout(1000);
 
     console.log("Using scratch code " + scratch + " to login...");

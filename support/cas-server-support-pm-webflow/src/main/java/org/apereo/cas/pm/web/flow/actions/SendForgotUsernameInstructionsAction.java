@@ -5,6 +5,8 @@ import org.apereo.cas.audit.AuditPrincipalResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.principal.NullPrincipal;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
@@ -85,7 +87,12 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
         if (!EmailValidator.getInstance().isValid(email)) {
             return getErrorEvent("email.invalid", "Provided email address is invalid", requestContext);
         }
-        val query = PasswordManagementQuery.builder().email(email).build();
+        var query = PasswordManagementQuery.builder().email(email).build();
+        val username = passwordManagementService.findUsername(query);
+        if (StringUtils.isBlank(username)) {
+            return getErrorEvent("username.missing", "No username could be located for the given email address", requestContext);
+        }
+        query = PasswordManagementQuery.builder().username(username).email(email).build();
         return locateUserAndProcess(requestContext, query);
     }
 
@@ -97,10 +104,6 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
      * @return the event
      */
     protected Event locateUserAndProcess(final RequestContext requestContext, final PasswordManagementQuery query) {
-        val username = passwordManagementService.findUsername(query);
-        if (StringUtils.isBlank(username)) {
-            return getErrorEvent("username.missing", "No username could be located for the given email address", requestContext);
-        }
         if (sendForgotUsernameEmailToAccount(query, requestContext)) {
             return success();
         }
@@ -120,7 +123,11 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
         val credential = new BasicIdentifiableCredential();
         credential.setId(query.getUsername());
         val person = principalResolver.resolve(credential);
-        FunctionUtils.doIfNotNull(person, principal -> parameters.put("principal", principal));
+        FunctionUtils.doIf(person != null && !person.getClass().equals(NullPrincipal.class),
+            principal -> {
+                parameters.put("principal", principal);
+                requestContext.getFlashScope().put(Principal.class.getName(), person);
+            }).accept(person);
         val reset = casProperties.getAuthn().getPm().getForgotUsername().getMail();
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val body = EmailMessageBodyBuilder.builder().properties(reset)

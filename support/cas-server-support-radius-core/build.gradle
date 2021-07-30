@@ -17,7 +17,12 @@ dependencies {
     api libraries.jradius
 
     implementation project(":core:cas-server-core-util-api")
-    
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-web-api")
+
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-util")
+
     testImplementation project(path: ":support:cas-server-support-aup-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-aup-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")

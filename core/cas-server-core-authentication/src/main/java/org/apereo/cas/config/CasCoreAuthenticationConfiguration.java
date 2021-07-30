@@ -19,6 +19,7 @@ import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -102,10 +103,10 @@ public class CasCoreAuthenticationConfiguration {
         val sortedConfigurers = new ArrayList<>(configurers);
         AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
 
-        sortedConfigurers.forEach(c -> {
+        sortedConfigurers.forEach(Unchecked.consumer(c -> {
             LOGGER.trace("Configuring authentication execution plan [{}]", c.getName());
             c.configureAuthenticationExecutionPlan(plan);
-        });
+        }));
         return plan;
     }
 

@@ -88,7 +88,6 @@ public class SamlUtils {
      * @param objectType the object type
      * @return the t
      */
-    @SneakyThrows
     public <T extends SOAPObject> T newSoapObject(final Class<T> objectType) {
         val qName = getSamlObjectQName(objectType);
         LOGGER.trace("Attempting to create SOAPObject for type: [{}] and QName: [{}]", objectType, qName);
@@ -104,7 +103,6 @@ public class SamlUtils {
      * @param objectType the object type
      * @return the t
      */
-    @SneakyThrows
     public static <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
         val qName = getSamlObjectQName(objectType);
         return newSamlObject(objectType, qName);

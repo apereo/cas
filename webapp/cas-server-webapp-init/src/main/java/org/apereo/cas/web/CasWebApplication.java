@@ -44,19 +44,20 @@ import java.time.Instant;
 @NoArgsConstructor
 @Slf4j
 public class CasWebApplication {
-    
+
     /**
      * Main entry point of the CAS web application.
      *
      * @param args the args
      */
     public static void main(final String[] args) {
+        CasEmbeddedContainerUtils.getLoggingInitialization()
+            .ifPresent(init -> init.setMainArguments(args));
         val banner = CasEmbeddedContainerUtils.getCasBannerInstance();
         new SpringApplicationBuilder(CasWebApplication.class)
             .banner(banner)
             .web(WebApplicationType.SERVLET)
             .logStartupInfo(true)
-            .contextClass(CasWebApplicationContext.class)
             .contextFactory(webApplicationType -> new CasWebApplicationContext())
             .applicationStartup(CasEmbeddedContainerUtils.getApplicationStartup())
             .run(args);

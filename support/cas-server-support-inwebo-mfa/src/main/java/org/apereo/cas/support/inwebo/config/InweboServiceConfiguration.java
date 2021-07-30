@@ -1,6 +1,6 @@
 package org.apereo.cas.support.inwebo.config;
 
-import org.apereo.cas.authentication.DefaultCasSSLContext;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.inwebo.service.InweboConsoleAdmin;
 import org.apereo.cas.support.inwebo.service.InweboService;
@@ -38,7 +38,7 @@ public class InweboServiceConfiguration {
 
     @Autowired
     @Qualifier("casSslContext")
-    private ObjectProvider<DefaultCasSSLContext> casSslContext;
+    private ObjectProvider<CasSSLContext> casSslContext;
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboConsoleAdmin")

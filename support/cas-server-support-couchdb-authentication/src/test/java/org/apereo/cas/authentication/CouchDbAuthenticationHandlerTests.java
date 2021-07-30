@@ -28,7 +28,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -127,8 +126,7 @@ public class CouchDbAuthenticationHandlerTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyAuthentication() {
+    public void verifyAuthentication() throws Exception {
         val result = this.authenticationHandler.authenticate(CoreAuthenticationTestUtils
             .getCredentialsWithDifferentUsernameAndPassword("u1", "p1"));
         assertEquals("u1", result.getPrincipal().getId());

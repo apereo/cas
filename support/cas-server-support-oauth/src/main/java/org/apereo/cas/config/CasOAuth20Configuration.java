@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
@@ -21,6 +22,7 @@ import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20AccessTokenAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.authenticator.OAuth20ClientIdClientSecretAuthenticator;
+import org.apereo.cas.support.oauth.authenticator.OAuth20DefaultCasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.authenticator.OAuth20ProofKeyCodeExchangeAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20RefreshTokenAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20UsernamePasswordAuthenticator;
@@ -182,7 +184,7 @@ public class CasOAuth20Configuration {
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
-    private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
+    private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
 
     @Autowired
     @Qualifier("defaultTicketFactory")
@@ -242,7 +244,8 @@ public class CasOAuth20Configuration {
     @Bean
     @RefreshScope
     public UrlResolver casCallbackUrlResolver() {
-        return new OAuth20CasCallbackUrlResolver(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()));
+        val callbackUrl = OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix());
+        return new OAuth20CasCallbackUrlResolver(callbackUrl);
     }
 
     @Bean
@@ -560,7 +563,6 @@ public class CasOAuth20Configuration {
         return new AccessTokenGrantAuditableRequestExtractor(accessTokenGrantRequestExtractors());
     }
 
-
     @ConditionalOnMissingBean(name = "oauthUserProfileViewRenderer")
     @Bean
     @RefreshScope
@@ -784,7 +786,8 @@ public class CasOAuth20Configuration {
     @Bean
     @RefreshScope
     public OAuth20CasAuthenticationBuilder oauthCasAuthenticationBuilder() {
-        return new OAuth20CasAuthenticationBuilder(oauthPrincipalFactory(), webApplicationServiceFactory.getObject(),
+        return new OAuth20DefaultCasAuthenticationBuilder(oauthPrincipalFactory(),
+            webApplicationServiceFactory.getObject(),
             profileScopeToAttributesFilter(), casProperties);
     }
 

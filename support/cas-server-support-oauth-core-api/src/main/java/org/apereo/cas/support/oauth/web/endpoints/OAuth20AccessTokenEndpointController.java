@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenException;
@@ -18,7 +19,6 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.LoggingUtils;
 
 import com.google.common.base.Supplier;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
@@ -62,11 +62,11 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
         OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,
         OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.TOKEN_URL},
         produces = MediaType.APPLICATION_JSON_VALUE)
-    @SneakyThrows
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         try {
             if (!verifyAccessTokenRequest(request, response)) {
-                throw new IllegalArgumentException("Access token validation failed");
+                LoggingUtils.error(LOGGER, "Access token validation failed");
+                return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_GRANT);
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
@@ -141,6 +141,7 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
             .responseType(result.getResponseType().orElse(OAuth20ResponseTypes.NONE))
             .casProperties(getConfigurationContext().getCasProperties())
             .generatedToken(result)
+            .grantType(result.getGrantType().orElse(OAuth20GrantTypes.NONE))
             .build();
         return getConfigurationContext().getAccessTokenResponseGenerator().generate(request, response, tokenResult);
     }

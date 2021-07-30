@@ -502,7 +502,8 @@ public abstract class AbstractOAuth20Tests {
         val service = factory.createService(registeredService.getClientId());
         val code = oAuthCodeFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"), new ArrayList<>(),
-            codeChallenge, codeChallengeMethod, CLIENT_ID, new HashMap<>());
+            codeChallenge, codeChallengeMethod, CLIENT_ID, new HashMap<>(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.ticketRegistry.addTicket(code);
         return code;
     }
@@ -526,7 +527,8 @@ public abstract class AbstractOAuth20Tests {
         val service = factory.createService(registeredService.getServiceId());
         val refreshToken = oAuthRefreshTokenFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"),
-            new ArrayList<>(), registeredService.getClientId(), StringUtils.EMPTY, new HashMap<>());
+            new ArrayList<>(), registeredService.getClientId(), StringUtils.EMPTY, new HashMap<>(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.ticketRegistry.addTicket(refreshToken);
         return refreshToken;
     }
@@ -537,18 +539,22 @@ public abstract class AbstractOAuth20Tests {
         val service = factory.createService(registeredService.getServiceId());
         val refreshToken = oAuthRefreshTokenFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"),
-            new ArrayList<>(), registeredService.getClientId(), accessToken.getId(), new HashMap<>());
+            new ArrayList<>(), registeredService.getClientId(), accessToken.getId(), new HashMap<>(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.ticketRegistry.addTicket(refreshToken);
         return refreshToken;
     }
 
-    protected OAuth20AccessToken addAccessToken(final Principal principal, final OAuthRegisteredService registeredService) {
+    protected OAuth20AccessToken addAccessToken(final Principal principal,
+                                                final OAuthRegisteredService registeredService) {
+        val code = addCode(principal, registeredService);
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getServiceId());
         val accessToken = defaultAccessTokenFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"),
-            new ArrayList<>(), registeredService.getClientId(), new HashMap<>());
+            new ArrayList<>(), code.getId(), registeredService.getClientId(), new HashMap<>(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.ticketRegistry.addTicket(accessToken);
         return accessToken;
     }

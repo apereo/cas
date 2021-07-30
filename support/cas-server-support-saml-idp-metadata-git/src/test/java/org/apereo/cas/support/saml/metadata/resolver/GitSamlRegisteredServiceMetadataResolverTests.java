@@ -16,6 +16,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
@@ -36,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.git.sign-commits=false",
     "cas.authn.saml-idp.metadata.git.push-changes=true",
     "cas.authn.saml-idp.metadata.git.idp-metadata-enabled=true",
+    "cas.authn.saml-idp.metadata.git.crypto.enabled=false",
     "cas.authn.saml-idp.metadata.git.repository-url=file://${java.io.tmpdir}/cas-metadata-data",
     "cas.authn.saml-idp.metadata.git.clone-directory.location=file://${java.io.tmpdir}/cas-saml-metadata-gsrsmrt"
 })
@@ -98,5 +100,13 @@ public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMe
         assertFalse(resolvers.isEmpty());
         service.setMetadataLocation("https://example.com/endswith.git");
         assertTrue(resolver.supports(service));
+
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() {
+                resolver.resolve(null, null);
+                resolver.saveOrUpdate(null);
+            }
+        });
     }
 }

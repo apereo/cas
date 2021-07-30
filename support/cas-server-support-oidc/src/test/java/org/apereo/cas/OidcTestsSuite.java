@@ -45,12 +45,15 @@ import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecut
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutorTests;
 import org.apereo.cas.oidc.util.OidcRequestSupportTests;
 import org.apereo.cas.oidc.web.OidcAccessTokenResponseGeneratorTests;
+import org.apereo.cas.oidc.web.OidcAuthenticationAuthorizeSecurityLogicTests;
 import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolverTests;
+import org.apereo.cas.oidc.web.OidcCasCallbackUrlResolverTests;
 import org.apereo.cas.oidc.web.OidcCasClientRedirectActionBuilderTests;
 import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolverTests;
 import org.apereo.cas.oidc.web.OidcHandlerInterceptorAdapterTests;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAuthorizationResponseBuilderTests;
+import org.apereo.cas.oidc.web.OidcLocaleChangeInterceptorTests;
 import org.apereo.cas.oidc.web.controllers.OidcIntrospectionEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.OidcWellKnownEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.authorize.OidcAuthorizeEndpointControllerTests;
@@ -140,6 +143,9 @@ import org.junit.platform.suite.api.Suite;
     OidcRegisteredServiceJwtAccessTokenCipherExecutorTests.class,
     OidcClientConfigurationAccessTokenAuthenticatorTests.class,
     OidcDefaultIssuerServiceTests.class,
+    OidcLocaleChangeInterceptorTests.class,
+    OidcCasCallbackUrlResolverTests.class,
+    OidcAuthenticationAuthorizeSecurityLogicTests.class,
     DefaultOidcAttributeReleasePolicyFactoryTests.class,
     OidcSingleLogoutMessageCreatorTests.class,
     OidcSingleLogoutServiceMessageHandlerTests.class

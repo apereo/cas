@@ -328,9 +328,34 @@ public class FunctionUtils {
      * @return the value
      */
     public static String throwIfBlank(final String value) {
-        if (StringUtils.isBlank(value)) {
-            throw new IllegalArgumentException("Value cannot be empty or blank");
-        }
+        throwIf(StringUtils.isBlank(value), () -> new IllegalArgumentException("Value cannot be empty or blank"));
         return value;
+    }
+
+    /**
+     * Throw if.
+     *
+     * @param condition the condition
+     * @param throwable the throwable
+     */
+    public static void throwIf(final boolean condition,
+                               final Supplier<? extends RuntimeException> throwable) {
+        if (condition) {
+            throw throwable.get();
+        }
+    }
+
+    /**
+     * Do and return.
+     *
+     * @param <T>       the type parameter
+     * @param condition the condition
+     * @param trueTask  the true task
+     * @param falseTask the false task
+     * @return the ticket
+     */
+    public static <T> T doAndReturn(final boolean condition, final Supplier<T> trueTask,
+                                    final Supplier<T> falseTask) {
+        return condition ? trueTask.get() : falseTask.get();
     }
 }

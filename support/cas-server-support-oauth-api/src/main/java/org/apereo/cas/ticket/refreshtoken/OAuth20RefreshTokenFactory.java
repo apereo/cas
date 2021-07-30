@@ -2,6 +2,8 @@ package org.apereo.cas.ticket.refreshtoken;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
@@ -26,6 +28,8 @@ public interface OAuth20RefreshTokenFactory extends TicketFactory {
      * @param clientId             the client id
      * @param accessToken          the access token created with this refresh token
      * @param requestClaims        the request claims
+     * @param responseType         the response type
+     * @param grantType            the grant type
      * @return the refresh token
      */
     OAuth20RefreshToken create(Service service, Authentication authentication,
@@ -33,5 +37,7 @@ public interface OAuth20RefreshTokenFactory extends TicketFactory {
                                Collection<String> scopes,
                                String clientId,
                                String accessToken,
-                               Map<String, Map<String, Object>> requestClaims);
+                               Map<String, Map<String, Object>> requestClaims,
+                               OAuth20ResponseTypes responseType,
+                               OAuth20GrantTypes grantType);
 }
