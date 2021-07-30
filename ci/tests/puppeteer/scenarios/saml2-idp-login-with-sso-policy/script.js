@@ -37,7 +37,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(3000)
     
     let metadataDir = path.join(__dirname, '/saml-md');
-    fs.rmdirSync(metadataDir, { recursive: true });
+    fs.rmdir(metadataDir, { recursive: true }, () => {});
 
     await cas.assertVisibility(page, '#username')
     await cas.assertVisibility(page, '#password')

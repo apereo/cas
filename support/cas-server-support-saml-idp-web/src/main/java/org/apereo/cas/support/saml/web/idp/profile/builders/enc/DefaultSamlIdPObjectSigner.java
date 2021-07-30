@@ -312,7 +312,7 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
         }
         privateKeyFactoryBean.setSingleton(false);
         LOGGER.debug("Locating signature signing key for [{}] using algorithm [{}]",
-            registeredService, privateKeyFactoryBean.getAlgorithm());
+            registeredService.getMetadataLocation(), privateKeyFactoryBean.getAlgorithm());
         return privateKeyFactoryBean.getObject();
     }
 

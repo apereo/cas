@@ -402,6 +402,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val context = new JEEContext(request, response);
         val relayState = configurationContext.getSessionStore()
             .get(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE)
+            .or(() -> Optional.ofNullable(SAMLBindingSupport.getRelayState(authnContext.getValue())))
             .orElseGet(() -> request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));
         val messageContext = bindRelayStateParameter(request, response, authnContext, (String) relayState);
         return Pair.of(authnContext.getLeft(), messageContext);
