@@ -36,7 +36,8 @@ public class DefaultLogoutRedirectionStrategyTests {
         val context = getMockRequestContext(request);
         val props = new LogoutProperties();
         props.setFollowServiceRedirects(true);
-        val strategy = new DefaultLogoutRedirectionStrategy(mock(ServiceFactory.class), props, mock(SingleLogoutServiceLogoutUrlBuilder.class));
+        val strategy = new DefaultLogoutRedirectionStrategy(mock(ServiceFactory.class),
+            props, mock(SingleLogoutServiceLogoutUrlBuilder.class));
 
         assertTrue(strategy.supports(context));
         strategy.handle(context);
@@ -60,6 +61,23 @@ public class DefaultLogoutRedirectionStrategyTests {
     }
 
     @Test
+    public void verifyNoRedirectToAuthorizedService() {
+        val props = new LogoutProperties();
+        props.setFollowServiceRedirects(false);
+        props.setRedirectParameter("targetParam");
+        val request = new MockHttpServletRequest();
+        request.addParameter(props.getRedirectParameter(), "https://github.com/apereo/cas");
+        val context = getMockRequestContext(request);
+
+        val logoutUrlBuilder = mock(SingleLogoutServiceLogoutUrlBuilder.class);
+        when(logoutUrlBuilder.isServiceAuthorized(any(WebApplicationService.class), any())).thenReturn(Boolean.TRUE);
+        val strategy = new DefaultLogoutRedirectionStrategy(new WebApplicationServiceFactory(), props, logoutUrlBuilder);
+        strategy.handle(context);
+        assertNotNull(WebUtils.getService(context));
+        assertNull(WebUtils.getLogoutRedirectUrl(context, String.class));
+    }
+
+    @Test
     public void verifyRedirectToService() {
         val props = new LogoutProperties();
         props.setFollowServiceRedirects(true);
@@ -72,6 +90,7 @@ public class DefaultLogoutRedirectionStrategyTests {
         when(logoutUrlBuilder.isServiceAuthorized(any(WebApplicationService.class), any())).thenReturn(Boolean.TRUE);
         val strategy = new DefaultLogoutRedirectionStrategy(new WebApplicationServiceFactory(), props, logoutUrlBuilder);
         strategy.handle(context);
+        assertNotNull(WebUtils.getService(context));
         assertNotNull(WebUtils.getLogoutRedirectUrl(context, String.class));
     }
 
@@ -89,6 +108,7 @@ public class DefaultLogoutRedirectionStrategyTests {
         when(logoutUrlBuilder.isServiceAuthorized(any(WebApplicationService.class), any())).thenReturn(Boolean.FALSE);
         strategy.handle(context);
         assertNull(WebUtils.getLogoutRedirectUrl(context, String.class));
+        assertNull(WebUtils.getService(context));
     }
 
     private static MockRequestContext getMockRequestContext(final MockHttpServletRequest request) {

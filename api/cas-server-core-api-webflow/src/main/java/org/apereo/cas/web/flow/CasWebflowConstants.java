@@ -207,6 +207,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_RENEW = "renew";
 
     /**
+     * Transition id for mfa composite.
+     */
+    String TRANSITION_ID_MFA_COMPOSITE = "mfa-composite";
+
+    /**
      * The transition state 'successWithWarnings'.
      */
     String TRANSITION_ID_SUCCESS_WITH_WARNINGS = "successWithWarnings";
@@ -333,6 +338,10 @@ public interface CasWebflowConstants {
      * The state 'unavailable'.
      */
     String STATE_ID_UNAVAILABLE = "unavailable";
+    /**
+     * State id for mfa composite.
+     */
+    String STATE_ID_MFA_COMPOSITE = "mfa-composite";
 
     /**
      * The state 'serviceAuthorizationCheck'.
