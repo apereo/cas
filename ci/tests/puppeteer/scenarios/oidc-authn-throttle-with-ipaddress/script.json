@@ -12,7 +12,9 @@
 
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
     "--cas.authn.oidc.jwks.jwks-file=file:/tmp/keystore.jwks",
-    
+
+    "--cas.authn.throttle.schedule.start-delay=PT60S",
+
     "--logging.level.org.apereo.cas=debug",
     "--logging.level.org.apereo.cas.web.support.AbstractThrottledSubmissionHandlerInterceptorAdapter=trace"
   ]
