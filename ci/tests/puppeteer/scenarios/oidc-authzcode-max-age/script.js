@@ -1,8 +1,6 @@
 const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
-const https = require('https');
 const assert = require('assert');
-const axios = require('axios');
 const jwt = require('jsonwebtoken');
 
 async function fetchIdToken(page, maxAge, successHandler) {
@@ -27,12 +25,6 @@ async function fetchIdToken(page, maxAge, successHandler) {
     let code = await cas.assertParameter(page, "code");
     console.log("OAuth code " + code);
 
-    const instance = axios.create({
-        httpsAgent: new https.Agent({
-            rejectUnauthorized: false
-        })
-    });
-
     let accessTokenParams = "client_id=client&";
     accessTokenParams += "client_secret=secret&";
     accessTokenParams += "grant_type=authorization_code&";
@@ -42,27 +34,22 @@ async function fetchIdToken(page, maxAge, successHandler) {
     console.log("Calling " + accessTokenUrl);
 
     let accessToken = null;
-    await instance
-        .post(accessTokenUrl, new URLSearchParams(), {
-            headers: {
-                'Content-Type': "application/json"
-            }
-        })
-        .then(res => {
-            console.log(res.data);
-            assert(res.data.access_token !== null);
+    await cas.doPost(accessTokenUrl, "", {
+        'Content-Type': "application/json"
+    }, function (res) {
+        console.log(res.data);
+        assert(res.data.access_token !== null);
 
-            accessToken = res.data.access_token;
-            console.log("Received access token " + accessToken);
+        accessToken = res.data.access_token;
+        console.log("Received access token " + accessToken);
 
-            console.log("Decoding ID token...");
-            let decoded = jwt.decode(res.data.id_token);
-            console.log(decoded);
-            successHandler(decoded);
-        })
-        .catch(error => {
-            throw 'Operation failed to obtain access token: ' + error;
-        })
+        console.log("Decoding ID token...");
+        let decoded = jwt.decode(res.data.id_token);
+        console.log(decoded);
+        successHandler(decoded);
+    }, function (error) {
+        throw 'Operation failed to obtain access token: ' + error;
+    });
 }
 
 (async () => {
@@ -72,17 +59,17 @@ async function fetchIdToken(page, maxAge, successHandler) {
     let time1 = null;
     let time2 = null;
 
-    await fetchIdToken(page, -1, function(idToken) {
+    await fetchIdToken(page, -1, function (idToken) {
         time1 = idToken.auth_time
     });
     await page.waitForTimeout(2000)
-    await fetchIdToken(page, 1, function(idToken) {
+    await fetchIdToken(page, 1, function (idToken) {
         time2 = idToken.auth_time;
     });
 
     console.log("Initial attempt; ID token auth_time: " + time1)
     console.log("Second attempt with max_age=1; ID token auth_time: " + time2)
     assert(time1 !== time2);
-    
+
     await browser.close();
 })();
