@@ -1,8 +1,6 @@
 const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
-const https = require('https');
 const assert = require('assert');
-const axios = require('axios');
 const jwt = require('jsonwebtoken');
 
 (async () => {
@@ -24,12 +22,6 @@ const jwt = require('jsonwebtoken');
     let code = await cas.assertParameter(page, "code");
     console.log("OAuth code " + code);
 
-    const instance = axios.create({
-        httpsAgent: new https.Agent({
-            rejectUnauthorized: false
-        })
-    });
-
     let accessTokenParams = "client_id=client&";
     accessTokenParams += "client_secret=secret&";
     accessTokenParams += "grant_type=authorization_code&";
@@ -39,46 +31,38 @@ const jwt = require('jsonwebtoken');
     console.log("Calling " + accessTokenUrl);
 
     let accessToken = null;
-    await instance
-        .post(accessTokenUrl, new URLSearchParams(), {
-            headers: {
-                'Content-Type': "application/json"
-            }
-        })
-        .then(res => {
-            console.log(res.data);
-            assert(res.data.access_token !== null);
 
-            accessToken = res.data.access_token;
-            console.log("Received access token " + accessToken);
+    await cas.doPost(accessTokenUrl, "", {
+        'Content-Type': "application/json"
+    }, function (res) {
+        console.log(res.data);
+        assert(res.data.access_token !== null);
 
-            console.log("Decoding ID token...");
-            let decoded = jwt.decode(res.data.id_token);
-            console.log(decoded);
-            assert(decoded.sub !== null)
-        })
-        .catch(error => {
-            throw 'Operation failed to obtain access token: ' + error;
-        })
+        accessToken = res.data.access_token;
+        console.log("Received access token " + accessToken);
+
+        console.log("Decoding ID token...");
+        let decoded = jwt.decode(res.data.id_token);
+        console.log(decoded);
+        assert(decoded.sub !== null)
+    }, function (error) {
+        throw 'Operation failed to obtain access token: ' + error;
+    });
 
     assert(accessToken != null, "Access Token cannot be null")
 
     let profileUrl = "https://localhost:8443/cas/oidc/profile?access_token=" + accessToken;
     console.log("Calling user profile " + profileUrl);
-    instance
-        .post(profileUrl, new URLSearchParams(), {
-            headers: {
-                'Content-Type': "application/json"
-            }
-        })
-        .then(res => {
-            console.log(res.data);
-            assert(res.data.name != null)
-            assert(res.data.sub != null)
-        })
-        .catch(error => {
-            throw 'Operation failed: ' + error;
-        })
+
+    await cas.doPost(profileUrl, "", {
+        'Content-Type': "application/json"
+    }, function (res) {
+        console.log(res.data);
+        assert(res.data.name != null)
+        assert(res.data.sub != null)
+    }, function (error) {
+        throw 'Operation failed: ' + error;
+    });
 
     await browser.close();
 })();
