@@ -123,6 +123,11 @@ exports.assertMissingParameter = async (page, param) => {
     assert(result.searchParams.has(param) === false);
 }
 
+exports.sleep = async(ms) => {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}
 
 exports.assertTicketParameter = async (page) => {
     console.log("Page URL: " + page.url())
