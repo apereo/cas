@@ -1,8 +1,6 @@
 const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
-const https = require('https');
 const assert = require('assert');
-const axios = require('axios');
 
 async function fetchRefreshToken(page, clientId, redirectUrl) {
     let url = "https://localhost:8443/cas/oidc/authorize?"
@@ -24,30 +22,17 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
     let code = await cas.assertParameter(page, "code");
     console.log("OAuth code " + code);
 
-    const instance = axios.create({
-        httpsAgent: new https.Agent({
-            rejectUnauthorized: false
-        })
-    });
-
     let accessTokenParams = "client_id=" + clientId + "&";
     accessTokenParams += "client_secret=secret&";
     accessTokenParams += "grant_type=authorization_code&";
     accessTokenParams += "redirect_uri=" + redirectUrl;
 
-    let accessTokenUrl = 'https://localhost:8443/cas/oidc/token?' + accessTokenParams + "&code=" + code;
-    console.log("Calling " + accessTokenUrl);
-
     let accessToken = null;
     let refreshToken = null;
 
-    await instance
-        .post(accessTokenUrl, new URLSearchParams(), {
-            headers: {
-                'Content-Type': "application/json"
-            }
-        })
-        .then(res => {
+    let accessTokenUrl = 'https://localhost:8443/cas/oidc/token?' + accessTokenParams + "&code=" + code;
+    await cas.doPost(accessTokenUrl, "", {'Content-Type': "application/json"},
+        function (res) {
             console.log(res.data);
             assert(res.data.access_token !== null);
             assert(res.data.refresh_token !== null);
@@ -57,8 +42,8 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
 
             console.log("Received access token " + accessToken);
             console.log("Received refresh token " + refreshToken);
-        })
-        .catch(error => {
+        },
+        function (err) {
             throw 'Operation failed to obtain access token: ' + error;
         })
 
@@ -79,24 +64,10 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
     let authzHeader = "Basic " + buff.toString('base64');
     console.log("Authorization header: " + authzHeader);
 
-    const instance = axios.create({
-        httpsAgent: new https.Agent({
-            rejectUnauthorized: false
-        })
-    });
-    await instance
-        .post(accessTokenUrl, new URLSearchParams(), {
-            headers: {
-                'Content-Type': "application/json",
-                'Authorization': authzHeader
-            }
-        })
-        .then(res => {
-            successHandler(res);
-        })
-        .catch(error => {
-            errorHandler(error);
-        })
+    await cas.doPost(accessTokenUrl, "", {
+        'Content-Type': "application/json",
+        'Authorization': authzHeader
+    }, successHandler, errorHandler);
 }
 
 (async () => {
@@ -139,6 +110,6 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
         }, function (error) {
             throw 'Operation should fail but instead produced: ' + error;
         });
-    
+
     await browser.close();
 })();
