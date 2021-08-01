@@ -164,8 +164,9 @@ exports.doPost = async (url, params, headers, successHandler, failureHandler) =>
             rejectUnauthorized: false
         })
     });
+    let urlParams = params instanceof URLSearchParams ? params : new URLSearchParams(params);
     await instance
-        .post(url, new URLSearchParams(params), {headers: headers})
+        .post(url, urlParams, {headers: headers})
         .then(res => {
             console.log(res.data);
             successHandler(res);
