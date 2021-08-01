@@ -1,8 +1,6 @@
 const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
-const https = require('https');
 const assert = require('assert');
-const axios = require('axios');
 const jwt = require('jsonwebtoken');
 
 (async () => {
@@ -25,12 +23,6 @@ const jwt = require('jsonwebtoken');
 
     let code = await cas.assertParameter(page, "code");
     console.log("OAuth code " + code);
-    
-    const instance = axios.create({
-        httpsAgent: new https.Agent({
-            rejectUnauthorized: false
-        })
-    });
 
     let accessTokenParams = "client_id=client&";
     accessTokenParams += "client_secret=secret&";
@@ -41,83 +33,63 @@ const jwt = require('jsonwebtoken');
     console.log("Calling " + accessTokenUrl);
 
     let accessToken = null;
-    await instance
-        .post(accessTokenUrl, new URLSearchParams(), {
-            headers: {
-                'Content-Type': "application/json"
-            }
-        })
-        .then(res => {
-            console.log(res.data);
-            assert(res.data.access_token !== null);
+    await cas.doPost(accessTokenUrl, "", {
+        'Content-Type': "application/json"
+    }, function (res) {
+        console.log(res.data);
+        assert(res.data.access_token !== null);
 
-            accessToken = res.data.access_token;
-            console.log("Received access token " + accessToken);
+        accessToken = res.data.access_token;
+        console.log("Received access token " + accessToken);
 
-            console.log("Decoding ID token...");
-            let decoded = jwt.decode(res.data.id_token);
-            console.log(decoded);
+        console.log("Decoding ID token...");
+        let decoded = jwt.decode(res.data.id_token);
+        console.log(decoded);
 
-            assert(decoded.sub !== null)
-            assert(decoded["preferred_username"] == null)
-        })
-        .catch(error => {
-            throw 'Operation failed to obtain access token: ' + error;
-        })
+        assert(decoded.sub !== null)
+        assert(decoded["preferred_username"] == null)
+    }, function (error) {
+        throw 'Operation failed to obtain access token: ' + error;
+    });
 
     assert(accessToken != null, "Access Token cannot be null")
 
     let profileUrl = "https://localhost:8443/cas/oidc/profile?access_token=" + accessToken;
     console.log("Calling user profile " + profileUrl);
-    instance
-        .post(profileUrl, new URLSearchParams(), {
-            headers: {
-                'Content-Type': "application/json"
-            }
-        })
-        .then(res => {
-            console.log(res.data);
-            assert(res.data.email != null)
-            assert(res.data.gender != null)
-            assert(res.data.name != null)
-            assert(res.data["preferred_username"] != null)
-        })
-        .catch(error => {
-            throw 'Operation failed: ' + error;
-        })
+    await cas.doPost(profileUrl, "", {
+        'Content-Type': "application/json"
+    }, function (res) {
+        console.log(res.data);
+        assert(res.data.email != null)
+        assert(res.data.gender != null)
+        assert(res.data.name != null)
+        assert(res.data["preferred_username"] != null)
+    }, function (error) {
+        throw 'Operation failed: ' + error;
+    });
 
     console.log("Trying to re-use OAuth code " + accessTokenUrl);
-    await instance
-        .post(accessTokenUrl, new URLSearchParams(), {
-            headers: {
-                'Content-Type': "application/json"
-            }
-        })
-        .then(res => {
-            throw 'OAuth code ' + code + ' cannot be used again';
-        })
-        .catch(error => {
-            console.log(error.response.data)
-            assert(error.response.data.error === 'invalid_grant')
-        })
-
+    await cas.doPost(accessTokenUrl, "", {
+        'Content-Type': "application/json"
+    }, function (res) {
+        throw 'OAuth code ' + code + ' cannot be used again';
+    }, function (error) {
+        console.log(error.response.data)
+        assert(error.response.data.error === 'invalid_grant')
+    });
 
     console.log("Reusing OAuth code " + code + " should have revoked access token " + accessToken);
     console.log("Calling user profile again with revoked access token: " + profileUrl);
-    instance
-        .post(profileUrl, new URLSearchParams(), {
-            headers: {
-                'Content-Type': "application/json"
-            }
-        })
-        .then(res => {
-            throw 'Access token ' + accessToken + ' should have been removed and rejected with code reused';
-        })
-        .catch(error => {
-            assert(error.response.status === 401)
-            console.log(error.response.data);
-            assert(error.response.data.error === "expired_accessToken");
-        })
+
+    await cas.doPost(profileUrl, "", {
+        'Content-Type': "application/json"
+    }, function (res) {
+        throw 'Access token ' + accessToken + ' should have been removed and rejected with code reused';
+    }, function (error) {
+        assert(error.response.status === 401)
+        console.log(error.response.data);
+        assert(error.response.data.error === "expired_accessToken");
+    });
 
     await browser.close();
 })();

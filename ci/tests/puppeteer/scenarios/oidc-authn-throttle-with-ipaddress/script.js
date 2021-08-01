@@ -1,7 +1,5 @@
 const assert = require('assert');
 const cas = require('../../cas.js');
-const axios = require("axios");
-const https = require("https");
 
 async function throttleTokenEndpoint() {
     let params = "client_id=unknown&";
@@ -30,27 +28,19 @@ async function throttleUserInfoEndpoint() {
 }
 
 (async () => {
-     await throttleTokenEndpoint();
+    await throttleTokenEndpoint();
     await cas.sleep(2000)
-     await throttleUserInfoEndpoint();
+    await throttleUserInfoEndpoint();
 })();
 
 async function submitRequest(url, status) {
-    const instance = axios.create({
-        httpsAgent: new https.Agent({
-            rejectUnauthorized: false
-        })
-    });
     console.log("Calling " + url);
-    await instance
-        .post(url, new URLSearchParams(), {
-            headers: {'Content-Type': "application/json"}
-        })
-        .then(res => {
-            throw "Operation should not have passed: " + res
-        })
-        .catch(error => {
-            console.log("Expecting " + status + ", Current status: " + error.response.status);
-            assert(status === error.response.status)
-        })
+    await cas.doPost(url, "", {
+        'Content-Type': "application/json"
+    }, function (res) {
+        throw "Operation should not have passed: " + res
+    }, function (error) {
+        console.log("Expecting " + status + ", Current status: " + error.response.status);
+        assert(status === error.response.status)
+    });
 }

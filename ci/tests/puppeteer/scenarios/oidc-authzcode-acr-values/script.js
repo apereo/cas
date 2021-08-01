@@ -1,8 +1,6 @@
 const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
-const https = require('https');
 const assert = require('assert');
-const axios = require('axios');
 const jwt = require('jsonwebtoken');
 
 const redirectUrl = "https://apereo.github.io";
@@ -44,7 +42,7 @@ async function fetchCode(page, acr) {
 
     let scratch = await fetchScratch(page);
     console.log("Using scratch code " + scratch + " to login...");
-    await cas.type(page,'#token', scratch);
+    await cas.type(page, '#token', scratch);
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
@@ -59,12 +57,6 @@ async function fetchCode(page, acr) {
 }
 
 async function exchangeCode(page, code, successHandler) {
-    const instance = axios.create({
-        httpsAgent: new https.Agent({
-            rejectUnauthorized: false
-        })
-    });
-
     let accessTokenParams = "client_id=client&";
     accessTokenParams += "client_secret=secret&";
     accessTokenParams += "grant_type=authorization_code&";
@@ -74,28 +66,23 @@ async function exchangeCode(page, code, successHandler) {
     console.log("Calling " + accessTokenUrl);
 
     let accessToken = null;
-    await instance
-        .post(accessTokenUrl, new URLSearchParams(), {
-            headers: {
-                'Content-Type': "application/json"
-            }
-        })
-        .then(res => {
-            console.log(res.data);
-            assert(res.data.access_token !== null);
+    await cas.doPost(accessTokenUrl, "", {
+        'Content-Type': "application/json"
+    }, function (res) {
+        console.log(res.data);
+        assert(res.data.access_token !== null);
 
-            accessToken = res.data.access_token;
-            console.log("Received access token " + accessToken);
+        accessToken = res.data.access_token;
+        console.log("Received access token " + accessToken);
 
-            console.log("Decoding ID token...");
-            let decoded = jwt.decode(res.data.id_token);
-            console.log(decoded);
+        console.log("Decoding ID token...");
+        let decoded = jwt.decode(res.data.id_token);
+        console.log(decoded);
 
-            successHandler(decoded);
-        })
-        .catch(error => {
-            throw 'Operation failed to obtain access token: ' + error;
-        })
+        successHandler(decoded);
+    }, function (error) {
+        throw 'Operation failed to obtain access token: ' + error;
+    });
 }
 
 (async () => {
