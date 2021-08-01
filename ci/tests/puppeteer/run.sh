@@ -163,6 +163,8 @@ exitScript="${exitScript//\$\{SCENARIO\}/${scenarioName}}"
   chmod +x "${exitScript}" && \
   eval "export SCENARIO=${scenarioName}"; eval "${exitScript}"
 
+printgreen "Done!\n"
+
 if [[ "${CI}" != "true" ]]; then
   printgreen "Hit enter to cleanup scenario ${scenario} that ended with exit code $RC \n"
   read -r

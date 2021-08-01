@@ -1,4 +1,6 @@
 const assert = require('assert');
+const axios = require('axios');
+const https = require('https');
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
@@ -123,7 +125,7 @@ exports.assertMissingParameter = async (page, param) => {
     assert(result.searchParams.has(param) === false);
 }
 
-exports.sleep = async(ms) => {
+exports.sleep = async (ms) => {
     return new Promise((resolve) => {
         setTimeout(resolve, ms);
     });
@@ -139,3 +141,36 @@ exports.assertTicketParameter = async (page) => {
     return ticket;
 }
 
+exports.doGet = async (url, successHandler, failureHandler) => {
+    const instance = axios.create({
+        httpsAgent: new https.Agent({
+            rejectUnauthorized: false
+        })
+    });
+    await instance
+        .get(url)
+        .then(res => {
+            console.log(res.data);
+            successHandler(res);
+        })
+        .catch(error => {
+            failureHandler(error);
+        })
+}
+
+exports.doPost = async (url, params, headers, successHandler, failureHandler) => {
+    const instance = axios.create({
+        httpsAgent: new https.Agent({
+            rejectUnauthorized: false
+        })
+    });
+    await instance
+        .post(url, new URLSearchParams(params), {headers: headers})
+        .then(res => {
+            console.log(res.data);
+            successHandler(res);
+        })
+        .catch(error => {
+            failureHandler(error);
+        })
+}
