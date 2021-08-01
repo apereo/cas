@@ -7,6 +7,7 @@ async function throttleTokenEndpoint() {
     params += "grant_type=client_credentials&";
     params += "scope=openid";
     let url = 'https://localhost:8443/cas/oidc/token?' + params;
+
     console.log("Log in attempt: #1 " + new Date().toISOString())
     await submitRequest(url, 401);
     console.log("Log in attempt: #2 " + new Date().toISOString())
@@ -29,8 +30,8 @@ async function throttleUserInfoEndpoint() {
 
 (async () => {
     await throttleTokenEndpoint();
-    await cas.sleep(2000)
-    await throttleUserInfoEndpoint();
+    // await cas.sleep(2000)
+    // await throttleUserInfoEndpoint();
 })();
 
 async function submitRequest(url, status) {

@@ -107,11 +107,9 @@ public class CasOAuth20ThrottleConfiguration {
         return new WebMvcConfigurer() {
             @Override
             public void addInterceptors(final InterceptorRegistry registry) {
-                Objects.requireNonNull(authenticationThrottlingExecutionPlan.getObject()).getAuthenticationThrottleInterceptors()
-                    .forEach(handler -> registry.addInterceptor(handler)
-                        .order(0)
-                        .addPathPatterns(BASE_OAUTH20_URL.concat("/*")));
-                registry.addInterceptor(oauthHandlerInterceptorAdapter());
+                authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors()
+                    .forEach(handler -> registry.addInterceptor(handler).order(0).addPathPatterns(BASE_OAUTH20_URL.concat("/*")));
+                registry.addInterceptor(oauthHandlerInterceptorAdapter()).order(1).addPathPatterns(BASE_OAUTH20_URL.concat("/*"));
             }
         };
     }
