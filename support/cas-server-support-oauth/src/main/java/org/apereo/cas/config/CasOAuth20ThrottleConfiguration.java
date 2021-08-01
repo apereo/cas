@@ -33,7 +33,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
+import static org.apereo.cas.support.oauth.OAuth20Constants.*;
 
 /**
  * This is {@link CasOAuth20ThrottleConfiguration}.
