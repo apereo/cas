@@ -111,6 +111,7 @@ public class CasOAuth20ThrottleConfiguration {
                     .forEach(handler -> registry.addInterceptor(handler)
                         .order(0)
                         .addPathPatterns(BASE_OAUTH20_URL.concat("/*")));
+                registry.addInterceptor(oauthHandlerInterceptorAdapter());
             }
         };
     }
