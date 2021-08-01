@@ -35,10 +35,22 @@ rate in failures per second. The following properties are provided to define the
 
 * `failureRangeInSeconds` - Period of time in seconds during which the threshold applies.
 * `failureThreshold` - Number of failed login attempts permitted in the above period.
+* 
+<div class="alert alert-info mt-3"><strong>Threshold Rate</strong><p>
+The failure threshold rate is calculated as: <code>failureThreshold / failureRangeInSeconds</code>.
+</p></div>
 
 A failure rate of more than 1 per 3 seconds is indicative of an automated authentication attempt, which is a
-reasonable basis for throttling policy. Regardless of policy care should be taken to weigh security against access;
+reasonable basis for throttling policy. Regardless of policy care should be 
+taken to weigh security against access;
 overly restrictive policies may prevent legitimate authentication attempts.
+
+<div class="alert alert-info mt-3"><strong>Threshold Rate</strong><p>
+The failure threshold rate is calculated as: <code>failureThreshold / failureRangeInSeconds</code>. For instance,
+the failure rate for the above scenario would be <code>0.333333</code>. An authentication attempt may be considered throttled
+if the request submission rate (calculated as the difference between the current date and the last submission date) exceeds
+the failure threshold rate.
+</p></div>
 
 Enable the following module in your configuration overlay:
 
