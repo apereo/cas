@@ -716,7 +716,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     @ConditionalOnMissingBean(name = "oidcServerDiscoverySettingsFactory")
     public FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory() {
-        return new OidcServerDiscoverySettingsFactory(casProperties, oidcIssuerService());
+        return new OidcServerDiscoverySettingsFactory(casProperties, oidcIssuerService(), applicationContext);
     }
 
     @Bean(initMethod = "generate")

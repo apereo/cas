@@ -59,6 +59,9 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("userinfo_encryption_enc_values_supported")
     private List<String> userInfoEncryptionEncodingValuesSupported;
 
+    @JsonProperty("acr_values_supported")
+    private List<String> acrValuesSupported;
+
     @JsonProperty("request_object_signing_alg_values_supported")
     private List<String> requestObjectSigningAlgValuesSupported;
 
