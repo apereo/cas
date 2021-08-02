@@ -79,7 +79,7 @@ while (( "$#" )); do
         shift
         ;;
     --no-watch)
-        flags+=" --no-watch-fs"
+        flags+=" --no-watch-fs "
         shift
         ;;
     --test)
@@ -87,15 +87,15 @@ while (( "$#" )); do
         shift 2
         ;;
     --no-retry)
-        flags+=" -DskipTestRetry=true"
+        flags+=" -DskipTestRetry=true "
         shift
         ;;
     --ignore-failures)
-        flags+=" -DignoreTestFailures=true"
+        flags+=" -DignoreTestFailures=true "
         shift
         ;;
     --no-build-cache)
-        flags+=" --no-build-cache"
+        flags+=" --no-build-cache "
         shift
         ;;
     --category)

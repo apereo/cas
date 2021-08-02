@@ -36,30 +36,23 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator e
 
     @Override
     public boolean validate(final JEEContext context) {
-        val request = context.getNativeRequest();
-
-        val authnRequest = request.getParameter(OAuth20Constants.REQUEST);
-        if (StringUtils.isNotBlank(authnRequest)) {
-            LOGGER.warn("Self-contained authentication requests as JWTs are not accepted");
-            setErrorDetails(context, OAuth20Constants.REQUEST_NOT_SUPPORTED, StringUtils.EMPTY, true);
-            return false;
-        }
-
-        val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
-        if (!OAuth20Utils.isAuthorizedResponseTypeForService(context, getRegisteredServiceByClientId(clientId))) {
-            val responseType = request.getParameter(OAuth20Constants.RESPONSE_TYPE);
-            val msg = String.format("Client is not allowed to use the [%s] response_type", responseType);
-            setErrorDetails(context, OAuth20Constants.UNAUTHORIZED_CLIENT, msg, true);
-            return false;
-        }
-
-        return true;
+        val clientIdResult = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID);
+        return clientIdResult.map(clientId -> {
+            if (!OAuth20Utils.isAuthorizedResponseTypeForService(context, getRegisteredServiceByClientId(clientId))) {
+                val responseTypeResult = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE);
+                val msg = String.format("Client is not allowed to use the [%s] response_type", responseTypeResult.orElse("unknown"));
+                LOGGER.warn(msg);
+                setErrorDetails(context, OAuth20Constants.UNAUTHORIZED_CLIENT, msg, true);
+                return false;
+            }
+            return true;
+        }).orElse(false);
     }
 
     @Override
     public boolean supports(final JEEContext context) {
         if (preValidate(context)) {
-            val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
+            val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE);
             return OAuth20Utils.isResponseType(responseType.map(String::valueOf).orElse(StringUtils.EMPTY), getResponseType());
         }
         return false;
