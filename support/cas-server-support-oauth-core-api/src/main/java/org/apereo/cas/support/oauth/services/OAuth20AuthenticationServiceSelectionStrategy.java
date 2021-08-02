@@ -46,47 +46,45 @@ public class OAuth20AuthenticationServiceSelectionStrategy extends BaseAuthentic
     }
 
     private static Optional<NameValuePair> resolveClientIdFromService(final Service service) {
+        return getRequestParameter(service, OAuth20Constants.CLIENT_ID);
+    }
+
+    private static Optional<NameValuePair> getRequestParameter(final Service service, final String name) {
         try {
-            val builder = new URIBuilder(service.getId());
-            return builder.getQueryParams()
-                .stream()
-                .filter(p -> p.getName().equals(OAuth20Constants.CLIENT_ID))
-                .findFirst()
-                .or(Unchecked.supplier(() -> getJwtRequestParameter(service, OAuth20Constants.CLIENT_ID)));
+            val value = getJwtRequestParameter(service, name)
+                .or(Unchecked.supplier(() -> {
+                    val builder = new URIBuilder(service.getId());
+                    return builder.getQueryParams()
+                        .stream()
+                        .filter(p -> p.getName().equals(name))
+                        .map(NameValuePair::getValue)
+                        .findFirst();
+                }));
+            return value.map(v -> new BasicNameValuePair(name, v));
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
     }
 
-    private static Optional<? extends NameValuePair> getJwtRequestParameter(final Service service,
-                                                                            final String paramName) throws Exception {
+    private static Optional<String> getJwtRequestParameter(final Service service,
+                                                           final String paramName) throws Exception {
         if (service.getAttributes().containsKey(OAuth20Constants.REQUEST)) {
             val jwtRequest = (String) service.getAttributes().get(OAuth20Constants.REQUEST).get(0);
             val paramValue = OAuth20Utils.getJwtRequestParameter(jwtRequest, paramName, String.class);
-            return Optional.of(new BasicNameValuePair(paramName, paramValue));
+            return Optional.of(paramValue);
         }
         return Optional.empty();
     }
 
     @SneakyThrows
     private static Optional<NameValuePair> resolveRedirectUri(final Service service) {
-        val builder = new URIBuilder(service.getId());
-        return builder.getQueryParams()
-            .stream()
-            .filter(p -> p.getName().equals(OAuth20Constants.REDIRECT_URI))
-            .findFirst()
-            .or(Unchecked.supplier(() -> getJwtRequestParameter(service, OAuth20Constants.REDIRECT_URI)));
+        return getRequestParameter(service, OAuth20Constants.REDIRECT_URI);
     }
 
     @SneakyThrows
     private static Optional<NameValuePair> resolveGrantType(final Service service) {
-        val builder = new URIBuilder(service.getId());
-        return builder.getQueryParams()
-            .stream()
-            .filter(p -> p.getName().equals(OAuth20Constants.GRANT_TYPE))
-            .findFirst()
-            .or(Unchecked.supplier(() -> getJwtRequestParameter(service, OAuth20Constants.GRANT_TYPE)));
+        return getRequestParameter(service, OAuth20Constants.GRANT_TYPE);
     }
 
     @Override
