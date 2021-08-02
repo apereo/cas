@@ -1,13 +1,17 @@
 package org.apereo.cas.oidc.discovery;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcServerDiscoverySettingsFactory}.
@@ -20,6 +24,8 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
     private final CasConfigurationProperties casProperties;
 
     private final OidcIssuerService issuerService;
+
+    private final ConfigurableApplicationContext applicationContext;
 
     @Override
     public OidcServerDiscoverySettings getObject() {
@@ -55,6 +61,14 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discovery.setRequestObjectEncryptionAlgValuesSupported(discoveryConfig.getRequestObjectEncryptionAlgValuesSupported());
         discovery.setRequestObjectEncryptionEncodingValuesSupported(discoveryConfig.getRequestObjectEncryptionEncodingValuesSupported());
 
+        discovery.setAcrValuesSupported(discoveryConfig.getAcrValuesSupported());
+        if (discoveryConfig.getAcrValuesSupported().isEmpty()) {
+            val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext).values()
+                .stream()
+                .map(MultifactorAuthenticationProvider::getId)
+                .collect(Collectors.toList());
+            discovery.setAcrValuesSupported(providers);
+        }
         return discovery;
     }
 
