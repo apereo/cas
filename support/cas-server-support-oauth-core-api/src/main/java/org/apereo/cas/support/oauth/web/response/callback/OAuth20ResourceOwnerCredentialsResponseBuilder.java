@@ -47,7 +47,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder implements OAuth20Au
 
     @Override
     public boolean supports(final JEEContext context) {
-        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE)
+        val grantType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.GRANT_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.PASSWORD);
     }

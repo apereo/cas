@@ -53,7 +53,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             throw new UnauthorizedServiceException("Unable to locate service in registry for redirect URI " + redirectUri);
         }
 
-        val requestedScopes = OAuth20Utils.parseRequestScopes(request);
+        val requestedScopes = OAuth20Utils.parseRequestScopes(context);
         val token = getOAuthTokenFromRequest(request);
         if (token == null || token.isExpired()) {
             throw new InvalidTicketException(getOAuthParameter(request));
