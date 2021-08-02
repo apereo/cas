@@ -20,11 +20,6 @@ public class OAuth20IdTokenResponseTypeAuthorizationRequestValidator extends OAu
         super(servicesManager, webApplicationServiceServiceFactory, registeredServiceAccessStrategyEnforcer);
     }
 
-    /**
-     * Gets response type.
-     *
-     * @return the response type
-     */
     @Override
     public OAuth20ResponseTypes getResponseType() {
         return OAuth20ResponseTypes.ID_TOKEN;

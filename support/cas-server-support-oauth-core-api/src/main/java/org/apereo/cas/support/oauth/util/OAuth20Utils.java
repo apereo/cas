@@ -10,6 +10,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.OAuth20Token;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -24,6 +25,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hjson.JsonValue;
+import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
@@ -44,6 +46,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -136,6 +139,22 @@ public class OAuth20Utils {
                 return Pair.of(m, valuesSet);
             })
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+    }
+
+    /**
+     * Gets authorization parameter.
+     *
+     * @param context the context
+     * @param name    the name
+     * @return the authorization parameter
+     */
+    public static Optional<String> getRequestParameter(final WebContext context, final String name) {
+        return context.getRequestParameter(OAuth20Constants.REQUEST)
+            .map(Unchecked.function(request -> {
+                val jwt = JwtBuilder.parse(request);
+                return jwt.getStringClaim(name);
+            }))
+            .or(() -> context.getRequestParameter(name));
     }
 
     /**
@@ -529,9 +548,9 @@ public class OAuth20Utils {
             val upc = (UsernamePasswordCredentials) upcResult.get();
             return Pair.of(upc.getUsername(), upc.getPassword());
         }
-        val clientId = webContext.getRequestParameter(OAuth20Constants.CLIENT_ID)
+        val clientId = getRequestParameter(webContext, OAuth20Constants.CLIENT_ID)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val clientSecret = webContext.getRequestParameter(OAuth20Constants.CLIENT_SECRET)
+        val clientSecret = getRequestParameter(webContext, OAuth20Constants.CLIENT_SECRET)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         return Pair.of(clientId, clientSecret);
     }

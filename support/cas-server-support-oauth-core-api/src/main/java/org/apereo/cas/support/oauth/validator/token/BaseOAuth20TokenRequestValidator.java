@@ -64,17 +64,13 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
     }
 
     @Override
-    public boolean validate(final JEEContext ctx) {
-        val request = ctx.getNativeRequest();
-        val response = ctx.getNativeResponse();
-
-        val grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
+    public boolean validate(final JEEContext context) {
+        val grantType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
         if (!isGrantTypeSupported(grantType, OAuth20GrantTypes.values())) {
             LOGGER.warn("Grant type is not supported: [{}]", grantType);
             return false;
         }
 
-        val context = new JEEContext(request, response);
         val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
         val profile = manager.getProfile();
         if (profile.isEmpty()) {
@@ -111,7 +107,7 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
 
     @Override
     public boolean supports(final JEEContext context) {
-        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+        val grantType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType.map(String::valueOf).orElse(StringUtils.EMPTY), getGrantType());
     }
 }
