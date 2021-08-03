@@ -42,7 +42,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discovery.setIntrospectionSupportedAuthenticationMethods(discoveryConfig.getIntrospectionSupportedAuthenticationMethods());
         discovery.setGrantTypesSupported(discoveryConfig.getGrantTypesSupported());
         discovery.setTokenEndpointAuthMethodsSupported(discoveryConfig.getTokenEndpointAuthMethodsSupported());
-        discovery.setClaimsParameterSupported(true);
+        discovery.setClaimsParameterSupported(discoveryConfig.isClaimsParameterSupported());
 
         discovery.setIdTokenSigningAlgValuesSupported(discoveryConfig.getIdTokenSigningAlgValuesSupported());
         discovery.setIdTokenEncryptionAlgValuesSupported(discoveryConfig.getIdTokenEncryptionAlgValuesSupported());
@@ -57,6 +57,8 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
 
         discovery.setCodeChallengeMethodsSupported(discoveryConfig.getCodeChallengeMethodsSupported());
 
+        discovery.setRequestParameterSupported(discoveryConfig.isRequestParameterSupported());
+        discovery.setRequestUriParameterSupported(discoveryConfig.isRequestUriParameterSupported());
         discovery.setRequestObjectSigningAlgValuesSupported(discoveryConfig.getRequestObjectSigningAlgValuesSupported());
         discovery.setRequestObjectEncryptionAlgValuesSupported(discoveryConfig.getRequestObjectEncryptionAlgValuesSupported());
         discovery.setRequestObjectEncryptionEncodingValuesSupported(discoveryConfig.getRequestObjectEncryptionEncodingValuesSupported());
