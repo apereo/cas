@@ -29,6 +29,21 @@ public class OidcDiscoveryProperties implements Serializable {
     private static final long serialVersionUID = 813028615694269276L;
 
     /**
+     * Specifying whether this provider supports use of the claims parameter.
+     */
+    private boolean claimsParameterSupported = true;
+
+    /**
+     * Specifying whether this provider supports use of the {@code request} parameter.
+     */
+    private boolean requestParameterSupported = true;
+
+    /**
+     * Specifying whether this provider supports use of the {@code request_uri} parameter.
+     */
+    private boolean requestUriParameterSupported = true;
+
+    /**
      * List of supported scopes.
      */
     private List<String> scopes = Stream.of("openid", "profile", "email", "address", "phone", "offline_access")

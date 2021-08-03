@@ -83,8 +83,11 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("claims_parameter_supported")
     private boolean claimsParameterSupported = true;
 
+    @JsonProperty("request_uri_parameter_supported")
+    private boolean requestUriParameterSupported = true;
+
     @JsonProperty("request_parameter_supported")
-    private boolean requestParameterSupported;
+    private boolean requestParameterSupported = true;
 
     @JsonProperty("backchannel_logout_supported")
     private boolean backchannelLogoutSupported;
