@@ -231,6 +231,9 @@ while (( "$#" )); do
             jmx|jmx)
                 task+="testJMX "
                 ;;
+            restfulapiauthentication|restfulauthn|restauthn)
+                task+="testRestfulApiAuthentication "
+                ;;
             rest|restful|restapi|restfulapi)
                 task+="testRestfulApi "
                 ;;
