@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Tag("RestfulApi")
+@Tag("RestfulApiAuthentication")
 public class RestfulAuthenticationPolicyTests {
     @Test
     public void verifyAllowedOperation() throws Exception {

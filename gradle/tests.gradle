@@ -53,6 +53,7 @@ enum TestCategories {
     Redis,
     RegisteredService,
     RestfulApi,
+    RestfulApiAuthentication,
     SAML,
     SAMLMetadata,
     SAMLServiceProvider,

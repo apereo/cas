@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("RestfulApi")
+@Tag("RestfulApiAuthentication")
 public class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
     @Test
     public void verifyOperationShouldProceed() {
