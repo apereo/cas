@@ -13,6 +13,13 @@ import java.util.Collection;
 public interface CasWebflowExecutionPlan {
 
     /**
+     * Register webflow login context provider.
+     *
+     * @param provider the provider
+     */
+    void registerWebflowLoginContextProvider(CasWebflowLoginContextProvider provider);
+
+    /**
      * Register webflow configurer.
      *
      * @param cfg the cfg
@@ -39,6 +46,13 @@ public interface CasWebflowExecutionPlan {
      * @return the webflow interceptors
      */
     Collection<HandlerInterceptor> getWebflowInterceptors();
+
+    /**
+     * Gets webflow login context providers.
+     *
+     * @return the webflow login context providers
+     */
+    Collection<CasWebflowLoginContextProvider> getWebflowLoginContextProviders();
 
     /**
      * Execute the plan.
