@@ -19,19 +19,16 @@ const cas = require('../../cas.js');
 
     await cas.click(page, "input[name='submit']")
     await page.waitForNavigation();
-    await page.waitForTimeout(1000)
 
     await page.goto("https://samltest.id/start-idp-test/");
     await cas.type(page,'input[name=\'entityID\']', "https://cas.apereo.org/custom/idp/21c826665039536e");
-    await page.waitForTimeout(1000)
     await cas.click(page, "input[type='submit']")
     await page.waitForNavigation();
 
-    await page.waitForTimeout(5000)
-
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(3000)
-    
+
+    await page.waitForSelector('div.entry-content p', { visible: true });
     const header = await cas.textContent(page, "div.entry-content p");
     assert(header.startsWith("Your browser has completed the full SAML 2.0 round-trip"));
 

@@ -2,6 +2,8 @@ const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
 const https = require('https');
 const assert = require('assert');
+const path = require("path");
+const fs = require("fs");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -38,7 +40,6 @@ const assert = require('assert');
 
     await page.waitForTimeout(2000);
 
-    await page.setRequestInterception(true);
     page.once('request', request => {
         var data = {
             'method': 'POST',
@@ -50,15 +51,18 @@ const assert = require('assert');
         };
 
         request.continue(data);
-
         page.setRequestInterception(false);
     });
 
-    const response = await page.goto('https://localhost:8443/cas/idp/profile/SAML2/POST/SLO');
+    await page.setRequestInterception(true);
+    await page.goto('https://localhost:8443/cas/idp/profile/SAML2/POST/SLO');
     await page.waitForTimeout(2000);
 
     const content = await page.content();
     assert(content.includes('value="Go to https://samltest.id/Shibboleth.sso/SLO/Redirect?SAMLResponse='));
+
+    let metadataDir = path.join(__dirname, '/saml-md');
+    fs.rmdir(metadataDir, { recursive: true }, () => {});
 
     await browser.close();
 })();
