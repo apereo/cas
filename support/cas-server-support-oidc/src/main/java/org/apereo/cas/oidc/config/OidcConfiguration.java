@@ -382,7 +382,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @Bean
     public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver() {
-        return new OidcCallbackAuthorizeViewResolver();
+        return new OidcCallbackAuthorizeViewResolver(servicesManager.getObject());
     }
 
     @Bean
