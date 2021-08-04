@@ -31,15 +31,20 @@ async function fetchScratch(page) {
     return JSON.stringify(JSON.parse(response)[0].scratchCodes[0]);
 }
 
-async function fetchCode(page, acr) {
+async function fetchCode(page, acr, params) {
     let url = "https://localhost:8443/cas/oidc/authorize?"
-        + "response_type=code&client_id=client&scope=openid%20email%20profile%20address%20phone&"
-        + "prompt=login&redirect_uri=" + redirectUrl
+        + "response_type=code&client_id=client&scope=openid%20email%20profile%20address%20phone"
+        + "&redirect_uri=" + redirectUrl
         + "&nonce=3d3a7457f9ad3&state=1735fd6c43c14&acr_values=" + acr;
+    if (params !== undefined) {
+        url += "&" + params;
+    }
 
     console.log("Navigating to " + url);
     await page.goto(url);
-    await cas.loginWith(page, "casuser", "Mellon");
+    if (await cas.isVisible(page, "#username")) {
+        await cas.loginWith(page, "casuser", "Mellon");
+    }
 
     let scratch = await fetchScratch(page);
     console.log("Using scratch code " + scratch + " to login...");
@@ -91,7 +96,7 @@ async function exchangeCode(page, code, successHandler) {
     const page = await cas.newPage(browser);
 
     console.log("Fetching code for MFA based on ACR mfa-gauth")
-    let code = await fetchCode(page, "mfa-gauth");
+    let code = await fetchCode(page, "mfa-gauth", "login=prompt");
     await exchangeCode(page, code, function (idToken) {
         assert(idToken.sub !== null)
         assert(idToken.acr === "https://refeds.org/profile/mfa")
@@ -101,7 +106,19 @@ async function exchangeCode(page, code, successHandler) {
     await page.goto("https://localhost:8443/cas/logout");
 
     console.log("Fetching code for MFA based on ACR 1 mapped in configuration to mfa-gauth")
-    code = await fetchCode(page, "https://refeds.org/profile/mfa%20something-else");
+    code = await fetchCode(page, "https://refeds.org/profile/mfa%20something-else", "login=prompt");
+    await exchangeCode(page, code, function (idToken) {
+        assert(idToken.sub !== null)
+        assert(idToken.acr === "https://refeds.org/profile/mfa")
+        assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"))
+    })
+    await page.goto("https://localhost:8443/cas/logout");
+
+    console.log("Fetching code for MFA based on ACR mfa-gauth for existing SSO")
+    await page.goto("https://localhost:8443/cas/login");
+    await cas.loginWith(page, "casuser", "Mellon");
+
+    code = await fetchCode(page, "mfa-gauth");
     await exchangeCode(page, code, function (idToken) {
         assert(idToken.sub !== null)
         assert(idToken.acr === "https://refeds.org/profile/mfa")
