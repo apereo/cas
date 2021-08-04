@@ -108,6 +108,7 @@ exports.newPage = async (browser) => {
         page = await browser.newPage();
     }
     await page.setDefaultNavigationTimeout(0);
+    // await page.setRequestInterception(true);
     await page.bringToFront();
     return page;
 }
