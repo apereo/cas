@@ -7,7 +7,7 @@ env:
   REPOSITORY_PWD: ${{ secrets.ARTIFACTS_REPOSITORY_PWD }}
   REPOSITORY_URL: ${{ secrets.ARTIFACTS_REPOSITORY_URL }}
   RUBY_VERSION: 2.6
-  JDK_CURRENT: 11.0.11
+  JDK_CURRENT: 11.0.12
   TIMEOUT: 640000
 
 ##########################################################################
@@ -33,7 +33,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'adopt'
+          distribution: 'zulu'
       - name: Initialize
         run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
 
@@ -48,7 +48,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'adopt'
+          distribution: 'zulu'
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/checkout@v2
@@ -76,7 +76,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'adopt'
+          distribution: 'zulu'
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v2
