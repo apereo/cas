@@ -113,6 +113,7 @@ exports.newPage = async (browser) => {
 }
 
 exports.assertParameter = async (page, param) => {
+    console.log(`Asserting parameter ${param} in URL: ` + page.url());
     let result = new URL(page.url());
     let value = result.searchParams.get(param);
     console.log(`Parameter ${param} with value ${value}`);
