@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.config.OidcComponentSerializationConfiguration;
 import org.apereo.cas.oidc.config.OidcConfiguration;
+import org.apereo.cas.oidc.config.OidcEndpointsConfiguration;
 import org.apereo.cas.oidc.config.OidcThrottleConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.throttle.ThrottledRequestFilter;
@@ -41,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasThymeleafConfiguration.class,
     CasThemesConfiguration.class,
     OidcConfiguration.class,
+    OidcEndpointsConfiguration.class,
     OidcComponentSerializationConfiguration.class,
     OidcThrottleConfiguration.class,
     CasOAuth20Configuration.class,

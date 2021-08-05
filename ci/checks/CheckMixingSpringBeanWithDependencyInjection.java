@@ -34,10 +34,9 @@ public class CheckMixingSpringBeanWithDependencyInjection {
 
     private static void checkConfigurations(final String projectPath) throws Exception {
         var pass = new AtomicBoolean(true);
-        var pattern = Pattern.compile("@Qualifier\\(\"(.+)\"\\)");
+        var pattern = Pattern.compile("^.*@Qualifier\\(\"(.+)\"\\)$");
         Files.walk(Paths.get(projectPath))
             .filter(f -> Files.isRegularFile(f) && f.toFile().getName().endsWith("Configuration.java"))
-            .filter(f -> f.toFile().getName().contains("OidcConfiguration"))
             .forEach(file -> {
 //                print("Examining file %s", file);
                 var contents = readFile(file);
@@ -47,7 +46,8 @@ public class CheckMixingSpringBeanWithDependencyInjection {
                     var matcher2 = Pattern.compile(match).matcher(contents);
 //                    print("\tLooking for match %s", match);
                     if (matcher2.find()) {
-                        print("Found injected dependency that is also declared as a Bean method: %s", matcher2.group());
+                        print("Found injected dependency in file %s: Dependency injection is declared as a @Bean method: %s",
+                           file.toFile().getPath(), matcher2.group().trim());
                         pass.set(false);
                         break;
                     }
