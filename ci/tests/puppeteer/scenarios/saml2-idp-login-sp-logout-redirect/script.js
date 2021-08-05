@@ -56,7 +56,7 @@ const fs = require("fs");
 
     await page.setRequestInterception(true);
     await page.goto('https://localhost:8443/cas/idp/profile/SAML2/POST/SLO');
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(3000);
 
     const content = await page.content();
     assert(content.includes('value="Go to https://samltest.id/Shibboleth.sso/SLO/Redirect?SAMLResponse='));
