@@ -154,6 +154,7 @@ jobs:
           - CheckMissingTestTagAnnotation
           - CheckEnforceLombokAnnotations
           - CheckRequiredModuleAnnotationReferences
+          - CheckMixingSpringBeanWithDependencyInjection
     name: ${{ matrix.check }}
     steps:
       - uses: actions/checkout@v2
