@@ -23,11 +23,11 @@ const fs = require("fs");
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
         };
-
         request.continue(data);
     });
 
     await page.goto('https://localhost:8443/cas/idp/profile/SAML2/POST/SLO');
+    await page.waitForTimeout(2000);
     assert(page.url() === 'https://samltest.id/Shibboleth.sso/SLO/POST');
     let metadataDir = path.join(__dirname, '/saml-md');
     fs.rmdir(metadataDir, { recursive: true }, () => {});
