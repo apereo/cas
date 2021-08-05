@@ -81,7 +81,9 @@ enum TestCategories {
 if (rootProject.tasks.findByName("testCategories") == null) {
     rootProject.tasks.create(name: "testCategories", description: "Display all available test categories") {
         doLast {
+            def categoryMatchPattern = System.getenv().get("CATEGORY_REGEX") ?: ".*"
             def result = TestCategories.values()
+                    .filter { it.name().matches(categoryMatchPattern) }
                     .toSorted({ o1, o2 ->
                         o1.name().compareTo(o2.name())
                     })
