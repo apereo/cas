@@ -36,10 +36,13 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20AuthorizationResponseBuilder {
+public class OAuth20TokenAuthorizationResponseBuilder extends BaseOAuth20AuthorizationResponseBuilder {
     private final OAuth20TokenGenerator accessTokenGenerator;
+
     private final ServicesManager servicesManager;
+
     private final JwtBuilder accessTokenJwtBuilder;
+
     private final CasConfigurationProperties casProperties;
 
     @Override
@@ -59,6 +62,12 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
         return buildCallbackUrlResponseType(holder, redirectUri, accessToken, new ArrayList<>(0), refreshToken, context);
     }
 
+    @Override
+    public boolean supports(final JEEContext context) {
+        val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        return StringUtils.equalsIgnoreCase(responseType, OAuth20ResponseTypes.TOKEN.getType());
+    }
 
     /**
      * Build callback url response type string.
@@ -136,12 +145,5 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
 
         LOGGER.debug("Redirecting to URL [{}]", url);
         return buildResponseModelAndView(context, servicesManager, accessToken.getClientId(), url, new LinkedHashMap<>());
-    }
-
-    @Override
-    public boolean supports(final JEEContext context) {
-        val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        return StringUtils.equalsIgnoreCase(responseType, OAuth20ResponseTypes.TOKEN.getType());
     }
 }

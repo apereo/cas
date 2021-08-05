@@ -2,17 +2,12 @@ package org.apereo.cas.oidc.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
-import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
-import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilderConfigurer;
-import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticator;
@@ -43,29 +38,22 @@ import org.apereo.cas.oidc.scopes.DefaultOidcAttributeReleasePolicyFactory;
 import org.apereo.cas.oidc.scopes.OidcAttributeReleasePolicyFactory;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
 import org.apereo.cas.oidc.services.OidcServicesManagerRegisteredServiceLocator;
-import org.apereo.cas.oidc.slo.OidcSingleLogoutMessageCreator;
-import org.apereo.cas.oidc.slo.OidcSingleLogoutServiceLogoutUrlBuilder;
-import org.apereo.cas.oidc.slo.OidcSingleLogoutServiceMessageHandler;
-import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionService;
 import org.apereo.cas.oidc.token.OidcJwtAccessTokenCipherExecutor;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutor;
 import org.apereo.cas.oidc.util.OidcRequestSupport;
-import org.apereo.cas.oidc.web.OidcAccessTokenResponseGenerator;
 import org.apereo.cas.oidc.web.OidcAuthenticationAuthorizeSecurityLogic;
 import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolver;
 import org.apereo.cas.oidc.web.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolver;
-import org.apereo.cas.oidc.web.OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder;
-import org.apereo.cas.oidc.web.OidcImplicitIdTokenAuthorizationResponseBuilder;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.authenticator.OAuth20AuthenticationClientProvider;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
-import org.apereo.cas.support.oauth.authenticator.OAuthAuthenticationClientProvider;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -74,17 +62,12 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
-import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
-import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentialsResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20InvalidAuthorizationResponseBuilder;
-import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResourceOwnerCredentialsResponseBuilder;
-import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20JwtBuilder;
@@ -96,9 +79,7 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
-import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.StringSerializer;
-import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
@@ -133,10 +114,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcConfiguration}.
@@ -144,11 +123,14 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@SuppressWarnings("unchecked")
 @Configuration("oidcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class OidcConfiguration {
+
+    @Autowired
+    @Qualifier("oidcAuthorizationResponseBuilders")
+    private ObjectProvider<Set<OAuth20AuthorizationResponseBuilder>> oidcAuthorizationResponseBuilders;
 
     @Autowired
     @Qualifier("oauthRegisteredServiceCipherExecutor")
@@ -169,10 +151,6 @@ public class OidcConfiguration {
     @Autowired
     @Qualifier("oauthAuthorizationRequestValidators")
     private ObjectProvider<Set<OAuth20AuthorizationRequestValidator>> oauthRequestValidators;
-
-    @Autowired
-    @Qualifier("grantingTicketExpirationPolicy")
-    private ObjectProvider<ExpirationPolicyBuilder> grantingTicketExpirationPolicy;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
@@ -233,16 +211,12 @@ public class OidcConfiguration {
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
+    @Qualifier("oidcAccessTokenResponseGenerator")
+    private ObjectProvider<OAuth20AccessTokenResponseGenerator> oidcAccessTokenResponseGenerator;
+
+    @Autowired
     @Qualifier("oauthTokenRequestValidators")
     private ObjectProvider<Collection<OAuth20TokenRequestValidator>> oauthTokenRequestValidators;
-
-    @Autowired
-    @Qualifier("noRedirectHttpClient")
-    private ObjectProvider<HttpClient> httpClient;
-
-    @Autowired
-    @Qualifier("authenticationServiceSelectionPlan")
-    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
 
     @Autowired
     @Qualifier("oauthDistributedSessionCookieGenerator")
@@ -251,10 +225,6 @@ public class OidcConfiguration {
     @Autowired
     @Qualifier("oauthInvalidAuthorizationBuilder")
     private ObjectProvider<OAuth20InvalidAuthorizationResponseBuilder> oauthInvalidAuthorizationBuilder;
-
-    @Autowired
-    @Qualifier("urlValidator")
-    private ObjectProvider<UrlValidator> urlValidator;
 
     @Autowired
     @Qualifier("defaultAccessTokenFactory")
@@ -293,23 +263,6 @@ public class OidcConfiguration {
     @RefreshScope
     public OAuth20CasClientRedirectActionBuilder oidcCasClientRedirectActionBuilder() {
         return new OidcCasClientRedirectActionBuilder(oidcRequestSupport());
-    }
-
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "oidcIdTokenGenerator")
-    @Bean
-    public IdTokenGeneratorService oidcIdTokenGenerator() throws Exception {
-        val context = oidcConfigurationContext();
-        context.setIdTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService());
-        return new OidcIdTokenGeneratorService(context);
-    }
-
-    @ConditionalOnMissingBean(name = "oidcAccessTokenResponseGenerator")
-    @Bean
-    @RefreshScope
-    public OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator() throws Exception {
-        return new OidcAccessTokenResponseGenerator(oidcIdTokenGenerator(), accessTokenJwtBuilder(),
-            casProperties, oidcIssuerService());
     }
 
     @Bean
@@ -359,7 +312,7 @@ public class OidcConfiguration {
     public ServicesManagerRegisteredServiceLocator oidcServicesManagerRegisteredServiceLocator() {
         return new OidcServicesManagerRegisteredServiceLocator();
     }
-    
+
     @ConditionalOnMissingBean(name = "clientRegistrationRequestSerializer")
     @Bean
     @RefreshScope
@@ -400,13 +353,6 @@ public class OidcConfiguration {
     @RefreshScope
     public OAuth20UserProfileDataCreator oidcUserProfileDataCreator() {
         return new OidcUserProfileDataCreator(servicesManager.getObject(), profileScopeToAttributesFilter());
-    }
-    
-    @ConditionalOnMissingBean(name = "oidcSingleLogoutServiceLogoutUrlBuilderConfigurer")
-    @Bean
-    @RefreshScope
-    public SingleLogoutServiceLogoutUrlBuilderConfigurer oidcSingleLogoutServiceLogoutUrlBuilderConfigurer() {
-        return () -> new OidcSingleLogoutServiceLogoutUrlBuilder(servicesManager.getObject(), urlValidator.getObject());
     }
 
     @Bean
@@ -453,84 +399,6 @@ public class OidcConfiguration {
 
     @Bean
     @RefreshScope
-    @ConditionalOnMissingBean(name = "oidcImplicitIdTokenCallbackUrlBuilder")
-    public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenCallbackUrlBuilder() throws Exception {
-        return new OidcImplicitIdTokenAuthorizationResponseBuilder(
-            oidcIdTokenGenerator(),
-            oauthTokenGenerator.getObject(),
-            grantingTicketExpirationPolicy.getObject(),
-            servicesManager.getObject(),
-            accessTokenJwtBuilder(),
-            casProperties);
-    }
-
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "oidcImplicitIdTokenAndTokenCallbackUrlBuilder")
-    public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenAndTokenCallbackUrlBuilder() throws Exception {
-        return new OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder(
-            oidcIdTokenGenerator(),
-            oauthTokenGenerator.getObject(),
-            grantingTicketExpirationPolicy.getObject(),
-            servicesManager.getObject(),
-            accessTokenJwtBuilder(),
-            casProperties);
-    }
-
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "oidcResourceOwnerCredentialsResponseBuilder")
-    public OAuth20AuthorizationResponseBuilder oidcResourceOwnerCredentialsResponseBuilder() throws Exception {
-        return new OAuth20ResourceOwnerCredentialsResponseBuilder(
-            oidcAccessTokenResponseGenerator(),
-            oauthTokenGenerator.getObject(),
-            casProperties);
-    }
-
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "oidcClientCredentialsResponseBuilder")
-    public OAuth20AuthorizationResponseBuilder oidcClientCredentialsResponseBuilder() throws Exception {
-        return new OAuth20ClientCredentialsResponseBuilder(
-            oidcAccessTokenResponseGenerator(),
-            oauthTokenGenerator.getObject(),
-            casProperties);
-    }
-
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "oidcTokenResponseBuilder")
-    public OAuth20AuthorizationResponseBuilder oidcTokenResponseBuilder() {
-        return new OAuth20TokenAuthorizationResponseBuilder(
-            oauthTokenGenerator.getObject(),
-            servicesManager.getObject(),
-            accessTokenJwtBuilder(),
-            casProperties);
-    }
-
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "oidcAuthorizationCodeResponseBuilder")
-    public OAuth20AuthorizationResponseBuilder oidcAuthorizationCodeResponseBuilder() {
-        return new OAuth20AuthorizationCodeAuthorizationResponseBuilder(
-            ticketRegistry.getObject(),
-            defaultOAuthCodeFactory.getObject(),
-            servicesManager.getObject());
-    }
-
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "oidcAuthorizationResponseBuilders")
-    public Set<OAuth20AuthorizationResponseBuilder> oidcAuthorizationResponseBuilders() {
-        val builders = applicationContext.getBeansOfType(OAuth20AuthorizationResponseBuilder.class, false, true);
-        return builders.entrySet().stream().
-            filter(e -> !e.getKey().startsWith("oauth")).
-            map(Map.Entry::getValue).
-            collect(Collectors.toSet());
-    }
-
-    @Bean
-    @RefreshScope
     @ConditionalOnMissingBean(name = "oidcRegisteredServiceJwtAccessTokenCipherExecutor")
     public RegisteredServiceCipherExecutor oidcRegisteredServiceJwtAccessTokenCipherExecutor() {
         return new OidcRegisteredServiceJwtAccessTokenCipherExecutor(oidcDefaultJsonWebKeystoreCache.getObject(),
@@ -545,7 +413,7 @@ public class OidcConfiguration {
     }
 
     @Bean
-    public OAuthAuthenticationClientProvider oidcClientConfigurationAuthenticationClientProvider() {
+    public OAuth20AuthenticationClientProvider oidcClientConfigurationAuthenticationClientProvider() {
         return () -> {
             val accessTokenClient = new HeaderClient();
             accessTokenClient.setCredentialsExtractor(new BearerAuthExtractor());
@@ -558,7 +426,7 @@ public class OidcConfiguration {
     }
 
     @Bean
-    public OAuthAuthenticationClientProvider oidcPrivateKeyJwtClientProvider() {
+    public OAuth20AuthenticationClientProvider oidcPrivateKeyJwtClientProvider() {
         return () -> {
             val privateKeyJwtClient = new DirectFormClient(new OidcPrivateKeyJwtAuthenticator(
                 servicesManager.getObject(),
@@ -576,7 +444,7 @@ public class OidcConfiguration {
     }
 
     @Bean
-    public OAuthAuthenticationClientProvider oidcClientSecretJwtClientProvider() {
+    public OAuth20AuthenticationClientProvider oidcClientSecretJwtClientProvider() {
         return () -> {
             val client = new DirectFormClient(new OidcClientSecretJwtAuthenticator(
                 servicesManager.getObject(),
@@ -614,32 +482,6 @@ public class OidcConfiguration {
         return new OidcUserProfileViewRenderer(casProperties.getAuthn().getOauth(),
             servicesManager.getObject(),
             oidcUserProfileSigningAndEncryptionService());
-    }
-
-    @ConditionalOnMissingBean(name = "oidcSingleLogoutMessageCreator")
-    @Bean
-    @RefreshScope
-    public SingleLogoutMessageCreator oidcSingleLogoutMessageCreator() {
-        return new OidcSingleLogoutMessageCreator(oidcConfigurationContext());
-    }
-
-    @ConditionalOnMissingBean(name = "oidcSingleLogoutServiceMessageHandler")
-    @Bean
-    @RefreshScope
-    public SingleLogoutServiceMessageHandler oidcSingleLogoutServiceMessageHandler() {
-        return new OidcSingleLogoutServiceMessageHandler(httpClient.getObject(),
-            oidcSingleLogoutMessageCreator(),
-            servicesManager.getObject(),
-            singleLogoutServiceLogoutUrlBuilder.getObject(),
-            casProperties.getSlo().isAsynchronous(),
-            authenticationServiceSelectionPlan.getObject(),
-            oidcIssuerService());
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "oidcLogoutExecutionPlanConfigurer")
-    public LogoutExecutionPlanConfigurer oidcLogoutExecutionPlanConfigurer() {
-        return plan -> plan.registerSingleLogoutServiceMessageHandler(oidcSingleLogoutServiceMessageHandler());
     }
 
     @Bean
@@ -689,7 +531,7 @@ public class OidcConfiguration {
             .callbackAuthorizeViewResolver(callbackAuthorizeViewResolver())
             .profileScopeToAttributesFilter(profileScopeToAttributesFilter())
             .accessTokenGenerator(oauthTokenGenerator.getObject())
-            .accessTokenResponseGenerator(oidcAccessTokenResponseGenerator())
+            .accessTokenResponseGenerator(oidcAccessTokenResponseGenerator.getObject())
             .deviceTokenExpirationPolicy(deviceTokenExpirationPolicy.getObject())
             .accessTokenGrantRequestValidators(oauthTokenRequestValidators.getObject())
             .userProfileDataCreator(oidcUserProfileDataCreator())
@@ -697,7 +539,7 @@ public class OidcConfiguration {
             .oAuthCodeFactory(defaultOAuthCodeFactory.getObject())
             .consentApprovalViewResolver(consentApprovalViewResolver())
             .authenticationBuilder(authenticationBuilder.getObject())
-            .oauthAuthorizationResponseBuilders(oidcAuthorizationResponseBuilders())
+            .oauthAuthorizationResponseBuilders(oidcAuthorizationResponseBuilders.getObject())
             .oauthInvalidAuthorizationResponseBuilder(oauthInvalidAuthorizationBuilder.getObject())
             .oauthRequestValidators(oauthRequestValidators.getObject())
             .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder.getObject())
