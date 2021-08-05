@@ -4,13 +4,13 @@ import org.pac4j.core.client.Client;
 import org.springframework.core.Ordered;
 
 /**
- * This is {@link OAuthAuthenticationClientProvider}.
+ * This is {@link OAuth20AuthenticationClientProvider}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
 @FunctionalInterface
-public interface OAuthAuthenticationClientProvider extends Ordered {
+public interface OAuth20AuthenticationClientProvider extends Ordered {
     @Override
     default int getOrder() {
         return 0;
