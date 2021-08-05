@@ -14,6 +14,10 @@ const cas = require('../../cas.js');
     await submitLogin(page);
     await assertFailure(page);
 
+    await page.goto("https://localhost:8443/cas/login");
+    await submitLogin(page);
+    await page.goto("https://localhost:8443/cas/login?service=https://credtype.userpswd.example.com");
+    await assertFailure(page);
     await browser.close();
 })();
 
@@ -23,6 +27,6 @@ async function submitLogin(page) {
 
 async function assertFailure(page) {
     let header = await cas.innerText(page, '#loginErrorsPanel p');
-
     assert(header === "Service access denied due to missing privileges.")
+    await page.waitForTimeout(1000)
 }

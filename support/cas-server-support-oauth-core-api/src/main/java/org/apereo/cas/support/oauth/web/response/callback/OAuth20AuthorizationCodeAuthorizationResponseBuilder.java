@@ -31,7 +31,7 @@ import java.util.LinkedHashMap;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAuth20AuthorizationResponseBuilder {
+public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOAuth20AuthorizationResponseBuilder {
     /**
      * The Ticket registry.
      */
