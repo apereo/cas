@@ -1,71 +1,19 @@
 package org.apereo.cas.oidc.config;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
-import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
-import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
-import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilderConfigurer;
-import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticator;
-import org.apereo.cas.oidc.authn.OidcCasCallbackUrlResolver;
-import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticator;
-import org.apereo.cas.oidc.authn.OidcClientSecretJwtAuthenticator;
-import org.apereo.cas.oidc.authn.OidcPrivateKeyJwtAuthenticator;
-import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
-import org.apereo.cas.oidc.claims.mapping.OidcDefaultAttributeToScopeClaimMapper;
-import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
-import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactory;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
-import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerUserInfoRepository;
-import org.apereo.cas.oidc.discovery.webfinger.userinfo.OidcEchoingWebFingerUserInfoRepository;
-import org.apereo.cas.oidc.discovery.webfinger.userinfo.OidcGroovyWebFingerUserInfoRepository;
-import org.apereo.cas.oidc.discovery.webfinger.userinfo.OidcRestfulWebFingerUserInfoRepository;
-import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
-import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequestSerializer;
-import org.apereo.cas.oidc.issuer.OidcDefaultIssuerService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoader;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
-import org.apereo.cas.oidc.jwks.OidcRegisteredServiceJsonWebKeystoreCacheLoader;
-import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheExpirationPolicy;
 import org.apereo.cas.oidc.jwks.generator.OidcDefaultJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.generator.OidcRestfulJsonWebKeystoreGeneratorService;
-import org.apereo.cas.oidc.profile.OidcProfileScopeToAttributesFilter;
-import org.apereo.cas.oidc.profile.OidcUserProfileDataCreator;
-import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionService;
-import org.apereo.cas.oidc.profile.OidcUserProfileViewRenderer;
-import org.apereo.cas.oidc.scopes.DefaultOidcAttributeReleasePolicyFactory;
-import org.apereo.cas.oidc.scopes.OidcAttributeReleasePolicyFactory;
-import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
-import org.apereo.cas.oidc.services.OidcServicesManagerRegisteredServiceLocator;
-import org.apereo.cas.oidc.slo.OidcSingleLogoutMessageCreator;
-import org.apereo.cas.oidc.slo.OidcSingleLogoutServiceLogoutUrlBuilder;
-import org.apereo.cas.oidc.slo.OidcSingleLogoutServiceMessageHandler;
-import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
-import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionService;
-import org.apereo.cas.oidc.token.OidcJwtAccessTokenCipherExecutor;
-import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutor;
-import org.apereo.cas.oidc.util.OidcRequestSupport;
-import org.apereo.cas.oidc.web.OidcAccessTokenResponseGenerator;
-import org.apereo.cas.oidc.web.OidcAuthenticationAuthorizeSecurityLogic;
-import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolver;
-import org.apereo.cas.oidc.web.OidcCasClientRedirectActionBuilder;
-import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolver;
 import org.apereo.cas.oidc.web.OidcHandlerInterceptorAdapter;
-import org.apereo.cas.oidc.web.OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder;
-import org.apereo.cas.oidc.web.OidcImplicitIdTokenAuthorizationResponseBuilder;
 import org.apereo.cas.oidc.web.OidcLocaleChangeInterceptor;
 import org.apereo.cas.oidc.web.controllers.authorize.OidcAuthorizeEndpointController;
 import org.apereo.cas.oidc.web.controllers.discovery.OidcWellKnownEndpointController;
@@ -81,51 +29,13 @@ import org.apereo.cas.oidc.web.controllers.token.OidcRevocationEndpointControlle
 import org.apereo.cas.oidc.web.flow.OidcMultifactorAuthenticationTrigger;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIAction;
 import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurer;
-import org.apereo.cas.services.RegisteredServiceCipherExecutor;
-import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
-import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
-import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
-import org.apereo.cas.support.oauth.authenticator.OAuthAuthenticationClientProvider;
-import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
-import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
-import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
-import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
-import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
-import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
-import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilder;
-import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
-import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentialsResponseBuilder;
-import org.apereo.cas.support.oauth.web.response.callback.OAuth20InvalidAuthorizationResponseBuilder;
-import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResourceOwnerCredentialsResponseBuilder;
-import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
-import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
-import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
-import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
-import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.IdTokenGeneratorService;
-import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
-import org.apereo.cas.ticket.accesstoken.OAuth20JwtBuilder;
-import org.apereo.cas.ticket.code.OAuth20CodeFactory;
-import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
-import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.token.JwtBuilder;
-import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
-import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.UrlValidator;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -137,22 +47,14 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.core.credentials.extractor.BearerAuthExtractor;
 import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
-import org.pac4j.core.http.url.UrlResolver;
-import org.pac4j.http.client.direct.DirectFormClient;
-import org.pac4j.http.client.direct.HeaderClient;
 import org.pac4j.springframework.web.SecurityInterceptor;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -171,15 +73,12 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
-import java.io.Serializable;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcEndpointsConfiguration}.
@@ -187,7 +86,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@SuppressWarnings("unchecked")
 @Configuration("oidcEndpointsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class OidcEndpointsConfiguration {
@@ -295,7 +193,7 @@ public class OidcEndpointsConfiguration {
             .expireAfterWrite(Duration.ofMinutes(oidc.getJwks().getJwksCacheInMinutes()))
             .build(oidcDefaultJsonWebKeystoreCacheLoader());
     }
-    
+
     @Bean
     public WebMvcConfigurer oidcWebMvcConfigurer() {
         return new WebMvcConfigurer() {
@@ -328,7 +226,7 @@ public class OidcEndpointsConfiguration {
         interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
         return interceptor;
     }
-    
+
     @Bean
     public HandlerInterceptor oauthInterceptor() {
         val oidc = casProperties.getAuthn().getOidc();
@@ -346,7 +244,7 @@ public class OidcEndpointsConfiguration {
             oauthDistributedSessionStore.getObject(),
             oauthRequestValidators.getObject());
     }
-    
+
     @Bean
     @ConditionalOnMissingBean(name = "oidcProtocolEndpointConfigurer")
     @RefreshScope
@@ -456,7 +354,7 @@ public class OidcEndpointsConfiguration {
     public OidcAuthorizeEndpointController oidcAuthorizeController() {
         return new OidcAuthorizeEndpointController(oidcConfigurationContext.getObject());
     }
-    
+
     @RefreshScope
     @Bean
     public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver() {

@@ -1,10 +1,8 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 
-import lombok.val;
 import org.pac4j.core.context.JEEContext;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -51,10 +49,7 @@ public interface OAuth20AuthorizationResponseBuilder {
      * @param parameters      the parameters
      * @return the model and view
      */
-    default ModelAndView buildResponseModelAndView(final JEEContext context, final ServicesManager servicesManager,
-                                                   final String clientId, final String redirectUrl,
-                                                   final Map<String, String> parameters) {
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
-        return OAuth20Utils.buildResponseModelAndView(context, registeredService, redirectUrl, parameters);
-    }
+    ModelAndView buildResponseModelAndView(JEEContext context, ServicesManager servicesManager,
+                                           String clientId, String redirectUrl,
+                                           Map<String, String> parameters);
 }

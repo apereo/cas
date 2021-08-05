@@ -23,7 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @since 5.2.0
  */
 @RequiredArgsConstructor
-public class OAuth20ResourceOwnerCredentialsResponseBuilder implements OAuth20AuthorizationResponseBuilder {
+public class OAuth20ResourceOwnerCredentialsResponseBuilder extends BaseOAuth20AuthorizationResponseBuilder {
     private final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator;
     private final OAuth20TokenGenerator accessTokenGenerator;
     private final CasConfigurationProperties casProperties;
