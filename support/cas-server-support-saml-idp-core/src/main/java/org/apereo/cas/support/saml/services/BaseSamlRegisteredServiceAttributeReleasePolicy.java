@@ -42,10 +42,14 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
     private static final long serialVersionUID = -3301632236702329694L;
 
     @SneakyThrows
-    private static String getEntityIdFromRequest(final HttpServletRequest request) {
+    private static String getEntityIdFromRequest(final HttpServletRequest request, final Service service) {
         val entityId = request.getParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID);
         if (StringUtils.isNotBlank(entityId)) {
             return entityId;
+        }
+        val entityIdAttribute = service.getAttributes().get(SamlProtocolConstants.PARAMETER_ENTITY_ID);
+        if (entityIdAttribute != null && entityIdAttribute.size() > 0) {
+            return (String) entityIdAttribute.get(0);
         }
         val svcParam = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
         if (StringUtils.isNotBlank(svcParam)) {
@@ -89,7 +93,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
             val samlRegisteredService = (SamlRegisteredService) registeredService;
 
             val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-            val entityId = getEntityIdFromRequest(request);
+            val entityId = getEntityIdFromRequest(request, selectedService);
             val applicationContext = ApplicationContextProvider.getApplicationContext();
             val resolver = applicationContext.getBean(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME,
                 SamlRegisteredServiceCachingMetadataResolver.class);
