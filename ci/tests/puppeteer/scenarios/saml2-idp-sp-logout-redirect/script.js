@@ -24,6 +24,7 @@ const fs = require("fs");
             },
         };
         page.setRequestInterception(true);
+        request.setRequestInterception(true)
         request.continue(data);
         page.setRequestInterception(false);
     });
