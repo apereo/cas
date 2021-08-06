@@ -37,7 +37,6 @@ import org.springframework.test.context.TestPropertySource;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Map;
 import java.util.Set;
 
@@ -64,6 +63,7 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
 
     @BeforeEach
     public void beforeEach() {
+        servicesManager.deleteAll();
         samlRegisteredService = getSamlRegisteredServiceFor(false, false,
             false, "https://cassp.example.org");
         servicesManager.save(samlRegisteredService);
