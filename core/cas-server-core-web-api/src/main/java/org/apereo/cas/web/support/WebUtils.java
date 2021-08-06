@@ -1007,7 +1007,7 @@ public class WebUtils {
      * @return the model and view
      */
     public static ModelAndView produceErrorView(final String view, final Exception e) {
-        val mv = new ModelAndView(view, CollectionUtils.wrap("rootCauseException", e));
+        val mv = new ModelAndView(view, CollectionUtils.wrap(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, e));
         mv.setStatus(HttpStatus.BAD_REQUEST);
         return mv;
     }

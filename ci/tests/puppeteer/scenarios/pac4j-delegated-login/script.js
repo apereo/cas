@@ -18,7 +18,6 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(1000);
 
     let header = await cas.textContent(page, "#content div h2");
-
     assert(header === "Unauthorized Access")
     header = await cas.textContent(page, "#content div p");
 

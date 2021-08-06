@@ -1,7 +1,9 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPCoreProperties;
 import org.apereo.cas.services.RegisteredService;
@@ -124,7 +126,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param ex  the ex
      * @return the model and view
      */
-    @ExceptionHandler({UnauthorizedServiceException.class, SamlException.class})
+    @ExceptionHandler({PrincipalException.class, UnauthorizedServiceException.class, SamlException.class})
     public ModelAndView handleUnauthorizedServiceException(final HttpServletRequest req, final Exception ex) {
         return WebUtils.produceUnauthorizedErrorView(ex);
     }
@@ -376,6 +378,16 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val service = configurationContext.getWebApplicationServiceFactory().createService(id);
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(id));
         val registeredService = configurationContext.getServicesManager().findServiceBy(service, SamlRegisteredService.class);
+
+        val audit = AuditableContext.builder()
+            .service(service)
+            .authentication(authentication)
+            .registeredService(registeredService)
+            .httpRequest(request)
+            .httpResponse(response)
+            .build();
+        val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
+        accessResult.throwExceptionIfNeeded();
 
         val assertion = buildCasAssertion(authentication, service, registeredService, Map.of());
         val authenticationContext = buildAuthenticationContextPair(request, response, context);
