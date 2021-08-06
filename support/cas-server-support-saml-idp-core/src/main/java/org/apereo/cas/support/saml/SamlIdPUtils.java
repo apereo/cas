@@ -168,18 +168,20 @@ public class SamlIdPUtils {
         if (acsFromRequest != null) {
             var requestSigned = authnRequest.isSigned()
                 || (messageContext.containsSubcontext(SAMLBindingContext.class)
-                    && messageContext.getSubcontext(SAMLBindingContext.class).hasBindingSignature());
-            
+                && messageContext.getSubcontext(SAMLBindingContext.class).hasBindingSignature());
+
             if (!requestSigned && authnRequest.getExtensions() != null && authnRequest.getExtensions().getUnknownXMLObjects() != null) {
                 LOGGER.debug("Checking SAML authentication extensions [{}]", authnRequest.getExtensions().getUnknownXMLObjects());
                 requestSigned = authnRequest.getExtensions().getUnknownXMLObjects()
                     .stream()
                     .filter(object -> object.getElementQName().equals(Attribute.DEFAULT_ELEMENT_NAME))
                     .map(Attribute.class::cast)
-                    .filter(attribute -> attribute.getName().equalsIgnoreCase("hasBindingSignature"))
-                    .allMatch(attribute -> attribute.getAttributeValues().stream()
+                    .allMatch(attribute -> !attribute.getAttributeValues().isEmpty()
+                        && attribute.getName().equalsIgnoreCase("hasBindingSignature")
+                        && attribute.getAttributeValues().stream()
                         .map(AttributeValue.class::cast)
                         .allMatch(value -> Boolean.parseBoolean(value.getTextContent())));
+
             }
 
             if (!requestSigned) {
