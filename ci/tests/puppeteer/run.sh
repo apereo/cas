@@ -68,8 +68,9 @@ keystore="$PWD"/ci/tests/puppeteer/overlay/thekeystore
 printgreen "\nGenerating keystore ${keystore} for CAS with\nDN=${dname}, SAN=${subjectAltName} ..."
 [ -f "${keystore}" ] && rm "${keystore}"
 keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
-  -keystore "${keystore}" -dname "${dname}" -ext SAN="${subjectAltName}"
+  -keystore "${keystore}" -dname "${dname}" 
 [ -f "${keystore}" ] && echo "Created ${keystore}"
+export CAS_KEYSTORE="${keystore}"
 
 echo -e "******************************************************"
 printgreen "Scenario: ${scenario}"
@@ -134,6 +135,7 @@ if [[ "$DEBUG" == "debug" ]]; then
 fi
 echo -e "\nLaunching CAS with properties [${properties}], run arguments [${runArgs}] and dependencies [${dependencies}]"
 java ${runArgs} -jar "$PWD"/cas.war ${properties} \
+  -Dcom.sun.net.ssl.checkRevocation=false \
   --spring.profiles.active=none --server.ssl.key-store="$keystore" &
 pid=$!
 printgreen "\nWaiting for CAS under process id ${pid}"
@@ -142,12 +144,20 @@ until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/l
     sleep 1
 done
 printgreen "\n\nReady!"
+
+readyScript=$(cat "${config}" | jq -j '.readyScript // empty')
+readyScript="${readyScript//\$\{PWD\}/${PWD}}"
+readyScript="${readyScript//\$\{SCENARIO\}/${scenarioName}}"
+[ -n "${readyScript}" ] && \
+  printgreen "\n\nReady script: ${readyScript}" && \
+  chmod +x "${readyScript}" && \
+  eval "export SCENARIO=${scenarioName}"; eval "${readyScript}"
+  
 clear
 scriptPath="${scenario}/script.js"
 echo -e "*************************************"
 echo -e "Running ${scriptPath}\n"
 export NODE_TLS_REJECT_UNAUTHORIZED=0
-export CAS_KEYSTORE="${keystore}"
 node --unhandled-rejections=strict ${scriptPath} ${config}
 RC=$?
 if [[ $RC -ne 0 ]]; then
