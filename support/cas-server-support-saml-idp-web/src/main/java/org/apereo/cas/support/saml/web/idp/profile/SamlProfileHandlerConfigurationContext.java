@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
@@ -91,4 +92,5 @@ public class SamlProfileHandlerConfigurationContext {
 
     private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
+    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 }

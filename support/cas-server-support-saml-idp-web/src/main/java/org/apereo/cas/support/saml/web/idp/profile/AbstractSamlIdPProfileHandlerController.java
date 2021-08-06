@@ -1,8 +1,10 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -113,7 +115,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param ex  the ex
      * @return the model and view
      */
-    @ExceptionHandler({UnauthorizedServiceException.class, SamlException.class})
+    @ExceptionHandler({PrincipalException.class, UnauthorizedServiceException.class, SamlException.class})
     public ModelAndView handleUnauthorizedServiceException(final HttpServletRequest req, final Exception ex) {
         return WebUtils.produceUnauthorizedErrorView(ex);
     }
@@ -439,6 +441,17 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                 if (buildResponseFromSso) {
                     storeSamlAuthnRequest(request, response, pair);
 
+                    val audit = AuditableContext.builder()
+                        .service(service)
+                        .authentication(authentication)
+                        .registeredService(registeredService)
+                        .httpRequest(request)
+                        .httpResponse(response)
+                        .build();
+                    val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
+                    accessResult.throwExceptionIfNeeded();
+
+                    
                     val assertion = buildCasAssertion(authentication, service, registeredService, Map.of());
                     LOGGER.debug("Building CAS assertion [{}] for issuer [{}]", assertion, issuer);
                     val messageContext = Objects.requireNonNull(pair.getRight());
