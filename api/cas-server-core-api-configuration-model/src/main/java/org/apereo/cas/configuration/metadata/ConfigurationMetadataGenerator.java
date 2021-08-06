@@ -272,7 +272,9 @@ public class ConfigurationMetadataGenerator {
         for (val prop : propertiesToProcess) {
 
             val matcher = NESTED_CLASS_PATTERN.matcher(prop.getType());
-            matcher.matches();
+            if (!matcher.matches()) {
+                throw new RuntimeException("Unable to find a match for " + prop.getType());
+            }
 
             val parent = matcher.group(1);
             val innerType = matcher.group(2);
@@ -304,16 +306,27 @@ public class ConfigurationMetadataGenerator {
                     .stream()
                     .peek(member -> {
                         if (member.isFieldDeclaration()) {
-                            val fieldDecl = member.asFieldDeclaration();
-                            fieldDecl.getVariable(0).getInitializer().ifPresent(exp -> {
-                                if (exp instanceof LiteralStringValueExpr) {
-                                    prop.setDefaultValue(((LiteralStringValueExpr) exp).getValue());
-                                } else if (exp instanceof BooleanLiteralExpr) {
-                                    prop.setDefaultValue(((BooleanLiteralExpr) exp).getValue());
-                                } else if (exp instanceof FieldAccessExpr) {
-                                    prop.setDefaultValue(((FieldAccessExpr) exp).getNameAsString());
+                            var fieldDecl = member.asFieldDeclaration();
+                            var variable = fieldDecl.getVariable(0);
+
+                            if (variable.getInitializer().isPresent()) {
+                                var beginIndex = prop.getName().lastIndexOf('.');
+                                var propShortName = beginIndex != -1 ? prop.getName().substring(beginIndex + 1) : prop.getName();
+                                var names = RelaxedPropertyNames.forCamelCase(variable.getNameAsString()).getValues();
+                                if (names.contains(propShortName)) {
+                                    variable.getInitializer().ifPresent(exp -> {
+                                        var value = (Object) null;
+                                        if (exp instanceof LiteralStringValueExpr) {
+                                            value = ((LiteralStringValueExpr) exp).getValue();
+                                        } else if (exp instanceof BooleanLiteralExpr) {
+                                            value = ((BooleanLiteralExpr) exp).getValue();
+                                        } else if (exp instanceof FieldAccessExpr) {
+                                            value = ((FieldAccessExpr) exp).getNameAsString();
+                                        }
+                                        prop.setDefaultValue(value);
+                                    });
                                 }
-                            });
+                            }
                         }
                     })
                     .filter(member -> {
