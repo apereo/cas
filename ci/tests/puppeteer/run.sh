@@ -147,6 +147,7 @@ scriptPath="${scenario}/script.js"
 echo -e "*************************************"
 echo -e "Running ${scriptPath}\n"
 export NODE_TLS_REJECT_UNAUTHORIZED=0
+export CAS_KEYSTORE="${keystore}"
 node --unhandled-rejections=strict ${scriptPath} ${config}
 RC=$?
 if [[ $RC -ne 0 ]]; then

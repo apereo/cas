@@ -254,7 +254,8 @@ public class OAuth20Utils {
      * @return the model and view
      */
     public static ModelAndView produceErrorView(final Exception e, final HttpStatus status) {
-        val mv = new ModelAndView(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, CollectionUtils.wrap("rootCauseException", e));
+        val mv = new ModelAndView(CasWebflowConstants.VIEW_ID_SERVICE_ERROR,
+            CollectionUtils.wrap(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, e));
         mv.setStatus(status);
         return mv;
     }

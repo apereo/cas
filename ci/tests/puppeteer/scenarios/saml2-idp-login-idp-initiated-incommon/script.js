@@ -2,7 +2,6 @@ const puppeteer = require('puppeteer');
 const performance = require('perf_hooks').performance;
 const fs = require('fs');
 const path = require('path');
-const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
