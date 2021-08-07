@@ -1,6 +1,8 @@
 const assert = require('assert');
 const axios = require('axios');
 const https = require('https');
+const {spawn} = require('child_process');
+const waitOn = require('wait-on');
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
@@ -103,6 +105,7 @@ exports.type = async (page, selector, value) => {
 }
 
 exports.newPage = async (browser) => {
+    console.clear();
     let page = (await browser.pages())[0];
     if (page === undefined) {
         page = await browser.newPage();
@@ -176,4 +179,41 @@ exports.doPost = async (url, params, headers, successHandler, failureHandler) =>
         .catch(error => {
             failureHandler(error);
         })
+}
+
+exports.waitFor = async (url, successHandler, failureHandler) => {
+    let opts = {
+        resources: [url],
+        delay: 1000,
+        interval: 2000,
+        timeout: 120000
+    };
+    await waitOn(opts)
+        .then(function () {
+            successHandler("good")
+        })
+        .catch(function (err) {
+            failureHandler(err);
+        });
+}
+
+exports.launchSamlSp = async (idpMetadataPath, samlSpDir, samlOpts) => {
+    let args = ['-q', '-x', 'test', '--no-daemon',
+        '-DidpMetadataType=idpMetadataFile',
+        '-DidpMetadata=' + idpMetadataPath,
+        '-Dsp.sslKeystorePath=' + process.env.CAS_KEYSTORE];
+    args = args.concat(samlOpts);
+    console.log("Launching SAML2 SP in " + samlSpDir + " with " + args);
+    const exec = spawn('./gradlew', args, {cwd: samlSpDir});
+
+    exec.stdout.on('data', (data) => {
+        console.log(data.toString());
+    });
+    exec.stderr.on('data', (data) => {
+        console.error(data.toString());
+    });
+    exec.on('exit', (code) => {
+        console.log(`Child process exited with code ${code}`);
+    });
+    return exec;
 }
