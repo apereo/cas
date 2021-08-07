@@ -4,7 +4,7 @@
   "name" : "Sample",
   "id" : 1,
   "evaluationOrder" : 1,
-  "metadataLocation" : "https://localhost:9876/sp/saml/metadata",
+  "metadataLocation" : "http://localhost:8076/sp/saml/metadata",
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
   }

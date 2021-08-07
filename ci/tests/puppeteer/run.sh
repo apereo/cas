@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 RED="\e[31m"
 GREEN="\e[32m"
 YELLOW="\e[33m"
@@ -52,7 +51,7 @@ random=$(openssl rand -hex 8)
 
 if [[ ! -d "$PWD"/ci/tests/puppeteer/node_modules/puppeteer ]] ; then
   printgreen "Installing Puppeteer"
-  npm_install_cmd="npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer jsonwebtoken axios request colors"
+  npm_install_cmd="npm i --prefix "$PWD"/ci/tests/puppeteer"
   eval $npm_install_cmd || eval $npm_install_cmd || eval $npm_install_cmd
 else
   printgreen "Using existing Puppeteer modules..."
@@ -144,14 +143,6 @@ until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/l
     sleep 1
 done
 printgreen "\n\nReady!"
-
-readyScript=$(cat "${config}" | jq -j '.readyScript // empty')
-readyScript="${readyScript//\$\{PWD\}/${PWD}}"
-readyScript="${readyScript//\$\{SCENARIO\}/${scenarioName}}"
-[ -n "${readyScript}" ] && \
-  printgreen "\n\nReady script: ${readyScript}" && \
-  chmod +x "${readyScript}" && \
-  eval "export SCENARIO=${scenarioName}"; eval "${readyScript}"
   
 clear
 scriptPath="${scenario}/script.js"
