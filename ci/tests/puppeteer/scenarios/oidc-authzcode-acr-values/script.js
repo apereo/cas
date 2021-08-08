@@ -56,7 +56,7 @@ async function exchangeCode(page, code, successHandler) {
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json"
-    }, function (res) {
+    }, async function (res) {
         console.log(res.data);
         assert(res.data.access_token !== null);
 
@@ -64,8 +64,7 @@ async function exchangeCode(page, code, successHandler) {
         console.log("Received access token " + accessToken);
 
         console.log("Decoding ID token...");
-        let decoded = jwt.decode(res.data.id_token);
-        console.log(decoded);
+        let decoded = await cas.decodeJwt(res.data.id_token);
 
         successHandler(decoded);
     }, function (error) {
