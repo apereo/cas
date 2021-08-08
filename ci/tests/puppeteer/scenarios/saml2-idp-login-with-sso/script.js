@@ -28,9 +28,7 @@ const cas = require('../../cas.js');
     url += "&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin";
     await page.goto(url);
     await page.waitForTimeout(1000)
-    header = await cas.innerText(page, '#content h2');
-    assert(header === "Application Not Authorized to Use CAS")
-
+    await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS")
     let metadataDir = path.join(__dirname, '/saml-md');
     fs.rmdir(metadataDir, { recursive: true }, () => {});
     await browser.close();

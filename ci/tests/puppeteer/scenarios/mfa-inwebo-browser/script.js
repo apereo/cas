@@ -20,8 +20,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(1000);
 
     console.log("Checking for PIN code...")
-    let header = await cas.innerText(page, "main h2");
-    assert(header === "Fill in your PIN code:")
+    await cas.assertInnerText(page, "main h2","Fill in your PIN code:" )
     const enrollForm = await page.$('#enrollForm');
     assert(enrollForm != null);
 
@@ -29,8 +28,6 @@ const cas = require('../../cas.js');
     // And redirect to error/registration
     console.log("Checking for error/registration")
     await page.waitForTimeout(5000);
-    const header2 = await cas.innerText(page, 'main h2');
-    assert(header2 === "An error has occurred.")
-
+    await cas.assertInnerText(page, "main h2","An error has occurred." )
     await browser.close();
 })();
