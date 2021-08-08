@@ -19,9 +19,9 @@ const cas = require('../../cas.js');
     await cas.assertVisibility(page, '#username')
 
     let uid = await page.$('#username');
-    assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")))
-    assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")))
-    assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")))
+    await cas.assertAttribute(uid, "autocapitalize", "none");
+    await cas.assertAttribute(uid, "spellcheck", "false");
+    await cas.assertAttribute(uid, "autocomplete", "username");
 
     await cas.assertVisibility(page, '#password')
 

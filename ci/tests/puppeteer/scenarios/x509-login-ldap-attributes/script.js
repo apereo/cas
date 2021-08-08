@@ -10,8 +10,7 @@ const request = require('request');
     await pageldap.goto("https://localhost:8443/cas/login");
     await cas.loginWith(pageldap, "aburr", "P@ssw0rd");
     await cas.assertTicketGrantingCookie(pageldap);
-    const headerldap = await cas.innerText(pageldap, '#content div h2');
-    assert(headerldap === "Log In Successful")
+    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     const attributesldap = await cas.innerText(pageldap, '#attribute-tab-0 table#attributesTable tbody');
     assert(attributesldap.includes("aburr"))
     assert(attributesldap.includes("someattribute"))
@@ -61,8 +60,7 @@ const request = require('request');
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(5000)
 
-    const header = await cas.innerText(page, "#content div h2");
-    assert(header === "Log In Successful")
+    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
 
     const body = await cas.innerText(page, '#content div p');
     assert(body.includes("1234567890@college.edu"))
