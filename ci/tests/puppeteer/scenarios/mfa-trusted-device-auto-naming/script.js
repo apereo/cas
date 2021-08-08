@@ -22,16 +22,7 @@ const cas = require("../../cas.js");
     assert(element === "Log In Successful")
 
     await cas.assertTicketGrantingCookie(page);
-
-    options1 = {
-        protocol: "https:",
-        hostname: "localhost",
-        port: 8443,
-        path: "/cas/actuator/multifactorTrustedDevices",
-        method: "GET",
-        rejectUnauthorized: false,
-    };
-    response = await httpGet(options1);
+    response = await cas.doRequest("https://localhost:8443/cas/actuator/multifactorTrustedDevices");
     let record = JSON.parse(response)[0];
     assert(record.id !== null);
     assert(record.name !== null);

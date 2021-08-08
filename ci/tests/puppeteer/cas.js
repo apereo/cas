@@ -146,14 +146,14 @@ exports.assertTicketParameter = async (page) => {
     return ticket;
 }
 
-exports.doRequest = async(url, method = "GET", headers = {}, statusCode = 0) => {
+exports.doRequest = async(url, method = "GET", headers = {}, statusCode = 0, body = undefined) => {
     return new Promise((resolve, reject) => {
         let options = {
             method: method,
             rejectUnauthorized: false,
             headers: headers
         };
-        https.get(url, options, res => {
+        let request = https.request(url, options, res => {
             console.log("Response status code: " + res.statusCode)
             if (statusCode > 0) {
                 assert(res.statusCode === statusCode);
@@ -164,6 +164,9 @@ exports.doRequest = async(url, method = "GET", headers = {}, statusCode = 0) => 
             res.on("data", chunk => body.push(chunk));
             res.on("end", () => resolve(body.join("")));
         }).on("error", reject);
+        if (body !== undefined) {
+            request.write(body);
+        }
     });
 }
 

@@ -24,10 +24,8 @@ const cas = require('../../cas.js');
 
 
 async function executeRequest(url, statusCode) {
-    return await cas.doRequest({
-        url: url, method: "POST", statusCode: statusCode, headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    });
+    return await cas.doRequest(url, "POST", {
+        'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }, statusCode);
 }
