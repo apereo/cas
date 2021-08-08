@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const cas = require('../../cas.js');
@@ -33,12 +32,8 @@ const cas = require('../../cas.js');
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(2000)
 
-    const title = await page.title();
-    console.log(title);
-    assert(title === "CAS - Central Authentication Service")
-
-    const header = await cas.innerText(page, '#content div h2');
-    assert(header === "Log In Successful")
+    await cas.assertPageTitle(page, "CAS - Central Authentication Service");
+    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
 
     let metadataDir = path.join(__dirname, '/saml-md');
     fs.rmdir(metadataDir, { recursive: true }, () => {});

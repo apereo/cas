@@ -18,8 +18,7 @@ const cas = require("../../cas.js");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
-    let element = await cas.innerText(page, '#content div h2');
-    assert(element === "Log In Successful")
+    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
 
     await cas.assertTicketGrantingCookie(page);
     response = await cas.doRequest("https://localhost:8443/cas/actuator/multifactorTrustedDevices");

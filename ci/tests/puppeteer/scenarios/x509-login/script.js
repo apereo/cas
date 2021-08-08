@@ -48,8 +48,7 @@ const request = require('request');
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(5000)
 
-    const header = await cas.innerText(page, "#content div h2");
-    assert(header === "Log In Successful")
+    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
 
     const body = await cas.innerText(page, '#content div p');
     assert(body.includes("CN=mmoayyed, OU=dev, O=bft, L=mt, C=world"))

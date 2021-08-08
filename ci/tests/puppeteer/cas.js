@@ -116,6 +116,10 @@ exports.newPage = async (browser) => {
     return page;
 }
 
+exports.assertAttribute = async (element, name, expectedValue) => {
+    assert(expectedValue === await element.evaluate(el => el.getAttribute(name)))
+}
+
 exports.assertParameter = async (page, param) => {
     console.log(`Asserting parameter ${param} in URL: ` + page.url());
     let result = new URL(page.url());
@@ -146,7 +150,7 @@ exports.assertTicketParameter = async (page) => {
     return ticket;
 }
 
-exports.doRequest = async(url, method = "GET", headers = {}, statusCode = 0, body = undefined) => {
+exports.doRequest = async (url, method = "GET", headers = {}, statusCode = 0, body = undefined) => {
     return new Promise((resolve, reject) => {
         let options = {
             method: method,
@@ -158,7 +162,7 @@ exports.doRequest = async(url, method = "GET", headers = {}, statusCode = 0, bod
             if (statusCode > 0) {
                 assert(res.statusCode === statusCode);
             }
-            
+
             res.setEncoding("utf8");
             const body = [];
             res.on("data", chunk => body.push(chunk));
@@ -240,4 +244,15 @@ exports.launchSamlSp = async (idpMetadataPath, samlSpDir, samlOpts) => {
         console.log(`Child process exited with code ${code}`);
     });
     return exec;
+}
+
+exports.assertInnerText = async(page, selector, value) => {
+    const header = await this.innerText(page, selector);
+    assert(header === value)
+}
+
+exports.assertPageTitle = async (page, value) => {
+    const title = await page.title();
+    console.log(title);
+    assert(title === value)
 }

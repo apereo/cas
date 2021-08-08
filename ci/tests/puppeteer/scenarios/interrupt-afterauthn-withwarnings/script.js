@@ -19,7 +19,6 @@ const cas = require('../../cas.js');
     assert(header === "Authentication Succeeded with Warnings")
     await cas.submitForm(page, "#form");
     await cas.assertTicketGrantingCookie(page);
-    header = await cas.innerText(page, '#content div h2');
-    assert(header === "Log In Successful")
+    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await browser.close();
 })();

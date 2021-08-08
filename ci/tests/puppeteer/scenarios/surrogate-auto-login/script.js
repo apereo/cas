@@ -13,8 +13,7 @@ const cas = require('../../cas.js');
 
     await page.goto("https://localhost:8443/cas/login");
     await cas.loginWith(page, "user3+casuser", "Mellon");
-    const header = await cas.innerText(page, '#content div h2');
-    assert(header === "Log In Successful")
+    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     p = await cas.innerText(page, '#content div p');
     assert(p.startsWith("You, user3, have successfully logged into the Central Authentication Service"))
 
