@@ -10,30 +10,18 @@ const path = require('path');
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(1000)
     
-    await page.goto("https://samltest.id/upload.php");
-    await page.waitForTimeout(1000)
-
-    const fileElement = await page.$("input[type=file]");
-    let metadata = path.join(__dirname, '/saml-md/sp-metadata.xml');
-    console.log("Metadata file: " + metadata);
-
-    await fileElement.uploadFile(metadata);
-    await cas.click(page, "input[name='submit']")
-    await page.waitForNavigation();
-    await page.waitForTimeout(2000)
+    await cas.uploadSamlMetadata(page, path.join(__dirname, '/saml-md/sp-metadata.xml'));
 
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(2000);
 
     await cas.assertVisibility(page, '#loginProviders')
-
     await cas.assertVisibility(page, 'li #SAML2Client')
     
     await cas.click(page, "li #SAML2Client")
     await page.waitForNavigation();
 
     await page.waitForTimeout(5000)
-
     await cas.loginWith(page, "morty", "panic");
     await page.waitForTimeout(3000)
 

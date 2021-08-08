@@ -24,28 +24,10 @@ const path = require('path');
     });
     
     console.log("Upload CAS SP metadata...")
-    await page.goto("https://samltest.id/upload.php");
-    await page.waitForTimeout(1000)
-    let fileElement = await page.$("input[type=file]");
-    let metadata = path.join(__dirname, '/saml-md/sp-metadata.xml');
-    console.log("SP Metadata file: " + metadata);
-    await fileElement.uploadFile(metadata);
-    await cas.click(page, "input[name='submit']")
-    await page.waitForNavigation();
-    await page.waitForTimeout(2000)
+    await cas.uploadSamlMetadata(page, path.join(__dirname, '/saml-md/sp-metadata.xml'));
 
     console.log("Upload CAS IDP metadata...")
-    await page.goto("https://samltest.id/upload.php");
-    await page.waitForTimeout(1000)
-    fileElement = await page.$("input[type=file]");
-    metadata = path.join(__dirname, '/saml-md/idp-metadata.xml');
-    console.log("IDP Metadata file: " + metadata);
-    await fileElement.uploadFile(metadata);
-    await page.waitForTimeout(1000)
-
-    await cas.click(page, "input[name='submit']")
-    await page.waitForNavigation();
-    await page.waitForTimeout(1000)
+    await cas.uploadSamlMetadata(page, path.join(__dirname, '/saml-md/idp-metadata.xml'));
 
     await page.goto("https://samltest.id/start-idp-test/");
     await cas.type(page,'input[name=\'entityID\']', "https://cas.apereo.org/saml/idp");

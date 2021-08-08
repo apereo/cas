@@ -12,21 +12,8 @@ const cas = require('../../cas.js');
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(1000);
     await cas.loginWith(page, "casuser", "Mellon");
-    
-    await page.goto("https://samltest.id/upload.php");
-    await page.waitForTimeout(1000)
 
-    const fileElement = await page.$("input[type=file]");
-    let metadata = path.join(__dirname, '/saml-md/idp-metadata.xml');
-    console.log("Metadata file: " + metadata);
-
-    await fileElement.uploadFile(metadata);
-    // await page.waitForTimeout(1000)
-
-    await cas.click(page, "input[name='submit']")
-    await page.waitForNavigation();
-
-    await page.waitForTimeout(1000)
+    await cas.uploadSamlMetadata(page, path.join(__dirname, '/saml-md/idp-metadata.xml'));
 
     await page.goto("https://samltest.id/start-idp-test/");
     await cas.type(page,'input[name=\'entityID\']', "https://cas.apereo.org/saml/idp");

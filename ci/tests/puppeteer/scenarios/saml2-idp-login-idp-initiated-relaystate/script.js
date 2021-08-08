@@ -23,15 +23,7 @@ async function unsolicited(page, target) {
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await browser.newPage();
-    await page.goto("https://samltest.id/upload.php");
-
-    const fileElement = await page.$("input[type=file]");
-    let metadata = path.join(__dirname, '/saml-md/idp-metadata.xml');
-    console.log("Metadata file: " + metadata);
-
-    await fileElement.uploadFile(metadata);
-    await cas.click(page, "input[name='submit']")
-    await page.waitForNavigation();
+    await cas.uploadSamlMetadata(page, path.join(__dirname, '/saml-md/idp-metadata.xml'));
 
     await page.goto("https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "Mellon");
