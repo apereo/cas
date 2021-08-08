@@ -154,7 +154,7 @@ exports.doRequest = async (url, method = "GET", headers = {}, statusCode = 200, 
             headers: headers
         };
         console.log(`Contacting ${url} via ${method}`)
-        let request = https.get(url, options, res => {
+        const handler = (res) => {
             console.log("Response status code: " + res.statusCode)
             if (statusCode > 0) {
                 assert(res.statusCode === statusCode);
@@ -163,9 +163,17 @@ exports.doRequest = async (url, method = "GET", headers = {}, statusCode = 200, 
             const body = [];
             res.on("data", chunk => body.push(chunk));
             res.on("end", () => resolve(body.join("")));
-        }).on("error", reject);
+        };
+
         if (requestBody !== undefined) {
+            let request = https.request(url, options, res => {
+                handler(res);
+            }).on("error", reject);
             request.write(requestBody);
+        } else {
+            https.get(url, options, res => {
+                handler(res);
+            }).on("error", reject);
         }
     });
 }
@@ -242,7 +250,7 @@ exports.launchSamlSp = async (idpMetadataPath, samlSpDir, samlOpts) => {
     return exec;
 }
 
-exports.assertInnerText = async(page, selector, value) => {
+exports.assertInnerText = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
     assert(header === value)
 }
@@ -252,3 +260,4 @@ exports.assertPageTitle = async (page, value) => {
     console.log(title);
     assert(title === value)
 }
+
