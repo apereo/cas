@@ -8,10 +8,9 @@ const cas = require('../../cas.js');
     await page.goto("https://localhost:8443/cas/login");
 
     let uid = await page.$('#username');
-    await cas.assertAttribute(uid, "autocapitalize", "none");
-    await cas.assertAttribute(uid, "spellcheck", "false");
-    await cas.assertAttribute(uid, "autocomplete", "username");
-    
+    assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")))
+    assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")))
+    assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")))
     await cas.loginWith(page, "casuser", "Mellon");
     
     const url = await page.url()
