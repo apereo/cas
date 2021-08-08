@@ -18,8 +18,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(3000)
 
     await page.waitForSelector('div.entry-content p', { visible: true });
-    const header = await cas.textContent(page, "div.entry-content p");
-    assert(header.startsWith("Your browser has completed the full SAML 2.0 round-trip"));
+    await cas.assertInnerTextStartsWith(page, "div.entry-content p", "Your browser has completed the full SAML 2.0 round-trip");
 
     let artifacts = [
         "idp-metadata.xml",

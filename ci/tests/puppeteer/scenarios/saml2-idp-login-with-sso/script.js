@@ -19,9 +19,8 @@ const cas = require('../../cas.js');
     await page.waitForNavigation();
 
     await page.waitForSelector('div.entry-content p', { visible: true });
-    let header = await cas.textContent(page, "div.entry-content p");
-    assert(header.startsWith("Your browser has completed the full SAML 2.0 round-trip"));
-
+    await cas.assertInnerTextStartsWith(page, "div.entry-content p", "Your browser has completed the full SAML 2.0 round-trip");
+    
     let entityId = "https://httpbin.org/shibboleth";
     let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
     url += `?providerId=${entityId}`;

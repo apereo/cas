@@ -8,17 +8,11 @@ const cas = require('../../cas.js');
     await page.goto("https://localhost:8443/cas/login");
 
     await page.waitForTimeout(2000)
-
-    let link = await cas.textContent(page, "#forgotPasswordLink");
-    assert(link === "Reset your password")
-
+    await cas.assertInnerText(page, "#forgotPasswordLink", "Reset your password");
+    
     await cas.click(page, "#forgotPasswordLink")
     await page.waitForTimeout(1000)
-
-    let header = await cas.textContent(page, "#reset #fm1 h3");
-
-    assert(header === "Reset your password")
-
+    await cas.assertInnerText(page, "#reset #fm1 h3", "Reset your password");
     await cas.assertVisibility(page, '#username')
     let uid = await page.$('#username');
     assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")))
@@ -31,23 +25,19 @@ const cas = require('../../cas.js');
 
     await page.waitForTimeout(1000)
 
-    header = await cas.textContent(page, "#content h2");
-    assert(header === "Password Reset Instructions Sent Successfully.")
-
-    header = await cas.textContent(page, "#content p");
-    assert(header.startsWith("You should shortly receive a message"))
+    await cas.assertInnerText(page, "#content p", "Password Reset Instructions Sent Successfully.");
+    await cas.assertInnerTextStartsWith(page, "#content p", "You should shortly receive a message");
 
     await page.goto("http://localhost:8282");
     await page.waitForTimeout(1000)
     await cas.click(page, "table tbody td a")
     await page.waitForTimeout(1000)
 
-    link = await cas.textContent(page, "div[name=bodyPlainText] .well");
+    let link = await cas.textContent(page, "div[name=bodyPlainText] .well");
     await page.goto(link);
     await page.waitForTimeout(1000)
 
-    header = await cas.textContent(page, "#content h2");
-    assert(header === "Answer Security Questions")
+    await cas.assertInnerText(page, "#content h2", "Answer Security Questions");
 
     await cas.type(page,'#q0', "answer1");
     await cas.type(page,'#q1', "answer2");
@@ -63,12 +53,8 @@ const cas = require('../../cas.js');
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
-    header = await cas.textContent(page, "#content h2");
-    assert(header === "Password Change Successful")
-
-    header = await cas.textContent(page, "#content p");
-    assert(header === "Your account password is successfully updated.")
-
+    await cas.assertInnerText(page, "#content h2", "Password Change Successful");
+    await cas.assertInnerText(page, "#content p", "Your account password is successfully updated.");
     await browser.close();
 })();
 
