@@ -116,10 +116,6 @@ exports.newPage = async (browser) => {
     return page;
 }
 
-exports.assertAttribute = async (element, name, expectedValue) => {
-    assert(expectedValue === await element.evaluate(el => el.getAttribute(name)))
-}
-
 exports.assertParameter = async (page, param) => {
     console.log(`Asserting parameter ${param} in URL: ` + page.url());
     let result = new URL(page.url());

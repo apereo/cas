@@ -5,20 +5,20 @@ const fs = require('fs');
 const request = require('request');
 
 (async () => {
-    const browserldap = await puppeteer.launch(cas.browserOptions());
-    const pageldap = await cas.newPage(browserldap);
-    await pageldap.goto("https://localhost:8443/cas/login");
-    await cas.loginWith(pageldap, "aburr", "P@ssw0rd");
-    await cas.assertTicketGrantingCookie(pageldap);
+    let browser = await puppeteer.launch(cas.browserOptions());
+    let page = await cas.newPage(browser);
+    await page.goto("https://localhost:8443/cas/login");
+    await cas.loginWith(page, "aburr", "P@ssw0rd");
+    await cas.assertTicketGrantingCookie(page);
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
-    const attributesldap = await cas.innerText(pageldap, '#attribute-tab-0 table#attributesTable tbody');
+    const attributesldap = await cas.innerText(page, '#attribute-tab-0 table#attributesTable tbody');
     assert(attributesldap.includes("aburr"))
     assert(attributesldap.includes("someattribute"))
     assert(attributesldap.includes("ldap-dn"))
-    await browserldap.close();
+    await browser.close();
 
-    const browser = await puppeteer.launch(cas.browserOptions());
-    const page = await cas.newPage(browser);
+    browser = await puppeteer.launch(cas.browserOptions());
+    page = await cas.newPage(browser);
 
     await page.setRequestInterception(true);
     let args = process.argv.slice(2);
