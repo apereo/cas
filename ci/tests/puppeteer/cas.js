@@ -260,16 +260,21 @@ exports.assertInnerText = async (page, selector, value) => {
 
 exports.assertPageTitle = async (page, value) => {
     const title = await page.title();
-    console.log(title);
+    console.log("Page Title: " + title);
     assert(title === value)
 }
 
-exports.decodeJwt = async (token) => {
+exports.decodeJwt = async (token, complete = false) => {
     console.log(`Decoding token ${token}`);
-    let decoded = jwt.decode(token, {complete: true});
-    console.log("Decoded token header: " + colors.green(decoded.header));
-    console.log("Decoded token payload:");
-    console.log(colors.green(decoded.payload));
+    let decoded = jwt.decode(token, {complete: complete});
+    if (complete) {
+        console.log("Decoded token header: " + colors.green(decoded.header));
+        console.log("Decoded token payload:");
+        console.log(colors.green(decoded.payload));
+    } else {
+        console.log("Decoded token payload:");
+        console.log(colors.green(decoded));
+    }
     return decoded;
 }
 
