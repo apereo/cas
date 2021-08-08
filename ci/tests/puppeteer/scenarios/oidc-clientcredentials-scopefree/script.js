@@ -1,5 +1,4 @@
 const assert = require('assert');
-const jwt = require('jsonwebtoken');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -14,24 +13,18 @@ const cas = require('../../cas.js');
 
     await cas.doPost(url, "", {
         'Content-Type': "application/json"
-    }, function (res) {
+    }, async function (res) {
 
         console.log(res.data);
         assert(res.data.access_token !== null);
 
         console.log("Decoding JWT access token...");
-        let decoded = jwt.decode(res.data.access_token);
-        console.log(decoded);
+        let decoded = await cas.decodeJwt(res.data.id_token);
 
         assert(res.data.id_token !== null);
         assert(res.data.refresh_token !== null);
         assert(res.data.token_type !== null);
         assert(res.data.scope !== null);
-
-        console.log("Decoding id token...")
-        decoded = jwt.decode(res.data.id_token);
-        console.log(decoded);
-
         assert(decoded.sub !== null)
         assert(decoded.cn !== null)
         assert(decoded.name !== null)

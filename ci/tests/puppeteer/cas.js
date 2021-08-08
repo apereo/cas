@@ -3,6 +3,8 @@ const axios = require('axios');
 const https = require('https');
 const {spawn} = require('child_process');
 const waitOn = require('wait-on');
+const jwt = require('jsonwebtoken');
+const colors = require('colors');
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
@@ -261,3 +263,11 @@ exports.assertPageTitle = async (page, value) => {
     assert(title === value)
 }
 
+exports.decodeJwt = async (token) => {
+    console.log(`Decoding token ${token}`);
+    let decoded = jwt.decode(token, {complete: true});
+    console.log("Decoded token header: " + colors.green(decoded.header));
+    console.log("Decoded token payload:");
+    console.log(colors.green(decoded.payload));
+    return decoded;
+}

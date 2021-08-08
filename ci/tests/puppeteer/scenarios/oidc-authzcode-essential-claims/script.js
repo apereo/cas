@@ -34,17 +34,13 @@ const jwt = require('jsonwebtoken');
 
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json"
-    }, function (res) {
+    }, async function (res) {
         console.log(res.data);
         assert(res.data.access_token !== null);
 
         accessToken = res.data.access_token;
         console.log("Received access token " + accessToken);
-
-        console.log("Decoding ID token...");
-        let decoded = jwt.decode(res.data.id_token);
-        console.log(decoded);
-        assert(decoded.sub !== null)
+        await cas.decodeJwt(res.data.id_token);
     }, function (error) {
         throw 'Operation failed to obtain access token: ' + error;
     });

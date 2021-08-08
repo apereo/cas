@@ -1,7 +1,6 @@
 const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
 const assert = require('assert');
-const jwt = require('jsonwebtoken');
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -39,7 +38,7 @@ const jwt = require('jsonwebtoken');
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json"
-    }, function (res) {
+    }, async function (res) {
         console.log(res.data);
         assert(res.data.access_token !== null);
 
@@ -47,9 +46,7 @@ const jwt = require('jsonwebtoken');
         console.log("Received access token " + accessToken);
 
         console.log("Decoding ID token...");
-        let decoded = jwt.decode(res.data.id_token);
-        console.log(decoded);
-
+        let decoded = await cas.decodeJwt(res.data.id_token);
         assert(decoded.sub !== null)
         assert(decoded.aud !== null)
         assert(decoded.state !== null)
