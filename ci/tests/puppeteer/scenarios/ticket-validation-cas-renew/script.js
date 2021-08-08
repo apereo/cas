@@ -1,6 +1,5 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
-const https = require('https');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -41,31 +40,12 @@ const cas = require('../../cas.js');
 })();
 
 async function validate(endpoint, service, ticket, renew = false) {
-    let httpGet = options => {
-        return new Promise((resolve, reject) => {
-            https.get(options, res => {
-                res.setEncoding('utf8');
-                const body = [];
-                res.on('data', chunk => body.push(chunk));
-                res.on('end', () => resolve(body.join('')));
-            }).on('error', reject);
-        });
-    };
     let path = "/cas/" + endpoint + "?service=" + service + "&ticket=" + ticket;
     if (renew) {
         path = path + "&renew=true";
     }
-
     console.log("Validating " + path);
-    let result = await httpGet({
-        protocol: 'https:',
-        hostname: 'localhost',
-        port: 8443,
-        path: path,
-        method: 'GET',
-        rejectUnauthorized: false,
-    });
-
+    let result = await cas.doRequest("https://localhost:8443" + path);
     console.log(result);
     return result;
 }

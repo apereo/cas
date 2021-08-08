@@ -146,6 +146,27 @@ exports.assertTicketParameter = async (page) => {
     return ticket;
 }
 
+exports.doRequest = async(url, method = "GET", headers = {}, statusCode = 0) => {
+    return new Promise((resolve, reject) => {
+        let options = {
+            method: method,
+            rejectUnauthorized: false,
+            headers: headers
+        };
+        https.get(url, options, res => {
+            console.log("Response status code: " + res.statusCode)
+            if (statusCode > 0) {
+                assert(res.statusCode === statusCode);
+            }
+            
+            res.setEncoding("utf8");
+            const body = [];
+            res.on("data", chunk => body.push(chunk));
+            res.on("end", () => resolve(body.join("")));
+        }).on("error", reject);
+    });
+}
+
 exports.doGet = async (url, successHandler, failureHandler) => {
     const instance = axios.create({
         httpsAgent: new https.Agent({

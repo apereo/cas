@@ -71,7 +71,7 @@ const jwt = require('jsonwebtoken');
     console.log("Trying to re-use OAuth code " + accessTokenUrl);
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json"
-    }, function (res) {
+    }, function () {
         throw 'OAuth code ' + code + ' cannot be used again';
     }, function (error) {
         console.log(error.response.data)
@@ -83,7 +83,7 @@ const jwt = require('jsonwebtoken');
 
     await cas.doPost(profileUrl, "", {
         'Content-Type': "application/json"
-    }, function (res) {
+    }, function () {
         throw 'Access token ' + accessToken + ' should have been removed and rejected with code reused';
     }, function (error) {
         assert(error.response.status === 401)

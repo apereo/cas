@@ -43,7 +43,7 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
             console.log("Received access token " + accessToken);
             console.log("Received refresh token " + refreshToken);
         },
-        function (err) {
+        function () {
             throw 'Operation failed to obtain access token: ' + error;
         })
 
