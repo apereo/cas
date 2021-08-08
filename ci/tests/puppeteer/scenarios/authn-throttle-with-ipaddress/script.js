@@ -7,7 +7,7 @@ const cas = require('../../cas.js');
 
     console.log("Log in attempt: #1")
     await submitLoginFailure(page);
-    await cas.assertInnerText(page, "#content div.banner p", "Authentication attempt has failed")
+    await cas.assertInnerTextStartsWith(page, "#content div.banner p", "Authentication attempt has failed")
 
     console.log("Log in attempt: #2")
     await submitLoginFailure(page);

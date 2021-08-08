@@ -6,9 +6,6 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/login");
-
-    // await page.waitForTimeout(1000)
-
     let link = await cas.textContent(page, "#forgotUsernameLink");
     assert(link === "Forgot your username?")
 
@@ -27,13 +24,8 @@ const cas = require('../../cas.js');
     await cas.type(page,'#email', "casuser@example.org");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
-
-    // await page.waitForTimeout(3000)
-
-    header = await cas.textContent(page, "#content h2");
-    assert(header === "Instructions Sent Successfully.")
-    header = await cas.textContent(page, "#content p");
-    assert(header.startsWith("You should shortly receive a message"))
+    await cas.assertInnerTextStartsWith(page, "#content h2", "Instructions Sent Successfully.");
+    await cas.assertInnerTextStartsWith(page, "#content p", "You should shortly receive a message");
 
     await browser.close();
 })();

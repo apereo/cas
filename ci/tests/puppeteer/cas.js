@@ -253,6 +253,11 @@ exports.launchSamlSp = async (idpMetadataPath, samlSpDir, samlOpts) => {
     return exec;
 }
 
+exports.assertInnerTextStartsWith = async (page, selector, value) => {
+    const header = await this.innerText(page, selector);
+    assert(header.startsWith(value));
+}
+
 exports.assertInnerText = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
     assert(header === value)
@@ -285,7 +290,7 @@ exports.uploadSamlMetadata = async(page, metadata) => {
     console.log("Metadata file: " + metadata);
     await fileElement.uploadFile(metadata);
     await page.waitForTimeout(1000)
-    await cas.click(page, "input[name='submit']")
+    await this.click(page, "input[name='submit']")
     await page.waitForNavigation();
     await page.waitForTimeout(2000)
 }

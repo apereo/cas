@@ -19,9 +19,7 @@ const cas = require('../../cas.js');
 
     let header = await cas.textContent(page, "#content div h2");
     assert(header === "Unauthorized Access")
-    header = await cas.textContent(page, "#content div p");
-
-    assert(header.startsWith("Either the authentication request was rejected/cancelled"));
+    await cas.assertInnerTextStartsWith(page, "div.entry-content p", "Your browser has completed the full SAML 2.0 round-trip");
 
     await cas.assertVisibility(page, '#errorTable')
     await cas.assertVisibility(page, '#loginLink')

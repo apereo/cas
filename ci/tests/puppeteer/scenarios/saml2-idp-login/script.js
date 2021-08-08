@@ -21,9 +21,8 @@ const cas = require('../../cas.js');
 
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForSelector('div.entry-content p', { visible: true });
-    const header = await cas.textContent(page, "div.entry-content p");
-    assert(header.startsWith("Your browser has completed the full SAML 2.0 round-trip"));
-    
+    await cas.assertInnerTextStartsWith(page, "div.entry-content p", "Your browser has completed the full SAML 2.0 round-trip");
+
     let metadataDir = path.join(__dirname, '/saml-md');
     fs.rmdir(metadataDir, { recursive: true }, () => {});
 
