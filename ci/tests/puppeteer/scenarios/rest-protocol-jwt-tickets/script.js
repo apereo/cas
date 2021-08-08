@@ -4,7 +4,7 @@ const cas = require('../../cas.js');
 
 (async () => {
     console.log("Creating ticket-granting ticket as JWT")
-    let tgt = await executeRequest('https://localhost:8443/cas/cas/v1/tickets?username=casuser&password=Mellon&token=true', 201);
+    let tgt = await executeRequest('https://localhost:8443/cas/v1/tickets?username=casuser&password=Mellon&token=true', 201);
     console.log(tgt);
     let decoded = jwt.decode(tgt);
     console.log(decoded);
