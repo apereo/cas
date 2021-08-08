@@ -66,6 +66,7 @@ import org.apereo.cas.oidc.web.controllers.profile.OidcUserProfileEndpointContro
 import org.apereo.cas.oidc.web.controllers.token.OidcAccessTokenEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.token.OidcRevocationEndpointControllerTests;
 import org.apereo.cas.oidc.web.flow.OidcAuthenticationContextWebflowEventResolverTests;
+import org.apereo.cas.oidc.web.flow.OidcCasWebflowLoginContextProviderTests;
 import org.apereo.cas.oidc.web.flow.OidcMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIActionTests;
 import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurerTests;
@@ -144,6 +145,7 @@ import org.junit.platform.suite.api.Suite;
     OidcClientConfigurationAccessTokenAuthenticatorTests.class,
     OidcDefaultIssuerServiceTests.class,
     OidcLocaleChangeInterceptorTests.class,
+    OidcCasWebflowLoginContextProviderTests.class,
     OidcCasCallbackUrlResolverTests.class,
     OidcAuthenticationAuthorizeSecurityLogicTests.class,
     DefaultOidcAttributeReleasePolicyFactoryTests.class,
