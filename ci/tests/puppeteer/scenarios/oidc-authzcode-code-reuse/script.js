@@ -1,7 +1,6 @@
 const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
 const assert = require('assert');
-const jwt = require('jsonwebtoken');
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());

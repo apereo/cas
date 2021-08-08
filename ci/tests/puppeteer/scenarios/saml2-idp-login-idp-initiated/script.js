@@ -6,21 +6,7 @@ const cas = require('../../cas.js');
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await page.goto("https://samltest.id/upload.php");
-    // await page.waitForTimeout(1000)
-
-    const fileElement = await page.$("input[type=file]");
-    let metadata = path.join(__dirname, '/saml-md/idp-metadata.xml');
-    console.log("Metadata file: " + metadata);
-
-    await fileElement.uploadFile(metadata);
-    // await page.waitForTimeout(1000)
-
-    await cas.click(page, "input[name='submit']")
-    await page.waitForNavigation();
-
-    // await page.waitForTimeout(1000)
-
+    await cas.uploadSamlMetadata(page, path.join(__dirname, '/saml-md/idp-metadata.xml'));
     let entityId = "https://samltest.id/saml/sp";
     let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
     url += `?providerId=${entityId}`;

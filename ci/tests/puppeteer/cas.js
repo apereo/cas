@@ -5,6 +5,7 @@ const {spawn} = require('child_process');
 const waitOn = require('wait-on');
 const jwt = require('jsonwebtoken');
 const colors = require('colors');
+const path = require("path");
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
@@ -270,4 +271,16 @@ exports.decodeJwt = async (token) => {
     console.log("Decoded token payload:");
     console.log(colors.green(decoded.payload));
     return decoded;
+}
+
+exports.uploadSamlMetadata = async(page, metadata) => {
+    await page.goto("https://samltest.id/upload.php");
+    await page.waitForTimeout(1000)
+    const fileElement = await page.$("input[type=file]");
+    console.log("Metadata file: " + metadata);
+    await fileElement.uploadFile(metadata);
+    await page.waitForTimeout(1000)
+    await cas.click(page, "input[name='submit']")
+    await page.waitForNavigation();
+    await page.waitForTimeout(2000)
 }

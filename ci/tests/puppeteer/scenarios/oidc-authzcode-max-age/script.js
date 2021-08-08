@@ -1,7 +1,6 @@
 const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
 const assert = require('assert');
-const jwt = require('jsonwebtoken');
 
 async function fetchIdToken(page, maxAge, successHandler) {
     const redirectUrl = "https://github.com/apereo/cas";
