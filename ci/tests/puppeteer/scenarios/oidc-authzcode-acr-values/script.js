@@ -2,32 +2,12 @@ const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
 const assert = require('assert');
 const jwt = require('jsonwebtoken');
-const https = require("https");
 
 const redirectUrl = "https://apereo.github.io";
 
-const httpGet = (options) => {
-    return new Promise((resolve, reject) => {
-        https.get(options, res => {
-            res.setEncoding("utf8");
-            const body = [];
-            res.on("data", chunk => body.push(chunk));
-            res.on("end", () => resolve(body.join("")));
-        }).on("error", reject);
-    });
-};
-
-async function fetchScratch(page) {
+async function fetchScratch() {
     console.log("Fetching Scratch codes from /cas/actuator...");
-    let options1 = {
-        protocol: "https:",
-        hostname: "localhost",
-        port: 8443,
-        path: "/cas/actuator/gauthCredentialRepository/casuser",
-        method: "GET",
-        rejectUnauthorized: false,
-    };
-    const response = await httpGet(options1);
+    const response = await cas.doRequest("https://localhost:8443/cas/actuator/gauthCredentialRepository/casuser");
     return JSON.stringify(JSON.parse(response)[0].scratchCodes[0]);
 }
 
@@ -46,7 +26,7 @@ async function fetchCode(page, acr, params) {
         await cas.loginWith(page, "casuser", "Mellon");
     }
 
-    let scratch = await fetchScratch(page);
+    let scratch = await fetchScratch();
     console.log("Using scratch code " + scratch + " to login...");
     await cas.type(page, '#token', scratch);
     await page.keyboard.press('Enter');

@@ -1,34 +1,11 @@
 const puppeteer = require("puppeteer");
 const assert = require("assert");
-const url = require("url");
 const cas = require("../../cas.js");
-const https = require("https");
-
-const httpGet = (options) => {
-    return new Promise((resolve, reject) => {
-        https.get(options, res => {
-            res.setEncoding("utf8");
-            const body = [];
-            res.on("data", chunk => body.push(chunk));
-            res.on("end", () => resolve(body.join("")));
-        }).on("error", reject);
-    });
-};
-
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     console.log("Fetching Scratch codes from /cas/actuator...");
-
-    let options1 = {
-        protocol: "https:",
-        hostname: "localhost",
-        port: 8443,
-        path: "/cas/actuator/gauthCredentialRepository/casuser",
-        method: "GET",
-        rejectUnauthorized: false,
-    };
-    const response = await httpGet(options1);
+    const response = await cas.doRequest("https://localhost:8443/cas/actuator/gauthCredentialRepository/casuser");
     let scratch = JSON.stringify(JSON.parse(response)[0].scratchCodes[0]);
 
     const page = await cas.newPage(browser);

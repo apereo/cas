@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
-const https = require('https');
+
 const assert = require('assert');
 const path = require("path");
 const fs = require("fs");
@@ -15,27 +15,7 @@ const fs = require("fs");
     await cas.loginWith(page, "casuser", "Mellon");
 
     let ticket = await cas.assertTicketParameter(page);
-
-    let options = {
-        protocol: 'https:',
-        hostname: 'localhost',
-        port: 8443,
-        path: '/cas/validate?service=' + service + "&ticket=" + ticket,
-        method: 'GET',
-        rejectUnauthorized: false,
-    };
-
-    const httpGet = options => {
-        return new Promise((resolve, reject) => {
-            https.get(options, res => {
-                res.setEncoding('utf8');
-                const body = [];
-                res.on('data', chunk => body.push(chunk));
-                res.on('end', () => resolve(body.join('')));
-            }).on('error', reject);
-        });
-    };
-    await httpGet(options);
+    await cas.doRequest('https://localhost:8443/cas/validate?service=' + service + "&ticket=" + ticket)
     await page.close();
 
     page = await cas.newPage(browser);

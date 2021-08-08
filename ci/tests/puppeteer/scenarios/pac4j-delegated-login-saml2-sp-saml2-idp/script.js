@@ -13,13 +13,13 @@ const path = require('path');
 
     await cas.doGet('https://localhost:8443/cas/sp/metadata', function(res) {
         assert(res.status === 200)
-    }, function(error) {
+    }, function() {
         throw 'Operation failed to capture metadata';
     });
 
     await cas.doGet('https://localhost:8443/cas/sp/idp/metadata', function(res) {
         assert(res.status === 200)
-    }, function(error) {
+    }, function() {
         throw 'Operation failed to capture metadata';
     });
     
