@@ -150,26 +150,26 @@ exports.assertTicketParameter = async (page) => {
     return ticket;
 }
 
-exports.doRequest = async (url, method = "GET", headers = {}, statusCode = 0, body = undefined) => {
+exports.doRequest = async (url, method = "GET", headers = {}, statusCode = 200, requestBody = undefined) => {
     return new Promise((resolve, reject) => {
         let options = {
             method: method,
             rejectUnauthorized: false,
             headers: headers
         };
-        let request = https.request(url, options, res => {
+        console.log(`Contacting ${url} via ${method}`)
+        let request = https.get(url, options, res => {
             console.log("Response status code: " + res.statusCode)
             if (statusCode > 0) {
                 assert(res.statusCode === statusCode);
             }
-
             res.setEncoding("utf8");
             const body = [];
             res.on("data", chunk => body.push(chunk));
             res.on("end", () => resolve(body.join("")));
         }).on("error", reject);
-        if (body !== undefined) {
-            request.write(body);
+        if (requestBody !== undefined) {
+            request.write(requestBody);
         }
     });
 }

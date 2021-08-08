@@ -7,7 +7,9 @@ const redirectUrl = "https://apereo.github.io";
 
 async function fetchScratch() {
     console.log("Fetching Scratch codes from /cas/actuator...");
-    const response = await cas.doRequest("https://localhost:8443/cas/actuator/gauthCredentialRepository/casuser");
+    const response = await cas.doRequest("https://localhost:8443/cas/actuator/gauthCredentialRepository/casuser", "GET", {
+        'Accept': 'application/json'
+    });
     return JSON.stringify(JSON.parse(response)[0].scratchCodes[0]);
 }
 
