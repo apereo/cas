@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const cas = require('../../cas.js');
@@ -30,8 +29,7 @@ function cleanUp(exec) {
         await page.waitForTimeout(3000)
         await page.waitForSelector('#username', {visible: true});
         await cas.loginWith(page, "casuser", "Mellon");
-        let header = await cas.innerText(page, '#content h2');
-        assert(header === "Application Not Authorized to Use CAS")
+        await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS")
 
         console.log("Trying with an exising SSO session...")
         await page.goto("https://localhost:8443/cas/logout");
@@ -43,8 +41,7 @@ function cleanUp(exec) {
         await page.waitForSelector('#idpForm', {visible: true});
         await cas.submitForm(page, "#idpForm");
         await page.waitForTimeout(2000)
-        header = await cas.innerText(page, '#content h2');
-        assert(header === "Application Not Authorized to Use CAS")
+        await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS")
 
         await browser.close();
         console.log("Killing SAML2 SP process...");

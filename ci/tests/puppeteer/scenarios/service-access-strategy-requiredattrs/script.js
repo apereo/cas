@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -26,7 +25,6 @@ async function submitLogin(page) {
 }
 
 async function assertFailure(page) {
-    let header = await cas.innerText(page, '#loginErrorsPanel p');
-    assert(header === "Service access denied due to missing privileges.")
+    await cas.assertInnerText(page, "#loginErrorsPanel p", "Service access denied due to missing privileges.")
     await page.waitForTimeout(1000)
 }
