@@ -31,15 +31,7 @@ const cas = require("../../cas.js");
     let ticket = await cas.assertTicketParameter(page);
 
     console.log("Validating ticket " + ticket + " with service " + service);
-    let options2 = {
-        protocol: "https:",
-        hostname: "localhost",
-        port: 8443,
-        path: "/cas/p3/serviceValidate?service=" + service + "&ticket=" + ticket,
-        method: "GET",
-        rejectUnauthorized: false,
-    };
-    const body = await httpGet(options2);
+    const body = await cas.doRequest("https://localhost:8443/cas/p3/serviceValidate?service=" + service + "&ticket=" + ticket);
 
     console.log(body);
     
