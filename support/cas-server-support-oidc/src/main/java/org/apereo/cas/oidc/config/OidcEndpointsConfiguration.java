@@ -26,6 +26,7 @@ import org.apereo.cas.oidc.web.controllers.logout.OidcPostLogoutRedirectUrlMatch
 import org.apereo.cas.oidc.web.controllers.profile.OidcUserProfileEndpointController;
 import org.apereo.cas.oidc.web.controllers.token.OidcAccessTokenEndpointController;
 import org.apereo.cas.oidc.web.controllers.token.OidcRevocationEndpointController;
+import org.apereo.cas.oidc.web.flow.OidcCasWebflowLoginContextProvider;
 import org.apereo.cas.oidc.web.flow.OidcMultifactorAuthenticationTrigger;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIAction;
 import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurer;
@@ -38,6 +39,7 @@ import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -398,6 +400,7 @@ public class OidcEndpointsConfiguration {
         return plan -> {
             plan.registerWebflowConfigurer(oidcWebflowConfigurer());
             plan.registerWebflowInterceptor(oidcLocaleChangeInterceptor());
+            plan.registerWebflowLoginContextProvider(oidcCasWebflowLoginContextProvider());
         };
     }
 
@@ -405,6 +408,13 @@ public class OidcEndpointsConfiguration {
     @ConditionalOnMissingBean(name = "oidcConfirmView")
     public View oidcConfirmView() {
         return casProtocolViewFactory.getObject().create(applicationContext, "protocol/oidc/confirm");
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "oidcCasWebflowLoginContextProvider")
+    @RefreshScope
+    public CasWebflowLoginContextProvider oidcCasWebflowLoginContextProvider() {
+        return new OidcCasWebflowLoginContextProvider(argumentExtractor.getObject());
     }
 
     private String getOidcBaseEndpoint(final OidcIssuerService issuerService) {
