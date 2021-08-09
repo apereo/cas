@@ -61,14 +61,11 @@ const request = require('request');
     await page.waitForTimeout(5000)
 
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerTextContains(page, "#content div p", "1234567890@college.edu");
 
-    const body = await cas.innerText(page, '#content div p');
-    assert(body.includes("1234567890@college.edu"))
-
-    const attributes = await cas.innerText(page, '#attribute-tab-0 table#attributesTable tbody');
-    assert(attributes.includes("casuserx509"))
-    assert(attributes.includes("someattribute"))
-    assert(attributes.includes("user-account-control"))
+    await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "casuserx509");
+    await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "someattribute");
+    await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "user-account-control");
 
     await browser.close();
 })();

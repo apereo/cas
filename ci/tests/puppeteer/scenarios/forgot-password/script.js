@@ -25,7 +25,7 @@ const cas = require('../../cas.js');
 
     await page.waitForTimeout(1000)
 
-    await cas.assertInnerText(page, "#content p", "Password Reset Instructions Sent Successfully.");
+    await cas.assertInnerText(page, "#content h2", "Password Reset Instructions Sent Successfully.");
     await cas.assertInnerTextStartsWith(page, "#content p", "You should shortly receive a message");
 
     await page.goto("http://localhost:8282");

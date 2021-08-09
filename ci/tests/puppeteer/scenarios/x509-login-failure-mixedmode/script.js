@@ -47,9 +47,6 @@ const request = require('request');
 
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(3000)
-
-    const p = await cas.innerText(page, '#loginErrorsPanel p');
-    assert(p.startsWith("Authentication attempt has failed"));
-    
+    await cas.assertInnerTextStartsWith(page, "#loginErrorsPanel p", "Authentication attempt has failed")
     await browser.close();
 })();
