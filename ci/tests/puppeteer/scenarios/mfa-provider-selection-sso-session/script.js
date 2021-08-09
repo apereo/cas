@@ -41,7 +41,7 @@ async function fetchScratch() {
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(1000);
 
-    await cas.assertInnerTextStartsWith(page, "#authnContextClass td.attribute-value", [mfa-gauth]);
+    await cas.assertInnerTextStartsWith(page, "#authnContextClass td.attribute-value", "[mfa-gauth]");
     
     await page.goto("https://localhost:8443/cas/login?service=https://github.com/apereo/cas");
     const url = await page.url()
