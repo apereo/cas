@@ -49,9 +49,7 @@ const request = require('request');
     await page.waitForTimeout(5000)
 
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
-
-    const body = await cas.innerText(page, '#content div p');
-    assert(body.includes("CN=mmoayyed, OU=dev, O=bft, L=mt, C=world"))
+    await cas.assertInnerTextContains(page, "#content div p", "CN=mmoayyed, OU=dev, O=bft, L=mt, C=world");
 
     await browser.close();
 })();

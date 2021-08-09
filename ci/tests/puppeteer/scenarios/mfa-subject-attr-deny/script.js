@@ -1,6 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
-
 const cas = require('../../cas.js');
 
 (async () => {
@@ -10,9 +8,7 @@ const cas = require('../../cas.js');
     await cas.loginWith(page, "casuser", "Mellon");
 
     await page.waitForTimeout(3000)
-    
-    const p = await cas.innerText(page, '#loginErrorsPanel p');
-    assert(p.startsWith("Authentication attempt for your account is denied"));
-    
+    await cas.assertInnerTextStartsWith(page, "#loginErrorsPanel p", "Authentication attempt for your account is denied")
+
     await browser.close();
 })();

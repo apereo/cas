@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const cas = require('../../cas.js');
