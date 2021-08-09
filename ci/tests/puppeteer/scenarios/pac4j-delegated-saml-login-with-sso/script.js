@@ -1,6 +1,5 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
-const fs = require('fs');
 const path = require('path');
 const cas = require('../../cas.js');
 
@@ -40,10 +39,7 @@ const cas = require('../../cas.js');
     assert(url.startsWith("https://github.com/"))
 
     await cas.assertTicketParameter(page);
-
-    let metadataDir = path.join(__dirname, '/saml-md');
-    fs.rmdir(metadataDir, { recursive: true }, () => {});
-    
+    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
 

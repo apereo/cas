@@ -8,8 +8,8 @@ const cas = require('../../cas.js');
     params += "grant_type=client_credentials&";
     params += "scope=openid";
 
-    let url = 'https://localhost:8443/cas/oidc/token?' + params;
-    console.log("Calling " + url);
+    let url = `https://localhost:8443/cas/oidc/token?${params}`;
+    console.log(`Calling ${url}`);
 
     await cas.doPost(url, "", {
         'Content-Type': "application/json"
@@ -31,6 +31,6 @@ const cas = require('../../cas.js');
         assert(decoded["preferred_username"] !== null)
         assert(decoded["given-name"] !== null)
     }, function (error) {
-        throw 'Operation failed: ' + error;
+        throw `Operation failed: ${error}`;
     });
 })();

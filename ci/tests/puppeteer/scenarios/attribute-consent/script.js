@@ -59,9 +59,9 @@ const cas = require('../../cas.js');
     assert(opt != null);
 
     const url = "https://localhost:8443/cas/actuator/attributeConsent/casuser"
-    console.log("Trying " + url)
+    console.log(`Trying ${url}`)
     const response = await page.goto(url);
-    console.log(response.status() + " " + response.statusText())
+    console.log(`${response.status()} ${response.statusText()}`)
     assert(response.ok())
 
     await browser.close();

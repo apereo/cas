@@ -27,8 +27,8 @@ const cas = require('../../cas.js');
         "idp-signing.crt"
     ]
     artifacts.forEach(art => {
-        let pt = path.join(__dirname, '/saml-md/' + art);
-        console.log("Deleting " + pt)
+        let pt = path.join(__dirname, `/saml-md/${art}`);
+        console.log(`Deleting ${pt}`)
         fs.rmSync(pt, { force: true });
     })
 

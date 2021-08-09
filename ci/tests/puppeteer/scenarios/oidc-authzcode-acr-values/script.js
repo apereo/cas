@@ -13,22 +13,19 @@ async function fetchScratch() {
 }
 
 async function fetchCode(page, acr, params) {
-    let url = "https://localhost:8443/cas/oidc/authorize?"
-        + "response_type=code&client_id=client&scope=openid%20email%20profile%20address%20phone"
-        + "&redirect_uri=" + redirectUrl
-        + "&nonce=3d3a7457f9ad3&state=1735fd6c43c14&acr_values=" + acr;
+    let url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=openid%20email%20profile%20address%20phone&redirect_uri=${redirectUrl}&nonce=3d3a7457f9ad3&state=1735fd6c43c14&acr_values=${acr}`;
     if (params !== undefined) {
-        url += "&" + params;
+        url += `&${params}`;
     }
 
-    console.log("Navigating to " + url);
+    console.log(`Navigating to ${url}`);
     await page.goto(url);
     if (await cas.isVisible(page, "#username")) {
         await cas.loginWith(page, "casuser", "Mellon");
     }
 
     let scratch = await fetchScratch();
-    console.log("Using scratch code " + scratch + " to login...");
+    console.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page, '#token', scratch);
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
@@ -39,7 +36,7 @@ async function fetchCode(page, acr, params) {
     }
 
     let code = await cas.assertParameter(page, "code");
-    console.log("OAuth code " + code);
+    console.log(`OAuth code ${code}`);
     return code;
 }
 
@@ -47,10 +44,10 @@ async function exchangeCode(page, code, successHandler) {
     let accessTokenParams = "client_id=client&";
     accessTokenParams += "client_secret=secret&";
     accessTokenParams += "grant_type=authorization_code&";
-    accessTokenParams += "redirect_uri=" + redirectUrl;
+    accessTokenParams += `redirect_uri=${redirectUrl}`;
 
-    let accessTokenUrl = 'https://localhost:8443/cas/oidc/token?' + accessTokenParams + "&code=" + code;
-    console.log("Calling " + accessTokenUrl);
+    let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
+    console.log(`Calling ${accessTokenUrl}`);
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
@@ -60,14 +57,14 @@ async function exchangeCode(page, code, successHandler) {
         assert(res.data.access_token !== null);
 
         accessToken = res.data.access_token;
-        console.log("Received access token " + accessToken);
+        console.log(`Received access token ${accessToken}`);
 
         console.log("Decoding ID token...");
         let decoded = await cas.decodeJwt(res.data.id_token);
 
         successHandler(decoded);
     }, function (error) {
-        throw 'Operation failed to obtain access token: ' + error;
+        throw `Operation failed to obtain access token: ${error}`;
     });
 }
 

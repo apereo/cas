@@ -1,18 +1,13 @@
 const puppeteer = require('puppeteer');
-const fs = require('fs');
 const path = require('path');
 const cas = require('../../cas.js');
 const assert = require("assert");
 
-function cleanUp(exec) {
+async function cleanUp(exec) {
     console.log("Killing SAML2 SP process...");
     exec.kill();
-    let metadataDir = path.join(__dirname, '/saml-md');
-    fs.rmdir(metadataDir, {recursive: true}, () => {
-    });
-    metadataDir = path.join(__dirname, '/saml-sp');
-    fs.rmdir(metadataDir, {recursive: true}, () => {
-    });
+    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectory(path.join(__dirname, '/saml-sp'));
 }
 
 (async () => {
@@ -33,7 +28,7 @@ function cleanUp(exec) {
         await cas.loginWith(page, "casuser", "Mellon");
         await page.waitForResponse(response => response.status() === 200)
         await page.waitForTimeout(3000)
-        console.log("Page URL: " + page.url());
+        console.log(`Page URL: ${page.url()}`);
         await page.waitForSelector('body pre', { visible: true });
         let content = await cas.textContent(page, "body pre");
         let payload = JSON.parse(content);
@@ -50,7 +45,7 @@ function cleanUp(exec) {
         await page.waitForSelector('#idpForm', {visible: true});
         await cas.submitForm(page, "#idpForm");
         await page.waitForTimeout(2000)
-        console.log("Page URL: " + page.url());
+        console.log(`Page URL: ${page.url()}`);
         await page.waitForSelector('body pre', { visible: true });
         content = await cas.textContent(page, "body pre");
         payload = JSON.parse(content);
@@ -58,9 +53,9 @@ function cleanUp(exec) {
         assert(payload.form.SAMLResponse !== null);
 
         await browser.close();
-        cleanUp(exec);
+        await cleanUp(exec);
     }, async function (error) {
-        cleanUp(exec);
+        await cleanUp(exec);
         console.log(error);
         throw error;
     })

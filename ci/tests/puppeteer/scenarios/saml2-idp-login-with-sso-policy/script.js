@@ -1,6 +1,4 @@
 const puppeteer = require('puppeteer');
-
-const fs = require('fs');
 const path = require('path');
 const cas = require('../../cas.js');
 
@@ -20,12 +18,8 @@ const cas = require('../../cas.js');
     // await page.waitForTimeout(1000)
     await cas.click(page, "input[type='submit']")
     await page.waitForNavigation();
-
     await page.waitForTimeout(3000)
-    
-    let metadataDir = path.join(__dirname, '/saml-md');
-    fs.rmdir(metadataDir, { recursive: true }, () => {});
-
+    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await cas.assertVisibility(page, '#username')
     await cas.assertVisibility(page, '#password')
 

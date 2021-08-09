@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const fs = require('fs');
 const path = require('path');
 const cas = require('../../cas.js');
 
@@ -12,7 +11,7 @@ const cas = require('../../cas.js');
     url += `?providerId=${entityId}`;
     url += "&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin";
 
-    console.log("Navigating to " + url);
+    console.log(`Navigating to ${url}`);
     await page.goto(url);
     await page.waitForTimeout(1000)
     await cas.loginWith(page, "casuser", "Mellon");
@@ -20,10 +19,7 @@ const cas = require('../../cas.js');
 
     await cas.assertPageTitle(page, "CAS - Central Authentication Service");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
-
-    let metadataDir = path.join(__dirname, '/saml-md');
-    fs.rmdir(metadataDir, { recursive: true }, () => {});
-    
+    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
 

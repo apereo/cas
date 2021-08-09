@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const fs = require('fs');
 const path = require('path');
 const cas = require('../../cas.js');
 
@@ -13,14 +12,9 @@ const cas = require('../../cas.js');
     // await page.waitForTimeout(1000)
     await cas.click(page, "input[type='submit']")
     await page.waitForNavigation();
-
-    // await page.waitForTimeout(1000)
-
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForSelector('div.entry-content p', { visible: true });
-
-    let metadataDir = path.join(__dirname, '/saml-md');
-    fs.rmdir(metadataDir, { recursive: true }, () => {});
+    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await cas.assertInnerTextStartsWith(page, "div.entry-content p", "Your browser has completed the full SAML 2.0 round-trip");
 
     await browser.close();

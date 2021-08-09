@@ -11,7 +11,7 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
 
     const service = "https://google.com";
-    await page.goto("https://localhost:8443/cas/login?service=" + service);
+    await page.goto(`https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(1000);
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(500);
@@ -22,7 +22,7 @@ const cas = require("../../cas.js");
     await cas.submitForm(page, "#mfa-gauth > form[name=fm1]")
     await page.waitForTimeout(1000);
 
-    console.log("Using scratch code " + scratch + " to login...");
+    console.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,'#token', scratch);
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
@@ -30,8 +30,8 @@ const cas = require("../../cas.js");
 
     let ticket = await cas.assertTicketParameter(page);
 
-    console.log("Validating ticket " + ticket + " with service " + service);
-    const body = await cas.doRequest("https://localhost:8443/cas/p3/serviceValidate?service=" + service + "&ticket=" + ticket);
+    console.log(`Validating ticket ${ticket} with service ${service}`);
+    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);
 
     console.log(body);
     

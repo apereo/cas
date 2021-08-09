@@ -9,7 +9,8 @@ const cas = require('../../cas.js');
         "description": "This is the Apereo CAS server"
     };
     let body = JSON.stringify(service);
-    console.log("Sending\n" + body);
+    console.log(`Sending
+${body}`);
 
     body = await cas.doRequest("https://localhost:8443/cas/v1/services", "POST", {
         'Authorization': 'Basic Y2FzdXNlcjpNZWxsb24=',

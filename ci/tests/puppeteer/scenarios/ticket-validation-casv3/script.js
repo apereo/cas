@@ -7,11 +7,11 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     const service = "https://example.com";
 
-    await page.goto("https://localhost:8443/cas/login?service=" + service);
+    await page.goto(`https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page, "casuser", "Mellon");
 
     let ticket = await cas.assertTicketParameter(page);
-    const body = await cas.doRequest('https://localhost:8443/cas/p3/serviceValidate?service=' + service + "&ticket=" + ticket);
+    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);
     console.log(body)
     assert(body.includes('<cas:serviceResponse xmlns:cas=\'http://www.yale.edu/tp/cas\'>'))
     assert(body.includes('<cas:user>casuser</cas:user>'))

@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const fs = require('fs');
 const cas = require('../../cas.js');
 const path = require('path');
 
@@ -31,9 +30,7 @@ const path = require('path');
     await cas.assertTicketGrantingCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
-    let metadataDir = path.join(__dirname, '/saml-md');
-    fs.rmdir(metadataDir, { recursive: true }, () => {});
-    
+    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
 

@@ -13,7 +13,7 @@ const cas = require('../../cas.js');
         "response_type=code&" +
         "response_mode=form_post&" +
         "nonce=vn4qulthnx";
-    console.log("First attempt: navigating to " + url);
+    console.log(`First attempt: navigating to ${url}`);
     await page.goto(url);
 
     await cas.loginWith(page, "casuser", "Mellon");
@@ -26,8 +26,8 @@ const cas = require('../../cas.js');
     let header = await cas.textContent(page, "h1.green-text");
     assert(header === "Success!")
 
-    url = url + "&prompt=login";
-    console.log("Second attempt: navigating to " + url);
+    url = `${url}&prompt=login`;
+    console.log(`Second attempt: navigating to ${url}`);
     await page.goto(url);
     await cas.assertVisibility(page, "#username");
     await cas.assertVisibility(page, "#password");

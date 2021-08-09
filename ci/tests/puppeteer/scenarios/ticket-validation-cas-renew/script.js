@@ -5,14 +5,14 @@ const cas = require('../../cas.js');
 (async () => {
 
     for (const endpoint of ["validate", "serviceValidate", "p3/serviceValidate"]) {
-        console.log("Checking validation endpoint: " + endpoint);
+        console.log(`Checking validation endpoint: ${endpoint}`);
 
         const browser = await puppeteer.launch(cas.browserOptions());
         const page = await cas.newPage(browser);
 
         const service1 = "https://httpbin.org/get";
-        console.log("Logging into " + service1 + " without renew to create SSO");
-        await page.goto("https://localhost:8443/cas/login?service=" + service1);
+        console.log(`Logging into ${service1} without renew to create SSO`);
+        await page.goto(`https://localhost:8443/cas/login?service=${service1}`);
         await cas.loginWith(page, "casuser", "Mellon");
 
         let ticket = await cas.assertTicketParameter(page);
@@ -25,8 +25,8 @@ const cas = require('../../cas.js');
         }
 
         const service2 = "https://httpbin.org/get";
-        console.log("Logging into " + service2 + " to validate with renew=true and existing SSO");
-        await page.goto("https://localhost:8443/cas/login?service=" + service2);
+        console.log(`Logging into ${service2} to validate with renew=true and existing SSO`);
+        await page.goto(`https://localhost:8443/cas/login?service=${service2}`);
         ticket = await cas.assertTicketParameter(page);
         body = await validate(endpoint, service2, ticket, true);
 
@@ -40,12 +40,12 @@ const cas = require('../../cas.js');
 })();
 
 async function validate(endpoint, service, ticket, renew = false) {
-    let path = "/cas/" + endpoint + "?service=" + service + "&ticket=" + ticket;
+    let path = `/cas/${endpoint}?service=${service}&ticket=${ticket}`;
     if (renew) {
-        path = path + "&renew=true";
+        path = `${path}&renew=true`;
     }
-    console.log("Validating " + path);
-    let result = await cas.doRequest("https://localhost:8443" + path);
+    console.log(`Validating ${path}`);
+    let result = await cas.doRequest(`https://localhost:8443${path}`);
     console.log(result);
     return result;
 }
