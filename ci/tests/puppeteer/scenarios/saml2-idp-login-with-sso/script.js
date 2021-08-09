@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const fs = require('fs');
 const path = require('path');
 const cas = require('../../cas.js');
 
@@ -27,8 +26,7 @@ const cas = require('../../cas.js');
     await page.goto(url);
     await page.waitForTimeout(1000)
     await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS")
-    let metadataDir = path.join(__dirname, '/saml-md');
-    fs.rmdir(metadataDir, { recursive: true }, () => {});
+    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
 

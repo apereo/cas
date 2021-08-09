@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
     console.log(tgt);
     assert(tgt !== null);
 
-    let st = await executeRequest('https://localhost:8443/cas/v1/tickets/' + tgt + '?service=https://github.com/apereo/cas', 200);
+    let st = await executeRequest(`https://localhost:8443/cas/v1/tickets/${tgt}?service=https://github.com/apereo/cas`, 200);
     await cas.decodeJwt(st);
 })();
 

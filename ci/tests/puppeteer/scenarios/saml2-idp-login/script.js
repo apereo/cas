@@ -1,6 +1,5 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
-const fs = require('fs');
 const path = require('path');
 const cas = require('../../cas.js');
 
@@ -22,17 +21,13 @@ const cas = require('../../cas.js');
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForSelector('div.entry-content p', { visible: true });
     await cas.assertInnerTextStartsWith(page, "div.entry-content p", "Your browser has completed the full SAML 2.0 round-trip");
-
-    let metadataDir = path.join(__dirname, '/saml-md');
-    fs.rmdir(metadataDir, { recursive: true }, () => {});
-
-
+    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     const endpoints = ["health", "samlIdPRegisteredServiceMetadataCache?serviceId=Sample&entityId=https://samltest.id/saml/sp"];
     const baseUrl = "https://localhost:8443/cas/actuator/"
     for (let i = 0; i < endpoints.length; i++) {
         let url = baseUrl + endpoints[i];
         const response = await page.goto(url);
-        console.log(response.status() + " " + response.statusText())
+        console.log(`${response.status()} ${response.statusText()}`)
         assert(response.ok())
     }
 

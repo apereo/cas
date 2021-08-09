@@ -6,6 +6,7 @@ const waitOn = require('wait-on');
 const jwt = require('jsonwebtoken');
 const colors = require('colors');
 const path = require("path");
+const fs = require("fs");
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
@@ -23,6 +24,11 @@ exports.browserOptions = (opt) => {
         ...opt
     };
 };
+
+exports.removeDirectory = async(directory) => {
+    console.log(colors.green(`Removing directory ${directory}`));
+    fs.rmdir(directory, { recursive: true }, () => {});
+}
 
 exports.click = async (page, button) => {
     await page.evaluate((button) => {
@@ -96,7 +102,7 @@ exports.assertNoTicketGrantingCookie = async (page) => {
 }
 
 exports.submitForm = async (page, selector) => {
-    console.log("Submitting form " + selector);
+    console.log(`Submitting form ${selector}`);
     await page.$eval(selector, form => form.submit());
     await page.waitForTimeout(2500)
 }
@@ -120,7 +126,7 @@ exports.newPage = async (browser) => {
 }
 
 exports.assertParameter = async (page, param) => {
-    console.log(`Asserting parameter ${param} in URL: ` + page.url());
+    console.log(`Asserting parameter ${param} in URL: ${page.url()}`);
     let result = new URL(page.url());
     let value = result.searchParams.get(param);
     console.log(`Parameter ${param} with value ${value}`);
@@ -140,11 +146,11 @@ exports.sleep = async (ms) => {
 }
 
 exports.assertTicketParameter = async (page) => {
-    console.log("Page URL: " + page.url())
+    console.log(`Page URL: ${page.url()}`);
     let result = new URL(page.url());
     assert(result.searchParams.has("ticket"))
     let ticket = result.searchParams.get("ticket");
-    console.log("Ticket: " + ticket);
+    console.log(`Ticket: ${ticket}`);
     assert(ticket != null);
     return ticket;
 }
@@ -158,7 +164,7 @@ exports.doRequest = async (url, method = "GET", headers = {}, statusCode = 200, 
         };
         console.log(`Contacting ${url} via ${method}`)
         const handler = (res) => {
-            console.log("Response status code: " + res.statusCode)
+            console.log(`Response status code: ${res.statusCode}`)
             if (statusCode > 0) {
                 assert(res.statusCode === statusCode);
             }
@@ -235,10 +241,10 @@ exports.waitFor = async (url, successHandler, failureHandler) => {
 exports.launchSamlSp = async (idpMetadataPath, samlSpDir, samlOpts) => {
     let args = ['-q', '-x', 'test', '--no-daemon',
         '-DidpMetadataType=idpMetadataFile',
-        '-DidpMetadata=' + idpMetadataPath,
-        '-Dsp.sslKeystorePath=' + process.env.CAS_KEYSTORE];
+        `-DidpMetadata=${idpMetadataPath}`,
+        `-Dsp.sslKeystorePath=${process.env.CAS_KEYSTORE}`];
     args = args.concat(samlOpts);
-    console.log("Launching SAML2 SP in " + samlSpDir + " with " + args);
+    console.log(`Launching SAML2 SP in ${samlSpDir} with ${args}`);
     const exec = spawn('./gradlew', args, {cwd: samlSpDir});
 
     exec.stdout.on('data', (data) => {
@@ -270,7 +276,7 @@ exports.assertInnerText = async (page, selector, value) => {
 
 exports.assertPageTitle = async (page, value) => {
     const title = await page.title();
-    console.log("Page Title: " + title);
+    console.log(`Page Title: ${title}`);
     assert(title === value)
 }
 
@@ -278,7 +284,7 @@ exports.decodeJwt = async (token, complete = false) => {
     console.log(`Decoding token ${token}`);
     let decoded = jwt.decode(token, {complete: complete});
     if (complete) {
-        console.log("Decoded token header: " + colors.green(decoded.header));
+        console.log(`Decoded token header: ${colors.green(decoded.header)}`);
         console.log("Decoded token payload:");
         console.log(colors.green(decoded.payload));
     } else {
@@ -292,7 +298,7 @@ exports.uploadSamlMetadata = async(page, metadata) => {
     await page.goto("https://samltest.id/upload.php");
     await page.waitForTimeout(1000)
     const fileElement = await page.$("input[type=file]");
-    console.log("Metadata file: " + metadata);
+    console.log(`Metadata file: ${metadata}`);
     await fileElement.uploadFile(metadata);
     await page.waitForTimeout(1000)
     await this.click(page, "input[name='submit']")

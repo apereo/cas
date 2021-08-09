@@ -1,17 +1,12 @@
 const puppeteer = require('puppeteer');
-const fs = require('fs');
 const path = require('path');
 const cas = require('../../cas.js');
 
-function cleanUp(exec) {
+async function cleanUp(exec) {
     console.log("Killing SAML2 SP process...");
     exec.kill();
-    let metadataDir = path.join(__dirname, '/saml-md');
-    fs.rmdir(metadataDir, {recursive: true}, () => {
-    });
-    metadataDir = path.join(__dirname, '/saml-sp');
-    fs.rmdir(metadataDir, {recursive: true}, () => {
-    });
+    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectory(path.join(__dirname, '/saml-sp'));
 }
 
 (async () => {
@@ -43,9 +38,9 @@ function cleanUp(exec) {
         await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS")
 
         await browser.close();
-        cleanUp(exec);
+        await cleanUp(exec);
     }, async function (error) {
-        cleanUp(exec);
+        await cleanUp(exec);
         console.log(error);
         throw error;
     })

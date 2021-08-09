@@ -11,11 +11,9 @@ const assert = require("assert");
         + "b2RlIiwicmVkaXJlY3RfdXJpIjoiaHR0cHM6XC9cL2FwZXJlby5naXRod"
         + "WIuaW8iLCJzdGF0ZSI6InZJTjFiMFk0Q2siLCJub25jZSI6IjFOOW1xUE"
         + "85ZnQiLCJjbGllbnRfaWQiOiJjbGllbnQifQ.";
-    const url = "https://localhost:8443/cas/oidc/authorize?request="
-        + request + "&scope=openid"
-        + "&redirect_uri=https://unknown.net";
+    const url = `https://localhost:8443/cas/oidc/authorize?request=${request}&scope=openid&redirect_uri=https://unknown.net`;
 
-    console.log("Navigating to " + url);
+    console.log(`Navigating to ${url}`);
     await page.goto(url);
     await cas.loginWith(page, "casuser", "Mellon");
 
@@ -25,15 +23,15 @@ const assert = require("assert");
     }
 
     let code = await cas.assertParameter(page, "code");
-    console.log("OAuth code " + code);
+    console.log(`OAuth code ${code}`);
 
     let accessTokenParams = "client_id=client&";
     accessTokenParams += "client_secret=secret&";
     accessTokenParams += "grant_type=authorization_code&";
-    accessTokenParams += "redirect_uri=" + redirectUrl;
+    accessTokenParams += `redirect_uri=${redirectUrl}`;
 
-    let accessTokenUrl = 'https://localhost:8443/cas/oidc/token?' + accessTokenParams + "&code=" + code;
-    console.log("Calling " + accessTokenUrl);
+    let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
+    console.log(`Calling ${accessTokenUrl}`);
 
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
@@ -43,7 +41,7 @@ const assert = require("assert");
         assert(res.data.access_token !== null);
 
         accessToken = res.data.access_token;
-        console.log("Received access token " + accessToken);
+        console.log(`Received access token ${accessToken}`);
 
         console.log("Decoding ID token...");
         let decoded = await cas.decodeJwt(res.data.id_token);
@@ -55,7 +53,7 @@ const assert = require("assert");
         assert(decoded.state != null)
         assert(decoded.nonce != null)
     }, function (error) {
-        throw 'Operation failed to obtain access token: ' + error;
+        throw `Operation failed to obtain access token: ${error}`;
     });
 
     await browser.close();

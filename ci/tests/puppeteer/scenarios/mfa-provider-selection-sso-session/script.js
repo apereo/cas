@@ -31,7 +31,7 @@ async function fetchScratch() {
     await page.waitForTimeout(500);
 
     let scratch = await fetchScratch();
-    console.log("Using scratch code " + scratch + " to login...");
+    console.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,'#token', scratch);
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
@@ -59,7 +59,7 @@ async function fetchScratch() {
     await page.waitForTimeout(500);
 
     scratch = await fetchScratch();
-    console.log("Using scratch code " + scratch + " to login...");
+    console.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,'#token', scratch);
     await page.keyboard.press('Enter');
     await page.waitForNavigation();

@@ -10,12 +10,12 @@ async function login(page, redirectUrl, params) {
 
     let authzUrl = "https://localhost:8443/cas/oidc/authorize?";
     authzUrl += "response_type=code&client_id=client&scope=openid";
-    authzUrl += "&prompt=none&redirect_uri=" + redirectUrl + "&nonce=" + nonce + "&state=" + state;
+    authzUrl += `&prompt=none&redirect_uri=${redirectUrl}&nonce=${nonce}&state=${state}`;
 
     if (params !== undefined) {
-        authzUrl += '&' + params;
+        authzUrl += `&${params}`;
     }
-    console.log("Navigating to " + authzUrl);
+    console.log(`Navigating to ${authzUrl}`);
     await page.goto(authzUrl);
 }
 
@@ -32,7 +32,7 @@ async function login(page, redirectUrl, params) {
 
     redirectUrl = "https://httpbin.org/post";
     await login(page, redirectUrl, "response_mode=form_post")
-    console.log("Page URL: " + page.url());
+    console.log(`Page URL: ${page.url()}`);
 
     await page.waitForResponse(response => response.status() === 200)
     await page.waitForSelector('body pre', { visible: true });

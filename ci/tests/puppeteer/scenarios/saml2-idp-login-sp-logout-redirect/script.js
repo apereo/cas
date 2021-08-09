@@ -2,19 +2,18 @@ const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
 const assert = require('assert');
 const path = require("path");
-const fs = require("fs");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
 
     let page = await cas.newPage(browser);
     const service = "https://example.com";
-    await page.goto("https://localhost:8443/cas/login?service=" + service);
+    await page.goto(`https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(1000);
     await cas.loginWith(page, "casuser", "Mellon");
 
     let ticket = await cas.assertTicketParameter(page);
-    await cas.doRequest('https://localhost:8443/cas/validate?service=' + service + "&ticket=" + ticket);
+    await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`);
     await page.close();
     
     page = await cas.newPage(browser);
@@ -36,10 +35,6 @@ const fs = require("fs");
     await page.goto('https://localhost:8443/cas/idp/profile/SAML2/POST/SLO');
     const content = await page.content();
     assert(content.includes('value="Go to https://samltest.id/Shibboleth.sso/SLO/Redirect?SAMLResponse='));
-
-    let metadataDir = path.join(__dirname, '/saml-md');
-    fs.rmdir(metadataDir, {recursive: true}, () => {
-    });
-
+    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();

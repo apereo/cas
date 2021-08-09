@@ -13,7 +13,7 @@ const cas = require("../../cas.js");
     await page.goto("https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "Mellon");
     
-    console.log("Using scratch code " + scratch + " to login...");
+    console.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,'#token', scratch);
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
