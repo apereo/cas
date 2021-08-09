@@ -493,6 +493,12 @@ public abstract class AbstractSamlIdPProfileHandlerController {
 
         val facade = adaptor.get();
         verifyAuthenticationContextSignature(authenticationContext, request, authnRequest, facade, registeredService);
+
+        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, authenticationContext.getRight()), facade,
+            authnRequest.getProtocolBinding());
+        LOGGER.debug("Determined SAML2 endpoint for authentication request as [{}]",
+            StringUtils.defaultIfBlank(acs.getResponseLocation(), acs.getLocation()));
+        
         SamlUtils.logSamlObject(configurationContext.getOpenSamlConfigBean(), authnRequest);
         return Pair.of(registeredService, facade);
     }
@@ -682,7 +688,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
         val webContext = new JEEContext(request, response);
         return SamlIdPUtils.retrieveSamlRequest(webContext, configurationContext.getSessionStore(),
-            configurationContext.getOpenSamlConfigBean(), AuthnRequest.class)
+                configurationContext.getOpenSamlConfigBean(), AuthnRequest.class)
             .orElseThrow(() -> new IllegalArgumentException("SAML request or context could not be determined from session store"));
     }
 

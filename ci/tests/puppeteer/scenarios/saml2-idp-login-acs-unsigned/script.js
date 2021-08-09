@@ -4,6 +4,7 @@ const path = require('path');
 const cas = require('../../cas.js');
 
 function cleanUp(exec) {
+    console.log("Killing SAML2 SP process...");
     exec.kill();
     let metadataDir = path.join(__dirname, '/saml-md');
     fs.rmdir(metadataDir, {recursive: true}, () => {
@@ -27,8 +28,6 @@ function cleanUp(exec) {
         await page.waitForSelector('#idpForm', {visible: true});
         await cas.submitForm(page, "#idpForm");
         await page.waitForTimeout(3000)
-        await page.waitForSelector('#username', {visible: true});
-        await cas.loginWith(page, "casuser", "Mellon");
         await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS")
 
         console.log("Trying with an exising SSO session...")
@@ -44,7 +43,6 @@ function cleanUp(exec) {
         await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS")
 
         await browser.close();
-        console.log("Killing SAML2 SP process...");
         cleanUp(exec);
     }, async function (error) {
         cleanUp(exec);

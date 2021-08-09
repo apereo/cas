@@ -5,6 +5,7 @@ const cas = require('../../cas.js');
 const assert = require("assert");
 
 function cleanUp(exec) {
+    console.log("Killing SAML2 SP process...");
     exec.kill();
     let metadataDir = path.join(__dirname, '/saml-md');
     fs.rmdir(metadataDir, {recursive: true}, () => {
@@ -57,7 +58,6 @@ function cleanUp(exec) {
         assert(payload.form.SAMLResponse !== null);
 
         await browser.close();
-        console.log("Killing SAML2 SP process...");
         cleanUp(exec);
     }, async function (error) {
         cleanUp(exec);
