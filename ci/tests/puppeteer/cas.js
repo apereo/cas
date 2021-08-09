@@ -5,7 +5,6 @@ const {spawn} = require('child_process');
 const waitOn = require('wait-on');
 const jwt = require('jsonwebtoken');
 const colors = require('colors');
-const path = require("path");
 const fs = require("fs");
 
 const BROWSER_OPTIONS = {
