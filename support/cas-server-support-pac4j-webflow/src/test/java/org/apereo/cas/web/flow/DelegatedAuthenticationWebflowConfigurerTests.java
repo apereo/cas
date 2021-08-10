@@ -41,7 +41,7 @@ public class DelegatedAuthenticationWebflowConfigurerTests extends BaseWebflowCo
         val request = new MockHttpServletRequest();
         request.addParameter("error_description", "fail");
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        context.getFlowScope().put("rootCauseException", new RuntimeException());
+        context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, new RuntimeException());
         stopState.enter(context);
         assertTrue(context.getFlowScope().contains("code"));
         assertTrue(context.getFlowScope().contains("description"));

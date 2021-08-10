@@ -1,7 +1,9 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPCoreProperties;
 import org.apereo.cas.services.RegisteredService;
@@ -124,7 +126,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param ex  the ex
      * @return the model and view
      */
-    @ExceptionHandler({UnauthorizedServiceException.class, SamlException.class})
+    @ExceptionHandler({PrincipalException.class, UnauthorizedServiceException.class, SamlException.class})
     public ModelAndView handleUnauthorizedServiceException(final HttpServletRequest req, final Exception ex) {
         return WebUtils.produceUnauthorizedErrorView(ex);
     }
@@ -377,6 +379,16 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(id));
         val registeredService = configurationContext.getServicesManager().findServiceBy(service, SamlRegisteredService.class);
 
+        val audit = AuditableContext.builder()
+            .service(service)
+            .authentication(authentication)
+            .registeredService(registeredService)
+            .httpRequest(request)
+            .httpResponse(response)
+            .build();
+        val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
+        accessResult.throwExceptionIfNeeded();
+
         val assertion = buildCasAssertion(authentication, service, registeredService, Map.of());
         val authenticationContext = buildAuthenticationContextPair(request, response, context);
         val binding = determineProfileBinding(authenticationContext, assertion);
@@ -402,6 +414,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val context = new JEEContext(request, response);
         val relayState = configurationContext.getSessionStore()
             .get(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE)
+            .or(() -> Optional.ofNullable(SAMLBindingSupport.getRelayState(authnContext.getValue())))
             .orElseGet(() -> request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));
         val messageContext = bindRelayStateParameter(request, response, authnContext, (String) relayState);
         return Pair.of(authnContext.getLeft(), messageContext);
@@ -480,6 +493,12 @@ public abstract class AbstractSamlIdPProfileHandlerController {
 
         val facade = adaptor.get();
         verifyAuthenticationContextSignature(authenticationContext, request, authnRequest, facade, registeredService);
+
+        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, authenticationContext.getRight()), facade,
+            authnRequest.getProtocolBinding());
+        LOGGER.debug("Determined SAML2 endpoint for authentication request as [{}]",
+            StringUtils.defaultIfBlank(acs.getResponseLocation(), acs.getLocation()));
+        
         SamlUtils.logSamlObject(configurationContext.getOpenSamlConfigBean(), authnRequest);
         return Pair.of(registeredService, facade);
     }
@@ -669,7 +688,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
         val webContext = new JEEContext(request, response);
         return SamlIdPUtils.retrieveSamlRequest(webContext, configurationContext.getSessionStore(),
-            configurationContext.getOpenSamlConfigBean(), AuthnRequest.class)
+                configurationContext.getOpenSamlConfigBean(), AuthnRequest.class)
             .orElseThrow(() -> new IllegalArgumentException("SAML request or context could not be determined from session store"));
     }
 

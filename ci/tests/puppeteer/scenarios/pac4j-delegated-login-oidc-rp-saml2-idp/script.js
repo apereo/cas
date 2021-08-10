@@ -1,6 +1,5 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
-const fs = require('fs');
 const cas = require('../../cas.js');
 const path = require('path');
 
@@ -11,18 +10,7 @@ const path = require('path');
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(1000)
 
-    console.log("Upload metadata...")
-    await page.goto("https://samltest.id/upload.php");
-    await page.waitForTimeout(1000)
-
-    const fileElement = await page.$("input[type=file]");
-    let metadata = path.join(__dirname, '/saml-md/sp-metadata.xml');
-    console.log("Metadata file: " + metadata);
-
-    await fileElement.uploadFile(metadata);
-    await cas.click(page, "input[name='submit']")
-    await page.waitForNavigation();
-    await page.waitForTimeout(2000)
+    await cas.uploadSamlMetadata(page, path.join(__dirname, '/saml-md/sp-metadata.xml'));
 
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
         "client_id=client&" +
@@ -66,9 +54,6 @@ const path = require('path');
 
     console.log(page.url());
     assert(page.url().startsWith("https://oidcdebugger.com/debug"))
-
-    let metadataDir = path.join(__dirname, '/saml-md');
-    fs.rmdirSync(metadataDir, { recursive: true });
-
+    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();

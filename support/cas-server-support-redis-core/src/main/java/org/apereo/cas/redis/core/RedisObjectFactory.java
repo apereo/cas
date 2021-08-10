@@ -169,13 +169,13 @@ public class RedisObjectFactory {
             config.setTestOnReturn(pool.isTestOnReturn());
             config.setTestOnCreate(pool.isTestOnCreate());
             if (pool.getMinEvictableIdleTimeMillis() > 0) {
-                config.setMinEvictableIdleTimeMillis(pool.getMinEvictableIdleTimeMillis());
+                config.setMinEvictableIdleTime(Duration.ofMillis(pool.getMinEvictableIdleTimeMillis()));
             }
             if (pool.getNumTestsPerEvictionRun() > 0) {
                 config.setNumTestsPerEvictionRun(pool.getNumTestsPerEvictionRun());
             }
             if (pool.getSoftMinEvictableIdleTimeMillis() > 0) {
-                config.setSoftMinEvictableIdleTimeMillis(pool.getSoftMinEvictableIdleTimeMillis());
+                config.setSoftMinEvictableIdleTime(Duration.ofMillis(pool.getSoftMinEvictableIdleTimeMillis()));
             }
             poolingClientConfig.poolConfig(config);
             LOGGER.trace("Redis configuration: the pool is configured to [{}]", config);

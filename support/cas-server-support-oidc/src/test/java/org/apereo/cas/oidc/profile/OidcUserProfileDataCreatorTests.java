@@ -42,6 +42,7 @@ public class OidcUserProfileDataCreatorTests extends AbstractOidcTests {
 
         val attrs = (Map) data.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES);
         assertTrue(attrs.containsKey("email"));
+
     }
 
     @Test
@@ -57,5 +58,6 @@ public class OidcUserProfileDataCreatorTests extends AbstractOidcTests {
         when(accessToken.getClaims()).thenReturn(result);
         val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
         assertFalse(data.isEmpty());
+        assertTrue(data.containsKey(OidcConstants.CLAIM_SUB));
     }
 }

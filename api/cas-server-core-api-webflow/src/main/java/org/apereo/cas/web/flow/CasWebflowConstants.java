@@ -7,18 +7,22 @@ package org.apereo.cas.web.flow;
  * @since 5.0.0
  */
 public interface CasWebflowConstants {
+    /*
+     ****************************************
+     * Errors.
+     ****************************************
+     */
 
     /**
-     * Base path for webflow configuration files.
+     * Attribute to track exceptions in models.
      */
-    String BASE_CLASSPATH_WEBFLOW = "classpath*:/webflow";
+    String ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION = "rootCauseException";
 
     /*
      ****************************************
      * Transitions.
      ****************************************
      */
-
 
     /**
      * The transition state 'captchaError'.
@@ -637,7 +641,7 @@ public interface CasWebflowConstants {
      * State if for MFA composite events.
      */
     String STATE_ID_MFA_COMPOSITE = "mfa-composite";
-        
+
     /**
      * State that can be used by MFA providers that offer preAuth endpoints.
      */
@@ -832,7 +836,7 @@ public interface CasWebflowConstants {
      * The view state 'casSessionStorageWriteView'.
      */
     String VIEW_ID_SESSION_STORAGE_WRITE = "storage/casSessionStorageWriteView";
-    
+
     /**
      * The view state 'casSessionStorageReadView'.
      */

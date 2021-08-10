@@ -7,7 +7,6 @@ import org.apereo.cas.support.oauth.validator.authorization.OAuth20Authorization
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
-import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlanConfigurer;
 
 import lombok.val;
 import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
@@ -33,7 +32,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
+import static org.apereo.cas.support.oauth.OAuth20Constants.*;
 
 /**
  * This is {@link CasOAuth20ThrottleConfiguration}.
@@ -60,6 +59,10 @@ public class CasOAuth20ThrottleConfiguration {
     @Autowired
     @Qualifier("oauthAuthorizationRequestValidators")
     private Set<OAuth20AuthorizationRequestValidator> oauthAuthorizationRequestValidators;
+
+    @Autowired
+    @Qualifier("authenticationThrottlingExecutionPlan")
+    private ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan;
 
     @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
     @Bean
@@ -99,24 +102,15 @@ public class CasOAuth20ThrottleConfiguration {
     }
 
     @Bean
-    public AuthenticationThrottlingExecutionPlanConfigurer oauthAuthenticationThrottlingExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationThrottleInterceptor(oauthHandlerInterceptorAdapter());
+    @ConditionalOnMissingBean(name = "oauthThrottleWebMvcConfigurer")
+    public WebMvcConfigurer oauthThrottleWebMvcConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addInterceptors(final InterceptorRegistry registry) {
+                authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors()
+                    .forEach(handler -> registry.addInterceptor(handler).order(0).addPathPatterns(BASE_OAUTH20_URL.concat("/*")));
+                registry.addInterceptor(oauthHandlerInterceptorAdapter()).order(1).addPathPatterns(BASE_OAUTH20_URL.concat("/*"));
+            }
+        };
     }
-
-    @Configuration("oauthThrottleWebMvcConfigurer")
-    static class CasOAuthThrottleWebMvcConfigurer implements WebMvcConfigurer {
-
-        @Autowired
-        @Qualifier("authenticationThrottlingExecutionPlan")
-        private ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan;
-
-        @Override
-        public void addInterceptors(final InterceptorRegistry registry) {
-            Objects.requireNonNull(authenticationThrottlingExecutionPlan.getObject()).getAuthenticationThrottleInterceptors()
-                .forEach(handler -> registry.addInterceptor(handler)
-                    .order(0)
-                    .addPathPatterns(BASE_OAUTH20_URL.concat("/*")));
-        }
-    }
-
 }

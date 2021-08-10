@@ -1,6 +1,5 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
-const url = require('url');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -16,22 +15,12 @@ const cas = require('../../cas.js');
     assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")))
     assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")))
     assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")))
-    
+
     await cas.type(page,'#username', "casuser");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
-
-    // await page.waitForTimeout(10000)
-
-    const header = await cas.innerText(page, '#login h3');
-
-    assert(header === "Provide Token")
-
-    const sub = await cas.innerText(page, '#login p');
-    console.log(sub)
-    assert(sub.startsWith("Please provide the security token sent to you"));
-
+    await cas.assertInnerText(page, "#login h3", "Provide Token")
+    await cas.assertInnerTextStartsWith(page, "#login p", "Please provide the security token sent to you");
     await cas.assertVisibility(page, '#token')
-    
     await browser.close();
 })();

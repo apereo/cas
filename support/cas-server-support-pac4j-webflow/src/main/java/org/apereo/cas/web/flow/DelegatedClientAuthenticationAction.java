@@ -295,7 +295,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @return the event
      */
     protected Event stopWebflow(final Exception e, final RequestContext requestContext) {
-        requestContext.getFlashScope().put("rootCauseException", e);
+        requestContext.getFlashScope().put(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, e);
         return new Event(this, CasWebflowConstants.TRANSITION_ID_STOP, new LocalAttributeMap<>("error", e));
     }
 

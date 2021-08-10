@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -10,8 +9,7 @@ const cas = require('../../cas.js');
 
     await page.goto("https://localhost:8443/cas");
     await cas.assertNoTicketGrantingCookie(page);
-
-
+    
     await page.goto("https://localhost:8443/cas/login?service=https://github.com&renew=true");
     await cas.loginWith(page, "casuser", "Mellon");
 

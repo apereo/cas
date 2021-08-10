@@ -1,0 +1,17 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "https://httpbin.org/shibboleth",
+  "name" : "Sample",
+  "id" : 2,
+  "evaluationOrder" : 1,
+  "metadataLocation" : "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVariables['SCENARIO']}/sp-metadata.xml",
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "requiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "credentialType" : [ "java.util.HashSet", [ "X509CertificateCredential" ] ]
+    }
+  }
+}
+
+

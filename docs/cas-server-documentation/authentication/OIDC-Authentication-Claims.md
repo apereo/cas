@@ -9,7 +9,18 @@ category: Protocols
 
 OpenID connect claims are treated as normal CAS attributes that need to
 be [resolved, mapped and released](../integration/Attribute-Release-Policies.html).
-    
+
+<div class="alert alert-warning">
+<strong>ID Token Claims</strong><p>
+Per OpenID Connect specification, individual claims requested by OpenID scopes,
+such as <code>profile</code>, <code>email</code>, etc. are only put into the OpenID 
+Connect ID token when the response type is set to <code>id_token</code>. To assist with 
+backward compatibility and non-complying application integrations, CAS provides options to force-include
+claims in the ID token, though please note that this should be a last workaround as doing so most likely
+is in violation of the OpenID Connect specification. Claims should be requested from 
+the userinfo/profile endpoints in exchange for an access token as indicated by the appropriate response type.
+</p></div>
+
 ## Configuration
 
 {% include casproperties.html properties="cas.authn.oidc.core" %}

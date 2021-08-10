@@ -51,7 +51,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 5.3.0
  */
 @ExtendWith(MockitoExtension.class)
-@Tag("RestfulApi")
+@Tag("RestfulApiAuthentication")
 public class UserAuthenticationResourceTests {
     private static final String TICKETS_RESOURCE_URL = "/cas/v1/users";
 

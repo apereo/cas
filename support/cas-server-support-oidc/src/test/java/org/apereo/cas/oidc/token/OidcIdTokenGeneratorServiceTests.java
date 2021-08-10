@@ -125,6 +125,7 @@ public class OidcIdTokenGeneratorServiceTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
+        "cas.authn.oidc.core.include-id-token-claims=false",
         "cas.authn.oauth.access-token.crypto.encryption-enabled=false",
         "cas.authn.oidc.core.claims-map.preferred_username=custom-attribute"
     })

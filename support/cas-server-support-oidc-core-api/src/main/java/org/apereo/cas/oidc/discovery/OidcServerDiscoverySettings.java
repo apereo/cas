@@ -59,6 +59,9 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("userinfo_encryption_enc_values_supported")
     private List<String> userInfoEncryptionEncodingValuesSupported;
 
+    @JsonProperty("acr_values_supported")
+    private List<String> acrValuesSupported;
+
     @JsonProperty("request_object_signing_alg_values_supported")
     private List<String> requestObjectSigningAlgValuesSupported;
 
@@ -80,8 +83,11 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("claims_parameter_supported")
     private boolean claimsParameterSupported = true;
 
+    @JsonProperty("request_uri_parameter_supported")
+    private boolean requestUriParameterSupported = true;
+
     @JsonProperty("request_parameter_supported")
-    private boolean requestParameterSupported;
+    private boolean requestParameterSupported = true;
 
     @JsonProperty("backchannel_logout_supported")
     private boolean backchannelLogoutSupported;

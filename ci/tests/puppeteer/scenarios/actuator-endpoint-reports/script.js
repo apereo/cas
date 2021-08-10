@@ -47,9 +47,9 @@ const cas = require('../../cas.js');
     const baseUrl = "https://localhost:8443/cas/actuator/"
     for (let i = 0; i < endpoints.length; i++) {
         let url = baseUrl + endpoints[i];
-        console.log("Trying " + url)
+        console.log(`Trying ${url}`)
         const response = await page.goto(url);
-        console.log(response.status() + " " + response.statusText())
+        console.log(`${response.status()} ${response.statusText()}`)
         assert(response.ok())
     }
     await browser.close();

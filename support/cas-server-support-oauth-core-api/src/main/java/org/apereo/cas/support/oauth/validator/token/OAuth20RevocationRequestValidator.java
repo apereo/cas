@@ -45,7 +45,7 @@ public class OAuth20RevocationRequestValidator implements OAuth20TokenRequestVal
 
     @Override
     public boolean supports(final JEEContext context) {
-        val token = context.getRequestParameter(OAuth20Constants.TOKEN)
+        val token = OAuth20Utils.getRequestParameter(context, OAuth20Constants.TOKEN)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isBlank(token)) {
             return false;

@@ -70,7 +70,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             }
         }
 
-        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID)
+        val clientId = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID)
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
         val registeredService = getRegisteredServiceByClientId(clientId);

@@ -1,40 +1,17 @@
 const puppeteer = require("puppeteer");
 const assert = require("assert");
-const url = require("url");
 const cas = require("../../cas.js");
-const https = require("https");
-
-const httpGet = (options) => {
-    return new Promise((resolve, reject) => {
-        https.get(options, res => {
-            res.setEncoding("utf8");
-            const body = [];
-            res.on("data", chunk => body.push(chunk));
-            res.on("end", () => resolve(body.join("")));
-        }).on("error", reject);
-    });
-};
-
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     console.log("Fetching Scratch codes from /cas/actuator...");
-
-    let options1 = {
-        protocol: "https:",
-        hostname: "localhost",
-        port: 8443,
-        path: "/cas/actuator/gauthCredentialRepository/casuser",
-        method: "GET",
-        rejectUnauthorized: false,
-    };
-    const response = await httpGet(options1);
+    const response = await cas.doRequest("https://localhost:8443/cas/actuator/gauthCredentialRepository/casuser");
     let scratch = JSON.stringify(JSON.parse(response)[0].scratchCodes[0]);
 
     const page = await cas.newPage(browser);
 
     const service = "https://google.com";
-    await page.goto("https://localhost:8443/cas/login?service=" + service);
+    await page.goto(`https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(1000);
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(500);
@@ -45,7 +22,7 @@ const httpGet = (options) => {
     await cas.submitForm(page, "#mfa-gauth > form[name=fm1]")
     await page.waitForTimeout(1000);
 
-    console.log("Using scratch code " + scratch + " to login...");
+    console.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,'#token', scratch);
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
@@ -53,16 +30,8 @@ const httpGet = (options) => {
 
     let ticket = await cas.assertTicketParameter(page);
 
-    console.log("Validating ticket " + ticket + " with service " + service);
-    let options2 = {
-        protocol: "https:",
-        hostname: "localhost",
-        port: 8443,
-        path: "/cas/p3/serviceValidate?service=" + service + "&ticket=" + ticket,
-        method: "GET",
-        rejectUnauthorized: false,
-    };
-    const body = await httpGet(options2);
+    console.log(`Validating ticket ${ticket} with service ${service}`);
+    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);
 
     console.log(body);
     

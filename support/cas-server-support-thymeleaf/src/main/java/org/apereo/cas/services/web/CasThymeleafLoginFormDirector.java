@@ -1,14 +1,16 @@
 package org.apereo.cas.services.web;
 
-import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.thymeleaf.context.WebEngineContext;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * This is {@link CasThymeleafLoginFormDirector}.
@@ -16,7 +18,9 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@RequiredArgsConstructor
 public class CasThymeleafLoginFormDirector {
+    private final CasWebflowExecutionPlan webflowExecutionPlan;
 
     /**
      * Is login form viewable?.
@@ -40,7 +44,6 @@ public class CasThymeleafLoginFormDirector {
     public boolean isLoginFormUsernameInputVisible(final WebEngineContext vars) {
         val context = RequestContextHolder.getRequestContext();
         return context != null && WebUtils.isCasLoginFormViewable(context)
-            && StringUtils.isBlank(WebUtils.getOpenIdLocalUserId(context))
             && WebUtils.getPasswordlessAuthenticationAccount(context, Serializable.class) == null;
     }
 
@@ -66,13 +69,13 @@ public class CasThymeleafLoginFormDirector {
     public String getLoginFormUsername(final WebEngineContext vars) {
         val context = RequestContextHolder.getRequestContext();
         if (context != null && WebUtils.isCasLoginFormViewable(context)) {
-            var user = WebUtils.getOpenIdLocalUserId(context);
-            if (StringUtils.isBlank(user)) {
-                val acct = WebUtils.getPasswordlessAuthenticationAccount(context, BasicIdentifiableCredential.class);
-                if (acct != null) {
-                    return acct.getId();
-                }
-            }
+            return webflowExecutionPlan.getWebflowLoginContextProviders()
+                .stream()
+                .map(provider -> provider.getCandidateUsername(context))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst()
+                .orElse(StringUtils.EMPTY);
         }
         return StringUtils.EMPTY;
     }

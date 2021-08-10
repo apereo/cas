@@ -14,6 +14,8 @@ import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -49,7 +51,7 @@ public class OAuth20UtilsTests {
         val mv = OAuth20Utils.produceUnauthorizedErrorView();
         assertEquals(HttpStatus.UNAUTHORIZED, mv.getStatus());
     }
-    
+
     @Test
     public void verifyNoClientId() {
         assertNull(OAuth20Utils.getRegisteredOAuthServiceByClientId(mock(ServicesManager.class), null));
@@ -58,9 +60,44 @@ public class OAuth20UtilsTests {
     @Test
     public void verifyRequestParams() {
         val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
         request.addParameter("attr1", "value1");
         request.addParameter("attr2", "value2", "value3");
-        assertFalse(OAuth20Utils.getRequestParameters(List.of("attr1", "attr2"), request).isEmpty());
+        assertFalse(OAuth20Utils.getRequestParameters(List.of("attr1", "attr2"), context).isEmpty());
+    }
+
+    @Test
+    public void verifyRequestParam() throws Exception {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
+        request.addParameter("attr1", "value1");
+        request.addParameter("attr2", "value2", "value3");
+        assertFalse(OAuth20Utils.getRequestParameter(context, "attr1", String.class).isEmpty());
+        assertFalse(OAuth20Utils.getRequestParameter(context, "attr2", List.class).isEmpty());
+        assertFalse(OAuth20Utils.getRequestParameter(context, "attr2", String[].class).isEmpty());
+    }
+
+    @Test
+    public void verifyRequestParamJwt() throws Exception {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
+
+        val claims = new JWTClaimsSet.Builder().subject("cas")
+            .claim("scope", new String[]{"openid", "profile"})
+            .claim("response", "code")
+            .claim("client_id", List.of("client1", "client2"))
+            .build();
+        val jwt = new PlainJWT(claims);
+        val jwtString = jwt.serialize();
+        request.removeAllParameters();
+        request.addParameter(OAuth20Constants.REQUEST, jwtString);
+
+        assertFalse(OAuth20Utils.getRequestParameter(context, "response", String.class).isEmpty());
+        assertFalse(OAuth20Utils.getRequestParameter(context, "client_id", List.class).isEmpty());
+        assertFalse(OAuth20Utils.getRequestParameter(context, "scope", String[].class).isEmpty());
     }
 
     @Test
@@ -140,7 +177,7 @@ public class OAuth20UtilsTests {
         when(token.getClaims()).thenReturn(Map.of("userinfo", Map.of("givenName", "CAS")));
         assertFalse(OAuth20Utils.parseUserInfoRequestClaims(token).isEmpty());
     }
-    
+
     @Test
     public void verifyClientSecretCheckWithoutCipher() {
         val cipher = new OAuth20RegisteredServiceCipherExecutor();

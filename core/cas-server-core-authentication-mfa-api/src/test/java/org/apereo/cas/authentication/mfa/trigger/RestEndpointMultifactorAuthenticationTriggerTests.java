@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("RestfulApi")
+@Tag("RestfulApiAuthentication")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
 

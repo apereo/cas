@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.context.JEEContext;
@@ -49,6 +50,12 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
 
     public OidcIdTokenGeneratorService(final OidcConfigurationContext configurationContext) {
         super(configurationContext);
+    }
+
+    private static void setClaim(final JwtClaims claims, final String claimName, final Object claimValue) {
+        if (claimValue != null && StringUtils.isNotBlank(claimValue.toString())) {
+            claims.setClaim(claimName, claimValue);
+        }
     }
 
     @Override
@@ -146,10 +153,10 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         claims.setClaim(OidcConstants.CLAIM_AUTH_TIME, tgt.getAuthentication().getAuthenticationDate().toEpochSecond());
 
         if (attributes.containsKey(OAuth20Constants.STATE)) {
-            claims.setClaim(OAuth20Constants.STATE, attributes.get(OAuth20Constants.STATE).get(0));
+            setClaim(claims, OAuth20Constants.STATE, attributes.get(OAuth20Constants.STATE).get(0));
         }
         if (attributes.containsKey(OAuth20Constants.NONCE)) {
-            claims.setClaim(OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).get(0));
+            setClaim(claims, OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).get(0));
         }
         generateAccessTokenHash(accessToken, service, claims);
 
