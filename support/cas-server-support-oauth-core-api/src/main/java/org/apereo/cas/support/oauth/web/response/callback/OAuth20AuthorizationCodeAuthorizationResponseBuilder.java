@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
@@ -30,7 +31,7 @@ import java.util.LinkedHashMap;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAuth20AuthorizationResponseBuilder {
+public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOAuth20AuthorizationResponseBuilder {
     /**
      * The Ticket registry.
      */
@@ -59,7 +60,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
 
     @Override
     public boolean supports(final JEEContext context) {
-        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE)
+        val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
         return StringUtils.equalsIgnoreCase(responseType, OAuth20ResponseTypes.CODE.getType());
@@ -81,7 +82,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
         val state = attributes.get(OAuth20Constants.STATE).get(0).toString();
         val nonce = attributes.get(OAuth20Constants.NONCE).get(0).toString();
 
-        val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI)
+        val redirectUri = OAuth20Utils.getRequestParameter(context, OAuth20Constants.REDIRECT_URI)
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
         LOGGER.debug("Authorize request successful for client [{}] with redirect uri [{}]", clientId, redirectUri);

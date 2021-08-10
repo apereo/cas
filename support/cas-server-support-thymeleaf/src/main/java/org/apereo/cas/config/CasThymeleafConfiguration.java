@@ -10,6 +10,7 @@ import org.apereo.cas.services.web.ThemeViewResolverFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.CasProtocolViewFactory;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.view.CasProtocolThymeleafViewFactory;
 import org.apereo.cas.web.view.ChainingTemplateViewResolver;
 import org.apereo.cas.web.view.RestfulUrlTemplateResolver;
@@ -184,8 +185,10 @@ public class CasThymeleafConfiguration {
     @ConditionalOnMissingBean(name = "casThymeleafLoginFormDirector")
     @Bean
     @RefreshScope
-    public CasThymeleafLoginFormDirector casThymeleafLoginFormDirector() {
-        return new CasThymeleafLoginFormDirector();
+    @Autowired
+    public CasThymeleafLoginFormDirector casThymeleafLoginFormDirector(@Qualifier("casWebflowExecutionPlan")
+                                                                       final CasWebflowExecutionPlan webflowExecutionPlan) {
+        return new CasThymeleafLoginFormDirector(webflowExecutionPlan);
     }
 
     @ConditionalOnMissingBean(name = "themeViewResolverFactory")

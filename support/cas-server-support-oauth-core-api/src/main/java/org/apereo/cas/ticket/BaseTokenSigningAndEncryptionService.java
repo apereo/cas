@@ -117,7 +117,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
     protected String signToken(final OAuthRegisteredService svc,
                                final JwtClaims claims,
                                final PublicJsonWebKey jsonWebKey) {
-        LOGGER.debug("Service [{}] is set to sign id tokens", svc);
+        LOGGER.debug("Service [{}] is set to sign id tokens", svc.getServiceId());
         return EncodingUtils.signJws(claims, jsonWebKey, getJsonWebKeySigningAlgorithm(svc), new HashMap<>(0));
     }
 

@@ -54,7 +54,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
                 LOGGER.info("Creating self-signed certificate for encryption...");
                 val encryption = buildSelfSignedEncryptionCert(registeredService);
 
-                LOGGER.info("Creating metadata...");
+                LOGGER.info("Creating SAML2 metadata for identity provider...");
                 val metadata = buildMetadataGeneratorParameters(signing, encryption, registeredService);
 
                 val doc = newSamlIdPMetadataDocument();

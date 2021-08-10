@@ -13,10 +13,7 @@ const cas = require('../../cas.js');
         "response_mode=form_post&" +
         "nonce=vn4qulthnx";
     await page.goto(url);
-
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.waitForTimeout(3000)
-
     await cas.click(page, "#allow");
     await page.waitForNavigation();
 

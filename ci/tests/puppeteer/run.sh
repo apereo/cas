@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 RED="\e[31m"
 GREEN="\e[32m"
 YELLOW="\e[33m"
@@ -52,7 +51,7 @@ random=$(openssl rand -hex 8)
 
 if [[ ! -d "$PWD"/ci/tests/puppeteer/node_modules/puppeteer ]] ; then
   printgreen "Installing Puppeteer"
-  npm_install_cmd="npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer jsonwebtoken axios request colors"
+  npm_install_cmd="npm i --prefix "$PWD"/ci/tests/puppeteer"
   eval $npm_install_cmd || eval $npm_install_cmd || eval $npm_install_cmd
 else
   printgreen "Using existing Puppeteer modules..."
@@ -68,8 +67,9 @@ keystore="$PWD"/ci/tests/puppeteer/overlay/thekeystore
 printgreen "\nGenerating keystore ${keystore} for CAS with\nDN=${dname}, SAN=${subjectAltName} ..."
 [ -f "${keystore}" ] && rm "${keystore}"
 keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
-  -keystore "${keystore}" -dname "${dname}" -ext SAN="${subjectAltName}"
+  -keystore "${keystore}" -dname "${dname}" 
 [ -f "${keystore}" ] && echo "Created ${keystore}"
+export CAS_KEYSTORE="${keystore}"
 
 echo -e "******************************************************"
 printgreen "Scenario: ${scenario}"
@@ -134,6 +134,7 @@ if [[ "$DEBUG" == "debug" ]]; then
 fi
 echo -e "\nLaunching CAS with properties [${properties}], run arguments [${runArgs}] and dependencies [${dependencies}]"
 java ${runArgs} -jar "$PWD"/cas.war ${properties} \
+  -Dcom.sun.net.ssl.checkRevocation=false \
   --spring.profiles.active=none --server.ssl.key-store="$keystore" &
 pid=$!
 printgreen "\nWaiting for CAS under process id ${pid}"
@@ -142,7 +143,8 @@ until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/l
     sleep 1
 done
 printgreen "\n\nReady!"
-
+  
+clear
 scriptPath="${scenario}/script.js"
 echo -e "*************************************"
 echo -e "Running ${scriptPath}\n"
@@ -162,6 +164,8 @@ exitScript="${exitScript//\$\{SCENARIO\}/${scenarioName}}"
   printgreen "Exit script: ${exitScript}" && \
   chmod +x "${exitScript}" && \
   eval "export SCENARIO=${scenarioName}"; eval "${exitScript}"
+
+printgreen "Done!\n"
 
 if [[ "${CI}" != "true" ]]; then
   printgreen "Hit enter to cleanup scenario ${scenario} that ended with exit code $RC \n"

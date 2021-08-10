@@ -1,6 +1,5 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
-const fs = require('fs');
 const path = require('path');
 const cas = require('../../cas.js');
 
@@ -10,18 +9,8 @@ const cas = require('../../cas.js');
 
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(1000)
-    
-    await page.goto("https://samltest.id/upload.php");
-    await page.waitForTimeout(2000)
 
-    const fileElement = await page.$("input[type=file]");
-    let metadata = path.join(__dirname, '/saml-md/sp-metadata.xml');
-    console.log("Metadata file: " + metadata);
-
-    await fileElement.uploadFile(metadata);
-    await cas.click(page, "input[name='submit']")
-    await page.waitForNavigation();
-    await page.waitForTimeout(3000)
+    await cas.uploadSamlMetadata(page, path.join(__dirname, '/saml-md/sp-metadata.xml'));
 
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(3000);
@@ -31,9 +20,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(3000);
 
     await cas.assertVisibility(page, '#loginProviders')
-
     await cas.assertVisibility(page, '#existingSsoMsg')
-    
     await cas.assertVisibility(page, 'li #SAML2Client')
 
     await cas.click(page, "li #SAML2Client")
@@ -52,10 +39,7 @@ const cas = require('../../cas.js');
     assert(url.startsWith("https://github.com/"))
 
     await cas.assertTicketParameter(page);
-
-    let metadataDir = path.join(__dirname, '/saml-md');
-    fs.rmdirSync(metadataDir, { recursive: true });
-    
+    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
 

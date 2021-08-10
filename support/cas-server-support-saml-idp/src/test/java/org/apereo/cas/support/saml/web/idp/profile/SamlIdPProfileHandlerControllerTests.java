@@ -100,7 +100,7 @@ public class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         request.addParameter("username", "casuser");
         val results = controller.handleUnauthorizedServiceException(request, new IllegalStateException());
         assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, results.getViewName());
-        assertTrue(results.getModel().containsKey("rootCauseException"));
+        assertTrue(results.getModel().containsKey(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION));
         
         assertThrows(UnauthorizedServiceException.class,
             () -> controller.verifySamlRegisteredService(StringUtils.EMPTY));

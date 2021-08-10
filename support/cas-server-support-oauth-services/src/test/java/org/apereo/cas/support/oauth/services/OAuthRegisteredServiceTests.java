@@ -68,7 +68,7 @@ public class OAuthRegisteredServiceTests {
     }
 
     @Test
-    public void verifySerializeAOAuthRegisteredServiceToJson() {
+    public void verifySerializeOAuthRegisteredServiceToJson() {
         val serviceWritten = new OAuthRegisteredService();
         serviceWritten.setName("checkSaveMethod");
         serviceWritten.setServiceId("testId");

@@ -58,7 +58,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
 
     @Override
     public final boolean preHandle(final HttpServletRequest request,
-                                   final HttpServletResponse response, final Object handler) throws Exception {
+                                   final HttpServletResponse response,
+                                   final Object handler) throws Exception {
         if (isRequestIgnoredForThrottling(request, response)) {
             LOGGER.trace("Letting the request through without throttling; No request filters support it");
             return true;

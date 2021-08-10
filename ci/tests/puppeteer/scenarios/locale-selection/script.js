@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -9,10 +8,7 @@ const cas = require('../../cas.js');
         'Accept-Language': 'de'
     });
     await page.goto("https://localhost:8443/cas/login");
-
     await page.waitForTimeout(1000)
-    const header = await cas.innerText(page, '#content #fm1 button[name=submit]');
-
-    assert(header === "ANMELDEN")
+    await cas.assertInnerText(page, "#content #fm1 button[name=submit]", "ANMELDEN")
     await browser.close();
 })();

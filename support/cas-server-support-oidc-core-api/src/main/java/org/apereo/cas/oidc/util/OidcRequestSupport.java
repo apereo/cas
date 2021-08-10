@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link OidcRequestSupport}.
@@ -42,24 +41,23 @@ import java.util.stream.Stream;
 @Slf4j
 @RequiredArgsConstructor
 public class OidcRequestSupport {
-    private static final String PATTERN_VALID_ISSUER_ENDPOINTS = Stream.of(
-            OidcConstants.LOGOUT_URL,
-            OidcConstants.JWKS_URL,
-            OidcConstants.ACCESS_TOKEN_URL,
-            OidcConstants.TOKEN_URL,
-            OidcConstants.PROFILE_URL,
-            OidcConstants.AUTHORIZE_URL,
-            OidcConstants.INTROSPECTION_URL,
-            OidcConstants.CLIENT_CONFIGURATION_URL,
-            OidcConstants.REVOCATION_URL,
-            OidcConstants.REGISTRATION_URL,
-            OAuth20Constants.ACCESS_TOKEN_URL,
-            OAuth20Constants.TOKEN_URL,
-            OAuth20Constants.AUTHORIZE_URL,
-            OAuth20Constants.INTROSPECTION_URL,
-            OAuth20Constants.PROFILE_URL,
-            OAuth20Constants.REVOCATION_URL)
-        .collect(Collectors.joining("|"));
+    private static final String PATTERN_VALID_ISSUER_ENDPOINTS = String.join("|",
+        OidcConstants.LOGOUT_URL,
+        OidcConstants.JWKS_URL,
+        OidcConstants.ACCESS_TOKEN_URL,
+        OidcConstants.TOKEN_URL,
+        OidcConstants.PROFILE_URL,
+        OidcConstants.AUTHORIZE_URL,
+        OidcConstants.INTROSPECTION_URL,
+        OidcConstants.CLIENT_CONFIGURATION_URL,
+        OidcConstants.REVOCATION_URL,
+        OidcConstants.REGISTRATION_URL,
+        OAuth20Constants.ACCESS_TOKEN_URL,
+        OAuth20Constants.TOKEN_URL,
+        OAuth20Constants.AUTHORIZE_URL,
+        OAuth20Constants.INTROSPECTION_URL,
+        OAuth20Constants.PROFILE_URL,
+        OAuth20Constants.REVOCATION_URL);
 
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
