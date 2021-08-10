@@ -309,6 +309,10 @@ ext.libraries = [
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "net.sf.ehcache", module: "ehcache")
                     exclude(group: "org.ow2.asm", module: "asm")
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-stax")
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-policy-stax")
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
+                    exclude(group: "org.apache.wss4j", module: "wss4j-policy")
                 },
                 dependencies.create("org.apache.cxf:cxf-rt-rs-security-sso-saml:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -324,6 +328,8 @@ ext.libraries = [
                     exclude(group: "org.opensaml", module: "opensaml-saml-impl")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-saml-impl")
                     exclude(group: "org.ow2.asm", module: "asm")
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-stax")
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
                 },
                 dependencies.create("org.apache.cxf:cxf-rt-ws-policy:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -332,6 +338,7 @@ ext.libraries = [
                     exclude(group: "net.sf.ehcache", module: "ehcache")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-api")
                     exclude(group: "org.ow2.asm", module: "asm")
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-stax")
                 },
                 dependencies.create("org.apache.cxf:cxf-rt-ws-addr:$apacheCxfVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -374,6 +381,10 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-stax")
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-policy-stax")
+                    exclude(group: "org.apache.cxf", module: "cxf-rt-ws-security")
                 }
         ],
         casclient               : dependencies.create("org.jasig.cas.client:cas-client-core:$casClientVersion") {
@@ -3531,6 +3542,52 @@ ext.libraries = [
                 },
         ],
         wss4j                   : [
+                dependencies.create("org.apache.wss4j:wss4j-bindings:$wss4jVersion") {
+                },
+                dependencies.create("org.apache.wss4j:wss4j-policy:$wss4jVersion") {
+                },
+                dependencies.create("org.apache.wss4j:wss4j-ws-security-stax:$wss4jVersion") {
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-security-api")
+                    exclude(group: "org.opensaml", module: "opensaml-security-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-soap-api")
+                    exclude(group: "org.opensaml", module: "opensaml-soap-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-storage-api")
+                    exclude(group: "org.opensaml", module: "opensaml-storage-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-profile-api")
+                    exclude(group: "org.opensaml", module: "opensaml-profile-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-messaging-api")
+                    exclude(group: "org.opensaml", module: "opensaml-messaging-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-xmlsec-api")
+                    exclude(group: "org.opensaml", module: "opensaml-xmlsec-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
+                },
+                dependencies.create("org.apache.wss4j:wss4j-ws-security-policy-stax:$wss4jVersion") {
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-security-api")
+                    exclude(group: "org.opensaml", module: "opensaml-security-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-soap-api")
+                    exclude(group: "org.opensaml", module: "opensaml-soap-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-storage-api")
+                    exclude(group: "org.opensaml", module: "opensaml-storage-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-profile-api")
+                    exclude(group: "org.opensaml", module: "opensaml-profile-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-messaging-api")
+                    exclude(group: "org.opensaml", module: "opensaml-messaging-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-xmlsec-api")
+                    exclude(group: "org.opensaml", module: "opensaml-xmlsec-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-saml-impl")
+                    exclude(group: "org.opensaml", module: "opensaml-xacml-saml-api")
+                    exclude(group: "org.opensaml", module: "opensaml-core")
+                },
                 dependencies.create("org.apache.wss4j:wss4j-ws-security-dom:$wss4jVersion") {
                     exclude(group: "org.jvnet.mimepull", module: "mimepull")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-api")
@@ -3552,7 +3609,6 @@ ext.libraries = [
                     exclude(group: "org.opensaml", module: "opensaml-xacml-saml-impl")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-saml-api")
                     exclude(group: "org.opensaml", module: "opensaml-core")
-
                 },
                 dependencies.create("org.apache.wss4j:wss4j-ws-security-common:$wss4jVersion") {
                     exclude(group: "org.jvnet.mimepull", module: "mimepull")
@@ -3575,6 +3631,7 @@ ext.libraries = [
                     exclude(group: "org.opensaml", module: "opensaml-xacml-saml-impl")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-saml-api")
                     exclude(group: "org.opensaml", module: "opensaml-core")
+                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
                 },
                 dependencies.create("wsdl4j:wsdl4j:$wsdl4jVersion") {
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")

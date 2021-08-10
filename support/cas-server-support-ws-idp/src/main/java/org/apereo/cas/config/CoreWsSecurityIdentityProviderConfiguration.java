@@ -169,7 +169,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
             service.setName(service.getClass().getSimpleName());
             service.setDescription("WS-Federation Authentication Request");
             service.setServiceId(callbackService.getId().concat(".+"));
-            LOGGER.debug("Saving callback service [{}] into the registry", service);
+            LOGGER.debug("Saving callback service [{}] into the registry", service.getServiceId());
             plan.registerServiceRegistry(new WSFederationServiceRegistry(applicationContext, service));
         };
     }
