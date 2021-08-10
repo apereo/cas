@@ -5,6 +5,7 @@ dependencies {
     implementation libraries.bouncycastle
     implementation libraries.apachecxf
     implementation libraries.ehcache
+    implementation libraries.wss4j
     
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-tickets-api")
