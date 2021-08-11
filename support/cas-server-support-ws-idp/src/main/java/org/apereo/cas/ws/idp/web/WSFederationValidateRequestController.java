@@ -12,6 +12,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
 import org.jasig.cas.client.util.CommonUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -85,9 +86,9 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
                                                     final HttpServletRequest request) {
 
         val targetService = createService(fedRequest);
-        val service = findAndValidateFederationRequestForRegisteredService(targetService, fedRequest);
+        val registeredService = findAndValidateFederationRequestForRegisteredService(targetService, fedRequest);
         LOGGER.debug("Redirecting to identity provider for initial authentication [{}]", fedRequest);
-        redirectToIdentityProvider(fedRequest, response, request, service);
+        redirectToIdentityProvider(fedRequest, response, request, targetService, registeredService);
     }
 
     private WebApplicationService createService(final WSFederationRequest fedRequest) {
@@ -99,13 +100,20 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
     }
 
     @SneakyThrows
-    private void redirectToIdentityProvider(final WSFederationRequest fedRequest, final HttpServletResponse response,
-                                            final HttpServletRequest request, final WSFederationRegisteredService service) {
+    private void redirectToIdentityProvider(final WSFederationRequest fedRequest,
+                                            final HttpServletResponse response,
+                                            final HttpServletRequest request,
+                                            final WebApplicationService service,
+                                            final WSFederationRegisteredService registeredService) {
         val serviceUrl = constructServiceUrl(request, response, fedRequest);
-        LOGGER.debug("Created service url [{}] mapped to [{}]", serviceUrl, service);
+        LOGGER.debug("Created service url [{}] mapped to [{}]", serviceUrl, registeredService);
         val renew = shouldRenewAuthentication(fedRequest, request);
-        val initialUrl = CommonUtils.constructRedirectUrl(getConfigContext().getCasProperties().getServer().getLoginUrl(),
+        var initialUrl = CommonUtils.constructRedirectUrl(getConfigContext().getCasProperties().getServer().getLoginUrl(),
             CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, renew, false);
+        val builder = new URIBuilder(initialUrl);
+        service.getAttributes().forEach((key, value)
+            -> CollectionUtils.firstElement(value).map(Object::toString).ifPresent(v -> builder.addParameter(key, v)));
+        initialUrl = builder.toString();
         LOGGER.debug("Redirecting authN request to [{}]", initialUrl);
         val authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
         authenticationRedirectStrategy.redirect(request, response, initialUrl);
