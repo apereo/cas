@@ -29,6 +29,12 @@ dependencyResolutionManagement {
             }
         }
         maven {
+            url "https://jitpack.io"
+            content {
+                includeGroupByRegex "com.github.mmoayyed.*"
+            }
+        }
+        maven {
             url "https://oss.sonatype.org/content/repositories/snapshots"
             mavenContent { snapshotsOnly() }
         }
