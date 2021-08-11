@@ -31,7 +31,7 @@ function resourceLoadedSuccessfully() {
             $('.pwd').attr('type', 'password');
             $(".reveal-password-icon").removeClass("fas fa-eye-slash").addClass("fas fa-eye");
             ev.preventDefault();
-        })
+        });
 
         $revealpassword.mousedown(function (ev) {
             $('.pwd').attr('type', 'text');
