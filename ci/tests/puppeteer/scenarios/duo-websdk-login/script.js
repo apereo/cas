@@ -15,7 +15,7 @@ const cas = require('../../cas.js');
     for (let i = 0; i < endpoints.length; i++) {
         let url = baseUrl + endpoints[i];
         const response = await page.goto(url);
-        console.log(response.status() + " " + response.statusText())
+        console.log(`${response.status()} ${response.statusText()}`)
         assert(response.ok())
     }
     

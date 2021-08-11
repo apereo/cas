@@ -12,6 +12,8 @@ import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 
+import java.util.Objects;
+
 /**
  * This is {@link OAuth20PasswordGrantTypeTokenRequestValidator}.
  *
@@ -41,6 +43,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20To
         val clientId = clientIdAndSecret.getKey();
         LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
+        Objects.requireNonNull(registeredService, "Registered service cannot be found for client " + clientId);
         val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getServiceId());
         val audit = AuditableContext.builder()
             .service(service)

@@ -48,7 +48,6 @@ public class JpaSamlIdPMetadataGeneratorTests {
         "cas.jdbc.show-sql=false"
     })
     @Nested
-    @Tag("JDBC")
     @SuppressWarnings("ClassCanBeStatic")
     public class DefaultJpaSamlIdPMetadataGeneratorTests extends BaseJpaSamlMetadataTests {
         @Test
