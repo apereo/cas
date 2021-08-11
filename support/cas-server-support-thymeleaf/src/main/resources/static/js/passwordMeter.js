@@ -82,9 +82,10 @@ function jqueryReady() {
     var password = document.getElementById('password');
     var confirmed = document.getElementById('confirmedPassword');
     var barElement = document.getElementById('strengthProgressBar');
+    var bar;
 
     if (typeof mdc !== 'undefined') {
-        var bar = new mdc.linearProgress.MDCLinearProgress(barElement);
+        bar = new mdc.linearProgress.MDCLinearProgress(barElement);
     } else {
         bar = $(barElement);
     }
