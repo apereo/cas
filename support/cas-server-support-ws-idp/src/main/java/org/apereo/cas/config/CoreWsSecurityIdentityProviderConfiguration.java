@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfigurer;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
@@ -15,9 +16,11 @@ import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.ws.idp.WSFederationConstants;
@@ -34,7 +37,7 @@ import org.apereo.cas.ws.idp.web.WSFederationValidateRequestController;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
+import org.jasig.cas.client.validation.TicketValidator;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -61,14 +64,17 @@ import java.util.List;
 @ImportResource(locations = "classpath:META-INF/cxf/cxf.xml")
 @Slf4j
 public class CoreWsSecurityIdentityProviderConfiguration {
+    @Autowired
+    @Qualifier("authenticationAttributeReleasePolicy")
+    private ObjectProvider<AuthenticationAttributeReleasePolicy> authenticationAttributeReleasePolicy;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("casClientTicketValidator")
-    private ObjectProvider<AbstractUrlBasedTicketValidator> casClientTicketValidator;
-
+    
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
     private ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator;
@@ -192,12 +198,20 @@ public class CoreWsSecurityIdentityProviderConfiguration {
         return new WsFederationServicesManagerRegisteredServiceLocator();
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "wsFederationTicketValidator")
+    public TicketValidator wsFederationTicketValidator() {
+        return new InternalTicketValidator(centralAuthenticationService.getObject(),
+            webApplicationServiceFactory.getObject(), authenticationAttributeReleasePolicy.getObject(),
+            servicesManager.getObject());
+    }
+
     private WSFederationRequestConfigurationContext.WSFederationRequestConfigurationContextBuilder getConfigurationContext() {
         return WSFederationRequestConfigurationContext.builder()
             .servicesManager(servicesManager.getObject())
             .webApplicationServiceFactory(webApplicationServiceFactory.getObject())
             .casProperties(casProperties)
-            .ticketValidator(casClientTicketValidator.getObject())
+            .ticketValidator(wsFederationTicketValidator())
             .securityTokenServiceTokenFetcher(securityTokenServiceTokenFetcher.getObject())
             .serviceSelectionStrategy(wsFederationAuthenticationServiceSelectionStrategy())
             .httpClient(httpClient.getObject())

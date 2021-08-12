@@ -63,8 +63,13 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
                 val claimName = entry.getKey();
                 val attributeValue = resolvedAttributes.get(entry.getValue());
                 val claim = WSFederationClaims.valueOf(claimName.toUpperCase());
-                LOGGER.trace("Evaluating claim [{}] mapped to attribute value [{}]", claim.getUri(), attributeValue);
-                mapSingleAttributeDefinition(claim.getUri(), entry.getValue(), attributeValue, resolvedAttributes, attributesToRelease);
+                if (resolvedAttributes.containsKey(claim.getUri())) {
+                    attributesToRelease.put(claim.getUri(), resolvedAttributes.get(claim.getUri()));
+                } else {
+                    LOGGER.trace("Evaluating claim [{}] mapped to attribute value [{}]", claim.getUri(), attributeValue);
+                    mapSingleAttributeDefinition(claim.getUri(), entry.getValue(),
+                        attributeValue, resolvedAttributes, attributesToRelease);
+                }
             });
         return attributesToRelease;
     }

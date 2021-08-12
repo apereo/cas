@@ -237,6 +237,24 @@ exports.waitFor = async (url, successHandler, failureHandler) => {
         });
 }
 
+exports.launchWsFedSp = async (spDir, opts = []) => {
+    let args = ['-q', '-x', 'test', '--no-daemon', `-Dsp.sslKeystorePath=${process.env.CAS_KEYSTORE}`];
+    args = args.concat(opts);
+    console.log(`Launching WSFED SP in ${spDir} with ${args}`);
+    const exec = spawn('./gradlew', args, {cwd: spDir});
+
+    exec.stdout.on('data', (data) => {
+        console.log(data.toString());
+    });
+    exec.stderr.on('data', (data) => {
+        console.error(data.toString());
+    });
+    exec.on('exit', (code) => {
+        console.log(`Child process exited with code ${code}`);
+    });
+    return exec;
+}
+
 exports.launchSamlSp = async (idpMetadataPath, samlSpDir, samlOpts) => {
     let args = ['-q', '-x', 'test', '--no-daemon',
         '-DidpMetadataType=idpMetadataFile',

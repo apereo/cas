@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.http.ssl.SSLContexts;
 import org.jooq.lambda.Unchecked;
@@ -9,7 +10,9 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 import java.security.KeyStore;
+import java.security.cert.X509Certificate;
 
 /**
  * This is {@link CasSSLContext}.
@@ -46,6 +49,50 @@ public interface CasSSLContext {
                     factory.init(null, null);
                     return factory.getKeyManagers();
                 }).get();
+            }
+        };
+    }
+
+    /**
+     * Disabled.
+     *
+     * @return the cas ssl context
+     */
+    static CasSSLContext disabled() {
+        return new CasSSLContext() {
+            @Override
+            @SneakyThrows
+            public SSLContext getSslContext() {
+                val sc = SSLContext.getInstance("SSL");
+                sc.init(getKeyManagers(), getTrustManagers(), null);
+                return sc;
+            }
+
+            @Override
+            public TrustManager[] getTrustManagers() {
+                return new TrustManager[] {getDisabledTrustedManager()};
+            }
+
+            @Override
+            public KeyManager[] getKeyManagers() {
+                return new KeyManager[0];
+            }
+
+            private X509TrustManager getDisabledTrustedManager() {
+                return new X509TrustManager() {
+                    @Override
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
+
+                    @Override
+                    public void checkClientTrusted(final X509Certificate[] certs, final String authType) {
+                    }
+
+                    @Override
+                    public void checkServerTrusted(final X509Certificate[] certs, final String authType) {
+                    }
+                };
             }
         };
     }
