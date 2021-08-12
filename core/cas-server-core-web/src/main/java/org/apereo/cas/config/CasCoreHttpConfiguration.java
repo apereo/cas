@@ -21,6 +21,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -55,7 +56,11 @@ public class CasCoreHttpConfiguration {
     public CasSSLContext casSslContext() throws Exception {
         val client = casProperties.getHttpClient().getTruststore();
         if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
-            return new DefaultCasSSLContext(client.getFile(), client.getPsw(), client.getType());
+            return new DefaultCasSSLContext(client.getFile(), client.getPsw(),
+                client.getType(), casProperties.getHttpClient());
+        }
+        if (casProperties.getHttpClient().getHostNameVerifier().equalsIgnoreCase("none")) {
+            return CasSSLContext.disabled();
         }
         return CasSSLContext.system();
     }
@@ -91,6 +96,7 @@ public class CasCoreHttpConfiguration {
 
     @ConditionalOnMissingBean(name = "hostnameVerifier")
     @Bean
+    @RefreshScope
     public HostnameVerifier hostnameVerifier() {
         if (casProperties.getHttpClient().getHostNameVerifier().equalsIgnoreCase("none")) {
             return NoopHostnameVerifier.INSTANCE;

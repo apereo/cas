@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
 import org.apereo.cas.util.http.SimpleHttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 
@@ -70,7 +71,8 @@ public class FileTrustStoreSslSocketFactoryTests {
                                                          final String password,
                                                          final String trustStoreType) {
         return new SSLConnectionSocketFactory(
-            new DefaultCasSSLContext(resource, password, trustStoreType).getSslContext());
+            new DefaultCasSSLContext(resource, password, trustStoreType,
+                new HttpClientProperties()).getSslContext());
     }
 
     private static SSLConnectionSocketFactory sslFactory() {
