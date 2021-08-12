@@ -6,6 +6,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -31,7 +32,7 @@ import java.util.LinkedHashMap;
 @Slf4j
 public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthorizeViewResolver {
     private final ServicesManager servicesManager;
-    
+
     @Override
     @SneakyThrows
     public ModelAndView resolve(final JEEContext context, final ProfileManager manager, final String url) {
@@ -48,9 +49,6 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
                 model.put(OAuth20Constants.ERROR, OidcConstants.LOGIN_REQUIRED);
                 return new ModelAndView(new MappingJackson2JsonView(), model);
             }
-            val redirect = OidcRequestSupport.getRedirectUrlWithError(originalRedirectUrl.get(),
-                OidcConstants.LOGIN_REQUIRED, context);
-            LOGGER.warn("Unable to detect authenticated user profile for prompt-less login attempts. Redirecting to URL [{}]", redirect);
             val parameters = new LinkedHashMap<String, String>();
             parameters.put(OAuth20Constants.ERROR, OidcConstants.LOGIN_REQUIRED);
             OAuth20Utils.getRequestParameter(context, OAuth20Constants.STATE)
@@ -59,6 +57,13 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
                 .ifPresent(nonce -> parameters.put(OAuth20Constants.NONCE, nonce));
             val clientId = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
+
+            val responseType = OAuth20Utils.getResponseModeType(context);
+            val redirect = FunctionUtils.doIf(OAuth20Utils.isResponseModeTypeFormPost(registeredService, responseType),
+                originalRedirectUrl::get,
+                () -> OidcRequestSupport.getRedirectUrlWithError(originalRedirectUrl.get(), OidcConstants.LOGIN_REQUIRED, context))
+                .get();
+            LOGGER.warn("Unable to detect authenticated user profile for prompt-less login attempts. Redirecting to URL [{}]", redirect);
             return OAuth20Utils.buildResponseModelAndView(context, registeredService, redirect, parameters);
         }
         if (prompt.contains(OidcConstants.PROMPT_LOGIN)) {

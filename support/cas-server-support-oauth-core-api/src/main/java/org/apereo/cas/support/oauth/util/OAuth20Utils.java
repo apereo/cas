@@ -608,7 +608,9 @@ public class OAuth20Utils {
             val model = new LinkedHashMap<String, Object>();
             model.put("originalUrl", url);
             model.put("parameters", parameters);
-            return new ModelAndView(CasWebflowConstants.VIEW_ID_POST_RESPONSE, model);
+            val mv = new ModelAndView(CasWebflowConstants.VIEW_ID_POST_RESPONSE, model);
+            LOGGER.debug("Redirecting to [{}] with model [{}]", mv.getViewName(), mv.getModel());
+            return mv;
         }
         return new ModelAndView(new RedirectView(url), parameters);
     }
