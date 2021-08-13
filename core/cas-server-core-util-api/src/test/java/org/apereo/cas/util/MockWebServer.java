@@ -29,6 +29,7 @@ import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 
 /**
@@ -150,6 +151,9 @@ public class MockWebServer implements AutoCloseable {
         this.worker.setResource(new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8)));
     }
 
+    public void responseBodySupplier(final Supplier<Resource> sup) {
+         this.worker.setResourceSupplier(sup);
+    }
     /**
      * Starts the Web server so it can accept requests on the listening port.
      */
@@ -214,6 +218,9 @@ public class MockWebServer implements AutoCloseable {
 
         @Setter
         private Resource resource;
+
+        @Setter
+        private Supplier<Resource> resourceSupplier;
 
         private boolean running;
 
@@ -286,6 +293,10 @@ public class MockWebServer implements AutoCloseable {
         }
 
         private void writeResponse(final Socket socket) throws IOException {
+            if (resource == null) {
+                this.resource = this.resourceSupplier.get();
+            }
+            
             if (resource != null) {
                 LOGGER.debug("Socket response for resource [{}]", resource.getDescription());
                 val out = socket.getOutputStream();

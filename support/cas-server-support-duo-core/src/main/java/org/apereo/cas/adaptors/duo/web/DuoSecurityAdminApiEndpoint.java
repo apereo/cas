@@ -60,7 +60,7 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasActuatorEndpoint {
             .filter(provider -> provider.getDuoAuthenticationService().getAdminApiService().isPresent())
             .forEach(Unchecked.consumer(p -> {
                 val duoService = p.getDuoAuthenticationService().getAdminApiService().get();
-                duoService.getUser(username).ifPresent(user -> results.put(p.getId(), user));
+                duoService.getDuoSecurityUserAccount(username).ifPresent(user -> results.put(p.getId(), user));
             }));
         return results;
     }

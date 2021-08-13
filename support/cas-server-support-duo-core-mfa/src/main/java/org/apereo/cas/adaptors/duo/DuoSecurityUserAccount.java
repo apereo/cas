@@ -41,6 +41,19 @@ public class DuoSecurityUserAccount implements Serializable {
 
     private List<DuoSecurityUserDevice> devices = new ArrayList<>();
 
+    private List<DuoSecurityBypassCode> bypassCodes = new ArrayList<>();
+
+    /**
+     * Add bypass code.
+     *
+     * @param codes the codes
+     * @return the duo security user account
+     */
+    public DuoSecurityUserAccount addBypassCodes(final List<DuoSecurityBypassCode> codes) {
+        this.bypassCodes.addAll(codes);
+        return this;
+    }
+
     /**
      * Add devices.
      *
