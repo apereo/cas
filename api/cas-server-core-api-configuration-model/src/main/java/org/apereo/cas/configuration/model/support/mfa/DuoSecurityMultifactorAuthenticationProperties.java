@@ -47,14 +47,17 @@ public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifac
      * that you generate and keep secret from Duo.
      * This is a required setting for the WebSDK integration types.
      * Leaving this setting as blank will activate the Universal Prompt option.
-     * 
+     * <p>
      * You can generate a random string in Python with:
      * &lt;pre&gt;
      * import os, hashlib
      * print hashlib.sha1(os.urandom(32)).hexdigest()
      * &lt;/pre&gt;
+     *
+     * @deprecated since 6.4.0
      */
     @RequiredProperty
+    @Deprecated(since = "6.4.0")
     private String duoApplicationKey;
 
     /**
@@ -90,13 +93,11 @@ public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifac
     /**
      * Duo admin integration key.
      */
-    @RequiredProperty
     private String duoAdminIntegrationKey;
 
     /**
      * Duo admin secret key.
      */
-    @RequiredProperty
     private String duoAdminSecretKey;
 
     public DuoSecurityMultifactorAuthenticationProperties() {

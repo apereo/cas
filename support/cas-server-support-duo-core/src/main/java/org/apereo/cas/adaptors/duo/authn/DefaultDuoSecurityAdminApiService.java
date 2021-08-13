@@ -134,8 +134,9 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
         client.setHostnameVerifier(factory.getHostnameVerifier());
         client.setSslSocketFactory(factory.getSslContext().getSocketFactory());
         val result = (JSONObject) request.executeJSONRequest();
-        return result.length() > 0 && result.has("response") && result.has("stat")
-            ? result.getJSONArray("response")
+        return result.length() > 0 && result.has(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE)
+            && result.has(DuoSecurityAuthenticationService.RESULT_KEY_STAT)
+            ? result.getJSONArray(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE)
             : null;
     }
 }

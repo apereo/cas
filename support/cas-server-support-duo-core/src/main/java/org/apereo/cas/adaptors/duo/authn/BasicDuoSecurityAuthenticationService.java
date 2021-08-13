@@ -30,9 +30,11 @@ import java.util.Optional;
  * @author Eric Pierce
  * @author Dmitriy Kopylenko
  * @since 4.2
+ * @deprecated since 6.4.0
  */
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
+@Deprecated(since = "6.4.0")
 public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthenticationService {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();

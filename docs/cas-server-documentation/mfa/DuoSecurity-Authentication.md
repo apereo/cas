@@ -20,6 +20,11 @@ Duo offers several options for authenticating users:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-duo" %}
 
+<div class="alert alert-warning"><strong>Usage</strong>
+<p><strong>Please note that support for Duo multifactor authentication that is based on the Duo's Web SDK and the embedded iFrame
+is deprecated and scheduled to be removed in the future. You should consider switching to the 'Universal Prompt' variant
+described in this document to avoid surprised in future upgrades.</p>
+</div>
 
 ## Actuator Endpoints
       
@@ -105,15 +110,13 @@ curl --location --header "Content-Type: application/cas" https://apps.example.or
 
 {% include casproperties.html properties="cas.authn.mfa.duo" %}
 
-
 ## REST Protocol Credential Extraction
 
 In the event that the [CAS REST Protocol](../protocol/REST-Protocol.html) is turned on, a 
 special credential extractor is injected into the REST authentication engine in order 
 to recognize credentials and authenticate them as part of the REST request.
 The expected parameter name in the request body is `passcode` that can be found from
-Duo Security's mobile application or received via SMS. 
-
+Duo Security's mobile application or received via SMS.
 
 ## Troubleshooting
 
