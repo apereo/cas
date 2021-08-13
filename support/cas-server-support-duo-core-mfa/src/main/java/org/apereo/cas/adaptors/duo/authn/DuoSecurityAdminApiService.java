@@ -37,5 +37,5 @@ public interface DuoSecurityAdminApiService {
      * @return the duo security bypass codes
      * @throws Exception the exception
      */
-    List<String> createDuoSecurityBypassCodesFor(String userIdentifier) throws Exception;
+    List<Long> createDuoSecurityBypassCodesFor(String userIdentifier) throws Exception;
 }

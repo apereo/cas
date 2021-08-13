@@ -89,9 +89,9 @@ exports.assertInvisibility = async (page, selector) => {
 }
 
 exports.assertTicketGrantingCookie = async (page) => {
-    let tgc = (await page.cookies()).filter(value => value.name === "TGC");
-    console.log(`Asserting ticket-granting cookie: ${tgc}`);
+    const tgc = (await page.cookies()).filter(value => value.name === "TGC");
     assert(tgc.length !== 0);
+    console.log(`Asserting ticket-granting cookie: ${tgc[0].value}`);
 }
 
 exports.assertNoTicketGrantingCookie = async (page) => {
@@ -321,4 +321,20 @@ exports.uploadSamlMetadata = async(page, metadata) => {
     await this.click(page, "input[name='submit']")
     await page.waitForNavigation();
     await page.waitForTimeout(2000)
+}
+
+exports.loginDuoSecurityBypassCode = async(page, bypassCode) => {
+    await page.waitForTimeout(3000);
+    const frame = await page.waitForSelector("iframe#duo_iframe");
+    const rect = await page.evaluate(el => {
+        const {x, y, width, height} = el.getBoundingClientRect();
+        return {x, y, width, height};
+    }, frame);
+    let x1 = rect.x + rect.width - 120;
+    let y1 = rect.y + rect.height - 160;
+    await page.mouse.click(x1, y1);
+    await page.keyboard.sendCharacter(bypassCode);
+    await page.keyboard.down('Enter');
+    await page.keyboard.up('Enter');
+    await page.waitForTimeout(3000)
 }
