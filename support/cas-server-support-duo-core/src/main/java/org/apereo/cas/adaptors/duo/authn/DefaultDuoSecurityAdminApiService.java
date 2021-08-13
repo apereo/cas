@@ -22,10 +22,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.util.ReflectionUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultDuoSecurityAdminApiService}.
@@ -41,7 +43,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
     private final DuoSecurityMultifactorAuthenticationProperties duoProperties;
 
     private static String getAdminEndpointUri(final String uri) {
-        return "/admin/v1/users" + uri;
+        return "/admin/v1/" + uri;
     }
 
     private static DuoSecurityUserAccount mapDuoSecurityUserAccount(final JSONObject userJson) throws JSONException {
@@ -79,7 +81,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
 
     @Override
     public Optional<DuoSecurityUserAccount> getDuoSecurityUserAccount(final String username) throws Exception {
-        val userResponse = getEndpointResultFor(CollectionUtils.wrap("username", username));
+        val userResponse = getEndpointResultFor(CollectionUtils.wrap("uri", "users", "username", username));
         if (userResponse != null && userResponse.length() == 1) {
             val userJson = userResponse.getJSONObject(0);
             val user = mapDuoSecurityUserAccount(userJson);
@@ -90,12 +92,15 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
     }
 
     @Override
-    public List<String> createDuoSecurityBypassCodesFor(final String userIdentifier) throws Exception {
-        val params = CollectionUtils.<String, String>wrap("uri", String.format("/%s/bypass_codes", userIdentifier));
+    public List<Long> createDuoSecurityBypassCodesFor(final String userIdentifier) throws Exception {
+        val params = CollectionUtils.<String, String>wrap("uri", String.format("users/%s/bypass_codes", userIdentifier));
         params.put("method", HttpMethod.POST.name());
         val bypassResponse = getEndpointResultFor(params);
         if (bypassResponse != null) {
-            return CollectionUtils.wrapList(bypassResponse.join(",").replace("\"", StringUtils.EMPTY).split(","));
+            return Arrays.stream(bypassResponse.join(",")
+                .replace("\"", StringUtils.EMPTY).split(","))
+                .map(Long::valueOf)
+                .collect(Collectors.toList());
         }
         return new ArrayList<>(0);
     }
@@ -103,8 +108,9 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
     @Override
     public List<DuoSecurityBypassCode> getDuoSecurityBypassCodesFor(final String userIdentifier) throws Exception {
         val codes = new ArrayList<DuoSecurityBypassCode>();
-        val bypassResponse = getEndpointResultFor(CollectionUtils.wrap("uri", String.format("/%s/bypass_codes", userIdentifier)));
-        for (int i = 0; bypassResponse != null && i < bypassResponse.length(); i++) {
+
+        val bypassResponse = getEndpointResultFor(CollectionUtils.wrap("uri", String.format("users/%s/bypass_codes", userIdentifier)));
+        for (var i = 0; bypassResponse != null && i < bypassResponse.length(); i++) {
             val bypassJson = bypassResponse.getJSONObject(i);
             if (bypassJson.has("bypass_code_id")) {
                 val code = new DuoSecurityBypassCode(bypassJson.getString("bypass_code_id"));

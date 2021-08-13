@@ -52,7 +52,8 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasActuatorEndpoint {
         @Parameter(name = "username", required = true, in = ParameterIn.PATH),
         @Parameter(name = "providerId")
     })
-    public Map<String, DuoSecurityUserAccount> getUser(@PathVariable("username") final String username, @RequestParam final String providerId) {
+    public Map<String, DuoSecurityUserAccount> getUser(@PathVariable("username") final String username,
+                                                       @RequestParam(required = false) final String providerId) {
         val results = new LinkedHashMap<String, DuoSecurityUserAccount>();
         val providers = applicationContext.getBeansOfType(DuoSecurityMultifactorAuthenticationProvider.class).values();
         providers
@@ -83,10 +84,10 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasActuatorEndpoint {
     @PostMapping(path = "/bypassCodes",
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, List<String>> createBypassCodes(@RequestParam(value = "username", required = false) final String username,
-                                                       @RequestParam(value = "providerId", required = false) final String providerId,
-                                                       @RequestParam(value = "userId", required = false) final String userId) {
-        val results = new LinkedHashMap<String, List<String>>();
+    public Map<String, List<Long>> createBypassCodes(@RequestParam(value = "username", required = false) final String username,
+                                                     @RequestParam(value = "providerId", required = false) final String providerId,
+                                                     @RequestParam(value = "userId", required = false) final String userId) {
+        val results = new LinkedHashMap<String, List<Long>>();
         val providers = applicationContext.getBeansOfType(DuoSecurityMultifactorAuthenticationProvider.class).values();
         providers
             .stream()
