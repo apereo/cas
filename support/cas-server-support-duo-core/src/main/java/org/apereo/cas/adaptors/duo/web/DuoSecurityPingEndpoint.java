@@ -57,7 +57,7 @@ public class DuoSecurityPingEndpoint extends BaseCasActuatorEndpoint {
                 val duoService = p.getDuoAuthenticationService();
                 val available = duoService.ping();
                 results.put(p.getId(),
-                    CollectionUtils.wrap("duoApiHost", duoService.getApiHost(),
+                    CollectionUtils.wrap("duoApiHost", duoService.getProperties().getDuoApiHost(),
                         "name", p.getFriendlyName(),
                         "availability", available
                     ));

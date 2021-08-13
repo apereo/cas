@@ -61,7 +61,7 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
     @Override
     public boolean ping() {
         try {
-            val url = buildUrlHttpScheme(getApiHost().concat("/rest/v1/ping"));
+            val url = buildUrlHttpScheme(getProperties().getDuoApiHost().concat("/rest/v1/ping"));
             LOGGER.trace("Contacting Duo @ [{}]", url);
 
             val msg = httpClient.sendMessageToEndPoint(new URL(url));
@@ -85,9 +85,9 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
 
     @Override
     public Optional<String> signRequestToken(final String uid) {
-        return Optional.of(DuoWeb.signRequest(duoProperties.getDuoIntegrationKey(),
-            duoProperties.getDuoSecretKey(),
-            duoProperties.getDuoApplicationKey(), uid));
+        return Optional.of(DuoWeb.signRequest(properties.getDuoIntegrationKey(),
+            properties.getDuoSecretKey(),
+            properties.getDuoApplicationKey(), uid));
     }
 
     private DuoSecurityAuthenticationResult authenticateDuoCredential(final Credential creds) throws Exception {
@@ -96,9 +96,9 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
             throw new IllegalArgumentException("No signed request token was passed to verify");
         }
         LOGGER.trace("Verifying duo response with signed request token '[{}]'", signedRequestToken);
-        val authUserId = DuoWeb.verifyResponse(duoProperties.getDuoIntegrationKey(),
-            duoProperties.getDuoSecretKey(),
-            duoProperties.getDuoApplicationKey(), signedRequestToken);
+        val authUserId = DuoWeb.verifyResponse(properties.getDuoIntegrationKey(),
+            properties.getDuoSecretKey(),
+            properties.getDuoApplicationKey(), signedRequestToken);
         return DuoSecurityAuthenticationResult.builder().success(true).username(authUserId).build();
     }
 

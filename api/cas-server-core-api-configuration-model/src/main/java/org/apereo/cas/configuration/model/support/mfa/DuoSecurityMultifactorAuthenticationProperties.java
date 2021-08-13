@@ -87,6 +87,18 @@ public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifac
      */
     private boolean accountStatusEnabled = true;
 
+    /**
+     * Duo admin integration key.
+     */
+    @RequiredProperty
+    private String duoAdminIntegrationKey;
+
+    /**
+     * Duo admin secret key.
+     */
+    @RequiredProperty
+    private String duoAdminSecretKey;
+
     public DuoSecurityMultifactorAuthenticationProperties() {
         setId(DEFAULT_IDENTIFIER);
     }
