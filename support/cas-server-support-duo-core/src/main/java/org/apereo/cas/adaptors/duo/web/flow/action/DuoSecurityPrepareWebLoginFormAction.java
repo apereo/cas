@@ -31,7 +31,7 @@ public class DuoSecurityPrepareWebLoginFormAction extends AbstractMultifactorAut
         val viewScope = requestContext.getViewScope();
         duoAuthenticationService.signRequestToken(principal.getId())
             .ifPresent(value -> viewScope.put("sigRequest", value));
-        viewScope.put("apiHost", duoAuthenticationService.getApiHost());
+        viewScope.put("apiHost", duoAuthenticationService.getProperties().getDuoApiHost());
         viewScope.put("principal", principal);
         return success();
     }

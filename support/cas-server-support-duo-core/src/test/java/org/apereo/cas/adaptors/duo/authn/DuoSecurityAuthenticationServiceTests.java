@@ -70,7 +70,7 @@ public class DuoSecurityAuthenticationServiceTests {
                 httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()),
                 Caffeine.newBuilder().build());
             assertTrue(service.ping());
-            assertNotNull(service.getApiHost());
+            assertNotNull(service.getProperties().getDuoApiHost());
         }
     }
 

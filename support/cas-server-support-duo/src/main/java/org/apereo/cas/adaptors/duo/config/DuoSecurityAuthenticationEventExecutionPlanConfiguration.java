@@ -6,7 +6,9 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityDirectCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProviderFactory;
+import org.apereo.cas.adaptors.duo.config.cond.ConditionalOnDuoSecurityAdminApiConfigured;
 import org.apereo.cas.adaptors.duo.config.cond.ConditionalOnDuoSecurityConfigured;
+import org.apereo.cas.adaptors.duo.web.DuoSecurityAdminApiEndpoint;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityPingEndpoint;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityUserAccountStatusEndpoint;
 import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityMultifactorWebflowConfigurer;
@@ -203,6 +205,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnAvailableEndpoint
     public DuoSecurityUserAccountStatusEndpoint duoAccountStatusEndpoint() {
         return new DuoSecurityUserAccountStatusEndpoint(casProperties, applicationContext);
+    }
+
+    @Bean
+    @ConditionalOnAvailableEndpoint
+    @ConditionalOnDuoSecurityAdminApiConfigured
+    public DuoSecurityAdminApiEndpoint duoAdminApiEndpoint() {
+        return new DuoSecurityAdminApiEndpoint(casProperties, applicationContext);
     }
 
     private AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator(
