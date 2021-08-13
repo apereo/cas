@@ -22,11 +22,20 @@ public interface DuoSecurityAdminApiService {
     Optional<DuoSecurityUserAccount> getDuoSecurityUserAccount(String username) throws Exception;
 
     /**
-     * Gets duo security bypass codes for.
+     * Gets duo security bypass codes for user id.
      *
      * @param userIdentifier the user identifier
      * @return the duo security bypass codes
      * @throws Exception the exception
      */
     List<DuoSecurityBypassCode> getDuoSecurityBypassCodesFor(String userIdentifier) throws Exception;
+
+    /**
+     * Gets duo security bypass codes for user id.
+     *
+     * @param userIdentifier the user identifier
+     * @return the duo security bypass codes
+     * @throws Exception the exception
+     */
+    List<String> createDuoSecurityBypassCodesFor(String userIdentifier) throws Exception;
 }

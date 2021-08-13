@@ -13,7 +13,6 @@ import com.duosecurity.client.Http;
 import com.squareup.okhttp.OkHttpClient;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -34,7 +33,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Slf4j
 @EqualsAndHashCode
 @RequiredArgsConstructor
 public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiService {
@@ -43,17 +41,17 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
     private final DuoSecurityMultifactorAuthenticationProperties duoProperties;
 
     private static String getAdminEndpointUri(final String uri) {
-        return "/admin/v1/" + uri;
+        return "/admin/v1/users" + uri;
     }
 
     private static DuoSecurityUserAccount mapDuoSecurityUserAccount(final JSONObject userJson) throws JSONException {
         val user = new DuoSecurityUserAccount(userJson.getString("username"));
         user.setStatus(DuoSecurityUserAccountStatus.from(userJson.getString("status")));
-        FunctionUtils.doIfNotNull(userJson.getString("email"), value -> user.addAttribute("email", value));
+        FunctionUtils.doIfNotNull(userJson.get("email"), value -> user.addAttribute("email", value.toString()));
         FunctionUtils.doIfNotNull(userJson.getString("user_id"), value -> user.addAttribute("user_id", value));
-        FunctionUtils.doIfNotNull(userJson.getString("firstname"), value -> user.addAttribute("firstname", value));
-        FunctionUtils.doIfNotNull(userJson.getString("lastname"), value -> user.addAttribute("lastname", value));
-        FunctionUtils.doIfNotNull(userJson.getString("realname"), value -> user.addAttribute("realname", value));
+        FunctionUtils.doIfNotNull(userJson.get("firstname"), value -> user.addAttribute("firstname", value.toString()));
+        FunctionUtils.doIfNotNull(userJson.get("lastname"), value -> user.addAttribute("lastname", value.toString()));
+        FunctionUtils.doIfNotNull(userJson.get("realname"), value -> user.addAttribute("realname", value.toString()));
         FunctionUtils.doIfNotNull(userJson.getBoolean("is_enrolled"), value -> user.addAttribute("is_enrolled", value.toString()));
         FunctionUtils.doIfNotNull(userJson.getLong("last_login"), value -> user.addAttribute("last_login", value.toString()));
         FunctionUtils.doIfNotNull(userJson.getLong("created"), value -> user.addAttribute("created", value.toString()));
@@ -92,9 +90,20 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
     }
 
     @Override
+    public List<String> createDuoSecurityBypassCodesFor(final String userIdentifier) throws Exception {
+        val params = CollectionUtils.<String, String>wrap("uri", String.format("/%s/bypass_codes", userIdentifier));
+        params.put("method", HttpMethod.POST.name());
+        val bypassResponse = getEndpointResultFor(params);
+        if (bypassResponse != null) {
+            return CollectionUtils.wrapList(bypassResponse.join(",").replace("\"", StringUtils.EMPTY).split(","));
+        }
+        return new ArrayList<>(0);
+    }
+
+    @Override
     public List<DuoSecurityBypassCode> getDuoSecurityBypassCodesFor(final String userIdentifier) throws Exception {
         val codes = new ArrayList<DuoSecurityBypassCode>();
-        val bypassResponse = getEndpointResultFor(CollectionUtils.wrap("uri", String.format("%s/bypass_codes", userIdentifier)));
+        val bypassResponse = getEndpointResultFor(CollectionUtils.wrap("uri", String.format("/%s/bypass_codes", userIdentifier)));
         for (int i = 0; bypassResponse != null && i < bypassResponse.length(); i++) {
             val bypassJson = bypassResponse.getJSONObject(i);
             if (bypassJson.has("bypass_code_id")) {
@@ -110,8 +119,9 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
     }
 
     private JSONArray getEndpointResultFor(final Map<String, String> params) throws Exception {
-        val uri = getAdminEndpointUri(params.getOrDefault("uri", "users"));
-        val request = new Http(HttpMethod.GET.name(), duoProperties.getDuoApiHost(), uri);
+        val uri = getAdminEndpointUri(params.getOrDefault("uri", StringUtils.EMPTY));
+        val method = params.getOrDefault("method", HttpMethod.GET.name());
+        val request = new Http(method, duoProperties.getDuoApiHost(), uri);
         request.addParam("offset", "0");
         request.addParam("limit", "1");
         params.forEach(request::addParam);
