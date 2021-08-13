@@ -1,11 +1,13 @@
 package org.apereo.cas.adaptors.duo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -31,6 +33,7 @@ public class DuoSecurityUserAccount implements Serializable {
 
     private final String username;
 
+    @JsonIgnore
     private final Map<String, String> metadata = new LinkedHashMap<>();
 
     private DuoSecurityUserAccountStatus status = DuoSecurityUserAccountStatus.AUTH;
@@ -73,7 +76,9 @@ public class DuoSecurityUserAccount implements Serializable {
      * @return the duo security user account
      */
     public DuoSecurityUserAccount addAttribute(final String key, final String value) {
-        this.metadata.put(key, value);
+        if (!StringUtils.equalsAnyIgnoreCase("null", value) && StringUtils.isNotBlank(value)) {
+            this.metadata.put(key, value);
+        }
         return this;
     }
 

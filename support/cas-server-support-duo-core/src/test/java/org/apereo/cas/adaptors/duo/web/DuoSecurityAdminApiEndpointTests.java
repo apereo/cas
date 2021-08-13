@@ -5,10 +5,13 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationPro
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -25,6 +28,7 @@ import org.springframework.http.HttpStatus;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,6 +45,9 @@ import static org.mockito.Mockito.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("ActuatorEndpoint")
 public class DuoSecurityAdminApiEndpointTests {
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
+
     @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
@@ -87,7 +94,34 @@ public class DuoSecurityAdminApiEndpointTests {
             assertNotNull(user.getLastLogin());
             assertNotNull(user.getCreated());
             assertFalse(user.getDevices().isEmpty());
-            assertFalse(user.getBypassCodes().isEmpty());
+            assertTrue(user.getBypassCodes().isEmpty());
+        }
+    }
+
+    @Test
+    public void verifyCreateBypassCodes() throws Exception {
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        val props = new DuoSecurityMultifactorAuthenticationProperties()
+            .setDuoApiHost("localhost:8443")
+            .setDuoAdminIntegrationKey(UUID.randomUUID().toString())
+            .setDuoAdminSecretKey(UUID.randomUUID().toString());
+        val duoService = new BasicDuoSecurityAuthenticationService(props, httpClient,
+            List.of(), Caffeine.newBuilder().build());
+        val bean = mock(DuoSecurityMultifactorAuthenticationProvider.class);
+        when(bean.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
+        when(bean.getDuoAuthenticationService()).thenReturn(duoService);
+        when(bean.matches(eq(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER))).thenReturn(true);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, bean, "duoProvider");
+
+        val endpoint = new DuoSecurityAdminApiEndpoint(casProperties, this.applicationContext);
+
+        val data = Map.of("stat", "OK", "response", CollectionUtils.wrapList("123456"));
+        val entity = MAPPER.writeValueAsString(data);
+        try (val webServer = new MockWebServer(8443,
+            new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
+            webServer.start();
+            val result = endpoint.createBypassCodes(null, DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER, "mghfytgdq");
+            assertFalse(result.isEmpty());
         }
     }
 }
