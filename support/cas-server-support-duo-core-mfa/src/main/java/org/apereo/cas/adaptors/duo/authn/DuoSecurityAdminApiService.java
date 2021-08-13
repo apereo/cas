@@ -1,7 +1,9 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import org.apereo.cas.adaptors.duo.DuoSecurityBypassCode;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -10,7 +12,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@FunctionalInterface
 public interface DuoSecurityAdminApiService {
     /**
      * Gets user.
@@ -18,5 +19,14 @@ public interface DuoSecurityAdminApiService {
      * @param username the username
      * @return the user
      */
-    Optional<DuoSecurityUserAccount> getUser(String username) throws Exception;
+    Optional<DuoSecurityUserAccount> getDuoSecurityUserAccount(String username) throws Exception;
+
+    /**
+     * Gets duo security bypass codes for.
+     *
+     * @param userIdentifier the user identifier
+     * @return the duo security bypass codes
+     * @throws Exception the exception
+     */
+    List<DuoSecurityBypassCode> getDuoSecurityBypassCodesFor(String userIdentifier) throws Exception;
 }
