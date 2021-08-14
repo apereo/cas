@@ -341,6 +341,18 @@ exports.screenshot = async(page) => {
     console.log(`Screenshot saved at ${filePath}`);
 }
 
+exports.assertTextContent = async(page, selector, value) => {
+    await page.waitForSelector(selector, { visible: true });
+    let header = await this.textContent(page, selector);
+    assert(header === value);
+}
+
+exports.assertTextContentStartsWith = async(page, selector, value) => {
+    await page.waitForSelector(selector, { visible: true });
+    let header = await this.textContent(page, selector);
+    assert(header.startsWith(value));
+}
+
 exports.loginDuoSecurityBypassCode = async (page, type) => {
     await page.waitForTimeout(10000);
     if (type === "websdk") {

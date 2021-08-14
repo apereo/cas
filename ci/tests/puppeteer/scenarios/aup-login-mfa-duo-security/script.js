@@ -10,8 +10,7 @@ const cas = require('../../cas.js');
     await cas.loginWith(page, "duobypass", "Mellon");
     await page.waitForTimeout(8000)
     
-    const header = await cas.textContent(page, "#main-content #login #fm1 h3");
-    assert(header === "Acceptable Usage Policy")
+    await cas.assertTextContent(page, "#main-content #login #fm1 h3", "Acceptable Usage Policy")
 
     await cas.assertVisibility(page, 'button[name=submit]')
     await cas.assertVisibility(page, 'button[name=cancel]')

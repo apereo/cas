@@ -18,6 +18,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.support.StaticApplicationContext;
@@ -52,6 +53,9 @@ import static org.mockito.Mockito.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("WebflowMfaActions")
 public class DuoSecurityPrepareWebLoginFormActionTests {
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     @Test
     public void verifyOperation() throws Exception {
         val applicationContext = new StaticApplicationContext();
@@ -75,6 +79,7 @@ public class DuoSecurityPrepareWebLoginFormActionTests {
         WebUtils.putAuthentication(authentication, context);
 
         val duoService = mock(DuoSecurityAuthenticationService.class);
+        when(duoService.getProperties()).thenReturn(casProperties.getAuthn().getMfa().getDuo().get(0));
         val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
         when(provider.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         when(provider.getDuoAuthenticationService()).thenReturn(duoService);
