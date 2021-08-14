@@ -334,8 +334,10 @@ exports.fetchDuoSecurityBypassCode = async () => {
     return JSON.stringify(JSON.parse(response)["mfa-duo"][0]);
 }
 exports.loginDuoSecurityBypassCode = async (page) => {
+    await page.screenshot({path: "./screenshot1.png", fullPage: true });
     await page.waitForTimeout(8000);
     const frame = await page.waitForSelector("iframe#duo_iframe");
+    await page.screenshot({path: "./screenshot2.png", fullPage: true });
     const rect = await page.evaluate(el => {
         const {x, y, width, height} = el.getBoundingClientRect();
         return {x, y, width, height};
@@ -343,6 +345,7 @@ exports.loginDuoSecurityBypassCode = async (page) => {
     let x1 = rect.x + rect.width - 120;
     let y1 = rect.y + rect.height - 160;
     await page.mouse.click(x1, y1);
+    await page.screenshot({path: "./screenshot3.png", fullPage: true });
     let bypassCode = this.fetchDuoSecurityBypassCode();
     await page.keyboard.sendCharacter(bypassCode);
     await page.keyboard.down('Enter');

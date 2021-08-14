@@ -91,6 +91,8 @@ jobs:
           distribution: 'zulu'
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
       - name: Run Tests
         run: ./ci/tests/puppeteer/run.sh $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
 ##########################################################################
