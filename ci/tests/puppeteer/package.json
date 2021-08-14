@@ -2,6 +2,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "colors": "^1.4.0",
+    "imgur": "^1.0.2",
     "jsonwebtoken": "^8.5.1",
     "perf_hooks": "^0.0.1",
     "puppeteer": "^5.5.0",
