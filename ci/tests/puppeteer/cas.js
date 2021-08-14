@@ -334,7 +334,7 @@ exports.fetchDuoSecurityBypassCode = async () => {
     return JSON.stringify(JSON.parse(response)["mfa-duo"][0]);
 }
 exports.loginDuoSecurityBypassCode = async (page) => {
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(8000);
     const frame = await page.waitForSelector("iframe#duo_iframe");
     const rect = await page.evaluate(el => {
         const {x, y, width, height} = el.getBoundingClientRect();
