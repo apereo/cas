@@ -4,14 +4,6 @@ const assert = require('assert');
 
 const redirectUrl = "https://apereo.github.io";
 
-async function fetchScratch() {
-    console.log("Fetching Scratch codes from /cas/actuator...");
-    const response = await cas.doRequest("https://localhost:8443/cas/actuator/gauthCredentialRepository/casuser", "GET", {
-        'Accept': 'application/json'
-    });
-    return JSON.stringify(JSON.parse(response)[0].scratchCodes[0]);
-}
-
 async function fetchCode(page, acr, params) {
     let url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=openid%20email%20profile%20address%20phone&redirect_uri=${redirectUrl}&nonce=3d3a7457f9ad3&state=1735fd6c43c14&acr_values=${acr}`;
     if (params !== undefined) {
@@ -24,7 +16,7 @@ async function fetchCode(page, acr, params) {
         await cas.loginWith(page, "casuser", "Mellon");
     }
 
-    let scratch = await fetchScratch();
+    let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     console.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page, '#token', scratch);
     await page.keyboard.press('Enter');

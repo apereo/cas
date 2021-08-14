@@ -4,12 +4,8 @@ const cas = require("../../cas.js");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    console.log("Fetching Scratch codes from /cas/actuator...");
-    const response = await cas.doRequest("https://localhost:8443/cas/actuator/gauthCredentialRepository/casuser");
-    let scratch = JSON.stringify(JSON.parse(response)[0].scratchCodes[0]);
-
+    let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     const page = await cas.newPage(browser);
-
     const service = "https://google.com";
     await page.goto(`https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(1000);
