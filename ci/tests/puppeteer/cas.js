@@ -337,7 +337,7 @@ exports.fetchDuoSecurityBypassCode = async () => {
 exports.screenshot = async(page) => {
     let index = Math.floor(Math.random() * 10000);
     let filePath = `./screenshot${index}.png`;
-    await page.screenshot({path: filePath, fullPage: true, quality: 100 });
+    await page.screenshot({path: filePath, fullPage: true });
 }
 
 exports.loginDuoSecurityBypassCode = async (page) => {
