@@ -364,7 +364,7 @@ exports.assertTextContentStartsWith = async(page, selector, value) => {
 }
 
 exports.loginDuoSecurityBypassCode = async (page, type) => {
-    await page.waitForTimeout(10000);
+    await page.waitForTimeout(12000);
     if (type === "websdk") {
         const frame = await page.waitForSelector("iframe#duo_iframe");
         await this.screenshot(page);
@@ -385,5 +385,5 @@ exports.loginDuoSecurityBypassCode = async (page, type) => {
     await this.screenshot(page);
     await page.keyboard.down('Enter');
     await page.keyboard.up('Enter');
-    await page.waitForTimeout(3000)
+    await page.waitForTimeout(5000)
 }
