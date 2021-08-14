@@ -7,7 +7,7 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/login?authn_method=mfa-duo");
     await cas.loginWith(page, "casuser", "Mellon");
-    await cas.loginDuoSecurityBypassCode(page);
+    await cas.loginDuoSecurityBypassCode(page, "websdk");
     console.log(await page.url())
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.assertTicketGrantingCookie(page);

@@ -338,23 +338,29 @@ exports.screenshot = async(page) => {
     let index = Math.floor(Math.random() * 10000);
     let filePath = `./screenshot${index}.png`;
     await page.screenshot({path: filePath, fullPage: true });
+    console.log(`Screenshot saved at ${filePath}`);
 }
 
-exports.loginDuoSecurityBypassCode = async (page) => {
-    await this.screenshot(page);
-    await page.waitForTimeout(8000);
-    const frame = await page.waitForSelector("iframe#duo_iframe");
-    await this.screenshot(page);
-    const rect = await page.evaluate(el => {
-        const {x, y, width, height} = el.getBoundingClientRect();
-        return {x, y, width, height};
-    }, frame);
-    let x1 = rect.x + rect.width - 120;
-    let y1 = rect.y + rect.height - 160;
-    await page.mouse.click(x1, y1);
-    await this.screenshot(page);
+exports.loginDuoSecurityBypassCode = async (page, type) => {
+    await page.waitForTimeout(10000);
+    if (type === "websdk") {
+        const frame = await page.waitForSelector("iframe#duo_iframe");
+        await this.screenshot(page);
+        const rect = await page.evaluate(el => {
+            const {x, y, width, height} = el.getBoundingClientRect();
+            return {x, y, width, height};
+        }, frame);
+        let x1 = rect.x + rect.width - 120;
+        let y1 = rect.y + rect.height - 160;
+        await page.mouse.click(x1, y1);
+        await this.screenshot(page);
+    } else {
+        // console.log(await page.url())
+        await this.click(page, "button#passcode");
+    }
     let bypassCode = await this.fetchDuoSecurityBypassCode();
     await page.keyboard.sendCharacter(bypassCode);
+    await this.screenshot(page);
     await page.keyboard.down('Enter');
     await page.keyboard.up('Enter');
     await page.waitForTimeout(3000)
