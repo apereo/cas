@@ -8,15 +8,11 @@ const cas = require('../../cas.js');
     await page.goto("https://localhost:8443/cas/login");
 
     await cas.loginWith(page, "casuser", "Mellon");
-    let header = await cas.textContent(page, "#content h1");
-    assert(header === "Authentication Interrupt")
+    await cas.assertTextContent(page, "#content h1", "Authentication Interrupt")
 
-    header = await cas.textContent(page, "#content p");
-    assert(header.startsWith("The authentication flow has been interrupted"));
+    await cas.assertTextContentStartsWith(page, "#content p", "The authentication flow has been interrupted"));
     await cas.assertNoTicketGrantingCookie(page);
-
-    header = await cas.textContent(page, "#interruptMessage");
-    assert(header === "We interrupted your login");
+    await cas.assertTextContent(page, "#interruptMessage", "We interrupted your login");
 
     await cas.assertVisibility(page, '#interruptLinks')
     await cas.assertVisibility(page, '#attributesTable')

@@ -48,9 +48,7 @@ const path = require('path');
 
     await cas.click(page, "#allow")
     await page.waitForTimeout(4000)
-
-    let header = await cas.textContent(page, "h1.green-text");
-    assert(header === "Success!")
+    await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     console.log(page.url());
     assert(page.url().startsWith("https://oidcdebugger.com/debug"))
