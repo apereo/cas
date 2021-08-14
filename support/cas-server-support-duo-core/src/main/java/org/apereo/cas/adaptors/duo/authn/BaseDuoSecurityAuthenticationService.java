@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuth
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.duosecurity.client.Http;
 import com.duosecurity.duoweb.DuoWebException;
@@ -178,7 +179,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      */
     protected Http buildHttpPostAuthRequest() {
         val request = new Http(HttpMethod.POST.name(),
-            properties.getDuoApiHost(),
+            SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getDuoApiHost()),
             String.format("/auth/v%s/auth", AUTH_API_VERSION));
         configureHttpRequest(request);
         return request;
@@ -192,7 +193,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      */
     protected Http buildHttpPostUserPreAuthRequest(final String username) {
         val request = new Http(HttpMethod.POST.name(),
-            properties.getDuoApiHost(),
+            SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getDuoApiHost()),
             String.format("/auth/v%s/preauth", AUTH_API_VERSION));
         request.addParam("username", username);
         configureHttpRequest(request);
@@ -270,9 +271,10 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      */
     @SneakyThrows
     protected Http signHttpUserPreAuthRequest(final Http request) {
+        val resolver = SpringExpressionLanguageValueResolver.getInstance();
         request.signRequest(
-            properties.getDuoIntegrationKey(),
-            properties.getDuoSecretKey());
+            resolver.resolve(properties.getDuoIntegrationKey()),
+            resolver.resolve(properties.getDuoSecretKey()));
         return request;
     }
 

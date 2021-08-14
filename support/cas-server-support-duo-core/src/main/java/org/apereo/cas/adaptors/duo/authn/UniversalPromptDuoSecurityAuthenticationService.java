@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuth
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.duosecurity.Client;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -53,6 +54,21 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
         final Cache<String, DuoSecurityUserAccount> userAccountCache) {
         super(duoProperties, httpClient, multifactorAuthenticationPrincipalResolver, userAccountCache);
         this.duoClient = duoClient;
+    }
+
+    @Override
+    public Optional<Object> getDuoClient() {
+        return Optional.of(this.duoClient);
+    }
+    
+    @SneakyThrows
+    private static Client getDuoClient(final DuoSecurityMultifactorAuthenticationProperties duoProperties,
+                                       final CasConfigurationProperties casProperties) {
+        val resolver = SpringExpressionLanguageValueResolver.getInstance();
+        return new Client.Builder(resolver.resolve(duoProperties.getDuoIntegrationKey()),
+            resolver.resolve(duoProperties.getDuoSecretKey()),
+            resolver.resolve(duoProperties.getDuoApiHost()),
+            casProperties.getServer().getLoginUrl()).build();
     }
 
     @Override
@@ -140,20 +156,5 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
             LoggingUtils.warn(LOGGER, e);
         }
         return false;
-    }
-
-    @Override
-    public Optional<Object> getDuoClient() {
-        return Optional.of(this.duoClient);
-    }
-
-    @SneakyThrows
-    private static Client getDuoClient(final DuoSecurityMultifactorAuthenticationProperties duoProperties,
-        final CasConfigurationProperties casProperties) {
-        return new Client.Builder(duoProperties.getDuoIntegrationKey(),
-            duoProperties.getDuoSecretKey(),
-            duoProperties.getDuoApiHost(),
-            casProperties.getServer().getLoginUrl()).build();
-
     }
 }
