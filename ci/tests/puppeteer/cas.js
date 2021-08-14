@@ -6,6 +6,7 @@ const waitOn = require('wait-on');
 const jwt = require('jsonwebtoken');
 const colors = require('colors');
 const fs = require("fs");
+const { ImgurClient } = require('imgur');
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
@@ -61,6 +62,13 @@ exports.inputValue = async (page, selector) => {
     let text = await page.evaluate(element => element.value, element);
     console.log(`Input value for selector [${selector}] is: [${text}]`);
     return text;
+}
+
+exports.uploadImage = async(imagePath) => {
+    console.log(`Uploading image ${imagePath}`);
+    let client = new ImgurClient({ clientId: process.env.IMGUR_CLIENT_ID });
+    const response = await client.upload(imagePath);
+    console.log(response.link);
 }
 
 exports.loginWith = async (page, user, password,
@@ -339,6 +347,7 @@ exports.screenshot = async(page) => {
     let filePath = `./screenshot${index}.png`;
     await page.screenshot({path: filePath, fullPage: true });
     console.log(`Screenshot saved at ${filePath}`);
+    await this.uploadImage(filePath);
 }
 
 exports.assertTextContent = async(page, selector, value) => {

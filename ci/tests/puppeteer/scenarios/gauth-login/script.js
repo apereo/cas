@@ -17,7 +17,7 @@ const cas = require('../../cas.js');
     await cas.assertVisibility(page, '#id-2')
     await cas.assertVisibility(page, '#register')
     await cas.submitForm(page, "#form-1");
-    await cas.assertTextContentStartsWith(page, "#login p", "Your selected device for multifactor authentication is"))
+    await cas.assertTextContentStartsWith(page, "#login p", "Your selected device for multifactor authentication is");
     await cas.assertVisibility(page, '#token')
     await cas.assertVisibility(page, '#login')
     await cas.assertVisibility(page, '#cancel')
