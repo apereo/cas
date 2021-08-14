@@ -347,7 +347,7 @@ exports.screenshot = async(page) => {
     let index = Math.floor(Math.random() * 10000);
     let filePath = path.join(__dirname, `/screenshot${index}.png`)
     await page.screenshot({path: filePath, fullPage: true });
-    console.log(`Screenshot saved at ${filePath}`);
+    console.log(colors.green(`Screenshot saved at ${filePath}`));
     await this.uploadImage(filePath);
 }
 
@@ -377,7 +377,6 @@ exports.loginDuoSecurityBypassCode = async (page, type) => {
         await page.mouse.click(x1, y1);
         await this.screenshot(page);
     } else {
-        // console.log(await page.url())
         await this.click(page, "button#passcode");
     }
     let bypassCode = await this.fetchDuoSecurityBypassCode();
@@ -385,5 +384,6 @@ exports.loginDuoSecurityBypassCode = async (page, type) => {
     await this.screenshot(page);
     await page.keyboard.down('Enter');
     await page.keyboard.up('Enter');
-    await page.waitForTimeout(5000)
+    await this.screenshot(page);
+    await page.waitForTimeout(10000)
 }
