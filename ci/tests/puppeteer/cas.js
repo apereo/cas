@@ -6,7 +6,7 @@ const waitOn = require('wait-on');
 const jwt = require('jsonwebtoken');
 const colors = require('colors');
 const fs = require("fs");
-const { ImgurClient } = require('imgur');
+const {ImgurClient} = require('imgur');
 const path = require("path");
 
 const BROWSER_OPTIONS = {
@@ -59,17 +59,17 @@ exports.textContent = async (page, selector) => {
 }
 
 exports.inputValue = async (page, selector) => {
-    let element = await page.$(selector);
-    let text = await page.evaluate(element => element.value, element);
+    const element = await page.$(selector);
+    const text = await page.evaluate(element => element.value, element);
     console.log(`Input value for selector [${selector}] is: [${text}]`);
     return text;
 }
 
-exports.uploadImage = async(imagePath) => {
+exports.uploadImage = async (imagePath) => {
     console.log(`Uploading image ${imagePath}`);
-    let client = new ImgurClient({ clientId: process.env.IMGUR_CLIENT_ID });
+    const client = new ImgurClient({clientId: process.env.IMGUR_CLIENT_ID});
     const response = await client.upload(imagePath);
-    console.log(response);
+    console.log(colors.yellow(response.data.link));
 }
 
 exports.loginWith = async (page, user, password,
@@ -82,6 +82,14 @@ exports.loginWith = async (page, user, password,
     await page.waitForNavigation();
 }
 
+exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
+    console.log(`Fetching Scratch codes for ${user}...`);
+    const response = await this.doRequest(`https://localhost:8443/cas/actuator/gauthCredentialRepository/${user}`,
+        "GET", {
+            'Accept': 'application/json'
+        });
+    return JSON.stringify(JSON.parse(response)[0].scratchCodes[0]);
+}
 exports.isVisible = async (page, selector) => {
     let element = await page.$(selector);
     console.log(`Checking visibility for ${selector}`);
@@ -343,22 +351,22 @@ exports.fetchDuoSecurityBypassCode = async () => {
     return JSON.stringify(JSON.parse(response)["mfa-duo"][0]);
 }
 
-exports.screenshot = async(page) => {
+exports.screenshot = async (page) => {
     let index = Math.floor(Math.random() * 10000);
     let filePath = path.join(__dirname, `/screenshot${index}.png`)
-    await page.screenshot({path: filePath, fullPage: true });
+    await page.screenshot({path: filePath, fullPage: true});
     console.log(colors.green(`Screenshot saved at ${filePath}`));
     await this.uploadImage(filePath);
 }
 
-exports.assertTextContent = async(page, selector, value) => {
-    await page.waitForSelector(selector, { visible: true });
+exports.assertTextContent = async (page, selector, value) => {
+    await page.waitForSelector(selector, {visible: true});
     let header = await this.textContent(page, selector);
     assert(header === value);
 }
 
-exports.assertTextContentStartsWith = async(page, selector, value) => {
-    await page.waitForSelector(selector, { visible: true });
+exports.assertTextContentStartsWith = async (page, selector, value) => {
+    await page.waitForSelector(selector, {visible: true});
     let header = await this.textContent(page, selector);
     assert(header.startsWith(value));
 }
