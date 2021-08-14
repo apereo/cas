@@ -21,7 +21,7 @@ async function fetchBypassCode() {
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.assertTicketGrantingCookie(page);
 
-    const endpoints = ["duoPing", "duoAccountStatus/casuser"];
+    const endpoints = ["duoPing", "duoAccountStatus/casuser", "duoAdmin/casuser?providerId=mfa-duo"];
     const baseUrl = "https://localhost:8443/cas/actuator/"
     for (let i = 0; i < endpoints.length; i++) {
         let url = baseUrl + endpoints[i];

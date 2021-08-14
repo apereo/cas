@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -34,12 +35,14 @@ public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifac
      * Duo integration key.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String duoIntegrationKey;
 
     /**
      * Duo secret key.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String duoSecretKey;
 
     /**
@@ -58,12 +61,14 @@ public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifac
      */
     @RequiredProperty
     @Deprecated(since = "6.4.0")
+    @ExpressionLanguageCapable
     private String duoApplicationKey;
 
     /**
      * Duo API host and url.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String duoApiHost;
 
     /**
@@ -93,11 +98,13 @@ public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifac
     /**
      * Duo admin integration key.
      */
+    @ExpressionLanguageCapable
     private String duoAdminIntegrationKey;
 
     /**
      * Duo admin secret key.
      */
+    @ExpressionLanguageCapable
     private String duoAdminSecretKey;
 
     public DuoSecurityMultifactorAuthenticationProperties() {

@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuth
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.duosecurity.client.Http;
 import com.squareup.okhttp.OkHttpClient;
@@ -125,13 +126,16 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
     }
 
     private JSONArray getEndpointResultFor(final Map<String, String> params) throws Exception {
+        val resolver = SpringExpressionLanguageValueResolver.getInstance();
         val uri = getAdminEndpointUri(params.getOrDefault("uri", StringUtils.EMPTY));
         val method = params.getOrDefault("method", HttpMethod.GET.name());
-        val request = new Http(method, duoProperties.getDuoApiHost(), uri);
+        val request = new Http(method, resolver.resolve(duoProperties.getDuoApiHost()), uri);
         request.addParam("offset", "0");
         request.addParam("limit", "1");
         params.forEach(request::addParam);
-        request.signRequest(duoProperties.getDuoAdminIntegrationKey(), duoProperties.getDuoAdminSecretKey());
+        val ikey = resolver.resolve(duoProperties.getDuoAdminIntegrationKey());
+        val skey = resolver.resolve(duoProperties.getDuoAdminSecretKey());
+        request.signRequest(ikey, skey);
         val factory = this.httpClient.getHttpClientFactory();
         Optional.ofNullable(factory.getProxy()).ifPresent(proxy -> request.setProxy(proxy.getHostName(), proxy.getPort()));
         val field = ReflectionUtils.findField(request.getClass(), "httpClient");

@@ -44,9 +44,6 @@ public class DefaultDuoSecurityAdminApiServiceTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Test
     public void verifyOperation() throws Exception {
         ApplicationContextProvider.holdApplicationContext(applicationContext);

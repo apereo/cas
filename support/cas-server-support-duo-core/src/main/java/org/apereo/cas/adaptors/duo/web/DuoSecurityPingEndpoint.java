@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.duo.web;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,8 +28,6 @@ import java.util.Objects;
  */
 @Endpoint(id = "duoPing", enableByDefault = false)
 public class DuoSecurityPingEndpoint extends BaseCasActuatorEndpoint {
-    private static final int MAP_SIZE = 8;
-
     private final ApplicationContext applicationContext;
 
     public DuoSecurityPingEndpoint(final CasConfigurationProperties casProperties,
@@ -46,7 +45,8 @@ public class DuoSecurityPingEndpoint extends BaseCasActuatorEndpoint {
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Ping Duo Security given the provider id", parameters = {@Parameter(name = "providerId")})
     public Map<?, ?> pingDuo(@Nullable final String providerId) {
-        val results = new LinkedHashMap<>(MAP_SIZE);
+        val resolver = SpringExpressionLanguageValueResolver.getInstance();
+        val results = new LinkedHashMap<>();
         val providers = applicationContext.getBeansOfType(DuoSecurityMultifactorAuthenticationProvider.class).values();
         providers
             .stream()
@@ -57,9 +57,8 @@ public class DuoSecurityPingEndpoint extends BaseCasActuatorEndpoint {
                 val duoService = p.getDuoAuthenticationService();
                 val available = duoService.ping();
                 results.put(p.getId(),
-                    CollectionUtils.wrap("duoApiHost", duoService.getProperties().getDuoApiHost(),
-                        "name", p.getFriendlyName(),
-                        "availability", available
+                    CollectionUtils.wrap("duoApiHost", resolver.resolve(duoService.getProperties().getDuoApiHost()),
+                        "name", p.getFriendlyName(), "availability", available
                     ));
             });
         return results;
