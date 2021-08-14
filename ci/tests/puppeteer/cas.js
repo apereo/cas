@@ -333,11 +333,18 @@ exports.fetchDuoSecurityBypassCode = async () => {
         });
     return JSON.stringify(JSON.parse(response)["mfa-duo"][0]);
 }
+
+exports.screenshot = async(page) => {
+    let index = Math.floor(Math.random() * 10000);
+    let filePath = `./screenshot${index}.png`;
+    await page.screenshot({path: filePath, fullPage: true, quality: 100 });
+}
+
 exports.loginDuoSecurityBypassCode = async (page) => {
-    await page.screenshot({path: "./screenshot1.png", fullPage: true });
+    await this.screenshot(page);
     await page.waitForTimeout(8000);
     const frame = await page.waitForSelector("iframe#duo_iframe");
-    await page.screenshot({path: "./screenshot2.png", fullPage: true });
+    await this.screenshot(page);
     const rect = await page.evaluate(el => {
         const {x, y, width, height} = el.getBoundingClientRect();
         return {x, y, width, height};
@@ -345,8 +352,8 @@ exports.loginDuoSecurityBypassCode = async (page) => {
     let x1 = rect.x + rect.width - 120;
     let y1 = rect.y + rect.height - 160;
     await page.mouse.click(x1, y1);
-    await page.screenshot({path: "./screenshot3.png", fullPage: true });
-    let bypassCode = this.fetchDuoSecurityBypassCode();
+    await this.screenshot(page);
+    let bypassCode = await this.fetchDuoSecurityBypassCode();
     await page.keyboard.sendCharacter(bypassCode);
     await page.keyboard.down('Enter');
     await page.keyboard.up('Enter');
