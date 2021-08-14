@@ -24,9 +24,10 @@ exports.browserOptions = (opt) => {
     };
 };
 
-exports.removeDirectory = async(directory) => {
+exports.removeDirectory = async (directory) => {
     console.log(colors.green(`Removing directory ${directory}`));
-    fs.rmdir(directory, { recursive: true }, () => {});
+    fs.rmdir(directory, {recursive: true}, () => {
+    });
 }
 
 exports.click = async (page, button) => {
@@ -311,7 +312,7 @@ exports.decodeJwt = async (token, complete = false) => {
     return decoded;
 }
 
-exports.uploadSamlMetadata = async(page, metadata) => {
+exports.uploadSamlMetadata = async (page, metadata) => {
     await page.goto("https://samltest.id/upload.php");
     await page.waitForTimeout(1000)
     const fileElement = await page.$("input[type=file]");
@@ -323,7 +324,16 @@ exports.uploadSamlMetadata = async(page, metadata) => {
     await page.waitForTimeout(2000)
 }
 
-exports.loginDuoSecurityBypassCode = async(page, bypassCode) => {
+exports.fetchDuoSecurityBypassCode = async () => {
+    console.log("Fetching Bypass codes for Duo Security...");
+    const response = await this.doRequest("https://localhost:8443/cas/actuator/duoAdmin/bypassCodes?username=casuser",
+        "POST", {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        });
+    return JSON.stringify(JSON.parse(response)["mfa-duo"][0]);
+}
+exports.loginDuoSecurityBypassCode = async (page) => {
     await page.waitForTimeout(3000);
     const frame = await page.waitForSelector("iframe#duo_iframe");
     const rect = await page.evaluate(el => {
@@ -333,6 +343,7 @@ exports.loginDuoSecurityBypassCode = async(page, bypassCode) => {
     let x1 = rect.x + rect.width - 120;
     let y1 = rect.y + rect.height - 160;
     await page.mouse.click(x1, y1);
+    let bypassCode = this.fetchDuoSecurityBypassCode();
     await page.keyboard.sendCharacter(bypassCode);
     await page.keyboard.down('Enter');
     await page.keyboard.up('Enter');
