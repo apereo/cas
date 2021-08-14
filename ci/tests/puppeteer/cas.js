@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const colors = require('colors');
 const fs = require("fs");
 const { ImgurClient } = require('imgur');
+const path = require("path");
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
@@ -68,7 +69,7 @@ exports.uploadImage = async(imagePath) => {
     console.log(`Uploading image ${imagePath}`);
     let client = new ImgurClient({ clientId: process.env.IMGUR_CLIENT_ID });
     const response = await client.upload(imagePath);
-    console.log(response.link);
+    console.log(response);
 }
 
 exports.loginWith = async (page, user, password,
@@ -344,7 +345,7 @@ exports.fetchDuoSecurityBypassCode = async () => {
 
 exports.screenshot = async(page) => {
     let index = Math.floor(Math.random() * 10000);
-    let filePath = `./screenshot${index}.png`;
+    let filePath = path.join(__dirname, `/screenshot${index}.png`)
     await page.screenshot({path: filePath, fullPage: true });
     console.log(`Screenshot saved at ${filePath}`);
     await this.uploadImage(filePath);
