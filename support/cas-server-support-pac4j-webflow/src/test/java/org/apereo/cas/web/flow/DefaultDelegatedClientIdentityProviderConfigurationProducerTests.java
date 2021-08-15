@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
     properties = "cas.authn.pac4j.cookie.enabled=true")
-@Tag("Webflow")
+@Tag("Delegation")
 public class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
     @Autowired
     @Qualifier("delegatedClientIdentityProviderConfigurationProducer")
