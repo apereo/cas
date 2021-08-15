@@ -158,8 +158,10 @@
 
             <script>
                 const redirectTo = $("a[autoRedirect=true]").attr("href");
-                if (redirectTo != null && redirectTo != undefined) {
+                if (redirectTo !== null) {
                     window.location.href = redirectTo;
+                } else {
+                    console.log("Unable to locate provider with auto-redirect");
                 }
             </script>
         </div>
