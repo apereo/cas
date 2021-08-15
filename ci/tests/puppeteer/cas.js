@@ -66,10 +66,13 @@ exports.inputValue = async (page, selector) => {
 }
 
 exports.uploadImage = async (imagePath) => {
-    console.log(`Uploading image ${imagePath}`);
-    const client = new ImgurClient({clientId: process.env.IMGUR_CLIENT_ID});
-    const response = await client.upload(imagePath);
-    console.log(colors.yellow(response.data.link));
+    let clientId = process.env.IMGUR_CLIENT_ID;
+    if (clientId !== null && clientId !== undefined) {
+        console.log(`Uploading image ${imagePath}`);
+        const client = new ImgurClient({clientId: clientId});
+        const response = await client.upload(imagePath);
+        console.log(colors.yellow(response.data.link));
+    }
 }
 
 exports.loginWith = async (page, user, password,
