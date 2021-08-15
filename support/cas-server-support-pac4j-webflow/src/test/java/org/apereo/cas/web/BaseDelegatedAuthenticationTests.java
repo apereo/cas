@@ -71,7 +71,6 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
-
 /**
  * This is {@link BaseDelegatedAuthenticationTests}.
  *

@@ -1,11 +1,13 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -61,4 +63,11 @@ public class Pac4jDelegatedAuthenticationCoreProperties implements Serializable 
      * Order of the authentication handler in the chain.
      */
     private Integer order;
+
+    /**
+     * Path to a groovy script to determine the auto-redirection
+     * strategy to identity providers.
+     */
+    @NestedConfigurationProperty
+    private SpringResourceProperties groovyRedirectionStrategy = new SpringResourceProperties();
 }
