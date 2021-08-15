@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.adaptors.duo.DuoSecurityBypassCode;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
+import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountGroup;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserDevice;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
@@ -58,9 +59,34 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
         FunctionUtils.doIfNotNull(userJson.getBoolean("is_enrolled"), value -> user.addAttribute("is_enrolled", value.toString()));
         FunctionUtils.doIfNotNull(userJson.getLong("last_login"), value -> user.addAttribute("last_login", value.toString()));
         FunctionUtils.doIfNotNull(userJson.getLong("created"), value -> user.addAttribute("created", value.toString()));
+        FunctionUtils.doIfNotNull(userJson.optString("alias1"), value -> user.addAttribute("alias1", value));
+        FunctionUtils.doIfNotNull(userJson.optString("alias2"), value -> user.addAttribute("alias2", value));
         if (user.getStatus() != DuoSecurityUserAccountStatus.DENY && !user.isEnrolled()) {
             user.setStatus(DuoSecurityUserAccountStatus.ENROLL);
         }
+        mapUserPhones(userJson, user);
+        mapUserGroups(userJson, user);
+        return user;
+    }
+
+    private static void mapUserGroups(final JSONObject userJson, final DuoSecurityUserAccount user) throws JSONException {
+        val groupsResponse = userJson.getJSONArray("groups");
+        for (int i = 0; groupsResponse != null && i < groupsResponse.length(); i++) {
+            val json = groupsResponse.getJSONObject(i);
+            if (json.has("group_id")) {
+                val group = new DuoSecurityUserAccountGroup(json.getString("group_id"),
+                    json.getString("name"), json.getString("status"));
+                group.setDescription(json.optString("description"));
+                group.setMobileOtpEnabled(json.optBoolean("mobile_otp_enabled"));
+                group.setPushEnabled(json.optBoolean("push_enabled"));
+                group.setSmsEnabled(json.optBoolean("sms_enabled"));
+                group.setVoiceEnabled(json.optBoolean("voice_enabled"));
+                user.addGroup(group);
+            }
+        }
+    }
+
+    private static void mapUserPhones(final JSONObject userJson, final DuoSecurityUserAccount user) throws JSONException {
         val phones = userJson.getJSONArray("phones");
         for (int i = 0; phones != null && i < phones.length(); i++) {
             val phoneJson = phones.getJSONObject(i);
@@ -77,7 +103,6 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
                 .split(",")));
             user.addDevice(phone);
         }
-        return user;
     }
 
     @Override
@@ -99,7 +124,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
         val bypassResponse = getEndpointResultFor(params);
         if (bypassResponse != null) {
             return Arrays.stream(bypassResponse.join(",")
-                .replace("\"", StringUtils.EMPTY).split(","))
+                    .replace("\"", StringUtils.EMPTY).split(","))
                 .map(Long::valueOf)
                 .collect(Collectors.toList());
         }
@@ -131,7 +156,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
         val method = params.getOrDefault("method", HttpMethod.GET.name());
         val request = new Http(method, resolver.resolve(duoProperties.getDuoApiHost()), uri);
         request.addParam("offset", "0");
-        request.addParam("limit", "1");
+        request.addParam("limit", params.getOrDefault("limit", "1"));
         params.forEach(request::addParam);
         val ikey = resolver.resolve(duoProperties.getDuoAdminIntegrationKey());
         val skey = resolver.resolve(duoProperties.getDuoAdminSecretKey());

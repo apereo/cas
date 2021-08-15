@@ -9,6 +9,7 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,26 +45,32 @@ public class DefaultDuoSecurityAdminApiServiceTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
-    @Test
-    public void verifyOperation() throws Exception {
+    private DuoSecurityMultifactorAuthenticationProperties properties;
+
+    @BeforeEach
+    public void setup() {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
-        val props = new DuoSecurityMultifactorAuthenticationProperties()
+        properties = new DuoSecurityMultifactorAuthenticationProperties()
             .setDuoApiHost("localhost:8443")
             .setDuoAdminIntegrationKey(UUID.randomUUID().toString())
             .setDuoAdminSecretKey(UUID.randomUUID().toString());
-        val duoService = new BasicDuoSecurityAuthenticationService(props, httpClient,
+        val duoService = new BasicDuoSecurityAuthenticationService(properties, httpClient,
             List.of(), Caffeine.newBuilder().build());
         val bean = mock(DuoSecurityMultifactorAuthenticationProvider.class);
         when(bean.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         when(bean.getDuoAuthenticationService()).thenReturn(duoService);
         when(bean.matches(eq(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER))).thenReturn(true);
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, bean, "duoProvider");
-        val service = new DefaultDuoSecurityAdminApiService(this.httpClient, props);
+    }
+
+    @Test
+    public void verifyCodes() throws Exception {
+        val service = new DefaultDuoSecurityAdminApiService(this.httpClient, properties);
         try (val webServer = new MockWebServer(8443)) {
             webServer.responseBodySupplier(() -> new ClassPathResource("duoAdminApiResponse-bypassCodes.json"));
             webServer.start();
-            val result = service.getDuoSecurityBypassCodesFor("DU3RP9I2WOC59VZX672N");
-            assertFalse(result.isEmpty());
+            val codes = service.getDuoSecurityBypassCodesFor("DU3RP9I2WOC59VZX672N");
+            assertFalse(codes.isEmpty());
         }
     }
 }

@@ -14,6 +14,7 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,8 +59,8 @@ public class DuoSecurityAdminApiEndpointTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Test
-    public void verifyOperation() {
+    @BeforeEach
+    public void setup() {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         val props = new DuoSecurityMultifactorAuthenticationProperties()
             .setDuoApiHost("localhost:8443")
@@ -72,7 +73,10 @@ public class DuoSecurityAdminApiEndpointTests {
         when(bean.getDuoAuthenticationService()).thenReturn(duoService);
         when(bean.matches(eq(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER))).thenReturn(true);
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, bean, "duoProvider");
+    }
 
+    @Test
+    public void verifyOperation() {
         val endpoint = new DuoSecurityAdminApiEndpoint(casProperties, this.applicationContext);
         try (val webServer = new MockWebServer(8443,
             new ByteArrayResource("{\"stat\": \"OK\" }".getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
@@ -91,6 +95,7 @@ public class DuoSecurityAdminApiEndpointTests {
             assertNotNull(user.getFirstName());
             assertNotNull(user.getLastName());
             assertNotNull(user.getEmail());
+            assertNotNull(user.getRealName());
             assertNotNull(user.getLastLogin());
             assertNotNull(user.getCreated());
             assertFalse(user.getDevices().isEmpty());
@@ -100,21 +105,7 @@ public class DuoSecurityAdminApiEndpointTests {
 
     @Test
     public void verifyCreateBypassCodes() throws Exception {
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-        val props = new DuoSecurityMultifactorAuthenticationProperties()
-            .setDuoApiHost("localhost:8443")
-            .setDuoAdminIntegrationKey(UUID.randomUUID().toString())
-            .setDuoAdminSecretKey(UUID.randomUUID().toString());
-        val duoService = new BasicDuoSecurityAuthenticationService(props, httpClient,
-            List.of(), Caffeine.newBuilder().build());
-        val bean = mock(DuoSecurityMultifactorAuthenticationProvider.class);
-        when(bean.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
-        when(bean.getDuoAuthenticationService()).thenReturn(duoService);
-        when(bean.matches(eq(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER))).thenReturn(true);
-        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, bean, "duoProvider");
-
         val endpoint = new DuoSecurityAdminApiEndpoint(casProperties, this.applicationContext);
-
         val data = Map.of("stat", "OK", "response", CollectionUtils.wrapList("123456"));
         val entity = MAPPER.writeValueAsString(data);
         try (val webServer = new MockWebServer(8443,
