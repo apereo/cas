@@ -6,8 +6,9 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/login");
-
     await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginDuoSecurityBypassCode(page, 'universal-prompt');
+    
     await cas.assertTextContent(page, "#content h1", "Authentication Interrupt")
 
     await cas.assertTextContentStartsWith(page, "#content p", "The authentication flow has been interrupted");
@@ -23,8 +24,8 @@ const cas = require('../../cas.js');
 
     let cancel = await page.$('#cancel');
     assert(cancel == null);
-
     await cas.submitForm(page, "#fm1");
     await cas.assertTicketGrantingCookie(page);
+    await page.waitForTimeout(1000)
     await browser.close();
 })();
