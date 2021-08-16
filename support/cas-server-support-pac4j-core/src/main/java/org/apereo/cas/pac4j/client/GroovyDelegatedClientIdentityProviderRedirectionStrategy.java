@@ -36,4 +36,9 @@ public class GroovyDelegatedClientIdentityProviderRedirectionStrategy implements
         val args = new Object[]{context, service, registeredService, provider, LOGGER};
         return Optional.ofNullable(watchableScript.execute(args, DelegatedClientIdentityProviderConfiguration.class));
     }
+
+    @Override
+    public int getOrder() {
+        return 0;
+    }
 }

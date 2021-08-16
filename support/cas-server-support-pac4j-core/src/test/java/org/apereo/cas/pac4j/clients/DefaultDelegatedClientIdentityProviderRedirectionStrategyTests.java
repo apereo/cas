@@ -22,6 +22,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.core.Ordered;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -96,6 +97,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
         val results = strategy.getPrimaryDelegatedAuthenticationProvider(context, service, provider);
         assertFalse(results.isEmpty());
         assertTrue(results.get().isAutoRedirect());
+        assertEquals(Ordered.LOWEST_PRECEDENCE, strategy.getOrder());
     }
 
     @Test

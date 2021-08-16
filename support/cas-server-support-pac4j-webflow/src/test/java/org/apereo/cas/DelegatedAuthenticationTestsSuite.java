@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.support.pac4j.RefreshableDelegatedClientsTests;
 import org.apereo.cas.web.DefaultDelegatedAuthenticationNavigationControllerTests;
+import org.apereo.cas.web.DelegatedClientIdentityProviderRedirectionStrategyTests;
 import org.apereo.cas.web.flow.DefaultDelegatedClientAuthenticationWebflowManagerTests;
 import org.apereo.cas.web.flow.DefaultDelegatedClientIdentityProviderConfigurationProducerTests;
 import org.apereo.cas.web.flow.DelegatedAuthenticationClientFinishLogoutActionTests;
@@ -23,6 +24,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 5.3.0
  */
 @SelectClasses({
+    DelegatedClientIdentityProviderRedirectionStrategyTests.class,
     RefreshableDelegatedClientsTests.class,
     DelegatedClientAuthenticationActionTests.class,
     DelegatedClientIdentityProviderConfigurationProducerTests.class,

@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.pac4j.client.ChainingDelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.pac4j.client.DefaultDelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.pac4j.client.DelegatedClientIdentityProviderRedirectionStrategy;
@@ -290,12 +291,15 @@ public class DelegatedAuthenticationWebflowConfiguration {
     @Bean
     @RefreshScope
     public DelegatedClientIdentityProviderRedirectionStrategy delegatedClientIdentityProviderRedirectionStrategy() {
+        val chain = new ChainingDelegatedClientIdentityProviderRedirectionStrategy();
         val strategy = casProperties.getAuthn().getPac4j().getCore().getGroovyRedirectionStrategy();
-        return strategy.getLocation() != null
-            ? new GroovyDelegatedClientIdentityProviderRedirectionStrategy(servicesManager.getObject(),
-                new WatchableGroovyScriptResource(strategy.getLocation()))
-            : new DefaultDelegatedClientIdentityProviderRedirectionStrategy(servicesManager.getObject(),
-                delegatedAuthenticationCookieGenerator(), casProperties);
+        if (strategy.getLocation() != null) {
+            chain.addStrategy(new GroovyDelegatedClientIdentityProviderRedirectionStrategy(servicesManager.getObject(),
+                new WatchableGroovyScriptResource(strategy.getLocation())));
+        }
+        chain.addStrategy(new DefaultDelegatedClientIdentityProviderRedirectionStrategy(servicesManager.getObject(),
+            delegatedAuthenticationCookieGenerator(), casProperties));
+        return chain;
     }
 
     @ConditionalOnMissingBean(name = "delegatedAuthenticationCookieGenerator")
