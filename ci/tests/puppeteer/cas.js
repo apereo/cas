@@ -71,7 +71,7 @@ exports.uploadImage = async (imagePath) => {
         console.log(`Uploading image ${imagePath}`);
         const client = new ImgurClient({clientId: clientId});
         const response = await client.upload(imagePath);
-        console.log(colors.yellow(response.data.link));
+        console.log(colors.green(response.data.link));
     }
 }
 
@@ -344,9 +344,9 @@ exports.uploadSamlMetadata = async (page, metadata) => {
     await page.waitForTimeout(2000)
 }
 
-exports.fetchDuoSecurityBypassCode = async () => {
-    console.log("Fetching Bypass codes for Duo Security...");
-    const response = await this.doRequest("https://localhost:8443/cas/actuator/duoAdmin/bypassCodes?username=casuser",
+exports.fetchDuoSecurityBypassCode = async (user = "casuser") => {
+    console.log(`Fetching Bypass codes from Duo Security for ${user}...`);
+    const response = await this.doRequest(`https://localhost:8443/cas/actuator/duoAdmin/bypassCodes?username=${user}`,
         "POST", {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -392,9 +392,11 @@ exports.loginDuoSecurityBypassCode = async (page, type) => {
     }
     let bypassCode = await this.fetchDuoSecurityBypassCode();
     await page.keyboard.sendCharacter(bypassCode);
-    await this.screenshot(page);
+    // await this.screenshot(page);
+    console.log(`Submitting Duo Security bypass code`);
     await page.keyboard.down('Enter');
     await page.keyboard.up('Enter');
     await this.screenshot(page);
+    console.log(`Waiting for Duo Security to accept bypass code`);
     await page.waitForTimeout(10000)
 }
