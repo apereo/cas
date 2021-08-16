@@ -28,9 +28,7 @@
                 <div class="card-title" th:if="${delegatedAuthenticationProviderPrimary != null}">
                     <div class="alert alert-info" role="alert">
                         <span th:utext="#{screen.welcome.label.navto(${delegatedAuthenticationProviderPrimary.name})}" />
-
                         <p>
-
                         <div role="progressbar" class="mdc-linear-progress mdc-linear-progress--indeterminate">
                             <div class="mdc-linear-progress__buffer">
                                 <div class="mdc-linear-progress__buffer-bar"></div>
@@ -158,7 +156,7 @@
 
             <script>
                 const redirectTo = $("a[autoRedirect=true]").attr("href");
-                if (redirectTo !== null) {
+                if (redirectTo !== null && redirectTo !== undefined) {
                     window.location.href = redirectTo;
                 } else {
                     console.log("Unable to locate provider with auto-redirect");

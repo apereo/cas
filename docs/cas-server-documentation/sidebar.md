@@ -100,6 +100,7 @@ layout: null
         *   [Custom](/cas/{{ version }}/authentication/Configuring-Custom-Authentication.html)
     *   [Delegation](#delegationauthn)
         *   [Overview](/cas/{{ version }}/integration/Delegate-Authentication.html)
+        *   [Authentication Policy](/cas/{{ version }}/integration/Delegate-Authentication-AuthenticationPolicy.html)
         *   [Identity Providers](#identityproviders)
             *   [Apple](/cas/{{ version }}/integration/Delegate-Authentication-Apple.html)
             *   [Azure AD](/cas/{{ version }}/integration/Delegate-Authentication-Azure-AD.html)

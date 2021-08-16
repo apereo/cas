@@ -112,33 +112,9 @@ On CAS server side, to push attributes to the CAS client, it should be configure
 }
 ```
 
-## Access Strategy
+## Authentication Policy
 
-Service definitions may be conditionally authorized to use an external identity provider by defining their own access strategy and policy:
-
-```json
-{
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId" : "sample",
-  "name" : "sample",
-  "id" : 100,
-  "accessStrategy" : {
-    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
-    "delegatedAuthenticationPolicy" : {
-      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy",
-      "allowedProviders" : [ "java.util.ArrayList", [ "Facebook", "Twitter" ] ],
-      "permitUndefined": true,
-      "exclusive": true
-    }
-  }
-}
-```
-
-Note that:
-
-- The list of allowed providers should contain the external identity provider names (i.e. client names).
-- The `permitUndefined` flag decides whether access should be granted in the event that no allowed providers are defined explicitly.
-- The `exclusive` flag decides whether authentication should be exclusively limited to allowed providers, disabling other methods such as username/password, etc.
+Please [see this guide](Delegate-Authentication-AuthenticationPolicy.html).
 
 ## Provisioning
 
@@ -157,14 +133,6 @@ and all other relevant details for the given authentication request are tracked 
 more relevant for clustred deployments.
 
 {% include casproperties.html properties="cas.session-replication" %}
- 
-## Identity Provider Selection
-
-The selected identity provider can be optionally tracked and stored using a dedicated cookie,
-which will then be used on subsequent attempts to auto-redirect to 
-the identity provider, skipping the selection menu.
-
-{% include casproperties.html properties="cas.authn.pac4j.cookie" %}
 
 ## Troubleshooting
 
