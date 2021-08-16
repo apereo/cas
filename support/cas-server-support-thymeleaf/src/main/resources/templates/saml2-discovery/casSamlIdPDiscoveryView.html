@@ -20,14 +20,6 @@
 
             <div id="idpSelect"></div>
             <script type="text/javascript" th:inline="javascript">
-
-                function jqueryReady() {
-                    head.load(
-                    /*[[@{/js/samlidp/idpselect_config.js}]]*/ ,
-                    /*[[@{/js/samlidp/idpselect.js}]]*/ ,
-                    );
-                }
-
                 /*<![CDATA[*/
                 function IdPSelectUIParametersForCAS(obj) {
                     obj.myEntityID = /*[[${entityIds}]]*/;
@@ -51,6 +43,8 @@
                 }
             /*]]>*/
             </script>
+            <script th:src="@{/js/samlidp/idpselect_config.js}"></script>
+            <script th:src="@{/js/samlidp/idpselect.js}"></script>
         </div>
     </main>
 

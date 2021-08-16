@@ -106,17 +106,17 @@
                         <li th:if="${identityProviderDiscoveryEnabled}">
                             <script type="text/javascript" th:inline="javascript">
                                 /*<![CDATA[*/
-                                var url = /*[[@{/idp/discovery}]]*/ ;
+                                let url = /*[[@{/idp/discovery}]]*/ ;
 
-                                var returnUrl = /*[[${cas.server.name} + @{/idp/discovery/redirect}]]*/ ;
+                                let returnUrl = /*[[${cas.server.name} + @{/idp/discovery/redirect}]]*/ ;
 
                                 if (window.location.search) {
                                     returnUrl += encodeURIComponent(window.location.search);
                                 }
-                                url += "?return=" + returnUrl;
-                                var link = `<a href='${url}' class='mdc-button mdc-button--raised d-block'>
-                                                                    <i class='mdi mdi-shield' aria-hidden='true'></i>
-                                                                    <span class="mdc-button__label">SAML2 Identity Provider Discovery</span></a>`;
+                                url += `?return=${returnUrl}`;
+                                let link = `<a href='${url}' id="saml2IdPDiscovery" class='mdc-button mdc-button--raised d-block'>
+                                   <i class='mdi mdi-shield' aria-hidden='true'></i>
+                                   <span class="mdc-button__label">SAML2 Identity Provider Discovery</span></a>`;
                                 document.write(link);
                                 /*]]>*/
                             </script>

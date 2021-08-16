@@ -120,11 +120,6 @@ Please [see this guide](Delegate-Authentication-AuthenticationPolicy.html).
 
 Please [see this guide](Delegate-Authentication-Provisioning.html).
 
-## SAML2 Identity Providers
-
-To learn more about delegating authentication to SAML2 identity providers, 
-please [review this guide](Delegate-Authentication-SAML.html).
- 
 ## Session Replication
                 
 For the current active session, the selected identity provider, the relying party

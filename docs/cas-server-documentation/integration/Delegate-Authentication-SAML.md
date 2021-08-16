@@ -65,14 +65,14 @@ See [registered service properties](../services/Configuring-Service-Custom-Prope
 ## Identity Provider Discovery Service
 
 <div class="alert alert-info"><strong>Note</strong><p>Using identity provider discovery requires 
-delegated authentication to be available as the feature cannot be used on its own
+delegated authentication to be available. This feature cannot be used on its own
 as a standalone discovery service.</p></div>
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-discovery" %}
 
 Identity provider discovery allows CAS 
 to [embed and present a discovery service](https://wiki.shibboleth.net/confluence/display/EDS10/Embedded+Discovery+Service) 
-as part of delegated authentication. Configured SAML2identity providers in the CAS configuration
+as part of delegated authentication. Configured SAML2 identity providers in the CAS configuration
 used for delegated authentication are presented as options for discovery. 
 
 CAS is also able to directly consume multiple JSON feeds
