@@ -20,6 +20,7 @@ import org.apereo.cas.web.support.WebUtils;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.Ordered;
@@ -43,6 +44,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
+@Tag("Delegation")
 public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
 
     private ServicesManager servicesManager;
