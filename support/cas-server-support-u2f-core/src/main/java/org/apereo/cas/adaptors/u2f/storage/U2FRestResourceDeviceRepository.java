@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.u2f.storage;
 import org.apereo.cas.configuration.model.support.mfa.u2f.U2FRestfulMultifactorAuthenticationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
@@ -51,6 +50,7 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     }
 
     @Override
+    @SneakyThrows
     public Map<String, List<U2FDeviceRegistration>> readDevicesFromResource() {
         HttpResponse response = null;
         try {
@@ -67,8 +67,6 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
                     new TypeReference<>() {
                     });
             }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
