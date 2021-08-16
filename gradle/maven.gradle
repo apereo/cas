@@ -186,7 +186,7 @@ ext.createPomRepositories = { node ->
     repository.appendNode("snapshots").appendNode("enabled", "false")
 
     repository = repositories.appendNode("repository")
-    repository.appendNode("id", "couchbase")
+    repository.appendNode("id", "jitpack")
     repository.appendNode("url", "https://jitpack.io")
     repository.appendNode("releases").appendNode("enabled", "true")
     repository.appendNode("snapshots").appendNode("enabled", "false")

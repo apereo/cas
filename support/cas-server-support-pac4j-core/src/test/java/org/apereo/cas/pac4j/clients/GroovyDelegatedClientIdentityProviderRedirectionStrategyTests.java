@@ -73,5 +73,6 @@ public class GroovyDelegatedClientIdentityProviderRedirectionStrategyTests {
         val strategy = new GroovyDelegatedClientIdentityProviderRedirectionStrategy(this.servicesManager,
             new WatchableGroovyScriptResource(resource));
         assertFalse(strategy.getPrimaryDelegatedAuthenticationProvider(context, service, provider).isEmpty());
+        assertEquals(0, strategy.getOrder());
     }
 }
