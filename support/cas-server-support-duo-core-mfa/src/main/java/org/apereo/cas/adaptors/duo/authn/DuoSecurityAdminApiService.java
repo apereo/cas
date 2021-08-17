@@ -18,6 +18,7 @@ public interface DuoSecurityAdminApiService {
      *
      * @param username the username
      * @return the user
+     * @throws Exception the exception
      */
     Optional<DuoSecurityUserAccount> getDuoSecurityUserAccount(String username) throws Exception;
 
