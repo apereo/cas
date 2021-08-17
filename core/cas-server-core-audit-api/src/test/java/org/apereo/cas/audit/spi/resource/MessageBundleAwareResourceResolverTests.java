@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Web")
+@Tag("Audits")
 public class MessageBundleAwareResourceResolverTests {
     @Test
     public void verifyOperationByExceptionMessage() {
