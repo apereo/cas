@@ -55,7 +55,6 @@ import java.util.zip.InflaterInputStream;
 @UtilityClass
 public class SamlIdPUtils {
 
-
     /**
      * Retrieve authn request authn request.
      *
