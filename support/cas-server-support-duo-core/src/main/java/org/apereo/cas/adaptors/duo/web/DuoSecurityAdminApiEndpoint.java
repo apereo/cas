@@ -74,6 +74,7 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasActuatorEndpoint {
      *
      * @param username   the username
      * @param providerId the provider id
+     * @param userId     the user id
      * @return the map
      */
     @Operation(summary = "Create bypass codes using Duo Admin API", parameters = {
