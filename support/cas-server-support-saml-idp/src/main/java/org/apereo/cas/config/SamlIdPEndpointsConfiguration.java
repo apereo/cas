@@ -411,7 +411,7 @@ public class SamlIdPEndpointsConfiguration {
         return CookieUtils.buildCookieRetrievingGenerator(cookie);
     }
 
-    @ConditionalOnMissingBean(name = "samlIdPDistributedSessionStore")
+    @ConditionalOnMissingBean(name = DistributedJEESessionStore.DEFAULT_BEAN_NAME)
     @Bean
     @RefreshScope
     public SessionStore samlIdPDistributedSessionStore() {

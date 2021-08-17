@@ -63,7 +63,6 @@ import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -229,20 +228,18 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param request  the request
      * @param response the response
      * @return the model and view
-     * @throws Exception the exception
      */
     protected ModelAndView issueAuthenticationRequestRedirect(final Pair<? extends SignableSAMLObject, MessageContext> pair,
                                                               final HttpServletRequest request,
-                                                              final HttpServletResponse response) throws Exception {
+                                                              final HttpServletResponse response) {
         val authnRequest = (AuthnRequest) pair.getLeft();
         val serviceUrl = constructServiceUrl(request, response, pair);
         LOGGER.debug("Created service url [{}]", DigestUtils.abbreviate(serviceUrl));
 
         val properties = configurationContext.getCasProperties();
-        val initialUrl = CommonUtils.constructRedirectUrl(properties.getServer().getLoginUrl(),
+        val urlToRedirectTo = CommonUtils.constructRedirectUrl(properties.getServer().getLoginUrl(),
             CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, authnRequest.isForceAuthn(),
             authnRequest.isPassive());
-        val urlToRedirectTo = buildRedirectUrlByRequestedAuthnContext(initialUrl, authnRequest, request);
         LOGGER.debug("Redirecting SAML authN request to [{}]", urlToRedirectTo);
 
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
@@ -259,52 +256,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val mv = new ModelAndView(new RedirectView(urlToRedirectTo));
         mv.setStatus(HttpStatus.FOUND);
         return mv;
-    }
-
-    /**
-     * Gets authentication context mappings.
-     *
-     * @return the authentication context mappings
-     */
-    protected Map<String, String> getAuthenticationContextMappings() {
-        val properties = configurationContext.getCasProperties();
-        val authnContexts = properties.getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings();
-        return CollectionUtils.convertDirectedListToMap(authnContexts);
-    }
-
-    /**
-     * Build redirect url by requested authn context.
-     *
-     * @param initialUrl   the initial url
-     * @param authnRequest the authn request
-     * @param request      the request
-     * @return the redirect url
-     */
-    protected String buildRedirectUrlByRequestedAuthnContext(final String initialUrl, final AuthnRequest authnRequest,
-                                                             final HttpServletRequest request) {
-        val authenticationContextClassMappings = configurationContext.getCasProperties()
-            .getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings();
-        if (authnRequest.getRequestedAuthnContext() == null
-            || authenticationContextClassMappings == null || authenticationContextClassMappings.isEmpty()) {
-            return initialUrl;
-        }
-
-        val mappings = getAuthenticationContextMappings();
-        val mappedClassRef = authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs()
-            .stream()
-            .filter(Objects::nonNull)
-            .filter(ref -> StringUtils.isNotBlank(ref.getURI()))
-            .filter(ref -> {
-                val clazz = ref.getURI();
-                return mappings.containsKey(clazz);
-            })
-            .findFirst();
-        if (mappedClassRef.isPresent()) {
-            val mappedClazz = mappings.get(mappedClassRef.get().getURI());
-            return initialUrl + '&' + configurationContext.getCasProperties()
-                .getAuthn().getMfa().getTriggers().getHttp().getRequestParameter() + '=' + mappedClazz;
-        }
-        return initialUrl;
     }
 
     /**
@@ -498,7 +449,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             authnRequest.getProtocolBinding());
         LOGGER.debug("Determined SAML2 endpoint for authentication request as [{}]",
             StringUtils.defaultIfBlank(acs.getResponseLocation(), acs.getLocation()));
-        
+
         SamlUtils.logSamlObject(configurationContext.getOpenSamlConfigBean(), authnRequest);
         return Pair.of(registeredService, facade);
     }
