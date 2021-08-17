@@ -7,7 +7,7 @@ import org.apereo.cas.validation.Assertion;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.inspektr.audit.spi.support.ParametersAsStringResourceResolver;
 
