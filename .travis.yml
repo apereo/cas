@@ -11,3 +11,8 @@ install:
 script:
   - echo "Travis CI is disabled"
 
+
+cache:
+  directories:
+  - $HOME/.gradle/caches/
+  - $HOME/.gradle/wrapper/
