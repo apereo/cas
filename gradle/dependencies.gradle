@@ -850,7 +850,6 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 }
         ],
         awscognito              : [
@@ -861,7 +860,6 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 },
                 dependencies.create("software.amazon.awssdk:cognitoidentityprovider:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -870,7 +868,6 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 }
         ],
         awssecretsmanager       : [
@@ -898,14 +895,6 @@ ext.libraries = [
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                },
-                dependencies.create("org.springframework.cloud:spring-cloud-starter-aws:$springCloudAwsVersion") {
-                    exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
-                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "org.springframework.cloud", module: "spring-cloud-commons")
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-aws-actuator:$springCloudAwsVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")

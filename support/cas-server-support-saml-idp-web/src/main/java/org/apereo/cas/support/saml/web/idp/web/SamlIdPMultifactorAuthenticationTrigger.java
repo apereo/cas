@@ -52,7 +52,7 @@ public class SamlIdPMultifactorAuthenticationTrigger implements MultifactorAuthe
         val mappings = getAuthenticationContextMappings();
         return result
             .map(pair -> (AuthnRequest) pair.getLeft())
-                .flatMap(authnRequest -> authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs()
+            .flatMap(authnRequest -> authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs()
                 .stream()
                 .filter(Objects::nonNull)
                 .filter(ref -> StringUtils.isNotBlank(ref.getURI()))
@@ -71,14 +71,18 @@ public class SamlIdPMultifactorAuthenticationTrigger implements MultifactorAuthe
     @Override
     public boolean supports(final HttpServletRequest request, final RegisteredService registeredService,
                             final Authentication authentication, final Service service) {
-        val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-        val context = new JEEContext(request, response);
-        val result = SamlIdPUtils.retrieveSamlRequest(context, distributedSessionStore, openSamlConfigBean, AuthnRequest.class);
-        val supports = result.isPresent() && result
-            .map(pair -> (AuthnRequest) pair.getLeft())
-            .stream()
-            .allMatch(authnRequest -> authnRequest.getRequestedAuthnContext() != null);
-        return supports && !getAuthenticationContextMappings().isEmpty();
+        if (!getAuthenticationContextMappings().isEmpty()) {
+            val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
+            val context = new JEEContext(request, response);
+            val result = SamlIdPUtils.retrieveSamlRequest(context, distributedSessionStore, openSamlConfigBean, AuthnRequest.class);
+            if (result.isPresent()) {
+                val authnRequest = (AuthnRequest) result.get().getLeft();
+                return authnRequest.getRequestedAuthnContext() != null
+                    && authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs() != null
+                    && !authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs().isEmpty();
+            }
+        }
+        return false;
     }
 
     /**
