@@ -63,3 +63,5 @@ ci/tests/puppeteer/scenarios/**/screenshot*.png
 ci/tests/puppeteer/**/screenshot*.png
 ci/tests/puppeteer/**/strapi
 ci/tests/puppeteer/**/*.jwks
+ci/tests/puppeteer/scenarios/pac4j-delegated-saml-login-shibidp/shibcasauthn
+ci/tests/puppeteer/scenarios/pac4j-delegated-saml-login-shibidp/saml-md
