@@ -53,8 +53,6 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
             parameters.put(OAuth20Constants.ERROR, OidcConstants.LOGIN_REQUIRED);
             OAuth20Utils.getRequestParameter(context, OAuth20Constants.STATE)
                 .ifPresent(state -> parameters.put(OAuth20Constants.STATE, state));
-            OAuth20Utils.getRequestParameter(context, OAuth20Constants.NONCE)
-                .ifPresent(nonce -> parameters.put(OAuth20Constants.NONCE, nonce));
             val clientId = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
 
