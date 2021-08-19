@@ -45,9 +45,9 @@ public class OidcDiscoveryProperties implements Serializable {
 
     /**
      * Parameter indicating whether the authorization server provides the {@code iss}
-     * parameter in the authorization response
+     * parameter in the authorization response.
      */
-    private boolean authorizationResponseIssuerParameterSupported = true;
+    private boolean authorizationResponseIssuerParameterSupported;
 
     /**
      * List of supported scopes.

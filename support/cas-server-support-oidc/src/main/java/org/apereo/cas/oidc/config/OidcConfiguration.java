@@ -43,7 +43,6 @@ import org.apereo.cas.oidc.token.OidcJwtAccessTokenCipherExecutor;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutor;
 import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.oidc.web.OidcAuthenticationAuthorizeSecurityLogic;
-import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolver;
 import org.apereo.cas.oidc.web.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolver;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
@@ -204,6 +203,10 @@ public class OidcConfiguration {
     private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
+    @Qualifier("callbackAuthorizeViewResolver")
+    private ObjectProvider<OAuth20CallbackAuthorizeViewResolver> callbackAuthorizeViewResolver;
+
+    @Autowired
     @Qualifier("defaultOAuthCodeFactory")
     private ObjectProvider<OAuth20CodeFactory> defaultOAuthCodeFactory;
 
@@ -237,11 +240,6 @@ public class OidcConfiguration {
     @Bean
     public ConsentApprovalViewResolver consentApprovalViewResolver() {
         return new OidcConsentApprovalViewResolver(casProperties, oauthDistributedSessionStore.getObject());
-    }
-
-    @Bean
-    public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver() {
-        return new OidcCallbackAuthorizeViewResolver(servicesManager.getObject());
     }
 
     @Bean
@@ -528,7 +526,7 @@ public class OidcConfiguration {
             .oauthConfig(oauthSecConfig.getObject())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .centralAuthenticationService(centralAuthenticationService.getObject())
-            .callbackAuthorizeViewResolver(callbackAuthorizeViewResolver())
+            .callbackAuthorizeViewResolver(callbackAuthorizeViewResolver.getObject())
             .profileScopeToAttributesFilter(profileScopeToAttributesFilter())
             .accessTokenGenerator(oauthTokenGenerator.getObject())
             .accessTokenResponseGenerator(oidcAccessTokenResponseGenerator.getObject())

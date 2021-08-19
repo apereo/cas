@@ -5,16 +5,20 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.oidc.web.OidcAccessTokenResponseGenerator;
+import org.apereo.cas.oidc.web.OidcAuthorizationModelAndViewBuilder;
+import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolver;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAuthorizationResponseBuilder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationModelAndViewBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentialsResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResourceOwnerCredentialsResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
+import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
@@ -78,7 +82,7 @@ public class OidcResponseConfiguration {
     @Autowired
     @Qualifier("grantingTicketExpirationPolicy")
     private ObjectProvider<ExpirationPolicyBuilder> grantingTicketExpirationPolicy;
-    
+
     @Autowired
     @Qualifier("oidcIssuerService")
     private ObjectProvider<OidcIssuerService> oidcIssuerService;
@@ -94,11 +98,19 @@ public class OidcResponseConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "oidcClientCredentialsResponseBuilder")
-    public OAuth20AuthorizationResponseBuilder oidcClientCredentialsResponseBuilder() throws Exception {
+    public OAuth20AuthorizationResponseBuilder oidcClientCredentialsResponseBuilder() {
         return new OAuth20ClientCredentialsResponseBuilder(
+            servicesManager.getObject(),
             oidcAccessTokenResponseGenerator(),
             oauthTokenGenerator.getObject(),
-            casProperties);
+            casProperties,
+            oauthAuthorizationModelAndViewBuilder());
+    }
+
+    @Bean
+    public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver() {
+        return new OidcCallbackAuthorizeViewResolver(servicesManager.getObject(),
+            oauthAuthorizationModelAndViewBuilder());
     }
 
     @Bean
@@ -106,10 +118,17 @@ public class OidcResponseConfiguration {
     @ConditionalOnMissingBean(name = "oidcTokenResponseBuilder")
     public OAuth20AuthorizationResponseBuilder oidcTokenResponseBuilder() {
         return new OAuth20TokenAuthorizationResponseBuilder(
-            oauthTokenGenerator.getObject(),
             servicesManager.getObject(),
+            casProperties,
+            oauthTokenGenerator.getObject(),
             accessTokenJwtBuilder.getObject(),
-            casProperties);
+            oauthAuthorizationModelAndViewBuilder());
+    }
+
+    @Bean
+    @RefreshScope
+    public OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder() {
+        return new OidcAuthorizationModelAndViewBuilder(oidcIssuerService.getObject(), casProperties);
     }
 
     @Bean
@@ -117,9 +136,11 @@ public class OidcResponseConfiguration {
     @ConditionalOnMissingBean(name = "oidcAuthorizationCodeResponseBuilder")
     public OAuth20AuthorizationResponseBuilder oidcAuthorizationCodeResponseBuilder() {
         return new OAuth20AuthorizationCodeAuthorizationResponseBuilder(
+            servicesManager.getObject(),
+            casProperties,
             ticketRegistry.getObject(),
             defaultOAuthCodeFactory.getObject(),
-            servicesManager.getObject());
+            oauthAuthorizationModelAndViewBuilder());
     }
 
     @Bean
@@ -144,7 +165,8 @@ public class OidcResponseConfiguration {
             grantingTicketExpirationPolicy.getObject(),
             servicesManager.getObject(),
             accessTokenJwtBuilder.getObject(),
-            casProperties);
+            casProperties,
+            oauthAuthorizationModelAndViewBuilder());
     }
 
     @Bean
@@ -157,17 +179,19 @@ public class OidcResponseConfiguration {
             grantingTicketExpirationPolicy.getObject(),
             servicesManager.getObject(),
             accessTokenJwtBuilder.getObject(),
-            casProperties);
+            casProperties,
+            oauthAuthorizationModelAndViewBuilder());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "oidcResourceOwnerCredentialsResponseBuilder")
-    public OAuth20AuthorizationResponseBuilder oidcResourceOwnerCredentialsResponseBuilder() throws Exception {
+    public OAuth20AuthorizationResponseBuilder oidcResourceOwnerCredentialsResponseBuilder() {
         return new OAuth20ResourceOwnerCredentialsResponseBuilder(
+            servicesManager.getObject(), casProperties,
             oidcAccessTokenResponseGenerator(),
             oauthTokenGenerator.getObject(),
-            casProperties);
+            oauthAuthorizationModelAndViewBuilder());
     }
 
     @RefreshScope

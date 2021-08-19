@@ -12,7 +12,7 @@ import org.apereo.cas.ticket.code.OAuth20Code;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 
@@ -34,7 +34,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
     }
 
     @Override
-    protected boolean validateInternal(final JEEContext context, final String grantType,
+    protected boolean validateInternal(final WebContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) {
         val clientId = uProfile.getId();
         val redirectUri = OAuth20Utils.getRequestParameter(context, OAuth20Constants.REDIRECT_URI);

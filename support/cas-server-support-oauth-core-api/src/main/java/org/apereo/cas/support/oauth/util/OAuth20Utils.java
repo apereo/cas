@@ -26,7 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hjson.JsonValue;
 import org.jooq.lambda.Unchecked;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -34,7 +33,6 @@ import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,7 +43,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -299,7 +296,7 @@ public class OAuth20Utils {
      * @param context the context
      * @return the response type
      */
-    public static OAuth20ResponseTypes getResponseType(final JEEContext context) {
+    public static OAuth20ResponseTypes getResponseType(final WebContext context) {
         val responseType = getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         val type = Arrays.stream(OAuth20ResponseTypes.values())
@@ -588,30 +585,5 @@ public class OAuth20Utils {
      */
     public boolean doesServiceNeedAuthentication(final OAuthRegisteredService registeredService) {
         return StringUtils.isNotBlank(registeredService.getClientSecret());
-    }
-
-    /**
-     * Build response model and view.
-     *
-     * @param context           the context
-     * @param registeredService the registered service
-     * @param url               the redirect url
-     * @param parameters        the parameters
-     * @return the model and view
-     */
-    public static ModelAndView buildResponseModelAndView(final WebContext context,
-                                                         final OAuthRegisteredService registeredService,
-                                                         final String url,
-                                                         final Map<String, String> parameters) {
-        val responseType = OAuth20Utils.getResponseModeType(context);
-        if (OAuth20Utils.isResponseModeTypeFormPost(registeredService, responseType)) {
-            val model = new LinkedHashMap<String, Object>();
-            model.put("originalUrl", url);
-            model.put("parameters", parameters);
-            val mv = new ModelAndView(CasWebflowConstants.VIEW_ID_POST_RESPONSE, model);
-            LOGGER.debug("Redirecting to [{}] with model [{}]", mv.getViewName(), mv.getModel());
-            return mv;
-        }
-        return new ModelAndView(new RedirectView(url), parameters);
     }
 }

@@ -15,7 +15,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.springframework.core.Ordered;
 
 import java.util.Objects;
@@ -37,7 +37,7 @@ public class OAuth20DeviceCodeResponseTypeRequestValidator implements OAuth20Tok
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
-    public boolean validate(final JEEContext context) {
+    public boolean validate(final WebContext context) {
         val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).orElse(StringUtils.EMPTY);
         if (!OAuth20Utils.checkResponseTypes(responseType, OAuth20ResponseTypes.values())) {
             LOGGER.warn("Response type [{}] is not supported.", responseType);
@@ -57,7 +57,7 @@ public class OAuth20DeviceCodeResponseTypeRequestValidator implements OAuth20Tok
     }
 
     @Override
-    public boolean supports(final JEEContext context) {
+    public boolean supports(final WebContext context) {
         val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         val clientId = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID)

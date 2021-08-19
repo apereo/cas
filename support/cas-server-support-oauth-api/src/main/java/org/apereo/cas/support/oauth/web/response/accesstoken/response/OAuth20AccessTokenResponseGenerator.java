@@ -1,9 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
+import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OAuth20AccessTokenResponseGenerator}.
@@ -17,10 +15,9 @@ public interface OAuth20AccessTokenResponseGenerator {
     /**
      * Generate.
      *
-     * @param request  the request
-     * @param response the response
-     * @param result   the result
+     * @param webContext the web context
+     * @param result     the result
      * @return the model and view
      */
-    ModelAndView generate(HttpServletRequest request, HttpServletResponse response, OAuth20AccessTokenResponseResult result);
+    ModelAndView generate(WebContext webContext, OAuth20AccessTokenResponseResult result);
 }
