@@ -80,10 +80,7 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
         }
 
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
-        if (registeredService == null) {
-            return true;
-        }
-        return OAuth20Utils.doesServiceNeedAuthentication(registeredService);
+        return registeredService == null || OAuth20Utils.doesServiceNeedAuthentication(registeredService);
     }
 
     /**
@@ -182,12 +179,7 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
     protected boolean isAuthorizationRequest(final HttpServletRequest request,
                                              final HttpServletResponse response) {
         val requestPath = request.getRequestURI();
-
-        if (doesUriMatchPattern(requestPath, getAuthorizeUrls())) {
-            return isValidAuthorizeRequest(new JEEContext(request, response));
-        }
-
-        return false;
+        return doesUriMatchPattern(requestPath, getAuthorizeUrls()) && isValidAuthorizeRequest(new JEEContext(request, response));
     }
 
     /**
@@ -225,10 +217,7 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
             .filter(b -> b.supports(context))
             .findFirst()
             .orElse(null);
-        if (validator == null) {
-            return false;
-        }
-        return validator.validate(context);
+        return validator != null && validator.validate(context);
     }
 
     private Optional<AccessTokenGrantRequestExtractor> extractAccessTokenGrantRequest(final HttpServletRequest request) {

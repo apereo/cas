@@ -134,7 +134,7 @@ public class CompressionUtils {
                 baos.write(buf, 0, count);
                 count = iis.read(buf);
             }
-            return new String(baos.toByteArray(), StandardCharsets.UTF_8);
+            return baos.toString(StandardCharsets.UTF_8);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             return null;
