@@ -356,10 +356,8 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
         if (this.createLogGroupIfNeeded) {
             LOGGER.debug("Attempting to locate the log group [{}]", logGroupName);
             val describeLogGroupsResult = awsLogsClient.describeLogGroups(DescribeLogGroupsRequest.builder().logGroupNamePrefix(logGroupName).build());
-            var createLogGroup = true;
-            if (describeLogGroupsResult != null && describeLogGroupsResult.hasLogGroups()) {
-                createLogGroup = describeLogGroupsResult.logGroups().stream().noneMatch(g -> g.logGroupName().equals(logGroupName));
-            }
+            var createLogGroup = describeLogGroupsResult == null || !describeLogGroupsResult.hasLogGroups()
+                || describeLogGroupsResult.logGroups().stream().noneMatch(g -> g.logGroupName().equals(logGroupName));
             if (createLogGroup) {
                 LOGGER.debug("Creating log group [{}]", logGroupName);
                 val createLogGroupRequest = CreateLogGroupRequest.builder().logGroupName(logStreamName).build();

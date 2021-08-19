@@ -81,10 +81,8 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
     private static boolean isNotificationSent(final CommunicationsManager communicationsManager,
                                               final Principal principal,
                                               final Ticket token) {
-        if (communicationsManager.isNotificationSenderDefined()) {
-            return communicationsManager.notify(principal, "Apereo CAS Token", String.format("Token: %s", token.getId()));
-        }
-        return false;
+        return communicationsManager.isNotificationSenderDefined()
+            && communicationsManager.notify(principal, "Apereo CAS Token", String.format("Token: %s", token.getId()));
     }
 
     @Override
