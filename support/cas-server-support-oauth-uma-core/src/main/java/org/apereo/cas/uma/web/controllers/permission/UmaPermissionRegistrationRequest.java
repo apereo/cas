@@ -22,8 +22,6 @@ import java.util.Map;
  */
 @Data
 public class UmaPermissionRegistrationRequest implements Serializable {
-    private static final int MAP_SIZE = 8;
-
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
@@ -33,10 +31,10 @@ public class UmaPermissionRegistrationRequest implements Serializable {
     private long resourceId;
 
     @JsonProperty("resource_scopes")
-    private Collection<String> scopes = new LinkedHashSet<>(MAP_SIZE);
+    private Collection<String> scopes = new LinkedHashSet<>();
 
     @JsonProperty
-    private Map<String, Object> claims = new LinkedHashMap<>(MAP_SIZE);
+    private Map<String, Object> claims = new LinkedHashMap<>();
 
     /**
      * As json string.
