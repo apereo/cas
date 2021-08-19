@@ -20,18 +20,6 @@
                         http://www.w3.org/2001/04/xmlenc# http://www.w3.org/TR/xmlenc-core/xenc-schema.xsd
                         http://www.w3.org/2009/xmlenc11# http://www.w3.org/TR/2013/REC-xmlenc-core1-20130411/xenc-schema-11.xsd"
     sortKey="1">
-    
-    <MetadataProvider id="HTTPMetadata"
-                      xsi:type="FileBackedHTTPMetadataProvider"
-                      backingFile="%{idp.home}/metadata/localCopyFromXYZHTTP.xml"
-                      metadataURL="http://localhost:8888/cas/sp/metadata"
-                      failFastInitialization="false">
-        
-        <MetadataFilter xsi:type="RequiredValidUntil" maxValidityInterval="P30D"/>
-        <MetadataFilter xsi:type="EntityRole">
-            <RetainedRole>md:SPSSODescriptor</RetainedRole>
-        </MetadataFilter>
-    </MetadataProvider>
 
     <!--
     Example file metadata provider.  Use this if you want to load metadata
@@ -42,10 +30,8 @@
     responsibility to ensure that the contents on disk are trustworthy.
     -->
     
-    <!--
-    <MetadataProvider id="LocalMetadata"  xsi:type="FilesystemMetadataProvider" metadataFile="PATH_TO_YOUR_METADATA"/>
-    -->
-
+    <MetadataProvider id="LocalMetadata"  xsi:type="FilesystemMetadataProvider"
+                      metadataFile="/opt/shibboleth-idp/metadata/sp-metadata.xml"/>
 
     <!--
     Example CAS metadata source for managing CAS services using SAML metadata.
