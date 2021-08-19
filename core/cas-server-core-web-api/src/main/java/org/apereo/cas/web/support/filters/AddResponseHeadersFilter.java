@@ -37,9 +37,7 @@ import java.util.Map;
 @Getter
 @SuppressWarnings("JdkObsolete")
 public class AddResponseHeadersFilter extends AbstractSecurityFilter implements Filter {
-    private static final int MAP_SIZE = 8;
-
-    private Map<String, String> headersMap = new LinkedHashMap<>(MAP_SIZE);
+    private Map<String, String> headersMap = new LinkedHashMap<>();
 
     @Override
     public void init(final FilterConfig filterConfig) {

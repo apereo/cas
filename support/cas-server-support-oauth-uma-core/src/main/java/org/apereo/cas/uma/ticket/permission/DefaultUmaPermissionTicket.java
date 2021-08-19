@@ -28,11 +28,9 @@ import java.util.Set;
 public class DefaultUmaPermissionTicket extends AbstractTicket implements UmaPermissionTicket {
     private static final long serialVersionUID = 2963749819727757623L;
 
-    private static final int MAP_SIZE = 8;
+    private Map<String, Object> claims = new LinkedHashMap<>();
 
-    private Map<String, Object> claims = new LinkedHashMap<>(MAP_SIZE);
-
-    private Set<String> scopes = new LinkedHashSet<>(MAP_SIZE);
+    private Set<String> scopes = new LinkedHashSet<>();
 
     private ResourceSet resourceSet = new ResourceSet();
 

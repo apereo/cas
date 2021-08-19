@@ -39,7 +39,7 @@ The following standard claims are supported by CAS for release:
 | `PUID`                          | `http://schemas.xmlsoap.org/claims/PUID`
 
 The attribute release policy assigned to relying parties and 
-ervices is able to link a given standard claim and map it to an attribute
+services is able to link a given standard claim and map it to an attribute
 that should be already available. The configuration looks as such:
 
 ```json

@@ -13,7 +13,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.core.Ordered;
@@ -64,7 +64,7 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
     }
 
     @Override
-    public boolean validate(final JEEContext context) {
+    public boolean validate(final WebContext context) {
         val grantType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
         if (!isGrantTypeSupported(grantType, OAuth20GrantTypes.values())) {
             LOGGER.warn("Grant type is not supported: [{}]", grantType);
@@ -91,7 +91,7 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
      * @param userProfile the profile
      * @return true/false
      */
-    protected boolean validateInternal(final JEEContext context,
+    protected boolean validateInternal(final WebContext context,
                                        final String grantType,
                                        final ProfileManager manager,
                                        final UserProfile userProfile) {
@@ -106,7 +106,7 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
     protected abstract OAuth20GrantTypes getGrantType();
 
     @Override
-    public boolean supports(final JEEContext context) {
+    public boolean supports(final WebContext context) {
         val grantType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType.map(String::valueOf).orElse(StringUtils.EMPTY), getGrantType());
     }

@@ -103,7 +103,7 @@ public class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
         assertTrue(mv.getModel().containsKey("originalUrl"));
         var parameters = (Map<String, String>) mv.getModel().get("parameters");
         assertEquals(request.getParameter(OAuth20Constants.STATE), parameters.get(OAuth20Constants.STATE));
-        assertEquals(request.getParameter(OAuth20Constants.NONCE), parameters.get(OAuth20Constants.NONCE));
+        assertFalse(parameters.containsKey(OAuth20Constants.NONCE));
     }
 
     @Test

@@ -27,7 +27,7 @@ Support is enabled by the following module:
 ## Configuration
 
 This module has a configuration strategy which by default auto-configures a hazelcast 
-instance used by the ticket registry implementation to build and retrieve Hazelcast's 
+instance used by the ticket registry implementation to build and retrieve Hazelcast 
 maps for its distributed tickets storage. Some aspects of hazelcast configuration in 
 this auto-configuration mode are controlled by CAS properties.
 

@@ -72,7 +72,7 @@ User consent decisions may be stored and remembered using one of the following o
 
 | Storage          | Description                                         
 |--------------------------------------------------------------------------------------
-| CoucbDb          | [See this guide](Attribute-Release-Consent-Storage-CouchDb.html).
+| CouchDb          | [See this guide](Attribute-Release-Consent-Storage-CouchDb.html).
 | Custom           | [See this guide](Attribute-Release-Consent-Storage-Custom.html).
 | Groovy           | [See this guide](Attribute-Release-Consent-Storage-Groovy.html).
 | JDBC             | [See this guide](Attribute-Release-Consent-Storage-JDBC.html).

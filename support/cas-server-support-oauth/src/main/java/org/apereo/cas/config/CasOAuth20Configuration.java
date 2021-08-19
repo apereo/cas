@@ -69,7 +69,9 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Acc
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20DefaultAccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20RegisteredServiceJwtAccessTokenCipherExecutor;
+import org.apereo.cas.support.oauth.web.response.callback.DefaultOAuth20AuthorizationModelAndViewBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationModelAndViewBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentialsResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20InvalidAuthorizationResponseBuilder;
@@ -578,6 +580,12 @@ public class CasOAuth20Configuration {
             profileScopeToAttributesFilter());
     }
 
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "oauthAuthorizationModelAndViewBuilder")
+    public OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder() {
+        return new DefaultOAuth20AuthorizationModelAndViewBuilder();
+    }
 
     @ConditionalOnMissingBean(name = "oauthAuthorizationResponseBuilders")
     @Bean
@@ -719,32 +727,32 @@ public class CasOAuth20Configuration {
     @Bean
     @RefreshScope
     public OAuth20AuthorizationResponseBuilder oauthResourceOwnerCredentialsResponseBuilder() {
-        return new OAuth20ResourceOwnerCredentialsResponseBuilder(accessTokenResponseGenerator(), oauthTokenGenerator(),
-            casProperties);
+        return new OAuth20ResourceOwnerCredentialsResponseBuilder(servicesManager.getObject(), casProperties,
+            accessTokenResponseGenerator(), oauthTokenGenerator(), oauthAuthorizationModelAndViewBuilder());
     }
 
     @ConditionalOnMissingBean(name = "oauthClientCredentialsResponseBuilder")
     @Bean
     @RefreshScope
     public OAuth20AuthorizationResponseBuilder oauthClientCredentialsResponseBuilder() {
-        return new OAuth20ClientCredentialsResponseBuilder(accessTokenResponseGenerator(),
-            oauthTokenGenerator(), casProperties);
+        return new OAuth20ClientCredentialsResponseBuilder(servicesManager.getObject(),
+            accessTokenResponseGenerator(), oauthTokenGenerator(), casProperties, oauthAuthorizationModelAndViewBuilder());
     }
 
     @ConditionalOnMissingBean(name = "oauthTokenResponseBuilder")
     @Bean
     @RefreshScope
     public OAuth20AuthorizationResponseBuilder oauthTokenResponseBuilder() {
-        return new OAuth20TokenAuthorizationResponseBuilder(oauthTokenGenerator(),
-            servicesManager.getObject(), accessTokenJwtBuilder(), casProperties);
+        return new OAuth20TokenAuthorizationResponseBuilder(servicesManager.getObject(), casProperties,
+            oauthTokenGenerator(), accessTokenJwtBuilder(), oauthAuthorizationModelAndViewBuilder());
     }
 
     @ConditionalOnMissingBean(name = "oauthAuthorizationCodeResponseBuilder")
     @Bean
     @RefreshScope
     public OAuth20AuthorizationResponseBuilder oauthAuthorizationCodeResponseBuilder() {
-        return new OAuth20AuthorizationCodeAuthorizationResponseBuilder(ticketRegistry.getObject(),
-            defaultOAuthCodeFactory(), servicesManager.getObject());
+        return new OAuth20AuthorizationCodeAuthorizationResponseBuilder(servicesManager.getObject(), casProperties,
+            ticketRegistry.getObject(), defaultOAuthCodeFactory(), oauthAuthorizationModelAndViewBuilder());
     }
 
     @ConditionalOnMissingBean(name = "oauthInvalidAuthorizationBuilder")
