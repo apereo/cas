@@ -44,6 +44,12 @@ public class OidcDiscoveryProperties implements Serializable {
     private boolean requestUriParameterSupported = true;
 
     /**
+     * Parameter indicating whether the authorization server provides the {@code iss}
+     * parameter in the authorization response.
+     */
+    private boolean authorizationResponseIssuerParameterSupported;
+
+    /**
      * List of supported scopes.
      */
     private List<String> scopes = Stream.of("openid", "profile", "email", "address", "phone", "offline_access")

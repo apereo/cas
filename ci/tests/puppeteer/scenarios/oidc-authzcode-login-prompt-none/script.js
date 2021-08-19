@@ -35,7 +35,6 @@ async function login(page, redirectUrl, params) {
     assert(payload.args.state !== state);
 
     assert(payload.form.error === "login_required");
-    assert(payload.form.nonce === nonce);
     assert(payload.form.state === state);
     await browser.close();
 })();

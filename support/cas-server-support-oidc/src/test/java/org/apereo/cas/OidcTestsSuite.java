@@ -46,6 +46,7 @@ import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecut
 import org.apereo.cas.oidc.util.OidcRequestSupportTests;
 import org.apereo.cas.oidc.web.OidcAccessTokenResponseGeneratorTests;
 import org.apereo.cas.oidc.web.OidcAuthenticationAuthorizeSecurityLogicTests;
+import org.apereo.cas.oidc.web.OidcAuthorizationModelAndViewBuilderTests;
 import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolverTests;
 import org.apereo.cas.oidc.web.OidcCasCallbackUrlResolverTests;
 import org.apereo.cas.oidc.web.OidcCasClientRedirectActionBuilderTests;
@@ -144,6 +145,7 @@ import org.junit.platform.suite.api.Suite;
     OidcRegisteredServiceJwtAccessTokenCipherExecutorTests.class,
     OidcClientConfigurationAccessTokenAuthenticatorTests.class,
     OidcDefaultIssuerServiceTests.class,
+    OidcAuthorizationModelAndViewBuilderTests.class,
     OidcLocaleChangeInterceptorTests.class,
     OidcCasWebflowLoginContextProviderTests.class,
     OidcCasCallbackUrlResolverTests.class,
