@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OAuth20ResourceOwnerCredentialsResponseBuilderTests extends AbstractOAuth20Tests {
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -49,11 +49,11 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilderTests extends Abstrac
             .build();
         assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.build(context, CLIENT_ID, holder));
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, CLIENT_ID);
-        oauthResourceOwnerCredentialsResponseBuilder.build(context, registeredService, "https://example.org", Map.of());
+        assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.build(context, registeredService, "https://example.org", Map.of()));
     }
 
     @Test
-    public void verifyModelAndViewPost() {
+    public void verifyModelAndViewPost() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -64,7 +64,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilderTests extends Abstrac
     }
 
     @Test
-    public void verifyModelAndView() {
+    public void verifyModelAndView() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
