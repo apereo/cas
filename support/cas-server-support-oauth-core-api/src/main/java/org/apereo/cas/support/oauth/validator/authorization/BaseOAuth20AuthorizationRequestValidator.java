@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 
 /**
  * This is {@link BaseOAuth20AuthorizationRequestValidator}.
@@ -52,7 +52,7 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
      * @param context the context
      * @return true/false
      */
-    protected boolean preValidate(final JEEContext context) {
+    protected boolean preValidate(final WebContext context) {
         val clientId = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
         if (StringUtils.isBlank(clientId)) {
             LOGGER.warn("Missing required parameter [{}]", OAuth20Constants.CLIENT_ID);
@@ -115,7 +115,7 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
      * @param errorDescription  the OAuth error description
      * @param errorWithCallBack does the error will redirect the end-user to the client
      */
-    protected void setErrorDetails(final JEEContext context, final String error,
+    protected void setErrorDetails(final WebContext context, final String error,
                                    final String errorDescription, final boolean errorWithCallBack) {
         context.setRequestAttribute(OAuth20Constants.ERROR, error);
         context.setRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION, errorDescription);

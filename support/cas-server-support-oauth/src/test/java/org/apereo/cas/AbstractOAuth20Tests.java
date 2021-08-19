@@ -245,6 +245,11 @@ public abstract class AbstractOAuth20Tests {
     @Qualifier("oauthAuthorizationCodeResponseBuilder")
     protected OAuth20AuthorizationResponseBuilder oauthAuthorizationCodeResponseBuilder;
 
+
+    @Autowired
+    @Qualifier("oauthTokenResponseBuilder")
+    protected OAuth20AuthorizationResponseBuilder oauthTokenResponseBuilder;
+
     @Autowired
     @Qualifier("accessTokenResponseGenerator")
     protected OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator;
@@ -655,7 +660,7 @@ public abstract class AbstractOAuth20Tests {
             .service(service)
             .generatedToken(generatedToken)
             .build();
-        return accessTokenResponseGenerator.generate(mockRequest, mockResponse, result);
+        return accessTokenResponseGenerator.generate(new JEEContext(mockRequest, mockResponse), result);
     }
 
     /**

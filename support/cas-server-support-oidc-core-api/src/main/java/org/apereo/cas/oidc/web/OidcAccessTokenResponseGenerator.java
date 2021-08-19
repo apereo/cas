@@ -13,9 +13,8 @@ import org.apereo.cas.token.JwtBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.pac4j.core.context.WebContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Optional;
 
@@ -50,15 +49,15 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
     }
 
     @Override
-    protected Map<String, Object> getAccessTokenResponseModel(final HttpServletRequest request,
-                                                              final HttpServletResponse response,
+    protected Map<String, Object> getAccessTokenResponseModel(final WebContext webContext,
                                                               final OAuth20AccessTokenResponseResult result) {
-        val model = super.getAccessTokenResponseModel(request, response, result);
+        val model = super.getAccessTokenResponseModel(webContext, result);
         val accessToken = result.getGeneratedToken().getAccessToken();
         accessToken.ifPresent(token -> {
             val oidcRegisteredService = (OidcRegisteredService) result.getRegisteredService();
-            val idToken = this.idTokenGenerator.generate(request, response, accessToken.get(),
-                result.getAccessTokenTimeout(), result.getResponseType(), result.getGrantType(), oidcRegisteredService);
+            val idToken = idTokenGenerator.generate(webContext, accessToken.get(),
+                result.getAccessTokenTimeout(), result.getResponseType(),
+                result.getGrantType(), oidcRegisteredService);
 
             LOGGER.debug("Generated ID token [{}]", idToken);
             model.put(OidcConstants.ID_TOKEN, idToken);

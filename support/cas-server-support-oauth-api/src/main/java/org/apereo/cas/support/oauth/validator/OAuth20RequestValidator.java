@@ -1,6 +1,6 @@
 package org.apereo.cas.support.oauth.validator;
 
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.springframework.core.Ordered;
 
 /**
@@ -17,7 +17,7 @@ public interface OAuth20RequestValidator extends Ordered {
      * @param context the context
      * @return true/false
      */
-    boolean validate(JEEContext context);
+    boolean validate(WebContext context);
 
     /**
      * Supports request?
@@ -25,6 +25,6 @@ public interface OAuth20RequestValidator extends Ordered {
      * @param context the context
      * @return true/false
      */
-    boolean supports(JEEContext context);
+    boolean supports(WebContext context);
 
 }

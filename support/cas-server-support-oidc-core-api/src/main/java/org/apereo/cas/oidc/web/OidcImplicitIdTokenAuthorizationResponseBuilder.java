@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationModelAndViewBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
@@ -20,7 +21,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -43,14 +44,15 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilder extends OAuth20Toke
                                                            final ExpirationPolicyBuilder idTokenExpirationPolicy,
                                                            final ServicesManager servicesManager,
                                                            final JwtBuilder accessTokenJwtBuilder,
-                                                           final CasConfigurationProperties casProperties) {
-        super(accessTokenGenerator, servicesManager, accessTokenJwtBuilder, casProperties);
+                                                           final CasConfigurationProperties casProperties,
+                                                           final OAuth20AuthorizationModelAndViewBuilder authorizationModelAndViewBuilder) {
+        super(servicesManager, casProperties, accessTokenGenerator, accessTokenJwtBuilder, authorizationModelAndViewBuilder);
         this.idTokenGenerator = idTokenGenerator;
         this.idTokenExpirationPolicy = idTokenExpirationPolicy;
     }
 
     @Override
-    public boolean supports(final JEEContext context) {
+    public boolean supports(final WebContext context) {
         val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         return OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.ID_TOKEN);
@@ -58,12 +60,12 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilder extends OAuth20Toke
 
     @Override
     protected ModelAndView buildCallbackUrlResponseType(final AccessTokenRequestDataHolder holder,
-                                                        final String redirectUri, final OAuth20AccessToken accessToken,
+                                                        final String redirectUri,
+                                                        final OAuth20AccessToken accessToken,
                                                         final List<NameValuePair> params,
                                                         final OAuth20RefreshToken refreshToken,
-                                                        final JEEContext context) throws Exception {
-        val idToken = this.idTokenGenerator.generate(context.getNativeRequest(),
-            context.getNativeResponse(), accessToken,
+                                                        final WebContext context) throws Exception {
+        val idToken = this.idTokenGenerator.generate(context, accessToken,
             idTokenExpirationPolicy.buildTicketExpirationPolicy().getTimeToLive(),
             OAuth20ResponseTypes.ID_TOKEN, holder.getGrantType(), holder.getRegisteredService());
         LOGGER.debug("Generated id token [{}]", idToken);

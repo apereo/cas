@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationModelAndViewBuilder;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -33,6 +34,8 @@ import java.util.LinkedHashMap;
 public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthorizeViewResolver {
     private final ServicesManager servicesManager;
 
+    private final OAuth20AuthorizationModelAndViewBuilder authorizationModelAndViewBuilder;
+
     @Override
     @SneakyThrows
     public ModelAndView resolve(final JEEContext context, final ProfileManager manager, final String url) {
@@ -58,11 +61,11 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
 
             val responseType = OAuth20Utils.getResponseModeType(context);
             val redirect = FunctionUtils.doIf(OAuth20Utils.isResponseModeTypeFormPost(registeredService, responseType),
-                originalRedirectUrl::get,
-                () -> OidcRequestSupport.getRedirectUrlWithError(originalRedirectUrl.get(), OidcConstants.LOGIN_REQUIRED, context))
+                    originalRedirectUrl::get,
+                    () -> OidcRequestSupport.getRedirectUrlWithError(originalRedirectUrl.get(), OidcConstants.LOGIN_REQUIRED, context))
                 .get();
             LOGGER.warn("Unable to detect authenticated user profile for prompt-less login attempts. Redirecting to URL [{}]", redirect);
-            return OAuth20Utils.buildResponseModelAndView(context, registeredService, redirect, parameters);
+            return authorizationModelAndViewBuilder.build(context, registeredService, redirect, parameters);
         }
         if (prompt.contains(OidcConstants.PROMPT_LOGIN)) {
             LOGGER.trace("Removing login prompt from URL [{}]", url);
