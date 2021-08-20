@@ -5,7 +5,6 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
