@@ -86,4 +86,15 @@ public interface CasCookieBuilder {
      * @return the string
      */
     String getCookieName();
+
+    /**
+     * Remove all cookies by the same name.
+     * Attempts to ensure all variations of the same cookie
+     * that may have been issued under root, or those with a lingering {@code /}
+     * are removed from the response.
+     *
+     * @param request  the request
+     * @param response the response
+     */
+    void removeAll(HttpServletRequest request, HttpServletResponse response);
 }
