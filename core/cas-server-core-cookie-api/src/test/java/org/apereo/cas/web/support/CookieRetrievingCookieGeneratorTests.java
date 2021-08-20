@@ -31,16 +31,41 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Cookie")
 public class CookieRetrievingCookieGeneratorTests {
 
-    private static CookieGenerationContext getCookieGenerationContext() {
+    private static CookieGenerationContext getCookieGenerationContext(final String path) {
         return CookieGenerationContext.builder()
             .name("cas")
-            .path("/")
+            .path(path)
             .maxAge(1000)
             .comment("CAS Cookie")
             .domain("example.org")
             .secure(true)
             .httpOnly(true)
             .build();
+    }
+
+    private static CookieGenerationContext getCookieGenerationContext() {
+        return getCookieGenerationContext("/");
+    }
+
+    @Test
+    public void verifyRemoveAllCookiesByName() {
+        val request = new MockHttpServletRequest();
+        var response = new MockHttpServletResponse();
+
+        val gen1 = new CookieRetrievingCookieGenerator(getCookieGenerationContext());
+        val cookie1 = gen1.addCookie(request, response, "some-value");
+
+        val gen2 = new CookieRetrievingCookieGenerator(getCookieGenerationContext("/cas"));
+        val cookie2 = gen2.addCookie(request, response, "some-value");
+
+        val gen3 = new CookieRetrievingCookieGenerator(getCookieGenerationContext("/cas/"));
+        val cookie3 = gen3.addCookie(request, response, "some-value");
+
+        request.setCookies(cookie1, cookie2, cookie3);
+        response = new MockHttpServletResponse();
+        gen1.removeAll(request, response);
+        assertEquals(9, response.getCookies().length);
+        assertTrue(Arrays.stream(response.getCookies()).allMatch(c -> c.getMaxAge() == 0));
     }
 
     @Test
