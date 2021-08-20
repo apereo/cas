@@ -20,9 +20,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
-
+import java.util.stream.Stream;
 
 /**
  * Extends CookieGenerator to allow you to retrieve a value from a request.
@@ -140,6 +141,22 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     }
 
     @Override
+    public void removeAll(final HttpServletRequest request, final HttpServletResponse response) {
+        Optional.ofNullable(request.getCookies()).ifPresent(cookies -> Arrays.stream(cookies)
+            .filter(c -> StringUtils.equalsIgnoreCase(c.getName(), getCookieName()))
+            .forEach(c -> Stream.of("/", getCookiePath(), StringUtils.appendIfMissing(getCookiePath(), "/"))
+                .forEach(path -> {
+                    c.setMaxAge(0);
+                    c.setPath(path);
+                    c.setSecure(isCookieSecure());
+                    c.setHttpOnly(isCookieHttpOnly());
+                    c.setComment(cookieGenerationContext.getComment());
+                    LOGGER.debug("Removing cookie [{}] with path [{}]", c.getName(), c.getPath());
+                    response.addCookie(c);
+                })));
+    }
+
+    @Override
     public void addCookie(final HttpServletRequest request, final HttpServletResponse response, final String cookieValue) {
         addCookie(request, response, false, cookieValue);
     }
@@ -210,7 +227,6 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         }
         val value = StringUtils.removeEndIgnoreCase(builder.toString(), ";");
         LOGGER.trace("Adding cookie header as [{}]", value);
-
         val setCookieHeaders = response.getHeaders("Set-Cookie");
         response.setHeader("Set-Cookie", value);
         setCookieHeaders.stream()

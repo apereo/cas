@@ -95,6 +95,7 @@ public class InitialFlowSetupAction extends AbstractAction {
             return ticket.getId();
         }
         ticketGrantingTicketCookieGenerator.removeCookie(response);
+        ticketGrantingTicketCookieGenerator.removeAll(request, response);
         WebUtils.putTicketGrantingTicketInScopes(context, StringUtils.EMPTY);
         return null;
     }
