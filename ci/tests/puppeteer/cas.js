@@ -105,18 +105,25 @@ exports.assertVisibility = async (page, selector) => {
 
 exports.assertInvisibility = async (page, selector) => {
     let element = await page.$(selector);
-    console.log(`Checking invisibility for ${selector}`);
+    console.log(`Checking element invisibility for ${selector}`);
     assert(element == null || await element.boundingBox() == null);
 }
 
 exports.assertTicketGrantingCookie = async (page) => {
-    const tgc = (await page.cookies()).filter(value => value.name === "TGC");
+    const tgc = (await page.cookies()).filter(value => {
+        console.log(`Checking cookie ${value.name}`)
+        return value.name === "TGC"
+    });
     assert(tgc.length !== 0);
     console.log(`Asserting ticket-granting cookie: ${tgc[0].value}`);
+    return tgc[0];
 }
 
 exports.assertNoTicketGrantingCookie = async (page) => {
-    let tgc = (await page.cookies()).filter(value => value.name === "TGC");
+    let tgc = (await page.cookies()).filter(value => {
+        console.log(`Checking cookie ${value.name}`)
+        return value.name === "TGC"
+    });
     console.log(`Asserting no ticket-granting cookie: ${tgc}`);
     assert(tgc.length === 0);
 }
