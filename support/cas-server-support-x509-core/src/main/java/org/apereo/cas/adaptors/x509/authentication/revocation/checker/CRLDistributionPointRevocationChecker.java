@@ -15,7 +15,6 @@ import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.cryptacular.x509.ExtensionReader;
-import org.ehcache.StateTransitionException;
 import org.ehcache.Status;
 import org.ehcache.UserManagedCache;
 import org.springframework.beans.factory.DisposableBean;
