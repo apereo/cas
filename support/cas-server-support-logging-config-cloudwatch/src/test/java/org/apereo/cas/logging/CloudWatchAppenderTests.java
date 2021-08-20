@@ -5,6 +5,7 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -29,6 +30,7 @@ public class CloudWatchAppenderTests {
         val context = LoggerContext.getContext(false);
         val logger = context.getLogger(CloudWatchAppender.class.getName());
         val appender = (CloudWatchAppender) logger.getAppenders().get("CloudWatchAppender");
+        appender.start();
         assertNotNull(appender);
         assertDoesNotThrow(new Executable() {
             @Override
