@@ -8,6 +8,7 @@ import org.apereo.cas.audit.DelegatedAuthenticationAuditResourceResolver;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -89,6 +90,10 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("centralAuthenticationService")
     private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
+    @Autowired
+    @Qualifier("casSslContext")
+    private ObjectProvider<CasSSLContext> casSslContext;
+
     @Bean
     @ConditionalOnMissingBean(name = "pac4jDelegatedClientFactory")
     @RefreshScope
@@ -99,7 +104,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         }
         val customizers = applicationContext.getBeansOfType(DelegatedClientFactoryCustomizer.class, false, true).values();
         AnnotationAwareOrderComparator.sortIfNecessary(customizers);
-        return new DefaultDelegatedClientFactory(casProperties, customizers);
+        return new DefaultDelegatedClientFactory(casProperties, customizers, casSslContext.getObject());
     }
 
     @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionStore")
