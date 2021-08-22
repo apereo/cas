@@ -15,7 +15,8 @@ const assert = require("assert");
 
     await cas.click(page, "li #SAML2Client")
     await page.waitForNavigation();
-    await page.waitForTimeout(5000)
+    await page.waitForTimeout(8000)
+    await cas.screenshot(page);
     await page.waitForSelector('#username', {visible: true});
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(5000)
