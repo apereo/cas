@@ -17,10 +17,10 @@ env:
 
 on:
   push:
-    branches: [ master ]
+    branches: [ 6.4.x ]
   pull_request:
     types: [ labeled ]
-    branches: [ master ]
+    branches: [ 6.4.x ]
 
 ##########################################################################
 
@@ -129,4 +129,4 @@ jobs:
       - name: Install Ruby gems
         run: gem install bundler
       - name: Publish Documentation
-        run: ./ci/docs/publish.sh development
+        run: ./ci/docs/publish.sh 6.4.x

@@ -12,10 +12,10 @@ env:
 
 on:
   push:
-    branches: [ master ]
+    branches: [ 6.4.x ]
   pull_request:
     types: [ labeled ]
-    branches: [ master ]
+    branches: [ 6.4.x ]
 
 ##########################################################################
 
@@ -106,11 +106,11 @@ jobs:
     strategy:
       matrix:
         category:
-          - spotbugsMain
-          - spotbugsTest
+          # - spotbugsMain
+          # - spotbugsTest
           - checkstyleMain
           - checkstyleTest
-          - checkLicense
+          # - checkLicense
     name: ${{ matrix.category }}
     steps:
       - uses: actions/checkout@v2
