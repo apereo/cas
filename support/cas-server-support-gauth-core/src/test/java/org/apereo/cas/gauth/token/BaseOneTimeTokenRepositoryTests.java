@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -49,7 +51,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         token = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER.toLowerCase(), 1234);
         assertTrue(token.getId() > 0);
     }
-    
+
     @Test
     public void verifyTokensWithUniqueIdsSave() {
         val token = new GoogleAuthenticatorToken(1111, CASUSER);
@@ -105,11 +107,12 @@ public abstract class BaseOneTimeTokenRepositoryTests {
 
     @Test
     public void verifySize() {
+        val uid = UUID.randomUUID().toString();
         assertEquals(oneTimeTokenAuthenticatorTokenRepository.count(), 0);
-        val token = new GoogleAuthenticatorToken(916984, "sample");
+        val token = new GoogleAuthenticatorToken(916984, uid);
         oneTimeTokenAuthenticatorTokenRepository.store(token);
         assertEquals(1, oneTimeTokenAuthenticatorTokenRepository.count());
-        assertEquals(1, oneTimeTokenAuthenticatorTokenRepository.count("sample"));
+        assertEquals(1, oneTimeTokenAuthenticatorTokenRepository.count(uid));
         oneTimeTokenAuthenticatorTokenRepository.removeAll();
         assertEquals(0, oneTimeTokenAuthenticatorTokenRepository.count(), "Repository is not empty");
     }

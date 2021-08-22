@@ -46,12 +46,6 @@ public abstract class BaseCouchbaseProperties implements Serializable {
     private String idleConnectionTimeout = "PT60S";
 
     /**
-     * String representation of query threshold.
-     */
-    @DurationCapable
-    private String queryThreshold = "PT30S";
-
-    /**
      * String representation of search timeout.
      */
     @DurationCapable

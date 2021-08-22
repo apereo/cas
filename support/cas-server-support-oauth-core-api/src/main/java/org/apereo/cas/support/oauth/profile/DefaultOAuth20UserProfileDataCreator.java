@@ -77,7 +77,6 @@ public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileD
         val principal = this.scopeToAttributesFilter.filter(accessToken.getService(), currentPrincipal,
             registeredService, context, accessToken);
         LOGGER.debug("Created CAS principal [{}] based on requested/authorized scopes", principal);
-
         return principal;
     }
 

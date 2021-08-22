@@ -28,32 +28,30 @@ import java.util.function.Predicate;
 @Slf4j
 @Getter
 public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
-    private static final int MAP_SIZE = 8;
-
     private static final long serialVersionUID = -8504842011648432398L;
 
-    private final List<CredentialMetaData> credentials = new ArrayList<>(MAP_SIZE);
+    private final List<CredentialMetaData> credentials = new ArrayList<>();
 
     /**
      * Warnings here are considered global and apply
      * to the authentication event vs individual attempts and results.
      */
-    private final List<MessageDescriptor> warnings = new ArrayList<>(MAP_SIZE);
+    private final List<MessageDescriptor> warnings = new ArrayList<>();
 
     /**
      * Authentication metadata attributes.
      */
-    private final Map<String, List<Object>> attributes = new LinkedHashMap<>(MAP_SIZE);
+    private final Map<String, List<Object>> attributes = new LinkedHashMap<>();
 
     /**
      * Map of handler names to authentication successes.
      */
-    private final Map<String, AuthenticationHandlerExecutionResult> successes = new LinkedHashMap<>(MAP_SIZE);
+    private final Map<String, AuthenticationHandlerExecutionResult> successes = new LinkedHashMap<>();
 
     /**
      * Map of handler names to authentication failures.
      */
-    private final Map<String, Throwable> failures = new LinkedHashMap<>(MAP_SIZE);
+    private final Map<String, Throwable> failures = new LinkedHashMap<>();
 
     /**
      * Authenticated principal.
@@ -121,11 +119,11 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @return AuthenticationBuilder new AuthenticationBuilder instance.
      */
     public static AuthenticationBuilder of(final Principal principal,
-        final PrincipalFactory principalFactory,
-        final Map<String, List<Object>> principalAttributes,
-        final Service service,
-        final RegisteredService registeredService,
-        final Authentication authentication) {
+                                           final PrincipalFactory principalFactory,
+                                           final Map<String, List<Object>> principalAttributes,
+                                           final Service service,
+                                           final RegisteredService registeredService,
+                                           final Authentication authentication) {
 
         val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
         val newPrincipal = principalFactory.createPrincipal(principalId, principalAttributes);
@@ -184,6 +182,12 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     public AuthenticationBuilder setSuccesses(final @NonNull Map<String, AuthenticationHandlerExecutionResult> successes) {
         this.successes.clear();
         return addSuccesses(successes);
+    }
+
+    @Override
+    public AuthenticationBuilder addAttributes(final Map<String, Object> attributes) {
+        attributes.forEach(this::addAttribute);
+        return this;
     }
 
     @Override

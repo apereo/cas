@@ -71,7 +71,7 @@ whose token expiration policy is to deviate from the default configuration must 
   "accessTokenExpirationPolicy": {
     "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy",
     "maxTimeToLive": "1000",
-    "timeToLive": "100"
+    "timeToKill": "100"
   }
 }
 ```
@@ -88,7 +88,7 @@ whose token expiration policy is to deviate from the default configuration must 
   "id" : 100,
   "accessTokenExpirationPolicy": {
     "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthDeviceTokenExpirationPolicy",
-    "timeToLive": "100"
+    "timeToKill": "100"
   }
 }
 ```
@@ -105,7 +105,7 @@ whose token expiration policy is to deviate from the default configuration must 
   "id" : 100,
   "accessTokenExpirationPolicy": {
     "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthRefreshTokenExpirationPolicy",
-    "timeToLive": "100"
+    "timeToKill": "100"
   }
 }
 ```

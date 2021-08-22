@@ -11,6 +11,8 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20RegisteredServiceJwtAccessTokenCipherExecutor;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
@@ -108,8 +110,11 @@ public class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Te
             new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor());
         val expiringAccessTokenFactory = new OAuth20DefaultAccessTokenFactory(
             alwaysExpiresExpirationPolicyBuilder(), jwtBuilder, servicesManager);
+
+        val code = addCode(principal, addRegisteredService());
         val accessToken = expiringAccessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
-            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null, new HashMap<>());
+            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), code.getId(), code.getClientId(), new HashMap<>(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.ticketRegistry.addTicket(accessToken);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
@@ -138,8 +143,11 @@ public class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Te
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         val authentication = getAuthentication(principal);
+        val code = addCode(principal, addRegisteredService());
+
         val accessToken = accessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
-            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null, new HashMap<>());
+            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), code.getId(), code.getClientId(), new HashMap<>(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.ticketRegistry.addTicket(accessToken);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
@@ -173,8 +181,12 @@ public class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Te
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         val authentication = getAuthentication(principal);
+        val code = addCode(principal, addRegisteredService());
+
         val accessToken = accessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
-            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null, new HashMap<>());
+            new MockTicketGrantingTicket("casuser"), new ArrayList<>(),
+            code.getId(), code.getClientId(), new HashMap<>(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         accessToken.getTicketGrantingTicket().markTicketExpired();
         this.ticketRegistry.addTicket(accessToken);
 
@@ -215,8 +227,11 @@ public class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Te
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         val authentication = getAuthentication(principal);
+        val code = addCode(principal, addRegisteredService());
         val accessToken = accessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
-            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null, new HashMap<>());
+            new MockTicketGrantingTicket("casuser"), new ArrayList<>(),
+            code.getId(), code.getClientId(), new HashMap<>(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.ticketRegistry.addTicket(accessToken);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);

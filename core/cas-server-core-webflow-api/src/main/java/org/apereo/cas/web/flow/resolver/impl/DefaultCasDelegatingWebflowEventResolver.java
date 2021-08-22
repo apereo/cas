@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -59,7 +60,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
         try {
 
             if (credential != null) {
-                val builder = getWebflowEventResolutionConfigurationContext().getAuthenticationSystemSupport()
+                val builder = getConfigurationContext().getAuthenticationSystemSupport()
                     .handleInitialAuthenticationTransaction(service, credential);
                 builder.getInitialAuthentication().ifPresent(authn -> {
                     WebUtils.putAuthenticationResultBuilder(builder, context);
@@ -93,7 +94,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             if (event == null) {
                 FunctionUtils.doIf(LOGGER.isDebugEnabled(),
                     e -> LOGGER.debug(exception.getMessage(), exception),
-                    e -> LOGGER.warn(exception.getMessage()))
+                    e -> LoggingUtils.warn(LOGGER, exception.getMessage(), exception))
                     .accept(exception);
                 event = newEvent(CasWebflowConstants.TRANSITION_ID_ERROR, exception);
             }
@@ -150,7 +151,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             throw new IllegalArgumentException(new AuthenticationException(msg));
         }
         LOGGER.trace("Locating service [{}] in service registry to determine authentication policy", service);
-        val registeredService = getWebflowEventResolutionConfigurationContext().getServicesManager().findServiceBy(service);
+        val registeredService = getConfigurationContext().getServicesManager().findServiceBy(service);
         LOGGER.trace("Enforcing access strategy policies for registered service [{}] and principal [{}]",
             registeredService, authn.getPrincipal());
         val unauthorizedRedirectUrl = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl();
@@ -163,7 +164,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             .authentication(authn)
             .registeredService(registeredService)
             .build();
-        val result = getWebflowEventResolutionConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
+        val result = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         result.throwExceptionIfNeeded();
         return registeredService;
     }

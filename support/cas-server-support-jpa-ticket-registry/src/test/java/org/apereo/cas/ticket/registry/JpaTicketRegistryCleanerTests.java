@@ -1,7 +1,12 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketFactory;
@@ -11,17 +16,22 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
+import org.apereo.cas.ticket.code.OAuth20Code;
+import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceToken;
 import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -30,11 +40,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link JpaTicketRegistryCleanerTests}.
@@ -54,6 +66,10 @@ public class JpaTicketRegistryCleanerTests {
     @Autowired
     @Qualifier("defaultAccessTokenFactory")
     protected OAuth20AccessTokenFactory accessTokenFactory;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
 
     @Autowired
     @Qualifier("ticketRegistry")
@@ -122,7 +138,7 @@ public class JpaTicketRegistryCleanerTests {
         assertTrue(ticketRegistry.getTickets().isEmpty());
     }
 
-    @Test
+    @RepeatedTest(2)
     @Order(1)
     public void verifyOauthOperation() {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
@@ -130,9 +146,11 @@ public class JpaTicketRegistryCleanerTests {
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
         ticketRegistry.addTicket(tgt);
 
+        val code = createOAuthCode();
         val at = accessTokenFactory.create(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getAuthentication(), tgt,
-            Collections.singleton("scope1"), "client1", Collections.emptyMap());
+            Collections.singleton("scope1"), code.getId(), "client1", Collections.emptyMap(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
 
         ticketRegistry.addTicket(at);
         ticketRegistry.updateTicket(tgt);
@@ -217,5 +235,17 @@ public class JpaTicketRegistryCleanerTests {
         cleanerTimer.cancel();
         registryTimer.cancel();
         ticketRegistry.deleteAll();
+    }
+
+    private OAuth20Code createOAuthCode() {
+        val builder = mock(ExpirationPolicyBuilder.class);
+        when(builder.buildTicketExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
+        
+        return new OAuth20DefaultOAuthCodeFactory(builder, servicesManager)
+            .create(RegisteredServiceTestUtils.getService(),
+                RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
+                CollectionUtils.wrapSet("1", "2"), "code-challenge",
+                "code-challenge-method", "clientId1234567", new HashMap<>(),
+                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
     }
 }

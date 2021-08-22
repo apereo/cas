@@ -1,6 +1,7 @@
 {
   "dependencies": "captcha",
   "properties": [
+    "--cas.audit.engine.enabled=false",
     "--cas.google-recaptcha.enabled=true",
     "--cas.google-recaptcha.verify-url=https://www.google.com/recaptcha/api/siteverify",
     "--cas.google-recaptcha.site-key=7Let09ISAAAAAL-ip28pWHPkk-DtRz5HNpT4lVDf",

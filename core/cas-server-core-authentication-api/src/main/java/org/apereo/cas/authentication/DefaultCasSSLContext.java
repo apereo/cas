@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ssl.CompositeX509KeyManager;
 import org.apereo.cas.util.ssl.CompositeX509TrustManager;
@@ -30,38 +31,44 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @Getter
-public class DefaultCasSSLContext {
+public class DefaultCasSSLContext implements CasSSLContext {
     private static final String ALG_NAME_PKIX = "PKIX";
 
     private final SSLContext sslContext;
 
     private final TrustManager[] trustManagers;
 
-    @SneakyThrows
-    public DefaultCasSSLContext(final Resource trustStoreFile, final String trustStorePassword, final String trustStoreType) {
-        val casTrustStore = KeyStore.getInstance(trustStoreType);
-        val trustStorePasswordCharArray = trustStorePassword.toCharArray();
+    private final KeyManager[] keyManagers;
 
-        try (val casStream = trustStoreFile.getInputStream()) {
-            casTrustStore.load(casStream, trustStorePasswordCharArray);
+    public DefaultCasSSLContext(final Resource trustStoreFile,
+                                final String trustStorePassword,
+                                final String trustStoreType,
+                                final HttpClientProperties httpClientProperties) throws Exception {
+        val disabled = httpClientProperties.getHostNameVerifier().equalsIgnoreCase("none");
+        if (disabled) {
+            this.trustManagers = CasSSLContext.disabled().getTrustManagers();
+            this.keyManagers = CasSSLContext.disabled().getKeyManagers();
+        } else {
+            val casTrustStore = KeyStore.getInstance(trustStoreType);
+            val trustStorePasswordCharArray = trustStorePassword.toCharArray();
+            try (val casStream = trustStoreFile.getInputStream()) {
+                casTrustStore.load(casStream, trustStorePasswordCharArray);
+            }
+            val defaultAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
+            val customKeyManager = getKeyManager(ALG_NAME_PKIX, casTrustStore, trustStorePasswordCharArray);
+            val jvmKeyManager = getKeyManager(defaultAlgorithm, null, null);
+            val defaultTrustAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+            val customTrustManager = getTrustManager(ALG_NAME_PKIX, casTrustStore);
+            val jvmTrustManagers = getTrustManager(defaultTrustAlgorithm, null);
+            val allManagers = new ArrayList<>(customTrustManager);
+            allManagers.addAll(jvmTrustManagers);
+            this.trustManagers = new TrustManager[]{new CompositeX509TrustManager(allManagers)};
+            this.keyManagers = new KeyManager[]{
+                new CompositeX509KeyManager(CollectionUtils.wrapList(jvmKeyManager, customKeyManager))
+            };
         }
-
-        val defaultAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
-        val customKeyManager = getKeyManager(ALG_NAME_PKIX, casTrustStore, trustStorePasswordCharArray);
-        val jvmKeyManager = getKeyManager(defaultAlgorithm, null, null);
-
-        val defaultTrustAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-        val customTrustManager = getTrustManager(ALG_NAME_PKIX, casTrustStore);
-        val jvmTrustManagers = getTrustManager(defaultTrustAlgorithm, null);
-
-        val keyManagers = new KeyManager[]{
-            new CompositeX509KeyManager(CollectionUtils.wrapList(jvmKeyManager, customKeyManager))
-        };
-        val allManagers = new ArrayList<>(customTrustManager);
-        allManagers.addAll(jvmTrustManagers);
-        this.trustManagers = new TrustManager[]{new CompositeX509TrustManager(allManagers)};
         this.sslContext = SSLContexts.custom().setProtocol("SSL").build();
-        this.sslContext.init(keyManagers, trustManagers, null);
+        this.sslContext.init(this.keyManagers, this.trustManagers, null);
     }
 
     @SneakyThrows
@@ -80,5 +87,4 @@ public class DefaultCasSSLContext {
             .map(X509TrustManager.class::cast)
             .collect(Collectors.toList());
     }
-
 }

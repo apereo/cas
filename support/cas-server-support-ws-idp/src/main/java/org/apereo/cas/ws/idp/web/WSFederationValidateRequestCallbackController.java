@@ -33,8 +33,8 @@ import java.util.HashMap;
 @Slf4j
 public class WSFederationValidateRequestCallbackController extends BaseWSFederationRequestController {
 
-    public WSFederationValidateRequestCallbackController(final WSFederationRequestConfigurationContext wsFederationRequestConfigurationContext) {
-        super(wsFederationRequestConfigurationContext);
+    public WSFederationValidateRequestCallbackController(final WSFederationRequestConfigurationContext configurationContext) {
+        super(configurationContext);
     }
 
     /**

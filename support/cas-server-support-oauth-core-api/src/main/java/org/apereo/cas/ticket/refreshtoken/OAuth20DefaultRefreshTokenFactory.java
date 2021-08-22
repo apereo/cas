@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -49,17 +51,20 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
     }
 
     @Override
-    public OAuth20RefreshToken create(final Service service, final Authentication authentication,
+    public OAuth20RefreshToken create(final Service service,
+                                      final Authentication authentication,
                                       final TicketGrantingTicket ticketGrantingTicket,
                                       final Collection<String> scopes,
                                       final String clientId,
                                       final String accessToken,
-                                      final Map<String, Map<String, Object>> requestClaims) {
+                                      final Map<String, Map<String, Object>> requestClaims,
+                                      final OAuth20ResponseTypes responseType,
+                                      final OAuth20GrantTypes grantType) {
         val codeId = this.refreshTokenIdGenerator.getNewTicketId(OAuth20RefreshToken.PREFIX);
         val expirationPolicyToUse = determineExpirationPolicyForService(clientId);
         val rt = new OAuth20DefaultRefreshToken(codeId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket,
-            scopes, clientId, accessToken, requestClaims);
+            scopes, clientId, accessToken, requestClaims, responseType, grantType);
 
         if (ticketGrantingTicket != null) {
             ticketGrantingTicket.getDescendantTickets().add(rt.getId());

@@ -88,9 +88,11 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     @Override
     public void destroy() {
         try {
-            this.crlCache.close();
-        } catch (final StateTransitionException e) {
-            LOGGER.warn("Error closing CRL cache [{}]", e.getMessage(), e);
+            if (!Status.UNINITIALIZED.equals(this.crlCache.getStatus())) {
+                this.crlCache.close();
+            }
+        } catch (final Exception e) {
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -150,7 +152,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                 list.add(new URI(uriString));
             }
         } catch (final Exception e) {
-            LOGGER.warn("[{}] is not a valid distribution point URI.", uriString);
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 

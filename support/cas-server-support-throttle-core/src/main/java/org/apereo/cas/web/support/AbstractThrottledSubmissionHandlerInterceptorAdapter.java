@@ -10,12 +10,12 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,8 +34,8 @@ import java.util.List;
 @ToString
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter
-    implements ThrottledSubmissionHandlerInterceptor, InitializingBean {
+public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
+    implements ThrottledSubmissionHandlerInterceptor, InitializingBean, AsyncHandlerInterceptor {
     /**
      * Throttled login attempt action code used to tag the attempt in audit records.
      */
@@ -58,7 +58,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
     @Override
     public final boolean preHandle(final HttpServletRequest request,
-                                   final HttpServletResponse response, final Object handler) throws Exception {
+                                   final HttpServletResponse response,
+                                   final Object handler) throws Exception {
         if (isRequestIgnoredForThrottling(request, response)) {
             LOGGER.trace("Letting the request through without throttling; No request filters support it");
             return true;
@@ -95,6 +96,14 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     }
 
     @Override
+    public void afterCompletion(final HttpServletRequest request, final HttpServletResponse response,
+                                final Object handler, final Exception e) throws Exception {
+        if (!isRequestIgnoredForThrottling(request, response) && shouldResponseBeRecordedAsFailure(response)) {
+            recordSubmissionFailure(request);
+        }
+    }
+
+    @Override
     public void decrement() {
         LOGGER.debug("Throttling is not activated for this interceptor adapter");
     }
@@ -119,7 +128,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      */
     protected boolean shouldResponseBeRecordedAsFailure(final HttpServletResponse response) {
         val status = response.getStatus();
-        return status != HttpStatus.SC_CREATED && status != HttpStatus.SC_OK && status != HttpStatus.SC_MOVED_TEMPORARILY;
+        return status != HttpStatus.CREATED.value()
+            && status != HttpStatus.OK.value() && status != HttpStatus.FOUND.value();
     }
 
     /**

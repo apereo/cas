@@ -1,0 +1,25 @@
+{
+  "dependencies": "oidc",
+  "properties": [
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.oidc.core.issuer=${cas.server.name}/cas/oidc",
+    "--cas.authn.oidc.jwks.jwks-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/keystore.jwks",
+    
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+    "--cas.authn.attribute-repository.stub.id=STUB",
+
+    "--logging.level.org.apereo.cas=DEBUG",
+    "--logging.level.org.apereo.services.persondir=DEBUG",
+
+    "--cas.authn.oauth.user-profile-view-type=FLAT"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}
+
+
+

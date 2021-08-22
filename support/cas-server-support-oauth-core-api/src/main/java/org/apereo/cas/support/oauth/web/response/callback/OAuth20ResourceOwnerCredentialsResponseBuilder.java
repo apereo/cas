@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -10,10 +11,9 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Acc
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -22,14 +22,23 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredArgsConstructor
-public class OAuth20ResourceOwnerCredentialsResponseBuilder implements OAuth20AuthorizationResponseBuilder {
+public class OAuth20ResourceOwnerCredentialsResponseBuilder extends BaseOAuth20AuthorizationResponseBuilder {
     private final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator;
+
     private final OAuth20TokenGenerator accessTokenGenerator;
-    private final CasConfigurationProperties casProperties;
+
+    public OAuth20ResourceOwnerCredentialsResponseBuilder(final ServicesManager servicesManager,
+                                                          final CasConfigurationProperties casProperties,
+                                                          final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator,
+                                                          final OAuth20TokenGenerator accessTokenGenerator,
+                                                          final OAuth20AuthorizationModelAndViewBuilder authorizationModelAndViewBuilder) {
+        super(servicesManager, casProperties, authorizationModelAndViewBuilder);
+        this.accessTokenResponseGenerator = accessTokenResponseGenerator;
+        this.accessTokenGenerator = accessTokenGenerator;
+    }
 
     @Override
-    public ModelAndView build(final JEEContext context, final String clientId,
+    public ModelAndView build(final WebContext context, final String clientId,
                               final AccessTokenRequestDataHolder holder) {
         val accessTokenResult = accessTokenGenerator.generate(holder);
         val result = OAuth20AccessTokenResponseResult.builder()
@@ -39,14 +48,15 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder implements OAuth20Au
             .responseType(OAuth20Utils.getResponseType(context))
             .casProperties(casProperties)
             .generatedToken(accessTokenResult)
+            .grantType(holder.getGrantType())
             .build();
-        accessTokenResponseGenerator.generate(context.getNativeRequest(), context.getNativeResponse(), result);
+        accessTokenResponseGenerator.generate(context, result);
         return new ModelAndView();
     }
 
     @Override
-    public boolean supports(final JEEContext context) {
-        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE)
+    public boolean supports(final WebContext context) {
+        val grantType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.GRANT_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.PASSWORD);
     }

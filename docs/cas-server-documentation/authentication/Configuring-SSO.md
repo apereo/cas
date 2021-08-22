@@ -78,7 +78,7 @@ please [review this guide](../services/Configuring-Service-SSO-Policy.html).
 
 ## Disable Service SSO Access
 
-Participation in existing single signon sessions can be disabled on a per applications. For example, 
+Participation in existing single signon sessions can be disabled on a per-application basis. For example, 
 the following service will be challenged to present credentials every time, thereby not using SSO:
 
 ```json

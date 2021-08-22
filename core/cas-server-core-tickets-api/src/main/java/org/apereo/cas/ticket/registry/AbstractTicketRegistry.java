@@ -249,7 +249,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * @param ticketToProcess the result
      * @return the ticket
      */
-    @SneakyThrows
     protected Ticket decodeTicket(final Ticket ticketToProcess) {
         if (ticketToProcess instanceof EncodedTicket && !isCipherExecutorEnabled()) {
             LOGGER.warn("Found removable encoded ticket [{}] yet cipher operations are disabled. ", ticketToProcess.getId());

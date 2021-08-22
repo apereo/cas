@@ -13,8 +13,8 @@ const request = require('request');
     let config = JSON.parse(fs.readFileSync(args[0]));
     assert(config != null)
 
-    console.log("Certificate file: " + config.trustStoreCertificateFile);
-    console.log("Private key file: " + config.trustStorePrivateKeyFile);
+    console.log(`Certificate file: ${config.trustStoreCertificateFile}`);
+    console.log(`Private key file: ${config.trustStorePrivateKeyFile}`);
 
     const cert = fs.readFileSync(config.trustStoreCertificateFile);
     const key = fs.readFileSync(config.trustStorePrivateKeyFile);
@@ -48,11 +48,8 @@ const request = require('request');
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(5000)
 
-    const header = await cas.innerText(page, "#content div h2");
-    assert(header === "Log In Successful")
-
-    const body = await cas.innerText(page, '#content div p');
-    assert(body.includes("CN=mmoayyed, OU=dev, O=bft, L=mt, C=world"))
+    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerTextContains(page, "#content div p", "CN=mmoayyed, OU=dev, O=bft, L=mt, C=world");
 
     await browser.close();
 })();

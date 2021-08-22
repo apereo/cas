@@ -1,6 +1,5 @@
 package org.apereo.cas.digest;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,14 +17,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DefaultDigestHashedCredentialRetrieverTests {
 
     @Test
-    @SneakyThrows
-    public void verifyCanFindAnExistingUser() {
+    public void verifyCanFindAnExistingUser() throws Exception{
         val expectedPassword = "password";
         val credentialRetriever = new DefaultDigestHashedCredentialRetriever(
             Collections.singletonMap("user", expectedPassword));
-
         val credential = credentialRetriever.findCredential("user", "ignored");
-
         assertEquals(expectedPassword, credential);
     }
 

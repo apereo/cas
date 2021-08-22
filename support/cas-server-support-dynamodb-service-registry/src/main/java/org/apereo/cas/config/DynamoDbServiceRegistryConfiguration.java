@@ -8,7 +8,6 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +64,6 @@ public class DynamoDbServiceRegistryConfiguration {
 
     @RefreshScope
     @Bean
-    @SneakyThrows
     @ConditionalOnMissingBean(name = "amazonDynamoDbServiceRegistryClient")
     public DynamoDbClient amazonDynamoDbServiceRegistryClient() {
         val dynamoDbProperties = casProperties.getServiceRegistry().getDynamoDb();

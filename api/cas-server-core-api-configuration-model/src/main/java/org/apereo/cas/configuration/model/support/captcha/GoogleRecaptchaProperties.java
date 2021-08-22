@@ -64,7 +64,6 @@ public class GoogleRecaptchaProperties implements Serializable {
     /**
      * The google reCAPTCHA endpoint for verification of tokens and input.
      */
-    @RequiredProperty
     private String verifyUrl = "https://www.google.com/recaptcha/api/siteverify";
 
     /**

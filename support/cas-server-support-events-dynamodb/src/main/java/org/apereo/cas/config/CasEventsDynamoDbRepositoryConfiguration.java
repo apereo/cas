@@ -7,7 +7,6 @@ import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.DynamoDbCasEventRepository;
 import org.apereo.cas.support.events.DynamoDbCasEventsFacilitator;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -54,7 +53,6 @@ public class CasEventsDynamoDbRepositoryConfiguration {
 
     @RefreshScope
     @Bean
-    @SneakyThrows
     @ConditionalOnMissingBean(name = "dynamoDbEventRepositoryClient")
     public DynamoDbClient dynamoDbEventRepositoryClient() {
         val dynamoDbProperties = casProperties.getEvents().getDynamoDb();

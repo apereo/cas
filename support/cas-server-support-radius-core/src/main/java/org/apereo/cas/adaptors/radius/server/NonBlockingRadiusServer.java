@@ -4,7 +4,6 @@ import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
 
 import lombok.Setter;
-import lombok.ToString;
 import lombok.val;
 import net.jradius.client.RadiusClient;
 import net.jradius.packet.AccessRequest;
@@ -19,7 +18,6 @@ import net.jradius.packet.RadiusResponse;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@ToString
 @Setter
 public class NonBlockingRadiusServer extends AbstractRadiusServer {
     private static final long serialVersionUID = -2567137135937670129L;

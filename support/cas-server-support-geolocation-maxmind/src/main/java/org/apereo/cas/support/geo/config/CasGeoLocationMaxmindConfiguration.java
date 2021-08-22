@@ -8,7 +8,6 @@ import org.apereo.cas.util.ResourceUtils;
 import com.maxmind.db.CHMCache;
 import com.maxmind.db.Reader;
 import com.maxmind.geoip2.DatabaseReader;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,8 +41,7 @@ public class CasGeoLocationMaxmindConfiguration {
 
     @Bean
     @RefreshScope
-    @SneakyThrows
-    public GeoLocationService geoLocationService() {
+    public GeoLocationService geoLocationService() throws Exception {
         val properties = casProperties.getMaxmind();
         val cityDatabase = readDatabase(properties.getCityDatabase());
         val countryDatabase = readDatabase(properties.getCountryDatabase());

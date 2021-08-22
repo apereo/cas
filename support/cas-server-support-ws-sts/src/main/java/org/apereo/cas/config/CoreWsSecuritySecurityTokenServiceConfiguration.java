@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.DefaultSecurityTokenServiceTokenFetcher;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.authentication.SecurityTokenServiceTokenFetcher;
@@ -21,7 +22,6 @@ import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.sts.STSPropertiesMBean;
@@ -68,6 +68,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
+import javax.net.ssl.HostnameVerifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,6 +85,13 @@ import java.util.Map;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ImportResource(locations = "classpath:jaxws-realms.xml")
 public class CoreWsSecuritySecurityTokenServiceConfiguration {
+    @Autowired
+    @Qualifier("hostnameVerifier")
+    private ObjectProvider<HostnameVerifier> hostnameVerifier;
+
+    @Autowired
+    @Qualifier("casSslContext")
+    private ObjectProvider<CasSSLContext> casSslContext;
 
     @Autowired
     @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
@@ -126,8 +134,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
     @ConditionalOnMissingBean(name = "transportSTSProviderBean")
     @Bean
-    @SneakyThrows
-    public SecurityTokenServiceProvider transportSTSProviderBean() {
+    public SecurityTokenServiceProvider transportSTSProviderBean() throws Exception {
         val provider = new SecurityTokenServiceProvider();
         provider.setIssueOperation(transportIssueDelegate());
         provider.setValidateOperation(transportValidateDelegate());
@@ -389,7 +396,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     public SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder() {
         return new SecurityTokenServiceClientBuilder(casProperties.getAuthn().getWsfedIdp(),
-            casProperties.getServer().getPrefix());
+            casProperties.getServer().getPrefix(),
+            hostnameVerifier.getObject(), casSslContext.getObject());
     }
 
     @ConditionalOnMissingBean(name = "securityTokenServiceTokenFetcher")

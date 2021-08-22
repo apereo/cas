@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -15,20 +14,13 @@ const cas = require('../../cas.js');
     await page.goto("https://localhost:8443/cas/clientredirect?client_name=CASServer&service=https://github.com/apereo/cas");
     await page.waitForTimeout(1000)
 
-    console.log(page.url());
-    let result = new URL(page.url());
-    console.log(result.searchParams.get("ticket"));
-    assert(result.searchParams.has("ticket"));
-
+    await cas.assertTicketParameter(page);
 
     console.log("Start with second application with SSO for CAS server")
     await page.goto("https://localhost:8443/cas/clientredirect?client_name=CASServer&service=https://google.com");
     await page.waitForTimeout(1000)
 
-    console.log(page.url());
-    result = new URL(page.url());
-    console.log(result.searchParams.get("ticket"));
-    assert(result.searchParams.has("ticket"));
+    await cas.assertTicketParameter(page);
 
     await browser.close();
 })();

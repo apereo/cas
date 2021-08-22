@@ -48,7 +48,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
     @SneakyThrows
     protected Resource generate(final Resource file) {
         if (ResourceUtils.doesResourceExist(file)) {
-            LOGGER.debug("Located JSON web keystore at [{}]", file);
+            LOGGER.trace("Located JSON web keystore at [{}]", file);
             return file;
         }
         val jwk = generateJsonWebKey();

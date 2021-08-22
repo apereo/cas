@@ -5,6 +5,8 @@
 
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",
+
+    "--cas.authn.attribute-repository.stub.attributes.uid=uid",
     
     "--cas.authn.pm.forgot-username.mail.from=cas@apereo.org",
     "--cas.authn.pm.forgot-username.mail.text=To reset your password, please use %s",

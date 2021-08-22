@@ -69,7 +69,7 @@ import javax.sql.DataSource;
     JdbcPasswordHistoryManagementConfiguration.class,
     PasswordManagementConfiguration.class
 }, properties = {
-    "cas.jdbc.show-sql=true",
+    "cas.jdbc.show-sql=false",
     "cas.authn.pm.enabled=true",
     "cas.authn.pm.history.core.enabled=true",
     "cas.authn.pm.jdbc.auto-commit=false",

@@ -85,7 +85,7 @@ public class CasWebflowContextConfiguration {
     @Autowired
     @Qualifier("registeredServiceViewResolver")
     private ObjectProvider<ViewResolver> registeredServiceViewResolver;
-    
+
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
@@ -171,7 +171,9 @@ public class CasWebflowContextConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "localeChangeInterceptor")
     public LocaleChangeInterceptor localeChangeInterceptor() {
-        return new CasLocaleChangeInterceptor(casProperties.getLocale());
+        val interceptor = new CasLocaleChangeInterceptor(casProperties.getLocale());
+        interceptor.setParamName(casProperties.getLocale().getParamName());
+        return interceptor;
     }
 
     @Lazy(false)
@@ -185,23 +187,14 @@ public class CasWebflowContextConfiguration {
         return handler;
     }
 
-    @Lazy(false)
-    @Bean
-    public Object[] loginFlowHandlerMappingInterceptors() {
-        val interceptors = new ArrayList<>();
-        interceptors.add(localeChangeInterceptor());
-        themeChangeInterceptor.ifAvailable(interceptors::add);
-        authenticationThrottlingExecutionPlan.ifAvailable(p -> interceptors.addAll(p.getAuthenticationThrottleInterceptors()));
-        return interceptors.toArray();
-    }
-
     @Bean
     @Lazy(false)
-    public HandlerMapping loginFlowHandlerMapping() {
+    @Autowired
+    public HandlerMapping loginFlowHandlerMapping(@Qualifier("casWebflowExecutionPlan") final CasWebflowExecutionPlan webflowExecutionPlan) {
         val handler = new FlowHandlerMapping();
         handler.setOrder(LOGOUT_FLOW_HANDLER_ORDER - 1);
         handler.setFlowRegistry(loginFlowRegistry());
-        handler.setInterceptors(loginFlowHandlerMappingInterceptors());
+        handler.setInterceptors(webflowExecutionPlan.getWebflowInterceptors().toArray());
         return handler;
     }
 
@@ -301,6 +294,12 @@ public class CasWebflowContextConfiguration {
             plan.registerWebflowConfigurer(defaultWebflowConfigurer());
             plan.registerWebflowConfigurer(defaultLogoutWebflowConfigurer());
             plan.registerWebflowConfigurer(groovyWebflowConfigurer());
+
+            plan.registerWebflowInterceptor(localeChangeInterceptor());
+            themeChangeInterceptor.ifAvailable(plan::registerWebflowInterceptor);
+
+            authenticationThrottlingExecutionPlan.ifAvailable(
+                throttlingPlan -> throttlingPlan.getAuthenticationThrottleInterceptors().forEach(plan::registerWebflowInterceptor));
         };
     }
 }

@@ -133,7 +133,6 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
     @TestConfiguration
     @Lazy(false)
     public static class SamlIdPTestConfiguration {
-
         @Bean
         public TicketValidator samlIdPTicketValidator() throws Exception {
             val validator = mock(TicketValidator.class);

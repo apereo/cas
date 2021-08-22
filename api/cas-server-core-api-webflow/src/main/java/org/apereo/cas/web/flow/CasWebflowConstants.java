@@ -7,18 +7,22 @@ package org.apereo.cas.web.flow;
  * @since 5.0.0
  */
 public interface CasWebflowConstants {
+    /*
+     ****************************************
+     * Errors.
+     ****************************************
+     */
 
     /**
-     * Base path for webflow configuration files.
+     * Attribute to track exceptions in models.
      */
-    String BASE_CLASSPATH_WEBFLOW = "classpath*:/webflow";
+    String ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION = "rootCauseException";
 
     /*
      ****************************************
      * Transitions.
      ****************************************
      */
-
 
     /**
      * The transition state 'captchaError'.
@@ -182,6 +186,11 @@ public interface CasWebflowConstants {
      * Transition id 'post' .
      */
     String TRANSITION_ID_POST = "post";
+
+    /**
+     * Transition id 'mfa-composite'.
+     */
+    String TRANSITION_ID_MFA_COMPOSITE = "mfa-composite";
 
     /**
      * Transition id 'skip' .
@@ -629,6 +638,11 @@ public interface CasWebflowConstants {
     String STATE_ID_MFA_CHECK_BYPASS = "mfaCheckBypass";
 
     /**
+     * State if for MFA composite events.
+     */
+    String STATE_ID_MFA_COMPOSITE = "mfa-composite";
+
+    /**
      * State that can be used by MFA providers that offer preAuth endpoints.
      */
     String STATE_ID_MFA_PRE_AUTH = "mfaPreAuth";
@@ -777,6 +791,11 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_INIT_PASSWORD_RESET = "initPasswordReset";
 
+    /**
+     * State id 'compositeMfaProviderSelectedAction'.
+     */
+    String STATE_ID_MFA_PROVIDER_SELECTED = "compositeMfaProviderSelectedAction";
+
     /*
      ****************************************
      * Views.
@@ -817,7 +836,7 @@ public interface CasWebflowConstants {
      * The view state 'casSessionStorageWriteView'.
      */
     String VIEW_ID_SESSION_STORAGE_WRITE = "storage/casSessionStorageWriteView";
-    
+
     /**
      * The view state 'casSessionStorageReadView'.
      */
@@ -870,6 +889,11 @@ public interface CasWebflowConstants {
      * Actions.
      ****************************************
      */
+
+    /**
+     * Action id 'multifactorProviderSelectedAction'.
+     */
+    String ACTION_ID_MULTIFACTOR_PROVIDER_SELECTED = "multifactorProviderSelectedAction";
 
     /**
      * Action id 'injectResponseHeadersAction'.
@@ -940,11 +964,6 @@ public interface CasWebflowConstants {
      * Action id 'authenticationViaFormAction'.
      */
     String ACTION_ID_AUTHENTICATION_VIA_FORM_ACTION = "authenticationViaFormAction";
-
-    /**
-     * Action id 'compositeMfaProviderSelectedAction'.
-     */
-    String ACTION_ID_MFA_PROVIDER_SELECTED = "compositeMfaProviderSelectedAction";
 
     /**
      * Action id 'initialFlowSetupAction'.
@@ -1098,6 +1117,11 @@ public interface CasWebflowConstants {
      * Action id 'inquireInterruptAction .
      */
     String ACTION_ID_INQUIRE_INTERRUPT = "inquireInterruptAction";
+
+    /**
+     * Action id 'prepareMultifactorProviderSelectionAction'.
+     */
+    String ACTION_ID_PREPARE_MULTIFACTOR_PROVIDER_SELECTION = "prepareMultifactorProviderSelectionAction";
 
     /**
      * Action id 'finalizeInterruptFlowAction .

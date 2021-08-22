@@ -1,7 +1,9 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPCoreProperties;
 import org.apereo.cas.services.RegisteredService;
@@ -61,7 +63,6 @@ import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -124,7 +125,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param ex  the ex
      * @return the model and view
      */
-    @ExceptionHandler({UnauthorizedServiceException.class, SamlException.class})
+    @ExceptionHandler({PrincipalException.class, UnauthorizedServiceException.class, SamlException.class})
     public ModelAndView handleUnauthorizedServiceException(final HttpServletRequest req, final Exception ex) {
         return WebUtils.produceUnauthorizedErrorView(ex);
     }
@@ -227,20 +228,18 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param request  the request
      * @param response the response
      * @return the model and view
-     * @throws Exception the exception
      */
     protected ModelAndView issueAuthenticationRequestRedirect(final Pair<? extends SignableSAMLObject, MessageContext> pair,
                                                               final HttpServletRequest request,
-                                                              final HttpServletResponse response) throws Exception {
+                                                              final HttpServletResponse response) {
         val authnRequest = (AuthnRequest) pair.getLeft();
         val serviceUrl = constructServiceUrl(request, response, pair);
         LOGGER.debug("Created service url [{}]", DigestUtils.abbreviate(serviceUrl));
 
         val properties = configurationContext.getCasProperties();
-        val initialUrl = CommonUtils.constructRedirectUrl(properties.getServer().getLoginUrl(),
+        val urlToRedirectTo = CommonUtils.constructRedirectUrl(properties.getServer().getLoginUrl(),
             CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, authnRequest.isForceAuthn(),
             authnRequest.isPassive());
-        val urlToRedirectTo = buildRedirectUrlByRequestedAuthnContext(initialUrl, authnRequest, request);
         LOGGER.debug("Redirecting SAML authN request to [{}]", urlToRedirectTo);
 
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
@@ -257,52 +256,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val mv = new ModelAndView(new RedirectView(urlToRedirectTo));
         mv.setStatus(HttpStatus.FOUND);
         return mv;
-    }
-
-    /**
-     * Gets authentication context mappings.
-     *
-     * @return the authentication context mappings
-     */
-    protected Map<String, String> getAuthenticationContextMappings() {
-        val properties = configurationContext.getCasProperties();
-        val authnContexts = properties.getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings();
-        return CollectionUtils.convertDirectedListToMap(authnContexts);
-    }
-
-    /**
-     * Build redirect url by requested authn context.
-     *
-     * @param initialUrl   the initial url
-     * @param authnRequest the authn request
-     * @param request      the request
-     * @return the redirect url
-     */
-    protected String buildRedirectUrlByRequestedAuthnContext(final String initialUrl, final AuthnRequest authnRequest,
-                                                             final HttpServletRequest request) {
-        val authenticationContextClassMappings = configurationContext.getCasProperties()
-            .getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings();
-        if (authnRequest.getRequestedAuthnContext() == null
-            || authenticationContextClassMappings == null || authenticationContextClassMappings.isEmpty()) {
-            return initialUrl;
-        }
-
-        val mappings = getAuthenticationContextMappings();
-        val mappedClassRef = authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs()
-            .stream()
-            .filter(Objects::nonNull)
-            .filter(ref -> StringUtils.isNotBlank(ref.getURI()))
-            .filter(ref -> {
-                val clazz = ref.getURI();
-                return mappings.containsKey(clazz);
-            })
-            .findFirst();
-        if (mappedClassRef.isPresent()) {
-            val mappedClazz = mappings.get(mappedClassRef.get().getURI());
-            return initialUrl + '&' + configurationContext.getCasProperties()
-                .getAuthn().getMfa().getTriggers().getHttp().getRequestParameter() + '=' + mappedClazz;
-        }
-        return initialUrl;
     }
 
     /**
@@ -377,6 +330,16 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(id));
         val registeredService = configurationContext.getServicesManager().findServiceBy(service, SamlRegisteredService.class);
 
+        val audit = AuditableContext.builder()
+            .service(service)
+            .authentication(authentication)
+            .registeredService(registeredService)
+            .httpRequest(request)
+            .httpResponse(response)
+            .build();
+        val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
+        accessResult.throwExceptionIfNeeded();
+
         val assertion = buildCasAssertion(authentication, service, registeredService, Map.of());
         val authenticationContext = buildAuthenticationContextPair(request, response, context);
         val binding = determineProfileBinding(authenticationContext, assertion);
@@ -402,6 +365,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val context = new JEEContext(request, response);
         val relayState = configurationContext.getSessionStore()
             .get(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE)
+            .or(() -> Optional.ofNullable(SAMLBindingSupport.getRelayState(authnContext.getValue())))
             .orElseGet(() -> request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));
         val messageContext = bindRelayStateParameter(request, response, authnContext, (String) relayState);
         return Pair.of(authnContext.getLeft(), messageContext);
@@ -480,6 +444,12 @@ public abstract class AbstractSamlIdPProfileHandlerController {
 
         val facade = adaptor.get();
         verifyAuthenticationContextSignature(authenticationContext, request, authnRequest, facade, registeredService);
+
+        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, authenticationContext.getRight()), facade,
+            authnRequest.getProtocolBinding());
+        LOGGER.debug("Determined SAML2 endpoint for authentication request as [{}]",
+            StringUtils.defaultIfBlank(acs.getResponseLocation(), acs.getLocation()));
+
         SamlUtils.logSamlObject(configurationContext.getOpenSamlConfigBean(), authnRequest);
         return Pair.of(registeredService, facade);
     }
@@ -669,7 +639,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
         val webContext = new JEEContext(request, response);
         return SamlIdPUtils.retrieveSamlRequest(webContext, configurationContext.getSessionStore(),
-            configurationContext.getOpenSamlConfigBean(), AuthnRequest.class)
+                configurationContext.getOpenSamlConfigBean(), AuthnRequest.class)
             .orElseThrow(() -> new IllegalArgumentException("SAML request or context could not be determined from session store"));
     }
 

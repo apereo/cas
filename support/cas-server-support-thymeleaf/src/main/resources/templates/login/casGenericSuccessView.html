@@ -87,7 +87,7 @@
                 </section>
 
                 <section id="attribute-tab-1" class="d-none attribute-tab">
-                    <div class="w-100 mdc-data-table mx-auto my-4" id="divPrincipalAttributes" role="tabpanel" aria-labelledby="attributes-tab">
+                    <div class="w-100 mdc-data-table mx-auto my-4" id="divAuthenticationAttributes" role="tabpanel" aria-labelledby="attributes-tab">
                         <table id="attributesTable" class="mdc-data-table__table" style="white-space: unset">
                             <thead>
                             <tr class="mdc-data-table__header-row">
@@ -98,9 +98,10 @@
                             </thead>
                             <tbody class="mdc-data-table__content">
                         
-                            <tr th:each="attribute : ${authentication.attributes}" class="mdc-data-table__row">
-                                <td class="mdc-data-table__cell"><code><span th:utext="${attribute.key}"/></code></td>
-                                <td class="mdc-data-table__cell">
+                            <tr th:attr="id=${attribute.key}"
+                                th:each="attribute : ${authentication.attributes}" class="mdc-data-table__row">
+                                <td class="mdc-data-table__cell attribute-key"><code><span th:utext="${attribute.key}"/></code></td>
+                                <td class="mdc-data-table__cell attribute-value">
                                     <code><kbd th:utext="${#strings.abbreviate(attribute.value, 80)}"/></code>
                                 </td>
                             </tr>
@@ -110,7 +111,7 @@
                 </section>
 
                 <section id="attribute-tab-2" class="d-none attribute-tab" th:if="${authorizedServices}">
-                    <div class="w-100 mdc-data-table mx-auto my-4" id="divPrincipalAttributes" role="tabpanel" aria-labelledby="attributes-tab">
+                    <div class="w-100 mdc-data-table mx-auto my-4" id="divAuthorizedServices" role="tabpanel" aria-labelledby="attributes-tab">
                         <table id="attributesTable" class="mdc-data-table__table" style="white-space: unset">
                             <thead>
                             <tr class="mdc-data-table__header-row">
@@ -153,9 +154,14 @@
         
 
         <script type="text/javascript" th:inline="javascript">
-            let div = document.querySelector('#divPrincipalAttributes');
-            new mdc.dataTable.MDCDataTable(div);
-
+            let divs = ["divPrincipalAttributes", "divAuthenticationAttributes", "divAuthorizedServices"]
+            divs.forEach(id => {
+                let div = document.querySelector('#' + id);
+                if (div != null) {
+                    new mdc.dataTable.MDCDataTable(div);
+                }
+            })
+            
             $(function() {
                 tabify(mdc);
             });

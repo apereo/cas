@@ -91,7 +91,7 @@ are now automatically documented. [This](../monitoring/Monitoring-Statistics.htm
 
 ### Test Coverage
 
-CAS test coverage stands steady at `92%`. The collection of browser/functional tests has now grown to ~130 scenarios.
+CAS test coverage stands steady at `92%`. The collection of browser/functional tests has now grown to ~156 scenarios.
 
 ## Other Stuff
        

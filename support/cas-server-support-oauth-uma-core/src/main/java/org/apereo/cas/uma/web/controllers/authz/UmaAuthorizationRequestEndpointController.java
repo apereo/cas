@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -62,7 +63,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity handleAuthorizationRequest(@RequestBody final String body,
-        final HttpServletRequest request, final HttpServletResponse response) {
+                                                     final HttpServletRequest request, final HttpServletResponse response) {
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_AUTHORIZATION_SCOPE);
             val umaRequest = MAPPER.readValue(JsonValue.readHjson(body).toString(), UmaAuthorizationRequest.class);
@@ -110,11 +111,11 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
      */
     @SneakyThrows
     protected ResponseEntity handleMismatchedClaims(final HttpServletRequest request,
-        final HttpServletResponse response,
-        final ResourceSet resourceSet,
-        final UserProfile profileResult,
-        final UmaResourceSetClaimPermissionResult analysisResult,
-        final UmaPermissionTicket permissionTicket) {
+                                                    final HttpServletResponse response,
+                                                    final ResourceSet resourceSet,
+                                                    final UserProfile profileResult,
+                                                    final UmaResourceSetClaimPermissionResult analysisResult,
+                                                    final UmaPermissionTicket permissionTicket) {
 
         val model = new LinkedHashMap<String, Object>();
         model.put(OAuth20Constants.ERROR, OAuth20Constants.NEED_INFO);
@@ -194,8 +195,8 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             .getAuthn().getOauth().getUma().getRequestingPartyToken().getMaxTimeToLiveInSeconds()).getSeconds();
         request.setAttribute(UmaPermissionTicket.class.getName(), permissionTicket);
         request.setAttribute(ResourceSet.class.getName(), resourceSet);
-        val idToken = getUmaConfigurationContext().getRequestingPartyTokenGenerator().generate(request, response,
-            accessToken, timeout, OAuth20ResponseTypes.CODE, registeredService);
+        val idToken = getUmaConfigurationContext().getRequestingPartyTokenGenerator().generate(new JEEContext(request, response),
+            accessToken, timeout, OAuth20ResponseTypes.CODE, OAuth20GrantTypes.UMA_TICKET, registeredService);
         accessToken.setIdToken(idToken);
         getUmaConfigurationContext().getCentralAuthenticationService().updateTicket(accessToken);
 

@@ -33,8 +33,6 @@ import java.util.Map;
 public class DefaultConsentEngine implements ConsentEngine {
     private static final long serialVersionUID = -617809298856160625L;
 
-    private static final int MAP_SIZE = 8;
-
     private final ConsentRepository consentRepository;
 
     private final ConsentDecisionBuilder consentDecisionBuilder;
@@ -80,7 +78,7 @@ public class DefaultConsentEngine implements ConsentEngine {
         if (policy != null) {
             return policy.getConsentableAttributes(authentication.getPrincipal(), service, registeredService);
         }
-        return new LinkedHashMap<>(MAP_SIZE);
+        return new LinkedHashMap<>();
     }
 
     @Override
