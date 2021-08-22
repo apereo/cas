@@ -22,7 +22,7 @@ You will need to [generate your own PGP signatures](https://blog.sonatype.com/20
 sign the release artifacts prior to uploading them to a central repository. In order to create OpenPGP signatures, you will 
 need to generate a key pair. You need to provide the build with your key information, which means three things:
 
-- The public key ID (The last 8 symbols of the keyId. You can use `gpg -K` to get it
+- The public key ID (The last 8 symbols of the keyId. You can use `gpg -K` to get it).
 - The absolute path to the secret key ring file containing your private key. Since gpg 2.1, you need to export the keys with command:
 
 ```bash
@@ -78,9 +78,12 @@ skip this step and move on to next section to build and release.</p></div>
 <div class="alert alert-warning"><strong>Remember</strong><p>You should do this only for major or minor 
 releases, when new branches are created.</p></div>
  
-- Change `.github/workflows/cas-build.yml` to trigger and *only* build the newly-created release branch. Scan the file to make sure all references point to the newly-created release branch.
-- Examine all CI shell scripts under the `ci` folder to make sure nothing points to `development` or `master`. This is particularly applicable to how CAS documentation is published to the `gh-pages` branch.
-- Disable jobs in CI that report new dependency versions, update dependencies using Renovate, publish Docker images, etc.
+Change GitHub Actions workflows to trigger and *only* build the newly-created release branch:
+* 
+* Modify the `analysis.yml` workflow to run on the newly-created branch. Disable `spotBugsMain`, `spotBugsTest` and `checkLicense` tasks.
+* Modify the `validation.yml` workflow to run on the newly-created branch.
+* Modify the `build.yml` workflow to run on the newly-created branch, and only on Ubuntu. Disable the job to skip building on the latest JDK.
+* Modify the `publish.yml` workflow to run on the newly-created branch, and change the "Publish Documentation" parameter to point to the newly-created branch.
  
 Do not forget to commit all changes and push changes upstream, creating a new remote branch to track the release.
 
@@ -134,4 +137,3 @@ This task is only relevant when dealing with major or minor releases.
 
 (Optional) A number of CAS demos today run on Heroku and are tracked in dedicated 
 branches inside the codebase. Take a pass and update each, when relevant.
-                                                                                   
