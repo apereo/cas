@@ -2,9 +2,12 @@ package org.apereo.cas.authentication;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.ssl.SSLContexts;
 import org.jooq.lambda.Unchecked;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -43,6 +46,11 @@ public interface CasSSLContext {
             }
 
             @Override
+            public HostnameVerifier getHostnameVerifier() {
+                return new DefaultHostnameVerifier();
+            }
+
+            @Override
             public KeyManager[] getKeyManagers() {
                 return Unchecked.supplier(() -> {
                     val factory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
@@ -59,42 +67,7 @@ public interface CasSSLContext {
      * @return the cas ssl context
      */
     static CasSSLContext disabled() {
-        return new CasSSLContext() {
-            @Override
-            @SneakyThrows
-            public SSLContext getSslContext() {
-                val sc = SSLContext.getInstance("SSL");
-                sc.init(getKeyManagers(), getTrustManagers(), null);
-                return sc;
-            }
-
-            @Override
-            public TrustManager[] getTrustManagers() {
-                return new TrustManager[] {getDisabledTrustedManager()};
-            }
-
-            @Override
-            public KeyManager[] getKeyManagers() {
-                return new KeyManager[0];
-            }
-
-            private X509TrustManager getDisabledTrustedManager() {
-                return new X509TrustManager() {
-                    @Override
-                    public X509Certificate[] getAcceptedIssuers() {
-                        return null;
-                    }
-
-                    @Override
-                    public void checkClientTrusted(final X509Certificate[] certs, final String authType) {
-                    }
-
-                    @Override
-                    public void checkServerTrusted(final X509Certificate[] certs, final String authType) {
-                    }
-                };
-            }
-        };
+        return new DisabledCasSslContext();
     }
 
     /**
@@ -117,4 +90,53 @@ public interface CasSSLContext {
      * @return the key manager [ ]
      */
     KeyManager[] getKeyManagers();
+
+    /**
+     * Gets hostname verifier.
+     *
+     * @return the hostname verifier
+     */
+    HostnameVerifier getHostnameVerifier();
+
+    class DisabledCasSslContext implements CasSSLContext {
+        private static X509TrustManager getDisabledTrustedManager() {
+            return new X509TrustManager() {
+                @Override
+                public X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+
+                @Override
+                public void checkClientTrusted(final X509Certificate[] certs, final String authType) {
+                }
+
+                @Override
+                public void checkServerTrusted(final X509Certificate[] certs, final String authType) {
+                }
+            };
+        }
+
+        @Override
+        @SneakyThrows
+        public SSLContext getSslContext() {
+            val sc = SSLContext.getInstance("SSL");
+            sc.init(getKeyManagers(), getTrustManagers(), null);
+            return sc;
+        }
+
+        @Override
+        public TrustManager[] getTrustManagers() {
+            return new TrustManager[]{getDisabledTrustedManager()};
+        }
+
+        @Override
+        public KeyManager[] getKeyManagers() {
+            return new KeyManager[0];
+        }
+
+        @Override
+        public HostnameVerifier getHostnameVerifier() {
+            return NoopHostnameVerifier.INSTANCE;
+        }
+    }
 }
