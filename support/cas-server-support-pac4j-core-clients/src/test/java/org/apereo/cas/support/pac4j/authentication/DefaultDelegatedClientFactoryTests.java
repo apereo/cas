@@ -1,5 +1,7 @@
 package org.apereo.cas.support.pac4j.authentication;
 
+import org.apereo.cas.authentication.CasSSLContext;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
@@ -19,6 +21,10 @@ import org.pac4j.cas.config.CasProtocol;
 import org.pac4j.oauth.client.GitHubClient;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.store.HttpSessionStoreFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.io.File;
 import java.util.List;
@@ -32,7 +38,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Delegation")
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    CasCoreHttpConfiguration.class
+})
 public class DefaultDelegatedClientFactoryTests {
+    @Autowired
+    @Qualifier("casSslContext")
+    private CasSSLContext casSslContext;
 
     private static Pac4jSamlClientProperties getPac4jSamlClientProperties(final String sessionFactory) throws Exception {
         val saml = new Pac4jSamlClientProperties();
@@ -66,6 +79,10 @@ public class DefaultDelegatedClientFactoryTests {
         props.setSecret("TestSecret");
     }
 
+    private DefaultDelegatedClientFactory getDefaultDelegatedClientFactory(final CasConfigurationProperties casSettings) {
+        return new DefaultDelegatedClientFactory(casSettings, List.of(), casSslContext);
+    }
+
     @Test
     public void verifyFactoryForIdentifiableClients() {
         val props = new Pac4jDelegatedAuthenticationProperties();
@@ -94,7 +111,7 @@ public class DefaultDelegatedClientFactoryTests {
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val factory = getDefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(13, clients.size());
         factory.destroy();
@@ -114,7 +131,7 @@ public class DefaultDelegatedClientFactoryTests {
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val factory = getDefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
     }
@@ -129,7 +146,7 @@ public class DefaultDelegatedClientFactoryTests {
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val factory = getDefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
         val client = (CasClient) clients.iterator().next();
@@ -144,7 +161,7 @@ public class DefaultDelegatedClientFactoryTests {
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val factory = getDefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
 
@@ -160,7 +177,7 @@ public class DefaultDelegatedClientFactoryTests {
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val factory = getDefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
     }
@@ -174,7 +191,7 @@ public class DefaultDelegatedClientFactoryTests {
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val factory = getDefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
     }
@@ -186,7 +203,7 @@ public class DefaultDelegatedClientFactoryTests {
         props.getGithub().setScope("user");
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val factory = getDefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
         val client = (GitHubClient) clients.iterator().next();
@@ -212,7 +229,7 @@ public class DefaultDelegatedClientFactoryTests {
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val factory = getDefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
     }
@@ -250,7 +267,7 @@ public class DefaultDelegatedClientFactoryTests {
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val factory = getDefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(4, clients.size());
     }

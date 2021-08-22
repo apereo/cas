@@ -11,6 +11,7 @@ import lombok.val;
 import org.apache.http.ssl.SSLContexts;
 import org.springframework.core.io.Resource;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -40,10 +41,13 @@ public class DefaultCasSSLContext implements CasSSLContext {
 
     private final KeyManager[] keyManagers;
 
+    private final HostnameVerifier hostnameVerifier;
+
     public DefaultCasSSLContext(final Resource trustStoreFile,
                                 final String trustStorePassword,
                                 final String trustStoreType,
-                                final HttpClientProperties httpClientProperties) throws Exception {
+                                final HttpClientProperties httpClientProperties,
+                                final HostnameVerifier hostnameVerifier) throws Exception {
         val disabled = httpClientProperties.getHostNameVerifier().equalsIgnoreCase("none");
         if (disabled) {
             this.trustManagers = CasSSLContext.disabled().getTrustManagers();
@@ -69,6 +73,7 @@ public class DefaultCasSSLContext implements CasSSLContext {
         }
         this.sslContext = SSLContexts.custom().setProtocol("SSL").build();
         this.sslContext.init(this.keyManagers, this.trustManagers, null);
+        this.hostnameVerifier = hostnameVerifier;
     }
 
     @SneakyThrows

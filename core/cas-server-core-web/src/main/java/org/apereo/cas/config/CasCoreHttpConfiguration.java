@@ -57,7 +57,7 @@ public class CasCoreHttpConfiguration {
         val client = casProperties.getHttpClient().getTruststore();
         if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
             return new DefaultCasSSLContext(client.getFile(), client.getPsw(),
-                client.getType(), casProperties.getHttpClient());
+                client.getType(), casProperties.getHttpClient(), hostnameVerifier());
         }
         if (casProperties.getHttpClient().getHostNameVerifier().equalsIgnoreCase("none")) {
             return CasSSLContext.disabled();
