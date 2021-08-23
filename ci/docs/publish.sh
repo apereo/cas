@@ -7,11 +7,15 @@ proofRead=${3:-true}
 publishDocs=${4:-true}
 preBuild=${5:-true}
 
+echo "--------------------------------------"
 echo "Branch: ${branchVersion}"
 echo "Generate Data: ${generateData}"
 echo "Proof Read: ${proofRead}"
 echo "Publish: ${publishDocs}"
 echo "Pre Build: ${preBuild}"
+echo "--------------------------------------"
+
+rm -Rf $PWD/gh-pages
 
 function validateProjectDocumentation {
   HTML_PROOFER_IMAGE=hdeadman/html-proofer:latest
@@ -84,48 +88,49 @@ if [[ $generateData == "true" ]]; then
   echo -e "Generated documentation data at $PWD/gh-pages/_data/$branchVersion...\n"
 else 
   echo -e "Skipping documentation data generation...\n"
+  rm -Rf $PWD/gh-pages/_data 
 fi 
 
 rm -Rf $PWD/docs-latest
 rm -Rf $PWD/docs-includes
 
-echo "Looking for badly named include fragments..."
-ls $PWD/gh-pages/_includes/$branchVersion/*.md | grep -v '\-configuration.md$'
-docsVal=$?
-if [ $docsVal == 0 ]; then
- echo "Found include fragments whose name does not end in '-configuration.md'"
- exit 1
-fi
-
-echo "Looking for unused include fragments..."
-res=0
-files=$(ls $PWD/gh-pages/_includes/$branchVersion/*.md)
-for f in $files; do
- fname=$(basename "$f")
-#  echo "Looking for $fname in $PWD/gh-pages/$branchVersion";
- grep -r $fname "$PWD/gh-pages/$branchVersion" --include \*.md >/dev/null 2>&1
- docsVal=$?
- if [ $docsVal == 1 ]; then
-   grep -r $fname "$PWD/gh-pages/_includes/$branchVersion" --include \*.md >/dev/null 2>&1
-   docsVal=$?
- fi
- if [ $docsVal == 1 ]; then
-   grep "fragment:keep" $f >/dev/null 2>&1
-   docsVal=$?
-   if [ $docsVal == 1 ]; then
-      echo "$f is unused."
-      rm "docs/cas-server-documentation/_includes/$fname"
-      res=1
-   fi
- fi
-done
-
-if [ $res == 1 ]; then
- echo "Found unused include fragments."
- exit 1
-fi
-
 if [[ $proofRead == "true" ]]; then
+  echo "Looking for badly named include fragments..."
+  ls $PWD/gh-pages/_includes/$branchVersion/*.md | grep -v '\-configuration.md$'
+  docsVal=$?
+  if [ $docsVal == 0 ]; then
+    echo "Found include fragments whose name does not end in '-configuration.md'"
+    exit 1
+  fi
+
+  echo "Looking for unused include fragments..."
+  res=0
+  files=$(ls $PWD/gh-pages/_includes/$branchVersion/*.md)
+  for f in $files; do
+    fname=$(basename "$f")
+    #  echo "Looking for $fname in $PWD/gh-pages/$branchVersion";
+    grep -r $fname "$PWD/gh-pages/$branchVersion" --include \*.md >/dev/null 2>&1
+    docsVal=$?
+    if [ $docsVal == 1 ]; then
+      grep -r $fname "$PWD/gh-pages/_includes/$branchVersion" --include \*.md >/dev/null 2>&1
+      docsVal=$?
+    fi
+    if [ $docsVal == 1 ]; then
+      grep "fragment:keep" $f >/dev/null 2>&1
+      docsVal=$?
+      if [ $docsVal == 1 ]; then
+          echo "$f is unused."
+          rm "docs/cas-server-documentation/_includes/$fname"
+          res=1
+      fi
+    fi
+  done
+
+  if [ $res == 1 ]; then
+    echo "Found unused include fragments."
+    exit 1
+  fi
+
   echo "Validating documentation links..."
   validateProjectDocumentation
   retVal=$?
@@ -145,8 +150,9 @@ if [[ $preBuild == "true" ]]; then
   bundle install --full-index
   bundle update jekyll
   bundle update github-pages
-  echo -e "\nBuilding documentation site...\n"
-  bundle exec jekyll build --incremental --profile --config=_config.yml,cas-config.yml
+  echo -e "\nBuilding documentation site for $branchVersion with data at $PWD/gh-pages/_data...\n"
+  bundle exec jekyll build --profile --config=_config.yml,cas-config.yml
+  rm cas-config.yml
   retVal=$?
   if [[ ${retVal} -eq 1 ]]; then
     echo -e "Failed to build documentation.\n"
@@ -154,7 +160,7 @@ if [[ $preBuild == "true" ]]; then
   fi
 fi 
 
-rm -Rf _site .jekyll-metadata .sass-cache "$branchVersion/build"
+rm -Rf .jekyll-metadata .sass-cache "$branchVersion/build"
 
 echo -e "\nConfiguring git repository settings...\n"
 rm -Rf .git
@@ -169,14 +175,20 @@ git switch gh-pages 2>/dev/null || git switch -c gh-pages;
 echo -e "Configuring tracking branches for repository...\n"
 git branch -u origin/gh-pages
 
-echo -e "Adding changes to the git index...\n"
-git add --all -f
-
-echo -e "Committing changes...\n"
-git commit -am "Published docs to [gh-pages] from $branchVersion. "
-git status 
+rm -Rf ./$branchVersion
+mv _site/$branchVersion .          
+touch $branchVersion/.nojekyll
+rm -Rf _site
+rm -Rf _data
 
 if [[ "${publishDocs}" == "true" ]]; then
+  echo -e "Adding changes to the git index...\n"
+  git add --all -f 2>/dev/null 
+
+  echo -e "Committing changes...\n"
+  git commit -am "Published docs to [gh-pages] from $branchVersion." 2>/dev/null 
+  git status 
+
   echo -e "Pushing changes to remote repository...\n"
   if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "apereo/cas" ]; then
     echo -e "\nNo GitHub token is defined to publish documentation."
