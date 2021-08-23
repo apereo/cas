@@ -21,7 +21,7 @@ Duo offers several options for authenticating users:
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-duo" %}
 
 <div class="alert alert-warning"><strong>Usage</strong>
-<p><strong>Please note that support for Duo multifactor authentication that is based on the Duo's Web SDK and the embedded iFrame
+<p>Please note that support for Duo multifactor authentication that is based on the Duo's Web SDK and the embedded iFrame
 is deprecated and scheduled to be removed in the future. You should consider switching to the 'Universal Prompt' variant
 described in this document to avoid surprised in future upgrades.</p>
 </div>
