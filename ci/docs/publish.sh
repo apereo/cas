@@ -16,10 +16,42 @@ function printyellow() {
 
 clear
 branchVersion="$1"
-generateData=${2:-true}
-proofRead=${3:-true}
-publishDocs=${4:-true}
-preBuild=${5:-true}
+generateData=true
+proofRead=true
+publishDocs=true
+preBuild=true
+
+while (("$#")); do
+  case "$1" in
+  --branch)
+    branchVersion=$2
+    shift 2
+    ;;
+  --generate-data)
+    generateData=$2
+    shift 2
+    ;;
+  --proof-read)
+    proofRead=$2
+    shift 2
+    ;;
+  --publish)
+    publishDocs=$2
+    shift 2
+    ;;
+  --build)
+    preBuild=$2
+    shift 2
+    ;;
+  *)
+    shift
+    ;;
+  esac
+done
+
+if [[ $branchVersion == "master" ]]; then
+  branchVersion="development"
+fi
 
 echo "-------------------------------------------------------"
 printgreen "Branch: \t${branchVersion}"
@@ -31,28 +63,28 @@ echo "-------------------------------------------------------"
 
 rm -Rf $PWD/gh-pages
 
-function validateProjectDocumentation {
+function validateProjectDocumentation() {
   HTML_PROOFER_IMAGE=hdeadman/html-proofer:latest
   DOCS_FOLDER=$PWD/gh-pages/"$branchVersion"
   DOCS_OUTPUT=/tmp/build/out
   HTML_PROOFER_SCRIPT=$PWD/ci/docs/html-proofer-docs.rb
-  
+
   echo "Running html-proof image: ${HTML_PROOFER_IMAGE} on ${DOCS_FOLDER} with output ${DOCS_OUTPUT} using ${HTML_PROOFER_SCRIPT}"
   docker run --name="html-proofer" --rm \
-      --workdir /root \
-      -v ${DOCS_FOLDER}:/root/docs \
-      -v ${DOCS_OUTPUT}:/root/out \
-      -v ${HTML_PROOFER_SCRIPT}:/root/html-proofer-docs.rb \
-      --entrypoint /usr/local/bin/ruby \
-       ${HTML_PROOFER_IMAGE} \
-       /root/html-proofer-docs.rb
+    --workdir /root \
+    -v ${DOCS_FOLDER}:/root/docs \
+    -v ${DOCS_OUTPUT}:/root/out \
+    -v ${HTML_PROOFER_SCRIPT}:/root/html-proofer-docs.rb \
+    --entrypoint /usr/local/bin/ruby \
+    ${HTML_PROOFER_IMAGE} \
+    /root/html-proofer-docs.rb
   retVal=$?
   if [[ ${retVal} -eq 0 ]]; then
-      echo "HTML Proofer found no bad links."
-      return 0
+    printgreen "HTML Proofer found no bad links."
+    return 0
   else
-      echo "HTML Proofer found bad links."
-      return 1
+    printred "HTML Proofer found bad links."
+    return 1
   fi
 }
 
@@ -71,9 +103,9 @@ git clone --single-branch --depth 1 --branch gh-pages --quiet \
   https://${GH_PAGES_TOKEN}@github.com/apereo/cas $PWD/gh-pages
 
 printgreen "Removing previous documentation from $branchVersion...\n"
-rm -Rf $PWD/gh-pages/"$branchVersion" > /dev/null
-rm -Rf $PWD/gh-pages/_includes/"$branchVersion" > /dev/null
-rm -Rf $PWD/gh-pages/_data/"$branchVersion" > /dev/null
+rm -Rf $PWD/gh-pages/"$branchVersion" >/dev/null
+rm -Rf $PWD/gh-pages/_includes/"$branchVersion" >/dev/null
+rm -Rf $PWD/gh-pages/_data/"$branchVersion" >/dev/null
 
 printgreen "Creating $branchVersion directory...\n"
 mkdir -p "$PWD/gh-pages/$branchVersion"
@@ -86,7 +118,7 @@ cp -Rf $PWD/docs-latest/* "$PWD/gh-pages/$branchVersion"
 cp -Rf $PWD/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
 printgreen "Copied project documentation to $PWD/gh-pages/...\n"
 
-rm -Rf $PWD/gh-pages/_data/"$branchVersion" > /dev/null
+rm -Rf $PWD/gh-pages/_data/"$branchVersion" >/dev/null
 if [[ $generateData == "true" ]]; then
   docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
   printgreen "Generating documentation site data...\n"
@@ -98,14 +130,14 @@ if [[ $generateData == "true" ]]; then
     fi
   fi
   chmod +x ${docgen}
-  dataDir=`echo "$branchVersion" | sed 's/\.//g'`
+  dataDir=$(echo "$branchVersion" | sed 's/\.//g')
   printgreen "Generating documentation data at $PWD/gh-pages/_data/$dataDir...\n"
   ${docgen} "$PWD/gh-pages/_data" "$dataDir" "$PWD"
   printgreen "Generated documentation data at $PWD/gh-pages/_data/$dataDir...\n"
-else 
+else
   printgreen "Skipping documentation data generation...\n"
-  rm -Rf $PWD/gh-pages/_data 
-fi 
+  rm -Rf $PWD/gh-pages/_data
+fi
 
 rm -Rf $PWD/docs-latest
 rm -Rf $PWD/docs-includes
@@ -135,9 +167,9 @@ if [[ $proofRead == "true" ]]; then
       grep "fragment:keep" $f >/dev/null 2>&1
       docsVal=$?
       if [ $docsVal == 1 ]; then
-          echo "$f is unused."
-          rm "docs/cas-server-documentation/_includes/$fname"
-          res=1
+        echo "$f is unused."
+        rm "docs/cas-server-documentation/_includes/$fname"
+        res=1
       fi
     fi
   done
@@ -169,14 +201,14 @@ if [[ $preBuild == "true" ]]; then
   printgreen "\nBuilding documentation site for $branchVersion with data at $PWD/gh-pages/_data...\n"
   echo -n "Starting at " && date
   bundle exec jekyll build --profile --config=_config.yml,cas-config.yml
-   echo -n "Ended at " && date
+  echo -n "Ended at " && date
   rm cas-config.yml
   retVal=$?
   if [[ ${retVal} -eq 1 ]]; then
     printred "Failed to build documentation.\n"
     exit ${retVal}
   fi
-fi 
+fi
 
 rm -Rf .jekyll-metadata .sass-cache "$branchVersion/build"
 
@@ -189,7 +221,7 @@ git config user.name "CAS"
 git config core.fileMode false
 
 printgreen "Checking out branch..."
-git switch gh-pages 2>/dev/null || git switch -c gh-pages 2>/dev/null;
+git switch gh-pages 2>/dev/null || git switch -c gh-pages 2>/dev/null
 printgreen "Configuring tracking branches for repository...\n"
 git branch -u origin/gh-pages
 
@@ -201,11 +233,11 @@ rm -Rf _data
 
 if [[ "${publishDocs}" == "true" ]]; then
   printgreen "Adding changes to the git index...\n"
-  git add --all -f 2>/dev/null 
+  git add --all -f 2>/dev/null
 
   printgreen "Committing changes...\n"
-  git commit -am "Published docs to [gh-pages] from $branchVersion." 2>/dev/null 
-  git status 
+  git commit -am "Published docs to [gh-pages] from $branchVersion." 2>/dev/null
+  git status
 
   printgreen "Pushing changes to remote repository...\n"
   if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "apereo/cas" ]; then
@@ -220,15 +252,15 @@ if [[ "${publishDocs}" == "true" ]]; then
   retVal=$?
 else
   printyellow "Skipping documentation push to remote repository...\n"
-fi 
+fi
 
 popd
 rm -Rf "$PWD/gh-pages"
 
 if [[ ${retVal} -eq 0 ]]; then
-   printgreen "Done processing documentation to $branchVersion.\n"
-   exit 0
+  printgreen "Done processing documentation to $branchVersion.\n"
+  exit 0
 else
-   printred "Failed to process documentation.\n"
-   exit ${retVal}
+  printred "Failed to process documentation.\n"
+  exit ${retVal}
 fi
