@@ -1,5 +1,7 @@
 #!/bin/bash
 
+GENERATE_DATA="false";
+
 clear
 branchVersion="$1"
 
@@ -53,24 +55,26 @@ mkdir -p "$PWD/gh-pages/_includes/$branchVersion"
 mkdir -p "$PWD/gh-pages/_data/$branchVersion"
 
 echo -e "Copying new docs to $branchVersion...\n"
+mv "$PWD/docs-latest/cas-config.yml" "$PWD/gh-pages"
 cp -Rf $PWD/docs-latest/* "$PWD/gh-pages/$branchVersion"
 cp -Rf $PWD/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
 echo -e "Copied project documentation to $PWD/gh-pages/...\n"
 
-docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
-echo -e "Generating documentation site data...\n"
-if [ ! -f "$docgen" ]; then
 rm -Rf $PWD/gh-pages/_data/"$branchVersion" > /dev/null
-  ./gradlew :docs:cas-server-documentation-processor:build --no-daemon -x check -x test -x javadoc --configure-on-demand
-  if [ $? -eq 1 ]; then
-    echo "Unable to build the documentation processor. Aborting..."
-    exit 1
+if [[ $GENERATE_DATA == "true" ]]; then
+  docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
+  echo -e "Generating documentation site data...\n"
+  if [[ ! -f "$docgen" ]]; then
+    ./gradlew :docs:cas-server-documentation-processor:build --no-daemon -x check -x test -x javadoc --configure-on-demand
+    if [ $? -eq 1 ]; then
+      echo "Unable to build the documentation processor. Aborting..."
+      exit 1
+    fi
   fi
-fi
-
-chmod +x ${docgen}
-${docgen} "$PWD/gh-pages/_data" "$branchVersion" "$PWD"
-echo -e "Generated documentation data at $PWD/gh-pages/_data/$branchVersion...\n"
+  chmod +x ${docgen}
+  ${docgen} "$PWD/gh-pages/_data" "$branchVersion" "$PWD"
+  echo -e "Generated documentation data at $PWD/gh-pages/_data/$branchVersion...\n"
+fi 
 
 rm -Rf $PWD/docs-latest
 rm -Rf $PWD/docs-includes
@@ -127,7 +131,7 @@ bundle install --full-index
 bundle update jekyll
 bundle update github-pages
 echo -e "\nBuilding documentation site...\n"
-bundle exec jekyll build --incremental --profile 
+bundle exec jekyll build --incremental --profile --config=_config.yml,cas-config.yml
 retVal=$?
 if [[ ${retVal} -eq 1 ]]; then
   echo -e "Failed to build documentation.\n"
@@ -177,4 +181,3 @@ else
    echo -e "Failed to publish documentation.\n"
    exit ${retVal}
 fi
-
