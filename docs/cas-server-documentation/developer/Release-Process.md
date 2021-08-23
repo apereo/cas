@@ -110,7 +110,7 @@ You should also switch back to the main development branch (i.e. `master`) and f
 <div class="alert alert-info"><strong>Remember</strong><p>When updating the release description, try to be keep 
 consistent and follow the same layout as previous releases.</p></div>
 
-- Mark the release tag as pre-release, when releasing RC versions of the project on GitHub. 
+Remember to mark the release tag as pre-release, when releasing RC versions of the project on GitHub. 
 
 ## Update CAS Initializr
 
@@ -122,6 +122,7 @@ based on the newly-released version.
 <div class="alert alert-warning"><strong>Remember</strong><p>You should do this only for major or minor releases, when new branches are created.</p></div>
 
 - Configure docs to point `current` to the latest available version [here](https://github.com/apereo/cas/blob/gh-pages/current/index.html).
+- Modify the `cas-server-documentation/cas-config.yml` file to exclude relevant branches and directories from the build. 
 - Configure docs to include the new release in the list of [available versions](https://github.com/apereo/cas/blob/gh-pages/_layouts/default.html).
 - Update the project's [`README.md` page](https://github.com/apereo/cas/blob/master/README.md) to list the new version, if necessary.
 - Update [the build process](Build-Process.html) to include any needed information on how to build the new release.
@@ -129,8 +130,10 @@ based on the newly-released version.
 
 ## Update Maintenance Policy
 
-Update the [Maintenance Policy](https://github.com/apereo/cas/edit/gh-pages/developer/Maintenance-Policy.md/) to note the release schedule and EOL timeline. 
-This task is only relevant when dealing with major or minor releases.
+<div class="alert alert-warning"><strong>Remember</strong><p>You should do this only for major or minor releases, when new branches are created.</p></div>
+
+Update the [Maintenance Policy](https://github.com/apereo/cas/edit/gh-pages/developer/Maintenance-Policy.md/) to note 
+the release schedule and EOL timeline.
 
 ## Update Demos
 

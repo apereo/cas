@@ -1,5 +1,19 @@
 #!/bin/bash
 
+RED="\e[31m"
+GREEN="\e[32m"
+YELLOW="\e[33m"
+ENDCOLOR="\e[0m"
+function printred() {
+  printf "${RED}$1${ENDCOLOR}\n"
+}
+function printgreen() {
+  printf "${GREEN}$1${ENDCOLOR}\n"
+}
+function printyellow() {
+  printf "${YELLOW}$1${ENDCOLOR}\n"
+}
+
 clear
 branchVersion="$1"
 generateData=${2:-true}
@@ -7,13 +21,13 @@ proofRead=${3:-true}
 publishDocs=${4:-true}
 preBuild=${5:-true}
 
-echo "--------------------------------------"
-echo "Branch: ${branchVersion}"
-echo "Generate Data: ${generateData}"
-echo "Proof Read: ${proofRead}"
-echo "Publish: ${publishDocs}"
-echo "Pre Build: ${preBuild}"
-echo "--------------------------------------"
+echo "-------------------------------------------------------"
+printgreen "Branch: \t${branchVersion}"
+printgreen "Generate Data: \t${generateData}"
+printgreen "Proof Read: \t${proofRead}"
+printgreen "Publish: \t${publishDocs}"
+printgreen "Pre Build: \t${preBuild}"
+echo "-------------------------------------------------------"
 
 rm -Rf $PWD/gh-pages
 
@@ -45,37 +59,37 @@ function validateProjectDocumentation {
 [[ -d $PWD/docs-latest ]] && rm -Rf $PWD/docs-latest
 [[ -d $PWD/docs-includes ]] && rm -Rf $PWD/docs-includes
 
-echo -e "Copying project documentation over to $PWD/docs-latest...\n"
+printgreen "Copying project documentation over to $PWD/docs-latest...\n"
 chmod -R 777 docs/cas-server-documentation
 cp -R docs/cas-server-documentation/ $PWD/docs-latest
 mv $PWD/docs-latest/_includes $PWD/docs-includes
 
-echo -e "Cloning the repository to push documentation...\n"
+printgreen "Cloning the repository to push documentation...\n"
 [[ -d $PWD/gh-pages ]] && rm -Rf $PWD/gh-pages
 
 git clone --single-branch --depth 1 --branch gh-pages --quiet \
   https://${GH_PAGES_TOKEN}@github.com/apereo/cas $PWD/gh-pages
 
-echo -e "Removing previous documentation from $branchVersion...\n"
+printgreen "Removing previous documentation from $branchVersion...\n"
 rm -Rf $PWD/gh-pages/"$branchVersion" > /dev/null
 rm -Rf $PWD/gh-pages/_includes/"$branchVersion" > /dev/null
 rm -Rf $PWD/gh-pages/_data/"$branchVersion" > /dev/null
 
-echo -e "Creating $branchVersion directory...\n"
+printgreen "Creating $branchVersion directory...\n"
 mkdir -p "$PWD/gh-pages/$branchVersion"
 mkdir -p "$PWD/gh-pages/_includes/$branchVersion"
 mkdir -p "$PWD/gh-pages/_data/$branchVersion"
 
-echo -e "Copying new docs to $branchVersion...\n"
+printgreen "Copying new docs to $branchVersion...\n"
 mv "$PWD/docs-latest/cas-config.yml" "$PWD/gh-pages"
 cp -Rf $PWD/docs-latest/* "$PWD/gh-pages/$branchVersion"
 cp -Rf $PWD/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
-echo -e "Copied project documentation to $PWD/gh-pages/...\n"
+printgreen "Copied project documentation to $PWD/gh-pages/...\n"
 
 rm -Rf $PWD/gh-pages/_data/"$branchVersion" > /dev/null
 if [[ $generateData == "true" ]]; then
   docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
-  echo -e "Generating documentation site data...\n"
+  printgreen "Generating documentation site data...\n"
   if [[ ! -f "$docgen" ]]; then
     ./gradlew :docs:cas-server-documentation-processor:build --no-daemon -x check -x test -x javadoc --configure-on-demand
     if [ $? -eq 1 ]; then
@@ -84,10 +98,12 @@ if [[ $generateData == "true" ]]; then
     fi
   fi
   chmod +x ${docgen}
-  ${docgen} "$PWD/gh-pages/_data" "$branchVersion" "$PWD"
-  echo -e "Generated documentation data at $PWD/gh-pages/_data/$branchVersion...\n"
+  dataDir=`echo "$branchVersion" | sed 's/\.//g'`
+  printgreen "Generating documentation data at $PWD/gh-pages/_data/$dataDir...\n"
+  ${docgen} "$PWD/gh-pages/_data" "$dataDir" "$PWD"
+  printgreen "Generated documentation data at $PWD/gh-pages/_data/$dataDir...\n"
 else 
-  echo -e "Skipping documentation data generation...\n"
+  printgreen "Skipping documentation data generation...\n"
   rm -Rf $PWD/gh-pages/_data 
 fi 
 
@@ -95,15 +111,15 @@ rm -Rf $PWD/docs-latest
 rm -Rf $PWD/docs-includes
 
 if [[ $proofRead == "true" ]]; then
-  echo "Looking for badly named include fragments..."
+  printgreen "Looking for badly named include fragments..."
   ls $PWD/gh-pages/_includes/$branchVersion/*.md | grep -v '\-configuration.md$'
   docsVal=$?
   if [ $docsVal == 0 ]; then
-    echo "Found include fragments whose name does not end in '-configuration.md'"
+    printred "Found include fragments whose name does not end in '-configuration.md'"
     exit 1
   fi
 
-  echo "Looking for unused include fragments..."
+  printgreen "Looking for unused include fragments..."
   res=0
   files=$(ls $PWD/gh-pages/_includes/$branchVersion/*.md)
   for f in $files; do
@@ -127,42 +143,44 @@ if [[ $proofRead == "true" ]]; then
   done
 
   if [ $res == 1 ]; then
-    echo "Found unused include fragments."
+    printred "Found unused include fragments."
     exit 1
   fi
 
-  echo "Validating documentation links..."
+  printgreen "Validating documentation links..."
   validateProjectDocumentation
   retVal=$?
   if [[ ${retVal} -eq 1 ]]; then
-    echo -e "Failed to validate documentation.\n"
+    printred "Failed to validate documentation.\n"
     exit ${retVal}
   fi
 else
-  echo -e "Skipping validation of documentation links..."
+  printgreen "Skipping validation of documentation links..."
 fi
 
 pushd .
-cd $PWD/gh-pages
+cd "$PWD/gh-pages"
 
 if [[ $preBuild == "true" ]]; then
-  echo -e "Installing documentation dependencies...\n"
+  printgreen "Installing documentation dependencies...\n"
   bundle install --full-index
   bundle update jekyll
   bundle update github-pages
-  echo -e "\nBuilding documentation site for $branchVersion with data at $PWD/gh-pages/_data...\n"
+  printgreen "\nBuilding documentation site for $branchVersion with data at $PWD/gh-pages/_data...\n"
+  echo -n "Starting at " && date
   bundle exec jekyll build --profile --config=_config.yml,cas-config.yml
+   echo -n "Ended at " && date
   rm cas-config.yml
   retVal=$?
   if [[ ${retVal} -eq 1 ]]; then
-    echo -e "Failed to build documentation.\n"
+    printred "Failed to build documentation.\n"
     exit ${retVal}
   fi
 fi 
 
 rm -Rf .jekyll-metadata .sass-cache "$branchVersion/build"
 
-echo -e "\nConfiguring git repository settings...\n"
+printgreen "\nConfiguring git repository settings...\n"
 rm -Rf .git
 git init
 git remote add origin https://${GH_PAGES_TOKEN}@github.com/apereo/cas
@@ -170,47 +188,47 @@ git config user.email "cas@apereo.org"
 git config user.name "CAS"
 git config core.fileMode false
 
-echo -e "Checking out branch..."
-git switch gh-pages 2>/dev/null || git switch -c gh-pages;
-echo -e "Configuring tracking branches for repository...\n"
+printgreen "Checking out branch..."
+git switch gh-pages 2>/dev/null || git switch -c gh-pages 2>/dev/null;
+printgreen "Configuring tracking branches for repository...\n"
 git branch -u origin/gh-pages
 
-rm -Rf ./$branchVersion
-mv _site/$branchVersion .          
-touch $branchVersion/.nojekyll
+rm -Rf "./$branchVersion"
+mv "_site/$branchVersion" .
+touch "$branchVersion/.nojekyll"
 rm -Rf _site
 rm -Rf _data
 
 if [[ "${publishDocs}" == "true" ]]; then
-  echo -e "Adding changes to the git index...\n"
+  printgreen "Adding changes to the git index...\n"
   git add --all -f 2>/dev/null 
 
-  echo -e "Committing changes...\n"
+  printgreen "Committing changes...\n"
   git commit -am "Published docs to [gh-pages] from $branchVersion." 2>/dev/null 
   git status 
 
-  echo -e "Pushing changes to remote repository...\n"
+  printgreen "Pushing changes to remote repository...\n"
   if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "apereo/cas" ]; then
-    echo -e "\nNo GitHub token is defined to publish documentation."
+    printyellow "\nNo GitHub token is defined to publish documentation."
     popd
-    rm -Rf $PWD/gh-pages
+    rm -Rf "$PWD/gh-pages"
     exit 0
   fi
 
-  echo -e "Pushing upstream to origin/gh-pages...\n"
+  printgreen "Pushing upstream to origin/gh-pages...\n"
   git push -fq origin gh-pages
   retVal=$?
 else
-  echo -e "Skipping documentation push to remote repository...\n"
+  printyellow "Skipping documentation push to remote repository...\n"
 fi 
 
 popd
-rm -Rf $PWD/gh-pages
+rm -Rf "$PWD/gh-pages"
 
 if [[ ${retVal} -eq 0 ]]; then
-   echo -e "Done processing documentation to $branchVersion.\n"
+   printgreen "Done processing documentation to $branchVersion.\n"
    exit 0
 else
-   echo -e "Failed to process documentation.\n"
+   printred "Failed to process documentation.\n"
    exit ${retVal}
 fi
