@@ -1,9 +1,8 @@
 #!/bin/bash
 
-GENERATE_DATA="false";
-
 clear
 branchVersion="$1"
+generateData=${2:-true}
 
 function validateProjectDocumentation {
   HTML_PROOFER_IMAGE=hdeadman/html-proofer:latest
@@ -61,7 +60,7 @@ cp -Rf $PWD/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
 echo -e "Copied project documentation to $PWD/gh-pages/...\n"
 
 rm -Rf $PWD/gh-pages/_data/"$branchVersion" > /dev/null
-if [[ $GENERATE_DATA == "true" ]]; then
+if [[ $generateData == "true" ]]; then
   docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
   echo -e "Generating documentation site data...\n"
   if [[ ! -f "$docgen" ]]; then
@@ -74,6 +73,8 @@ if [[ $GENERATE_DATA == "true" ]]; then
   chmod +x ${docgen}
   ${docgen} "$PWD/gh-pages/_data" "$branchVersion" "$PWD"
   echo -e "Generated documentation data at $PWD/gh-pages/_data/$branchVersion...\n"
+else 
+  echo -e "Skipping documentation data generation...\n"
 fi 
 
 rm -Rf $PWD/docs-latest
