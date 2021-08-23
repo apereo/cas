@@ -137,18 +137,24 @@ fi
 rm -Rf _site .jekyll-metadata .sass-cache "$branchVersion/build"
 
 echo -e "\nConfiguring git repository settings...\n"
+rm -Rf .git
+git init
+git remote add origin https://${GH_PAGES_TOKEN}@github.com/apereo/cas
 git config user.email "cas@apereo.org"
 git config user.name "CAS"
 git config core.fileMode false
 
+echo -e "Checking out branch..."
+git switch gh-pages 2>/dev/null || git switch -c gh-pages;
 echo -e "Configuring tracking branches for repository...\n"
 git branch -u origin/gh-pages
 
 echo -e "Adding changes to the git index...\n"
-git add -f . 
+git add --all -f
 
 echo -e "Committing changes...\n"
-git commit -m "Published docs to [gh-pages] from $branchVersion. "
+git commit -am "Published docs to [gh-pages] from $branchVersion. "
+git status 
 
 if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "apereo/cas" ]; then
   echo -e "\nNo GitHub token is defined to publish documentation."
@@ -158,7 +164,7 @@ if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "apereo/cas" ]; then
 fi
 
 echo -e "Pushing upstream to origin/gh-pages...\n"
-git push -fq origin --all
+git push -fq origin gh-pages
 retVal=$?
 
 popd
