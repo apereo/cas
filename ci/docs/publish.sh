@@ -57,18 +57,19 @@ cp -Rf $PWD/docs-latest/* "$PWD/gh-pages/$branchVersion"
 cp -Rf $PWD/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
 echo -e "Copied project documentation to $PWD/gh-pages/...\n"
 
+docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
 echo -e "Generating documentation site data...\n"
+if [ ! -f "$docgen" ]; then
 rm -Rf $PWD/gh-pages/_data/"$branchVersion" > /dev/null
-./gradlew :docs:cas-server-documentation-processor:build --no-daemon -x check -x test -x javadoc --configure-on-demand
-if [ $? -eq 1 ]; then
-  echo "Unable to build the documentation processor. Aborting..."
-  exit 1
+  ./gradlew :docs:cas-server-documentation-processor:build --no-daemon -x check -x test -x javadoc --configure-on-demand
+  if [ $? -eq 1 ]; then
+    echo "Unable to build the documentation processor. Aborting..."
+    exit 1
+  fi
 fi
 
-docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
 chmod +x ${docgen}
 ${docgen} "$PWD/gh-pages/_data" "$branchVersion" "$PWD"
-rm -Rf docs/cas-server-documentation-processor/build
 echo -e "Generated documentation data at $PWD/gh-pages/_data/$branchVersion...\n"
 
 rm -Rf $PWD/docs-latest
