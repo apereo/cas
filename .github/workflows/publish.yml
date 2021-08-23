@@ -124,7 +124,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Set up Ruby
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
       - name: Install Ruby gems
