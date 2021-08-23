@@ -4,6 +4,14 @@ clear
 branchVersion="$1"
 generateData=${2:-true}
 proofRead=${3:-true}
+publishDocs=${4:-true}
+preBuild=${5:-true}
+
+echo "Branch: ${branchVersion}"
+echo "Generate Data: ${generateData}"
+echo "Proof Read: ${proofRead}"
+echo "Publish: ${publishDocs}"
+echo "Pre Build: ${preBuild}"
 
 function validateProjectDocumentation {
   HTML_PROOFER_IMAGE=hdeadman/html-proofer:latest
@@ -132,17 +140,19 @@ fi
 pushd .
 cd $PWD/gh-pages
 
-echo -e "Installing documentation dependencies...\n"
-bundle install --full-index
-bundle update jekyll
-bundle update github-pages
-echo -e "\nBuilding documentation site...\n"
-bundle exec jekyll build --incremental --profile --config=_config.yml,cas-config.yml
-retVal=$?
-if [[ ${retVal} -eq 1 ]]; then
-  echo -e "Failed to build documentation.\n"
-  exit ${retVal}
-fi
+if [[ $preBuild == "true" ]]; then
+  echo -e "Installing documentation dependencies...\n"
+  bundle install --full-index
+  bundle update jekyll
+  bundle update github-pages
+  echo -e "\nBuilding documentation site...\n"
+  bundle exec jekyll build --incremental --profile --config=_config.yml,cas-config.yml
+  retVal=$?
+  if [[ ${retVal} -eq 1 ]]; then
+    echo -e "Failed to build documentation.\n"
+    exit ${retVal}
+  fi
+fi 
 
 rm -Rf _site .jekyll-metadata .sass-cache "$branchVersion/build"
 
@@ -166,24 +176,29 @@ echo -e "Committing changes...\n"
 git commit -am "Published docs to [gh-pages] from $branchVersion. "
 git status 
 
-if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "apereo/cas" ]; then
-  echo -e "\nNo GitHub token is defined to publish documentation."
-  popd
-  rm -Rf $PWD/gh-pages
-  exit 0
-fi
+if [[ "${publishDocs}" == "true" ]]; then
+  echo -e "Pushing changes to remote repository...\n"
+  if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "apereo/cas" ]; then
+    echo -e "\nNo GitHub token is defined to publish documentation."
+    popd
+    rm -Rf $PWD/gh-pages
+    exit 0
+  fi
 
-echo -e "Pushing upstream to origin/gh-pages...\n"
-git push -fq origin gh-pages
-retVal=$?
+  echo -e "Pushing upstream to origin/gh-pages...\n"
+  git push -fq origin gh-pages
+  retVal=$?
+else
+  echo -e "Skipping documentation push to remote repository...\n"
+fi 
 
 popd
 rm -Rf $PWD/gh-pages
 
 if [[ ${retVal} -eq 0 ]]; then
-   echo -e "Published documentation to $branchVersion.\n"
+   echo -e "Done processing documentation to $branchVersion.\n"
    exit 0
 else
-   echo -e "Failed to publish documentation.\n"
+   echo -e "Failed to process documentation.\n"
    exit ${retVal}
 fi
