@@ -1,5 +1,4 @@
 #!/bin/bash
-
 RED="\e[31m"
 GREEN="\e[32m"
 YELLOW="\e[33m"
@@ -13,56 +12,6 @@ function printgreen() {
 function printyellow() {
   printf "${YELLOW}$1${ENDCOLOR}\n"
 }
-
-clear
-branchVersion="$1"
-generateData=true
-proofRead=true
-publishDocs=true
-preBuild=true
-
-while (("$#")); do
-  case "$1" in
-  --branch)
-    branchVersion=$2
-    shift 2
-    ;;
-  --generate-data)
-    generateData=$2
-    shift 2
-    ;;
-  --proof-read)
-    proofRead=$2
-    shift 2
-    ;;
-  --publish)
-    publishDocs=$2
-    shift 2
-    ;;
-  --build)
-    preBuild=$2
-    shift 2
-    ;;
-  *)
-    shift
-    ;;
-  esac
-done
-
-if [[ $branchVersion == "master" ]]; then
-  branchVersion="development"
-fi
-
-echo "-------------------------------------------------------"
-printgreen "Branch: \t${branchVersion}"
-printgreen "Generate Data: \t${generateData}"
-printgreen "Proof Read: \t${proofRead}"
-printgreen "Publish: \t${publishDocs}"
-printgreen "Pre Build: \t${preBuild}"
-echo "-------------------------------------------------------"
-
-rm -Rf $PWD/gh-pages
-
 function validateProjectDocumentation() {
   HTML_PROOFER_IMAGE=hdeadman/html-proofer:latest
   DOCS_FOLDER=$PWD/gh-pages/"$branchVersion"
@@ -88,6 +37,61 @@ function validateProjectDocumentation() {
   fi
 }
 
+clear
+
+branchVersion="master"
+generateData=true
+proofRead=true
+publishDocs=true
+preBuild=true
+
+while (("$#")); do
+  case "$1" in
+  --branch)
+    branchVersion=$2
+    shift 2
+    ;;
+  --generate-data|--data)
+    generateData=$2
+    shift 2
+    ;;
+  --proof-read|--validate)
+    proofRead=$2
+    shift 2
+    ;;
+  --publish)
+    publishDocs=$2
+    shift 2
+    ;;
+  --build)
+    preBuild=$2
+    shift 2
+    ;;
+  *)
+    shift
+    ;;
+  esac
+done
+
+if [[ $branchVersion == "master" ]]; then
+  branchVersion="development"
+fi
+
+if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "apereo/cas" ]; then
+  publishDocs=false
+  echo -e "\nNo GitHub token is defined to publish documentation."
+fi
+
+echo "-------------------------------------------------------"
+printgreen "Branch: \t${branchVersion}"
+printgreen "Build: \t\t${preBuild}"
+printgreen "Generate Data: \t${generateData}"
+printgreen "Validate: \t${proofRead}"
+printgreen "Publish: \t${publishDocs}"
+echo "-------------------------------------------------------"
+
+
+rm -Rf "$PWD/gh-pages"
 [[ -d $PWD/docs-latest ]] && rm -Rf $PWD/docs-latest
 [[ -d $PWD/docs-includes ]] && rm -Rf $PWD/docs-includes
 
@@ -96,16 +100,16 @@ chmod -R 777 docs/cas-server-documentation
 cp -R docs/cas-server-documentation/ $PWD/docs-latest
 mv $PWD/docs-latest/_includes $PWD/docs-includes
 
-printgreen "Cloning the repository to push documentation...\n"
-[[ -d $PWD/gh-pages ]] && rm -Rf $PWD/gh-pages
+printgreen "Cloning the repository to build documentation...\n"
+[[ -d "$PWD/gh-pages" ]] && rm -Rf "$PWD/gh-pages"
 
 git clone --single-branch --depth 1 --branch gh-pages --quiet \
   https://${GH_PAGES_TOKEN}@github.com/apereo/cas $PWD/gh-pages
 
 printgreen "Removing previous documentation from $branchVersion...\n"
-rm -Rf $PWD/gh-pages/"$branchVersion" >/dev/null
-rm -Rf $PWD/gh-pages/_includes/"$branchVersion" >/dev/null
-rm -Rf $PWD/gh-pages/_data/"$branchVersion" >/dev/null
+rm -Rf "$PWD/gh-pages/$branchVersion" >/dev/null
+rm -Rf "$PWD/gh-pages/_includes/$branchVersion" >/dev/null
+rm -Rf "$PWD/gh-pages/_data/$branchVersion" >/dev/null
 
 printgreen "Creating $branchVersion directory...\n"
 mkdir -p "$PWD/gh-pages/$branchVersion"
@@ -116,9 +120,11 @@ printgreen "Copying new docs to $branchVersion...\n"
 mv "$PWD/docs-latest/cas-config.yml" "$PWD/gh-pages"
 cp -Rf $PWD/docs-latest/* "$PWD/gh-pages/$branchVersion"
 cp -Rf $PWD/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
+rm -Rf "$PWD/gh-pages/_data/$branchVersion" >/dev/null
+rm -Rf "$PWD/docs-latest"
+rm -Rf "$PWD/docs-includes"
 printgreen "Copied project documentation to $PWD/gh-pages/...\n"
 
-rm -Rf $PWD/gh-pages/_data/"$branchVersion" >/dev/null
 if [[ $generateData == "true" ]]; then
   docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
   printgreen "Generating documentation site data...\n"
@@ -136,11 +142,8 @@ if [[ $generateData == "true" ]]; then
   printgreen "Generated documentation data at $PWD/gh-pages/_data/$dataDir...\n"
 else
   printgreen "Skipping documentation data generation...\n"
-  rm -Rf $PWD/gh-pages/_data
+  rm -Rf "$PWD/gh-pages/_data"
 fi
-
-rm -Rf $PWD/docs-latest
-rm -Rf $PWD/docs-includes
 
 if [[ $proofRead == "true" ]]; then
   printgreen "Looking for badly named include fragments..."
@@ -198,8 +201,9 @@ if [[ $preBuild == "true" ]]; then
   bundle install --full-index
   bundle update jekyll
   bundle update github-pages
-  printgreen "\nBuilding documentation site for $branchVersion with data at $PWD/gh-pages/_data...\n"
+  printgreen "\nBuilding documentation site for $branchVersion with data at $PWD/gh-pages/_data"
   echo -n "Starting at " && date
+
   bundle exec jekyll build --profile --config=_config.yml,cas-config.yml
   echo -n "Ended at " && date
   rm cas-config.yml
