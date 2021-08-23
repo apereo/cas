@@ -12,6 +12,7 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   RUBY_VERSION: 2.6
   JDK_CURRENT: 11.0.12
+  DOCS_BRANCH: master
 
 ##########################################################################
 
@@ -129,4 +130,4 @@ jobs:
       - name: Install Ruby gems
         run: gem install bundler
       - name: Publish Documentation
-        run: ./ci/docs/publish.sh development
+        run: ./ci/docs/publish.sh --branch ${{ env.DOCS_BRANCH }}
