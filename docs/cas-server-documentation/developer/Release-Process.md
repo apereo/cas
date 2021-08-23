@@ -123,7 +123,6 @@ based on the newly-released version.
 
 - Configure docs to point `current` to the latest available version [here](https://github.com/apereo/cas/blob/gh-pages/current/index.html).
 - Configure docs to include the new release in the list of [available versions](https://github.com/apereo/cas/blob/gh-pages/_layouts/default.html).
-- [Update docs](https://github.com/apereo/cas/edit/gh-pages/Older-Versions.md/) and add the newly released version.
 - Update the project's [`README.md` page](https://github.com/apereo/cas/blob/master/README.md) to list the new version, if necessary.
 - Update [the build process](Build-Process.html) to include any needed information on how to build the new release.
 - Update [the release notes](../release_notes/Overview.html) and remove all previous entries.
