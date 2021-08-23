@@ -51,8 +51,10 @@ random=$(openssl rand -hex 8)
 
 if [[ ! -d "$PWD"/ci/tests/puppeteer/node_modules/puppeteer ]] ; then
   printgreen "Installing Puppeteer"
-  npm_install_cmd="npm i --prefix "$PWD"/ci/tests/puppeteer"
+  cd "$PWD"/ci/tests/puppeteer
+  npm_install_cmd="npm install"
   eval $npm_install_cmd || eval $npm_install_cmd || eval $npm_install_cmd
+  cd -
 else
   printgreen "Using existing Puppeteer modules..."
 fi
@@ -78,7 +80,13 @@ echo -e "******************************************************\n"
 config="${scenario}/script.json"
 echo "Using scenario configuration file: ${config}"
 
-casWebApplicationFile="${PWD}/webapp/cas-server-webapp-tomcat/build/libs/cas-server-webapp-tomcat-${casVersion}.war"
+project=$(cat "${config}" | jq -j '.project // "tomcat"')
+projectType=war
+if [[ $project == starter* ]]; then
+  projectType=jar
+fi
+
+casWebApplicationFile="${PWD}/webapp/cas-server-webapp-${project}/build/libs/cas-server-webapp-${project}-${casVersion}.${projectType}"
 if [[ ! -f "$casWebApplicationFile" ]]; then
   printyellow "CAS web application at ${casWebApplicationFile} cannot be found. Rebuilding..."
   REBUILD="true"
@@ -88,7 +96,7 @@ dependencies=$(cat "${config}" | jq -j '.dependencies')
 
 if [[ "${REBUILD}" != "false" ]]; then
   printgreen "\nBuilding CAS found in $PWD for dependencies [${dependencies}]"
-  ./gradlew :webapp:cas-server-webapp-tomcat:build -DskipNestedConfigMetadataGen=true -x check -x javadoc \
+  ./gradlew :webapp:cas-server-webapp-${project}:build -DskipNestedConfigMetadataGen=true -x check -x javadoc \
     --no-daemon --build-cache --configure-on-demand --parallel -PcasModules="${dependencies}" -q
   if [ $? -eq 1 ]; then
     printred "\nFailed to build CAS web application. Examine the build output."
@@ -97,7 +105,7 @@ if [[ "${REBUILD}" != "false" ]]; then
 else
   printgreen "\nNot rebuilding CAS web application file because REBUILD=false"
 fi
-cp ${casWebApplicationFile} "$PWD"/cas.war
+cp ${casWebApplicationFile} "$PWD"/cas.${projectType}
 if [ $? -eq 1 ]; then
   printred "Unable to build or locate the CAS web application file. Aborting test..."
   exit 1
@@ -133,7 +141,7 @@ if [[ "$DEBUG" == "debug" ]]; then
   runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
 fi
 echo -e "\nLaunching CAS with properties [${properties}], run arguments [${runArgs}] and dependencies [${dependencies}]"
-java ${runArgs} -jar "$PWD"/cas.war ${properties} \
+java ${runArgs} -jar "$PWD"/cas.${projectType} ${properties} \
   -Dcom.sun.net.ssl.checkRevocation=false \
   --spring.profiles.active=none --server.ssl.key-store="$keystore" &
 pid=$!
@@ -175,7 +183,7 @@ fi
 printyellow "\nKilling CAS process ${pid} ..."
 kill -9 $pid
 printyellow "\nRemoving previous build artifacts ..."
-rm "$PWD"/cas.war
+rm "$PWD"/cas.${projectType}
 rm "$PWD"/ci/tests/puppeteer/overlay/thekeystore
 rm -Rf "$PWD"/ci/tests/puppeteer/overlay
 
