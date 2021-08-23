@@ -3,6 +3,7 @@
 clear
 branchVersion="$1"
 generateData=${2:-true}
+proofRead=${3:-true}
 
 function validateProjectDocumentation {
   HTML_PROOFER_IMAGE=hdeadman/html-proofer:latest
@@ -116,12 +117,16 @@ if [ $res == 1 ]; then
  exit 1
 fi
 
-echo "Validating documentation links..."
-validateProjectDocumentation
-retVal=$?
-if [[ ${retVal} -eq 1 ]]; then
-  echo -e "Failed to validate documentation.\n"
-  exit ${retVal}
+if [[ $proofRead == "true" ]]; then
+  echo "Validating documentation links..."
+  validateProjectDocumentation
+  retVal=$?
+  if [[ ${retVal} -eq 1 ]]; then
+    echo -e "Failed to validate documentation.\n"
+    exit ${retVal}
+  fi
+else
+  echo -e "Skipping validation of documentation links..."
 fi
 
 pushd .
