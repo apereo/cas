@@ -9,6 +9,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.http.client.utils.URIBuilder;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.saml.common.SAMLObjectBuilder;
@@ -21,6 +22,7 @@ import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,6 +46,8 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
 
     /**
      * Handle idp initiated sso requests.
+     * The URL of the response location at the SP (called the "Assertion Consumer Service")
+     * but can be omitted in favor of the IdP picking the default endpoint location from metadata.
      *
      * @param response the response
      * @param request  the request
@@ -66,10 +70,6 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + providerId);
         }
 
-        /*
-         The URL of the response location at the SP (called the "Assertion Consumer Service")
-         but can be omitted in favor of the IdP picking the default endpoint location from metadata.
-          */
         var shire = request.getParameter(SamlIdPConstants.SHIRE);
         val facade = adaptor.get();
         if (StringUtils.isBlank(shire)) {
@@ -127,6 +127,18 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
         SAMLBindingSupport.setRelayState(ctx, target);
 
         val pair = Pair.<RequestAbstractType, MessageContext>of(authnRequest, ctx);
-        return initiateAuthenticationRequest(pair, response, request);
+        val modelAndView = initiateAuthenticationRequest(pair, response, request);
+        val view = (RedirectView) modelAndView.getView();
+        val urlBuilder = new URIBuilder(Objects.requireNonNull(view).getUrl());
+        val paramNames = request.getParameterNames();
+        while (paramNames.hasMoreElements()) {
+            val parameterName = paramNames.nextElement();
+            if (!parameterName.equalsIgnoreCase(SamlIdPConstants.TARGET) && !parameterName.equalsIgnoreCase(SamlIdPConstants.TIME)
+                && !parameterName.equalsIgnoreCase(SamlIdPConstants.SHIRE) && !parameterName.equalsIgnoreCase(SamlIdPConstants.PROVIDER_ID)) {
+                urlBuilder.addParameter(parameterName, request.getParameter(parameterName));
+            }
+        }
+        view.setUrl(urlBuilder.build().toString());
+        return modelAndView;
     }
 }

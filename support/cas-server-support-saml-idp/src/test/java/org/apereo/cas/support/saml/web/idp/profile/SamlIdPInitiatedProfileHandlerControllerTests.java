@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Date;
 import java.util.UUID;
@@ -92,10 +93,15 @@ public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPCo
     public void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter(SamlIdPConstants.PROVIDER_ID, samlRegisteredService.getServiceId());
+        request.addParameter("CName1", "SomeParameter");
+        request.addParameter("CName2", "SomeParameter");
         request.addParameter(SamlIdPConstants.TARGET, "relay-state");
         val response = new MockHttpServletResponse();
         val mv = idpInitiatedSamlProfileHandlerController.handleIdPInitiatedSsoRequest(response, request);
         assertEquals(HttpStatus.FOUND, mv.getStatus());
+        val view = (RedirectView) mv.getView();
+        assertTrue(view.getUrl().contains("CName1="));
+        assertTrue(view.getUrl().contains("CName2="));
     }
 
     @Test
