@@ -6,10 +6,8 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await page.goto("https://127.0.0.1:8443/cas/login?authn_method=mfa-inwebo");
-
     await cas.loginWith(page, "testcas", "password");
-
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(5000);
     const startBrowserForm = await page.$('#startBrowserForm');
     assert(startBrowserForm != null);
     const startPushForm = await page.$('#startPushForm');
@@ -17,7 +15,7 @@ const cas = require('../../cas.js');
 
     // Asking for the PIN code
     await page.$eval('button[name=browser]', button => button.click());
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(5000);
 
     console.log("Checking for PIN code...")
     await cas.assertInnerText(page, "main h2","Fill in your PIN code:" )

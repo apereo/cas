@@ -39,6 +39,9 @@ function validateProjectDocumentation() {
 
 clear
 
+REPOSITORY_NAME="apereo/cas"
+REPOSITORY_ADDR="https://${GH_PAGES_TOKEN}@github.com/${REPOSITORY_NAME}"
+
 branchVersion="master"
 generateData=true
 proofRead=true
@@ -77,7 +80,7 @@ if [[ $branchVersion == "master" ]]; then
   branchVersion="development"
 fi
 
-if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "apereo/cas" ]; then
+if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
   publishDocs=false
   echo -e "\nNo GitHub token is defined to publish documentation."
 fi
@@ -98,13 +101,12 @@ rm -Rf "$PWD/gh-pages"
 printgreen "Copying project documentation over to $PWD/docs-latest...\n"
 chmod -R 777 docs/cas-server-documentation
 cp -R docs/cas-server-documentation/ $PWD/docs-latest
-mv $PWD/docs-latest/_includes $PWD/docs-includes
+mv "$PWD/docs-latest/_includes" "$PWD/docs-includes"
 
 printgreen "Cloning the repository to build documentation...\n"
 [[ -d "$PWD/gh-pages" ]] && rm -Rf "$PWD/gh-pages"
 
-git clone --single-branch --depth 1 --branch gh-pages --quiet \
-  https://${GH_PAGES_TOKEN}@github.com/apereo/cas $PWD/gh-pages
+git clone --single-branch --depth 1 --branch gh-pages --quiet "${REPOSITORY_ADDR}" $PWD/gh-pages
 
 printgreen "Removing previous documentation from $branchVersion...\n"
 rm -Rf "$PWD/gh-pages/$branchVersion" >/dev/null
@@ -219,7 +221,7 @@ rm -Rf .jekyll-metadata .sass-cache "$branchVersion/build"
 printgreen "\nConfiguring git repository settings...\n"
 rm -Rf .git
 git init
-git remote add origin https://${GH_PAGES_TOKEN}@github.com/apereo/cas
+git remote add origin "${REPOSITORY_ADDR}"
 git config user.email "cas@apereo.org"
 git config user.name "CAS"
 git config core.fileMode false
@@ -244,7 +246,7 @@ if [[ "${publishDocs}" == "true" ]]; then
   git status
 
   printgreen "Pushing changes to remote repository...\n"
-  if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "apereo/cas" ]; then
+  if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
     printyellow "\nNo GitHub token is defined to publish documentation."
     popd
     rm -Rf "$PWD/gh-pages"
