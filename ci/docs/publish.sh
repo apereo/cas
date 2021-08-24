@@ -82,7 +82,7 @@ fi
 
 if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
   publishDocs=false
-  echo -e "\nNo GitHub token is defined to publish documentation."
+  printyellow "\nNo GitHub token is defined to publish documentation."
 fi
 
 echo "-------------------------------------------------------"
@@ -91,6 +91,7 @@ printgreen "Build: \t\t${preBuild}"
 printgreen "Generate Data: \t${generateData}"
 printgreen "Validate: \t${proofRead}"
 printgreen "Publish: \t${publishDocs}"
+printgreen "Ruby Version: \t`ruby -v`"
 echo "-------------------------------------------------------"
 
 
@@ -103,9 +104,8 @@ chmod -R 777 docs/cas-server-documentation
 cp -R docs/cas-server-documentation/ $PWD/docs-latest
 mv "$PWD/docs-latest/_includes" "$PWD/docs-includes"
 
-printgreen "Cloning the repository to build documentation...\n"
+printgreen "Cloning ${REPOSITORY_NAME}'s [gh-pages] branch...\n"
 [[ -d "$PWD/gh-pages" ]] && rm -Rf "$PWD/gh-pages"
-
 git clone --single-branch --depth 1 --branch gh-pages --quiet "${REPOSITORY_ADDR}" $PWD/gh-pages
 
 printgreen "Removing previous documentation from $branchVersion...\n"
@@ -119,7 +119,10 @@ mkdir -p "$PWD/gh-pages/_includes/$branchVersion"
 mkdir -p "$PWD/gh-pages/_data/$branchVersion"
 
 printgreen "Copying new docs to $branchVersion...\n"
-mv "$PWD/docs-latest/cas-config.yml" "$PWD/gh-pages"
+mv "$PWD/docs-latest/Gemfile" "$PWD/gh-pages"
+mv "$PWD/docs-latest/_config.yml" "$PWD/gh-pages"
+rm -f "$PWD/gh-pages/Gemfile.lock"
+
 cp -Rf $PWD/docs-latest/* "$PWD/gh-pages/$branchVersion"
 cp -Rf $PWD/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
 rm -Rf "$PWD/gh-pages/_data/$branchVersion" >/dev/null
@@ -200,15 +203,12 @@ cd "$PWD/gh-pages"
 
 if [[ $preBuild == "true" ]]; then
   printgreen "Installing documentation dependencies...\n"
-  bundle install --full-index
-  bundle update jekyll
-  bundle update github-pages
+  bundle install
   printgreen "\nBuilding documentation site for $branchVersion with data at $PWD/gh-pages/_data"
   echo -n "Starting at " && date
-
-  bundle exec jekyll build --profile --config=_config.yml,cas-config.yml
+  jekyll --version
+  bundle exec jekyll build --profile
   echo -n "Ended at " && date
-  rm cas-config.yml
   retVal=$?
   if [[ ${retVal} -eq 1 ]]; then
     printred "Failed to build documentation.\n"
@@ -221,12 +221,13 @@ rm -Rf .jekyll-metadata .sass-cache "$branchVersion/build"
 printgreen "\nConfiguring git repository settings...\n"
 rm -Rf .git
 git init
+git config init.defaultBranch master
 git remote add origin "${REPOSITORY_ADDR}"
 git config user.email "cas@apereo.org"
 git config user.name "CAS"
 git config core.fileMode false
 
-printgreen "Checking out branch..."
+printgreen "Checking out gh-pages branch..."
 git switch gh-pages 2>/dev/null || git switch -c gh-pages 2>/dev/null
 printgreen "Configuring tracking branches for repository...\n"
 git branch -u origin/gh-pages
@@ -247,7 +248,7 @@ if [[ "${publishDocs}" == "true" ]]; then
 
   printgreen "Pushing changes to remote repository...\n"
   if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
-    printyellow "\nNo GitHub token is defined to publish documentation."
+    printyellow "\nNo GitHub token is defined to publish documentation. Skipping"
     popd
     rm -Rf "$PWD/gh-pages"
     exit 0
