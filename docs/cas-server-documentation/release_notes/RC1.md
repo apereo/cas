@@ -58,6 +58,11 @@ minimum system/platform requirements for this release.
 The following items are new improvements and enhancements presented in this release.
 
 ## Other Stuff
-
+        
+- SAML2 Unsolicited endpoint is now able to preserve custom query parameters.
+- CAS documentation is now pre-built and pushed to Github Pages, rather than letting GitHub to build the documentation from source. This approach is recommended by GitHub and Jekyll so as to assist with Github Pages build performance and configuration.
 ## Library Upgrades
-
+    
+- Pac4j
+- Spring Boot Admin
+- Nimbus JWT
