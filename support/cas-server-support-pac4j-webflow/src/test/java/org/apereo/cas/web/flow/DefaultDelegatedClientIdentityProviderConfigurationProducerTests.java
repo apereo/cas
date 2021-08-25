@@ -37,6 +37,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
 
     @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
         properties = "cas.authn.pac4j.cookie.enabled=true")
+    @SuppressWarnings("ClassCanBeStatic")
     public abstract class BaseDelegatedClientIdentityProviderConfigurationProducerTests {
         @Autowired
         @Qualifier("delegatedClientIdentityProviderConfigurationProducer")
