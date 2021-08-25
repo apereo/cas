@@ -25,6 +25,21 @@ public interface CasWebflowConstants {
      */
 
     /**
+     * The transition state 'discovery'.
+     */
+    String TRANSITION_ID_DISCOVERY = "discovery";
+
+    /**
+     * The transition state 'execute'.
+     */
+    String TRANSITION_ID_EXECUTE = "execute";
+
+    /**
+     * The transition state 'back'.
+     */
+    String TRANSITION_ID_BACK = "back";
+
+    /**
      * The transition state 'captchaError'.
      */
     String TRANSITION_ID_CAPTCHA_ERROR = "captchaError";
@@ -573,6 +588,21 @@ public interface CasWebflowConstants {
     String STATE_ID_FINISH_LOGOUT = "finishLogout";
 
     /**
+     * State id 'redirectToDelegatedAuthnProviderView'.
+     */
+    String STATE_ID_REDIRECT_TO_DELEGATED_AUTHN_PROVIDER_VIEW = "redirectToDelegatedAuthnProviderView";
+
+    /**
+     * State id 'delegatedAuthenticationDynamicDiscoveryView'.
+     */
+    String STATE_ID_DELEGATED_AUTHN_DYNAMIC_DISCOVERY_VIEW = "delegatedAuthenticationDynamicDiscoveryView";
+
+    /**
+     * State id 'delegatedAuthenticationProviderDiscoveryExecution'.
+     */
+    String STATE_ID_DELEGATED_AUTHN_DYNAMIC_DISCOVERY_EXECUTION = "delegatedAuthenticationProviderDiscoveryExecution";
+
+    /**
      * Delegated authentication state id.
      */
     String STATE_ID_DELEGATED_AUTHENTICATION = "delegatedAuthentication";
@@ -889,6 +919,11 @@ public interface CasWebflowConstants {
      * Actions.
      ****************************************
      */
+
+    /**
+     * Action id 'delegatedAuthenticationProviderDynamicDiscoveryAction'.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_DYNAMIC_DISCOVERY_EXECUTION = "delegatedAuthenticationProviderDynamicDiscoveryExecutionAction";
 
     /**
      * Action id 'multifactorProviderSelectedAction'.

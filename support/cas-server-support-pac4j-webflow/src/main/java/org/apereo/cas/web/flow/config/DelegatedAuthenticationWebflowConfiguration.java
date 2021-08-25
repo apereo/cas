@@ -11,6 +11,7 @@ import org.apereo.cas.pac4j.client.DefaultDelegatedClientIdentityProviderRedirec
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.pac4j.client.DelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.pac4j.client.GroovyDelegatedClientIdentityProviderRedirectionStrategy;
+import org.apereo.cas.pac4j.discovery.DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.ticket.TicketFactory;
@@ -31,6 +32,7 @@ import org.apereo.cas.web.flow.DelegatedAuthenticationErrorViewResolver;
 import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
+import org.apereo.cas.web.flow.DelegatedClientAuthenticationDynamicDiscoveryExecutionAction;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowManager;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -192,6 +194,16 @@ public class DelegatedAuthenticationWebflowConfiguration {
     @Bean
     public Action delegatedAuthenticationAction() {
         return new DelegatedClientAuthenticationAction(delegatedClientAuthenticationConfigurationContext());
+    }
+
+    @RefreshScope
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_DYNAMIC_DISCOVERY_EXECUTION)
+    @Bean
+    public Action delegatedAuthenticationProviderDynamicDiscoveryExecutionAction() {
+        val configContext = delegatedClientAuthenticationConfigurationContext();
+        val locator = new DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator(
+            configContext.getDelegatedClientIdentityProvidersProducer(), configContext.getClients(), casProperties);
+        return new DelegatedClientAuthenticationDynamicDiscoveryExecutionAction(configContext, locator);
     }
 
     @Bean
