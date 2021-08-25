@@ -11,8 +11,6 @@ import org.apereo.cas.pac4j.client.DefaultDelegatedClientIdentityProviderRedirec
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.pac4j.client.DelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.pac4j.client.GroovyDelegatedClientIdentityProviderRedirectionStrategy;
-import org.apereo.cas.pac4j.discovery.DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator;
-import org.apereo.cas.pac4j.discovery.DelegatedAuthenticationDynamicDiscoveryProviderLocator;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.ticket.TicketFactory;
@@ -33,7 +31,6 @@ import org.apereo.cas.web.flow.DelegatedAuthenticationErrorViewResolver;
 import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
-import org.apereo.cas.web.flow.DelegatedClientAuthenticationDynamicDiscoveryExecutionAction;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowManager;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -51,7 +48,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -317,26 +313,5 @@ public class DelegatedAuthenticationWebflowConfiguration {
     private DelegatedAuthenticationAccessStrategyHelper getDelegatedAuthenticationAccessStrategyHelper() {
         return new DelegatedAuthenticationAccessStrategyHelper(servicesManager.getObject(),
             delegatedAuthenticationPolicyAuditableEnforcer.getObject());
-    }
-
-    @Configuration("DelegatedAuthenticationDynamicDiscoverySelectionConfiguration")
-    @ConditionalOnProperty(prefix = "cas.authn.pac4j.core.discovery-selection", name = "selection-type", havingValue = "DYNAMIC")
-    public class DelegatedAuthenticationDynamicDiscoverySelectionConfiguration {
-        @Bean
-        @RefreshScope
-        @ConditionalOnMissingBean(name = "delegatedAuthenticationDynamicDiscoveryProviderLocator")
-        public DelegatedAuthenticationDynamicDiscoveryProviderLocator delegatedAuthenticationDynamicDiscoveryProviderLocator() {
-            val configContext = delegatedClientAuthenticationConfigurationContext();
-            return new DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator(
-                configContext.getDelegatedClientIdentityProvidersProducer(), configContext.getClients(), casProperties);
-        }
-
-        @RefreshScope
-        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_DYNAMIC_DISCOVERY_EXECUTION)
-        @Bean
-        public Action delegatedAuthenticationProviderDynamicDiscoveryExecutionAction() {
-            return new DelegatedClientAuthenticationDynamicDiscoveryExecutionAction(delegatedClientAuthenticationConfigurationContext(),
-                delegatedAuthenticationDynamicDiscoveryProviderLocator());
-        }
     }
 }

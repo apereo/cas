@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.calcs;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.impl.mock.MockTicketGrantingTicketCreatedEventProducer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -7,11 +8,13 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,6 +30,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 public class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
 
+    @BeforeEach
+    public void setup() {
+        HttpsURLConnection.setDefaultHostnameVerifier(CasSSLContext.disabled().getHostnameVerifier());
+        HttpsURLConnection.setDefaultSSLSocketFactory(CasSSLContext.disabled().getSslContext().getSocketFactory());
+    }
+    
     @Test
     public void verifyTestWhenNoAuthnEventsFoundForUser() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication("geoperson");

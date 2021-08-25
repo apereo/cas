@@ -8,24 +8,20 @@ const cas = require('../../cas.js');
     await page.goto("https://127.0.0.1:8443/cas/login?authn_method=mfa-inwebo");
     await cas.loginWith(page, "testcas", "password");
     await page.waitForTimeout(5000);
+    await cas.screenshot(page);
+
     const startBrowserForm = await page.$('#startBrowserForm');
     assert(startBrowserForm != null);
     const startPushForm = await page.$('#startPushForm');
     assert(startPushForm != null);
 
-    // Asking for the PIN code
+    console.log("Asking for the PIN code");
     await page.$eval('button[name=browser]', button => button.click());
-    await page.waitForTimeout(5000);
+    await page.waitForTimeout(8000);
 
-    console.log("Checking for PIN code...")
-    await cas.assertInnerText(page, "main h2","Fill in your PIN code:" )
-    const enrollForm = await page.$('#enrollForm');
-    assert(enrollForm != null);
+    await cas.assertVisibility(page, "#code");
+    await cas.assertVisibility(page, "#pin");
+    await cas.assertVisibility(page, "#enrollButton");
 
-    // Let's wait for Inwebo javascript to execute
-    // And redirect to error/registration
-    console.log("Checking for error/registration")
-    await page.waitForTimeout(5000);
-    await cas.assertInnerText(page, "main h2","An error has occurred." )
     await browser.close();
 })();
