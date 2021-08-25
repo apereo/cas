@@ -173,9 +173,14 @@ public class SamlIdPUtils {
                                                                         final AssertionConsumerService acsFromRequest,
                                                                         final AssertionConsumerService acsFromMetadata,
                                                                         final MessageContext authenticationContext) {
+        LOGGER.trace("ACS from authentication request is [{}], ACS from metadata is [{}] with binding [{}]",
+            acsFromRequest, acsFromMetadata, binding);
+        
         if (acsFromRequest != null) {
             if (!authnRequest.isSigned() && !SAMLBindingSupport.isMessageSigned(authenticationContext)) {
-                val locations = adaptor.getAssertionConsumerServiceLocations(binding);
+                val locations = StringUtils.isBlank(binding)
+                    ? adaptor.getAssertionConsumerServiceLocations(binding)
+                    : adaptor.getAssertionConsumerServiceLocations();
                 val acsUrl = StringUtils.defaultIfBlank(acsFromRequest.getResponseLocation(), acsFromRequest.getLocation());
                 val acsIndex = authnRequest instanceof AuthnRequest
                     ? AuthnRequest.class.cast(authnRequest).getAssertionConsumerServiceIndex()
