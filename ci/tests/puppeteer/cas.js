@@ -8,6 +8,7 @@ const colors = require('colors');
 const fs = require("fs");
 const {ImgurClient} = require('imgur');
 const path = require("path");
+const { PuppeteerScreenRecorder } = require('puppeteer-screen-recorder');
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
@@ -323,6 +324,24 @@ exports.assertPageTitle = async (page, value) => {
     const title = await page.title();
     console.log(`Page Title: ${title}`);
     assert(title === value)
+}
+
+exports.recordScreen = async(page) => {
+    let index = Math.floor(Math.random() * 10000);
+    let filePath = path.join(__dirname, `/recording-${index}.mp4`)
+    const config = {
+        followNewTab: true,
+        fps: 60,
+        videoFrame: {
+            width: 1024,
+            height: 768,
+        },
+        aspectRatio: '4:3',
+    };
+    const recorder = new PuppeteerScreenRecorder(page, config);
+    console.log(`Recording screen to ${filePath}`)
+    await recorder.start(filePath);
+    return recorder;
 }
 
 exports.decodeJwt = async (token, complete = false) => {

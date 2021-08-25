@@ -101,6 +101,7 @@ layout: null
     *   [Delegation](#delegationauthn)
         *   [Overview](/cas/{{ version }}/integration/Delegate-Authentication.html)
         *   [Authentication Policy](/cas/{{ version }}/integration/Delegate-Authentication-AuthenticationPolicy.html)
+        *   [Discovery Selection](/cas/{{ version }}/integration/Delegate-Authentication-DiscoverySelection.html)
         *   [Identity Providers](#identityproviders)
             *   [Apple](/cas/{{ version }}/integration/Delegate-Authentication-Apple.html)
             *   [Azure AD](/cas/{{ version }}/integration/Delegate-Authentication-Azure-AD.html)
