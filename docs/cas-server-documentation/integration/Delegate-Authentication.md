@@ -112,6 +112,10 @@ On CAS server side, to push attributes to the CAS client, it should be configure
 }
 ```
 
+## Discovery Selection
+
+Please [see this guide](Delegate-Authentication-DiscoverySelection.html).
+
 ## Authentication Policy
 
 Please [see this guide](Delegate-Authentication-AuthenticationPolicy.html).

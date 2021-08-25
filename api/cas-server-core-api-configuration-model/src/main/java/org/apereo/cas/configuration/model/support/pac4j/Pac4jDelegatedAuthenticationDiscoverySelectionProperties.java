@@ -31,6 +31,7 @@ public class Pac4jDelegatedAuthenticationDiscoverySelectionProperties implements
 
     /**
      * Locate discovery settings inside a JSON resource.
+     * Only available if {@link #selectionType} is set to {@link Pac4jDelegatedAuthenticationSelectionTypes#DYNAMIC}.
      */
     private Pac4jDelegatedAuthenticationDiscoverySelectionJsonProperties json = new Pac4jDelegatedAuthenticationDiscoverySelectionJsonProperties();
 

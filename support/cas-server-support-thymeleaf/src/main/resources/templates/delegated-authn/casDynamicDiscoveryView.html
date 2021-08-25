@@ -20,7 +20,7 @@
                    th:utext="${message.text}">Message Text</p>
             </div>
 
-            <form method="post" id="fm1">
+            <form method="post" id="discoverySelectionForm">
                 <section class="p-4">
                     <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                     <input type="hidden" name="_eventId" value="execute"/>
@@ -29,6 +29,7 @@
                         <input class="mdc-text-field__input"
                                id="username"
                                name="username"
+                               tabindex="0"
                                size="25"
                                type="text"
                                th:accesskey="#{screen.welcome.label.netid.accesskey}"
