@@ -162,7 +162,8 @@ public class SamlIdPUtils {
         }
         val missingLocation = StringUtils.isBlank(endpoint.getResponseLocation()) && StringUtils.isBlank(endpoint.getLocation());
         if (StringUtils.isBlank(endpoint.getBinding()) || missingLocation) {
-            throw new SamlException("Endpoint for " + authnRequest.getSchemaType() + " does not define a binding or location for " + binding);
+            throw new SamlException("Endpoint for " + authnRequest.getSchemaType()
+                + " does not define a binding or location for binding " + binding);
         }
         return endpoint;
     }

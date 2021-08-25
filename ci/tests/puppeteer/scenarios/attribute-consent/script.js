@@ -17,30 +17,27 @@ const cas = require('../../cas.js');
     await cas.assertTextContent(page, "#email", "email");
     await cas.assertTextContent(page, "#email-value", "[casuser@example.org]");
 
+    await cas.screenshot(page);
     await cas.click(page, "#optionsButton");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(2000)
 
+    await cas.screenshot(page);
     let opt = await page.$('#optionAlways');
     assert(opt != null);
     opt = await page.$('#optionAttributeName');
     assert(opt != null);
     opt = await page.$('#optionAttributeValue');
     assert(opt != null);
-
     await cas.assertTextContent(page, "#reminderTitle", "How often should I be reminded to consent again?")
 
     opt = await page.$('#reminder');
     assert(opt != null);
-
     opt = await page.$('#reminderTimeUnit');
     assert(opt != null);
-
     opt = await page.$('#confirm');
     assert(opt != null);
-
     opt = await page.$('#cancel');
     assert(opt != null);
-
     const url = "https://localhost:8443/cas/actuator/attributeConsent/casuser"
     console.log(`Trying ${url}`)
     const response = await page.goto(url);

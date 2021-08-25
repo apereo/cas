@@ -23,7 +23,7 @@ import java.util.Optional;
  * This is {@link DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator}.
  *
  * @author Misagh Moayyed
- * @since 6.4.0
+ * @since 6.5.0
  */
 @RequiredArgsConstructor
 @Getter

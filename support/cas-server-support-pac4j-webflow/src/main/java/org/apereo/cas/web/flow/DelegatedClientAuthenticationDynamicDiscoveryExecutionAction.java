@@ -14,7 +14,7 @@ import org.springframework.webflow.execution.RequestContext;
  * This is {@link DelegatedClientAuthenticationDynamicDiscoveryExecutionAction}.
  *
  * @author Misagh Moayyed
- * @since 6.4.0
+ * @since 6.5.0
  */
 @RequiredArgsConstructor
 public class DelegatedClientAuthenticationDynamicDiscoveryExecutionAction extends AbstractAction {

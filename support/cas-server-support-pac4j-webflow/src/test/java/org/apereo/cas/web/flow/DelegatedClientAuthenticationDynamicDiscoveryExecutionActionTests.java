@@ -26,10 +26,13 @@ import static org.mockito.Mockito.*;
  * This is {@link DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests}.
  *
  * @author Misagh Moayyed
- * @since 6.4.0
+ * @since 6.5.0
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
-    properties = "cas.authn.pac4j.core.discovery-selection.json.location=classpath:delegated-discovery.json")
+    properties = {
+        "cas.authn.pac4j.core.discovery-selection.selection-type=DYNAMIC",
+        "cas.authn.pac4j.core.discovery-selection.json.location=classpath:delegated-discovery.json"
+    })
 @Tag("WebflowAuthenticationActions")
 public class DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests {
     @Autowired

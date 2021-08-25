@@ -30,6 +30,7 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
+import org.apereo.cas.web.flow.config.DelegatedAuthenticationDynamicDiscoverySelectionConfiguration;
 import org.apereo.cas.web.flow.config.DelegatedAuthenticationWebflowConfiguration;
 
 import lombok.val;
@@ -120,7 +121,8 @@ public abstract class BaseDelegatedAuthenticationTests {
         Pac4jDelegatedAuthenticationConfiguration.class,
         Pac4jAuthenticationEventExecutionPlanConfiguration.class,
         Pac4jDelegatedAuthenticationSerializationConfiguration.class,
-        DelegatedAuthenticationWebflowConfiguration.class
+        DelegatedAuthenticationWebflowConfiguration.class,
+        DelegatedAuthenticationDynamicDiscoverySelectionConfiguration.class
     })
     public static class SharedTestConfiguration {
     }
