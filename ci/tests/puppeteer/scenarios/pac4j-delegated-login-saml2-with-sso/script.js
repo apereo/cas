@@ -32,7 +32,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(3000)
 
     await cas.click(page, "input[name='_eventId_proceed']")
-    await page.waitForTimeout(5000)
+    await page.waitForTimeout(8000)
 
     const url = await page.url()
     console.log(`Page url: ${url}`)

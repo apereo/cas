@@ -9,7 +9,7 @@ const assert = require("assert");
 
     const service = "https://apereo.github.io"
     await page.goto(`https://localhost:8443/cas/login?service=${service}`);
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(3000)
     await cas.assertVisibility(page, '#loginProviders')
     await cas.assertVisibility(page, 'li #SAML2Client')
 

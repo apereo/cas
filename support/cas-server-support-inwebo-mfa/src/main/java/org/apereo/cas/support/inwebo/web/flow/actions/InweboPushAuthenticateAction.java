@@ -18,16 +18,13 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.4.0
  */
 @RequiredArgsConstructor
-@Slf4j
 public class InweboPushAuthenticateAction extends AbstractAction {
-
     private final InweboService service;
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
         val authentication = WebUtils.getInProgressAuthentication();
         val login = authentication.getPrincipal().getId();
-        LOGGER.trace("Login: [{}]", login);
         var response = service.pushAuthenticate(login);
         if (response.getResult() == InweboResult.NOK) {
             response = service.pushAuthenticate(login);
