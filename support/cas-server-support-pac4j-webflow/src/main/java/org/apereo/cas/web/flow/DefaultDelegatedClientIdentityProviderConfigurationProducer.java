@@ -23,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -80,7 +81,19 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
             });
 
         if (!providers.isEmpty()) {
-            WebUtils.putDelegatedAuthenticationProviderConfigurations(context, providers);
+            val selectionType = casProperties.getAuthn().getPac4j().getCore().getDiscoverySelection().getSelectionType();
+            switch (selectionType) {
+                case DYNAMIC:
+                    WebUtils.putDelegatedAuthenticationProviderConfigurations(context, new HashSet<>());
+                    WebUtils.putDelegatedAuthenticationDynamicProviderSelection(context, Boolean.TRUE);
+                    break;
+                case MENU:
+                default:
+                    WebUtils.putDelegatedAuthenticationProviderConfigurations(context, providers);
+                    WebUtils.putDelegatedAuthenticationDynamicProviderSelection(context, Boolean.FALSE);
+                    break;
+            }
+            
         } else if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {
             LOGGER.warn("No delegated authentication providers could be determined based on the provided configuration. "
                 + "Either no clients are configured, or the current access strategy rules prohibit CAS from using authentication providers");

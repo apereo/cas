@@ -70,4 +70,11 @@ public class Pac4jDelegatedAuthenticationCoreProperties implements Serializable 
      */
     @NestedConfigurationProperty
     private SpringResourceProperties groovyRedirectionStrategy = new SpringResourceProperties();
+
+    /**
+     * Discovery selection settings.
+     */
+    @NestedConfigurationProperty
+    private Pac4jDelegatedAuthenticationDiscoverySelectionProperties discoverySelection = new Pac4jDelegatedAuthenticationDiscoverySelectionProperties();
+
 }
