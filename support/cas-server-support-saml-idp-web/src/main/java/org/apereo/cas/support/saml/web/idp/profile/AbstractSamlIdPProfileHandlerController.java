@@ -342,7 +342,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
 
         val assertion = buildCasAssertion(authentication, service, registeredService, Map.of());
         val authenticationContext = buildAuthenticationContextPair(request, response, context);
-        val binding = determineProfileBinding(authenticationContext, assertion);
+        val binding = determineProfileBinding(authenticationContext);
 
         val messageContext = authenticationContext.getRight();
         val relayState = SAMLBindingSupport.getRelayState(messageContext);
@@ -426,7 +426,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @throws Exception the exception
      */
     protected Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> verifySamlAuthenticationRequest(
-        final Pair<? extends SignableSAMLObject, MessageContext> authenticationContext,
+        final Pair<? extends RequestAbstractType, MessageContext> authenticationContext,
         final HttpServletRequest request) throws Exception {
         val authnRequest = (AuthnRequest) authenticationContext.getKey();
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
@@ -444,9 +444,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
 
         val facade = adaptor.get();
         verifyAuthenticationContextSignature(authenticationContext, request, authnRequest, facade, registeredService);
-
-        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, authenticationContext.getRight()), facade,
-            authnRequest.getProtocolBinding());
+        val binding = determineProfileBinding(authenticationContext);
+        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, authenticationContext.getRight()), facade, binding);
         LOGGER.debug("Determined SAML2 endpoint for authentication request as [{}]",
             StringUtils.defaultIfBlank(acs.getResponseLocation(), acs.getLocation()));
 
@@ -663,12 +662,9 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * Determine profile binding.
      *
      * @param authenticationContext the authentication context
-     * @param assertion             the assertion
      * @return the string
      */
-    protected String determineProfileBinding(final Pair<? extends RequestAbstractType, MessageContext> authenticationContext,
-                                             final Assertion assertion) {
-
+    protected String determineProfileBinding(final Pair<? extends RequestAbstractType, MessageContext> authenticationContext) {
         val authnRequest = AuthnRequest.class.cast(authenticationContext.getKey());
         val pair = getRegisteredServiceAndFacade(authnRequest);
         val facade = pair.getValue();
