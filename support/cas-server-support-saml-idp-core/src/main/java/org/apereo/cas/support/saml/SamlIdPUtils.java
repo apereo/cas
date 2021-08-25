@@ -178,7 +178,7 @@ public class SamlIdPUtils {
         
         if (acsFromRequest != null) {
             if (!authnRequest.isSigned() && !SAMLBindingSupport.isMessageSigned(authenticationContext)) {
-                val locations = StringUtils.isBlank(binding)
+                val locations = StringUtils.isNotBlank(binding)
                     ? adaptor.getAssertionConsumerServiceLocations(binding)
                     : adaptor.getAssertionConsumerServiceLocations();
                 val acsUrl = StringUtils.defaultIfBlank(acsFromRequest.getResponseLocation(), acsFromRequest.getLocation());
