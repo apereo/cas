@@ -278,7 +278,7 @@
                 </span>
             </form>
 
-            <div id="selectIdentityProvider" th:if="${delegatedAuthenticationDynamicProviderSelection and loginFormViewable and loginFormEnabled}">
+            <div id="selectIdentityProvider" th:if="${#bools.isTrue(delegatedAuthenticationDynamicProviderSelection) and loginFormViewable and loginFormEnabled}">
                 <p>
                 <form method="post" id="providerDiscoveryForm">
                     <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
