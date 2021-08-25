@@ -13,7 +13,8 @@ const cas = require('../../cas.js');
 
     console.log(`Navigating to ${url}`);
     await page.goto(url);
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(3000)
+    await cas.screenshot(page);
     await cas.loginWith(page, "casuser", "Mellon");
     console.log(await page.url())
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
