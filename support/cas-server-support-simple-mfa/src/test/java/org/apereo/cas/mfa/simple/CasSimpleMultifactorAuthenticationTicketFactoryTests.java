@@ -3,10 +3,10 @@ package org.apereo.cas.mfa.simple;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.BaseAbstractMultifactorAuthenticationProviderTests;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
+import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.TransientSessionTicket;
-import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -34,11 +34,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CasSimpleMultifactorAuthenticationTicketFactoryTests extends BaseAbstractMultifactorAuthenticationProviderTests {
     @Autowired
     @Qualifier("casSimpleMultifactorAuthenticationTicketFactory")
-    private TransientSessionTicketFactory ticketFactory;
+    private CasSimpleMultifactorAuthenticationTicketFactory ticketFactory;
 
     @Test
     public void verifyExpirationPolicy() {
-        val factory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
+        val factory = (CasSimpleMultifactorAuthenticationTicketFactory) this.ticketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getService("example"), new HashMap<>(0));
         assertNotNull(ticket);
         assertEquals(30, ticket.getExpirationPolicy().getTimeToLive());
@@ -46,7 +46,7 @@ public class CasSimpleMultifactorAuthenticationTicketFactoryTests extends BaseAb
 
     @Test
     public void verifyCustomExpirationPolicy() {
-        val factory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
+        val factory = (CasSimpleMultifactorAuthenticationTicketFactory) this.ticketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getService("example"),
             CollectionUtils.wrap(ExpirationPolicy.class.getName(),
                 HardTimeoutExpirationPolicy.builder().timeToKillInSeconds(60).build()));

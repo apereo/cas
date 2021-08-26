@@ -4,7 +4,10 @@ title: Localization - User Interface Customization - CAS
 category: User Interface
 ---
 
+{% include variables.html %}
+
 # Localization
+
 The CAS Web application includes a number of localized message files:
 
 - English (US)
@@ -29,8 +32,8 @@ The CAS Web application includes a number of localized message files:
 
 In order to "invoke" a specific language for the UI, the `/login` endpoint may be passed a `locale` parameter as such:
 
-```html
-https://cas.server.edu/login?locale=it
+```bash
+https://cas.server.org/login?locale=it
 ```
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Note that not all languages are complete and accurate across CAS server releases as translations are entirely dependent upon community contributions.
@@ -38,11 +41,18 @@ For an accurate and complete list of localized messages, always refer to the Eng
 
 ## Configuration
 
-All message bundles are marked under `messages_xx.properties` files at `src/main/resources`. The default language bundle is for the
-English language and is thus called `messages.properties`. If there are any custom messages that need to be presented into views,
+All message bundles are marked under `messages_xx.properties` files at `src/main/resources`.
+The default language bundle is for the
+English language and is thus called `messages.properties`. If there are any custom 
+messages that need to be presented into views,
 they may also be formatted under `custom_messages.properties` files.
 
 In the event that the code is not found in the activated resource bundle, the code itself will be used verbatim.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#localization)
-and [this guide](../configuration/Configuration-Properties.html#message-bundles).
+### Localization
+
+{% include casproperties.html properties="cas.locale." %}
+
+### Message Bundles
+
+{% include casproperties.html properties="cas.message-bundle." %}

@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -42,30 +43,20 @@ import java.util.Map;
 @Slf4j
 public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
-    private final String sql;
-    private final String fieldPassword;
-    private final String fieldExpired;
-    private final String fieldDisabled;
+    private final QueryJdbcAuthenticationProperties properties;
+
     private final Map<String, Object> principalAttributeMap;
 
-    public QueryDatabaseAuthenticationHandler(final String name,
+    public QueryDatabaseAuthenticationHandler(final QueryJdbcAuthenticationProperties properties,
                                               final ServicesManager servicesManager,
                                               final PrincipalFactory principalFactory,
-                                              final Integer order,
                                               final DataSource dataSource,
-                                              final String sql,
-                                              final String fieldPassword,
-                                              final String fieldExpired,
-                                              final String fieldDisabled,
                                               final Map<String, Object> attributes) {
-        super(name, servicesManager, principalFactory, order, dataSource);
-        this.sql = sql;
-        this.fieldPassword = fieldPassword;
-        this.fieldExpired = fieldExpired;
-        this.fieldDisabled = fieldDisabled;
+        super(properties.getName(), servicesManager, principalFactory, properties.getOrder(), dataSource);
+        this.properties = properties;
         this.principalAttributeMap = attributes;
 
-        if (StringUtils.isBlank(this.fieldPassword)) {
+        if (StringUtils.isBlank(properties.getFieldPassword())) {
             LOGGER.warn("When the password field is left undefined, CAS will skip comparing database and user passwords for equality "
                 + ", (specially if the query results do not contain the password field),"
                 + "and will instead only rely on a successful query execution with returned results in order to verify credentials");
@@ -76,18 +67,13 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
                                                                                         final String originalPassword)
         throws GeneralSecurityException, PreventedException {
-        if (StringUtils.isBlank(this.sql) || getJdbcTemplate() == null) {
-            throw new GeneralSecurityException("Authentication handler is not configured correctly. "
-                + "No SQL statement or JDBC template is found.");
-        }
-
         val attributes = Maps.<String, List<Object>>newHashMapWithExpectedSize(this.principalAttributeMap.size());
         val username = credential.getUsername();
         val password = credential.getPassword();
         try {
             val dbFields = query(credential);
-            if (dbFields.containsKey(this.fieldPassword)) {
-                val dbPassword = (String) dbFields.get(this.fieldPassword);
+            if (dbFields.containsKey(properties.getFieldPassword())) {
+                val dbPassword = (String) dbFields.get(properties.getFieldPassword());
 
                 val originalPasswordMatchFails = StringUtils.isNotBlank(originalPassword) && !matches(originalPassword, dbPassword);
                 val originalPasswordEquals = StringUtils.isBlank(originalPassword) && !StringUtils.equals(password, dbPassword);
@@ -102,7 +88,8 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
 
                 val count = dbFields.get("total");
                 if (count == null || !NumberUtils.isCreatable(count.toString())) {
-                    throw new FailedLoginException("Missing field value 'total' from the query results for " + username + " or value not parseable as a number");
+                    throw new FailedLoginException("Missing field value 'total' from the query results for "
+                        + username + " or value not parseable as a number");
                 }
 
                 val number = NumberUtils.createNumber(count.toString());
@@ -111,14 +98,14 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                 }
             }
 
-            if (StringUtils.isNotBlank(this.fieldDisabled) && dbFields.containsKey(this.fieldDisabled)) {
-                val dbDisabled = dbFields.get(this.fieldDisabled).toString();
+            if (StringUtils.isNotBlank(properties.getFieldDisabled()) && dbFields.containsKey(properties.getFieldDisabled())) {
+                val dbDisabled = dbFields.get(properties.getFieldDisabled()).toString();
                 if (BooleanUtils.toBoolean(dbDisabled) || "1".equals(dbDisabled)) {
                     throw new AccountDisabledException("Account has been disabled");
                 }
             }
-            if (StringUtils.isNotBlank(this.fieldExpired) && dbFields.containsKey(this.fieldExpired)) {
-                val dbExpired = dbFields.get(this.fieldExpired).toString();
+            if (StringUtils.isNotBlank(properties.getFieldExpired()) && dbFields.containsKey(properties.getFieldExpired())) {
+                val dbExpired = dbFields.get(properties.getFieldExpired()).toString();
                 if (BooleanUtils.toBoolean(dbExpired) || "1".equals(dbExpired)) {
                     throw new AccountPasswordMustChangeException("Password has expired");
                 }
@@ -130,20 +117,20 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
             }
             throw new FailedLoginException("Multiple records found for " + username);
         } catch (final DataAccessException e) {
-            throw new PreventedException("SQL exception while executing query for " + username, e);
+            throw new PreventedException(e);
         }
         val principal = this.principalFactory.createPrincipal(username, attributes);
         return createHandlerResult(credential, principal, new ArrayList<>(0));
     }
 
     private Map<String, Object> query(final UsernamePasswordCredential credential) {
-        if (this.sql.contains("?")) {
-            return getJdbcTemplate().queryForMap(this.sql, credential.getUsername());
+        if (properties.getSql().contains("?")) {
+            return getJdbcTemplate().queryForMap(properties.getSql(), credential.getUsername());
         }
         val parameters = new LinkedHashMap<String, Object>();
         parameters.put("username", credential.getUsername());
         parameters.put("password", credential.getPassword());
-        return getNamedJdbcTemplate().queryForMap(this.sql, parameters);
+        return getNamedParameterJdbcTemplate().queryForMap(properties.getSql(), parameters);
     }
 
     private void collectPrincipalAttributes(final Map<String, List<Object>> attributes, final Map<String, Object> dbFields) {

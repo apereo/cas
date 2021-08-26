@@ -1,21 +1,17 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.model.TriStateBoolean;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.Ordered;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This is {@link DefaultSingleSignOnParticipationStrategy}.
@@ -25,35 +21,33 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 @Getter
-@RequiredArgsConstructor
 @Setter
-public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnParticipationStrategy {
-    private final ServicesManager servicesManager;
-
-    private final boolean createCookieOnRenewedAuthentication;
-
-    private final boolean renewEnabled;
-
-    private final TicketRegistrySupport ticketRegistrySupport;
-
-    private final AuthenticationServiceSelectionPlan serviceSelectionStrategy;
+public class DefaultSingleSignOnParticipationStrategy extends BaseSingleSignOnParticipationStrategy {
+    private final SingleSignOnProperties properties;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
+    public DefaultSingleSignOnParticipationStrategy(final ServicesManager servicesManager,
+                                                    final SingleSignOnProperties properties,
+                                                    final TicketRegistrySupport ticketRegistrySupport,
+                                                    final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
+        super(servicesManager, ticketRegistrySupport, serviceSelectionStrategy);
+        this.properties = properties;
+    }
+
     @Override
-    public boolean isParticipating(final RequestContext requestContext) {
-        if (renewEnabled && requestContext.getRequestParameters().contains(CasProtocolConstants.PARAMETER_RENEW)) {
-            LOGGER.debug("[{}] is specified for the request. The authentication session will be considered renewed.",
-                CasProtocolConstants.PARAMETER_RENEW);
+    public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) {
+        if (properties.isRenewAuthnEnabled() && ssoRequest.isRequestingRenewAuthentication()) {
+            LOGGER.debug("The authentication session is considered renewed.");
             return false;
         }
 
-        val registeredService = determineRegisteredService(requestContext);
+        val registeredService = getRegisteredService(ssoRequest);
         if (registeredService == null) {
-            return true;
+            return properties.isSsoEnabled();
         }
 
-        val authentication = WebUtils.getAuthentication(requestContext);
+        val authentication = getAuthenticationFrom(ssoRequest);
         val ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
         try {
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
@@ -65,13 +59,20 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
                 LOGGER.debug("Service [{}] is not authorized to participate in SSO", registeredService.getServiceId());
                 return false;
             }
+
             val ssoPolicy = registeredService.getSingleSignOnParticipationPolicy();
             if (ssoPolicy != null) {
-                val tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
-                val ticketState = ticketRegistrySupport.getTicketState(tgtId);
-                if (ticketState != null) {
-                    return ssoPolicy.shouldParticipateInSso(ticketState);
+                val ticketState = getTicketState(ssoRequest);
+                if (ticketState.isPresent()) {
+                    return ssoPolicy.shouldParticipateInSso(registeredService, ticketState.get());
                 }
+            }
+
+            val tgtPolicy = registeredService.getTicketGrantingTicketExpirationPolicy();
+            if (tgtPolicy != null) {
+                val ticketState = getTicketState(ssoRequest);
+                return tgtPolicy.toExpirationPolicy()
+                    .map(policy -> !policy.isExpired(ticketState.get())).orElse(Boolean.TRUE);
             }
         } finally {
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(ca);
@@ -80,27 +81,14 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
     }
 
     @Override
-    public TriStateBoolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
-        val registeredService = determineRegisteredService(context);
+    public TriStateBoolean isCreateCookieOnRenewedAuthentication(final SingleSignOnParticipationRequest context) {
+        val registeredService = getRegisteredService(context);
         if (registeredService != null) {
             val ssoPolicy = registeredService.getSingleSignOnParticipationPolicy();
             if (ssoPolicy != null) {
-                return ssoPolicy.isCreateCookieOnRenewedAuthentication();
+                return ssoPolicy.getCreateCookieOnRenewedAuthentication();
             }
         }
-        return TriStateBoolean.fromBoolean(this.createCookieOnRenewedAuthentication);
-    }
-
-    private RegisteredService determineRegisteredService(final RequestContext requestContext) {
-        val registeredService = WebUtils.getRegisteredService(requestContext);
-        if (registeredService != null) {
-            return registeredService;
-        }
-        val service = WebUtils.getService(requestContext);
-        val serviceToUse = serviceSelectionStrategy.resolveService(service);
-        if (serviceToUse != null) {
-            return this.servicesManager.findServiceBy(serviceToUse);
-        }
-        return null;
+        return TriStateBoolean.fromBoolean(properties.isCreateSsoCookieOnRenewAuthn());
     }
 }

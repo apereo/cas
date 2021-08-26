@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
+
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
@@ -8,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,25 +19,21 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class
-}, properties = {
-    "cas.authn.attributeRepository.stub.attributes.uid=cas",
-    "cas.authn.attributeRepository.stub.attributes.givenName=apereo-cas",
-    "cas.authn.attributeRepository.stub.attributes.eppn=casuser",
+@SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class, properties = {
+    "cas.authn.attribute-repository.stub.attributes.uid=cas",
+    "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
+    "cas.authn.attribute-repository.stub.attributes.eppn=casuser",
     
-    "cas.authn.attributeRepository.json[0].location=classpath:/json-attribute-repository.json",
-    "cas.authn.attributeRepository.json[0].order=1",
+    "cas.authn.attribute-repository.json[0].location=classpath:/json-attribute-repository.json",
+    "cas.authn.attribute-repository.json[0].order=1",
 
-    "cas.authn.attributeRepository.groovy[0].location=classpath:/GroovyAttributeRepository.groovy",
-    "cas.authn.attributeRepository.groovy[0].order=2",
+    "cas.authn.attribute-repository.groovy[0].location=classpath:/GroovyAttributeRepository.groovy",
+    "cas.authn.attribute-repository.groovy[0].order=2",
 
-    "cas.authn.attributeRepository.aggregation=cascade",
-    "cas.authn.attributeRepository.merger=multivalued"
+    "cas.authn.attribute-repository.core.aggregation=CASCADE",
+    "cas.authn.attribute-repository.core.merger=MULTIVALUED"
 })
-@Tag("Simple")
+@Tag("Attributes")
 public class CasPersonDirectoryConfigurationCascadeAggregationTests {
     @Autowired
     @Qualifier("aggregatingAttributeRepository")

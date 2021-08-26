@@ -3,7 +3,7 @@ package org.apereo.cas.authentication.principal.provision;
 import org.apereo.cas.authentication.principal.Principal;
 
 import org.pac4j.core.client.BaseClient;
-import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.UserProfile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ public class ChainingDelegatedClientUserProfileProvisioner extends BaseDelegated
     private final List<DelegatedClientUserProfileProvisioner> provisioners = new ArrayList<>(0);
 
     @Override
-    public void execute(final Principal principal, final CommonProfile profile, final BaseClient client) {
+    public void execute(final Principal principal, final UserProfile profile, final BaseClient client) {
         provisioners.forEach(provisioner -> provisioner.execute(principal, profile, client));
     }
 

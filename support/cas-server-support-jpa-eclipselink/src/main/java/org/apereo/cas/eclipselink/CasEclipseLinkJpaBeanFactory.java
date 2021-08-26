@@ -14,7 +14,11 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
 
+import javax.persistence.TypedQuery;
+import javax.persistence.spi.PersistenceProvider;
+import java.io.Serializable;
 import java.util.HashMap;
+import java.util.stream.Stream;
 
 /**
  * This is {@link CasEclipseLinkJpaBeanFactory}.
@@ -46,5 +50,15 @@ public class CasEclipseLinkJpaBeanFactory implements JpaBeanFactory {
 
         bean.getJpaPropertyMap().putAll(map);
         return bean;
+    }
+
+    @Override
+    public Stream<? extends Serializable> streamQuery(final TypedQuery<? extends Serializable> query) {
+        return query.getResultStream();
+    }
+
+    @Override
+    public PersistenceProvider newPersistenceProvider(final AbstractJpaProperties jpa) {
+        return new org.eclipse.persistence.jpa.PersistenceProvider();
     }
 }

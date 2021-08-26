@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @SpringBootTest(classes = BaseX509Tests.SharedTestConfiguration.class,
-    properties = "cas.authn.x509.crlFetcher=resource")
+    properties = "cas.authn.x509.crl-fetcher=resource")
 @Tag("X509")
 public class DefaultX509ConfigTests {
 

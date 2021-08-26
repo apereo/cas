@@ -4,6 +4,8 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * This is {@link SingleSignOnSessionStatusEndpoint}.
@@ -25,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 public class SingleSignOnSessionStatusEndpoint {
 
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
+
     private final TicketRegistrySupport ticketRegistrySupport;
 
     /**
@@ -34,8 +38,9 @@ public class SingleSignOnSessionStatusEndpoint {
      * @return the response entity
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity ssoStatus(final HttpServletRequest request) {
-        var tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+    @Operation(summary = "Get current status of single sign-on", parameters = {@Parameter(name = "request", required = true)})
+    public ResponseEntity<Map<?, ?>> ssoStatus(final HttpServletRequest request) {
+        val tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         if (StringUtils.isBlank(tgtId)) {
             return ResponseEntity.badRequest().build();
         }

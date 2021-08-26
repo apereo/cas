@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.JmsQueueIdentifier;
 import org.apereo.cas.ticket.registry.queue.BaseMessageQueueCommand;
+import org.apereo.cas.util.PublisherIdentifier;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ import org.springframework.jms.annotation.JmsListener;
 public class JmsTicketRegistryReceiver {
     private final TicketRegistry ticketRegistry;
 
-    private final JmsQueueIdentifier ticketRegistryId;
+    private final PublisherIdentifier ticketRegistryId;
 
     /**
      * Receive.

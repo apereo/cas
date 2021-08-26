@@ -1,5 +1,8 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.audit.BaseAuditableExecution;
@@ -17,9 +20,9 @@ import org.apereo.inspektr.audit.annotation.Audit;
  */
 public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAuditableExecution {
     @Override
-    @Audit(action = "SERVICE_ACCESS_ENFORCEMENT",
-        actionResolverName = "SERVICE_ACCESS_ENFORCEMENT_ACTION_RESOLVER",
-        resourceResolverName = "SERVICE_ACCESS_ENFORCEMENT_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.SERVICE_ACCESS_ENFORCEMENT,
+        actionResolverName = AuditActionResolvers.SERVICE_ACCESS_ENFORCEMENT_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.SERVICE_ACCESS_ENFORCEMENT_RESOURCE_RESOLVER)
     public AuditableExecutionResult execute(final AuditableContext context) {
         val providedRegisteredService = context.getRegisteredService();
         if (context.getServiceTicket().isPresent() && context.getAuthenticationResult().isPresent() && providedRegisteredService.isPresent()) {
@@ -48,8 +51,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
                     registeredService,
-                    ticketGrantingTicket.get(),
-                    context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
+                    ticketGrantingTicket.get());
             } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }
@@ -71,8 +73,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
                     registeredService,
-                    authentication,
-                    context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
+                    authentication);
             } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }

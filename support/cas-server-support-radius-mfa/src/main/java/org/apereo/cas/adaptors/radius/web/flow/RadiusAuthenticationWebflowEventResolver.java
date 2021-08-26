@@ -1,5 +1,8 @@
 package org.apereo.cas.adaptors.radius.web.flow;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -18,9 +21,12 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 public class RadiusAuthenticationWebflowEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-    private static final String FLOW_SCOPE_ATTR_TOTAL_AUTHENTICATION_ATTEMPTS = "totalAuthenticationAttempts";
+    /**
+     * Flow scope variable to indicate count of authn attempts.
+     */
+    public static final String FLOW_SCOPE_ATTR_TOTAL_AUTHENTICATION_ATTEMPTS = "totalAuthenticationAttempts";
+
     private final long allowedAuthenticationAttempts;
 
     public RadiusAuthenticationWebflowEventResolver(
@@ -35,18 +41,18 @@ public class RadiusAuthenticationWebflowEventResolver extends BaseMultifactorAut
         return handleAuthenticationTransactionAndGrantTicketGrantingTicket(context);
     }
 
-    @Audit(action = "AUTHENTICATION_EVENT",
-        actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
-        resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.AUTHENTICATION_EVENT,
+        actionResolverName = AuditActionResolvers.AUTHENTICATION_EVENT_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.AUTHENTICATION_EVENT_RESOURCE_RESOLVER)
     @Override
     public Event resolveSingle(final RequestContext context) {
         return super.resolveSingle(context);
     }
 
     @Override
-    protected Event getAuthenticationFailureErrorEvent(final RequestContext context) {
+    protected Event getAuthenticationFailureErrorEvent(final RequestContext context, final Exception exception) {
         if (allowedAuthenticationAttempts <= 0) {
-            return super.getAuthenticationFailureErrorEvent(context);
+            return super.getAuthenticationFailureErrorEvent(context, exception);
         }
         val attempts = context.getFlowScope().getLong(FLOW_SCOPE_ATTR_TOTAL_AUTHENTICATION_ATTEMPTS, 0L) + 1;
         if (attempts >= allowedAuthenticationAttempts) {
@@ -54,7 +60,7 @@ public class RadiusAuthenticationWebflowEventResolver extends BaseMultifactorAut
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_CANCEL);
         }
         context.getFlowScope().put(FLOW_SCOPE_ATTR_TOTAL_AUTHENTICATION_ATTEMPTS, attempts + 1);
-        return super.getAuthenticationFailureErrorEvent(context);
+        return super.getAuthenticationFailureErrorEvent(context, exception);
     }
 
 }

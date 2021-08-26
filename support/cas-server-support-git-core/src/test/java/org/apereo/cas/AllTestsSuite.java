@@ -5,9 +5,8 @@ import org.apereo.cas.git.GitRepositoryTests;
 import org.apereo.cas.git.LoggingGitProgressMonitorTests;
 import org.apereo.cas.git.PathRegexPatternTreeFilterTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -21,6 +20,6 @@ import org.junit.runner.RunWith;
     GitRepositoryTests.class,
     PathRegexPatternTreeFilterTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

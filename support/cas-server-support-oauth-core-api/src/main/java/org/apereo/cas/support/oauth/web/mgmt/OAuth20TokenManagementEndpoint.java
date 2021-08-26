@@ -1,14 +1,16 @@
 package org.apereo.cas.support.oauth.web.mgmt;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
@@ -30,14 +32,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
 
-    private final TicketRegistry ticketRegistry;
+    private final CentralAuthenticationService centralAuthenticationService;
+
     private final JwtBuilder accessTokenJwtBuilder;
 
     public OAuth20TokenManagementEndpoint(final CasConfigurationProperties casProperties,
-                                          final TicketRegistry ticketRegistry,
+                                          final CentralAuthenticationService centralAuthenticationService,
                                           final JwtBuilder accessTokenJwtBuilder) {
         super(casProperties);
-        this.ticketRegistry = ticketRegistry;
+        this.centralAuthenticationService = centralAuthenticationService;
         this.accessTokenJwtBuilder = accessTokenJwtBuilder;
     }
 
@@ -47,8 +50,11 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
      * @return the access tokens
      */
     @ReadOperation
+    @Operation(summary = "Get access and/or refresh tokens")
     public Collection<Ticket> getTokens() {
-        return ticketRegistry.getTickets(ticket -> (ticket instanceof OAuth20AccessToken || ticket instanceof OAuth20RefreshToken) && !ticket.isExpired())
+        return centralAuthenticationService.getTickets(ticket ->
+            (ticket instanceof OAuth20AccessToken || ticket instanceof OAuth20RefreshToken) && !ticket.isExpired())
+            .stream()
             .sorted(Comparator.comparing(Ticket::getId))
             .collect(Collectors.toList());
     }
@@ -61,21 +67,15 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
      * @return the access token
      */
     @ReadOperation
+    @Operation(summary = "Get single token by id", parameters = {@Parameter(name = "token", required = true)})
     public Ticket getToken(@Selector final String token) {
-        val ticketId = extractAccessTokenFrom(token);
-        var ticket = (Ticket) ticketRegistry.getTicket(ticketId, OAuth20AccessToken.class);
-        if (ticket == null) {
-            ticket = ticketRegistry.getTicket(ticketId, OAuth20RefreshToken.class);
-        }
-        if (ticket == null) {
-            LOGGER.debug("Ticket [{}] is not found", ticketId);
+        try {
+            val ticketId = extractAccessTokenFrom(token);
+            return centralAuthenticationService.getTicket(ticketId, Ticket.class);
+        } catch (final Exception e) {
+            LOGGER.debug("Ticket [{}] is has expired or cannot be found", token);
             return null;
         }
-        if (ticket.isExpired()) {
-            LOGGER.debug("Ticket [{}] is has expired", ticketId);
-            return null;
-        }
-        return ticket;
     }
 
     /**
@@ -84,10 +84,11 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
      * @param ticketId the ticket id
      */
     @DeleteOperation
+    @Operation(summary = "Delete token by id", parameters = {@Parameter(name = "ticketId", required = true)})
     public void deleteToken(@Selector final String ticketId) {
         val ticket = getToken(ticketId);
         if (ticket != null) {
-            ticketRegistry.deleteTicket(ticket.getId());
+            centralAuthenticationService.deleteTicket(ticket.getId());
         }
     }
 

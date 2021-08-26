@@ -28,6 +28,17 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
      */
     private static final long serialVersionUID = 8196868021183513898L;
 
+    @JsonIgnore
+    @Override
+    public Class<? extends Credential> getCredentialClass() {
+        return this.getClass();
+    }
+
+    @JsonIgnore
+    public boolean isValid() {
+        return StringUtils.isNotBlank(getId());
+    }
+
     @Override
     public boolean equals(final Object other) {
         if (other == null) {
@@ -51,18 +62,7 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
         builder.append(getId());
         return builder.toHashCode();
     }
-
-    @JsonIgnore
-    @Override
-    public Class<? extends Credential> getCredentialClass() {
-        return this.getClass();
-    }
-
-    @JsonIgnore
-    public boolean isValid() {
-        return StringUtils.isNotBlank(getId());
-    }
-
+    
     /**
      * Validate.
      *
@@ -77,11 +77,5 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
                 .defaultText("Unable to accept credential with an empty or unspecified token")
                 .build());
         }
-    }
-
-    @JsonIgnore
-    @Override
-    public Credential toCredential() {
-        return this;
     }
 }

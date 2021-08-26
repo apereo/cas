@@ -53,7 +53,8 @@ public class GrouperMultifactorAuthenticationTrigger implements MultifactorAuthe
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
                                                                    final HttpServletRequest request, final Service service) {
-        val grouperField = casProperties.getAuthn().getMfa().getGrouperGroupField().toUpperCase();
+        val grouperField = casProperties.getAuthn().getMfa()
+            .getTriggers().getGrouper().getGrouperGroupField();
         if (StringUtils.isBlank(grouperField)) {
             LOGGER.debug("No group field is defined to process for Grouper multifactor trigger");
             return Optional.empty();
@@ -63,19 +64,19 @@ public class GrouperMultifactorAuthenticationTrigger implements MultifactorAuthe
             return Optional.empty();
         }
 
-        val principal = authentication.getPrincipal();
-        val results = grouperFacade.getGroupsForSubjectId(principal.getId());
-        if (results.isEmpty()) {
-            LOGGER.debug("No groups could be found for [{}] to resolve events for MFA", principal);
-            return Optional.empty();
-        }
-
         val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
 
+        val principal = authentication.getPrincipal();
+        val results = grouperFacade.getGroupsForSubjectId(principal.getId());
+        if (results.isEmpty()) {
+            LOGGER.debug("No groups could be found for [{}] to resolve events for MFA", principal);
+            return Optional.empty();
+        }
+        
         val groupField = GrouperGroupField.valueOf(grouperField);
 
         val values = results.stream()

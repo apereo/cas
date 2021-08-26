@@ -1,0 +1,109 @@
+name: Publish Fork Release to AWS CodeArtifact
+# This can be used to publish a release from a CAS fork to an AWS CodeArtifact private repository.
+# Workflow is triggered by four digit tags.
+# Requires secrets:
+# CODE_ARTIFACT_DOMAIN and CODE_ARTIFACT_URL determined when the repository is created.
+# CODE_ARTIFACT_AWS_ACCESS_KEY_ID and CODE_ARTIFACT_AWS_SECRET_ACCESS_KEY should be for user with publish rights on repo
+# CODE_ARTIFACT_REGION is region where the CodeArtifact repository exists
+
+env:
+  JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  TERM: xterm-256color
+  REPO_OWNER: ${{ github.repository_owner }}
+  JDK_CURRENT: 11.0.12
+  CODE_ARTIFACT_DOMAIN: ${{ secrets.CODE_ARTIFACT_DOMAIN }}
+  CODE_ARTIFACT_URL: ${{ secrets.CODE_ARTIFACT_URL }}
+
+##########################################################################
+
+# Trigger on four digit tags where the fourth digit differentiates build from official builds
+on:
+  push:
+    tags:
+      - 6.*.*.*
+      - 7.*.*.*
+
+##########################################################################
+
+jobs:
+
+  ##########################################################################
+
+  initialize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'zulu'
+      - name: Initialize
+        run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+
+  ##########################################################################
+
+  cache:
+    runs-on: ubuntu-latest
+    needs: [initialize]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'zulu'
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/checkout@v2
+      - name: Download Dependencies
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+  ##########################################################################
+
+  publish-release:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    continue-on-error: false
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'zulu'
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Configure AWS credentials
+        id: aws-credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.CODE_ARTIFACT_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.CODE_ARTIFACT_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.CODE_ARTIFACT_REGION }}
+      - name: Publish Release to AWS CodeArtifact Package Repository
+        run: |
+          export CODE_ARTIFACT_OWNER=${{ steps.aws-credentials.outputs.aws-account-id }}
+          echo "CodeArtifact owner length is $(echo -n $CODE_ARTIFACT_OWNER | wc -c)"
+          echo "CodeArtifact domain length is: $(echo -n CODE_ARTIFACT_DOMAIN | wc -c)"
+          export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain ${CODE_ARTIFACT_DOMAIN} --domain-owner ${{ steps.aws-credentials.outputs.aws-account-id }} --query authorizationToken --output text`
+          echo "Auth Token Length: $(echo -n $CODEARTIFACT_AUTH_TOKEN | wc -c)"
+          echo "CodeArtifact URL Length: $(echo -n $CODE_ARTIFACT_URL | wc -c)"
+          ./gradlew -DpublishReleases=true -DskipArtifactSigning=true --parallel --build-cache --configure-on-demand --no-daemon -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -PrepositoryUsername=aws -PrepositoryPassword=${CODEARTIFACT_AUTH_TOKEN} -PreleaseRepositoryUrl=${CODE_ARTIFACT_URL} -Pversion=${GITHUB_REF/refs\/tags\//}
+        if: ${{ env.CODE_ARTIFACT_URL != null && env.CODE_ARTIFACT_DOMAIN != null}}

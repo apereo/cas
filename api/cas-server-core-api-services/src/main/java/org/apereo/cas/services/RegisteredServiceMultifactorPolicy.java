@@ -1,5 +1,8 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
@@ -26,7 +29,7 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
      *
      * @return the failure mode
      */
-    RegisteredServiceMultifactorPolicyFailureModes getFailureMode();
+    BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes getFailureMode();
 
     /**
      * Gets principal attribute name trigger.
@@ -44,7 +47,7 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
     String getPrincipalAttributeValueToMatch();
 
     /**
-     * Indicates whether authentication should be skipped.
+     * Indicates whether multifactor authentication should be skipped.
      *
      * @return true/false
      */
@@ -85,5 +88,6 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
      *
      * @return MFA trigger as a script path or embedded script.
      */
+    @ExpressionLanguageCapable
     String getScript();
 }

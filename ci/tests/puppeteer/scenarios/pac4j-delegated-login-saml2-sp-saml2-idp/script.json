@@ -1,0 +1,33 @@
+{
+  "dependencies": "saml-idp,pac4j-webflow",
+  "properties": [
+    "--cas.audit.engine.enabled=false",
+
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+    "--cas.authn.attribute-repository.stub.attributes.name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.gender=female",
+    "--cas.authn.attribute-repository.stub.attributes.preferred_username=casuser",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--logging.level.org.apereo.cas=debug",
+
+    "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp/%{random}",
+    "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    "--cas.server.scope=example.net",
+
+    "--cas.authn.pac4j.saml[0].keystore-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[0].private-key-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[0].service-provider-entity-id=cas:apereo:pac4j:saml:%{random}",
+    "--cas.authn.pac4j.saml[0].service-provider-metadata-path=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/sp-metadata.xml",
+    "--cas.authn.pac4j.saml[0].keystore-path=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/samlKeystore.jks",
+    "--cas.authn.pac4j.saml[0].identity-provider-metadata-path=https://samltest.id/saml/idp",
+    "--cas.authn.pac4j.saml[0].destination-binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST",
+    "--cas.authn.pac4j.saml[0].client-name=SAML2Client"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

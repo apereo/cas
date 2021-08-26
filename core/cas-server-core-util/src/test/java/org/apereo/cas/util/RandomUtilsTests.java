@@ -1,6 +1,8 @@
 package org.apereo.cas.util;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -12,8 +14,20 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("Simple")
+@Tag("Utility")
 public class RandomUtilsTests {
+
+    @BeforeEach
+    public void beforeEach() {
+        System.setProperty(RandomUtils.SYSTEM_PROPERTY_SECURE_RANDOM_ALG, StringUtils.EMPTY);
+    }
+    
+    @Test
+    public void verifyUnknownAlg() {
+        System.setProperty(RandomUtils.SYSTEM_PROPERTY_SECURE_RANDOM_ALG, "bad-algorithm");
+        assertNotNull(RandomUtils.getNativeInstance());
+    }
+
     @Test
     public void verifyOperation() {
         val value = RandomUtils.generateSecureRandomId();
@@ -39,6 +53,12 @@ public class RandomUtilsTests {
 
         value = RandomUtils.nextInt(5, 5);
         assertNotNull(value);
+    }
+
+    @Test
+    public void verifyLong() {
+        var value = RandomUtils.nextLong(3, 3);
+        assertEquals(3, value);
     }
 
     @Test

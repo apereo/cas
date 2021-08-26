@@ -1,0 +1,10 @@
+# Set line endings to LF for scripts, even on Windows. Otherwise, execution within Docker images or CI on Windows bash fails.
+# See https://help.github.com/articles/dealing-with-line-endings/
+*.sh text eol=lf
+gradlew text eol=lf
+# match checkstyle lf enforcement, otherwise windows users get checkstyle errors on files that Git would convert
+*.java text eol=lf
+*.xml text eol=lf
+*.properties text eol=lf
+*.txt text eol=lf
+*.json text eol=lf

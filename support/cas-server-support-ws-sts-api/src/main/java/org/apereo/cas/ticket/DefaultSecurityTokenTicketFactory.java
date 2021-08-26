@@ -17,19 +17,21 @@ import lombok.val;
 public class DefaultSecurityTokenTicketFactory implements SecurityTokenTicketFactory {
 
     private final UniqueTicketIdGenerator ticketUniqueTicketIdGenerator;
+
     private final ExpirationPolicyBuilder expirationPolicy;
 
     @Override
-    public TicketFactory get(final Class<? extends Ticket> clazz) {
-        return this;
-    }
-
-    @Override
-    public SecurityTokenTicket create(final TicketGrantingTicket ticket, final byte[] securityTokenSerialized) {
+    public SecurityTokenTicket create(final TicketGrantingTicket ticket,
+                                      final byte[] securityTokenSerialized) {
         val token = EncodingUtils.encodeBase64(securityTokenSerialized);
         val id = ticketUniqueTicketIdGenerator.getNewTicketId(SecurityTokenTicket.PREFIX);
         val stt = new DefaultSecurityTokenTicket(id, ticket, this.expirationPolicy.buildTicketExpirationPolicy(), token);
         ticket.getDescendantTickets().add(stt.getId());
         return stt;
+    }
+
+    @Override
+    public Class<? extends Ticket> getTicketType() {
+        return SecurityTokenTicket.class;
     }
 }

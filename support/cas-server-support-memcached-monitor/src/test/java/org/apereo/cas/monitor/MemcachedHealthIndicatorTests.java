@@ -15,7 +15,6 @@ import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
@@ -37,11 +36,10 @@ import static org.mockito.Mockito.*;
     CasCoreUtilSerializationConfiguration.class
 }, properties = {
     "cas.monitor.memcached.servers=localhost:11212",
-    "cas.monitor.memcached.failureMode=Redistribute",
-    "cas.monitor.memcached.locatorType=ARRAY_MOD",
-    "cas.monitor.memcached.hashAlgorithm=FNV1A_64_HASH"
+    "cas.monitor.memcached.failure-mode=Redistribute",
+    "cas.monitor.memcached.locator-type=ARRAY_MOD",
+    "cas.monitor.memcached.hash-algorithm=FNV1A_64_HASH"
 })
-@DirtiesContext
 @Tag("Memcached")
 @EnabledIfPortOpen(port = 11211)
 public class MemcachedHealthIndicatorTests {

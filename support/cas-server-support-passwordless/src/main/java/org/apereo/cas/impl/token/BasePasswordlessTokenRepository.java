@@ -4,6 +4,7 @@ import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.util.gen.DefaultRandomNumberGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -13,7 +14,7 @@ import lombok.RequiredArgsConstructor;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class BasePasswordlessTokenRepository implements PasswordlessTokenRepository {
     private static final int TOKEN_LENGTH = 6;

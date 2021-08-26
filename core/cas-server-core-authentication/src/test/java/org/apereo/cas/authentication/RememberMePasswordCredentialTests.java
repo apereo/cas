@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.2.1
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class RememberMePasswordCredentialTests {
 
     @Test

@@ -4,7 +4,9 @@ import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.util.AopUtils;
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.Setter;
 import lombok.val;
+import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
 
@@ -14,9 +16,9 @@ import org.aspectj.lang.JoinPoint;
  * @author Scott Battaglia
  * @since 3.1.2
  */
+@Setter
 public class CredentialsAsFirstParameterResourceResolver implements AuditResourceResolver {
-
-    private static final String SUPPLIED_CREDENTIALS = "Supplied credentials: ";
+    private AuditTrailManager.AuditFormats auditFormat = AuditTrailManager.AuditFormats.DEFAULT;
 
     /**
      * Turn the arguments into a list.
@@ -24,13 +26,17 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
      * @param args the args
      * @return the string[]
      */
-    private static String[] toResources(final Object[] args) {
+    private String[] toResources(final Object[] args) {
         val object = args[0];
         if (object instanceof AuthenticationTransaction) {
             val transaction = AuthenticationTransaction.class.cast(object);
-            return new String[]{SUPPLIED_CREDENTIALS + transaction.getCredentials()};
+            return new String[]{toResourceString(transaction.getCredentials())};
         }
-        return new String[]{SUPPLIED_CREDENTIALS + CollectionUtils.wrap(object)};
+        return new String[]{toResourceString(CollectionUtils.wrap(object))};
+    }
+
+    private String toResourceString(final Object credential) {
+        return auditFormat.serialize(credential);
     }
 
     @Override

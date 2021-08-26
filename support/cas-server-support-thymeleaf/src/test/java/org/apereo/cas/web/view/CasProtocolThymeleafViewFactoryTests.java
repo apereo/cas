@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     ThymeleafAutoConfiguration.class
 })
-@Tag("Simple")
+@Tag("Web")
 public class CasProtocolThymeleafViewFactoryTests {
 
     @Autowired
@@ -38,8 +38,9 @@ public class CasProtocolThymeleafViewFactoryTests {
     @Test
     public void verifyOperation() {
         val factory = new CasProtocolThymeleafViewFactory(springTemplateEngine, thymeleafProperties);
-        val view = factory.create(applicationContext, "casLoginView");
+        val view = (CasProtocolView) factory.create(applicationContext, "login/casLoginView");
         assertNotNull(view);
         assertNotNull(view.toString());
+        assertNotNull(view.getLocale());
     }
 }

@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRende
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -50,26 +51,32 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
             return super.renderProfileForModel(userProfile, accessToken, response);
         }
 
-        val registeredService = (OidcRegisteredService) service;
-        if (signingAndEncryptionService.shouldSignToken(registeredService) || signingAndEncryptionService.shouldEncryptToken(registeredService)) {
-            val claims = new JwtClaims();
-            userProfile.forEach(claims::setClaim);
-            claims.setAudience(registeredService.getClientId());
-            claims.setIssuedAt(NumericDate.now());
-            claims.setIssuer(this.signingAndEncryptionService.getIssuer());
-            claims.setJwtId(UUID.randomUUID().toString());
+        try {
+            val registeredService = (OidcRegisteredService) service;
+            if (signingAndEncryptionService.shouldSignToken(registeredService)
+                || signingAndEncryptionService.shouldEncryptToken(registeredService)) {
+                val claims = new JwtClaims();
+                userProfile.forEach(claims::setClaim);
+                claims.setAudience(registeredService.getClientId());
+                claims.setIssuedAt(NumericDate.now());
+                claims.setIssuer(this.signingAndEncryptionService.getIssuer());
+                claims.setJwtId(UUID.randomUUID().toString());
 
-            LOGGER.debug("Collected user profile claims, before cipher operations, are [{}]", claims);
-            val result = this.signingAndEncryptionService.encode(registeredService, claims);
-            LOGGER.debug("Finalized user profile is [{}]", result);
+                LOGGER.debug("Collected user profile claims, before cipher operations, are [{}]", claims);
+                val result = this.signingAndEncryptionService.encode(registeredService, claims);
+                LOGGER.debug("Finalized user profile is [{}]", result);
 
-            response.setContentType(OidcConstants.CONTENT_TYPE_JWT);
-            val headers = new HttpHeaders();
-            headers.put("Content-Type", CollectionUtils.wrapList(OidcConstants.CONTENT_TYPE_JWT));
-            return new ResponseEntity<>(result, headers, HttpStatus.OK);
+                response.setContentType(OidcConstants.CONTENT_TYPE_JWT);
+                val headers = new HttpHeaders();
+                headers.put("Content-Type", CollectionUtils.wrapList(OidcConstants.CONTENT_TYPE_JWT));
+                return new ResponseEntity<>(result, headers, HttpStatus.OK);
+            }
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            val result = OAuth20Utils.toJson(userProfile);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
         }
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        val result = OAuth20Utils.toJson(userProfile);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>("Unable to produce user profile", HttpStatus.BAD_REQUEST);
     }
 }

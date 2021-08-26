@@ -1,7 +1,9 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20CallbackAuthorizeEndpointController;
@@ -11,9 +13,10 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointCo
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20RevocationEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
 import org.apereo.cas.support.oauth.web.mgmt.OAuth20TokenManagementEndpoint;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,6 +26,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 /**
  * This this {@link CasOAuth20EndpointsConfiguration}.
@@ -42,8 +47,8 @@ public class CasOAuth20EndpointsConfiguration {
     private ObjectProvider<JwtBuilder> accessTokenJwtBuilder;
 
     @Autowired
-    @Qualifier("ticketRegistry")
-    private ObjectProvider<TicketRegistry> ticketRegistry;
+    @Qualifier("centralAuthenticationService")
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("accessTokenGrantAuditableRequestExtractor")
@@ -61,9 +66,9 @@ public class CasOAuth20EndpointsConfiguration {
     @ConditionalOnMissingBean(name = "introspectionEndpointController")
     @Bean
     @Autowired
-    public OAuth20IntrospectionEndpointController introspectionEndpointController(
+    public OAuth20IntrospectionEndpointController<OAuth20ConfigurationContext> introspectionEndpointController(
         @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
-        return new OAuth20IntrospectionEndpointController(context);
+        return new OAuth20IntrospectionEndpointController<>(context);
     }
 
     @ConditionalOnMissingBean(name = "accessTokenController")
@@ -84,10 +89,10 @@ public class CasOAuth20EndpointsConfiguration {
     }
 
 
-    @ConditionalOnMissingBean(name = "profileController")
+    @ConditionalOnMissingBean(name = "oauthProfileController")
     @Bean
     @Autowired
-    public OAuth20UserProfileEndpointController profileController(
+    public OAuth20UserProfileEndpointController oauthProfileController(
         @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
         return new OAuth20UserProfileEndpointController(context);
     }
@@ -111,9 +116,18 @@ public class CasOAuth20EndpointsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public OAuth20TokenManagementEndpoint oAuth20TokenManagementEndpoint() {
+    public OAuth20TokenManagementEndpoint oauth20TokenManagementEndpoint() {
         return new OAuth20TokenManagementEndpoint(casProperties,
-            ticketRegistry.getObject(), accessTokenJwtBuilder.getObject());
+            centralAuthenticationService.getObject(), accessTokenJwtBuilder.getObject());
     }
 
+    @Bean
+    public ProtocolEndpointWebSecurityConfigurer<Void> oauth20ProtocolEndpointConfigurer() {
+        return new ProtocolEndpointWebSecurityConfigurer<>() {
+            @Override
+            public List<String> getIgnoredEndpoints() {
+                return List.of(StringUtils.prependIfMissing(OAuth20Constants.BASE_OAUTH20_URL, "/"));
+            }
+        };
+    }
 }

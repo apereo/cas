@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Simple")
+@Tag("CasConfiguration")
 public class CasConfigurationMetadataServerEndpointTests {
     @Autowired
     private CasConfigurationProperties casProperties;

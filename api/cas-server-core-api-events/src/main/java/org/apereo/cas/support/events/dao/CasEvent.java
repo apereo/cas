@@ -19,7 +19,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +35,52 @@ import java.util.Map;
 @Setter
 @AllArgsConstructor
 public class CasEvent implements Serializable {
+
+    /**
+     * The constant FIELD_TIMESTAMP.
+     */
+    public static final String FIELD_TIMESTAMP = "timestamp";
+
+    /**
+     * The constant FIELD_EVENT_ID.
+     */
+    public static final String FIELD_EVENT_ID = "eventId";
+
+    /**
+     * The constant FIELD_CLIENTIP.
+     */
+    public static final String FIELD_CLIENT_IP = "clientip";
+
+    /**
+     * The constant FIELD_SERVERIP.
+     */
+    public static final String FIELD_SERVER_IP = "serverip";
+
+    /**
+     * The constant FIELD_AGENT.
+     */
+    public static final String FIELD_AGENT = "agent";
+
+    /**
+     * The constant FIELD_GEO_LATITUDE.
+     */
+    public static final String FIELD_GEO_LATITUDE = "geoLatitude";
+
+    /**
+     * The constant FIELD_GEO_LONGITUDE.
+     */
+    public static final String FIELD_GEO_LONGITUDE = "geoLongitude";
+
+    /**
+     * The constant FIELD_GEO_ACCURACY.
+     */
+    public static final String FIELD_GEO_ACCURACY = "geoAccuracy";
+
+    /**
+     * The constant FIELD_GEO_TIMESTAMP.
+     */
+    public static final String FIELD_GEO_TIMESTAMP = "geoTimestamp";
+
     private static final long serialVersionUID = -4206712375316470417L;
 
     @Id
@@ -75,7 +120,7 @@ public class CasEvent implements Serializable {
      * @param time the time
      */
     public void putTimestamp(final Long time) {
-        put("timestamp", time.toString());
+        put(FIELD_TIMESTAMP, time.toString());
     }
 
     /**
@@ -84,7 +129,7 @@ public class CasEvent implements Serializable {
      * @param eventId the id
      */
     public void putEventId(final String eventId) {
-        put("eventId", eventId);
+        put(FIELD_EVENT_ID, eventId);
     }
 
     /**
@@ -93,7 +138,7 @@ public class CasEvent implements Serializable {
      * @param loc the loc
      */
     public void putClientIpAddress(final String loc) {
-        put("clientip", loc);
+        put(FIELD_CLIENT_IP, loc);
     }
 
     /**
@@ -102,7 +147,7 @@ public class CasEvent implements Serializable {
      * @param loc the loc
      */
     public void putServerIpAddress(final String loc) {
-        put("serverip", loc);
+        put(FIELD_SERVER_IP, loc);
     }
 
     /**
@@ -111,32 +156,32 @@ public class CasEvent implements Serializable {
      * @param dev the dev
      */
     public void putAgent(final String dev) {
-        put("agent", dev);
+        put(FIELD_AGENT, dev);
     }
 
     @JsonIgnore
     public Long getTimestamp() {
-        return Long.valueOf(get("timestamp"));
+        return Long.valueOf(get(FIELD_TIMESTAMP));
     }
 
     @JsonIgnore
     public String getAgent() {
-        return get("agent");
+        return get(FIELD_AGENT);
     }
 
     @JsonIgnore
     public String getEventId() {
-        return get("eventId");
+        return get(FIELD_EVENT_ID);
     }
 
     @JsonIgnore
     public String getClientIpAddress() {
-        return get("clientip");
+        return get(FIELD_CLIENT_IP);
     }
 
     @JsonIgnore
     public String getServerIpAddress() {
-        return get("serverip");
+        return get(FIELD_SERVER_IP);
     }
 
     /**
@@ -164,42 +209,6 @@ public class CasEvent implements Serializable {
     }
 
     /**
-     * Put geo latitude.
-     *
-     * @param s the s
-     */
-    private void putGeoLatitude(final String s) {
-        put("geoLatitude", s);
-    }
-
-    /**
-     * Put geo longitude.
-     *
-     * @param s the longitude
-     */
-    private void putGeoLongitude(final String s) {
-        put("geoLongitude", s);
-    }
-
-    /**
-     * Put geo accuracy.
-     *
-     * @param s the accuracy
-     */
-    private void putGeoAccuracy(final String s) {
-        put("geoAccuracy", s);
-    }
-
-    /**
-     * Put geo timestamp.
-     *
-     * @param s the timestamp
-     */
-    private void putGeoTimestamp(final String s) {
-        put("geoTimestamp", s);
-    }
-
-    /**
      * Put geo location.
      *
      * @param location the location
@@ -219,10 +228,46 @@ public class CasEvent implements Serializable {
     @JsonIgnore
     public GeoLocationRequest getGeoLocation() {
         val request = new GeoLocationRequest();
-        request.setAccuracy(get("geoAccuracy"));
-        request.setTimestamp(get("geoTimestamp"));
-        request.setLongitude(get("geoLongitude"));
-        request.setLatitude(get("geoLatitude"));
+        request.setAccuracy(get(FIELD_GEO_ACCURACY));
+        request.setTimestamp(get(FIELD_GEO_TIMESTAMP));
+        request.setLongitude(get(FIELD_GEO_LONGITUDE));
+        request.setLatitude(get(FIELD_GEO_LATITUDE));
         return request;
+    }
+
+    /**
+     * Put geo latitude.
+     *
+     * @param s the s
+     */
+    private void putGeoLatitude(final String s) {
+        put(FIELD_GEO_LATITUDE, s);
+    }
+
+    /**
+     * Put geo longitude.
+     *
+     * @param s the longitude
+     */
+    private void putGeoLongitude(final String s) {
+        put(FIELD_GEO_LONGITUDE, s);
+    }
+
+    /**
+     * Put geo accuracy.
+     *
+     * @param s the accuracy
+     */
+    private void putGeoAccuracy(final String s) {
+        put(FIELD_GEO_ACCURACY, s);
+    }
+
+    /**
+     * Put geo timestamp.
+     *
+     * @param s the timestamp
+     */
+    private void putGeoTimestamp(final String s) {
+        put(FIELD_GEO_TIMESTAMP, s);
     }
 }

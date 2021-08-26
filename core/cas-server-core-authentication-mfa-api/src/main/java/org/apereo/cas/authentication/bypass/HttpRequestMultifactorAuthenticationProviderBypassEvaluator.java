@@ -27,7 +27,9 @@ public class HttpRequestMultifactorAuthenticationProviderBypassEvaluator extends
     private static final long serialVersionUID = -7553981418344342672L;
 
     private final MultifactorAuthenticationProviderBypassProperties bypassProperties;
+
     private final Pattern httpRequestRemoteAddressPattern;
+
     private final Set<Pattern> httpRequestHeaderPatterns;
 
     public HttpRequestMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
@@ -46,9 +48,9 @@ public class HttpRequestMultifactorAuthenticationProviderBypassEvaluator extends
 
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecuteInternal(final Authentication authentication,
-                                                                  final RegisteredService registeredService,
-                                                                  final MultifactorAuthenticationProvider provider,
-                                                                  final HttpServletRequest request) {
+                                                                          final RegisteredService registeredService,
+                                                                          final MultifactorAuthenticationProvider provider,
+                                                                          final HttpServletRequest request) {
         val principal = authentication.getPrincipal();
         val bypassByHttpRequest = locateMatchingHttpRequest(authentication, request);
         if (bypassByHttpRequest) {

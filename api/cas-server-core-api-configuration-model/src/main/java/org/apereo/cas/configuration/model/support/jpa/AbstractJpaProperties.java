@@ -1,9 +1,12 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -24,6 +27,8 @@ import java.util.Map;
 @Setter
 @RequiresModule(name = "cas-server-support-jdbc-drivers")
 @Accessors(chain = true)
+@JsonFilter("AbstractJpaProperties")
+@SuppressWarnings("UnescapedEntity")
 public abstract class AbstractJpaProperties implements Serializable {
 
     private static final long serialVersionUID = 761486823496930920L;
@@ -36,7 +41,24 @@ public abstract class AbstractJpaProperties implements Serializable {
 
     /**
      * Hibernate feature to automatically validate and exports DDL to the schema.
-     * By default, creates and drops the schema automatically when a session is starts and ends
+     * By default, creates and drops the schema automatically when a session is starts and ends.
+     * Setting the value to {@code validate} or {@code none} may be more desirable for production,
+     * but any of the following options can be used:
+     * <ul>
+     *     <li>{@code validate}: Validate the schema, but make no changes to the database.</li>
+     *     <li>{@code update}: Update the schema.</li>
+     *     <li>{@code create}: Create the schema, destroying previous data.</li>
+     *     <li>{@code create-drop}: Drop the schema at the end of the session.</li>
+     *     <li>{@code none}: Do nothing.</li>
+     * </ul>
+     * <p>
+     * Note that during a version migration where any schema has changed {@code create-drop} will result
+     * in the loss of all data as soon as CAS is started. For transient data like tickets this is probably
+     * not an issue, but in cases like the audit table important data could be lost. Using `update`, while safe
+     * for data, is confirmed to result in invalid database state. {@code validate} or {@code none} settings
+     * are likely the only safe options for production use.
+     * </p>
+     * For more info, <a href="http://docs.spring.io/spring-framework/docs/current/javadoc-api">see this</a>.
      */
     private String ddlAuto = "update";
 
@@ -50,6 +72,7 @@ public abstract class AbstractJpaProperties implements Serializable {
      * The database connection URL.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String url = "jdbc:hsqldb:mem:cas-hsql-database";
 
     /**
@@ -85,12 +108,12 @@ public abstract class AbstractJpaProperties implements Serializable {
     /**
      * Controls the maximum amount of time that a connection is allowed to sit idle in the pool.
      */
+    @DurationCapable
     private String idleTimeout = "PT10M";
 
     /**
      * Attempts to do a JNDI data source look up for the data source name specified.
-     * Will attempt to locate the data source object as is, or will try to return a proxy
-     * instance of it, in the event that {@link #dataSourceProxy} is used.
+     * Will attempt to locate the data source object as is.
      */
     private String dataSourceName;
 
@@ -112,10 +135,20 @@ public abstract class AbstractJpaProperties implements Serializable {
     private int leakThreshold = 3_000;
 
     /**
+     * Allow hibernate to generate query statistics.
+     */
+    private boolean generateStatistics;
+
+    /**
      * A non-zero value enables use of JDBC2 batch updates by Hibernate. e.g. recommended values between 5 and 30.
      */
-    private int batchSize = 5;
+    private int batchSize = 100;
 
+    /**
+     * Used to specify number of rows to be fetched in a select query.
+     */
+    private int fetchSize = 100;
+    
     /**
      * Set the pool initialization failure timeout.
      * <ul>
@@ -158,12 +191,6 @@ public abstract class AbstractJpaProperties implements Serializable {
      * without waiting for an underlying transaction.
      */
     private boolean autocommit;
-
-    /**
-     * Indicates whether JNDI data sources retrieved should be proxied
-     * or returned back verbatim.
-     */
-    private boolean dataSourceProxy;
 
     /**
      * Fully-qualified name of the class that can control the physical naming strategy of hibernate.

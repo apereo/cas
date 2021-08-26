@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.Arrays;
 
@@ -29,6 +30,10 @@ import static org.junit.jupiter.api.Assertions.*;
     JpaServiceRegistryConfiguration.class
 })
 @Tag("SAML")
+@TestPropertySource(properties = {
+    "cas.service-registry.jpa.ddl-auto=create-drop",
+    "cas.service-registry.jpa.url=jdbc:hsqldb:mem:cas-services-${#randomString6}"
+})
 public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests {
 
     @BeforeEach
@@ -38,7 +43,7 @@ public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests
 
     @Test
     public void verifySavingSamlService() {
-        val service = new SamlRegisteredService();
+        var service = new SamlRegisteredService();
         service.setName("SAML");
         service.setServiceId("http://mmoayyed.example.net");
         service.setMetadataLocation("classpath:/metadata/idp-metadata.xml");
@@ -50,10 +55,10 @@ public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests
         service.setAttributeNameFormats(CollectionUtils.wrap("key", "value"));
         service.setAttributeFriendlyNames(CollectionUtils.wrap("friendly-name", "value"));
         service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, true));
-        servicesManager.save(service);
-        servicesManager.load();
-        val services = servicesManager.getAllServices();
-        assertEquals(2, services.size());
+        service = (SamlRegisteredService) servicesManager.save(service);
+        val services = servicesManager.load();
+        service = servicesManager.findServiceBy(service.getId(), SamlRegisteredService.class);
+        assertNotNull(service);
         services.forEach(s -> servicesManager.delete(s.getId()));
         assertEquals(0, servicesManager.count());
     }

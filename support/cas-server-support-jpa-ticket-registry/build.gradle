@@ -1,4 +1,7 @@
 description = "Apereo CAS JPA Ticket Registry Support"
+ext {
+    maxParallelForksForTests = 1
+}
 dependencies {
     api project(":api:cas-server-core-api")
 
@@ -26,6 +29,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-logout-api")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-web")

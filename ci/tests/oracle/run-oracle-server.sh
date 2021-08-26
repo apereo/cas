@@ -3,7 +3,8 @@
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
 echo "Running Oracle docker image..."
-docker run -d -p 1521:1521 --name oracle-db store/oracle/database-enterprise:12.2.0.1-slim
+docker stop oracle-db || true
+docker run --rm -d -p 1521:1521 --name oracle-db --rm store/oracle/database-enterprise:12.2.0.1-slim
 echo "Waiting for Oracle image to prepare..."
 sleep 90
 docker ps | grep "oracle-db"

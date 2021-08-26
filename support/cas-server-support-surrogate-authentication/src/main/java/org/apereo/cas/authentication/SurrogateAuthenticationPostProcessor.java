@@ -67,7 +67,6 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
                     .service(transaction.getService())
                     .authentication(authentication)
                     .registeredService(svc)
-                    .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
                     .build();
 
                 val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(serviceAccessAudit);

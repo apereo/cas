@@ -1,0 +1,8 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId": "https://localhost:8443/test/a/CAS/callback",
+  "name": "OIDC",
+  "id": 1
+}

@@ -4,15 +4,14 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import com.yubico.u2f.data.DeviceRegistration;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Serializable;
-         
+
 /**
  * This is {@link BaseU2FDeviceRepository}.
  *
@@ -20,14 +19,13 @@ import java.io.Serializable;
  * @since 5.1.0
  */
 @Getter
-@Setter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
 
     private final LoadingCache<String, String> requestStorage;
 
-    private CipherExecutor<Serializable, String> cipherExecutor;
+    private final CipherExecutor<Serializable, String> cipherExecutor;
 
     @Override
     public String getDeviceRegistrationRequest(final String requestId, final String username) {
@@ -56,13 +54,17 @@ public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
     }
 
     @Override
-    public void authenticateDevice(final String username, final DeviceRegistration registration) {
-        val devices = getRegisteredDevices(username);
-        LOGGER.trace("Located devices [{}] for username [{}]", devices, username);
-        val matched = devices.stream().anyMatch(d -> d.equals(registration));
+    public U2FDeviceRegistration verifyRegisteredDevice(final U2FDeviceRegistration registration) {
+        val devices = getRegisteredDevices(registration.getUsername());
+        val decoded = decode(registration);
+        LOGGER.trace("Located devices [{}] for username [{}]", devices, registration.getUsername());
+        val matched = devices.stream()
+            .map(this::decode)
+            .anyMatch(device -> device.matches(decoded));
         if (!matched) {
             throw new AuthenticationException("Failed to authenticate U2F device because "
                 + "no matching record was found. Is the device registered?");
         }
+        return registration;
     }
 }

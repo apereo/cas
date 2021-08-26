@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServiceMappedRegexAttributeFilter {
 
     private static final long serialVersionUID = 543145306984660628L;
@@ -67,7 +67,7 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
 
     private Collection<Pair<Pattern, String>> createPatternsAndReturnValue(final String attributeName) {
         val patternDef = getPatterns().get(attributeName);
-        val patternAndReturnVal = new ArrayList<Object>(CollectionUtils.toCollection(patternDef));
+        val patternAndReturnVal = new ArrayList<>(CollectionUtils.toCollection(patternDef));
         return patternAndReturnVal
             .stream()
             .map(this::mapPattern)
@@ -75,7 +75,7 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
     }
 
     private List<Object> filterAndMapAttributeValuesByPattern(final Set<Object> attributeValues, final Pattern pattern, final String returnValue) {
-        val values = new ArrayList<Object>(attributeValues.size());
+        val values = new ArrayList<>(attributeValues.size());
         attributeValues.forEach(v -> {
             val matcher = pattern.matcher(v.toString());
             val matches = isCompleteMatch() ? matcher.matches() : matcher.find();

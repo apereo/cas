@@ -44,20 +44,24 @@ public class JasyptTestAlgorithmsCommand {
             LOGGER.trace("Testing provider [{}]", provider);
             for (val algorithm : pbeAlgos) {
                 val cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
+                val algorithmStr = algorithm.toString();
                 cipher.setPassword(password);
                 cipher.setKeyObtentionIterations("1");
                 cipher.setProviderName(provider);
+                if (cipher.isVectorInitializationRequiredFor(algorithmStr)) {
+                    cipher.configureInitializationVector();
+                }
                 try {
                     var encryptedValue = StringUtils.EMPTY;
                     try {
-                        LOGGER.trace("Testing algorithm [{}]", algorithm.toString());
-                        cipher.setAlgorithm(algorithm.toString());
+                        LOGGER.trace("Testing algorithm [{}]", algorithmStr);
+                        cipher.setAlgorithm(algorithmStr);
                         encryptedValue = cipher.encryptValuePropagateExceptions(value);
                     } catch (final Exception e) {
                         LOGGER.trace(e.getMessage(), e);
                         continue;
                     }
-                    LOGGER.info("Provider: [{}] Algorithm: [{}]", provider, algorithm);
+                    LOGGER.info("Provider: [{}] Algorithm: [{}]", provider, algorithmStr);
                     try {
                         cipher.decryptValuePropagateExceptions(encryptedValue);
                         LOGGER.info("Encrypted Value: [{}] Decryption succeeded", encryptedValue);
@@ -66,9 +70,9 @@ public class JasyptTestAlgorithmsCommand {
                     }
                 } catch (final Exception e) {
                     if (e.getCause() instanceof NoSuchAlgorithmException) {
-                        LOGGER.warn("Provider: [{}] does not support Algorithm: [{}]", provider, algorithm);
+                        LOGGER.warn("Provider: [{}] does not support Algorithm: [{}]", provider, algorithmStr);
                     } else {
-                        LOGGER.warn("Error encrypting using provider: [{}] and algorithm: [{}], Message: {}", provider, algorithm, e.getMessage());
+                        LOGGER.warn("Error encrypting using provider: [{}] and algorithm: [{}], Message: [{}]", provider, algorithmStr, e.getMessage());
                     }
                 }
             }

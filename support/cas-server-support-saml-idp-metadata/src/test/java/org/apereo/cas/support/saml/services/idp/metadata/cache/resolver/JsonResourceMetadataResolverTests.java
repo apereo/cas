@@ -24,15 +24,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("SAML")
-@TestPropertySource(properties = "cas.authn.saml-idp.metadata.location=file:/tmp")
+@Tag("SAMLMetadata")
+@TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=file:/tmp")
 public class JsonResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
 
     @Test
     public void verifyResolverResolves() throws Exception {
         val props = new SamlIdPProperties();
         val dir = new FileSystemResource(FileUtils.getTempDirectory());
-        props.getMetadata().setLocation(dir.getFile().getCanonicalPath());
+        props.getMetadata().getFileSystem().setLocation(dir.getFile().getCanonicalPath());
         FileUtils.copyFile(new ClassPathResource("saml-sp-metadata.json").getFile(),
             new File(FileUtils.getTempDirectory(), "saml-sp-metadata.json"));
         val service = new SamlRegisteredService();
@@ -49,15 +49,16 @@ public class JsonResourceMetadataResolverTests extends BaseSamlIdPServicesTests 
         val metadataResolver = results.iterator().next();
         val resolved = metadataResolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("https://example.org/saml")));
         assertNotNull(resolved);
+        resolver.destroy();
     }
 
     /**
      * Make sure default file:/etc/cas/saml URI syntax is parsed correctly.
      */
     @Test
-    public void verifyResolverResolvesWithFileUri() throws Exception {
+    public void verifyResolverResolvesWithFileUri() {
         val props = new SamlIdPProperties();
-        props.getMetadata().setLocation("file:/etc/cas/saml");
+        props.getMetadata().getFileSystem().setLocation("file:/etc/cas/saml");
         val resolver = new JsonResourceMetadataResolver(props, openSamlConfigBean);
         assertNotNull(resolver);
     }

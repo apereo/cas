@@ -1,0 +1,11 @@
+{
+  "dependencies": "pm-webflow",
+  "properties": [
+    "--cas.authn.pm.core.enabled=true",
+
+    "--cas.authn.accept.password-policy.strategy=GROOVY",
+    "--cas.authn.accept.password-policy.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/GroovyPwdPolicy.groovy",
+    "--cas.authn.accept.password-policy.account-state-handling-enabled=true",
+    "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/pm-accounts.json"
+  ]
+}

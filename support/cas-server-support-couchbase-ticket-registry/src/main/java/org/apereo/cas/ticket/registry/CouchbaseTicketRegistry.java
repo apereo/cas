@@ -4,6 +4,8 @@ import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.couchbase.client.java.codec.JacksonJsonSerializer;
 import com.couchbase.client.java.codec.JsonTranscoder;
@@ -11,10 +13,8 @@ import com.couchbase.client.java.kv.GetOptions;
 import com.couchbase.client.java.kv.UpsertOptions;
 import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.query.QueryResult;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
@@ -38,20 +38,28 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
-        .findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     private final CouchbaseClientFactory couchbase;
 
-    @Override
-    public Ticket updateTicket(final Ticket ticket) {
-        addTicket(ticket);
-        return ticket;
+    /**
+     * Get the expiration policy value of the ticket in seconds.
+     *
+     * @param ticket the ticket
+     * @return the exp value
+     */
+    private static Duration getTimeToLive(final Ticket ticket) {
+        val ttl = ticket.getExpirationPolicy().getTimeToLive();
+        if (ttl >= Integer.MAX_VALUE) {
+            return Duration.ofSeconds(0);
+        }
+        val expTime = ttl.intValue();
+        return Duration.ofSeconds(expTime);
     }
 
     @Override
-    public void addTicket(final Ticket ticketToAdd) {
+    public void addTicketInternal(final Ticket ticketToAdd) {
         LOGGER.debug("Adding ticket [{}]", ticketToAdd);
         try {
             val ticket = encodeTicket(ticketToAdd);
@@ -62,7 +70,8 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
                     .expiry(getTimeToLive(ticketToAdd))
                     .transcoder(JsonTranscoder.create(JacksonJsonSerializer.create(MAPPER))));
         } catch (final Exception e) {
-            LOGGER.error("Failed adding [{}]: [{}]", ticketToAdd, e);
+            LOGGER.error("Failed adding [{}]", ticketToAdd);
+            LoggingUtils.error(LOGGER, e);
         }
     }
 
@@ -77,27 +86,28 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
             }
             val document = couchbase.bucketGet(encTicketId, GetOptions.getOptions()
                 .transcoder(JsonTranscoder.create(JacksonJsonSerializer.create(MAPPER))));
-            val ticket = document.contentAs(Ticket.class);
-            LOGGER.debug("Got ticket [{}] from the registry.", ticket);
-            val decoded = decodeTicket(ticket);
-            if (predicate.test(decoded)) {
-                return decoded;
+            if (document != null) {
+                val ticket = document.contentAs(Ticket.class);
+                LOGGER.debug("Got ticket [{}] from the registry.", ticket);
+                val decoded = decodeTicket(ticket);
+                if (predicate.test(decoded)) {
+                    return decoded;
+                }
+                return null;
             }
-            return null;
         } catch (final Exception e) {
-            LOGGER.error("Failed fetching [{}]: [{}]", ticketId, e);
+            LOGGER.error("Failed fetching [{}]", ticketId);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
 
-    /**
-     * Stops the couchbase client.
-     */
-    @SneakyThrows
     @Override
-    public void destroy() {
-        LOGGER.trace("Shutting down Couchbase");
-        this.couchbase.shutdown();
+    public long deleteAll() {
+        val query = getQueryForAllTickets();
+        val count = couchbase.count(query);
+        couchbase.remove(query);
+        return count;
     }
 
     @Override
@@ -120,6 +130,21 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
+    public Ticket updateTicket(final Ticket ticket) {
+        addTicket(ticket);
+        return ticket;
+    }
+
+    /**
+     * Stops the couchbase client.
+     */
+    @Override
+    public void destroy() {
+        LOGGER.trace("Shutting down Couchbase");
+        this.couchbase.shutdown();
+    }
+
+    @Override
     public long sessionCount() {
         return couchbase.count(String.format("prefix='%s'", TicketGrantingTicket.PREFIX));
     }
@@ -132,36 +157,12 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     @Override
     public boolean deleteSingleTicket(final String ticketIdToDelete) {
         val ticketId = encodeTicketId(ticketIdToDelete);
-        LOGGER.debug("Deleting ticket [{}]", ticketId);
-        try {
-            return couchbase.bucketRemoveFromDefaultCollection(ticketId) != null;
-        } catch (final Exception e) {
-            LOGGER.error("Failed deleting [{}]: [{}]", ticketId, e);
-            return false;
-        }
-    }
-
-    @Override
-    public long deleteAll() {
-        val query = getQueryForAllTickets();
-        val count = couchbase.count(query);
-        couchbase.remove(query);
-        return count;
+        LOGGER.trace("Deleting ticket [{}]", ticketId);
+        return couchbase.bucketRemoveFromDefaultCollection(ticketId).isPresent();
     }
 
     private String getQueryForAllTickets() {
         return String.format("REGEX_CONTAINS(%s.`@class`, \".*Ticket.*\")", couchbase.getBucket());
-    }
-
-    /**
-     * Get the expiration policy value of the ticket in seconds.
-     *
-     * @param ticket the ticket
-     * @return the exp value
-     */
-    private static Duration getTimeToLive(final Ticket ticket) {
-        val expTime = ticket.getExpirationPolicy().getTimeToLive().intValue();
-        return Duration.ofSeconds(expTime);
     }
 
     private QueryResult queryForTickets() {

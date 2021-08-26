@@ -8,8 +8,6 @@ import org.apereo.cas.services.ServicesManager;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.List;
@@ -24,8 +22,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
-@Tag("Simple")
+@Tag("CAS")
 public class ChainingCasProtocolValidationSpecificationTests {
 
     private static Assertion getAssertion() {

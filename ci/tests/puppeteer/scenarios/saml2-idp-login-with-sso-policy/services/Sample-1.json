@@ -1,0 +1,20 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "https://samltest.id/.+",
+  "name" : "Sample",
+  "id" : 1,
+  "evaluationOrder" : 1,
+  "metadataLocation" : "https://samltest.id/saml/sp",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  },
+  "authenticationPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
+    "requiredAuthenticationHandlers" : ["java.util.TreeSet", [ "JSON" ]],
+    "criteria": {
+      "@class": "org.apereo.cas.services.AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria"
+    }
+  }
+}
+
+

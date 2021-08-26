@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
+@Tag("WSFederation")
 public class SamlAssertionRealmCodecTests {
     @Test
     public void verifyOperation() {

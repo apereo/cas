@@ -71,22 +71,21 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
         }
         var encodedRawPassword = Crypt.crypt(rawPassword.toString(), providedSalt);
         var matched = StringUtils.equals(encodedRawPassword, encodedPassword);
-        LOGGER.debug("Provided password does {}match the encoded password", BooleanUtils.toString(matched, StringUtils.EMPTY, "not "));
+        val msg = String.format("Provided password does %smatch the encoded password",
+            BooleanUtils.toString(matched, StringUtils.EMPTY, "not "));
+        LOGGER.debug(msg);
         return matched;
     }
 
     private String generateCryptSalt() {
-        if (StringUtils.isBlank(this.encodingAlgorithm)) {
-            return null;
-        }
         val cryptSalt = new StringBuilder();
-        if ("1".equals(this.encodingAlgorithm) || "MD5".equals(this.encodingAlgorithm.toUpperCase())) {
+        if ("1".equals(this.encodingAlgorithm) || "MD5".equalsIgnoreCase(this.encodingAlgorithm)) {
             cryptSalt.append("$1$");
             LOGGER.debug("Encoding with MD5 algorithm");
-        } else if ("5".equals(this.encodingAlgorithm) || "SHA-256".equals(this.encodingAlgorithm.toUpperCase())) {
+        } else if ("5".equals(this.encodingAlgorithm) || "SHA-256".equalsIgnoreCase(this.encodingAlgorithm)) {
             cryptSalt.append("$5$rounds=").append(this.strength).append('$');
             LOGGER.debug("Encoding with SHA-256 algorithm and [{}] rounds", this.strength);
-        } else if ("6".equals(this.encodingAlgorithm) || "SHA-512".equals(this.encodingAlgorithm.toUpperCase())) {
+        } else if ("6".equals(this.encodingAlgorithm) || "SHA-512".equalsIgnoreCase(this.encodingAlgorithm)) {
             cryptSalt.append("$6$rounds=").append(this.strength).append('$');
             LOGGER.debug("Encoding with SHA-512 algorithm and [{}] rounds", this.strength);
         } else {
@@ -99,7 +98,7 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
             val keygen = new HexRandomStringGenerator(SALT_LENGTH);
             this.secret = keygen.getNewString();
         } else {
-            LOGGER.debug("The provided secrect is used as a salt");
+            LOGGER.trace("The provided secret is used as a salt");
         }
         cryptSalt.append(this.secret);
         return cryptSalt.toString();

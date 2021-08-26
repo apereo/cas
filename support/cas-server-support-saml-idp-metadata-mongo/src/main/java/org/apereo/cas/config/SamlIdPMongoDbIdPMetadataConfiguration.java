@@ -8,11 +8,11 @@ import org.apereo.cas.support.saml.idp.metadata.MongoDbSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
-import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import lombok.SneakyThrows;
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -21,9 +21,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import javax.net.ssl.SSLContext;
@@ -39,24 +39,24 @@ import javax.net.ssl.SSLContext;
 @ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.mongo", name = "idp-metadata-collection")
 @Slf4j
 public class SamlIdPMongoDbIdPMetadataConfiguration {
+    @Autowired
+    @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
+    private ObjectProvider<SamlIdPMetadataGeneratorConfigurationContext> samlIdPMetadataGeneratorConfigurationContext;
 
     @Autowired
-    private ResourceLoader resourceLoader;
+    @Qualifier("samlIdPMetadataCache")
+    private ObjectProvider<Cache<String, SamlIdPMetadataDocument>> samlIdPMetadataCache;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("samlSelfSignedCertificateWriter")
-    private ObjectProvider<SamlIdPCertificateAndKeyWriter> samlSelfSignedCertificateWriter;
 
     @Autowired
     @Qualifier("sslContext")
     private ObjectProvider<SSLContext> sslContext;
 
     @Bean
-    @ConditionalOnMissingBean(name = "mongoDbSamlIdPMetadataCipherExecutor")
-    public CipherExecutor mongoDbSamlIdPMetadataCipherExecutor() {
+    @RefreshScope
+    public CipherExecutor samlIdPMetadataGeneratorCipherExecutor() {
         val idp = casProperties.getAuthn().getSamlIdp();
         val crypto = idp.getMetadata().getMongo().getCrypto();
 
@@ -72,6 +72,7 @@ public class SamlIdPMongoDbIdPMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "mongoDbSamlIdPMetadataTemplate")
     @Bean
+    @RefreshScope
     public MongoTemplate mongoDbSamlIdPMetadataTemplate() {
         val idp = casProperties.getAuthn().getSamlIdp();
         val mongo = idp.getMetadata().getMongo();
@@ -82,26 +83,20 @@ public class SamlIdPMongoDbIdPMetadataConfiguration {
     }
 
     @Bean
-    @SneakyThrows
+    @RefreshScope
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
-            .samlIdPMetadataLocator(samlIdPMetadataLocator())
-            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
-            .resourceLoader(resourceLoader)
-            .casProperties(casProperties)
-            .metadataCipherExecutor(mongoDbSamlIdPMetadataCipherExecutor())
-            .build();
-        return new MongoDbSamlIdPMetadataGenerator(context, mongoDbSamlIdPMetadataTemplate(),
+        return new MongoDbSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext.getObject(), mongoDbSamlIdPMetadataTemplate(),
             idp.getMetadata().getMongo().getIdpMetadataCollection());
     }
 
     @Bean
-    @SneakyThrows
+    @RefreshScope
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new MongoDbSamlIdPMetadataLocator(
-            mongoDbSamlIdPMetadataCipherExecutor(),
+            samlIdPMetadataGeneratorCipherExecutor(),
+            samlIdPMetadataCache.getObject(),
             mongoDbSamlIdPMetadataTemplate(),
             idp.getMetadata().getMongo().getIdpMetadataCollection());
     }

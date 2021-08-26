@@ -27,7 +27,7 @@ function jqueryReady() {
 
         function UpdateProgressBar() {
             var progressBar = settings.progressBar;
-            var materialBar = settings.materialBar.foundation_;
+            var materialBar = settings.materialBar.foundation;
 
             var indicator = document.getElementById('progress-strength-indicator');
             var password = document.getElementById('password').value;

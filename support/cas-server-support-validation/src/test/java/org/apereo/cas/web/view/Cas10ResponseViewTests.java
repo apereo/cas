@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Tag("Simple")
+@Tag("CAS")
 public class Cas10ResponseViewTests {
 
     private Map<String, Object> model;
@@ -42,7 +42,7 @@ public class Cas10ResponseViewTests {
         list.add(CoreAuthenticationTestUtils.getAuthentication("someothername"));
         this.model.put("assertion", new DefaultAssertionBuilder(
             CoreAuthenticationTestUtils.getAuthentication()).with(list).with(
-            CoreAuthenticationTestUtils.getService("TestService")).with(true).build());
+            CoreAuthenticationTestUtils.getWebApplicationService("TestService")).with(true).build());
     }
 
     @Test

@@ -18,8 +18,8 @@ public class UmaServerDiscoverySettingsFactory implements FactoryBean<UmaServerD
 
     @Override
     public UmaServerDiscoverySettings getObject() {
-        val uma = casProperties.getAuthn().getUma();
-        return new UmaServerDiscoverySettings(casProperties, uma.getIssuer());
+        val uma = casProperties.getAuthn().getOauth().getUma();
+        return new UmaServerDiscoverySettings(casProperties, uma.getCore().getIssuer());
     }
 
     @Override

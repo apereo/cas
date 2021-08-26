@@ -30,7 +30,7 @@ public class ImmutableNativeJavaListSerializer extends Serializer<List<Object>> 
     }
 
     @Override
-    public List<Object> read(final Kryo kryo, final Input input, final Class<List<Object>> aClass) {
+    public List<Object> read(final Kryo kryo, final Input input, final Class<? extends List<Object>> aClass) {
         val size = input.readInt(true);
         val list = new Object[size];
         for (var i = 0; i < size; ++i) {

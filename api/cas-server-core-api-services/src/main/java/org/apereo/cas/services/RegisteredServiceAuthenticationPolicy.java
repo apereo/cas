@@ -25,6 +25,13 @@ public interface RegisteredServiceAuthenticationPolicy extends Serializable {
     Set<String> getRequiredAuthenticationHandlers();
 
     /**
+     * Gets excluded authentication handlers by their name/id.
+     *
+     * @return the required authentication handlers
+     */
+    Set<String> getExcludedAuthenticationHandlers();
+
+    /**
      * Gets required authentication policy criteria.
      *
      * @return the required authentication policies

@@ -4,11 +4,12 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
@@ -56,18 +57,16 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
                               final String codeChallenge,
                               final String codeChallengeMethod,
                               final String clientId,
-                              final Map<String, Map<String, Object>> requestClaims) {
+                              final Map<String, Map<String, Object>> requestClaims,
+                              final OAuth20ResponseTypes responseType,
+                              final OAuth20GrantTypes grantType) {
 
         val expirationPolicyToUse = determineExpirationPolicyForService(clientId);
         val codeId = this.oAuthCodeIdGenerator.getNewTicketId(OAuth20Code.PREFIX);
         return new OAuth20DefaultCode(codeId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket, scopes,
-            codeChallenge, codeChallengeMethod, clientId, requestClaims);
-    }
-
-    @Override
-    public TicketFactory get(final Class<? extends Ticket> clazz) {
-        return this;
+            codeChallenge, codeChallengeMethod, clientId,
+            requestClaims, responseType, grantType);
     }
 
     private ExpirationPolicy determineExpirationPolicyForService(final String clientId) {
@@ -81,5 +80,10 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
             }
         }
         return this.expirationPolicy.buildTicketExpirationPolicy();
+    }
+
+    @Override
+    public Class<? extends Ticket> getTicketType() {
+        return OAuth20Code.class;
     }
 }

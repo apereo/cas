@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.principal.provision;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.configuration.support.RestEndpointProperties;
+import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.util.MockWebServer;
 
 import lombok.val;
@@ -39,8 +39,6 @@ public class RestfulDelegatedClientUserProfileProvisionerTests {
             props.setUrl("http://localhost:9192");
             val service = new RestfulDelegatedClientUserProfileProvisioner(props);
             service.execute(CoreAuthenticationTestUtils.getPrincipal(), commonProfile, client);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 }

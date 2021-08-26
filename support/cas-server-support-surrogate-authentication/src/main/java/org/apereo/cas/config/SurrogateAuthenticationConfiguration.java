@@ -4,8 +4,11 @@ import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.SurrogateAuthenticationExpirationPolicyBuilder;
 import org.apereo.cas.authentication.SurrogateAuthenticationPostProcessor;
+import org.apereo.cas.authentication.SurrogateMultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
 import org.apereo.cas.authentication.SurrogatePrincipalElectionStrategy;
 import org.apereo.cas.authentication.SurrogatePrincipalResolver;
@@ -20,12 +23,11 @@ import org.apereo.cas.authentication.surrogate.JsonResourceSurrogateAuthenticati
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.expiration.builder.TicketGrantingTicketExpirationPolicyBuilder;
-import org.apereo.cas.util.io.CommunicationsManager;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -57,7 +59,7 @@ import java.util.List;
 @Slf4j
 public class SurrogateAuthenticationConfiguration {
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Autowired
@@ -99,8 +101,7 @@ public class SurrogateAuthenticationConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "surrogateAuthenticationService")
     @Bean
-    @SneakyThrows
-    public SurrogateAuthenticationService surrogateAuthenticationService() {
+    public SurrogateAuthenticationService surrogateAuthenticationService() throws Exception {
         val su = casProperties.getAuthn().getSurrogate();
         if (su.getJson().getLocation() != null) {
             LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getLocation());
@@ -114,7 +115,8 @@ public class SurrogateAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "surrogateAuthenticationPostProcessor")
     @Bean
-    public AuthenticationPostProcessor surrogateAuthenticationPostProcessor() {
+    @RefreshScope
+    public AuthenticationPostProcessor surrogateAuthenticationPostProcessor() throws Exception {
         return new SurrogateAuthenticationPostProcessor(
             surrogateAuthenticationService(),
             servicesManager.getObject(),
@@ -125,24 +127,40 @@ public class SurrogateAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "surrogatePrincipalBuilder")
     @Bean
-    public SurrogatePrincipalBuilder surrogatePrincipalBuilder() {
+    @RefreshScope
+    public SurrogatePrincipalBuilder surrogatePrincipalBuilder() throws Exception {
         return new SurrogatePrincipalBuilder(surrogatePrincipalFactory(), attributeRepository.getObject(), surrogateAuthenticationService());
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "surrogateMultifactorAuthenticationPrincipalResolver")
+    @RefreshScope
+    public MultifactorAuthenticationPrincipalResolver surrogateMultifactorAuthenticationPrincipalResolver() {
+        return new SurrogateMultifactorAuthenticationPrincipalResolver();
+    }
+    
     @ConditionalOnMissingBean(name = "surrogatePrincipalElectionStrategyConfigurer")
     @Bean
+    @RefreshScope
     public PrincipalElectionStrategyConfigurer surrogatePrincipalElectionStrategyConfigurer() {
-        return chain -> chain.registerElectionStrategy(new SurrogatePrincipalElectionStrategy());
+        return chain -> {
+            val strategy = new SurrogatePrincipalElectionStrategy();
+            val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
+            strategy.setAttributeMerger(merger);
+            chain.registerElectionStrategy(strategy);
+        };
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "surrogateAuditPrincipalIdProvider")
     public AuditPrincipalIdProvider surrogateAuditPrincipalIdProvider() {
         return new SurrogateAuditPrincipalIdProvider();
     }
 
     @ConditionalOnMissingBean(name = "surrogateAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer() {
+    @RefreshScope
+    public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer() throws Exception {
         return plan -> plan.registerAuthenticationPostProcessor(surrogateAuthenticationPostProcessor());
     }
 
@@ -155,23 +173,21 @@ public class SurrogateAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "surrogatePrincipalResolver")
     @Bean
     @RefreshScope
-    public PrincipalResolver surrogatePrincipalResolver() {
+    public PrincipalResolver surrogatePrincipalResolver() throws Exception {
         val principal = casProperties.getAuthn().getSurrogate().getPrincipal();
         val personDirectory = casProperties.getPersonDirectory();
-        val principalAttribute = org.apache.commons.lang3.StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-        return new SurrogatePrincipalResolver(attributeRepository.getObject(),
-            surrogatePrincipalFactory(),
-            principal.isReturnNull() || personDirectory.isReturnNull(),
-            principalAttribute,
-            personDirectory.isUseExistingPrincipalId() || principal.isUseExistingPrincipalId(),
-            principal.isAttributeResolutionEnabled(),
-            StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()),
-            surrogatePrincipalBuilder());
+        val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(surrogatePrincipalFactory(),
+            attributeRepository.getObject(),
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            SurrogatePrincipalResolver.class,
+            principal, personDirectory);
+        resolver.setSurrogatePrincipalBuilder(surrogatePrincipalBuilder());
+        return resolver;
     }
 
     @ConditionalOnMissingBean(name = "surrogatePrincipalResolutionExecutionPlanConfigurer")
     @Bean
-    public PrincipalResolutionExecutionPlanConfigurer surrogatePrincipalResolutionExecutionPlanConfigurer() {
+    public PrincipalResolutionExecutionPlanConfigurer surrogatePrincipalResolutionExecutionPlanConfigurer() throws Exception {
         return plan -> plan.registerPrincipalResolver(surrogatePrincipalResolver());
     }
 }

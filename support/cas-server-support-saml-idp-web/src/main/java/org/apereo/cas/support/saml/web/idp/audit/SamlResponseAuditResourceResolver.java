@@ -3,13 +3,13 @@ package org.apereo.cas.support.saml.web.idp.audit;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Fault;
+
+import java.util.HashMap;
 
 /**
  * This is {@link SamlResponseAuditResourceResolver}.
@@ -47,20 +47,16 @@ public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResour
     }
 
     private String[] getPrincipalIdFromSamlResponse(final Response response) {
-        val result =
-            new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
-                .append("issuer", response.getIssuer().getValue())
-                .append("destination", response.getDestination())
-                .toString();
-        return new String[]{result};
+        val values = new HashMap<>();
+        values.put("issuer", response.getIssuer().getValue());
+        values.put("destination", response.getDestination());
+        return new String[]{auditFormat.serialize(values)};
     }
 
     private String[] getPrincipalIdFromSamlEcpFault(final Fault fault) {
-        val result =
-            new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
-                .append("actor", fault.getActor().getURI())
-                .append("message", fault.getMessage().getValue())
-                .toString();
-        return new String[]{result};
+        val values = new HashMap<>();
+        values.put("actor", fault.getActor().getURI());
+        values.put("message", fault.getMessage().getValue());
+        return new String[]{auditFormat.serialize(values)};
     }
 }

@@ -9,8 +9,7 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
-
+@Tag("SAMLServiceProvider")
 @TestPropertySource(properties = {
     "cas.saml-sp.confluence.metadata=classpath:/metadata/sp-metadata.xml",
     "cas.saml-sp.confluence.name-id-attribute=cn",

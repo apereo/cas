@@ -1,10 +1,28 @@
 description = "Apereo CAS RADIUS Support"
+
+/*
+ * The following resolution strategy
+ * is required for JRadius library that relies
+ * on an old version of bouncycastle.
+ */
+def dependencyUpdates = gradle.startParameter.taskNames.any {task -> task.equalsIgnoreCase('dependencyUpdates') }
+if (!dependencyUpdates) {
+    ["runtimeClasspath", "testRuntimeClasspath"].forEach(name -> {
+        def cfg = configurations.findByName(name)
+        cfg.resolutionStrategy.force "org.bouncycastle:bcprov-jdk15on:1.63"
+    })
+}
+
 dependencies {
     api libraries.jradius
-    implementation libraries.bouncycastle
 
     implementation project(":core:cas-server-core-util-api")
-    
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-web-api")
+
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-util")
+
     testImplementation project(path: ":support:cas-server-support-aup-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-aup-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")

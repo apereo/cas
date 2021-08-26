@@ -1,6 +1,5 @@
 package org.apereo.cas.otp.web.flow;
 
-import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepositoryTests;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -8,7 +7,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -26,8 +24,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Webflow")
-@SpringBootTest(classes = BaseOneTimeTokenRepositoryTests.SharedTestConfiguration.class)
+@Tag("WebflowMfaActions")
 public class OneTimeTokenAuthenticationWebflowActionTests {
     @Test
     public void verifyAction() {

@@ -9,6 +9,8 @@ import org.apereo.cas.support.events.dao.InMemoryCasEventRepository;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +24,7 @@ import java.time.Duration;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "casEventsMemoryRepositoryConfiguration")
+@Configuration(value = "casEventsMemoryRepositoryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasEventsInMemoryRepositoryConfiguration {
@@ -32,7 +34,9 @@ public class CasEventsInMemoryRepositoryConfiguration {
     private static final long EXPIRATION_TIME = 2;
 
     @Bean
-    public CasEventRepository casEventRepository() {
+    @Autowired
+    public CasEventRepository casEventRepository(@Qualifier("casEventRepositoryFilter")
+                                                 final CasEventRepositoryFilter casEventRepositoryFilter) {
         final LoadingCache<String, CasEvent> storage = Caffeine.newBuilder()
             .initialCapacity(INITIAL_CACHE_SIZE)
             .maximumSize(MAX_CACHE_SIZE)
@@ -43,7 +47,7 @@ public class CasEventsInMemoryRepositoryConfiguration {
                 return null;
             });
         LOGGER.debug("Created an in-memory event repository to store CAS events for [{}] hours", EXPIRATION_TIME);
-        return new InMemoryCasEventRepository(casEventRepositoryFilter(), storage);
+        return new InMemoryCasEventRepository(casEventRepositoryFilter, storage);
     }
 
     @ConditionalOnMissingBean(name = "casEventRepositoryFilter")

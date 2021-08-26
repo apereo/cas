@@ -22,7 +22,6 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 public class RemoteAddressNonInteractiveCredentialsAction extends AbstractNonInteractiveCredentialsAction {
 
-
     public RemoteAddressNonInteractiveCredentialsAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                         final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
                                                         final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
@@ -37,8 +36,7 @@ public class RemoteAddressNonInteractiveCredentialsAction extends AbstractNonInt
         if (StringUtils.hasText(remoteAddress)) {
             return new RemoteAddressCredential(remoteAddress);
         }
-
-        LOGGER.debug("No remote address found.");
+        LOGGER.trace("No remote address found.");
         return null;
     }
 }

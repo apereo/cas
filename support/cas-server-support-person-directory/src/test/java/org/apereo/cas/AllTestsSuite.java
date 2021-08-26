@@ -1,12 +1,12 @@
 
 package org.apereo.cas;
 
+import org.apereo.cas.config.CasPersonDirectoryConfigurationCachingAttributeRepositoryTests;
 import org.apereo.cas.config.CasPersonDirectoryConfigurationCascadeAggregationTests;
 import org.apereo.cas.config.CasPersonDirectoryConfigurationMergeAggregationTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -18,15 +18,23 @@ import org.junit.runner.RunWith;
     JdbcMultiRowAttributeRepositoryTests.class,
     JdbcSingleRowAttributeRepositoryTests.class,
     RestfulPersonAttributeDaoTests.class,
+    PersonDirectoryAttributeRepositoryPlanTests.class,
     DefaultPersonDirectoryAttributeRepositoryPlanLdapTests.class,
     PersonDirectoryPrincipalResolverConcurrencyTests.class,
     PrincipalAttributeRepositoryFetcherCascadeTests.class,
     CachingAttributeRepositoryTests.class,
+    PrincipalAttributeRepositoryFetcherJdbcTests.class,
+    PersonDirectoryPrincipalResolverLdapTests.class,
+    PersonDirectoryPrincipalResolverOpenLdapTests.class,
+    PersonDirectoryPrincipalResolverActiveDirectoryTests.class,
+    PrincipalAttributeRepositoryFetcherLdapTests.class,
+    PrincipalAttributeRepositoryFetcherTests.class,
+    CasPersonDirectoryConfigurationCachingAttributeRepositoryTests.class,
     CasPersonDirectoryConfigurationMergeAggregationTests.class,
     CasPersonDirectoryConfigurationCascadeAggregationTests.class,
     DefaultAttributeDefinitionStoreTests.class,
     JdbcSingleRowAttributeRepositoryPostgresTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

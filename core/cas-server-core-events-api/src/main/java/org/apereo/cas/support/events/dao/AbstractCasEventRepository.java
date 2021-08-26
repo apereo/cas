@@ -4,12 +4,18 @@ import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.util.DateTimeUtils;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.boot.actuate.audit.AuditEvent;
+import org.springframework.boot.actuate.audit.listener.AuditApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 
 import java.time.ZonedDateTime;
 import java.util.Collection;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -18,9 +24,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public abstract class AbstractCasEventRepository implements CasEventRepository {
+public abstract class AbstractCasEventRepository implements CasEventRepository, ApplicationEventPublisherAware {
 
     /**
      * Field name to track event type.
@@ -39,6 +45,8 @@ public abstract class AbstractCasEventRepository implements CasEventRepository {
 
     private final CasEventRepositoryFilter eventRepositoryFilter;
 
+    private ApplicationEventPublisher applicationEventPublisher;
+
     private static ZonedDateTime convertEventCreationTime(final CasEvent event) {
         return DateTimeUtils.convertToZonedDateTime(event.getCreationTime());
     }
@@ -47,6 +55,11 @@ public abstract class AbstractCasEventRepository implements CasEventRepository {
     public void save(final CasEvent event) {
         if (getEventRepositoryFilter().shouldSaveEvent(event)) {
             saveInternal(event);
+
+            if (applicationEventPublisher != null) {
+                val auditEvent = new AuditEvent(event.getPrincipalId(), event.getType(), (Map) event.getProperties());
+                applicationEventPublisher.publishEvent(new AuditApplicationEvent(auditEvent));
+            }
         }
     }
 
@@ -116,5 +129,16 @@ public abstract class AbstractCasEventRepository implements CasEventRepository {
             .collect(Collectors.toSet());
     }
 
-    public abstract void saveInternal(CasEvent event);
+    @Override
+    public void setApplicationEventPublisher(final ApplicationEventPublisher publisher) {
+        this.applicationEventPublisher = publisher;
+    }
+
+    /**
+     * Save internal.
+     *
+     * @param event the event
+     * @return saved cas event
+     */
+    public abstract CasEvent saveInternal(CasEvent event);
 }

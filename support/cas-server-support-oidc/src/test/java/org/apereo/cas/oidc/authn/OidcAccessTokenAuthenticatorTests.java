@@ -1,11 +1,13 @@
 package org.apereo.cas.oidc.authn;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -27,12 +29,12 @@ public class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         val token = oidcTokenSigningAndEncryptionService.encode(getOidcRegisteredService(), getClaims());
         val auth = new OidcAccessTokenAuthenticator(ticketRegistry, oidcTokenSigningAndEncryptionService,
-            servicesManager, accessTokenJwtBuilder);
+            servicesManager, oidcAccessTokenJwtBuilder);
         val at = getAccessToken(token, "clientid");
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
 
-        auth.validate(credentials, ctx);
+        auth.validate(credentials, ctx, JEESessionStore.INSTANCE);
 
         val userProfile = credentials.getUserProfile();
         assertNotNull(userProfile);
@@ -43,5 +45,20 @@ public class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
         assertTrue(userProfile.containsAttribute("exp"));
         assertTrue(userProfile.containsAttribute("aud"));
         assertTrue(userProfile.containsAttribute("email"));
+
+        assertEquals(OAuth20AccessToken.class, accessTokenExpirationPolicy.getTicketType());
+    }
+
+    @Test
+    public void verifyFailsOperation() {
+        val request = new MockHttpServletRequest();
+        val ctx = new JEEContext(request, new MockHttpServletResponse());
+        val auth = new OidcAccessTokenAuthenticator(ticketRegistry, oidcTokenSigningAndEncryptionService,
+            servicesManager, oidcAccessTokenJwtBuilder);
+        val at = getAccessToken("helloworld", "clientid");
+        ticketRegistry.addTicket(at);
+        val credentials = new TokenCredentials(at.getId());
+        auth.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        assertNull(credentials.getUserProfile());
     }
 }

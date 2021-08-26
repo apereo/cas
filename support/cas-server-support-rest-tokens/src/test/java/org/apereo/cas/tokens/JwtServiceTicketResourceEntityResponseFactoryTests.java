@@ -3,11 +3,14 @@ package org.apereo.cas.tokens;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,9 +21,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Tag("Simple")
+@Tag("Tickets")
 public class JwtServiceTicketResourceEntityResponseFactoryTests extends BaseTicketResourceEntityResponseFactoryTests {
 
+    @Autowired
+    @Qualifier("restProtocolEndpointConfigurer")
+    private ProtocolEndpointWebSecurityConfigurer<Void> restProtocolEndpointConfigurer;
+
+    @Test
+    public void verifyEndpoints() {
+        assertFalse(restProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
+    }
+    
     @Test
     public void verifyServiceTicketAsDefault() {
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport);

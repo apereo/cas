@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Simple")
+@Tag("CasConfiguration")
 public class CasConfigurationEventListenerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

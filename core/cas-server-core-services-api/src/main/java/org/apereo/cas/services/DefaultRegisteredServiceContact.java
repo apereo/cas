@@ -7,12 +7,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Table;
 
 /**
+ * Contact assigned to a service definition.
+ * 
  * @author Travis Schmidt
  * @since 5.2
  */
@@ -22,9 +25,10 @@ import javax.persistence.Table;
 @ToString
 @Getter
 @Setter
+@Accessors(chain = true)
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"name", "email"})
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceContact implements RegisteredServiceContact {
 
     private static final long serialVersionUID = 1324660891900737066L;

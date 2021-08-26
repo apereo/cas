@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -32,8 +33,9 @@ import java.util.TreeMap;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
     private static final long serialVersionUID = -3546719400741715137L;
@@ -48,10 +50,10 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
     @Override
     public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
         var principalId = principal.getId();
-        val originalPrincipalAttributes = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
+        val originalPrincipalAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         originalPrincipalAttributes.putAll(principal.getAttributes());
         LOGGER.debug("Original principal attributes available for selection of username attribute [{}] are [{}].", this.usernameAttribute, originalPrincipalAttributes);
-        val releasePolicyAttributes = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
+        val releasePolicyAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         releasePolicyAttributes.putAll(getPrincipalAttributesFromReleasePolicy(principal, service, registeredService));
         LOGGER.debug("Attributes resolved by the release policy available for selection of username attribute [{}] are [{}].",
             this.usernameAttribute, releasePolicyAttributes);

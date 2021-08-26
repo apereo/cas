@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("OIDC")
-@TestPropertySource(properties = "cas.authn.oidc.jwks.jwksFile=file:${#systemProperties['java.io.tmpdir']}/something.jwks")
+@TestPropertySource(properties = "cas.authn.oidc.jwks.jwks-file=file:${#systemProperties['java.io.tmpdir']}/something.jwks")
 public class OidcDefaultJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
     private static File KEYSTORE;
 

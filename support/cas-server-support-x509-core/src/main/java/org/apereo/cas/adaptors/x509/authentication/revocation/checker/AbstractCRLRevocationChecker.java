@@ -54,7 +54,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
      * @param unavailableCRLPolicy the unavailable crl policy
      * @param expiredCRLPolicy     the expired crl policy
      */
-    public AbstractCRLRevocationChecker(final boolean checkAll,
+    protected AbstractCRLRevocationChecker(final boolean checkAll,
                                         final RevocationPolicy<Void> unavailableCRLPolicy,
                                         final RevocationPolicy<X509CRL> expiredCRLPolicy) {
         this.checkAll = checkAll;

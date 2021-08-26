@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.support.cookie;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,13 +21,15 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class TicketGrantingCookieProperties extends CookieProperties {
+@JsonFilter("TicketGrantingCookieProperties")
+public class TicketGrantingCookieProperties extends PinnableCookieProperties {
 
     private static final long serialVersionUID = 7392972818105536350L;
 
     /**
      * If remember-me is enabled, specifies the maximum age of the cookie.
      */
+    @DurationCapable
     private String rememberMeMaxAge = "P14D";
 
     /**

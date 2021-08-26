@@ -10,14 +10,17 @@ import com.hazelcast.config.DiscoveryConfig;
 import com.hazelcast.config.DiscoveryStrategyConfig;
 import com.hazelcast.config.EvictionConfig;
 import com.hazelcast.config.EvictionPolicy;
+import com.hazelcast.config.InMemoryFormat;
 import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.ManagementCenterConfig;
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.config.MaxSizePolicy;
 import com.hazelcast.config.MergePolicyConfig;
 import com.hazelcast.config.MulticastConfig;
+import com.hazelcast.config.NamedConfig;
 import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.config.PartitionGroupConfig;
+import com.hazelcast.config.ReplicatedMapConfig;
 import com.hazelcast.config.TcpIpConfig;
 import com.hazelcast.config.WanAcknowledgeType;
 import com.hazelcast.config.WanBatchPublisherConfig;
@@ -37,8 +40,6 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.UUID;
 
@@ -50,18 +51,18 @@ import java.util.UUID;
  */
 @Slf4j
 public class HazelcastConfigurationFactory {
-
     /**
-     * Build config.
+     * Sets config map.
      *
-     * @param hz         the hz
-     * @param mapConfigs the map configs
-     * @return the config
+     * @param mapConfig the map config
+     * @param config    the config
      */
-    public static Config build(final BaseHazelcastProperties hz, final Map<String, MapConfig> mapConfigs) {
-        val cfg = build(hz);
-        cfg.setMapConfigs(mapConfigs);
-        return finalizeConfig(cfg, hz);
+    public static void setConfigMap(final NamedConfig mapConfig, final Config config) {
+        if (mapConfig instanceof MapConfig) {
+            config.addMapConfig((MapConfig) mapConfig);
+        } else if (mapConfig instanceof ReplicatedMapConfig) {
+            config.addReplicatedMapConfig((ReplicatedMapConfig) mapConfig);
+        }
     }
 
     /**
@@ -71,10 +72,10 @@ public class HazelcastConfigurationFactory {
      * @param mapConfig the map config
      * @return the config
      */
-    public static Config build(final BaseHazelcastProperties hz, final MapConfig mapConfig) {
-        val cfg = new HashMap<String, MapConfig>();
-        cfg.put(mapConfig.getName(), mapConfig);
-        return build(hz, cfg);
+    public static Config build(final BaseHazelcastProperties hz, final NamedConfig mapConfig) {
+        val config = build(hz);
+        setConfigMap(mapConfig, config);
+        return finalizeConfig(config, hz);
     }
 
     /**
@@ -87,26 +88,35 @@ public class HazelcastConfigurationFactory {
         val cluster = hz.getCluster();
         val config = new Config();
 
-        config.setLicenseKey(hz.getLicenseKey());
+        config.setLicenseKey(hz.getCore().getLicenseKey());
+        if (cluster.getCore().getCpMemberCount() > 0) {
+            config.getCPSubsystemConfig().setCPMemberCount(cluster.getCore().getCpMemberCount());
+        }
 
-        buildManagementCenterConfig(config);
+        buildManagementCenterConfig(hz, config);
 
         val networkConfig = new NetworkConfig()
-            .setPort(cluster.getPort())
-            .setPortAutoIncrement(cluster.isPortAutoIncrement());
+            .setPort(cluster.getNetwork().getPort())
+            .setPortAutoIncrement(cluster.getNetwork().isPortAutoIncrement());
 
-        if (StringUtils.hasText(cluster.getLocalAddress())) {
-            config.setProperty(BaseHazelcastProperties.HAZELCAST_LOCAL_ADDRESS_PROP, cluster.getLocalAddress());
-        }
-        if (StringUtils.hasText(cluster.getPublicAddress())) {
-            config.setProperty(BaseHazelcastProperties.HAZELCAST_PUBLIC_ADDRESS_PROP, cluster.getPublicAddress());
-            networkConfig.setPublicAddress(cluster.getPublicAddress());
+        if (StringUtils.hasText(cluster.getNetwork().getNetworkInterfaces())) {
+            networkConfig.getInterfaces().setEnabled(true);
+            StringUtils.commaDelimitedListToSet(cluster.getNetwork().getNetworkInterfaces())
+                .forEach(faceIp -> networkConfig.getInterfaces().addInterface(faceIp));
         }
 
-        cluster.getOutboundPorts().forEach(networkConfig::addOutboundPortDefinition);
+        if (StringUtils.hasText(cluster.getNetwork().getLocalAddress())) {
+            config.setProperty(BaseHazelcastProperties.HAZELCAST_LOCAL_ADDRESS_PROP, cluster.getNetwork().getLocalAddress());
+        }
+        if (StringUtils.hasText(cluster.getNetwork().getPublicAddress())) {
+            config.setProperty(BaseHazelcastProperties.HAZELCAST_PUBLIC_ADDRESS_PROP, cluster.getNetwork().getPublicAddress());
+            networkConfig.setPublicAddress(cluster.getNetwork().getPublicAddress());
+        }
+
+        cluster.getNetwork().getOutboundPorts().forEach(networkConfig::addOutboundPortDefinition);
 
         if (cluster.getWanReplication().isEnabled()) {
-            if (!StringUtils.hasText(hz.getLicenseKey())) {
+            if (!StringUtils.hasText(hz.getCore().getLicenseKey())) {
                 throw new IllegalArgumentException("Cannot activate WAN replication, a Hazelcast enterprise feature, without a license key");
             }
             LOGGER.warn("Using Hazelcast WAN Replication requires a Hazelcast Enterprise subscription. Make sure you "
@@ -122,24 +132,24 @@ public class HazelcastConfigurationFactory {
 
         LOGGER.trace("Created Hazelcast network configuration [{}]", networkConfig);
         config.setNetworkConfig(networkConfig);
+        config.getSerializationConfig().setEnableCompression(hz.getCore().isEnableCompression());
 
-        LOGGER.trace("Enables compression: {}", hz.isEnableCompression());
-        config.getSerializationConfig().setEnableCompression(hz.isEnableCompression());
-
-        val instanceName = StringUtils.hasText(cluster.getInstanceName())
-            ? cluster.getInstanceName()
+        val instanceName = StringUtils.hasText(cluster.getCore().getInstanceName())
+            ? cluster.getCore().getInstanceName()
             : UUID.randomUUID().toString();
         LOGGER.trace("Configuring Hazelcast instance name [{}]", instanceName);
         return config.setInstanceName(instanceName)
             .setProperty(BaseHazelcastProperties.HAZELCAST_DISCOVERY_ENABLED_PROP, BooleanUtils.toStringTrueFalse(cluster.getDiscovery().isEnabled()))
-            .setProperty(BaseHazelcastProperties.IPV4_STACK_PROP, String.valueOf(cluster.isIpv4Enabled()))
-            .setProperty(BaseHazelcastProperties.LOGGING_TYPE_PROP, cluster.getLoggingType())
-            .setProperty(BaseHazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, String.valueOf(cluster.getMaxNoHeartbeatSeconds()));
+            .setProperty(BaseHazelcastProperties.IPV4_STACK_PROP, String.valueOf(cluster.getNetwork().isIpv4Enabled()))
+            .setProperty(BaseHazelcastProperties.LOGGING_TYPE_PROP, cluster.getCore().getLoggingType())
+            .setProperty(BaseHazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, String.valueOf(cluster.getCore().getMaxNoHeartbeatSeconds()));
     }
 
-    private static void buildManagementCenterConfig(final Config config) {
+    private static void buildManagementCenterConfig(final BaseHazelcastProperties hz, final Config config) {
         val managementCenter = new ManagementCenterConfig();
-        managementCenter.setScriptingEnabled(true);
+        LOGGER.trace("Enables management center scripting: [{}]", hz.getCore().isEnableManagementCenterScripting());
+        managementCenter.setScriptingEnabled(hz.getCore().isEnableManagementCenterScripting());
+
         config.setManagementCenterConfig(managementCenter);
     }
 
@@ -172,7 +182,8 @@ public class HazelcastConfigurationFactory {
         config.addWanReplicationConfig(wanReplicationConfig);
     }
 
-    private static JoinConfig createDiscoveryJoinConfig(final Config config, final HazelcastClusterProperties cluster, final NetworkConfig networkConfig) {
+    private static JoinConfig createDiscoveryJoinConfig(final Config config, final HazelcastClusterProperties cluster,
+                                                        final NetworkConfig networkConfig) {
         val joinConfig = new JoinConfig();
 
         LOGGER.trace("Disabling multicast and TCP/IP configuration for discovery");
@@ -202,23 +213,24 @@ public class HazelcastConfigurationFactory {
 
     private static JoinConfig createDefaultJoinConfig(final HazelcastClusterProperties cluster) {
         val tcpIpConfig = new TcpIpConfig()
-            .setEnabled(cluster.isTcpipEnabled())
-            .setMembers(cluster.getMembers())
-            .setConnectionTimeoutSeconds(cluster.getTimeout());
-        LOGGER.trace("Created Hazelcast TCP/IP configuration [{}] for members [{}]", tcpIpConfig, cluster.getMembers());
+            .setEnabled(cluster.getNetwork().isTcpipEnabled())
+            .setMembers(cluster.getNetwork().getMembers())
+            .setConnectionTimeoutSeconds(cluster.getCore().getTimeout());
+        LOGGER.trace("Created Hazelcast TCP/IP configuration [{}] for members [{}]", tcpIpConfig, cluster.getNetwork().getMembers());
 
-        val multicastConfig = new MulticastConfig().setEnabled(cluster.isMulticastEnabled());
-        if (cluster.isMulticastEnabled()) {
+        val multicast = cluster.getDiscovery().getMulticast();
+        val multicastConfig = new MulticastConfig().setEnabled(multicast.isEnabled());
+        if (multicast.isEnabled()) {
             LOGGER.debug("Created Hazelcast Multicast configuration [{}]", multicastConfig);
-            multicastConfig.setMulticastGroup(cluster.getMulticastGroup());
-            multicastConfig.setMulticastPort(cluster.getMulticastPort());
+            multicastConfig.setMulticastGroup(multicast.getGroup());
+            multicastConfig.setMulticastPort(multicast.getPort());
 
-            val trustedInterfaces = StringUtils.commaDelimitedListToSet(cluster.getMulticastTrustedInterfaces());
+            val trustedInterfaces = StringUtils.commaDelimitedListToSet(multicast.getTrustedInterfaces());
             if (!trustedInterfaces.isEmpty()) {
                 multicastConfig.setTrustedInterfaces(trustedInterfaces);
             }
-            multicastConfig.setMulticastTimeoutSeconds(cluster.getMulticastTimeout());
-            multicastConfig.setMulticastTimeToLive(cluster.getMulticastTimeToLive());
+            multicastConfig.setMulticastTimeoutSeconds(multicast.getTimeout());
+            multicastConfig.setMulticastTimeToLive(multicast.getTimeToLive());
         } else {
             LOGGER.debug("Skipped Hazelcast Multicast configuration since feature is disabled");
         }
@@ -229,10 +241,10 @@ public class HazelcastConfigurationFactory {
     }
 
     private static Config finalizeConfig(final Config config, final BaseHazelcastProperties hz) {
-        if (StringUtils.hasText(hz.getCluster().getPartitionMemberGroupType())) {
+        if (StringUtils.hasText(hz.getCluster().getCore().getPartitionMemberGroupType())) {
             val partitionGroupConfig = config.getPartitionGroupConfig();
             val type = PartitionGroupConfig.MemberGroupType.valueOf(
-                hz.getCluster().getPartitionMemberGroupType().toUpperCase());
+                hz.getCluster().getCore().getPartitionMemberGroupType().toUpperCase());
             LOGGER.trace("Using partition member group type [{}]", type);
             partitionGroupConfig.setEnabled(true).setGroupType(type);
         }
@@ -247,19 +259,19 @@ public class HazelcastConfigurationFactory {
      * @param timeoutSeconds the timeoutSeconds
      * @return the map config
      */
-    public static MapConfig buildMapConfig(final BaseHazelcastProperties hz, final String mapName, final long timeoutSeconds) {
+    public static NamedConfig buildMapConfig(final BaseHazelcastProperties hz, final String mapName, final long timeoutSeconds) {
         val cluster = hz.getCluster();
 
-        val evictionPolicy = EvictionPolicy.valueOf(cluster.getEvictionPolicy());
+        val evictionPolicy = EvictionPolicy.valueOf(cluster.getCore().getEvictionPolicy());
 
         val evictionConfig = new EvictionConfig();
         evictionConfig.setEvictionPolicy(evictionPolicy);
-        evictionConfig.setMaxSizePolicy(MaxSizePolicy.valueOf(cluster.getMaxSizePolicy()));
-        evictionConfig.setSize(cluster.getMaxSize());
+        evictionConfig.setMaxSizePolicy(MaxSizePolicy.valueOf(cluster.getCore().getMaxSizePolicy()));
+        evictionConfig.setSize(cluster.getCore().getMaxSize());
 
         val mergePolicyConfig = new MergePolicyConfig();
-        if (StringUtils.hasText(cluster.getMapMergePolicy())) {
-            switch (cluster.getMapMergePolicy().trim().toLowerCase()) {
+        if (StringUtils.hasText(cluster.getCore().getMapMergePolicy())) {
+            switch (cluster.getCore().getMapMergePolicy().trim().toLowerCase()) {
                 case "discard":
                     mergePolicyConfig.setPolicy(DiscardMergePolicy.class.getName());
                     break;
@@ -285,12 +297,22 @@ public class HazelcastConfigurationFactory {
             }
         }
 
+        if (cluster.getCore().isReplicated()) {
+            return new ReplicatedMapConfig()
+                .setName(mapName)
+                .setStatisticsEnabled(true)
+                .setAsyncFillup(cluster.getCore().isAsyncFillup())
+                .setInMemoryFormat(InMemoryFormat.BINARY)
+                .setSplitBrainProtectionName(mapName.concat("-SplitBrainProtection"))
+                .setMergePolicyConfig(mergePolicyConfig);
+        }
         return new MapConfig()
             .setName(mapName)
+            .setStatisticsEnabled(true)
             .setMergePolicyConfig(mergePolicyConfig)
             .setMaxIdleSeconds((int) timeoutSeconds)
-            .setBackupCount(cluster.getBackupCount())
-            .setAsyncBackupCount(cluster.getAsyncBackupCount())
+            .setBackupCount(cluster.getCore().getBackupCount())
+            .setAsyncBackupCount(cluster.getCore().getAsyncBackupCount())
             .setEvictionConfig(evictionConfig);
     }
 }

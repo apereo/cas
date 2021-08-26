@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.x509.authentication.ldap;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import java.net.URI;
 import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
+import java.util.Objects;
 
 /**
  * Fetches a CRL from an LDAP instance.
@@ -91,7 +93,8 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
             val result = performLdapSearch(ldapURL);
             if (result.isSuccess()) {
                 val entry = result.getEntry();
-                val attribute = entry.getAttribute(this.certificateAttribute);
+                val attribute = Objects.requireNonNull(entry.getAttribute(this.certificateAttribute),
+                    String.format("Certificate attribute %s does not exist or has no value", this.certificateAttribute));
 
                 if (attribute.isBinary()) {
                     LOGGER.debug("Located entry [{}]. Retrieving first attribute [{}]", entry, attribute);
@@ -103,8 +106,8 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
             LOGGER.debug("Failed to execute the search [{}]", result);
             throw new CertificateException("Failed to establish a connection ldap and search.");
 
-        } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
             throw new CertificateException(e.getMessage());
         }
     }
@@ -119,19 +122,10 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
      * @throws Exception the exception
      */
     protected X509CRL fetchX509CRLFromAttribute(final LdapAttribute attribute) throws Exception {
-        if (attribute != null && attribute.isBinary()) {
-            val val = attribute.getBinaryValue();
-            if (val == null || val.length == 0) {
-                throw new CertificateException("Empty attribute. Can not download CRL from ldap");
-            }
-            val decoded64 = EncodingUtils.decodeBase64(val);
-            if (decoded64 == null) {
-                throw new CertificateException("Could not decode the attribute value to base64");
-            }
-            LOGGER.trace("Retrieved CRL from ldap as byte array decoded in base64. Fetching...");
-            return super.fetch(new ByteArrayResource(decoded64));
-        }
-        throw new CertificateException("Attribute not found. Can not retrieve CRL");
+        val val = attribute.getBinaryValue();
+        val decoded64 = EncodingUtils.decodeBase64(val);
+        LOGGER.trace("Retrieved CRL from ldap as byte array decoded in base64. Fetching...");
+        return super.fetch(new ByteArrayResource(decoded64));
     }
 
     /**

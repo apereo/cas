@@ -1,6 +1,7 @@
 package org.apereo.cas.services.publisher;
 
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.PublisherIdentifier;
 
 import org.springframework.context.ApplicationEvent;
 
@@ -16,8 +17,9 @@ public interface CasRegisteredServiceStreamPublisher {
     /**
      * Publish.
      *
-     * @param service the service
-     * @param event   the event
+     * @param service             the service
+     * @param event               the event
+     * @param publisherIdentifier the publisher identifier
      */
-    void publish(RegisteredService service, ApplicationEvent event);
+    void publish(RegisteredService service, ApplicationEvent event, PublisherIdentifier publisherIdentifier);
 }

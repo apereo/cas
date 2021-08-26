@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author David Rodriguez
  * @since 5.1.0
  */
-@Tag("Simple")
+@Tag("Utility")
 public class RegexUtilsTests {
 
     @Test
@@ -24,7 +24,10 @@ public class RegexUtilsTests {
 
     @Test
     public void verifyBlankValidRegex() {
-        val pattern = RegexUtils.createPattern(StringUtils.EMPTY);
+        var pattern = RegexUtils.createPattern(StringUtils.EMPTY);
+        assertNotNull(pattern);
+        assertEquals(RegexUtils.MATCH_NOTHING_PATTERN, pattern);
+        pattern = RegexUtils.createPattern("********");
         assertNotNull(pattern);
         assertEquals(RegexUtils.MATCH_NOTHING_PATTERN, pattern);
     }

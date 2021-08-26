@@ -19,7 +19,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     properties = "cas.authn.throttle.failure.range-seconds=5"
 )
 @Getter
-@Tag("Simple")
+@Tag("AuthenticationThrottling")
 public class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests
     extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 

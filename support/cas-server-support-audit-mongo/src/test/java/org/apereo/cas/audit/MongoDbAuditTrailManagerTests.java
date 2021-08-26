@@ -35,7 +35,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     properties = {
         "cas.audit.mongo.host=localhost",
         "cas.audit.mongo.port=27017",
-        "cas.audit.mongo.dropCollection=true",
+        "cas.audit.mongo.drop-collection=true",
         "cas.audit.mongo.asynchronous=false",
         "cas.audit.mongo.user-id=root",
         "cas.audit.mongo.password=secret",

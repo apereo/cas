@@ -28,9 +28,9 @@ public class CouchbaseAuthenticationHandler extends AbstractUsernamePasswordAuth
     private final CouchbaseClientFactory couchbase;
 
     public CouchbaseAuthenticationHandler(final ServicesManager servicesManager,
-                                          final PrincipalFactory principalFactory,
-                                          final CouchbaseClientFactory couchbase,
-                                          final CouchbaseAuthenticationProperties couchbaseProperties) {
+        final PrincipalFactory principalFactory,
+        final CouchbaseClientFactory couchbase,
+        final CouchbaseAuthenticationProperties couchbaseProperties) {
         super(couchbaseProperties.getName(), servicesManager, principalFactory, couchbaseProperties.getOrder());
         this.couchbase = couchbase;
         this.couchbaseProperties = couchbaseProperties;
@@ -38,7 +38,8 @@ public class CouchbaseAuthenticationHandler extends AbstractUsernamePasswordAuth
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
-                                                                                        final String originalPassword) throws GeneralSecurityException {
+        final String originalPassword)
+        throws GeneralSecurityException {
         val query = String.format("%s = '%s'", couchbaseProperties.getUsernameAttribute(), transformedCredential.getUsername());
         val result = couchbase.select(query);
         val results = result.rowsAsObject();
@@ -52,9 +53,6 @@ public class CouchbaseAuthenticationHandler extends AbstractUsernamePasswordAuth
         }
 
         val row = results.get(0).getObject(couchbase.getBucket());
-        if (!row.containsKey(couchbaseProperties.getUsernameAttribute())) {
-            throw new FailedLoginException("No user attribute found for " + transformedCredential.getId());
-        }
         if (!row.containsKey(couchbaseProperties.getPasswordAttribute())) {
             throw new FailedLoginException("No password attribute found for " + transformedCredential.getId());
         }

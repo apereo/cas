@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -20,32 +21,40 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
+import org.apereo.cas.config.Pac4jAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.Pac4jDelegatedAuthenticationConfiguration;
+import org.apereo.cas.config.Pac4jDelegatedAuthenticationSerializationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.support.pac4j.config.Pac4jDelegatedAuthenticationConfiguration;
-import org.apereo.cas.support.pac4j.config.support.authentication.Pac4jAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.support.pac4j.config.support.authentication.Pac4jDelegatedAuthenticationSerializationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
+import org.apereo.cas.web.flow.config.DelegatedAuthenticationDynamicDiscoverySelectionConfiguration;
 import org.apereo.cas.web.flow.config.DelegatedAuthenticationWebflowConfiguration;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
+import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.credentials.Credentials;
+import org.pac4j.core.exception.http.OkAction;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
+import org.pac4j.oidc.client.OidcClient;
+import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
@@ -61,6 +70,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.Mockito.*;
+
 /**
  * This is {@link BaseDelegatedAuthenticationTests}.
  *
@@ -71,7 +82,6 @@ public abstract class BaseDelegatedAuthenticationTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-        MailSenderAutoConfiguration.class,
         ThymeleafAutoConfiguration.class,
         AopAutoConfiguration.class
     })
@@ -95,6 +105,7 @@ public abstract class BaseDelegatedAuthenticationTests {
         CasCoreAuthenticationMetadataConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreWebConfiguration.class,
         CasCoreWebflowConfiguration.class,
@@ -110,7 +121,8 @@ public abstract class BaseDelegatedAuthenticationTests {
         Pac4jDelegatedAuthenticationConfiguration.class,
         Pac4jAuthenticationEventExecutionPlanConfiguration.class,
         Pac4jDelegatedAuthenticationSerializationConfiguration.class,
-        DelegatedAuthenticationWebflowConfiguration.class
+        DelegatedAuthenticationWebflowConfiguration.class,
+        DelegatedAuthenticationDynamicDiscoverySelectionConfiguration.class
     })
     public static class SharedTestConfiguration {
     }
@@ -139,13 +151,21 @@ public abstract class BaseDelegatedAuthenticationTests {
             casClient.setCallbackUrl("http://callback.example.org");
             casClient.init();
 
+            val oidcCfg = new OidcConfiguration();
+            oidcCfg.setClientId("client_id");
+            oidcCfg.setSecret("client_secret");
+            oidcCfg.setDiscoveryURI("https://dev-425954.oktapreview.com/.well-known/openid-configuration");
+            val oidcClient = new OidcClient(oidcCfg);
+            oidcClient.setCallbackUrl("http://callback.example.org");
+            oidcClient.init();
+
             val facebookClient = new FacebookClient() {
                 @Override
-                protected Optional<OAuth20Credentials> retrieveCredentials(final WebContext context) {
+                public Optional<Credentials> retrieveCredentials(final WebContext context, final SessionStore sessionStore) {
                     return Optional.of(new OAuth20Credentials("fakeVerifier"));
                 }
             };
-            facebookClient.setProfileCreator((credentials, context) -> {
+            facebookClient.setProfileCreator((credentials, context, store) -> {
                 val profile = new CommonProfile();
                 profile.setClientName(facebookClient.getName());
                 profile.setId("casuser");
@@ -156,7 +176,17 @@ public abstract class BaseDelegatedAuthenticationTests {
             });
             facebookClient.setName(FacebookClient.class.getSimpleName());
 
-            return new Clients("https://cas.login.com", List.of(saml2Client, casClient, facebookClient));
+            val mockClientNoCredentials = mock(BaseClient.class);
+            when(mockClientNoCredentials.getName()).thenReturn("MockClientNoCredentials");
+            when(mockClientNoCredentials.getCredentials(any(), any())).thenThrow(new OkAction(StringUtils.EMPTY));
+            when(mockClientNoCredentials.isInitialized()).thenReturn(true);
+
+            val failingClient = mock(IndirectClient.class);
+            when(failingClient.getName()).thenReturn("FailingIndirectClient");
+            doThrow(new IllegalArgumentException("Unable to init")).when(failingClient).init();
+
+            return new Clients("https://cas.login.com", List.of(saml2Client, casClient,
+                facebookClient, oidcClient, mockClientNoCredentials, failingClient));
         }
     }
 }

@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.hazelcast.discovery;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,6 +19,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("HazelcastDockerSwarmDiscoveryProperties")
 public class HazelcastDockerSwarmDiscoveryProperties implements Serializable {
     private static final long serialVersionUID = -1409066358752067150L;
 
@@ -102,7 +104,7 @@ public class HazelcastDockerSwarmDiscoveryProperties implements Serializable {
         /**
          * The raw port that hazelcast is listening on.
          * IMPORTANT: This is NOT a docker "published" port, nor is it necessarily
-         * a EXPOSEd port. It is simply the hazelcast port that the service
+         * a EXPOSEd port. It is the hazelcast port that the service
          * is configured with, this must be the same for all matched containers
          * in order to work, and just using the default of 5701 is the simplest
          * way to go.

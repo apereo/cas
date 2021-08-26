@@ -27,4 +27,6 @@ public class SamlIdPAttributeDefinition extends DefaultAttributeDefinition {
     private static final long serialVersionUID = -144152003366303322L;
 
     private String friendlyName;
+
+    private String urn;
 }

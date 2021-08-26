@@ -1,7 +1,10 @@
 package org.apereo.cas.configuration.model.support.spnego;
 
+import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,6 +21,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("SpnegoAuthenticationProperties")
 public class SpnegoAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = 4513529663377430783L;
     /**
@@ -48,11 +52,13 @@ public class SpnegoAuthenticationProperties implements Serializable {
     /**
      * The Jcifs service principal.
      */
+    @RequiredProperty
     private String jcifsServicePrincipal = "HTTP/cas.example.com@EXAMPLE.COM";
 
     /**
      * Spnego JCIFS timeout.
      */
+    @DurationCapable
     private String timeout = "PT5M";
 
     /**

@@ -1,0 +1,63 @@
+{
+  "casuser": {
+    "name": [
+      "CAS"
+    ],
+    "given_name": [
+      "CAS"
+    ],
+    "family_name": [
+      "CAS"
+    ],
+    "preferred_username": [
+      "casuser"
+    ],
+    "email": [
+      "cas@apereo.org"
+    ],
+    "middle_name": [
+      "CAS"
+    ],
+    "nickname": [
+      "CAS"
+    ],
+    "profile": [
+      "https://github.com/apereo/cas"
+    ],
+    "picture": [
+      "https://user-images.githubusercontent.com/1205228/30969994-e2fe6bf0-a470-11e7-80f9-d54d1e4d348e.png"
+    ],
+    "website": [
+      "https://apereo.org/cas"
+    ],
+    "gender": [
+      "female"
+    ],
+    "birthdate": [
+      "1970-05-15"
+    ],
+    "zoneinfo": [
+      "America/Los_Angeles"
+    ],
+    "locale": [
+      "en-US"
+    ],
+    "updated_at": [
+      "1558450884133"
+    ],
+    "email_verified": [
+      true
+    ],
+    "address": [
+      {
+        "formatted": "1234 E Main Street, Somewhere, CA 82091"
+      }
+    ],
+    "phone_number": [
+      "+1 (425) 555-1212"
+    ],
+    "phone_number_verified": [
+      true
+    ]
+  }
+}

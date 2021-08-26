@@ -81,7 +81,7 @@ public class ResourceUtils {
                 return doesResourceExist(res);
             }
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
         return false;
     }
@@ -133,12 +133,19 @@ public class ResourceUtils {
      */
     public static AbstractResource getResourceFrom(final String location) throws IOException {
         val resource = getRawResourceFrom(location);
-        if (!resource.exists() || !resource.isReadable()) {
+        if (!resource.exists() || (resource.isFile() && resource.getFile().isFile() && !resource.isReadable())) {
             throw new FileNotFoundException("Resource " + location + " does not exist or is unreadable");
         }
         return resource;
     }
 
+    /**
+     * Export classpath resource to file.
+     *
+     * @param parentDirectory the parent directory
+     * @param resource        the resource
+     * @return the resource
+     */
     @SneakyThrows
     public static Resource exportClasspathResourceToFile(final File parentDirectory, final Resource resource) {
         LOGGER.trace("Preparing classpath resource [{}]", resource);
@@ -187,6 +194,7 @@ public class ResourceUtils {
      * @return the file
      */
     @SneakyThrows
+    @SuppressWarnings("JdkObsolete")
     public static Resource prepareClasspathResourceIfNeeded(final Resource resource,
                                                             final boolean isDirectory,
                                                             final String containsName) {

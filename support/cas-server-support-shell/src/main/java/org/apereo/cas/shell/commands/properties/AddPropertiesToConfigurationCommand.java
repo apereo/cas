@@ -113,7 +113,7 @@ public class AddPropertiesToConfigurationCommand {
             .collect(Collectors.toList());
         lines.forEach(v -> {
             val value = getDefaultValueForProperty(v);
-            LOGGER.info("Adding property [{}={}]", v.getId(), value);
+            LOGGER.info("Adding property [{}]=[{}]", v.getId(), value);
             p.put("# " + v.getId(), value);
         });
     }

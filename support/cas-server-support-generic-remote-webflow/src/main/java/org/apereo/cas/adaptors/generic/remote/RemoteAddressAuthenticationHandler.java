@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.google.common.base.Splitter;
 import lombok.Getter;
@@ -43,7 +44,8 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
      */
     private InetAddress inetNetworkRange;
 
-    public RemoteAddressAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public RemoteAddressAuthenticationHandler(final String name,
+        final ServicesManager servicesManager,
                                               final PrincipalFactory principalFactory,
                                               final Integer order) {
         super(name, servicesManager, principalFactory, order);
@@ -121,14 +123,14 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
                     this.inetNetworkRange = InetAddress.getByName(network);
                     LOGGER.debug("InetAddress network: [{}]", this.inetNetworkRange.toString());
                 } catch (final UnknownHostException e) {
-                    LOGGER.error("The network address was not valid: [{}]", e.getMessage());
+                    LoggingUtils.error(LOGGER, e);
                 }
 
                 try {
                     this.inetNetmask = InetAddress.getByName(netmask);
                     LOGGER.debug("InetAddress netmask: [{}]", this.inetNetmask.toString());
                 } catch (final UnknownHostException e) {
-                    LOGGER.error("The network netmask was not valid: [{}]", e.getMessage());
+                    LoggingUtils.error(LOGGER, e);
                 }
             }
         }

@@ -7,7 +7,6 @@ import org.apereo.cas.ticket.registry.InfinispanTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CoreTicketUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.infinispan.Cache;
@@ -34,14 +33,14 @@ public class InfinispanTicketRegistryConfiguration {
 
     @Bean
     @RefreshScope
-    public TicketRegistry ticketRegistry() {
+    public TicketRegistry ticketRegistry() throws Exception {
         val span = casProperties.getTicket().getRegistry().getInfinispan();
         val r = new InfinispanTicketRegistry(getCache(span));
         r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(span.getCrypto(), "infinispan"));
         return r;
     }
 
-    private Cache<String, Ticket> getCache(final InfinispanProperties span) {
+    private Cache<String, Ticket> getCache(final InfinispanProperties span) throws Exception {
         val cacheName = span.getCacheName();
         if (StringUtils.isBlank(cacheName)) {
             return cacheManager().getCache();
@@ -50,8 +49,7 @@ public class InfinispanTicketRegistryConfiguration {
     }
 
     @Bean
-    @SneakyThrows
-    public EmbeddedCacheManager cacheManager() {
+    public EmbeddedCacheManager cacheManager() throws Exception {
         val loc = casProperties.getTicket().getRegistry().getInfinispan().getConfigLocation();
         return new DefaultCacheManager(loc.getInputStream());
     }

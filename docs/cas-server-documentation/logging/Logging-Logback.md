@@ -4,6 +4,8 @@ title: CAS - Logback Configuration
 category: Logs & Audits
 ---
 
+{% include variables.html %}
+
 # Logback Logging
 
 CAS does also support [Logback](https://logback.qos.ch/) as an alternative logging engine. At a high level, 
@@ -16,13 +18,7 @@ Refer to the [Logback documentation](https://logback.qos.ch/documentation.html) 
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-logback</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-logback" %}
 
 You must also make sure the following modules and dependencies are excluded from the WAR overlay:
 
@@ -67,4 +63,4 @@ Sanitizing log data to remove sensitive ticket ids such as ticket-granting ticke
 may be worked out in future releases, you should be extra careful to cleanse log data prior to sharing it with external systems such as Splunk or Syslog, etc. 
 </p></div>
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#logging).
+{% include casproperties.html properties="cas.logging" thirdPartyStartsWith="logging." %}

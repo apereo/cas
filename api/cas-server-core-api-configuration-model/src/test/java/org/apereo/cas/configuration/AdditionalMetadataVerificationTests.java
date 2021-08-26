@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0
  */
 @SpringBootTest(classes = AopAutoConfiguration.class)
-@Tag("Simple")
+@Tag("CasConfiguration")
 public class AdditionalMetadataVerificationTests {
 
     @Autowired

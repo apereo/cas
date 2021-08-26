@@ -1,5 +1,6 @@
 package org.apereo.cas.aup;
 
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.configuration.model.support.aup.InMemoryAcceptableUsagePolicyProperties;
@@ -40,22 +41,30 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     private static void verifyAction(final AcceptableUsagePolicyProperties properties) {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val context = getRequestContext();
 
-        val support = mock(TicketRegistrySupport.class);
-        when(support.getAuthenticatedPrincipalFrom(anyString()))
-            .thenReturn(CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("carLicense", "false")));
-        val repo = new DefaultAcceptableUsagePolicyRepository(support, properties);
+        val repo = getRepositoryInstance(properties);
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         WebUtils.putTicketGrantingTicketInScopes(context, "TGT-12345");
 
-        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casaup");
-        assertFalse(repo.verify(context, c).isAccepted());
-        assertTrue(repo.submit(context, c));
-        assertTrue(repo.verify(context, c).isAccepted());
+        assertFalse(repo.verify(context).isAccepted());
+        assertTrue(repo.submit(context));
+        assertTrue(repo.verify(context).isAccepted());
+    }
+
+    private static MockRequestContext getRequestContext() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        return context;
+    }
+
+    private static AcceptableUsagePolicyRepository getRepositoryInstance(final AcceptableUsagePolicyProperties properties) {
+        val support = mock(TicketRegistrySupport.class);
+        when(support.getAuthenticatedPrincipalFrom(anyString()))
+            .thenReturn(CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("carLicense", "false")));
+        return new DefaultAcceptableUsagePolicyRepository(support, properties);
     }
 
     @Test
@@ -73,6 +82,15 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
     }
 
     @Test
+    public void verifyActionNoAuthentication() {
+        val properties = new AcceptableUsagePolicyProperties();
+        properties.getInMemory().setScope(InMemoryAcceptableUsagePolicyProperties.Scope.AUTHENTICATION);
+        val context = getRequestContext();
+        val repo = getRepositoryInstance(properties);
+        assertThrows(AuthenticationException.class, () -> repo.verify(context));
+    }
+
+    @Test
     public void verifyProps() {
         val status = AcceptableUsagePolicyStatus.accepted(CoreAuthenticationTestUtils.getPrincipal());
         status.clearProperties();
@@ -84,6 +102,10 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
         assertEquals(List.of("casuser"), status.getProperty("user"));
         assertEquals(List.of("cas", "system"), status.getPropertyOrDefault("example2", List.of()));
         assertEquals(Set.of("hello"), status.getPropertyOrDefault("nada", "hello"));
+
+
+        assertEquals(List.of("hello1", "hello2"), status.getPropertyOrDefault("nada", "hello1", "hello2"));
+        assertEquals(List.of("cas", "system"), status.getPropertyOrDefault("example2", "hello1", "hello2"));
     }
 
     @Override

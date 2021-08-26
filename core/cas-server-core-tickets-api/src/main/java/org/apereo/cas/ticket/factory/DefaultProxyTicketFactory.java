@@ -6,7 +6,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
@@ -33,10 +32,15 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DefaultProxyTicketFactory implements ProxyTicketFactory {
     private final UniqueTicketIdGenerator defaultTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+
     private final ExpirationPolicyBuilder<ProxyTicket> proxyTicketExpirationPolicy;
+
     private final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
+
     private final CipherExecutor<String, String> cipherExecutor;
+
     private final boolean onlyTrackMostRecentSession;
+
     private final ServicesManager servicesManager;
 
     @Override
@@ -44,6 +48,20 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
                                        final Class<T> clazz) {
         val ticketId = produceTicketIdentifier(service);
         return produceTicket(proxyGrantingTicket, service, ticketId, clazz);
+    }
+
+    private ExpirationPolicy determineExpirationPolicyForService(final Service service) {
+        val registeredService = servicesManager.findServiceBy(service);
+        if (registeredService != null && registeredService.getProxyTicketExpirationPolicy() != null) {
+            val policy = registeredService.getProxyTicketExpirationPolicy();
+            val count = policy.getNumberOfUses();
+            val ttl = policy.getTimeToLive();
+            if (count > 0 && StringUtils.isNotBlank(ttl)) {
+                return new MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy(count,
+                    Beans.newDuration(ttl).getSeconds());
+            }
+        }
+        return this.proxyTicketExpirationPolicy.buildTicketExpirationPolicy();
     }
 
     /**
@@ -74,20 +92,6 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
         return (T) result;
     }
 
-    private ExpirationPolicy determineExpirationPolicyForService(final Service service) {
-        val registeredService = servicesManager.findServiceBy(service);
-        if (registeredService != null && registeredService.getProxyTicketExpirationPolicy() != null) {
-            val policy = registeredService.getProxyTicketExpirationPolicy();
-            val count = policy.getNumberOfUses();
-            val ttl = policy.getTimeToLive();
-            if (count > 0 && StringUtils.isNotBlank(ttl)) {
-                return new MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy(count,
-                    Beans.newDuration(ttl).getSeconds());
-            }
-        }
-        return this.proxyTicketExpirationPolicy.buildTicketExpirationPolicy();
-    }
-
     /**
      * Produce ticket identifier.
      *
@@ -104,7 +108,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
         }
 
         val ticketId = generator.getNewTicketId(ProxyTicket.PROXY_TICKET_PREFIX);
-        if (this.cipherExecutor == null) {
+        if (cipherExecutor == null || !cipherExecutor.isEnabled()) {
             return ticketId;
         }
         LOGGER.trace("Attempting to encode proxy ticket [{}]", ticketId);
@@ -114,7 +118,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
     }
 
     @Override
-    public TicketFactory get(final Class<? extends Ticket> clazz) {
-        return this;
+    public Class<? extends Ticket> getTicketType() {
+        return ProxyTicket.class;
     }
 }

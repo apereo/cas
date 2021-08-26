@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,5 +61,10 @@ public class CustomNamespaceWSFederationClaimsReleasePolicy extends AbstractRegi
             }
         });
         return attributesToRelease;
+    }
+
+    @Override
+    public List<String> determineRequestedAttributeDefinitions() {
+        return new ArrayList<>(getAllowedAttributes().keySet());
     }
 }

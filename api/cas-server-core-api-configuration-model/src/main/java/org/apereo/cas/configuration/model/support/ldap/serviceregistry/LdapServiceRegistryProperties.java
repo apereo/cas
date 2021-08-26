@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.ldap.serviceregistry;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -17,6 +18,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("LdapServiceRegistryProperties")
 public class LdapServiceRegistryProperties extends AbstractLdapSearchProperties {
 
     private static final long serialVersionUID = 2372867394066286022L;

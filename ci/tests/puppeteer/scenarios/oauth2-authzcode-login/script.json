@@ -1,0 +1,21 @@
+{
+  "dependencies": "oauth-webflow",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+    
+    "--cas.http-web-request.cors.enabled=true",
+    "--cas.http-web-request.cors.allow-origins[0]=*",
+    "--cas.http-web-request.cors.allow-credentials=false",
+    "--cas.http-web-request.cors.allow-methods[0]=*",
+    "--cas.http-web-request.cors.allow-headers[0]=*",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ]
+}
+
+
+

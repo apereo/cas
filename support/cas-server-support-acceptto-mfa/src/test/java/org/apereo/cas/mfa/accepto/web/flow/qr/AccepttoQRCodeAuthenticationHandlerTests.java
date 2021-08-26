@@ -21,14 +21,14 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = BaseAccepttoMultifactorAuthenticationTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.mfa.acceptto.apiUrl=http://localhost:5001",
+        "cas.authn.mfa.acceptto.api-url=http://localhost:5001",
         "cas.authn.mfa.acceptto.application-id=thisisatestid",
         "cas.authn.mfa.acceptto.secret=thisisasecret",
         "cas.authn.mfa.acceptto.organization-id=thisisatestid",
         "cas.authn.mfa.acceptto.organization-secret=thisisasecret",
         "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem"
     })
-@Tag("Webflow")
+@Tag("MFA")
 public class AccepttoQRCodeAuthenticationHandlerTests {
     @Test
     public void verifyOperation() throws Exception {

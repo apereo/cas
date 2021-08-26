@@ -23,7 +23,7 @@ public class DefaultResourceSetRepository extends BaseResourceSetRepository {
             set.setId(System.currentTimeMillis());
         }
         repository.put(set.getId(), set);
-        return set;
+        return super.saveInternal(set);
     }
 
     @Override

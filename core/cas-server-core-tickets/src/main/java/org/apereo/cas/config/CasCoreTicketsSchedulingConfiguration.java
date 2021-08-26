@@ -7,7 +7,10 @@ import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
+import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.spring.boot.ConditionalOnMatchingHostname;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -31,7 +34,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "casCoreTicketsSchedulingConfiguration")
+@Configuration(value = "casCoreTicketsSchedulingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @EnableAsync
@@ -45,7 +48,7 @@ public class CasCoreTicketsSchedulingConfiguration {
     private ObjectProvider<LockingStrategy> lockingStrategy;
 
     @Autowired
-    @Qualifier("logoutManager")
+    @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
     private ObjectProvider<LogoutManager> logoutManager;
 
     @Autowired
@@ -66,33 +69,33 @@ public class CasCoreTicketsSchedulingConfiguration {
                 logoutManager.getObject(), ticketRegistry.getObject());
         }
         LOGGER.debug("Ticket registry cleaner is not enabled. "
-            + "Expired tickets are not forcefully collected and cleaned by CAS. It is up to the ticket registry itself to "
-            + "clean up tickets based on expiration and eviction policies.");
+            + "Expired tickets are not forcefully cleaned by CAS. It is up to the ticket registry itself to "
+            + "clean up tickets based on its own expiration and eviction policies.");
         return NoOpTicketRegistryCleaner.getInstance();
     }
 
     @ConditionalOnMissingBean(name = "ticketRegistryCleanerScheduler")
     @ConditionalOnProperty(prefix = "cas.ticket.registry.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnMatchingHostname(name = "cas.ticket.registry.cleaner.schedule.enabled-on-host")
     @Bean
     @RefreshScope
-    public TicketRegistryCleanerScheduler ticketRegistryCleanerScheduler() {
-        return new TicketRegistryCleanerScheduler(ticketRegistryCleaner());
+    @Autowired
+    public TicketRegistryCleanerScheduler ticketRegistryCleanerScheduler(@Qualifier("ticketRegistryCleaner")
+                                                                         final TicketRegistryCleaner ticketRegistryCleaner) {
+        return new TicketRegistryCleanerScheduler(ticketRegistryCleaner);
     }
 
 
     /**
      * The Ticket registry cleaner scheduler. Because the cleaner itself is marked
      * with {@link org.springframework.transaction.annotation.Transactional},
-     * we need to create a separate scheduler component that simply invokes it
+     * we need to create a separate scheduler component that invokes it
      * so that {@link Scheduled} annotations can be processed and not interfere
      * with transaction semantics of the cleaner.
      */
+    @RequiredArgsConstructor
     public static class TicketRegistryCleanerScheduler {
         private final TicketRegistryCleaner ticketRegistryCleaner;
-
-        public TicketRegistryCleanerScheduler(final TicketRegistryCleaner ticketRegistryCleaner) {
-            this.ticketRegistryCleaner = ticketRegistryCleaner;
-        }
 
         @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.schedule.start-delay:PT30S}",
             fixedDelayString = "${cas.ticket.registry.cleaner.schedule.repeat-interval:PT120S}")
@@ -100,11 +103,7 @@ public class CasCoreTicketsSchedulingConfiguration {
             try {
                 this.ticketRegistryCleaner.clean();
             } catch (final Exception e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.error(e.getMessage(), e);
-                } else {
-                    LOGGER.error(e.getMessage());
-                }
+                LoggingUtils.error(LOGGER, e);
             }
         }
     }

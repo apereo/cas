@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!--
+All loggers are asynchronous because of log42.component.properties in cas-server-core-logging-api.
+Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContextSelector or override log42.component.properties to turn off async
+-->
 <!-- Specify the refresh internal in seconds. -->
 <Configuration monitorInterval="5">
     <Appenders>
@@ -18,28 +22,28 @@
     </Appenders>
     
     <Loggers>
-        <AsyncLogger name="org.apereo.cas" level="info" additivity="false" includeLocation="true">
+        <Logger name="org.apereo.cas" level="info" additivity="false" includeLocation="true">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.apache" level="error" additivity="false">
+        </Logger>
+        <Logger name="org.apache" level="error" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.boot.admin" level="info" additivity="false">
+        </Logger>
+        <Logger name="org.springframework.boot.admin" level="info" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="de.codecentric.boot" level="info" additivity="false">
+        </Logger>
+        <Logger name="de.codecentric.boot" level="info" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.boot" level="info" additivity="false">
+        </Logger>
+        <Logger name="org.springframework.boot" level="info" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncRoot level="error">
+        </Logger>
+        <Root level="error">
             <AppenderRef ref="casConsole"/>
-        </AsyncRoot>
+        </Root>
     </Loggers>
 </Configuration>

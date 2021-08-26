@@ -38,5 +38,6 @@ public class GroovyAuthenticationHandlerResolverTests {
 
         val results = resolver.resolve(Set.of(new AcceptUsersAuthenticationHandler("casuser")), transaction);
         assertFalse(results.isEmpty());
+        resolver.destroy();
     }
 }

@@ -6,7 +6,7 @@ dependencies {
     implementation libraries.pac4jcore
     implementation libraries.jose4j
     implementation libraries.nimbus
-    
+
     implementation project(":support:cas-server-support-oauth-core")
     implementation project(":support:cas-server-support-oauth-core-api")
     implementation project(":support:cas-server-support-oauth-services")
@@ -40,6 +40,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-tickets")

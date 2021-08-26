@@ -60,19 +60,19 @@ public class FindPropertiesCommand {
 
         results.forEach((k, v) -> {
             if (summary) {
-                LOGGER.info("{}={}", k, v.getDefaultValue());
+                LOGGER.info("[{}]=[{}]", k, v.getDefaultValue());
                 val value = StringUtils.normalizeSpace(v.getShortDescription());
                 if (StringUtils.isNotBlank(value)) {
-                    LOGGER.info("{}", value);
+                    LOGGER.info("[{}]", value);
                 }
             } else {
-                LOGGER.info("Property: {}", k);
-                LOGGER.info("Group: {}", StringUtils.substringBeforeLast(k, "."));
-                LOGGER.info("Default Value: {}", ObjectUtils.defaultIfNull(v.getDefaultValue(), "[blank]"));
-                LOGGER.info("Type: {}", v.getType());
-                LOGGER.info("Summary: {}", StringUtils.normalizeSpace(v.getShortDescription()));
-                LOGGER.info("Description: {}", StringUtils.normalizeSpace(v.getDescription()));
-                LOGGER.info("Deprecated: {}", BooleanUtils.toStringYesNo(v.isDeprecated()));
+                LOGGER.info("Property: [{}]", k);
+                LOGGER.info("Group: [{}]", StringUtils.substringBeforeLast(k, "."));
+                LOGGER.info("Default Value: [{}]", ObjectUtils.defaultIfNull(v.getDefaultValue(), "[blank]"));
+                LOGGER.info("Type: [{}]", v.getType());
+                LOGGER.info("Summary: [{}]", StringUtils.normalizeSpace(v.getShortDescription()));
+                LOGGER.info("Description: [{}]", StringUtils.normalizeSpace(v.getDescription()));
+                LOGGER.info("Deprecated: [{}]", BooleanUtils.toStringYesNo(v.isDeprecated()));
             }
             LOGGER.info("-".repeat(SEP_LINE_LENGTH));
         });

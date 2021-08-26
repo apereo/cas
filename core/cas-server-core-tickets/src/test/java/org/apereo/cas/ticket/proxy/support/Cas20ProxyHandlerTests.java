@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Tag("Simple")
+@Tag("AuthenticationHandler")
 public class Cas20ProxyHandlerTests {
 
     private Cas20ProxyHandler handler;
@@ -32,7 +32,7 @@ public class Cas20ProxyHandlerTests {
     private TicketGrantingTicket proxyGrantingTicket;
 
     public Cas20ProxyHandlerTests() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @BeforeEach

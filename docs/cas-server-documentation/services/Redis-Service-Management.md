@@ -4,6 +4,8 @@ title: CAS - Redis Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # Redis Service Registry
 
 This service registry stores tickets in one or more [Redis](http://redis.io/) instances. The
@@ -14,15 +16,9 @@ The Redis service registry supports Redis Sentinel, which provides high availabi
 
 Support is enabled by including the following dependency in the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-redis-service-registry</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-redis-service-registry" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#redis-service-registry).
+{% include casproperties.html properties="cas.service-registry.redis" %}
 
 ## Auto Initialization
 

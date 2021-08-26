@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.model.support.captcha;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,6 +20,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("GoogleRecaptchaProperties")
 public class GoogleRecaptchaProperties implements Serializable {
 
     private static final long serialVersionUID = -8955074129123813915L;
@@ -29,27 +32,33 @@ public class GoogleRecaptchaProperties implements Serializable {
         /**
          * V2 version of the recaptcha API.
          */
-        V2,
+        GOOGLE_RECAPTCHA_V2,
         /**
          * V3 version of the recaptcha API.
          */
-        V3
+        GOOGLE_RECAPTCHA_V3,
+        /**
+         * hCaptcha.
+         */
+        HCAPTCHA
     }
 
     /**
      * Indicate the version of the recaptcha api.
      * Accepted values are: {@code V2, V3}.
      */
-    private RecaptchaVersions version = RecaptchaVersions.V2;
+    private RecaptchaVersions version = RecaptchaVersions.GOOGLE_RECAPTCHA_V2;
 
     /**
      * Whether google reCAPTCHA should be enabled.
      */
+    @RequiredProperty
     private boolean enabled = true;
 
     /**
      * The google reCAPTCHA site key.
      */
+    @RequiredProperty
     private String siteKey;
 
     /**
@@ -60,6 +69,7 @@ public class GoogleRecaptchaProperties implements Serializable {
     /**
      * The google reCAPTCHA site secret.
      */
+    @RequiredProperty
     private String secret;
 
     /**
@@ -71,8 +81,8 @@ public class GoogleRecaptchaProperties implements Serializable {
      * The google reCAPTCHA badge position (only if invisible is enabled).
      * Accepted values are:
      * <ul>
-     * <li>{@code bottomright}: default value.</li>
-     * <li>{@code bottomleft}</li>
+     * <li>{@code bottomright}: bottom right corner, default value.</li>
+     * <li>{@code bottomleft}: bottom left corner</li>
      * <li>{@code inline}: allows to control the CSS.</li>
      * </ul>
      */
@@ -86,5 +96,6 @@ public class GoogleRecaptchaProperties implements Serializable {
      * decide on thresholds by looking at your traffic in the admin console.
      * By default, you can use a threshold of 0.5.
      */
+    @RequiredProperty
     private double score = 0.5;
 }

@@ -107,7 +107,8 @@ header>nav .cas-brand .cas-logo {
     border-right: 1px solid rgba(0, 0, 0, .2);
     border-right: var(--cas-theme-border-light, 1px solid rgba(0, 0, 0, .2));
     padding: 2rem 2.5rem;
-    flex: 1;
+    flex: 1 1 auto;
+    /* IE flex fix */
 }
 
 .login-section:last-child {
@@ -215,6 +216,10 @@ button.close {
     color: inherit;
 }
 
+.login-provider-item {
+    list-style: none;
+}
+
 .login-provider-item .mdc-button .mdi {
     margin-right: 0.375rem;
 }
@@ -226,7 +231,12 @@ button.close {
 }
 
 .cas-footer {
-    font-size: 0.75rem;
+    background-color: var(--mdc-theme-primary, #6200ee);
+    color: whitesmoke;
+}
+
+.cas-footer a {
+    color: deepskyblue;
 }
 
 .cas-footer>* {
@@ -321,6 +331,9 @@ button.close {
     word-break: break-all;
 }
 
+.mdc-text-field {
+    width: 100%;
+}
 .mdc-text-field>.mdc-text-field__input, .mdc-text-field:not(.mdc-text-field--disabled):not(.mdc-text-field--outlined):not(.mdc-text-field--textarea)>.mdc-text-field__input {
     border-color: #153e50;
     border: 1px solid var(--cas-theme-primary, #153e50);
@@ -568,7 +581,9 @@ button.close {
     box-sizing: border-box;
 }
 
-/* legacy */
+.text-justify {
+text-align: justify;
+}
 
 #duo_iframe {
     width: 100%;
@@ -583,3 +598,30 @@ button.close {
     background-color: #17a3b844;
     border-radius: 4px;
 }
+
+#heroimg {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* IE flex fix */
+
+#main-content {
+    margin-right: inherit;
+    margin-left: inherit;
+}
+
+/* oddly, the auto right and left margins caused the login form to not be centered in IE */
+
+@media all and (min-width: 768px) {
+    .login-section {
+        flex: 1 1 500px;
+        /* according to flexbugs, flex-basis should be explicitly set for IE */
+        /* https://github.com/philipwalton/flexbugs#flexbug-4 */
+    }
+}
+
+/* flex-basis: auto works in IE with the column view,
+     but a specific value needs to be set for row view
+   */

@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.authy;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
@@ -24,12 +25,13 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler implements MultifactorAuthenticationHandler {
 
     private final boolean forceVerification;
     private final AuthyClientInstance instance;
 
-    public AuthyAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public AuthyAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                      final PrincipalFactory principalFactory,
                                       final AuthyClientInstance instance, final boolean forceVerification,
                                       final Integer order) {
         super(name, servicesManager, principalFactory, order);

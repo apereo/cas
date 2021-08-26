@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.Resource;
 
 /**
@@ -19,38 +20,31 @@ import org.springframework.core.io.Resource;
 @Slf4j
 @Getter
 @ToString(of = "resource")
-public class WatchableGroovyScriptResource implements AutoCloseable, ExecutableCompiledGroovyScript {
-    private transient FileWatcherService watcherService;
-    private transient GroovyObject groovyScript;
+public class WatchableGroovyScriptResource implements ExecutableCompiledGroovyScript {
     private final transient Resource resource;
 
+    private transient FileWatcherService watcherService;
+
+    private transient GroovyObject groovyScript;
+
     @SneakyThrows
-    public WatchableGroovyScriptResource(final Resource script) {
+    public WatchableGroovyScriptResource(final Resource script, final boolean enableWatcher) {
         this.resource = script;
 
         if (ResourceUtils.doesResourceExist(script)) {
-            if (ResourceUtils.isFile(script)) {
-                this.watcherService = new FileWatcherService(script.getFile(), file -> {
-                    try {
-                        LOGGER.debug("Reloading script at [{}]", file);
-                        compileScriptResource(script);
-                    } catch (final Exception e) {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.error(e.getMessage(), e);
-                        } else {
-                            LOGGER.error(e.getMessage());
-                        }
-                    }
-                });
+            if (ResourceUtils.isFile(script) && enableWatcher) {
+                this.watcherService = new FileWatcherService(script.getFile(), Unchecked.consumer(file -> {
+                    LOGGER.debug("Reloading script at [{}]", file);
+                    compileScriptResource(script);
+                }));
                 this.watcherService.start(script.getFilename());
-                compileScriptResource(script);
             }
+            compileScriptResource(script);
         }
     }
 
-
-    private void compileScriptResource(final Resource script) {
-        this.groovyScript = ScriptingUtils.parseGroovyScript(script, true);
+    public WatchableGroovyScriptResource(final Resource script) {
+        this(script, true);
     }
 
     /**
@@ -93,15 +87,7 @@ public class WatchableGroovyScriptResource implements AutoCloseable, ExecutableC
         return null;
     }
 
-    /**
-     * Execute t.
-     *
-     * @param <T>        the type parameter
-     * @param methodName the method name
-     * @param clazz      the clazz
-     * @param args       the args
-     * @return the t
-     */
+    @Override
     public <T> T execute(final String methodName, final Class<T> clazz, final Object... args) {
         return execute(methodName, clazz, true, args);
     }
@@ -126,7 +112,12 @@ public class WatchableGroovyScriptResource implements AutoCloseable, ExecutableC
     @Override
     public void close() {
         if (watcherService != null) {
+            LOGGER.trace("Shutting down watcher service for [{}]", this.resource);
             this.watcherService.close();
         }
+    }
+
+    private void compileScriptResource(final Resource script) {
+        this.groovyScript = ScriptingUtils.parseGroovyScript(script, true);
     }
 }

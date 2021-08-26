@@ -31,9 +31,9 @@ import static org.mockito.Mockito.*;
 @EnabledIfPortOpen(port = 8091)
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
     properties = {
-        "cas.authn.couchbase.clusterUsername=admin",
-        "cas.authn.couchbase.clusterPassword=password",
-        "cas.authn.couchbase.bucket=testbucket"
+        "cas.authn.couchbase.cluster-username=admin",
+        "cas.authn.couchbase.cluster-password=password",
+        "cas.authn.couchbase.bucket=pplbucket"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchbaseAuthenticationHandlerTests {
@@ -56,13 +56,24 @@ public class CouchbaseAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyBadEncoding() throws Exception {
+    public void verifyBadEncoding() {
         val props = casProperties.getAuthn().getCouchbase();
         val factory = new CouchbaseClientFactory(props);
         val handler = new CouchbaseAuthenticationHandler(mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), factory, props);
         handler.setPasswordEncoder(new SCryptPasswordEncoder());
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
+        assertThrows(FailedLoginException.class, () -> handler.authenticate(c));
+    }
+
+    @Test
+    public void verifyBadRecord() {
+        val props = casProperties.getAuthn().getCouchbase();
+        val factory = new CouchbaseClientFactory(props);
+        val handler = new CouchbaseAuthenticationHandler(mock(ServicesManager.class),
+            PrincipalFactoryUtils.newPrincipalFactory(), factory, props);
+        handler.setPasswordEncoder(new SCryptPasswordEncoder());
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("nopsw", "Mellon");
         assertThrows(FailedLoginException.class, () -> handler.authenticate(c));
     }
 

@@ -3,6 +3,7 @@ package org.apereo.cas.uma.web.controllers.rpt;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +45,8 @@ public class UmaRequestingPartyTokenJwksEndpointController extends BaseUmaEndpoi
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getKeys(final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            val jwks = getUmaConfigurationContext().getCasProperties().getAuthn().getUma().getRequestingPartyToken().getJwksFile();
+            val jwks = getUmaConfigurationContext().getCasProperties().getAuthn()
+                .getOauth().getUma().getRequestingPartyToken().getJwksFile().getLocation();
             if (ResourceUtils.doesResourceExist(jwks)) {
                 val jsonJwks = IOUtils.toString(jwks.getInputStream(), StandardCharsets.UTF_8);
                 val jsonWebKeySet = new JsonWebKeySet(jsonJwks);
@@ -54,7 +56,7 @@ public class UmaRequestingPartyTokenJwksEndpointController extends BaseUmaEndpoi
             }
             return new ResponseEntity<>("UMA RPT JWKS resource is undefined or cannot be located", HttpStatus.NOT_IMPLEMENTED);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

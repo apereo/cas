@@ -6,7 +6,9 @@ import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
+import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
@@ -81,7 +83,8 @@ public class ServiceTicketResourceTests {
 
         this.serviceTicketResource = new ServiceTicketResource(
             new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(publisher, mgmr),
-                new DefaultPrincipalElectionStrategy()),
+                new DefaultPrincipalElectionStrategy(), new DefaultAuthenticationResultBuilderFactory(),
+                new DefaultAuthenticationTransactionFactory()),
             ticketSupport, new DefaultArgumentExtractor(new WebApplicationServiceFactory()),
             new CasProtocolServiceTicketResourceEntityResponseFactory(casMock),
             new UsernamePasswordRestHttpRequestCredentialFactory(),

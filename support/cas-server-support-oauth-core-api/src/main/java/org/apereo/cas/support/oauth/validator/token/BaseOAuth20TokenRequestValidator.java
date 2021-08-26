@@ -6,13 +6,14 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.core.Ordered;
@@ -24,7 +25,7 @@ import org.springframework.core.Ordered;
  * @since 5.3.0
  */
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
 public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRequestValidator {
@@ -46,19 +47,9 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
                 return true;
             }
         }
+
         LOGGER.error("Unsupported grant type: [{}]", type);
         return false;
-    }
-
-    /**
-     * Is grant type supported.
-     *
-     * @param registeredService the registered service
-     * @param type              the type
-     * @return true/false
-     */
-    protected boolean isGrantTypeSupportedBy(final OAuthRegisteredService registeredService, final OAuth20GrantTypes type) {
-        return isGrantTypeSupportedBy(registeredService, type.getType());
     }
 
     /**
@@ -68,24 +59,20 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
      * @param type              the type
      * @return true/false
      */
-    protected boolean isGrantTypeSupportedBy(final OAuthRegisteredService registeredService, final String type) {
+    protected static boolean isGrantTypeSupportedBy(final OAuthRegisteredService registeredService, final String type) {
         return OAuth20Utils.isAuthorizedGrantTypeForService(type, registeredService);
     }
 
     @Override
-    public boolean validate(final JEEContext ctx) {
-        val request = ctx.getNativeRequest();
-        val response = ctx.getNativeResponse();
-
-        val grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
+    public boolean validate(final WebContext context) {
+        val grantType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
         if (!isGrantTypeSupported(grantType, OAuth20GrantTypes.values())) {
             LOGGER.warn("Grant type is not supported: [{}]", grantType);
             return false;
         }
 
-        val context = new JEEContext(request, response, getConfigurationContext().getSessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
-        val profile = manager.get(true);
+        val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
+        val profile = manager.getProfile();
         if (profile.isEmpty()) {
             LOGGER.warn("Could not locate authenticated profile for this request. Request is not authenticated");
             return false;
@@ -104,7 +91,7 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
      * @param userProfile the profile
      * @return true/false
      */
-    protected boolean validateInternal(final JEEContext context,
+    protected boolean validateInternal(final WebContext context,
                                        final String grantType,
                                        final ProfileManager manager,
                                        final UserProfile userProfile) {
@@ -119,8 +106,8 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
     protected abstract OAuth20GrantTypes getGrantType();
 
     @Override
-    public boolean supports(final JEEContext context) {
-        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+    public boolean supports(final WebContext context) {
+        val grantType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType.map(String::valueOf).orElse(StringUtils.EMPTY), getGrantType());
     }
 }

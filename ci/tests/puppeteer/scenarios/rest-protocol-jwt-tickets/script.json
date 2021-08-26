@@ -1,0 +1,9 @@
+{
+  "dependencies": "rest,rest-tokens",
+  "properties": [
+    "--cas.audit.engine.enabled=false",
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+    "--cas.authn.token.crypto.enabled=false"
+  ]
+}

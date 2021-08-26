@@ -1,15 +1,17 @@
 package org.apereo.cas.mfa.accepto;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.configuration.model.support.mfa.AccepttoMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.AccepttoMultifactorAuthenticationProperties;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoWebflowUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
@@ -22,7 +24,6 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.Cookie;
-
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPairGenerator;
 import java.util.List;
@@ -39,16 +40,25 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("MFA")
 public class AccepttoApiUtilsTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
     public void verifyEmail() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(
             CoreAuthenticationTestUtils.getPrincipal(Map.of("email", List.of("cas@example.org"))));
 
-        val properties = new AccepttoMultifactorProperties();
+        val properties = new AccepttoMultifactorAuthenticationProperties();
         properties.setEmailAttribute("email");
         assertNotNull(AccepttoApiUtils.getUserEmail(authentication, properties));
+    }
+
+    @Test
+    public void verifyInvalidUser() {
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(CoreAuthenticationTestUtils.getPrincipal(Map.of()));
+        val properties = new AccepttoMultifactorAuthenticationProperties();
+        properties.setEmailAttribute("email");
+        assertTrue(AccepttoApiUtils.isUserValid(authentication, properties).isEmpty());
     }
 
     @Test
@@ -56,14 +66,14 @@ public class AccepttoApiUtilsTests {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(
             CoreAuthenticationTestUtils.getPrincipal(Map.of("group", List.of("staff"))));
 
-        val properties = new AccepttoMultifactorProperties();
+        val properties = new AccepttoMultifactorAuthenticationProperties();
         properties.setGroupAttribute("group");
         assertNotNull(AccepttoApiUtils.getUserGroup(authentication, properties));
     }
 
     @Test
     public void verifyUserValid() throws Exception {
-        val properties = new AccepttoMultifactorProperties();
+        val properties = new AccepttoMultifactorAuthenticationProperties();
         properties.setGroupAttribute("group");
         properties.setEmailAttribute("email");
         properties.setApplicationId("appid");
@@ -81,14 +91,34 @@ public class AccepttoApiUtilsTests {
             val user = AccepttoApiUtils.isUserValid(authentication, properties);
             assertFalse(user.isEmpty());
 
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
+        }
+    }
+
+    @Test
+    public void verifyUserInvalidData() throws Exception {
+        val properties = new AccepttoMultifactorAuthenticationProperties();
+        properties.setGroupAttribute("group");
+        properties.setEmailAttribute("email");
+        properties.setApplicationId("appid");
+        properties.setSecret("p@$$w0rd");
+        properties.setApiUrl("http://localhost:9289");
+        val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of(
+            "email", List.of("cas@example.org"),
+            "group", List.of("staff")));
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
+
+        val data = MAPPER.writeValueAsString("__.. ..___$$$@@@");
+        try (val webServer = new MockWebServer(9289,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+            val user = AccepttoApiUtils.isUserValid(authentication, properties);
+            assertTrue(user.isEmpty());
         }
     }
 
     @Test
     public void verifyUserDevicePaired() throws Exception {
-        val properties = new AccepttoMultifactorProperties();
+        val properties = new AccepttoMultifactorAuthenticationProperties();
         properties.setGroupAttribute("group");
         properties.setEmailAttribute("email");
         properties.setApplicationId("appid");
@@ -104,14 +134,12 @@ public class AccepttoApiUtilsTests {
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertTrue(AccepttoApiUtils.isUserDevicePaired(authentication, properties));
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
         }
     }
 
     @Test
     public void verifyQR() throws Exception {
-        val properties = new AccepttoMultifactorProperties();
+        val properties = new AccepttoMultifactorAuthenticationProperties();
         properties.setGroupAttribute("group");
         properties.setEmailAttribute("email");
         properties.setApplicationId("appid");
@@ -128,7 +156,7 @@ public class AccepttoApiUtilsTests {
 
     @Test
     public void verifyAuthenticate() throws Exception {
-        val properties = new AccepttoMultifactorProperties();
+        val properties = new AccepttoMultifactorAuthenticationProperties();
         properties.setGroupAttribute("group");
         properties.setEmailAttribute("email");
         properties.setApplicationId("appid");
@@ -160,16 +188,20 @@ public class AccepttoApiUtilsTests {
         val payload = MAPPER.writeValueAsString(Map.of("uid", "casuser"));
         val jwt = EncodingUtils.signJwsRSASha512(priv, payload.getBytes(StandardCharsets.UTF_8), Map.of());
 
-        val data = MAPPER.writeValueAsString(Map.of("content", new String(jwt, StandardCharsets.UTF_8)));
+        var data = MAPPER.writeValueAsString(Map.of("content", new String(jwt, StandardCharsets.UTF_8)));
         try (val webServer = new MockWebServer(9285,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-
             val results = AccepttoApiUtils.authenticate(authentication, properties, context, pub);
             assertNotNull(results);
+        }
 
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
+        try (val webServer = new MockWebServer(9285,
+            new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+
+            val results = AccepttoApiUtils.authenticate(authentication, properties, context, pub);
+            assertTrue(results.isEmpty());
         }
     }
 }

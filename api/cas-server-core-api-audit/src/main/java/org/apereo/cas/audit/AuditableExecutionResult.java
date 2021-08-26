@@ -104,10 +104,7 @@ public class AuditableExecutionResult {
      */
     public void throwExceptionIfNeeded() {
         if (isExecutionFailure()) {
-            getException().ifPresent(ex -> {
-                throw ex;
-            });
-            throw new RuntimeException("Auditable task has failed to execute");
+            throw getException().get();
         }
     }
 

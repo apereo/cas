@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     "cas.authn.ldap[0].bind-dn=Administrator@cas.example.org",
     "cas.authn.ldap[0].bind-credential=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_ADMIN_PASSWORD,
     "cas.authn.ldap[0].ldap-url=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_LDAP_URL,
-    "cas.authn.ldap[0].useStartTls=true",
+    "cas.authn.ldap[0].use-start-tls=true",
     "cas.authn.ldap[0].subtree-search=true",
     "cas.authn.ldap[0].base-dn=dc=cas,dc=example,dc=org",
     "cas.authn.ldap[0].follow-referrals=false",
@@ -53,9 +53,9 @@ public class ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests extends
 
     @Test
     public void verifyAuthenticateWarnings() {
-        assertNotEquals(handler.size(), 0);
+        assertNotEquals(ldapAuthenticationHandlers.size(), 0);
 
-        this.handler.forEach(Unchecked.consumer(h -> {
+        this.ldapAuthenticationHandlers.forEach(Unchecked.consumer(h -> {
             val credential = new UsernamePasswordCredential(getUsername(), getSuccessPassword());
             val result = h.authenticate(credential);
             assertTrue(result.getWarnings() != null && !result.getWarnings().isEmpty());

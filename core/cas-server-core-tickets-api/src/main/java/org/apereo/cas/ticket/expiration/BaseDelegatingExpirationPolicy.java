@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.TicketState;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +33,7 @@ import java.util.Optional;
 @Slf4j
 @Getter
 @Setter
-@NoArgsConstructor(force = true)
+@NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirationPolicy {
@@ -41,11 +42,9 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
      */
     public static final String POLICY_NAME_DEFAULT = "DEFAULT";
 
-    private static final int MAP_SIZE = 8;
-
     private static final long serialVersionUID = 5927936344949518688L;
 
-    private final Map<String, ExpirationPolicy> policies = new LinkedHashMap<>(MAP_SIZE);
+    private final Map<String, ExpirationPolicy> policies = new LinkedHashMap<>();
 
     /**
      * Add policy.

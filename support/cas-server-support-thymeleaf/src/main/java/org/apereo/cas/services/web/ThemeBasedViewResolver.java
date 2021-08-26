@@ -40,18 +40,18 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
 
     @Override
     public View resolveViewName(final String viewName, final Locale locale) {
-        val theme = Optional.of(RequestContextHolder.currentRequestAttributes())
-            .filter(ServletRequestAttributes.class::isInstance)
-            .map(ServletRequestAttributes.class::cast)
-            .map(ServletRequestAttributes::getRequest)
-            .map(themeResolver::resolveThemeName);
         try {
+            val theme = Optional.of(RequestContextHolder.currentRequestAttributes())
+                .filter(ServletRequestAttributes.class::isInstance)
+                .map(ServletRequestAttributes.class::cast)
+                .map(ServletRequestAttributes::getRequest)
+                .map(themeResolver::resolveThemeName);
             val delegate = theme.map(this::getViewResolver);
             if (delegate.isPresent()) {
                 return delegate.get().resolveViewName(viewName, locale);
             }
         } catch (final Exception e) {
-            LOGGER.debug("error resolving view [{}] for theme [{}]", viewName, theme.orElse(null), e);
+            LOGGER.debug("error resolving view [{}] for theme", viewName, e);
         }
         return null;
     }

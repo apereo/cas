@@ -8,6 +8,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -37,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreHttpConfiguration.class,
@@ -57,10 +59,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     RestServicesConfiguration.class
 }, properties = {
-    "cas.rest.attribute-name=attr-name",
-    "cas.rest.attribute-value=attr-v"
+    "cas.rest.services.attribute-name=attr-name",
+    "cas.rest.services.attribute-value=attr-v"
 })
-@Tag("Simple")
+@Tag("CasConfiguration")
 public class RestServicesConfigurationTests {
     @Autowired
     @Qualifier("registeredServiceResourceRestController")

@@ -45,6 +45,11 @@ public interface RegisteredServiceExpirationPolicy extends Serializable {
      */
     boolean isDeleteWhenExpired();
 
+    /**
+     * Is expired?
+     *
+     * @return the boolean
+     */
     @JsonIgnore
     boolean isExpired();
 }

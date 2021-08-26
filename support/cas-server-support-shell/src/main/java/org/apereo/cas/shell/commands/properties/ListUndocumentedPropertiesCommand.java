@@ -41,6 +41,6 @@ public class ListUndocumentedPropertiesCommand {
                 && (StringUtils.isBlank(p.getValue().getShortDescription()) || StringUtils.isBlank(p.getValue().getDescription())))
             .map(Map.Entry::getValue)
             .sorted(Comparator.comparing(ConfigurationMetadataProperty::getId))
-            .forEach(p -> LOGGER.error("{} {} @ {}", ERROR_MSG_PREFIX, p.getId(), p.getType()));
+            .forEach(p -> LOGGER.error("[{}] [{}] @ [{}]", ERROR_MSG_PREFIX, p.getId(), p.getType()));
     }
 }

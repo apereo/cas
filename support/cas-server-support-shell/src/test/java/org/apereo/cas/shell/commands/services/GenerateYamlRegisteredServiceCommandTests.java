@@ -4,8 +4,8 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
 
-import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -26,14 +26,20 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SHELL")
 public class GenerateYamlRegisteredServiceCommandTests extends BaseCasShellCommandTests {
     @Test
-    @SneakyThrows
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val file = File.createTempFile("service", ".json");
         val yaml = File.createTempFile("service", ".yaml");
         val svc = RegisteredServiceTestUtils.getRegisteredService("example");
-        new RegisteredServiceJsonSerializer().to(Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8), svc);
-        assertTrue(file.exists());
+        try (val writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
+            new RegisteredServiceJsonSerializer().to(writer, svc);
+            writer.flush();
+        }
+        assertTrue(file.exists() && file.length() > 0);
         assertNotNull(shell.evaluate(() -> "generate-yaml --file " + file.getPath() + " --destination " + yaml.getPath()));
         assertTrue(yaml.exists());
+        val badFile = File.createTempFile("first", ".second");
+        assertNotNull(shell.evaluate(() -> "generate-yaml --file " + badFile + " --destination " + yaml.getPath()));
+        FileUtils.write(badFile, "data", StandardCharsets.UTF_8);
+        assertNotNull(shell.evaluate(() -> "generate-yaml --file " + badFile + " --destination " + yaml.getPath()));
     }
 }

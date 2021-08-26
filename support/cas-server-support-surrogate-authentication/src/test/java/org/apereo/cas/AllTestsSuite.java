@@ -1,6 +1,7 @@
 
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolverTests;
 import org.apereo.cas.authentication.SurrogateAuthenticationExpirationPolicyBuilderTests;
 import org.apereo.cas.authentication.SurrogateAuthenticationMetaDataPopulatorTests;
 import org.apereo.cas.authentication.SurrogateAuthenticationPostProcessorTests;
@@ -8,16 +9,17 @@ import org.apereo.cas.authentication.SurrogatePrincipalBuilderTests;
 import org.apereo.cas.authentication.SurrogatePrincipalElectionStrategyTests;
 import org.apereo.cas.authentication.SurrogatePrincipalResolverTests;
 import org.apereo.cas.authentication.audit.SurrogateAuditPrincipalIdProviderTests;
+import org.apereo.cas.authentication.audit.SurrogateEligibilitySelectionAuditResourceResolverTests;
 import org.apereo.cas.authentication.audit.SurrogateEligibilityVerificationAuditResourceResolverTests;
 import org.apereo.cas.authentication.event.SurrogateAuthenticationEventListenerTests;
 import org.apereo.cas.authentication.rest.SurrogateAuthenticationRestHttpRequestCredentialFactoryTests;
 import org.apereo.cas.authentication.surrogate.JsonResourceSurrogateAuthenticationServiceTests;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationServiceTests;
 import org.apereo.cas.ticket.expiration.SurrogateSessionExpirationPolicyJsonSerializerTests;
+import org.apereo.cas.ticket.expiration.SurrogateSessionExpirationPolicyTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -29,7 +31,10 @@ import org.junit.runner.RunWith;
     SurrogateAuthenticationPostProcessorTests.class,
     SurrogateAuthenticationMetaDataPopulatorTests.class,
     SurrogatePrincipalResolverTests.class,
+    SurrogateEligibilitySelectionAuditResourceResolverTests.class,
+    SurrogateSessionExpirationPolicyTests.class,
     SurrogatePrincipalBuilderTests.class,
+    MultifactorAuthenticationPrincipalResolverTests.class,
     SurrogateAuthenticationExpirationPolicyBuilderTests.class,
     SurrogateAuthenticationEventListenerTests.class,
     SurrogateEligibilityVerificationAuditResourceResolverTests.class,
@@ -40,6 +45,6 @@ import org.junit.runner.RunWith;
     SurrogatePrincipalElectionStrategyTests.class,
     SurrogateSessionExpirationPolicyJsonSerializerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

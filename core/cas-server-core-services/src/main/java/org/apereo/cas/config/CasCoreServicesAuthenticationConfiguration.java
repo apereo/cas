@@ -38,7 +38,7 @@ public class CasCoreServicesAuthenticationConfiguration {
     private ObjectProvider<CipherExecutor> cacheCredentialsCipherExecutor;
 
     @Autowired
-    @Qualifier("registeredServiceCipherExecutor")
+    @Qualifier(RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME)
     private ObjectProvider<RegisteredServiceCipherExecutor> registeredServiceCipherExecutor;
 
     @Bean

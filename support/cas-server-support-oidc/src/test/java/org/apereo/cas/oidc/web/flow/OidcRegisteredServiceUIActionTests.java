@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.web.flow;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfo;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -28,7 +29,7 @@ public class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
         val ctx = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(ctx, null);
         val event = oidcRegisteredServiceUIAction.execute(ctx);
-        assertEquals("success", event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         assertNull(WebUtils.getServiceUserInterfaceMetadata(ctx, Serializable.class));
     }
 
@@ -38,7 +39,7 @@ public class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
         WebUtils.putServiceIntoFlowScope(ctx, RegisteredServiceTestUtils.getService(
             "https://www.example.org?client_id=id&client_secret=secret&redirect_uri=https://oauth.example.org"));
         val event = oidcRegisteredServiceUIAction.execute(ctx);
-        assertEquals("success", event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         val mdui = WebUtils.getServiceUserInterfaceMetadata(ctx, DefaultRegisteredServiceUserInterfaceInfo.class);
         assertNotNull(mdui);
 

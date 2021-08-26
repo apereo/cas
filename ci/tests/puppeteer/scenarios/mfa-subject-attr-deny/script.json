@@ -1,0 +1,16 @@
+{
+  "dependencies": "yubikey",
+  "properties": [
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+
+    "--cas.authn.mfa.triggers.principal.global-principal-attribute-name-triggers=email",
+    "--cas.authn.mfa.triggers.principal.global-principal-attribute-value-regex=must-mfa",
+    "--cas.authn.mfa.triggers.principal.deny-if-unmatched=true",
+    
+    "--cas.authn.mfa.yubikey.client-id=18420",
+    "--cas.authn.mfa.yubikey.secret-key=iBIehjui22aK8x82oe6qzGeb0As=",
+    "--cas.authn.mfa.yubikey.api-urls=https://unknown1234.com"
+  ]
+}

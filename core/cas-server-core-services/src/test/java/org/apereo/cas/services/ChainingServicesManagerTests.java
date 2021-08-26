@@ -1,11 +1,16 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.util.RandomUtils;
+
 import lombok.val;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.core.Ordered;
 
-import java.util.HashSet;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -16,14 +21,22 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Simple")
-public class ChainingServicesManagerTests extends AbstractServicesManagerTests {
-    @Override
-    protected ServicesManager getServicesManagerInstance() {
-        val chain = new ChainingServicesManager();
-        val manager = new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class), new HashSet<>());
-        chain.registerServiceManager(manager);
-        return chain;
+@Tag("RegisteredService")
+public class ChainingServicesManagerTests extends AbstractServicesManagerTests<ChainingServicesManager> {
+    @Test
+    public void verifyOperation() {
+        val servicesManager = mock(ServicesManager.class);
+        when(servicesManager.findServiceBy(anyLong(), any())).thenCallRealMethod();
+        when(servicesManager.findServiceByName(anyString(), any())).thenCallRealMethod();
+        when(servicesManager.count()).thenCallRealMethod();
+        when(servicesManager.getName()).thenCallRealMethod();
+        when(servicesManager.getOrder()).thenCallRealMethod();
+        assertEquals(Ordered.LOWEST_PRECEDENCE, servicesManager.getOrder());
+        assertEquals(0, servicesManager.count());
+        assertNotNull(servicesManager.getName());
+
+        assertNull(servicesManager.findServiceBy(0, RegexRegisteredService.class));
+        assertNull(servicesManager.findServiceBy(new WebApplicationServiceFactory().createService("name"), RegexRegisteredService.class));
     }
 
     @Test
@@ -32,21 +45,51 @@ public class ChainingServicesManagerTests extends AbstractServicesManagerTests {
         r.setId(10);
         r.setName("domainService1");
         r.setServiceId("https://www.example.com/one");
-        this.servicesManager.save(r);
-        assertTrue(this.servicesManager.supports(RegexRegisteredService.class));
-        assertTrue(this.servicesManager.supports(r));
-        assertTrue(this.servicesManager.supports(RegisteredServiceTestUtils.getService()));
+        servicesManager.save(r);
+        assertTrue(servicesManager.supports(RegexRegisteredService.class));
+        assertTrue(servicesManager.supports(r));
+        assertTrue(servicesManager.supports(RegisteredServiceTestUtils.getService()));
     }
 
     @Test
     public void verifySaveWithDomains() {
         val svc = new RegexRegisteredService();
-        svc.setId(100);
+        svc.setId(RandomUtils.nextLong());
         svc.setName("domainService2");
-        svc.setServiceId("https://www.example.com/two");
+        svc.setServiceId("https://www.example.com/" + svc.getId());
         assertNotNull(servicesManager.save(svc, false));
-        val chain = DomainAwareServicesManager.class.cast(this.servicesManager);
-        assertTrue(chain.getDomains().count() == 0);
-        assertTrue(chain.getServicesForDomain("example.org").isEmpty());
+        assertEquals(servicesManager.getDomains().count(), 1);
+        assertFalse(servicesManager.getServicesForDomain("example.org").isEmpty());
+    }
+
+    @Test
+    public void verifySaveInBulk() {
+        servicesManager.deleteAll();
+        servicesManager.save(() -> {
+            val svc = new RegexRegisteredService();
+            svc.setId(RandomUtils.nextLong());
+            svc.setName("domainService2");
+            svc.setServiceId("https://www.example.com/" + svc.getId());
+            return svc;
+        }, Assertions::assertNotNull, 10);
+        val results = servicesManager.load();
+        assertEquals(10, results.size());
+    }
+
+    @Test
+    public void verifySaveInStreams() {
+        servicesManager.deleteAll();
+        val s1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
+        val s2 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
+        servicesManager.save(Stream.of(s1, s2));
+        val results = servicesManager.load();
+        assertEquals(2, results.size());
+    }
+
+    @Override
+    protected ServicesManager getServicesManagerInstance() {
+        val chain = new ChainingServicesManager();
+        chain.registerServiceManager(super.getServicesManagerInstance());
+        return chain;
     }
 }

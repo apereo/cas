@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.monitor.PooledLdapConnectionFactoryHealthIndicator;
 import org.apereo.cas.util.LdapUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -25,6 +24,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -36,8 +36,6 @@ import java.util.UUID;
 @Configuration(value = "ldapMonitorConfiguration", proxyBeanMethods = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapMonitorConfiguration {
-    private static final int MAP_SIZE = 8;
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -46,7 +44,7 @@ public class LdapMonitorConfiguration {
         val list = new ListFactoryBean() {
             @Override
             protected void destroyInstance(final List list) {
-                list.forEach(connectionFactory ->
+                Objects.requireNonNull(list).forEach(connectionFactory ->
                     ((ConnectionFactory) connectionFactory).close()
                 );
             }
@@ -56,15 +54,14 @@ public class LdapMonitorConfiguration {
     }
 
     @Bean
-    @SneakyThrows
     @Autowired
     @ConditionalOnEnabledHealthIndicator("pooledLdapConnectionFactoryHealthIndicator")
     public CompositeHealthContributor pooledLdapConnectionFactoryHealthIndicator(
             @Qualifier("pooledLdapConnectionFactoryHealthIndicatorListFactoryBean")
-            final ListFactoryBean pooledLdapConnectionFactoryHealthIndicatorListFactoryBean) {
+            final ListFactoryBean pooledLdapConnectionFactoryHealthIndicatorListFactoryBean) throws Exception {
         val ldaps = casProperties.getMonitor().getLdap();
         val connectionFactoryList = pooledLdapConnectionFactoryHealthIndicatorListFactoryBean.getObject();
-        val contributors = new LinkedHashMap<>(MAP_SIZE);
+        val contributors = new LinkedHashMap<>();
         ldaps.stream()
             .filter(LdapMonitorProperties::isEnabled)
             .map(ldap -> {

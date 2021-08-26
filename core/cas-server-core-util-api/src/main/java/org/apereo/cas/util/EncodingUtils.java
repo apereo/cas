@@ -23,24 +23,22 @@ import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 
-import javax.crypto.Cipher;
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is {@link EncodingUtils} that encapsulates common base64, signing and encryption calls and operations in one spot.
+ * This is {@link EncodingUtils} that encapsulates common base64,
+ * signing and encryption calls and operations in one spot.
  *
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 @Slf4j
 @UtilityClass
 public class EncodingUtils {
@@ -255,9 +253,8 @@ public class EncodingUtils {
      */
     @SneakyThrows
     public static String urlDecode(final String value) {
-        return URLDecoder.decode(value, StandardCharsets.UTF_8.name());
+        return StringUtils.isBlank(value) ? value : URLDecoder.decode(value, StandardCharsets.UTF_8.name());
     }
-
 
     /**
      * Validates Base64 encoding.
@@ -575,20 +572,6 @@ public class EncodingUtils {
                 throw new DecryptionException(e);
             }
             throw new DecryptionException();
-        }
-    }
-
-    /**
-     * Is jce installed ?
-     *
-     * @return true/false
-     */
-    public static boolean isJceInstalled() {
-        try {
-            val maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
-            return maxKeyLen == Integer.MAX_VALUE;
-        } catch (final NoSuchAlgorithmException e) {
-            return false;
         }
     }
 }

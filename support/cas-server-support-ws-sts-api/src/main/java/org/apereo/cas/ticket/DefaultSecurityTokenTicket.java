@@ -3,19 +3,14 @@ package org.apereo.cas.ticket;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.util.EncodingUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
-
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 /**
  * This is {@link DefaultSecurityTokenTicket}.
@@ -23,23 +18,19 @@ import javax.persistence.Table;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Entity
-@Table(name = "SECURITYTOKENTICKET")
-@DiscriminatorColumn(name = "TYPE")
-@DiscriminatorValue(SecurityTokenTicket.PREFIX)
 @NoArgsConstructor
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class DefaultSecurityTokenTicket extends AbstractTicket implements SecurityTokenTicket {
 
     private static final long serialVersionUID = 3940671352560102114L;
 
-    @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
     @Getter
     @JsonProperty("ticketGrantingTicket")
     private TicketGrantingTicket ticketGrantingTicket;
 
-    @Column(name = "SECURITY_TOKEN", length = 4096)
+    @JsonProperty
     private String securityToken;
-
+    
     public DefaultSecurityTokenTicket(final String id, final TicketGrantingTicket ticketGrantingTicket,
                                       final ExpirationPolicy expirationPolicy, final String securityToken) {
         super(id, expirationPolicy);
@@ -58,6 +49,7 @@ public class DefaultSecurityTokenTicket extends AbstractTicket implements Securi
     }
 
     @Override
+    @JsonIgnore
     public SecurityToken getSecurityToken() {
         val securityTokenBin = EncodingUtils.decodeBase64(this.securityToken);
         return SerializationUtils.deserialize(securityTokenBin);

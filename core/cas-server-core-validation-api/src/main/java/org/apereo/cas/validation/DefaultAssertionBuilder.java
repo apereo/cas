@@ -1,7 +1,7 @@
 package org.apereo.cas.validation;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 
 import lombok.Getter;
 
@@ -27,7 +27,7 @@ public class DefaultAssertionBuilder {
     /**
      * The Service.
      */
-    private Service service;
+    private WebApplicationService service;
     /**
      * The New login.
      */
@@ -59,7 +59,7 @@ public class DefaultAssertionBuilder {
      * @param service the service
      * @return the default assertion builder
      */
-    public DefaultAssertionBuilder with(final Service service) {
+    public DefaultAssertionBuilder with(final WebApplicationService service) {
         this.service = service;
         return this;
     }

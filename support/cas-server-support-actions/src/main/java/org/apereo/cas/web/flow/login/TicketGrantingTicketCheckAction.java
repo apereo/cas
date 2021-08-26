@@ -40,9 +40,8 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
         }
         try {
             val ticket = this.centralAuthenticationService.getTicket(tgtId, Ticket.class);
-            if (ticket != null && !ticket.isExpired()) {
-                return new Event(this, CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_VALID);
-            }
+            LOGGER.trace("Located ticket with id [{}]", ticket.getId());
+            return new Event(this, CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_VALID);
         } catch (final AbstractTicketException e) {
             LOGGER.trace("Could not retrieve ticket id [{}] from registry.", e.getMessage());
         }

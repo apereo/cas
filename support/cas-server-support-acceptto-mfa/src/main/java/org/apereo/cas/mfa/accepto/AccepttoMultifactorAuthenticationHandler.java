@@ -2,12 +2,15 @@ package org.apereo.cas.mfa.accepto;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.configuration.model.support.mfa.AccepttoMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.AccepttoMultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.hjson.JsonValue;
+import org.springframework.http.HttpMethod;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
@@ -26,7 +30,6 @@ import javax.security.auth.login.FailedLoginException;
 
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,15 +40,16 @@ import java.util.Map;
  * @since 6.0.0
  */
 @Slf4j
-public class AccepttoMultifactorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+public class AccepttoMultifactorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler implements MultifactorAuthenticationHandler {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
-    private final AccepttoMultifactorProperties accepttoProperties;
+    private final AccepttoMultifactorAuthenticationProperties accepttoProperties;
 
     public AccepttoMultifactorAuthenticationHandler(final ServicesManager servicesManager,
                                                     final PrincipalFactory principalFactory,
-                                                    final AccepttoMultifactorProperties accepttoProperties) {
+                                                    final AccepttoMultifactorAuthenticationProperties accepttoProperties) {
         super(accepttoProperties.getName(),
             servicesManager,
             principalFactory,
@@ -77,7 +81,12 @@ public class AccepttoMultifactorAuthenticationHandler extends AbstractPreAndPost
 
             HttpResponse response = null;
             try {
-                response = HttpUtils.executePost(url, parameters, new HashMap<>(0));
+                val exec = HttpUtils.HttpExecutionRequest.builder()
+                    .method(HttpMethod.POST)
+                    .url(url)
+                    .parameters(parameters)
+                    .build();
+                response = HttpUtils.execute(exec);
                 if (response != null) {
                     val status = response.getStatusLine().getStatusCode();
                     if (status == HttpStatus.SC_OK) {
@@ -110,24 +119,12 @@ public class AccepttoMultifactorAuthenticationHandler extends AbstractPreAndPost
                     if (status == HttpStatus.SC_UNAUTHORIZED) {
                         throw new AccountLockedException("Email address provided is not a valid registered account");
                     }
-                } else {
-                    LOGGER.warn("Unable to fetch a response from [{}]", url);
-                }
-            } catch (final Exception e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.error(e.getMessage(), e);
-                } else {
-                    LOGGER.error(e.getMessage());
                 }
             } finally {
                 HttpUtils.close(response);
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         throw new FailedLoginException("Acceptto authentication has failed");
     }

@@ -68,6 +68,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
             casProperties.getAuthn().getMfa().getGauth().getCouchDb().isCreateIfNotExists());
         repository.initStandardDesignDocument();
         return repository;
+
     }
 
     @ConditionalOnMissingBean(name = "couchDbOneTimeTokenAutneticatorTokenRepository")
@@ -76,7 +77,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(
         @Qualifier("couchDbOneTimeTokenRepository") final GoogleAuthenticatorTokenCouchDbRepository couchDbOneTimeTokenRepository) {
         return new GoogleAuthenticatorCouchDbTokenRepository(couchDbOneTimeTokenRepository,
-            casProperties.getAuthn().getMfa().getGauth().getTimeStepSize());
+            casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize());
     }
 
     @ConditionalOnMissingBean(name = "oneTimeTokenCouchDbFactory")
@@ -91,9 +92,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     @RefreshScope
     public GoogleAuthenticatorTokenCouchDbRepository couchDbOneTimeTokenRepository(
         @Qualifier("oneTimeTokenAccountCouchDbFactory") final CouchDbConnectorFactory oneTimeTokenCouchDbFactory) {
-        val repository = new GoogleAuthenticatorTokenCouchDbRepository(oneTimeTokenCouchDbFactory.getCouchDbConnector(),
+        return new GoogleAuthenticatorTokenCouchDbRepository(oneTimeTokenCouchDbFactory.getCouchDbConnector(),
             casProperties.getAuthn().getMfa().getGauth().getCouchDb().isCreateIfNotExists());
-        repository.initStandardDesignDocument();
-        return repository;
     }
 }

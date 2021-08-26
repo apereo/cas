@@ -6,9 +6,8 @@ import org.apereo.cas.web.TokenCredentialTests;
 import org.apereo.cas.web.flow.TokenAuthenticationActionTests;
 import org.apereo.cas.web.flow.TokenWebflowConfigurerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -22,6 +21,6 @@ import org.junit.runner.RunWith;
     TokenWebflowConfigurerTests.class,
     TokenCredentialTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

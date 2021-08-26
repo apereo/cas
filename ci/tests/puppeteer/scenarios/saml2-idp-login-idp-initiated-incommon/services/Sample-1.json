@@ -1,0 +1,12 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : ".+",
+  "name" : "Sample",
+  "id" : 1,
+  "evaluationOrder" : 1,
+  "requireSignedRoot": true,
+  "metadataSignatureLocation": "file://${#systemProperties['user.dir']}/ci/tests/puppeteer/scenarios/saml2-idp-login-idp-initiated-incommon/saml-md/inc-md-cert-mdq.pem",
+  "metadataLocation" : "https://mdq.incommon.org/entities"
+}
+
+

@@ -49,7 +49,7 @@ public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuth
                                                                    final HttpServletRequest httpServletRequest,
                                                                    final Service service) {
 
-        val multifactorMap = casProperties.getAuthn().getAdaptive().getRequireMultifactor();
+        val multifactorMap = casProperties.getAuthn().getAdaptive().getPolicy().getRequireMultifactor();
 
         if (service == null || authentication == null) {
             LOGGER.trace("No service or authentication is available to determine event for principal");

@@ -28,13 +28,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "cas.acceptable-usage-policy.mongo.host=localhost",
     "cas.acceptable-usage-policy.mongo.port=27017",
-    "cas.acceptable-usage-policy.mongo.dropCollection=true",
+    "cas.acceptable-usage-policy.mongo.drop-collection=true",
     "cas.acceptable-usage-policy.mongo.collection=acceptable-usage-policy",
     "cas.acceptable-usage-policy.mongo.user-id=root",
     "cas.acceptable-usage-policy.mongo.password=secret",
-    "cas.acceptable-usage-policy.mongo.databaseName=acceptableUsagePolicy",
-    "cas.acceptable-usage-policy.mongo.authenticationDatabaseName=admin",
-    "cas.acceptable-usage-policy.aupAttributeName=accepted"
+    "cas.acceptable-usage-policy.mongo.database-name=acceptableUsagePolicy",
+    "cas.acceptable-usage-policy.mongo.authentication-database-name=admin",
+    "cas.acceptable-usage-policy.core.aup-attribute-name=accepted"
 })
 @Getter
 public class MongoDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {

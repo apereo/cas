@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.duo.web;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("MFA")
+@Tag("ActuatorEndpoint")
 public class DuoSecurityPingEndpointTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -40,17 +40,20 @@ public class DuoSecurityPingEndpointTests {
 
         val duoService = mock(DuoSecurityAuthenticationService.class);
         when(duoService.ping()).thenReturn(true);
-        when(duoService.getApiHost()).thenReturn("https://api.duosecurity.com");
+
+        val props = new DuoSecurityMultifactorAuthenticationProperties()
+            .setDuoApiHost("https://api.duosecurity.com");
+        when(duoService.getProperties()).thenReturn(props);
 
         val bean = mock(DuoSecurityMultifactorAuthenticationProvider.class);
-        when(bean.getId()).thenReturn(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
+        when(bean.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         when(bean.getDuoAuthenticationService()).thenReturn(duoService);
-        when(bean.matches(eq(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER))).thenReturn(true);
+        when(bean.matches(eq(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER))).thenReturn(true);
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, bean, "duoProvider");
 
         val indicator = new DuoSecurityPingEndpoint(casProperties, this.applicationContext);
-        val result = indicator.pingDuo(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
+        val result = indicator.pingDuo(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         assertNotNull(result);
-        assertTrue(result.containsKey(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER));
+        assertTrue(result.containsKey(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER));
     }
 }

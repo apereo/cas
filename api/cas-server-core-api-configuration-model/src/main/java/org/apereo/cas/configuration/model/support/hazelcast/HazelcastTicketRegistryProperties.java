@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.hazelcast;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,6 +19,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("HazelcastTicketRegistryProperties")
 public class HazelcastTicketRegistryProperties extends BaseHazelcastProperties {
 
     private static final long serialVersionUID = -1095208036374406772L;

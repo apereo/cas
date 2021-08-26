@@ -33,9 +33,9 @@ public class ServiceRegistryInitializer {
             serviceRegistry.countServiceRegistries(), serviceRegistry.size());
 
         LOGGER.info("Service registries [{}] will be auto-initialized from JSON service definitions. "
-            + "You can turn off this behavior via the setting [cas.service-registry.init-from-json=false] "
+            + "You can turn off this behavior via the setting [cas.service-registry.core.init-from-json=false] "
             + "and explicitly register definitions in the services registry.", serviceRegistry.getName());
-
+        
         val servicesLoaded = jsonServiceRegistry.load();
         if (LOGGER.isDebugEnabled()) {
             val servicesList = servicesLoaded

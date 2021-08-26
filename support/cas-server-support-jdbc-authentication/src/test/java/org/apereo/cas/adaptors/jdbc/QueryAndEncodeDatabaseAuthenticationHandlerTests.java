@@ -4,11 +4,13 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.configuration.model.support.jdbc.authn.QueryEncodeJdbcAuthenticationProperties;
+import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.util.ByteSource;
@@ -18,6 +20,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.Entity;
@@ -27,6 +32,7 @@ import javax.persistence.Id;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,7 +41,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @SuppressWarnings("JDBCExecuteWithNonConstantString")
-@Tag("JDBC")
+@Tag("JDBCAuthentication")
+@Import(QueryAndEncodeDatabaseAuthenticationHandlerTests.DatabaseTestConfiguration.class)
 public class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
     private static final String ALG_NAME = "SHA-512";
 
@@ -85,8 +92,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDataba
     }
 
     @BeforeEach
-    @SneakyThrows
-    public void initialize() {
+    public void initialize() throws Exception {
         try (val c = this.dataSource.getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);
@@ -102,8 +108,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDataba
     }
 
     @AfterEach
-    @SneakyThrows
-    public void afterEachTest() {
+    public void afterEachTest() throws Exception {
         try (val c = this.dataSource.getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);
@@ -114,34 +119,45 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDataba
 
     @Test
     public void verifyAuthenticationFailsToFindUser() {
-        val q = new QueryAndEncodeDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, dataSource, ALG_NAME,
-            buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, StringUtils.EMPTY);
-
+        val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
+            .setSql(buildSql()).setPasswordFieldName(PASSWORD_FIELD_NAME)
+            .setSaltFieldName("salt").setDisabledFieldName("ops");
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler(properties, null,
+            PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
         assertThrows(AccountNotFoundException.class, () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test
     public void verifyAuthenticationInvalidSql() {
-        val q = new QueryAndEncodeDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, dataSource, ALG_NAME,
-            buildSql("makesNoSenseInSql"), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, StringUtils.EMPTY);
-
+        val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
+            .setSql(buildSql("makesNoSenseInSql")).setPasswordFieldName(PASSWORD_FIELD_NAME)
+            .setSaltFieldName("salt").setDisabledFieldName("ops");
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler(properties, null,
+            PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
         assertThrows(PreventedException.class, () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test
     public void verifyAuthenticationMultipleAccounts() {
-        val q = new QueryAndEncodeDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, dataSource, ALG_NAME,
-            buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, StringUtils.EMPTY);
+        val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
+            .setSql(buildSql()).setPasswordFieldName(PASSWORD_FIELD_NAME)
+            .setSaltFieldName("salt").setDisabledFieldName("ops");
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler(properties, null,
+            PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
 
         assertThrows(FailedLoginException.class,
             () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "password0")));
     }
 
     @Test
-    @SneakyThrows
-    public void verifyAuthenticationSuccessful() {
-        val q = new QueryAndEncodeDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, dataSource, ALG_NAME,
-            buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
+    public void verifyAuthenticationSuccessful() throws Exception {
+        val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
+            .setSql(buildSql()).setPasswordFieldName(PASSWORD_FIELD_NAME)
+            .setSaltFieldName("salt").setDisabledFieldName("ops")
+            .setNumberOfIterationsFieldName(NUM_ITERATIONS_FIELD_NAME).
+                setStaticSalt(STATIC_SALT);
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler(properties, null,
+            PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
 
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user1");
         val r = q.authenticate(c);
@@ -152,26 +168,40 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDataba
 
     @Test
     public void verifyAuthenticationWithExpiredField() {
-        val q = new QueryAndEncodeDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, dataSource, ALG_NAME,
-            buildSql(), PASSWORD_FIELD_NAME, "salt", EXPIRED_FIELD_NAME, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
-
+        val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
+            .setSql(buildSql())
+            .setPasswordFieldName(PASSWORD_FIELD_NAME)
+            .setExpiredFieldName(EXPIRED_FIELD_NAME)
+            .setStaticSalt(STATIC_SALT)
+            .setSaltFieldName("salt");
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler(properties, null,
+            PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
         assertThrows(AccountPasswordMustChangeException.class,
             () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user20")));
     }
 
     @Test
     public void verifyAuthenticationWithDisabledField() {
-        val q = new QueryAndEncodeDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, dataSource, ALG_NAME,
-            buildSql(), PASSWORD_FIELD_NAME, "salt", null, DISABLED_FIELD_NAME, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
+        val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
+            .setSql(buildSql()).setPasswordFieldName(PASSWORD_FIELD_NAME)
+            .setDisabledFieldName(DISABLED_FIELD_NAME)
+            .setStaticSalt(STATIC_SALT)
+            .setSaltFieldName("salt");
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler(properties, null,
+            PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
 
         assertThrows(AccountDisabledException.class, () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user21")));
     }
 
     @Test
-    @SneakyThrows
-    public void verifyAuthenticationSuccessfulWithAPasswordEncoder() {
-        val q = new QueryAndEncodeDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, dataSource, ALG_NAME,
-            buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
+    public void verifyAuthenticationSuccessfulWithAPasswordEncoder() throws Exception {
+        val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
+            .setSql(buildSql()).setPasswordFieldName(PASSWORD_FIELD_NAME)
+            .setNumberOfIterationsFieldName(NUM_ITERATIONS_FIELD_NAME)
+            .setStaticSalt(STATIC_SALT)
+            .setSaltFieldName("salt");
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler(properties, null,
+            PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
         q.setPasswordEncoder(new PasswordEncoder() {
             @Override
             public String encode(final CharSequence password) {
@@ -185,12 +215,20 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDataba
         });
 
         q.setPrincipalNameTransformer(new PrefixSuffixPrincipalNameTransformer("user", null));
-        val r = q.authenticate(
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("1", "user"));
+        val r = q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("1", "user"));
 
         assertNotNull(r);
         assertEquals("user1", r.getPrincipal().getId());
     }
+
+    @TestConfiguration("TestConfiguration")
+    public static class DatabaseTestConfiguration {
+        @Bean
+        public JpaPersistenceProviderContext persistenceProviderContext() {
+            return new JpaPersistenceProviderContext().setIncludeEntityClasses(Set.of(QueryAndEncodeDatabaseAuthenticationHandlerTests.UsersTable.class.getName()));
+        }
+    }
+
 
     @SuppressWarnings("unused")
     @Entity(name = "users")

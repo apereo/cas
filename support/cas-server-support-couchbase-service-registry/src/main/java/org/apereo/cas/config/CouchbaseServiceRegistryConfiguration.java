@@ -52,6 +52,7 @@ public class CouchbaseServiceRegistryConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "couchbaseServiceRegistry")
     public ServiceRegistry couchbaseServiceRegistry() {
         return new CouchbaseServiceRegistry(applicationContext, serviceRegistryCouchbaseClientFactory(),
             new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter()),

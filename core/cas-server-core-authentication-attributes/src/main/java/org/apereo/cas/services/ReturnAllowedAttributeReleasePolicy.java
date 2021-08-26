@@ -33,7 +33,7 @@ import java.util.TreeMap;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -5771481877391140569L;
@@ -72,4 +72,8 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
         return attributesToRelease;
     }
 
+    @Override
+    protected List<String> determineRequestedAttributeDefinitions() {
+        return getAllowedAttributes();
+    }
 }

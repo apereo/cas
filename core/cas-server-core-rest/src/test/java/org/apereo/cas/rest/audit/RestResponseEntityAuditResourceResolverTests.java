@@ -30,7 +30,7 @@ public class RestResponseEntityAuditResourceResolverTests {
             val headers = new LinkedMultiValueMap<String, String>();
             headers.put("header", CollectionUtils.wrapList("value"));
             headers.put("location", CollectionUtils.wrapList("someplace"));
-            val entity = new ResponseEntity<String>("The Response Body", headers, HttpStatus.OK);
+            val entity = new ResponseEntity<>("The Response Body", headers, HttpStatus.OK);
             assertTrue(r.resolveFrom(mock(JoinPoint.class), entity).length > 0);
         }
     }

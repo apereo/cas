@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration(value = "couchDbEventsConfiguration")
+@Configuration(value = "couchDbEventsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchDbEventsConfiguration {
 
@@ -55,8 +55,11 @@ public class CouchDbEventsConfiguration {
     @ConditionalOnMissingBean(name = "couchDbCasEventRepository")
     @Bean
     @RefreshScope
-    public CasEventRepository casEventRepository(@Qualifier("couchDbEventRepository") final EventCouchDbRepository eventCouchDbRepository) {
-        return new CouchDbCasEventRepository(couchDbEventRepositoryFilter(), eventCouchDbRepository, casProperties.getEvents().getCouchDb().isAsynchronous());
+    @Autowired
+    public CasEventRepository casEventRepository(@Qualifier("couchDbEventRepository") final EventCouchDbRepository eventCouchDbRepository,
+                                                 @Qualifier("couchDbEventRepositoryFilter") final CasEventRepositoryFilter couchDbEventRepositoryFilter) {
+        return new CouchDbCasEventRepository(couchDbEventRepositoryFilter,
+            eventCouchDbRepository, casProperties.getEvents().getCouchDb().isAsynchronous());
     }
 
     @ConditionalOnMissingBean(name = "couchDbEventRepositoryFilter")

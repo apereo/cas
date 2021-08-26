@@ -150,6 +150,13 @@ public class DigestUtils {
         }
     }
 
+    /**
+     * Raw digest.
+     *
+     * @param alg  the alg
+     * @param data the data
+     * @return the byte [ ]
+     */
     public static byte[] rawDigest(final String alg, final byte[] data) {
         try {
             val digest = getMessageDigestInstance(alg);

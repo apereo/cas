@@ -16,4 +16,9 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class CnEdipiPrincipalResolverProperties extends BaseAlternativePrincipalResolverProperties {
     private static final long serialVersionUID = 2622326703782668141L;
+
+    /**
+     * Whether to extract EDIPI as an attribute, regardless of principal resolver type.
+     */
+    private boolean extractEdipiAsAttribute;
 }

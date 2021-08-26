@@ -6,6 +6,7 @@ import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Optional;
@@ -31,10 +32,10 @@ public class AccepttoWebflowUtils {
     /**
      * Reset acceptto session store.
      *
-     * @param webContext the web context
+     * @param webContext   the web context
+     * @param sessionStore the session store
      */
-    public void resetChannelAndAuthentication(final JEEContext webContext) {
-        val sessionStore = webContext.getSessionStore();
+    public void resetChannelAndAuthentication(final JEEContext webContext, final SessionStore sessionStore) {
         sessionStore.set(webContext, SESSION_ATTRIBUTE_CHANNEL, null);
         sessionStore.set(webContext, SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION, null);
     }
@@ -42,11 +43,12 @@ public class AccepttoWebflowUtils {
     /**
      * Gets channel.
      *
-     * @param webContext the web context
+     * @param webContext   the web context
+     * @param sessionStore the session store
      * @return the channel
      */
-    public static Object getChannel(final JEEContext webContext) {
-        return webContext.getSessionStore().get(webContext, SESSION_ATTRIBUTE_CHANNEL);
+    public static Optional<Object> getChannel(final JEEContext webContext, final SessionStore sessionStore) {
+        return sessionStore.get(webContext, SESSION_ATTRIBUTE_CHANNEL);
     }
 
     /**
@@ -62,22 +64,25 @@ public class AccepttoWebflowUtils {
     /**
      * Gets authentication from session store.
      *
-     * @param webContext the web context
+     * @param webContext   the web context
+     * @param sessionStore the session store
      * @return the authentication from session store
      */
-    public static Authentication getAuthentication(final JEEContext webContext) {
-        val result = webContext.getSessionStore().get(webContext, SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION);
-        return (Authentication) result.map(Authentication.class::cast).orElse(null);
+    public static Authentication getAuthentication(final JEEContext webContext, final SessionStore sessionStore) {
+        val result = sessionStore.get(webContext, SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION);
+        return result.map(Authentication.class::cast).orElse(null);
     }
 
     /**
      * Store channel.
      *
-     * @param channel    the channel
-     * @param webContext the web context
+     * @param channel      the channel
+     * @param webContext   the web context
+     * @param sessionStore the session store
      */
-    public static void storeChannelInSessionStore(final String channel, final JEEContext webContext) {
-        webContext.getSessionStore().set(webContext, SESSION_ATTRIBUTE_CHANNEL, channel);
+    public static void storeChannelInSessionStore(final String channel,
+                                                  final JEEContext webContext, final SessionStore sessionStore) {
+        sessionStore.set(webContext, SESSION_ATTRIBUTE_CHANNEL, channel);
     }
 
     /**
@@ -85,9 +90,11 @@ public class AccepttoWebflowUtils {
      *
      * @param authentication the authentication
      * @param webContext     the web context
+     * @param sessionStore   the session store
      */
-    public static void storeAuthenticationInSessionStore(final Authentication authentication, final JEEContext webContext) {
-        webContext.getSessionStore().set(webContext, SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION, authentication);
+    public static void storeAuthenticationInSessionStore(final Authentication authentication,
+                                                         final JEEContext webContext, final SessionStore sessionStore) {
+        sessionStore.set(webContext, SESSION_ATTRIBUTE_ORIGINAL_AUTHENTICATION, authentication);
     }
 
     /**

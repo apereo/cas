@@ -20,7 +20,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].password-policy.enabled=true",
     "cas.authn.ldap[0].password-policy.type=FreeIPA",
     "cas.authn.ldap[0].password-policy.strategy=REJECT_RESULT_CODE",
-    "cas.authn.ldap[0].password-policy.accountStateHandlingEnabled=false"
+    "cas.authn.ldap[0].password-policy.account-state-handling-enabled=false"
 })
 @EnabledIfPortOpen(port = 10389)
 @Tag("Ldap")

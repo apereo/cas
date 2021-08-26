@@ -7,9 +7,9 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 
@@ -21,11 +21,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@TestPropertySource(properties = "cas.authn.saml-idp.metadata.location=file:/tmp")
 @Tag("JDBC")
+@Transactional(transactionManager = "transactionManagerSamlMetadata")
 public class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMetadataTests {
 
-    @Test
+    @RetryingTest(3)
     public void verifyResolver() throws Exception {
         val res = new ClassPathResource("samlsp-metadata.xml");
         val md = new SamlMetadataDocument();
@@ -39,7 +39,12 @@ public class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMe
         service.setDescription("Testing");
         service.setMetadataLocation("jdbc://");
         assertTrue(resolver.supports(service));
+        assertFalse(resolver.supports(null));
+        assertTrue(resolver.isAvailable(service));
         val resolvers = resolver.resolve(service);
-        assertTrue(resolvers.size() == 1);
+        assertEquals(1, resolvers.size());
+
+        service.setMetadataLocation("whatever");
+        assertFalse(resolver.supports(service));
     }
 }

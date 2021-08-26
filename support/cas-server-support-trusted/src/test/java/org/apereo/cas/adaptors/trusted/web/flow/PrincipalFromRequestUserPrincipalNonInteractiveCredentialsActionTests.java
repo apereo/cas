@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
+import org.apereo.cas.web.flow.CasWebflowConstants;
+
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -17,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.5
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTests extends BaseNonInteractiveCredentialsActionTests {
 
     @Autowired
@@ -33,7 +35,7 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), request, new MockHttpServletResponse()));
 
-        assertEquals("success", this.action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
     }
 
     @Test
@@ -42,7 +44,7 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
 
-        assertEquals("error", this.action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, this.action.execute(context).getId());
     }
 
 }

@@ -4,7 +4,9 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.UrlValidator;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -24,7 +26,7 @@ import java.util.function.Function;
  */
 @Getter
 @Setter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractWebApplicationServiceResponseBuilder implements ResponseBuilder<WebApplicationService> {
     private static final long serialVersionUID = -4584738964007702423L;
 
@@ -32,6 +34,8 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
      * Services manager instance.
      */
     protected final transient ServicesManager servicesManager;
+
+    private final UrlValidator urlValidator;
 
     private int order;
 
@@ -46,9 +50,16 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
         return DefaultResponse.getRedirectResponse(determineServiceResponseUrl(service), parameters);
     }
 
+    /**
+     * Determine service response url and provide url.
+     *
+     * @param service the service
+     * @return the string
+     */
     protected String determineServiceResponseUrl(final WebApplicationService service) {
         val registeredService = this.servicesManager.findServiceBy(service);
-        if (registeredService != null && StringUtils.isNotBlank(registeredService.getRedirectUrl())) {
+        if (registeredService != null && StringUtils.isNotBlank(registeredService.getRedirectUrl())
+            && getUrlValidator().isValid(registeredService.getRedirectUrl())) {
             return registeredService.getRedirectUrl();
         }
         return service.getOriginalUrl();

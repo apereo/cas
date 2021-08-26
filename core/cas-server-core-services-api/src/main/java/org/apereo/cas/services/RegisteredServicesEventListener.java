@@ -1,16 +1,20 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
-import org.apereo.cas.util.io.CommunicationsManager;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
+
+import java.util.Map;
 
 /**
  * This is {@link RegisteredServicesEventListener}.
@@ -39,6 +43,17 @@ public class RegisteredServicesEventListener {
     }
 
     /**
+     * Handle environment change event.
+     *
+     * @param event the event
+     */
+    @EventListener
+    @Async
+    public void handleEnvironmentChangeEvent(final EnvironmentChangeEvent event) {
+        servicesManager.load();
+    }
+    
+    /**
      * Handle registered service expired event.
      *
      * @param event the event
@@ -61,11 +76,12 @@ public class RegisteredServicesEventListener {
         communicationsManager.validate();
         if (communicationsManager.isMailSenderDefined()) {
             val mail = serviceRegistry.getMail();
-            val message = mail.getFormattedBody(serviceName);
+            val body = EmailMessageBodyBuilder.builder().properties(mail)
+                .parameters(Map.of("service", serviceName)).build().produce();
             contacts
                 .stream()
                 .filter(c -> StringUtils.isNotBlank(c.getEmail()))
-                .forEach(c -> communicationsManager.email(mail, c.getEmail(), message));
+                .forEach(c -> communicationsManager.email(mail, c.getEmail(), body));
         }
         if (communicationsManager.isSmsSenderDefined()) {
             val sms = serviceRegistry.getSms();

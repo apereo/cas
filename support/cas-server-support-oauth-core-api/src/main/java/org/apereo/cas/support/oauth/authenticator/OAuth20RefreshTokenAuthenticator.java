@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.exception.CredentialsException;
 
@@ -69,7 +70,9 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
 
     @Override
     protected void validateCredentials(final UsernamePasswordCredentials credentials,
-                                       final OAuthRegisteredService registeredService, final WebContext context) {
+                                       final OAuthRegisteredService registeredService,
+                                       final WebContext context,
+                                       final SessionStore sessionStore) {
         val token = credentials.getPassword();
         LOGGER.trace("Received refresh token [{}] for authentication", token);
 

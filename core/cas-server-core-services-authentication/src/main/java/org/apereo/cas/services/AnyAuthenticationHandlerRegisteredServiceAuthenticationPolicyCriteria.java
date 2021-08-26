@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria}.
@@ -21,14 +22,15 @@ import lombok.ToString;
 @Getter
 @EqualsAndHashCode
 @Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@Accessors(chain = true)
 public class AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria implements RegisteredServiceAuthenticationPolicyCriteria {
     private static final long serialVersionUID = -2905826778096374574L;
 
     private boolean tryAll;
 
     @Override
-    public AuthenticationPolicy toAuthenticationPolicy() {
+    public AuthenticationPolicy toAuthenticationPolicy(final RegisteredService registeredService) {
         return new AtLeastOneCredentialValidatedAuthenticationPolicy(this.tryAll);
     }
 }

@@ -3,6 +3,8 @@ package org.apereo.cas.oidc.claims;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.services.ChainingAttributeReleasePolicy;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -22,8 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = {
-    "cas.authn.oidc.claimsMap.email=mail",
-    "cas.authn.oidc.claimsMap.email_verified=mail_confirmed"
+    "cas.authn.oidc.core.claims-map.email=mail",
+    "cas.authn.oidc.core.claims-map.email_verified=mail_confirmed"
 })
 public class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     @Test
@@ -37,6 +39,7 @@ public class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
         assertTrue(policy.getAllowedAttributes().stream().allMatch(attrs::containsKey));
+        assertTrue(policy.determineRequestedAttributeDefinitions().containsAll(policy.getAllowedAttributes()));
     }
 
     @Test
@@ -61,5 +64,18 @@ public class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests
         assertEquals(List.of("cas@example.org"), releaseAttrs.get("email"));
         assertEquals(List.of("cas@example.org"), releaseAttrs.get("email_verified"));
         assertFalse(releaseAttrs.containsKey("phone"));
+    }
+
+    @Test
+    public void verifySerialization() {
+        val policy = new OidcEmailScopeAttributeReleasePolicy();
+        val chain = new ChainingAttributeReleasePolicy();
+        chain.addPolicy(policy);
+        val service = getOidcRegisteredService();
+        service.setAttributeReleasePolicy(chain);
+        val serializer = new RegisteredServiceJsonSerializer();
+        val json = serializer.toString(service);
+        assertNotNull(json);
+        assertNotNull(serializer.from(json));
     }
 }

@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<md:EntityDescriptor entityID="urn:app.e2ma.net" validUntil="2021-02-17T22:17:52Z" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata">
+    <md:SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://app.e2ma.net/app2/sso/assert_identity/" index="0"/>
+    </md:SPSSODescriptor>
+</md:EntityDescriptor>

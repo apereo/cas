@@ -1,8 +1,11 @@
 package org.apereo.cas.discovery;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 
@@ -37,17 +40,15 @@ import java.util.stream.Collectors;
 @Setter
 @RequiredArgsConstructor
 public class CasServerProfileRegistrar implements ApplicationContextAware {
-    private final Clients clients;
-    private final Set<String> availableAttributes;
-    private ApplicationContext applicationContext;
+    private final CasConfigurationProperties casProperties;
 
-    private Map<String, String> locateMultifactorAuthenticationProviderTypesSupported() {
-        val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
-        return providers
-            .values()
-            .stream()
-            .collect(Collectors.toMap(MultifactorAuthenticationProvider::getId, MultifactorAuthenticationProvider::getFriendlyName));
-    }
+    private final Clients clients;
+
+    private final Set<String> availableAttributes;
+
+    private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
+
+    private ApplicationContext applicationContext;
 
     private static Map<String, Class> locateRegisteredServiceTypesSupported() {
         final Function<Class, Object> mapper = c -> {
@@ -75,13 +76,6 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
             .collect(collector);
     }
 
-    private Set<String> locateDelegatedClientTypesSupported() {
-        if (clients == null) {
-            return new LinkedHashSet<>(0);
-        }
-        return clients.findAllClients().stream().map(Client::getName).collect(Collectors.toSet());
-    }
-
     /**
      * Gets profile.
      *
@@ -93,6 +87,30 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
         profile.setMultifactorAuthenticationProviderTypesSupported(locateMultifactorAuthenticationProviderTypesSupported());
         profile.setDelegatedClientTypesSupported(locateDelegatedClientTypesSupported());
         profile.setAvailableAttributes(this.availableAttributes);
+        profile.setUserDefinedScopes(casProperties.getAuthn().getOidc().getCore().getUserDefinedScopes().keySet());
+        profile.setAvailableAuthenticationHandlers(locateAvailableAuthenticationHandlers());
         return profile;
+    }
+
+    private Map<String, String> locateMultifactorAuthenticationProviderTypesSupported() {
+        val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
+        return providers
+            .values()
+            .stream()
+            .collect(Collectors.toMap(MultifactorAuthenticationProvider::getId, MultifactorAuthenticationProvider::getFriendlyName));
+    }
+
+    private Set<String> locateDelegatedClientTypesSupported() {
+        if (clients == null) {
+            return new LinkedHashSet<>(0);
+        }
+        return clients.findAllClients().stream().map(Client::getName).collect(Collectors.toSet());
+    }
+
+    private Set<String> locateAvailableAuthenticationHandlers() {
+        return this.authenticationEventExecutionPlan.getAuthenticationHandlers()
+            .stream()
+            .map(AuthenticationHandler::getName)
+            .collect(Collectors.toSet());
     }
 }

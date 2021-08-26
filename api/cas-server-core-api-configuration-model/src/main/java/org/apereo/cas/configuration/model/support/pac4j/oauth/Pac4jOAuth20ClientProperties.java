@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.support.pac4j.oauth;
 
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jIdentifiableClientProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,7 +23,8 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientProperties {
+@JsonFilter("Pac4jOAuth20ClientProperties")
+public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientProperties implements CasFeatureModule {
 
     private static final long serialVersionUID = -1240711580664148382L;
 

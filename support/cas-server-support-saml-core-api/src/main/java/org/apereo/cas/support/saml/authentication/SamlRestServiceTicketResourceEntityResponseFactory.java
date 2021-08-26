@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.authentication;
 
 import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -23,13 +23,14 @@ public class SamlRestServiceTicketResourceEntityResponseFactory implements Servi
     private final UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
     @Override
-    public ResponseEntity<String> build(final String ticketGrantingTicket, final Service service, final AuthenticationResult authenticationResult) {
+    public ResponseEntity<String> build(final String ticketGrantingTicket, final WebApplicationService service,
+                                        final AuthenticationResult authenticationResult) {
         val serviceTicketId = uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX);
         return new ResponseEntity<>(serviceTicketId, HttpStatus.OK);
     }
 
     @Override
-    public boolean supports(final Service service, final AuthenticationResult authenticationResult) {
+    public boolean supports(final WebApplicationService service, final AuthenticationResult authenticationResult) {
         return service instanceof SamlService && authenticationResult != null;
     }
 

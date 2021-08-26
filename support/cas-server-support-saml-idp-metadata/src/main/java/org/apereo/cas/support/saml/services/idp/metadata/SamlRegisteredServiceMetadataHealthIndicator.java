@@ -13,9 +13,11 @@ import org.springframework.boot.actuate.health.Health;
 
 import java.util.LinkedHashMap;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * This is {@link SamlRegisteredServiceMetadataHealthIndicator}.
+ * Only need 1 valid resolver for metadata to be 'available'.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -24,23 +26,18 @@ import java.util.Objects;
 @Slf4j
 public class SamlRegisteredServiceMetadataHealthIndicator extends AbstractHealthIndicator {
     private final SamlRegisteredServiceMetadataResolutionPlan metadataResolutionPlan;
+
     private final ServicesManager servicesManager;
 
-    /**
-     * Check for availability of metadata sources.
-     * Only need 1 valid resolver for metadata to be 'available'.
-     *
-     * @param builder the health builder to report back status
-     */
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
         val samlServices = servicesManager.findServiceBy(registeredService -> registeredService instanceof SamlRegisteredService);
         val availableResolvers = this.metadataResolutionPlan.getRegisteredMetadataResolvers();
-        LOGGER.debug("There are [{}] metadata resolver(s) available in the chain", availableResolvers.size());
+        LOGGER.trace("There are [{}] metadata resolver(s) available in the chain", availableResolvers.size());
 
         builder.up();
         builder.withDetail("name", getClass().getSimpleName());
-
+        var count = new AtomicInteger();
         samlServices
             .stream()
             .map(SamlRegisteredService.class::cast)
@@ -50,17 +47,20 @@ public class SamlRegisteredServiceMetadataHealthIndicator extends AbstractHealth
                 map.put("id", service.getId());
                 map.put("metadataLocation", service.getMetadataLocation());
                 map.put("serviceId", service.getServiceId());
-                val available = availableResolvers
+                val availability = availableResolvers
                     .stream()
                     .filter(Objects::nonNull)
-                    .peek(r -> LOGGER.debug("Checking if metadata resolver [{}] is available for service [{}]", r.getName(), service.getName()))
+                    .filter(r -> r.supports(service))
                     .anyMatch(r -> r.isAvailable(service));
-                map.put("availability", BooleanUtils.toStringYesNo(available));
+                map.put("availability", BooleanUtils.toStringYesNo(availability));
                 builder.withDetail(service.getName(), map);
-                if (!available) {
+                if (!availability) {
                     LOGGER.debug("No metadata resolver is available for service [{}]", service.getName());
-                    builder.down();
+                    count.getAndIncrement();
                 }
             });
+        if (count.intValue() == samlServices.size()) {
+            builder.down();
+        }
     }
 }

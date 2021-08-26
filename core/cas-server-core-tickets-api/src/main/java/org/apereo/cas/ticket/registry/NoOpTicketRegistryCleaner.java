@@ -3,7 +3,7 @@ package org.apereo.cas.ticket.registry;
 import lombok.NoArgsConstructor;
 
 /**
- * This is {@link NoOpTicketRegistryCleaner} that simply disables support for ticket cleanup.
+ * This is {@link NoOpTicketRegistryCleaner} that disables support for ticket cleanup.
  *
  * @author Misagh Moayyed
  * @since 5.1.0

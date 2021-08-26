@@ -1,13 +1,12 @@
 package org.apereo.cas.authentication.attribute;
 
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.FileWatcherService;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -19,12 +18,12 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hjson.JsonValue;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -46,11 +45,8 @@ import java.util.function.Predicate;
 @EqualsAndHashCode(of = "attributeDefinitions")
 @ToString(of = "attributeDefinitions")
 public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore, DisposableBean, AutoCloseable {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-        .findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     private final Map<String, AttributeDefinition> attributeDefinitions = new TreeMap<>();
 
@@ -65,17 +61,8 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
             loadAttributeDefinitionsFromInputStream(resource);
 
             if (ResourceUtils.isFile(resource)) {
-                this.storeWatcherService = new FileWatcherService(resource.getFile(), file -> {
-                    try {
-                        loadAttributeDefinitionsFromInputStream(new FileSystemResource(file));
-                    } catch (final Exception e) {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.error(e.getMessage(), e);
-                        } else {
-                            LOGGER.error(e.getMessage());
-                        }
-                    }
-                });
+                this.storeWatcherService = new FileWatcherService(resource.getFile(),
+                    Unchecked.consumer(file -> loadAttributeDefinitionsFromInputStream(new FileSystemResource(file))));
                 this.storeWatcherService.start(getClass().getSimpleName());
             }
         }
@@ -85,7 +72,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         Arrays.stream(defns).forEach(this::registerAttributeDefinition);
     }
 
-    private void loadAttributeDefinitionsFromInputStream(final Resource resource) throws IOException {
+    private void loadAttributeDefinitionsFromInputStream(final Resource resource) {
         try {
             LOGGER.trace("Loading attribute definitions from [{}]", resource);
             val json = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
@@ -94,7 +81,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
             });
             map.forEach(this::registerAttributeDefinition);
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -119,6 +106,19 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     }
 
     @Override
+    public AttributeDefinitionStore removeAttributeDefinition(final String key) {
+        LOGGER.debug("Removing attribute definition by key [{}]", key);
+
+        if (this.attributeDefinitions.containsKey(key)) {
+            val defn = this.attributeDefinitions.remove(key);
+            LOGGER.debug("Attribute definition [{}] has been removed from the definition store", defn);
+        } else {
+            LOGGER.debug("Attribute definition with the registered key [{}] was not found and the store was not altered", key);
+        }
+        return this;
+    }
+
+    @Override
     public Optional<AttributeDefinition> locateAttributeDefinition(final String key) {
         LOGGER.trace("Locating attribute definition for [{}]", key);
         return Optional.ofNullable(attributeDefinitions.get(key));
@@ -138,7 +138,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     public <T extends AttributeDefinition> Optional<T> locateAttributeDefinition(final Predicate<AttributeDefinition> predicate) {
         return attributeDefinitions.values()
             .stream()
-            .filter(predicate::test)
+            .filter(predicate)
             .map(defn -> (T) defn)
             .findFirst();
     }
@@ -149,14 +149,17 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     }
 
     @Override
-    public Optional<Pair<AttributeDefinition, List<Object>>> resolveAttributeValues(final String key, final List<Object> attributeValues,
-                                                                                    final RegisteredService registeredService) {
+    public Optional<Pair<AttributeDefinition, List<Object>>> resolveAttributeValues(final String key,
+                                                                                    final List<Object> attributeValues,
+                                                                                    final RegisteredService registeredService,
+                                                                                    final Map<String, List<Object>> attributes) {
         val result = locateAttributeDefinition(key);
         if (result.isEmpty()) {
             return Optional.empty();
         }
         val definition = result.get();
-        val currentValues = definition.resolveAttributeValues(attributeValues, this.scope, registeredService);
+        val currentValues = definition.resolveAttributeValues(attributeValues, this.scope,
+            registeredService, attributes);
         return Optional.of(Pair.of(definition, currentValues));
     }
 
@@ -165,6 +168,12 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         return attributeDefinitions.isEmpty();
     }
 
+    /**
+     * To.
+     *
+     * @param resource the resource
+     * @return the attribute definition store
+     */
     @SneakyThrows
     public AttributeDefinitionStore to(final File resource) {
         val json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.attributeDefinitions);

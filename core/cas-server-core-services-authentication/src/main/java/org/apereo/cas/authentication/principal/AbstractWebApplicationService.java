@@ -2,8 +2,8 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.validation.ValidationResponseType;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,7 +36,7 @@ import java.util.Map;
 @ToString
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
 public abstract class AbstractWebApplicationService implements WebApplicationService {
     private static final long serialVersionUID = 610105280927740076L;
@@ -69,7 +69,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
 
     @Column
     @Lob
-    private HashMap<String, List<Object>> attributes = new HashMap<>(0);
+    private Map<String, List<Object>> attributes = new HashMap<>(0);
 
     /**
      * Instantiates a new abstract web application service.
@@ -83,11 +83,4 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
         this.originalUrl = originalUrl;
         this.artifactId = artifactId;
     }
-
-    @JsonIgnore
-    @Override
-    public Map<String, List<Object>> getAttributes() {
-        return this.attributes;
-    }
-
 }

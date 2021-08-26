@@ -85,6 +85,11 @@ public class Ehcache3Properties implements Serializable {
     private String rootDirectory = "/tmp/cas/ehcache3";
 
     /**
+     * Persist data on disk when jvm is shut down if not using terracotta cluster.
+     */
+    private boolean persistOnDisk = true;
+
+    /**
      * Timeout when reading or writing to/from Terracotta cluster.
      */
     private long clusterReadWriteTimeout = 5L;

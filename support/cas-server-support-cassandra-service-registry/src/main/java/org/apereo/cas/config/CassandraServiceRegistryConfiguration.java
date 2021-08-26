@@ -47,6 +47,7 @@ public class CassandraServiceRegistryConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "cassandraServiceRegistry")
     public ServiceRegistry cassandraServiceRegistry() {
         val cassandra = casProperties.getServiceRegistry().getCassandra();
         return new CassandraServiceRegistry(cassandraServiceRegistrySessionFactory(), cassandra,
@@ -63,6 +64,7 @@ public class CassandraServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "cassandraServiceRegistryExecutionPlanConfigurer")
+    @RefreshScope
     public ServiceRegistryExecutionPlanConfigurer cassandraServiceRegistryExecutionPlanConfigurer() {
         return plan -> plan.registerServiceRegistry(cassandraServiceRegistry());
     }

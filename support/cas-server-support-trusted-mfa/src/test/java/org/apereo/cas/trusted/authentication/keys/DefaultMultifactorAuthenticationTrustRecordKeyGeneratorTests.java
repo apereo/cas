@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Simple")
+@Tag("MFATrustedDevices")
 public class DefaultMultifactorAuthenticationTrustRecordKeyGeneratorTests {
     @Test
     public void verifyOperation() {

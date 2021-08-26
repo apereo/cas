@@ -1,15 +1,15 @@
 package org.apereo.cas.configuration.model.support.redis;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link BaseRedisProperties}.
@@ -24,6 +24,12 @@ import java.util.List;
 public class BaseRedisProperties implements Serializable {
 
     private static final long serialVersionUID = -2600996981339638782L;
+
+    /**
+     * Whether the module is enabled or not, defaults to true.
+     */
+    @RequiredProperty
+    private boolean enabled = true;
 
     /**
      * Database index used by the connection factory.
@@ -50,19 +56,29 @@ public class BaseRedisProperties implements Serializable {
     private int port = 6379;
 
     /**
-     * Connection timeout in milliseconds.
+     * Command timeout.
      */
-    private int timeout = 2000;
+    @DurationCapable
+    private String timeout = "PT60S";
 
     /**
      * Redis connection pool settings.
      */
-    private Pool pool = new Pool();
+    @NestedConfigurationProperty
+    private RedisPoolProperties pool = new RedisPoolProperties();
 
     /**
      * Redis Sentinel settings.
      */
-    private Sentinel sentinel = new Sentinel();
+    @NestedConfigurationProperty
+    private RedisSentinelProperties sentinel = new RedisSentinelProperties();
+
+    /**
+     * Redis cluster settings.
+     */
+    @NestedConfigurationProperty
+    private RedisClusterProperties cluster = new RedisClusterProperties();
+
 
     /**
      * Whether or not to use SSL for connection factory.
@@ -70,161 +86,73 @@ public class BaseRedisProperties implements Serializable {
     private boolean useSsl;
 
     /**
+     * Connection timeout.
+     */
+    @DurationCapable
+    private String connectTimeout = "PT10S";
+
+    /**
      * Setting that describes how Lettuce routes read operations to replica nodes.
-     * Accepted mode are :
-     * <ul>
-     * <li>{@code MASTER}: Default mode. Read from the current master node.</li>
-     * <li>{@code MASTER_PREFERRED}: Read from the master, but if it is unavailable, read from replica nodes.</li>
-     * <li>{@code REPLICA/SLAVE}: Read from replica nodes. The value REPLICA should be used from lettuce-core version
-     * 5.2.</li>
-     * <li>{@code REPLICA_PREFERRED/SLAVE_PREFERRED}: Read from the replica nodes, but if none is unavailable, read
-     * from the master. The value REPLICA_PREFERRED should be used from lettuce-core version 5.2.</li>
-     * <li>{@code NEAREST}: Read from any node of the cluster with the lowest latency.</li>
-     * <li>{@code ANY}: Read from any node of the cluster.The value should be used from lettuce-core version 5.2.</li>
-     * </ul>
+     * Note that modes referencing MASTER/SLAVE are deprecated (but still supported) in the Lettuce redis client dependency
+     * so migrate config to UPSTREAM/REPLICA.
      */
-    private String readFrom;
+    private RedisReadFromTypes readFrom;
 
     /**
-     * Pool properties.
+     * The Lettuce library {@code ReadFrom} types that determine how Lettuce routes read operations to replica nodes.
      */
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    @RequiresModule(name = "cas-server-support-redis-core")
-    public static class Pool implements Serializable {
-
-        private static final long serialVersionUID = 8534823157764550894L;
-
+    public enum RedisReadFromTypes {
         /**
-         * Sets the maximum number of objects to examine during each run (if any) of the
-         * idle object evictor thread. When positive, the number of tests performed for
-         * a run will be the minimum of the configured value and the number of idle
-         * instances in the pool. When negative, the number of tests performed will be
-         * ceil(getNumIdle()/ abs(getNumTestsPerEvictionRun())) which means that when
-         * the value is -n roughly one nth of the idle objects will be tested per run.
+         * Read from the current upstream node.
          */
-        private int numTestsPerEvictionRun;
-
+        UPSTREAM,
         /**
-         * Sets the minimum amount of time an object may sit idle in the pool before it
-         * is eligible for eviction by the idle object evictor (if any - see
-         * setTimeBetweenEvictionRunsMillis(long)), with the extra condition that at
-         * least minIdle object instances remain in the pool. This setting is overridden
-         * by getMinEvictableIdleTimeMillis() (that is, if
-         * getMinEvictableIdleTimeMillis() is positive, then
-         * getSoftMinEvictableIdleTimeMillis() is ignored).
+         * Read from the upstream node, but if it is unavailable, read from replica nodes.
          */
-        private long softMinEvictableIdleTimeMillis;
-
+        UPSTREAMPREFERRED,
         /**
-         * Sets the minimum amount of time an object may sit idle in the pool before it
-         * is eligible for eviction by the idle object evictor (if any - see
-         * setTimeBetweenEvictionRunsMillis(long)). When non-positive, no objects will
-         * be evicted from the pool due to idle time alone.
+         * Read from the current upstream node.
+         * @deprecated Use {@link org.apereo.cas.configuration.model.support.redis.BaseRedisProperties.RedisReadFromTypes#UPSTREAM} instead.
          */
-        private long minEvictableIdleTimeMillis;
-
+        @Deprecated
+        MASTER,
         /**
-         * Returns whether the pool has LIFO (last in, first out) behaviour with respect
-         * to idle objects - always returning the most recently used object from the
-         * pool, or as a FIFO (first in, first out) queue, where the pool always returns
-         * the oldest object in the idle object pool.
+         * Read from the upstream node, but if it is unavailable, read from replica nodes.
+         * @deprecated Use {@link org.apereo.cas.configuration.model.support.redis.BaseRedisProperties.RedisReadFromTypes#UPSTREAMPREFERRED} instead.
          */
-        private boolean lifo = true;
-
+        @Deprecated
+        MASTERPREFERRED,
         /**
-         * Returns whether or not the pool serves threads waiting to borrow objects
-         * fairly. True means that waiting threads are served as if waiting in a FIFO
-         * queue.
+         * Read from replica nodes.
+         * @deprecated Use {@link org.apereo.cas.configuration.model.support.redis.BaseRedisProperties.RedisReadFromTypes#REPLICA} instead.
          */
-        private boolean fairness;
-
+        @Deprecated
+        SLAVE,
         /**
-         * Returns whether objects created for the pool will be validated before being
-         * returned from the borrowObject() method. Validation is performed by the
-         * validateObject() method of the factory associated with the pool. If the
-         * object fails to validate, then borrowObject() will fail.
+         *  Read from the replica nodes, but if none is unavailable, read from the upstream node.
+         * @deprecated Use {@link org.apereo.cas.configuration.model.support.redis.BaseRedisProperties.RedisReadFromTypes#REPLICAPREFERRED} instead.
          */
-        private boolean testOnCreate;
-
+        @Deprecated
+        SLAVEPREFERRED,
         /**
-         * Returns whether objects borrowed from the pool will be validated before being
-         * returned from the borrowObject() method. Validation is performed by the
-         * validateObject() method of the factory associated with the pool. If the
-         * object fails to validate, it will be removed from the pool and destroyed, and
-         * a new attempt will be made to borrow an object from the pool.
+         * Read from replica nodes.
          */
-        private boolean testOnBorrow;
-
+        REPLICA,
         /**
-         * Returns whether objects borrowed from the pool will be validated when they
-         * are returned to the pool via the returnObject() method. Validation is
-         * performed by the validateObject() method of the factory associated with the
-         * pool. Returning objects that fail validation are destroyed rather then being
-         * returned the pool.
+         * Read from the replica nodes, but if none is unavailable, read from the upstream node.
          */
-        private boolean testOnReturn;
-
+        REPLICAPREFERRED,
         /**
-         * Returns whether objects sitting idle in the pool will be validated by the
-         * idle object evictor ( if any - see setTimeBetweenEvictionRunsMillis(long)).
-         * Validation is performed by the validateObject() method of the factory
-         * associated with the pool. If the object fails to validate, it will be removed
-         * from the pool and destroyed.
+         * Read from any node of the cluster.
          */
-        private boolean testWhileIdle;
-
+        ANY,
         /**
-         * Max number of "idle" connections in the pool. Use a negative value to
-         * indicate an unlimited number of idle connections.
+         * Read from any replica node of the cluster.
          */
-        private int maxIdle = 8;
-
+        ANYREPLICA,
         /**
-         * Target for the minimum number of idle connections to maintain in the pool.
-         * This setting only has an effect if it is positive.
+         * Read from the nearest node.
          */
-        private int minIdle;
-
-        /**
-         * Max number of connections that can be allocated by the pool at a given time.
-         * Use a negative value for no limit.
-         */
-        private int maxActive = 8;
-
-        /**
-         * Maximum amount of time (in milliseconds) a connection allocation should block
-         * before throwing an exception when the pool is exhausted. Use a negative value
-         * to block indefinitely.
-         */
-        private int maxWait = -1;
-
-        /**
-         * Enable the pooling configuration.
-         */
-        private boolean enabled;
-    }
-
-    /**
-     * Redis sentinel properties.
-     */
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    @RequiresModule(name = "cas-server-support-redis-core")
-    public static class Sentinel implements Serializable {
-
-        private static final long serialVersionUID = 5434823157764550831L;
-
-        /**
-         * Name of Redis server.
-         */
-        private String master;
-
-        /**
-         * list of host:port pairs.
-         */
-        private List<String> node = new ArrayList<>(0);
+        NEAREST
     }
 }

@@ -33,7 +33,7 @@ public class CasCoreBootstrapStandaloneWatchConfiguration {
     @Qualifier("configurationPropertiesEnvironmentManager")
     private ObjectProvider<CasConfigurationPropertiesEnvironmentManager> configurationPropertiesEnvironmentManager;
 
-    @ConditionalOnProperty(value = "cas.events.track-configuration-modifications", havingValue = "true")
+    @ConditionalOnProperty(value = "cas.events.core.track-configuration-modifications", havingValue = "true")
     @Bean
     public CasConfigurationWatchService casConfigurationWatchService() {
         return new CasConfigurationWatchService(configurationPropertiesEnvironmentManager.getObject(), applicationContext);

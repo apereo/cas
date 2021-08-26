@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.config.CosmosDbServiceRegistryConfiguration;
 
+import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -27,23 +28,19 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.service-registry.cosmosDb.uri=https://localhost:8081",
     "cas.service-registry.cosmosDb.key=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
     "cas.service-registry.cosmosDb.database=TestDB",
-    "cas.service-registry.cosmosDb.dropCollection=true"
+    "cas.service-registry.cosmosDb.drop-collection=true"
 })
 @EnabledIfSystemProperty(named = "cosmosDbEnabled", matches = "true")
 @ResourceLock("cosmosdb-service")
+@Getter
 public class CosmosDbServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("cosmosDbServiceRegistry")
-    private ServiceRegistry serviceRegistry;
+    private ServiceRegistry newServiceRegistry;
 
     @BeforeEach
     public void deleteAll() {
-        serviceRegistry.load().forEach(service -> serviceRegistry.delete(service));
-        assertTrue(serviceRegistry.load().isEmpty());
-    }
-
-    @Override
-    protected ServiceRegistry getNewServiceRegistry() {
-        return serviceRegistry;
+        newServiceRegistry.load().forEach(service -> newServiceRegistry.delete(service));
+        assertTrue(newServiceRegistry.load().isEmpty());
     }
 }

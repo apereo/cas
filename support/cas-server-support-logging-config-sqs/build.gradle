@@ -1,0 +1,19 @@
+description = "Apereo CAS Core Logging AWS SQS"
+dependencies {
+    api project(":api:cas-server-core-api-ticket")
+
+    implementation libraries.awssqs
+    implementation libraries.log4j
+
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-logging-api")
+    implementation project(":support:cas-server-support-aws")
+
+    annotationProcessor libraries.log4j
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+}
+
+

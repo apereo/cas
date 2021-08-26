@@ -3,7 +3,6 @@ package org.apereo.cas.monitor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
@@ -19,12 +18,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
-@Tag("Simple")
+@Tag("Metrics")
 public class PoolHealthIndicatorTests {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Test
-    public void verifyObserveOK() throws Exception {
+    public void verifyObserveOK() {
         val monitor = new AbstractPoolHealthIndicator(1000, executor) {
             @Override
             protected Health.Builder checkPool(final Health.Builder builder) {
@@ -45,16 +44,11 @@ public class PoolHealthIndicatorTests {
         val health = monitor.health();
         assertEquals(health.getStatus(), Status.UP);
 
-        assertAll(new Executable() {
-            @Override
-            public void execute() throws Exception {
-                ((DisposableBean) monitor).destroy();
-            }
-        });
+        assertAll(((DisposableBean) monitor)::destroy);
     }
 
     @Test
-    public void verifyObserveDown() throws Exception {
+    public void verifyObserveDown() {
         val monitor = new AbstractPoolHealthIndicator(200, executor) {
             @Override
             protected Health.Builder checkPool(final Health.Builder builder) throws Exception {
@@ -75,16 +69,11 @@ public class PoolHealthIndicatorTests {
         val health = monitor.health();
         assertEquals(Status.DOWN, health.getStatus());
 
-        assertAll(new Executable() {
-                @Override
-                public void execute() throws Exception {
-                    ((DisposableBean) monitor).destroy();
-                }
-        });
+        assertAll(((DisposableBean) monitor)::destroy);
     }
 
     @Test
-    public void verifyObserveError() throws Exception {
+    public void verifyObserveError() {
         val monitor = new AbstractPoolHealthIndicator(500, executor) {
             @Override
             protected Health.Builder checkPool(final Health.Builder builder) {
@@ -103,11 +92,6 @@ public class PoolHealthIndicatorTests {
         };
         val health = monitor.health();
         assertEquals(health.getStatus(), Status.OUT_OF_SERVICE);
-        assertAll(new Executable() {
-                @Override
-                public void execute() throws Exception {
-                    ((DisposableBean) monitor).destroy();
-                }
-        });
+        assertAll(((DisposableBean) monitor)::destroy);
     }
 }

@@ -4,7 +4,7 @@
 
 echo "Running image for memcached..."
 docker stop memcached || true && docker rm memcached || true
-docker run  -p 11211:11211 --name memcached -d memcached:alpine memcached -m 256
+docker run --rm  -p 11211:11211 --name memcached -d memcached:alpine memcached -m 256
 
 docker ps | grep "memcached"
 retVal=$?

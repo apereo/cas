@@ -7,6 +7,7 @@ dependencies {
     implementation project(":core:cas-server-core-audit-api")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-services-authentication")
+    implementation project(":core:cas-server-core-notifications")
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-validation-api")
@@ -16,6 +17,9 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-cookie-api")
+    implementation project(":core:cas-server-core-authentication-mfa-api")
+
+    implementation project(":support:cas-server-support-pac4j-api")
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-saml-mdui-core")
@@ -25,6 +29,7 @@ dependencies {
     implementation libraries.casclient
     implementation libraries.shibutiljavasupport
     implementation libraries.pac4jcore
+    compileOnlyApi libraries.pac4jsaml
 
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-util")

@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -36,6 +37,7 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
      */
     private int order;
 
+    @ExpressionLanguageCapable
     private String groovyScript;
 
     @JsonIgnore

@@ -51,6 +51,11 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
+    public void deleteAll() {
+        this.mongoTemplate.remove(new Query(Criteria.where("serviceId").exists(true)), RegisteredService.class, this.collectionName);
+    }
+
+    @Override
     public RegisteredService findServiceById(final long svcId) {
         return this.mongoTemplate.findOne(new Query(Criteria.where("id").is(svcId)), RegisteredService.class, this.collectionName);
     }

@@ -9,9 +9,11 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
 import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
@@ -22,6 +24,7 @@ import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -66,12 +69,20 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         list.add(RegisteredServiceTestUtils.getRegisteredService("https://.+"));
         val dao = new InMemoryServiceRegistry(appCtx, list, new ArrayList<>());
 
-        val mgmr = new DefaultServicesManager(dao, appCtx, new HashSet<>());
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(dao)
+            .applicationContext(appCtx)
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().build())
+            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
+            .build();
+        val mgmr = new DefaultServicesManager(context);
         mgmr.load();
 
         val protocolAttributeEncoder = new DefaultCasProtocolAttributeEncoder(mgmr, CipherExecutor.noOpOfStringToString());
         val builder = new Saml10ObjectBuilder(configBean);
-        val samlResponseBuilder = new SamlResponseBuilder(builder, "testIssuer", "whatever", 1000, 30,
+        val samlResponseBuilder = new SamlResponseBuilder(builder, "testIssuer",
+            "whatever", 1000, "PT30S",
             new NoOpProtocolAttributeEncoder(), mgmr);
         this.response = new Saml10SuccessResponseView(protocolAttributeEncoder,
             mgmr,
@@ -101,7 +112,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
         val assertion = new DefaultAssertionBuilder(primary).with(List.of(primary)).with(
-            CoreAuthenticationTestUtils.getService()).with(true).build();
+            CoreAuthenticationTestUtils.getWebApplicationService()).with(true).build();
         model.put("assertion", assertion);
 
         val servletResponse = new MockHttpServletResponse();
@@ -139,7 +150,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
         val assertion = new DefaultAssertionBuilder(primary)
             .with(List.of(primary))
-            .with(CoreAuthenticationTestUtils.getService())
+            .with(CoreAuthenticationTestUtils.getWebApplicationService())
             .with(true)
             .build();
 
@@ -172,7 +183,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         val assertion = new DefaultAssertionBuilder(primary)
             .with(List.of(primary))
-            .with(CoreAuthenticationTestUtils.getService())
+            .with(CoreAuthenticationTestUtils.getWebApplicationService())
             .with(true)
             .build();
         model.put("assertion", assertion);

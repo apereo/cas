@@ -79,6 +79,7 @@ public class CouchDbServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "couchDbServiceRegistryExecutionPlanConfigurer")
+    @RefreshScope
     public ServiceRegistryExecutionPlanConfigurer couchDbServiceRegistryExecutionPlanConfigurer() {
         return plan -> plan.registerServiceRegistry(couchDbServiceRegistry());
     }

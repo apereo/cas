@@ -5,6 +5,7 @@ import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -47,9 +48,7 @@ public class UmaCreatePolicyForResourceSetEndpointController extends BaseUmaEndp
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity createPolicyForResourceSet(@PathVariable(value = "resourceId") final long resourceId,
-                                                     @RequestBody final String body,
-                                                     final HttpServletRequest request,
-                                                     final HttpServletResponse response) {
+        @RequestBody final String body, final HttpServletRequest request, final HttpServletResponse response) {
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
             val resourceSetResult = getUmaConfigurationContext().getUmaResourceSetRepository().getById(resourceId);
@@ -61,18 +60,13 @@ public class UmaCreatePolicyForResourceSetEndpointController extends BaseUmaEndp
             resourceSet.validate(profileResult);
 
             val umaRequest = MAPPER.readValue(JsonValue.readHjson(body).toString(), ResourceSetPolicy.class);
-            if (umaRequest == null) {
-                val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "UMA policy request cannot be found or parsed");
-                return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
-            }
-
             resourceSet.getPolicies().add(umaRequest);
             val saved = getUmaConfigurationContext().getUmaResourceSetRepository().save(resourceSet);
 
             val model = CollectionUtils.wrap("entity", saved, "code", HttpStatus.CREATED);
             return new ResponseEntity(model, HttpStatus.OK);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new ResponseEntity("Unable to save policy for resource-set.", HttpStatus.BAD_REQUEST);
     }

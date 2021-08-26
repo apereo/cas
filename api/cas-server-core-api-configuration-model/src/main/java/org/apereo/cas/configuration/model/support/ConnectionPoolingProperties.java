@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -17,18 +18,20 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@RequiresModule(name = "cas-server-support-ldap-core")
+@RequiresModule(name = "cas-server-core-util", automated = true)
 public class ConnectionPoolingProperties implements Serializable {
 
     private static final long serialVersionUID = -5307463292890944799L;
 
     /**
-     * Controls the minimum size that the pool is allowed to reach, including both idle and in-use connections.
+     * Controls the minimum size that the pool is allowed
+     * to reach, including both idle and in-use connections.
      */
     private int minSize = 6;
 
     /**
-     * Controls the maximum number of connections to keep in the pool, including both idle and in-use connections.
+     * Controls the maximum number of connections to keep
+     * in the pool, including both idle and in-use connections.
      */
     private int maxSize = 18;
 
@@ -39,6 +42,7 @@ public class ConnectionPoolingProperties implements Serializable {
      * A value of zero specifies that the timeout is the default system timeout
      * if there is one; otherwise, it specifies that there is no timeout.
      */
+    @DurationCapable
     private String maxWait = "PT2S";
 
     /**
@@ -50,7 +54,8 @@ public class ConnectionPoolingProperties implements Serializable {
     private boolean suspension;
 
     /**
-     * The maximum number of milliseconds that the pool will wait for a connection to be validated as alive.
+     * The maximum number of milliseconds that the
+     * pool will wait for a connection to be validated as alive.
      */
     private long timeoutMillis = 1_000;
 }

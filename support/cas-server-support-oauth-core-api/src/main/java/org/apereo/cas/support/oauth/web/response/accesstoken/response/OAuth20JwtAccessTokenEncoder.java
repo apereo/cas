@@ -19,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -41,6 +40,8 @@ public class OAuth20JwtAccessTokenEncoder {
     private final Service service;
 
     private final CasConfigurationProperties casProperties;
+
+    private final String issuer;
 
     /**
      * Encode access token as JWT.
@@ -98,7 +99,7 @@ public class OAuth20JwtAccessTokenEncoder {
     protected JwtBuilder.JwtRequest getJwtRequestBuilder(final Optional<RegisteredService> oAuthRegisteredService,
                                                          final OAuth20AccessToken accessToken) {
         val authentication = accessToken.getAuthentication();
-        val attributes = new HashMap<String, List<Object>>(authentication.getAttributes());
+        val attributes = new HashMap<>(authentication.getAttributes());
         attributes.putAll(authentication.getPrincipal().getAttributes());
 
         val builder = JwtBuilder.JwtRequest.builder();
@@ -111,6 +112,7 @@ public class OAuth20JwtAccessTokenEncoder {
             .validUntilDate(DateTimeUtils.dateOf(dt))
             .attributes(attributes)
             .registeredService(oAuthRegisteredService)
+            .issuer(StringUtils.defaultIfBlank(this.issuer, casProperties.getServer().getPrefix()))
             .build();
     }
 

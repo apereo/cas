@@ -45,6 +45,26 @@ public class OptionalWarningLdapAccountStateHandlerTests {
     }
 
     @Test
+    public void verifyWarningNoAttr() {
+        val h = new OptionalWarningLdapAccountStateHandler();
+        h.setDisplayWarningOnMatch(true);
+        val response = mock(AuthenticationResponse.class);
+        val config = new PasswordPolicyContext();
+        config.setPasswordWarningNumberOfDays(5);
+        val list = new ArrayList<MessageDescriptor>();
+        h.handleWarning(
+            new AccountState.DefaultWarning(ZonedDateTime.now(ZoneId.systemDefault()), 1),
+            response, config, list);
+        assertTrue(list.isEmpty());
+        h.setWarnAttributeName("attribute");
+        h.handleWarning(
+            new AccountState.DefaultWarning(ZonedDateTime.now(ZoneId.systemDefault()), 1),
+            response, config, list);
+        assertTrue(list.isEmpty());
+    }
+
+    
+    @Test
     public void verifyAlwaysWarningOnMatch() {
         val h = new OptionalWarningLdapAccountStateHandler();
         h.setWarnAttributeName("attribute");

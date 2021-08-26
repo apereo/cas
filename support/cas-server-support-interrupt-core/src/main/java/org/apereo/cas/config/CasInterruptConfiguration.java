@@ -11,10 +11,11 @@ import org.apereo.cas.interrupt.RestEndpointInterruptInquirer;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -36,6 +37,7 @@ public class CasInterruptConfiguration {
     @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "interruptInquirer")
+    @RefreshScope
     public InterruptInquiryExecutionPlan interruptInquirer(final List<InterruptInquiryExecutionPlanConfigurer> configurers) {
         val plan = new DefaultInterruptInquiryExecutionPlan();
         configurers.forEach(c -> {
@@ -46,21 +48,37 @@ public class CasInterruptConfiguration {
     }
 
     @Bean
-    public InterruptInquiryExecutionPlanConfigurer casDefaultInterruptInquiryExecutionPlanConfigurer() {
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "jsonInterruptInquiryExecutionPlanConfigurer")
+    @ConditionalOnProperty(name = "cas.interrupt.json.location")
+    public InterruptInquiryExecutionPlanConfigurer jsonInterruptInquiryExecutionPlanConfigurer() {
+        return plan -> plan.registerInterruptInquirer(new JsonResourceInterruptInquirer(casProperties.getInterrupt().getJson().getLocation()));
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "groovyInterruptInquiryExecutionPlanConfigurer")
+    @ConditionalOnProperty(name = "cas.interrupt.groovy.location")
+    public InterruptInquiryExecutionPlanConfigurer groovyInterruptInquiryExecutionPlanConfigurer() {
+        return plan -> plan.registerInterruptInquirer(new GroovyScriptInterruptInquirer(casProperties.getInterrupt().getGroovy().getLocation()));
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "regexInterruptInquiryExecutionPlanConfigurer")
+    @ConditionalOnProperty(name = {"cas.interrupt.regex.attribute-name", "cas.interrupt.regex.attribute-value"})
+    public InterruptInquiryExecutionPlanConfigurer regexInterruptInquiryExecutionPlanConfigurer() {
         return plan -> {
-            val ip = casProperties.getInterrupt();
-            if (StringUtils.isNotBlank(ip.getAttributeName()) && StringUtils.isNotBlank(ip.getAttributeValue())) {
-                plan.registerInterruptInquirer(new RegexAttributeInterruptInquirer(ip.getAttributeName(), ip.getAttributeValue()));
-            }
-            if (ip.getJson().getLocation() != null) {
-                plan.registerInterruptInquirer(new JsonResourceInterruptInquirer(ip.getJson().getLocation()));
-            }
-            if (ip.getGroovy().getLocation() != null) {
-                plan.registerInterruptInquirer(new GroovyScriptInterruptInquirer(ip.getGroovy().getLocation()));
-            }
-            if (StringUtils.isNotBlank(ip.getRest().getUrl())) {
-                plan.registerInterruptInquirer(new RestEndpointInterruptInquirer(ip.getRest()));
-            }
+            val regex = casProperties.getInterrupt().getRegex();
+            plan.registerInterruptInquirer(new RegexAttributeInterruptInquirer(regex.getAttributeName(), regex.getAttributeValue()));
         };
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "restInterruptInquiryExecutionPlanConfigurer")
+    @ConditionalOnProperty(name = "cas.interrupt.rest.url")
+    public InterruptInquiryExecutionPlanConfigurer restInterruptInquiryExecutionPlanConfigurer() {
+        return plan -> plan.registerInterruptInquirer(new RestEndpointInterruptInquirer(casProperties.getInterrupt().getRest()));
     }
 }

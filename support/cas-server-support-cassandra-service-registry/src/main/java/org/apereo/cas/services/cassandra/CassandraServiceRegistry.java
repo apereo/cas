@@ -8,6 +8,7 @@ import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import com.datastax.oss.driver.api.core.DefaultConsistencyLevel;
@@ -20,7 +21,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.cassandra.core.InsertOptions;
 import org.springframework.data.cassandra.core.query.Query;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -64,7 +64,7 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
                 .insert(new CassandraRegisteredServiceHolder(rs.getId(), data), options);
             return SERIALIZER.from(result.getEntity().getData());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return rs;
     }
@@ -72,52 +72,44 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
     @Override
     public boolean delete(final RegisteredService registeredService) {
         try {
-            
             cassandraSessionFactory.getCassandraTemplate()
                 .deleteById(registeredService.getId(), CassandraRegisteredServiceHolder.class);
             return true;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
 
     @Override
+    public void deleteAll() {
+        cassandraSessionFactory.getCassandraTemplate()
+            .getCqlOperations().execute("TRUNCATE TABLE " + CassandraRegisteredServiceHolder.TABLE_NAME);
+    }
+
+    @Override
     public long size() {
-        try {
-            return cassandraSessionFactory.getCassandraTemplate()
-                .count(CassandraRegisteredServiceHolder.class);
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return 0;
+        return cassandraSessionFactory.getCassandraTemplate()
+            .count(CassandraRegisteredServiceHolder.class);
     }
 
     @Override
     public Collection<RegisteredService> load() {
-        try {
-            val results = cassandraSessionFactory.getCassandraTemplate().select(Query.query(), CassandraRegisteredServiceHolder.class);
-            return results.stream()
-                .map(holder -> SERIALIZER.from(holder.getData()))
-                .filter(Objects::nonNull)
-                .map(this::invokeServiceRegistryListenerPostLoad)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return new ArrayList<>(0);
+        val results = cassandraSessionFactory.getCassandraTemplate().select(Query.query(), CassandraRegisteredServiceHolder.class);
+        return results.stream()
+            .map(holder -> SERIALIZER.from(holder.getData()))
+            .filter(Objects::nonNull)
+            .map(this::invokeServiceRegistryListenerPostLoad)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        try {
-            val holder = cassandraSessionFactory.getCassandraTemplate().selectOneById(id, CassandraRegisteredServiceHolder.class);
-            if (holder != null) {
-                return SERIALIZER.from(holder.getData());
-            }
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+        val holder = cassandraSessionFactory.getCassandraTemplate()
+            .selectOneById(id, CassandraRegisteredServiceHolder.class);
+        if (holder != null) {
+            return SERIALIZER.from(holder.getData());
         }
         return null;
     }

@@ -1,8 +1,7 @@
 package org.apereo.cas;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Test suite that runs all test in a batch.
@@ -14,6 +13,6 @@ import org.junit.runner.RunWith;
     CasMetricsConfigurationTests.class,
     SystemMonitorHealthIndicatorTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class CasMetricsTestsSuite {
 }

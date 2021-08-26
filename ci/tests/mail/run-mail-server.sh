@@ -4,7 +4,7 @@
 
 echo "Running MockMock docker image"
 docker stop email-server || true && docker rm email-server || true
-docker run -d -p25000:25000 -p8282:8282 --name "email-server" mmoayyed/mockmock:latest
+docker run --rm -d -p25000:25000 -p8282:8282 --name "email-server" mmoayyed/mockmock:latest
 
 docker ps | grep "email-server"
 retVal=$?

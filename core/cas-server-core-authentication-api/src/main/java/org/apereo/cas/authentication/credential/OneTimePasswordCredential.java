@@ -36,7 +36,8 @@ public class OneTimePasswordCredential extends BasicIdentifiableCredential {
     private String password;
 
     @JsonCreator
-    public OneTimePasswordCredential(@JsonProperty("id") final String id, @JsonProperty("password") final String password) {
+    public OneTimePasswordCredential(@JsonProperty("id") final String id,
+                                     @JsonProperty("password") final String password) {
         super(id);
         this.password = password;
     }

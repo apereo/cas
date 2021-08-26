@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @TestPropertySource(properties = "management.endpoint.releaseAttributes.enabled=true")
-@Tag("Simple")
+@Tag("ActuatorEndpoint")
 public class CasReleaseAttributesReportEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("releaseAttributesReportEndpoint")
@@ -29,10 +29,11 @@ public class CasReleaseAttributesReportEndpointTests extends AbstractCasEndpoint
     @Test
     public void verifyOperation() {
         val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
-        this.servicesManager.save(service);
+        servicesManager.save(service);
         val response = endpoint.releasePrincipalAttributes("casuser", "casuser", service.getServiceId());
         assertNotNull(response);
         assertFalse(response.isEmpty());
+        assertNotNull(endpoint.releaseAttributes("casuser", "casuser", service.getServiceId()));
     }
 }
 

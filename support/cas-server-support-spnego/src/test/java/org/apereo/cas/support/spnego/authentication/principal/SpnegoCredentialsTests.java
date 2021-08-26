@@ -9,12 +9,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 /**
  * @author Misagh Moayyed
  * @since 3.0.0
  */
-@Tag("Simple")
+@Tag("Spnego")
 public class SpnegoCredentialsTests {
 
     @Test

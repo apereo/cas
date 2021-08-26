@@ -121,6 +121,16 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
 
     public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern,
                                                 final boolean maxPathLengthAllowUnspecified,
+                                                final int maxPathLength) {
+        this(StringUtils.EMPTY, null, null, regExTrustedIssuerDnPattern,
+            maxPathLength, maxPathLengthAllowUnspecified, false,
+            false, null,
+            new NoOpRevocationChecker(),
+            null);
+    }
+
+    public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern,
+                                                final boolean maxPathLengthAllowUnspecified,
                                                 final boolean checkKeyUsage,
                                                 final boolean requireKeyUsage) {
         this(StringUtils.EMPTY, null, null, regExTrustedIssuerDnPattern,
@@ -233,18 +243,25 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         val pathLength = cert.getBasicConstraints();
         if (pathLength < 0) {
             if (!isCertificateAllowed(cert)) {
-                throw new FailedLoginException("Certificate subject does not match pattern " + this.regExSubjectDnPattern.pattern());
+                val msg = "Certificate subject does not match pattern " + this.regExSubjectDnPattern.pattern();
+                LOGGER.error(msg);
+                throw new FailedLoginException(msg);
             }
             if (this.checkKeyUsage && !isValidKeyUsage(cert)) {
-                throw new FailedLoginException("Certificate keyUsage constraint forbids SSL client authentication.");
+                val msg = "Certificate keyUsage constraint forbids SSL client authentication.";
+                LOGGER.error(msg);
+                throw new FailedLoginException(msg);
             }
         } else {
             if (pathLength == Integer.MAX_VALUE && !this.maxPathLengthAllowUnspecified) {
-                throw new FailedLoginException("Unlimited certificate path length not allowed by configuration.");
+                val msg = "Unlimited certificate path length not allowed by configuration.";
+                LOGGER.error(msg);
+                throw new FailedLoginException(msg);
             }
             if (pathLength > this.maxPathLength && pathLength < Integer.MAX_VALUE) {
-                throw new FailedLoginException(String.format(
-                    "Certificate path length %s exceeds maximum value %s.", pathLength, this.maxPathLength));
+                val msg = String.format("Certificate path length %s exceeds maximum value %s.", pathLength, this.maxPathLength);
+                LOGGER.error(msg);
+                throw new FailedLoginException(msg);
             }
         }
     }
@@ -285,7 +302,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      * @return true, if  certificate allowed
      */
     private boolean isCertificateAllowed(final X509Certificate cert) {
-        return doesNameMatchPattern(cert.getSubjectDN(), this.regExSubjectDnPattern);
+        return regExSubjectDnPattern == null || doesNameMatchPattern(cert.getSubjectDN(), this.regExSubjectDnPattern);
     }
 
     /**

@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.policy;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -11,6 +12,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.io.Serializable;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -29,16 +32,18 @@ public class AllCredentialsValidatedAuthenticationPolicy extends BaseAuthenticat
     private static final long serialVersionUID = 6112280265093249844L;
 
     @Override
-    public boolean isSatisfiedBy(final Authentication authn,
-                                 final Set<AuthenticationHandler> authenticationHandlers,
-                                 final ConfigurableApplicationContext applicationContext) {
-        LOGGER.debug("Successful authentications: [{}], credentials: [{}]", authn.getSuccesses().keySet(), authn.getCredentials());
+    public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authn,
+                                                             final Set<AuthenticationHandler> authenticationHandlers,
+                                                             final ConfigurableApplicationContext applicationContext,
+                                                             final Optional<Serializable> assertion) {
+        LOGGER.debug("Successful authentications: [{}], credentials: [{}]",
+            authn.getSuccesses().keySet(), authn.getCredentials());
         if (authn.getSuccesses().size() != authn.getCredentials().size()) {
             LOGGER.warn("Number of successful authentications, [{}], does not match the number of provided credentials, [{}].",
                 authn.getSuccesses().size(), authn.getCredentials().size());
-            return false;
+            return AuthenticationPolicyExecutionResult.failure();
         }
         LOGGER.debug("Authentication policy is satisfied.");
-        return true;
+        return AuthenticationPolicyExecutionResult.success();
     }
 }

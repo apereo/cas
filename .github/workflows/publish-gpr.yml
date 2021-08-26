@@ -1,0 +1,99 @@
+name: Publish Fork Release to Github Package Repository
+# As of July 2021 this workflow fails with 409 Conflict error on seemingly random packages or associated files (e.g. *.md5).
+# With as many packages as CAS publishes your odds of successfully publishing a release
+# to Github Packages are low, possibly zero.
+# The CAS shell jar is skipped because it fails with 400 error, presumably because it is too big for GPR. (~120MB)
+# GitHub automatically creates a GITHUB_TOKEN secret to use in your workflow and by default it has read/write to
+# packages when triggered to run on a a fork (but not when triggered by a fork to run on main repo).
+
+env:
+  JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  TERM: xterm-256color
+  REPO_OWNER: ${{ github.repository_owner }}
+  JDK_CURRENT: 11.0.12
+  TIMEOUT: 640000
+
+##########################################################################
+
+# Trigger on four digit tags where the fourth digit differentiates build from official builds
+on:
+  push:
+    tags:
+      - 6.*.*.*
+      - 7.*.*.*
+
+##########################################################################
+
+jobs:
+
+##########################################################################
+
+  initialize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'zulu'
+      - name: Initialize
+        run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+
+##########################################################################
+
+  cache:
+    runs-on: ubuntu-latest
+    needs: [initialize]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'zulu'
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/checkout@v2
+      - name: Download Dependencies
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+            
+##########################################################################
+
+  publish-release:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    continue-on-error: false
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'zulu'
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Output Config
+        run: echo "username=${GITHUB_ACTOR} releaseRepositoryUrl=https://maven.pkg.github.com/${GITHUB_REPOSITORY} on tag ${{ github.ref }} Token Length is [$(echo -n $GITHUB_TOKEN | wc -c)] Tag is ${GITHUB_REF/refs\/tags\//}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish Release to GH Package Repository
+        run: ./gradlew -DpublishReleases=true -DskipArtifactSigning=true -DpublishMinimalArtifacts=true --build-cache --configure-on-demand --no-daemon -Dorg.gradle.internal.http.socketTimeout="${TIMEOUT}" -Dorg.gradle.internal.http.connectionTimeout="${TIMEOUT}"  build publish -x test -x javadoc -x check -PrepositoryUsername=${GITHUB_ACTOR} -PrepositoryPassword=${GITHUB_TOKEN} -PreleaseRepositoryUrl=https://maven.pkg.github.com/${GITHUB_REPOSITORY} -Pversion=${GITHUB_REF/refs\/tags\//}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

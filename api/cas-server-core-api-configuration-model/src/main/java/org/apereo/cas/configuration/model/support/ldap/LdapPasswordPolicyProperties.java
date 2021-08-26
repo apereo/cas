@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.ldap;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -17,6 +18,7 @@ import lombok.experimental.Accessors;
 @Setter
 @RequiresModule(name = "cas-server-support-ldap")
 @Accessors(chain = true)
+@JsonFilter("LdapPasswordPolicyProperties")
 public class LdapPasswordPolicyProperties extends PasswordPolicyProperties {
     private static final long serialVersionUID = -1878237508646993100L;
 
@@ -27,7 +29,7 @@ public class LdapPasswordPolicyProperties extends PasswordPolicyProperties {
     private String customPolicyClass;
 
     /**
-     * LDAP type. Accepted values are {@code GENERIC,AD,FreeIPA,EDirectory}
+     * LDAP type.
      */
     private AbstractLdapProperties.LdapType type = AbstractLdapProperties.LdapType.GENERIC;
 

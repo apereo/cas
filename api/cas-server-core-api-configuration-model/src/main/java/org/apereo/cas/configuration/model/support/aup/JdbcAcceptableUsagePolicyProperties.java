@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.aup;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -17,6 +18,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("JdbcAcceptableUsagePolicyProperties")
 public class JdbcAcceptableUsagePolicyProperties extends AbstractJpaProperties {
 
     private static final long serialVersionUID = -1325011278378393385L;
@@ -28,7 +30,7 @@ public class JdbcAcceptableUsagePolicyProperties extends AbstractJpaProperties {
 
     /**
      * The column to store the AUP attribute. May differ from the profile attribute defined
-     * by {@link AcceptableUsagePolicyProperties#getAupAttributeName()}.
+     * by {@link AcceptableUsagePolicyCoreProperties#getAupAttributeName()}.
      * SQL query can be further customized by setting {@link #sqlUpdate}.
      */
     private String aupColumn;
@@ -50,4 +52,10 @@ public class JdbcAcceptableUsagePolicyProperties extends AbstractJpaProperties {
      * %s placeholders represent {@link #tableName}, {@link #aupColumn}, {@link #principalIdColumn} settings.
      */
     private String sqlUpdate = "UPDATE %s SET %s=true WHERE %s=?";
+
+    /**
+     * The query template to search for the AUP attribute.
+     * %s placeholders represent {@link #aupColumn}, {@link #tableName}, {@link #principalIdColumn} settings.
+     */
+    private String sqlSelect = "SELECT %s FROM %s WHERE %s=?";
 }

@@ -168,54 +168,39 @@ ext.createPomRepositories = { node ->
     def repositories = node.appendNode("repositories")
 
     def repository = repositories.appendNode("repository")
-    repository.appendNode("id", "jcenter")
-    repository.appendNode("url", "https://jcenter.bintray.com")
+    repository.appendNode("id", "maven-central")
+    repository.appendNode("url", "https://repo.maven.apache.org/maven2")
     repository.appendNode("releases").appendNode("enabled", "true")
+    repository.appendNode("snapshots").appendNode("enabled", "false")
 
     repository = repositories.appendNode("repository")
     repository.appendNode("id", "shib-release")
     repository.appendNode("url", "https://build.shibboleth.net/nexus/content/repositories/releases")
     repository.appendNode("releases").appendNode("enabled", "true")
-
-    repository = repositories.appendNode("repository")
-    repository.appendNode("id", "jitpack")
-    repository.appendNode("url", "https://jitpack.io")
-    repository.appendNode("releases").appendNode("enabled", "true")
-
-    repository = repositories.appendNode("repository")
-    repository.appendNode("id", "spring-plugins")
-    repository.appendNode("url", "https://repo.spring.io/plugins-release/")
-    repository.appendNode("releases").appendNode("enabled", "true")
+    repository.appendNode("snapshots").appendNode("enabled", "false")
 
     repository = repositories.appendNode("repository")
     repository.appendNode("id", "couchbase")
     repository.appendNode("url", "https://files.couchbase.com/maven2/")
     repository.appendNode("releases").appendNode("enabled", "true")
+    repository.appendNode("snapshots").appendNode("enabled", "false")
 
     repository = repositories.appendNode("repository")
-    repository.appendNode("id", "uniconiam")
-    repository.appendNode("url", "https://dl.bintray.com/uniconiam/maven")
+    repository.appendNode("id", "jitpack")
+    repository.appendNode("url", "https://jitpack.io")
     repository.appendNode("releases").appendNode("enabled", "true")
-
-    repository = repositories.appendNode("repository")
-    repository.appendNode("id", "spring-libs-milestone")
-    repository.appendNode("url", "https://repo.spring.io/libs-milestone")
-    repository.appendNode("releases").appendNode("enabled", "true")
-    repository.appendNode("snapshots").appendNode("enabled", "true")
-
-    repository = repositories.appendNode("repository")
-    repository.appendNode("id", "spring-snapshot-milestone")
-    repository.appendNode("url", "https://repo.spring.io/snapshot/")
-    repository.appendNode("snapshots").appendNode("enabled", "true")
+    repository.appendNode("snapshots").appendNode("enabled", "false")
 
     repository = repositories.appendNode("repository")
     repository.appendNode("id", "sonatype-snapshot")
     repository.appendNode("url", "https://oss.sonatype.org/content/repositories/snapshots")
     repository.appendNode("snapshots").appendNode("enabled", "true")
+    repository.appendNode("releases").appendNode("enabled", "false")
 
     repository = repositories.appendNode("repository")
-    repository.appendNode("id", "jfrog-snapshot")
-    repository.appendNode("url", "https://oss.jfrog.org/artifactory/oss-snapshot-local")
+    repository.appendNode("id", "apache-snapshot")
+    repository.appendNode("url", "https://repository.apache.org/content/repositories/snapshots")
     repository.appendNode("snapshots").appendNode("enabled", "true")
+    repository.appendNode("releases").appendNode("enabled", "false")
 }
 

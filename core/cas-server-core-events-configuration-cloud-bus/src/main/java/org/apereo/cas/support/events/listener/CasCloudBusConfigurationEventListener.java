@@ -19,6 +19,7 @@ import org.springframework.scheduling.annotation.Async;
 @RequiredArgsConstructor
 public class CasCloudBusConfigurationEventListener {
     private final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
+
     private final ApplicationContext applicationContext;
 
     /**

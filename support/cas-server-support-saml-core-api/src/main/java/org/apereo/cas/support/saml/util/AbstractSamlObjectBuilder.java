@@ -2,10 +2,12 @@ package org.apereo.cas.support.saml.util;
 
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.gen.HexRandomStringGenerator;
 import org.apereo.cas.util.serialization.JacksonXmlSerializer;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -18,7 +20,6 @@ import org.jdom2.input.DOMBuilder;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.XMLOutputter;
 import org.opensaml.core.xml.XMLObject;
-import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.schema.XSBase64Binary;
 import org.opensaml.core.xml.schema.XSBoolean;
 import org.opensaml.core.xml.schema.XSBooleanValue;
@@ -33,11 +34,7 @@ import org.opensaml.core.xml.schema.impl.XSDateTimeBuilder;
 import org.opensaml.core.xml.schema.impl.XSIntegerBuilder;
 import org.opensaml.core.xml.schema.impl.XSStringBuilder;
 import org.opensaml.core.xml.schema.impl.XSURIBuilder;
-import org.opensaml.saml.common.SAMLObject;
-import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.soap.common.SOAPObject;
-import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -73,12 +70,8 @@ import java.util.Objects;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractSamlObjectBuilder implements Serializable {
-    /**
-     * The constant DEFAULT_ELEMENT_NAME_FIELD.
-     */
-    protected static final String DEFAULT_ELEMENT_NAME_FIELD = "DEFAULT_ELEMENT_NAME";
 
     /**
      * The constant DEFAULT_ELEMENT_LOCAL_NAME_FIELD.
@@ -111,8 +104,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         val doc = constructDocumentFromXml(samlResponse);
 
         if (doc != null) {
-            val signedElement = signSamlElement(doc.getRootElement(),
-                privateKey, publicKey);
+            val signedElement = signSamlElement(doc.getRootElement(), privateKey, publicKey);
             doc.setRootElement(signedElement.detach());
             return new XMLOutputter().outputString(doc);
         }
@@ -135,11 +127,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             return builder.build(new ByteArrayInputStream(xmlString.getBytes(Charset.defaultCharset())));
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             return null;
         }
     }
@@ -222,96 +210,36 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         return nodeListStatus.item(nodeListStatus.getLength() - 1);
     }
 
-    /**
-     * Convert the received jdom element to an Element.
-     *
-     * @param element the element
-     * @return the org.w3c.dom. element
-     */
-    private static Element toDom(final org.jdom2.Element element) {
+    private static Element toDom(final org.jdom2.Element element) throws Exception {
         return Objects.requireNonNull(toDom(element.getDocument())).getDocumentElement();
     }
 
-    /**
-     * Convert the received jdom doc to a Document element.
-     *
-     * @param doc the doc
-     * @return the org.w3c.dom. document
-     */
-    private static org.w3c.dom.Document toDom(final Document doc) {
-        try {
-            LOGGER.trace("Creating document from: [{}]", doc);
-            val xmlOutputter = new XMLOutputter();
-            val elemStrWriter = new StringWriter();
-            xmlOutputter.output(doc, elemStrWriter);
-            val xmlBytes = elemStrWriter.toString().getBytes(Charset.defaultCharset());
-            val dbf = DocumentBuilderFactory.newInstance();
-            dbf.setNamespaceAware(true);
-            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            dbf.setFeature("http://apache.org/xml/features/validation/schema/normalized-value", false);
-            dbf.setFeature("http://javax.xml.XMLConstants/feature/secure-processing", true);
-            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-
-            return dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xmlBytes));
-        } catch (final Exception e) {
-            LOGGER.trace("Caught error during creation of org.w3c.dom.Document: e.getMessage()", e);
-            return null;
-        }
+    private static org.w3c.dom.Document toDom(final Document doc) throws Exception {
+        LOGGER.trace("Creating document from: [{}]", doc);
+        val xmlOutputter = new XMLOutputter();
+        val elemStrWriter = new StringWriter();
+        xmlOutputter.output(doc, elemStrWriter);
+        val xmlBytes = elemStrWriter.toString().getBytes(Charset.defaultCharset());
+        val dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        dbf.setFeature("http://apache.org/xml/features/validation/schema/normalized-value", false);
+        dbf.setFeature("http://javax.xml.XMLConstants/feature/secure-processing", true);
+        dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        return dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xmlBytes));
     }
 
     /**
-     * Create a new SAML object.
+     * Generate a secure random id.
      *
-     * @param <T>        the generic type
-     * @param objectType the object type
-     * @return the t
+     * @return the secure id string
      */
-    @SneakyThrows
-    public <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
-        val qName = getSamlObjectQName(objectType);
-        LOGGER.trace("Attempting to create SAMLObject for type: [{}] and QName: [{}]", objectType, qName);
-        val builder = (SAMLObjectBuilder<T>)
-            XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
-        if (builder == null) {
-            throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
-        }
-        return objectType.cast(builder.buildObject(qName));
-    }
-
-    /**
-     * New soap object t.
-     *
-     * @param <T>        the type parameter
-     * @param objectType the object type
-     * @return the t
-     */
-    @SneakyThrows
-    public <T extends SOAPObject> T newSoapObject(final Class<T> objectType) {
-        val qName = getSamlObjectQName(objectType);
-        LOGGER.trace("Attempting to create SOAPObject for type: [{}] and QName: [{}]", objectType, qName);
-        val builder = (SOAPObjectBuilder<T>)
-            XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
-        if (builder == null) {
-            throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
-        }
-        return objectType.cast(builder.buildObject(qName));
-    }
-
-    /**
-     * Gets saml object QName indicated by field {@link #DEFAULT_ELEMENT_NAME_FIELD}.
-     *
-     * @param objectType the object type
-     * @return the saml object QName
-     */
-    public QName getSamlObjectQName(final Class objectType) {
-        try {
-            val f = objectType.getField(DEFAULT_ELEMENT_NAME_FIELD);
-            return (QName) f.get(null);
-        } catch (final Exception e) {
-            throw new IllegalStateException("Cannot find/access field " + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD, e);
-        }
+    public String generateSecureRandomId() {
+        val random = new HexRandomStringGenerator(RANDOM_ID_SIZE);
+        val hex = random.getNewString();
+        return '_' + hex;
     }
 
     /**
@@ -386,17 +314,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         attrValueObj.setTextContent(value.toString());
         LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
         return attrValueObj;
-    }
-
-    /**
-     * Generate a secure random id.
-     *
-     * @return the secure id string
-     */
-    public String generateSecureRandomId() {
-        val random = new HexRandomStringGenerator(RANDOM_ID_SIZE);
-        val hex = random.getNewString();
-        return '_' + hex;
     }
 
     /**

@@ -3,7 +3,8 @@
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
 echo "Running Radius docker image..."
-docker run --name radius-server -d -p 1812-1813:1812-1813/udp mmoayyed/radius-server
+docker stop radius-server || true && docker rm radius-server || true
+docker run --rm --name radius-server -d -p 1812-1813:1812-1813/udp mmoayyed/radius-server
 
 docker ps | grep "radius-server"
 retVal=$?

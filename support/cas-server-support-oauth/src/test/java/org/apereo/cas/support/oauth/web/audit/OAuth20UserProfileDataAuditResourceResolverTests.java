@@ -39,9 +39,28 @@ public class OAuth20UserProfileDataAuditResourceResolverTests {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{token});
 
-        val result = r.resolveFrom(jp, CollectionUtils.wrap(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, "id",
+        val result = r.resolveFrom(jp, CollectionUtils.wrap(
+            OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, "id",
             OAuth20Constants.CLIENT_ID, "clientid",
             CasProtocolConstants.PARAMETER_SERVICE, "service",
+            "scopes", CollectionUtils.wrapSet("email"),
+            "attributes", CollectionUtils.wrap("attributeName", "attributeValue")));
+        assertTrue(result.length > 0);
+    }
+
+    @Test
+    public void verifyActionFromToken() {
+        val r = new OAuth20UserProfileDataAuditResourceResolver();
+        val token = mock(OAuth20AccessToken.class);
+        when(token.getId()).thenReturn("CODE");
+        when(token.getService()).thenReturn(RegisteredServiceTestUtils.getService());
+        when(token.getClientId()).thenReturn("CLIENTID");
+
+        val jp = mock(JoinPoint.class);
+        when(jp.getArgs()).thenReturn(new Object[]{token});
+
+        val result = r.resolveFrom(jp, CollectionUtils.wrap(
+            OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, "id",
             "scopes", CollectionUtils.wrapSet("email"),
             "attributes", CollectionUtils.wrap("attributeName", "attributeValue")));
         assertTrue(result.length > 0);

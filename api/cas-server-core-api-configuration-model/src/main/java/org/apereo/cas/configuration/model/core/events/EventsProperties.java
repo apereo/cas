@@ -1,14 +1,12 @@
 package org.apereo.cas.configuration.model.core.events;
 
-import org.apereo.cas.configuration.model.support.couchdb.BaseAsynchronousCouchDbProperties;
-import org.apereo.cas.configuration.model.support.influxdb.InfluxDbProperties;
-import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -22,90 +20,51 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("EventsProperties")
 public class EventsProperties implements Serializable {
 
     private static final long serialVersionUID = 1734523424737956370L;
 
     /**
-     * Whether event tracking and recording functionality should be enabled.
+     * Core and common events settings.
      */
-    private boolean enabled = true;
-
-    /**
-     * Whether geolocation should be tracked as part of collected authentication events.
-     * This of course require's consent from the user's browser to collect stats on location.
-     */
-    private boolean trackGeolocation;
-
-    /**
-     * Whether CAS should track the underlying configuration store for changes.
-     * This depends on whether the store provides that sort of functionality.
-     * When running in standalone mode, this typically translates to CAS monitoring
-     * configuration files and reloading context conditionally if there are any changes.
-     */
-    private boolean trackConfigurationModifications = true;
+    @NestedConfigurationProperty
+    private CoreEventsProperties core = new CoreEventsProperties();
 
     /**
      * Track authentication events inside a database.
      */
-    private Jpa jpa = new Jpa();
+    @NestedConfigurationProperty
+    private JpaEventsProperties jpa = new JpaEventsProperties();
 
     /**
      * Track authentication events inside an influxdb database.
      */
-    private InfluxDb influxDb = new InfluxDb();
+    @NestedConfigurationProperty
+    private InfluxDbEventsProperties influxDb = new InfluxDbEventsProperties();
 
     /**
      * Track authentication events inside a mongodb instance.
      */
-    private MongoDb mongo = new MongoDb();
+    @NestedConfigurationProperty
+    private MongoDbEventsProperties mongo = new MongoDbEventsProperties();
 
     /**
      * Track authentication events inside a couchdb instance.
      */
-    private CouchDb couchDb = new CouchDb();
+    @NestedConfigurationProperty
+    private CouchDbEventsProperties couchDb = new CouchDbEventsProperties();
 
-    @RequiresModule(name = "cas-server-support-events-jpa")
-    @Getter
-    @Setter
-    public static class Jpa extends AbstractJpaProperties {
+    /**
+     * Track authentication events inside a DynamoDb instance.
+     */
+    @NestedConfigurationProperty
+    private DynamoDbEventsProperties dynamoDb = new DynamoDbEventsProperties();
 
-        private static final long serialVersionUID = 7647381223153797806L;
-    }
-
-    @RequiresModule(name = "cas-server-support-events-mongo")
-    @Getter
-    @Setter
-    public static class MongoDb extends SingleCollectionMongoDbProperties {
-
-        private static final long serialVersionUID = -1918436901491275547L;
-
-        public MongoDb() {
-            setCollection("MongoDbCasEventRepository");
-        }
-    }
-
-    @RequiresModule(name = "cas-server-support-events-influxdb")
-    @Getter
-    @Setter
-    public static class InfluxDb extends InfluxDbProperties {
-
-        private static final long serialVersionUID = -3918436901491275547L;
-
-        public InfluxDb() {
-            setDatabase("CasInfluxDbEvents");
-        }
-    }
-
-    @RequiresModule(name = "cas-server-support-events-couchdb")
-    @Getter
-    @Setter
-    public static class CouchDb extends BaseAsynchronousCouchDbProperties {
-
-        private static final long serialVersionUID = -1587160128953366615L;
-
-        public CouchDb() {
-            setDbName("events");
-        }
-    }
+    /**
+     * Track authentication events inside a Redis instance.
+     */
+    @NestedConfigurationProperty
+    private RedisEventsProperties redis = new RedisEventsProperties();
+    
 }

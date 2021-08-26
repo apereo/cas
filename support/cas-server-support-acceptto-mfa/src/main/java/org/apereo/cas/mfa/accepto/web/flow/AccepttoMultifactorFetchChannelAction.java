@@ -3,6 +3,7 @@ package org.apereo.cas.mfa.accepto.web.flow;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.accepto.AccepttoApiUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -30,21 +31,21 @@ import java.security.PublicKey;
 @RequiredArgsConstructor
 public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
     private final CasConfigurationProperties casProperties;
-    private final SessionStore<JEEContext> sessionStore;
+    private final SessionStore sessionStore;
     private final PublicKey apiPublicKey;
 
     @Override
     public Event doExecute(final RequestContext requestContext) throws Exception {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        val webContext = new JEEContext(request, response, this.sessionStore);
+        val webContext = new JEEContext(request, response);
 
         val channel = authenticateAndFetchChannel(requestContext);
         LOGGER.debug("Storing channel [{}] in session", channel);
-        AccepttoWebflowUtils.storeChannelInSessionStore(channel, webContext);
+        AccepttoWebflowUtils.storeChannelInSessionStore(channel, webContext, sessionStore);
 
         val authentication = WebUtils.getInProgressAuthentication();
-        AccepttoWebflowUtils.storeAuthenticationInSessionStore(authentication, webContext);
+        AccepttoWebflowUtils.storeAuthenticationInSessionStore(authentication, webContext, sessionStore);
 
         val accepttoRedirectUrl = buildAccepttoAuthenticationSelectionUrl(request, channel);
         LOGGER.debug("Redirecting to [{}]", accepttoRedirectUrl);
@@ -81,7 +82,7 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
             val existingChannel = AccepttoWebflowUtils.getChannel(requestContext);
             if (existingChannel.isPresent()) {
                 val channel = existingChannel.get();
-                LOGGER.debug("Using existing channel retrieved as [{}}", channel);
+                LOGGER.debug("Using existing channel retrieved as [{}]", channel);
                 return channel;
             }
 
@@ -99,11 +100,7 @@ public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
                 return channel;
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         throw new AuthenticationException("Unable to fetch channel for user");
     }

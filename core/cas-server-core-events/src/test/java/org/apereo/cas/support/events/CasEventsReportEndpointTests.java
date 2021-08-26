@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Simple")
+@Tag("ActuatorEndpoint")
 public class CasEventsReportEndpointTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -90,8 +90,9 @@ public class CasEventsReportEndpointTests {
                 private final Collection<CasEvent> events = new LinkedHashSet<>();
 
                 @Override
-                public void saveInternal(final CasEvent event) {
+                public CasEvent saveInternal(final CasEvent event) {
                     events.add(event);
+                    return event;
                 }
 
                 @Override

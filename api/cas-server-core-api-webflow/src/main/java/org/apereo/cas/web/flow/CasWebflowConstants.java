@@ -7,11 +7,16 @@ package org.apereo.cas.web.flow;
  * @since 5.0.0
  */
 public interface CasWebflowConstants {
+    /*
+     ****************************************
+     * Errors.
+     ****************************************
+     */
 
     /**
-     * Base path for webflow configuration files.
+     * Attribute to track exceptions in models.
      */
-    String BASE_CLASSPATH_WEBFLOW = "classpath*:/webflow";
+    String ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION = "rootCauseException";
 
     /*
      ****************************************
@@ -19,6 +24,20 @@ public interface CasWebflowConstants {
      ****************************************
      */
 
+    /**
+     * The transition state 'discovery'.
+     */
+    String TRANSITION_ID_DISCOVERY = "discovery";
+
+    /**
+     * The transition state 'execute'.
+     */
+    String TRANSITION_ID_EXECUTE = "execute";
+
+    /**
+     * The transition state 'back'.
+     */
+    String TRANSITION_ID_BACK = "back";
 
     /**
      * The transition state 'captchaError'.
@@ -46,6 +65,16 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_FINALIZE = "finalize";
 
     /**
+     * The view id 'surrogateListView'.
+     */
+    String TRANSITION_ID_SURROGATE_VIEW = "surrogateListView";
+
+    /**
+     * Skip surrogate view if no surrogates can be found.
+     */
+    String TRANSITION_ID_SKIP_SURROGATE = "skipSurrogateView";
+
+    /**
      * The transition state 'warn'.
      */
     String TRANSITION_ID_WARN = "warn";
@@ -61,14 +90,29 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_SUBMIT = "submit";
 
     /**
+     * The transition state 'resend'.
+     */
+    String TRANSITION_ID_RESEND = "resend";
+
+    /**
      * The transition state 'error'.
      */
     String TRANSITION_ID_ERROR = "error";
 
     /**
+     * The transition state 'validate'.
+     */
+    String TRANSITION_ID_VALIDATE = "validate";
+
+    /**
      * The transition state 'resume'.
      */
     String TRANSITION_ID_RESUME = "resume";
+
+    /**
+     * Transition id `retry`.
+     */
+    String TRANSITION_ID_RETRY = "retry";
 
     /**
      * The transition state 'gateway'.
@@ -129,6 +173,19 @@ public interface CasWebflowConstants {
      * Transition id 'register'.
      */
     String TRANSITION_ID_REGISTER = "register";
+    /**
+     * Transition id 'delete'.
+     */
+    String TRANSITION_ID_DELETE = "delete";
+    /**
+     * Transition id 'store'.
+     */
+    String TRANSITION_ID_STORE = "store";
+
+    /**
+     * Transition id 'select'.
+     */
+    String TRANSITION_ID_SELECT = "select";
 
     /**
      * The transition state 'success'.
@@ -139,6 +196,16 @@ public interface CasWebflowConstants {
      * Transition id 'redirect' .
      */
     String TRANSITION_ID_REDIRECT = "redirect";
+
+    /**
+     * Transition id 'post' .
+     */
+    String TRANSITION_ID_POST = "post";
+
+    /**
+     * Transition id 'mfa-composite'.
+     */
+    String TRANSITION_ID_MFA_COMPOSITE = "mfa-composite";
 
     /**
      * Transition id 'skip' .
@@ -196,9 +263,18 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_SUCCESS_WITH_WARNINGS = "successWithWarnings";
 
     /**
+     * Transition id 'passwordUpdateSuccess'.
+     */
+    String TRANSITION_ID_PASSWORD_UPDATE_SUCCESS = "passwordUpdateSuccess";
+
+    /**
      * Transition id 'resetPassword'.
      */
     String TRANSITION_ID_RESET_PASSWORD = "resetPassword";
+    /**
+     * Transition id 'invalidPasswordResetToken'.
+     */
+    String TRANSITION_ID_INVALID_PASSWORD_RESET_TOKEN = "invalidPasswordResetToken";
 
     /**
      * Transition id 'forgotUsername'.
@@ -244,6 +320,22 @@ public interface CasWebflowConstants {
      * The state id 'registerTrustedDevice'.
      */
     String STATE_ID_REGISTER_TRUSTED_DEVICE = "registerTrustedDevice";
+
+    /**
+     * The state id 'finishedInterrupt'.
+     */
+    String STATE_ID_FINISHED_INTERRUPT = "finishedInterrupt";
+
+    /**
+     * The state id 'inquireInterruptAction'.
+     */
+    String STATE_ID_INQUIRE_INTERRUPT_ACTION = "inquireInterruptAction";
+
+    /**
+     * The state id 'finalizeInterruptFlowAction'.
+     */
+    String STATE_ID_FINALIZE_INTERRUPT_ACTION = "finalizeInterruptFlowAction";
+
     /**
      * The state id 'prepareRegisterTrustedDevice'.
      */
@@ -258,6 +350,12 @@ public interface CasWebflowConstants {
      * 'finishMfaTrustedAuth' state id.
      */
     String STATE_ID_FINISH_MFA_TRUSTED_AUTH = "finishMfaTrustedAuth";
+
+    /**
+     * 'getSecurityQuestionsView' state id.
+     */
+    String STATE_ID_SECURITY_QUESTIONS_VIEW = "getSecurityQuestionsView";
+
 
     /**
      * The transition state 'initialAuthenticationRequestValidationCheck'.
@@ -275,6 +373,11 @@ public interface CasWebflowConstants {
     String STATE_ID_TICKET_GRANTING_TICKET_CHECK = "ticketGrantingTicketCheck";
 
     /**
+     * The state id 'startX509Authenticate'.
+     */
+    String STATE_ID_X509_START = "startX509Authenticate";
+
+    /**
      * The state id 'createTicketGrantingTicket'.
      */
     String STATE_ID_CREATE_TICKET_GRANTING_TICKET = "createTicketGrantingTicket";
@@ -285,9 +388,44 @@ public interface CasWebflowConstants {
     String STATE_ID_INIT_LOGIN_FORM = "initializeLoginForm";
 
     /**
+     * The state 'afterInitializeLoginForm'.
+     */
+    String STATE_ID_AFTER_INIT_LOGIN_FORM = "afterInitializeLoginForm";
+
+    /**
+     * The state 'cancel'.
+     */
+    String STATE_ID_CANCEL = "cancel";
+
+    /**
+     * The state 'surrogateListView'.
+     */
+    String STATE_ID_SURROGATE_VIEW = "surrogateListView";
+
+    /**
+     * The state 'loadSurrogatesAction'.
+     */
+    String STATE_ID_LOAD_SURROGATES_ACTION = "loadSurrogatesAction";
+
+    /**
+     * The state 'selectSurrogate'.
+     */
+    String STATE_ID_SELECT_SURROGATE = "selectSurrogate";
+
+    /**
+     * The state 'duoUniversalPromptPrepareValidate'.
+     */
+    String STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN = "duoUniversalPromptPrepareValidate";
+
+    /**
      * The state 'viewLoginForm'.
      */
     String STATE_ID_VIEW_LOGIN_FORM = "viewLoginForm";
+
+    /**
+     * The state 'unavailable'.
+     */
+    String STATE_ID_UNAVAILABLE = "unavailable";
 
     /**
      * The state 'serviceAuthorizationCheck'.
@@ -305,7 +443,7 @@ public interface CasWebflowConstants {
     String STATE_ID_GATEWAY_REQUEST_CHECK = "gatewayRequestCheck";
 
     /**
-     * The state 'gatewayRequestCheck'.
+     * The state 'generateServiceTicket'.
      */
     String STATE_ID_GENERATE_SERVICE_TICKET = "generateServiceTicket";
 
@@ -348,6 +486,21 @@ public interface CasWebflowConstants {
      * The state 'mfaFailure'.
      */
     String STATE_ID_MFA_FAILURE = "mfaFailure";
+
+    /**
+     * The state 'deny'.
+     */
+    String STATE_ID_DENY = "deny";
+
+    /**
+     * The state 'finalizeWarning'.
+     */
+    String STATE_ID_FINALIZE_WARNING = "finalizeWarning";
+
+    /**
+     * The state 'registerDevice'.
+     */
+    String STATE_ID_REGISTER_DEVICE = "registerDevice";
 
     /**
      * The state 'serviceUnauthorizedCheck'.
@@ -435,9 +588,24 @@ public interface CasWebflowConstants {
     String STATE_ID_FINISH_LOGOUT = "finishLogout";
 
     /**
+     * State id 'redirectToDelegatedAuthnProviderView'.
+     */
+    String STATE_ID_REDIRECT_TO_DELEGATED_AUTHN_PROVIDER_VIEW = "redirectToDelegatedAuthnProviderView";
+
+    /**
+     * State id 'delegatedAuthenticationDynamicDiscoveryView'.
+     */
+    String STATE_ID_DELEGATED_AUTHN_DYNAMIC_DISCOVERY_VIEW = "delegatedAuthenticationDynamicDiscoveryView";
+
+    /**
+     * State id 'delegatedAuthenticationProviderDiscoveryExecution'.
+     */
+    String STATE_ID_DELEGATED_AUTHN_DYNAMIC_DISCOVERY_EXECUTION = "delegatedAuthenticationProviderDiscoveryExecution";
+
+    /**
      * Delegated authentication state id.
      */
-    String STATE_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
+    String STATE_ID_DELEGATED_AUTHENTICATION = "delegatedAuthentication";
 
     /**
      * State id 'frontLogout'.
@@ -500,6 +668,11 @@ public interface CasWebflowConstants {
     String STATE_ID_MFA_CHECK_BYPASS = "mfaCheckBypass";
 
     /**
+     * State if for MFA composite events.
+     */
+    String STATE_ID_MFA_COMPOSITE = "mfa-composite";
+
+    /**
      * State that can be used by MFA providers that offer preAuth endpoints.
      */
     String STATE_ID_MFA_PRE_AUTH = "mfaPreAuth";
@@ -517,12 +690,22 @@ public interface CasWebflowConstants {
     /**
      * The state id 'registerDeviceView'.
      */
-    String STATE_ID_REGISTER_DEVICE = "registerDeviceView";
+    String STATE_ID_REGISTER_DEVICE_VIEW = "registerDeviceView";
+
+    /**
+     * State id 'verifyPasswordResetRequest'.
+     */
+    String STATE_ID_VERIFY_PASSWORD_RESET_REQUEST = "verifyPasswordResetRequest";
 
     /**
      * The state id 'spnego'.
      */
     String STATE_ID_SPNEGO = "spnego";
+
+    /**
+     * The state id 'interruptView'.
+     */
+    String STATE_ID_INTERRUPT_VIEW = "interruptView";
 
     /**
      * The state id 'startSpnegoAuthenticate'.
@@ -535,50 +718,124 @@ public interface CasWebflowConstants {
     String STATE_ID_EVALUATE_SPNEGO_CLIENT = "evaluateClientRequest";
 
     /**
-     * The view state 'casPac4jStopWebflow'.
-     */
-    String STATE_ID_PAC4J_STOP_WEBFLOW = "casPac4jStopWebflow";
-
-    /**
-     * The view state 'casWsFedStopWebflow'.
-     */
-    String STATE_ID_WSFED_STOP_WEBFLOW = "casWsFedStopWebflow";
-
-    /**
-     * The view state 'sendPasswordResetInstructions'.
+     * The state state 'sendPasswordResetInstructions'.
      */
     String STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS = "sendPasswordResetInstructions";
 
     /**
-     * The view state 'sendForgotUsernameInstructions'.
+     * The state state 'sendForgotUsernameInstructions'.
      */
-    String STATE_ID_FORGOT_USERNAME_INSTRUCTIONS = "sendForgotUsernameInstructions";
+    String STATE_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS = "sendForgotUsernameInstructions";
 
     /**
      * The view state 'passwordChangeAction'.
      */
     String STATE_ID_PASSWORD_CHANGE_ACTION = "passwordChangeAction";
 
+    /**
+     * The state 'passwordResetErrorView'.
+     */
+    String STATE_ID_PASSWORD_RESET_ERROR_VIEW = "passwordResetErrorView";
+
+    /**
+     * State id `delegatedAuthenticationClientRetry`.
+     */
+    String STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY = "delegatedAuthenticationClientRetry";
+
+    /**
+     * View id 'casBadWorkstationView'.
+     */
+    String STATE_ID_INVALID_WORKSTATION = "casBadWorkstationView";
+
+    /**
+     * State id 'casAccountDisabledView'.
+     */
+    String STATE_ID_ACCOUNT_DISABLED = "casAccountDisabledView";
+
+    /**
+     * State id 'casAccountLockedView'.
+     */
+    String STATE_ID_ACCOUNT_LOCKED = "casAccountLockedView";
+
+    /**
+     * State id 'casBadHoursView'.
+     */
+    String STATE_ID_INVALID_AUTHENTICATION_HOURS = "casBadHoursView";
+
+    /**
+     * State id 'casAuthenticationBlockedView'.
+     */
+    String STATE_ID_AUTHENTICATION_BLOCKED = "casAuthenticationBlockedView";
+
+    /**
+     * State id 'casMustChangePassView'.
+     */
+    String STATE_ID_MUST_CHANGE_PASSWORD = "casMustChangePassView";
+    /**
+     * State id 'verifySecurityQuestions'.
+     */
+    String STATE_ID_VERIFY_SECURITY_QUESTIONS = "verifySecurityQuestions";
+
+    /**
+     * State id 'casExpiredPassView'.
+     */
+    String STATE_ID_EXPIRED_PASSWORD = "casExpiredPassView";
+
+    /**
+     * State id 'casForgotUsernameSendInfoView'.
+     */
+    String STATE_ID_FORGOT_USERNAME_ACCT_INFO = "casForgotUsernameSendInfoView";
+
+    /**
+     * State id 'casResetPasswordSentInstructions'.
+     */
+    String STATE_ID_SENT_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSentInstructionsView";
+
+    /**
+     * State id 'casResetPasswordSendInstructions'.
+     */
+    String STATE_ID_SEND_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSendInstructionsView";
+
+    /**
+     * State id 'casForgotUsernameSentInfoView'.
+     */
+    String STATE_ID_SENT_FORGOT_USERNAME_ACCT_INFO = "casForgotUsernameSentInfoView";
+
+    /**
+     * State id 'accountRegistrationCheck'.
+     */
+    String STATE_ID_CHECK_ACCOUNT_REGISTRATION = "accountRegistrationCheck";
+
+    /**
+     * State id 'viewRegistration'.
+     */
+    String STATE_ID_VIEW_REGISTRATION = "viewRegistration";
+
+    /**
+     * State id 'saveRegistration'.
+     */
+    String STATE_ID_SAVE_REGISTRATION = "saveRegistration";
+
+    /**
+     * State id 'initPasswordReset'.
+     */
+    String STATE_ID_INIT_PASSWORD_RESET = "initPasswordReset";
+
+    /**
+     * State id 'compositeMfaProviderSelectedAction'.
+     */
+    String STATE_ID_MFA_PROVIDER_SELECTED = "compositeMfaProviderSelectedAction";
+
     /*
      ****************************************
      * Views.
      ****************************************
      */
-    
+
     /**
      * The view state 'error'.
      */
     String VIEW_ID_ERROR = "error";
-
-    /**
-     * View id when MFA provider has been detected as unavailable and failureMode is closed.
-     */
-    String VIEW_ID_MFA_UNAVAILABLE = "casMfaUnavailableView";
-
-    /**
-     * View id when MFA provider has denied access to a user because of account lockout.
-     */
-    String VIEW_ID_MFA_DENIED = "casMfaDeniedView";
 
     /**
      * The view id 'casPostResponseView'.
@@ -586,105 +843,40 @@ public interface CasWebflowConstants {
     String VIEW_ID_POST_RESPONSE = "casPostResponseView";
 
     /**
-     * The view id 'casGenericSuccessView'.
-     */
-    String VIEW_ID_GENERIC_SUCCESS = "casGenericSuccessView";
-
-    /**
-     * The view id 'casConfirmView'.
-     */
-    String VIEW_ID_CONFIRM = "casConfirmView";
-
-    /**
      * The view id 'casServiceErrorView'.
      */
-    String VIEW_ID_SERVICE_ERROR = "casServiceErrorView";
-
-    /**
-     * View id 'casResetPasswordSendInstructions'.
-     */
-    String VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSendInstructionsView";
-
-    /**
-     * View id 'casForgotUsernameSentInfoView'.
-     */
-    String VIEW_ID_SENT_FORGOT_USERNAME_ACCT_INFO = "casForgotUsernameSentInfoView";
-
-    /**
-     * View id 'casForgotUsernameSendInfoView'.
-     */
-    String VIEW_ID_FORGOT_USERNAME_ACCT_INFO = "casForgotUsernameSendInfoView";
-
-    /**
-     * View id 'casBadHoursView'.
-     */
-    String VIEW_ID_INVALID_AUTHENTICATION_HOURS = "casBadHoursView";
-
-    /**
-     * View id 'casPasswordUpdateSuccessView'.
-     */
-    String VIEW_ID_PASSWORD_UPDATE_SUCCESS = "casPasswordUpdateSuccessView";
-
-    /**
-     * View id 'casAuthenticationBlockedView'.
-     */
-    String VIEW_ID_AUTHENTICATION_BLOCKED = "casAuthenticationBlockedView";
-
-    /**
-     * View id 'casResetPasswordErrorView'.
-     */
-    String VIEW_ID_PASSWORD_RESET_ERROR = "casResetPasswordErrorView";
-
-    /**
-     * View id 'casBadWorkstationView'.
-     */
-    String VIEW_ID_INVALID_WORKSTATION = "casBadWorkstationView";
-
-    /**
-     * View id 'casAccountDisabledView'.
-     */
-    String VIEW_ID_ACCOUNT_DISABLED = "casAccountDisabledView";
-
-    /**
-     * View id 'casAccountLockedView'.
-     */
-    String VIEW_ID_ACCOUNT_LOCKED = "casAccountLockedView";
-
-    /**
-     * View id 'casMustChangePassView'.
-     */
-    String VIEW_ID_MUST_CHANGE_PASSWORD = "casMustChangePassView";
-
-    /**
-     * View id 'casExpiredPassView'.
-     */
-    String VIEW_ID_EXPIRED_PASSWORD = "casExpiredPassView";
-
-    /**
-     * View id 'casResetPasswordSentInstructions'.
-     */
-    String VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSentInstructionsView";
+    String VIEW_ID_SERVICE_ERROR = "error/casServiceErrorView";
 
     /**
      * View name used for form-login into admin/actuator endpoints.
      */
-    String VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW = "casAdminLoginView";
+    String VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW = "admin/casAdminLoginView";
 
     /**
      * View id 'casDelegatedAuthnErrorView'.
      */
-    String VIEW_ID_DELEGATED_AUTHN_ERROR_VIEW = "casDelegatedAuthnErrorView";
+    String VIEW_ID_DELEGATED_AUTHN_ERROR_VIEW = "delegated-authn/casDelegatedAuthnErrorView";
 
+    /**
+     * The view state 'casPac4jStopWebflow'.
+     */
+    String VIEW_ID_PAC4J_STOP_WEBFLOW = "delegated-authn/casDelegatedAuthnStopWebflow";
+
+    /**
+     * The view state 'casSessionStorageWriteView'.
+     */
+    String VIEW_ID_SESSION_STORAGE_WRITE = "storage/casSessionStorageWriteView";
+
+    /**
+     * The view state 'casSessionStorageReadView'.
+     */
+    String VIEW_ID_SESSION_STORAGE_READ = "storage/casSessionStorageReadView";
 
     /*
      ****************************************
      * Decisions.
      ****************************************
      */
-    /**
-     * The decision state 'finishLogout'.
-     */
-    String DECISION_STATE_FINISH_LOGOUT = "finishLogout";
 
     /**
      * Action to check if login should redirect to password reset subflow.
@@ -729,23 +921,74 @@ public interface CasWebflowConstants {
      */
 
     /**
+     * Action id 'delegatedAuthenticationProviderDynamicDiscoveryAction'.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_DYNAMIC_DISCOVERY_EXECUTION = "delegatedAuthenticationProviderDynamicDiscoveryExecutionAction";
+
+    /**
+     * Action id 'multifactorProviderSelectedAction'.
+     */
+    String ACTION_ID_MULTIFACTOR_PROVIDER_SELECTED = "multifactorProviderSelectedAction";
+
+    /**
+     * Action id 'injectResponseHeadersAction'.
+     */
+    String ACTION_ID_INJECT_RESPONSE_HEADERS = "injectResponseHeadersAction";
+
+    /**
+     * Action id 'serviceAuthorizationCheck'.
+     */
+    String ACTION_ID_SERVICE_AUTHZ_CHECK = "serviceAuthorizationCheck";
+
+    /**
+     * Action id 'gatewayServicesManagementCheck'.
+     */
+    String ACTION_ID_GATEWAY_CHECK = "gatewayServicesManagementCheck";
+
+    /**
      * Action id 'validateCaptchaAction'.
      */
     String ACTION_ID_VALIDATE_CAPTCHA = "validateCaptchaAction";
+
+    /**
+     * Action id 'x509Check'.
+     */
+    String ACTION_ID_X509_CHECK = "x509Check";
+
+    /**
+     * Action id 'initializeLoginAction'.
+     */
+    String ACTION_ID_INIT_LOGIN_ACTION = "initializeLoginAction";
+
     /**
      * Action id 'initializeCaptchaAction'.
      */
     String ACTION_ID_INIT_CAPTCHA = "initializeCaptchaAction";
 
     /**
-     * Action id 'validateCaptchaAction'.
+     * Action id 'passwordResetValidateCaptchaAction'.
      */
     String ACTION_ID_PASSWORD_RESET_VALIDATE_CAPTCHA = "passwordResetValidateCaptchaAction";
-    
+
+    /**
+     * Action id 'forgotUsernameValidateCaptchaAction'.
+     */
+    String ACTION_ID_FORGOT_USERNAME_VALIDATE_CAPTCHA = "forgotUsernameValidateCaptchaAction";
+
     /**
      * Action id 'passwordResetInitializeCaptchaAction'.
      */
     String ACTION_ID_PASSWORD_RESET_INIT_CAPTCHA = "passwordResetInitializeCaptchaAction";
+
+    /**
+     * Action id 'forgotUsernameInitializeCaptchaAction'.
+     */
+    String ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA = "forgotUsernameInitializeCaptchaAction";
+
+    /**
+     * Action id 'initPasswordChangeAction .
+     */
+    String ACTION_ID_INIT_PASSWORD_CHANGE = "initPasswordChangeAction";
 
     /**
      * Action id 'renderLoginFormAction'.
@@ -756,11 +999,6 @@ public interface CasWebflowConstants {
      * Action id 'authenticationViaFormAction'.
      */
     String ACTION_ID_AUTHENTICATION_VIA_FORM_ACTION = "authenticationViaFormAction";
-
-    /**
-     * Action id 'compositeMfaProviderSelectedAction'.
-     */
-    String ACTION_ID_MFA_PROVIDER_SELECTED = "compositeMfaProviderSelectedAction";
 
     /**
      * Action id 'initialFlowSetupAction'.
@@ -813,6 +1051,25 @@ public interface CasWebflowConstants {
     String ACTION_ID_LOGOUT_VIEW_SETUP = "logoutViewSetupAction";
 
     /**
+     * Action id 'serviceWarningAction'.
+     */
+    String ACTION_ID_SERVICE_WARNING = "serviceWarningAction";
+    /**
+     * Action id 'finishLogoutAction'.
+     */
+    String ACTION_ID_FINISH_LOGOUT = "finishLogoutAction";
+
+    /**
+     * Action id 'populateSpringSecurityContextAction'.
+     */
+    String ACTION_ID_POPULATE_SECURITY_CONTEXT = "populateSpringSecurityContextAction";
+
+    /**
+     * Action id 'logoutAction'.
+     */
+    String ACTION_ID_LOGOUT = "logoutAction";
+
+    /**
      * Action id 'authenticationExceptionHandler'.
      */
     String ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER = "authenticationExceptionHandler";
@@ -831,6 +1088,22 @@ public interface CasWebflowConstants {
      * Action id `delegatedAuthenticationAction`.
      */
     String ACTION_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
+
+    /**
+     * Action id `delegatedAuthenticationClientLogoutAction`.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT = "delegatedAuthenticationClientLogoutAction";
+
+
+    /**
+     * Action id `delegatedAuthenticationClientFinishLogoutAction`.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_FINISH_LOGOUT = "delegatedAuthenticationClientFinishLogoutAction";
+
+    /**
+     * Action id `delegatedAuthenticationClientFinishLogoutAction`.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY = "delegatedAuthenticationClientRetryAction";
 
     /**
      * Action id `renewAuthenticationRequestCheckAction`.
@@ -864,4 +1137,66 @@ public interface CasWebflowConstants {
      * Action id 'acceptableUsagePolicyVerifyServiceAction .
      */
     String ACTION_ID_AUP_VERIFY_SERVICE = "acceptableUsagePolicyVerifyServiceAction";
+
+    /**
+     * Action id 'sendForgotUsernameInstructionsAction .
+     */
+    String ACTION_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS_ACTION = "sendForgotUsernameInstructionsAction";
+
+    /**
+     * Action id 'prepareInterruptViewAction .
+     */
+    String ACTION_ID_PREPARE_INTERRUPT_VIEW = "prepareInterruptViewAction";
+
+    /**
+     * Action id 'inquireInterruptAction .
+     */
+    String ACTION_ID_INQUIRE_INTERRUPT = "inquireInterruptAction";
+
+    /**
+     * Action id 'prepareMultifactorProviderSelectionAction'.
+     */
+    String ACTION_ID_PREPARE_MULTIFACTOR_PROVIDER_SELECTION = "prepareMultifactorProviderSelectionAction";
+
+    /**
+     * Action id 'finalizeInterruptFlowAction .
+     */
+    String ACTION_ID_FINALIZE_INTERRUPT = "finalizeInterruptFlowAction";
+
+    /**
+     * Action id 'oneTimeTokenAuthenticationWebflowAction .
+     */
+    String ACTION_ID_OTP_AUTHENTICATION_ACTION = "oneTimeTokenAuthenticationWebflowAction";
+
+    /**
+     * Action id 'loadSurrogatesListAction .
+     */
+    String ACTION_ID_LOAD_SURROGATES_LIST_ACTION = "loadSurrogatesListAction";
+
+    /**
+     * Action id 'selectSurrogateAction .
+     */
+    String ACTION_ID_SELECT_SURROGATE_ACTION = "selectSurrogateAction";
+
+    /**
+     * Action id 'duoUniversalPromptPrepareLoginAction .
+     */
+    String ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN = "duoUniversalPromptPrepareLoginAction";
+
+    /**
+     * Action id 'mfaVerifyTrustAction .
+     */
+    String ACTION_ID_MFA_VERIFY_TRUST_ACTION = "mfaVerifyTrustAction";
+
+    /**
+     * Action id 'mfaSetTrustAction .
+     */
+    String ACTION_ID_MFA_SET_TRUST_ACTION = "mfaSetTrustAction";
+
+    /**
+     * Action id 'duoUniversalPromptPrepareLoginAction .
+     */
+    String ACTION_ID_MFA_PREPARE_TRUST_DEVICE_VIEW_ACTION = "mfaPrepareTrustDeviceViewAction";
+
+
 }

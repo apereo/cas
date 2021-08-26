@@ -1,18 +1,22 @@
-<script type="text/javascript" th:src="@{#{webjars.es5shim.js}}"></script>
-<script type="text/javascript" th:src="@{#{webjars.cssVarsPonyfill.js}}"></script>
-<script src="//www.google.com/recaptcha/api.js" async defer
-    th:if="${recaptchaSiteKey != null and recaptchaVersion=='v2'}"></script>
-<script th:src="${'//www.google.com/recaptcha/api.js?render=' + recaptchaSiteKey}"
-    th:if="${recaptchaSiteKey != null and recaptchaVersion == 'v3'}"></script>
-
 <script type="text/javascript" th:src="@{#{webjars.jquery.js}}"></script>
-<script type="text/javascript" th:src="@{#{webjars.material-components.js}}"></script>
+<span th:remove="tag" th:if="${'true' == #strings.defaultString(#themes.code('cas.js.core.enabled'), 'true')}">
+    <span th:replace="fragments/material :: material">
+        <a href="fragments/material.html">Material</a> fragment will go here
+    </span>
+</span>
 
-<script type="text/javascript" th:src="@{${#themes.code('cas.standard.js.file')}}"></script>
+<span th:remove="tag" th:each="file : ${#strings.arraySplit(#themes.code('cas.standard.js.file'), ',')}">
+    <script type="text/javascript" th:src="@{${file}}"></script>
+</span>
+
 
 <script th:inline="javascript">
-    resourceLoadedSuccessfully();
-    cssVars({});
+    if (typeof resourceLoadedSuccessfully === "function") {
+        resourceLoadedSuccessfully();
+    }
+    $(function() {
+        cssVars({onlyLegacy: true});
+    })
 </script>
 
 <script th:inline="javascript">

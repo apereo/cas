@@ -31,8 +31,14 @@ public class DefaultTicketFactory implements TicketFactory {
      * @param factory     the factory
      * @return the default ticket factory
      */
-    public DefaultTicketFactory addTicketFactory(final @NonNull Class<? extends Ticket> ticketClass, final @NonNull TicketFactory factory) {
+    public DefaultTicketFactory addTicketFactory(final @NonNull Class<? extends Ticket> ticketClass,
+                                                 final @NonNull TicketFactory factory) {
         this.factoryMap.put(ticketClass.getCanonicalName(), factory);
         return this;
+    }
+
+    @Override
+    public Class<? extends Ticket> getTicketType() {
+        return Ticket.class;
     }
 }

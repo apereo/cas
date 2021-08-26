@@ -4,6 +4,7 @@ dependencies {
     implementation libraries.dropwizard
     implementation libraries.apachecxf
     implementation libraries.bouncycastle
+    implementation libraries.wss4j
 
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-tickets-api")
@@ -37,4 +38,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
 }

@@ -13,6 +13,7 @@ import java.io.Serializable;
  * @author Jerome LELEU
  * @since 6.2.0
  */
+@FunctionalInterface
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceProxyGrantingTicketExpirationPolicy extends Serializable {
     /**

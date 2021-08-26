@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Tag("Simple")
+@Tag("Tickets")
 public class TicketEncryptionDecryptionTests {
 
     private final MockTicketGrantingTicket tgt = new MockTicketGrantingTicket("casuser");

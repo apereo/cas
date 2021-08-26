@@ -21,8 +21,8 @@ import java.util.HashMap;
  * This controller is part of the {@link org.apereo.cas.web.DelegatingController}.
  *
  * @author Misagh Moayyed
- * @deprecated 6.2
  * @since 4.2
+ * @deprecated 6.2
  */
 @Slf4j
 @Deprecated(since = "6.2.0")
@@ -50,6 +50,7 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
                 return new ModelAndView(getServiceValidateConfigurationContext().getValidationViewFactory()
                     .getSuccessView(getClass()), parameters);
             }
+
             LOGGER.debug("Signature verification request unsuccessful.");
             return new ModelAndView(getServiceValidateConfigurationContext().getValidationViewFactory()
                 .getFailureView(getClass()), parameters);

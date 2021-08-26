@@ -3,8 +3,10 @@ dependencies {
     implementation libraries.awsjavadynamodb
 
     implementation project(":support:cas-server-support-aws")
+    implementation project(":support:cas-server-support-dynamodb-core")
     implementation project(":core:cas-server-core-configuration-api")
-
+    implementation project(":core:cas-server-core-util-api")
+    
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")

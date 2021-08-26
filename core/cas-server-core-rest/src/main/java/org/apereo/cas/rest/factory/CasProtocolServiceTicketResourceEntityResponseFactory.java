@@ -2,8 +2,8 @@ package org.apereo.cas.rest.factory;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +26,9 @@ public class CasProtocolServiceTicketResourceEntityResponseFactory implements Se
     protected final CentralAuthenticationService centralAuthenticationService;
 
     @Override
-    public ResponseEntity<String> build(final String ticketGrantingTicket, final Service service, final AuthenticationResult authenticationResult) {
-        val serviceTicketId = grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
+    public ResponseEntity<String> build(final String ticketGrantingTicket, final WebApplicationService webApplicationService,
+                                        final AuthenticationResult authenticationResult) {
+        val serviceTicketId = grantServiceTicket(ticketGrantingTicket, webApplicationService, authenticationResult);
         return new ResponseEntity<>(serviceTicketId, HttpStatus.OK);
     }
 
@@ -39,7 +40,8 @@ public class CasProtocolServiceTicketResourceEntityResponseFactory implements Se
      * @param authenticationResult the authentication result
      * @return the service ticket
      */
-    protected String grantServiceTicket(final String ticketGrantingTicket, final Service service, final AuthenticationResult authenticationResult) {
+    protected String grantServiceTicket(final String ticketGrantingTicket, final WebApplicationService service,
+                                        final AuthenticationResult authenticationResult) {
         val ticket = centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
 
         LOGGER.debug("Generated service ticket [{}]", ticket.getId());
@@ -47,8 +49,8 @@ public class CasProtocolServiceTicketResourceEntityResponseFactory implements Se
     }
 
     @Override
-    public boolean supports(final Service service, final AuthenticationResult authenticationResult) {
-        return service != null && service instanceof SimpleWebApplicationServiceImpl;
+    public boolean supports(final WebApplicationService service, final AuthenticationResult authenticationResult) {
+        return service instanceof SimpleWebApplicationServiceImpl;
     }
 
     @Override

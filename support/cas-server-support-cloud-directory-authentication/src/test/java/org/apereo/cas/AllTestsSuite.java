@@ -1,13 +1,13 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.authentication.CloudDirectoryAuthenticationHandlerTests;
-import org.apereo.cas.clouddirectory.DefaultCloudDirectoryRepositoryTests;
+import org.apereo.cas.authentication.AmazonCloudDirectoryAuthenticationHandlerTests;
+import org.apereo.cas.clouddirectory.AmazonCloudDirectoryUtilsTests;
+import org.apereo.cas.clouddirectory.DefaultAmazonCloudDirectoryRepositoryTests;
 import org.apereo.cas.config.CloudDirectoryAuthenticationConfigurationTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -16,10 +16,11 @@ import org.junit.runner.RunWith;
  * @since 6.0.0-RC3
  */
 @SelectClasses({
-    DefaultCloudDirectoryRepositoryTests.class,
+    DefaultAmazonCloudDirectoryRepositoryTests.class,
+    AmazonCloudDirectoryUtilsTests.class,
     CloudDirectoryAuthenticationConfigurationTests.class,
-    CloudDirectoryAuthenticationHandlerTests.class
+    AmazonCloudDirectoryAuthenticationHandlerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

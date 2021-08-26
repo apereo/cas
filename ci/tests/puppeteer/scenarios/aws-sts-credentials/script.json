@@ -1,0 +1,21 @@
+{
+  "dependencies": "aws",
+  "properties": [
+    "--cas.service-registry.core.init-from-json=true",
+    
+    "--cas.authn.attribute-repository.stub.attributes.first-name=Apereo",
+    "--cas.authn.attribute-repository.stub.attributes.last-name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@example.org",
+
+    "--cas.amazon-sts.endpoint=http://127.0.0.1:4566",
+    "--cas.amazon-sts.credential-access-key=test",
+    "--cas.amazon-sts.credential-secret-key=test",
+
+    "--server.servlet.encoding.charset=UTF-8",
+    
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=awsSts",
+    "--management.endpoints.enabled-by-default=true"
+  ],
+  "initScript": "${PWD}/ci/tests/aws/run-aws-server.sh"
+}

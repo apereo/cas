@@ -32,7 +32,7 @@ public class X509RestTlsClientCertCredentialFactory implements RestHttpRequestCr
         val certificates = (X509Certificate[]) request.getAttribute(REQUEST_ATTRIBUTE_X509_CERTIFICATE);
 
         if (certificates != null && certificates.length > 0) {
-            LOGGER.debug("Certificates found in request attribute: {}", REQUEST_ATTRIBUTE_X509_CERTIFICATE);
+            LOGGER.debug("Certificates found in request attribute: [{}]", REQUEST_ATTRIBUTE_X509_CERTIFICATE);
             val credentials = new ArrayList<Credential>(1);
             credentials.add(new X509CertificateCredential(certificates));
             return credentials;

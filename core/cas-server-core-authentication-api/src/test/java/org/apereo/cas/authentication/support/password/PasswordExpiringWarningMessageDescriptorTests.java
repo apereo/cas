@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Simple")
+@Tag("PasswordOps")
 public class PasswordExpiringWarningMessageDescriptorTests {
     @Test
     public void verifyOperation() {

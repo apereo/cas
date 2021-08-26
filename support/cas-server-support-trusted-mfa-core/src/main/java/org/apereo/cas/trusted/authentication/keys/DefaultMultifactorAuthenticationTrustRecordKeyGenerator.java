@@ -15,6 +15,7 @@ import lombok.val;
 @Slf4j
 public class DefaultMultifactorAuthenticationTrustRecordKeyGenerator
     implements MultifactorAuthenticationTrustRecordKeyGenerator {
+    
     @Override
     public String generate(final MultifactorAuthenticationTrustRecord record) {
         val result = record.getPrincipal()

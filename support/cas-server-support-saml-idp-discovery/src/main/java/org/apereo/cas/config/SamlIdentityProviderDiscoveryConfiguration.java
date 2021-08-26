@@ -15,7 +15,6 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +31,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * This is {@link SamlIdentityProviderDiscoveryConfiguration}.
@@ -39,7 +39,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "samlIdentityProviderDiscoveryConfiguration")
+@Configuration(value = "samlIdentityProviderDiscoveryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SamlIdentityProviderDiscoveryConfiguration {
     @Autowired
@@ -62,10 +62,6 @@ public class SamlIdentityProviderDiscoveryConfiguration {
     private ObjectProvider<ArgumentExtractor> argumentExtractor;
 
     @Autowired
-    @Qualifier("delegatedClientDistributedSessionStore")
-    private ObjectProvider<SessionStore> delegatedClientDistributedSessionStore;
-
-    @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
@@ -74,7 +70,7 @@ public class SamlIdentityProviderDiscoveryConfiguration {
 
     @Autowired
     private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-    
+
     @ConditionalOnMissingBean(name = "identityProviderDiscoveryWebflowConfigurer")
     @RefreshScope
     @Bean
@@ -86,24 +82,29 @@ public class SamlIdentityProviderDiscoveryConfiguration {
     }
 
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "identityProviderDiscoveryCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer identityProviderDiscoveryCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(identityProviderDiscoveryWebflowConfigurer());
+    public CasWebflowExecutionPlanConfigurer identityProviderDiscoveryCasWebflowExecutionPlanConfigurer(
+        @Qualifier("identityProviderDiscoveryWebflowConfigurer") final CasWebflowConfigurer identityProviderDiscoveryWebflowConfigurer) {
+        return plan -> plan.registerWebflowConfigurer(identityProviderDiscoveryWebflowConfigurer);
     }
 
     @Bean
-    public SamlIdentityProviderDiscoveryFeedController identityProviderDiscoveryFeedController() {
-        return new SamlIdentityProviderDiscoveryFeedController(casProperties, samlIdentityProviderEntityParser(),
+    @Autowired
+    public SamlIdentityProviderDiscoveryFeedController identityProviderDiscoveryFeedController(
+        @Qualifier("samlIdentityProviderEntityParser") final Supplier<List<SamlIdentityProviderEntityParser>> samlIdentityProviderEntityParser) {
+        return new SamlIdentityProviderDiscoveryFeedController(casProperties,
+            samlIdentityProviderEntityParser.get(),
             builtClients.getObject(),
             new DelegatedAuthenticationAccessStrategyHelper(servicesManager.getObject(),
                 registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer.getObject()),
-            argumentExtractor.getObject(),
-            delegatedClientDistributedSessionStore.getObject()
+            argumentExtractor.getObject()
         );
     }
 
     @Bean
-    public List<SamlIdentityProviderEntityParser> samlIdentityProviderEntityParser() {
+    @ConditionalOnMissingBean(name = "samlIdentityProviderEntityParser")
+    public Supplier<List<SamlIdentityProviderEntityParser>> samlIdentityProviderEntityParser() {
         val parsers = new ArrayList<SamlIdentityProviderEntityParser>();
 
         val resource = casProperties.getAuthn().getPac4j().getSamlDiscovery().getResource();
@@ -122,6 +123,6 @@ public class SamlIdentityProviderDiscoveryConfiguration {
                 entity.setEntityID(c.getIdentityProviderResolvedEntityId());
                 parsers.add(new SamlIdentityProviderEntityParser(entity));
             });
-        return parsers;
+        return () -> parsers;
     }
 }

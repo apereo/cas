@@ -8,13 +8,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.OrderComparator;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -45,7 +46,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
      * {@inheritDoc}
      * If the authentication event is established as part trusted/device browser
      * such that MFA was skipped, allow for validation to execute successfully.
-     * If authentication event did bypass MFA, let's for allow for validation to execute successfully.
+     * If authentication event did bypass MFA, allow for validation to execute successfully.
      *
      * @param authentication   the authentication
      * @param requestedContext the requested context
@@ -53,9 +54,9 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
      * @return true if the context can be successfully validated.
      */
     @Override
-    public Pair<Boolean, Optional<MultifactorAuthenticationProvider>> validate(final Authentication authentication,
-                                                                               final String requestedContext,
-                                                                               final RegisteredService service) {
+    public MultifactorAuthenticationContextValidationResult validate(final Authentication authentication,
+                                                                     final String requestedContext,
+                                                                     final Optional<RegisteredService> service) {
         val attributes = authentication.getAttributes();
         val ctxAttr = attributes.get(this.authenticationContextAttribute);
         val contexts = CollectionUtils.toCollection(ctxAttr);
@@ -65,43 +66,55 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
         val requestedProvider = locateRequestedProvider(providerMap.values(), requestedContext);
         if (requestedProvider.isEmpty()) {
             LOGGER.debug("Requested authentication provider cannot be recognized.");
-            return Pair.of(Boolean.FALSE, Optional.empty());
+            return MultifactorAuthenticationContextValidationResult.builder().success(false).build();
         }
         LOGGER.debug("Requested context is [{}] and available contexts are [{}]", requestedContext, contexts);
         if (contexts.stream().anyMatch(ctx -> ctx.toString().equals(requestedContext))) {
             LOGGER.debug("Requested authentication context [{}] is satisfied", requestedContext);
-            return Pair.of(Boolean.TRUE, requestedProvider);
+            return MultifactorAuthenticationContextValidationResult.builder()
+                .success(true).provider(requestedProvider).build();
         }
         if (StringUtils.isNotBlank(this.mfaTrustedAuthnAttributeName) && attributes.containsKey(this.mfaTrustedAuthnAttributeName)) {
             LOGGER.debug("Requested authentication context [{}] is satisfied since device is already trusted", requestedContext);
-            return Pair.of(Boolean.TRUE, requestedProvider);
+            return MultifactorAuthenticationContextValidationResult.builder()
+                .success(true).provider(requestedProvider).build();
         }
         val provider = requestedProvider.get();
         val satisfiedProviders = getSatisfiedAuthenticationProviders(authentication, providerMap.values());
         if (satisfiedProviders != null && !satisfiedProviders.isEmpty()) {
             val providers = satisfiedProviders.toArray(MultifactorAuthenticationProvider[]::new);
             OrderComparator.sortIfNecessary(providers);
+            LOGGER.debug("Satisfied authentication context(s) are [{}]", satisfiedProviders);
+
             val result = Arrays.stream(providers)
                 .filter(p -> p.equals(provider) || p.getOrder() >= provider.getOrder())
                 .findFirst();
             if (result.isPresent()) {
                 LOGGER.debug("Current provider [{}] already satisfies the authentication requirements of [{}]; proceed with flow normally.",
                     result.get(), requestedProvider);
-                return Pair.of(Boolean.TRUE, requestedProvider);
+                return MultifactorAuthenticationContextValidationResult.builder()
+                    .success(true).provider(requestedProvider).build();
             }
         }
-        LOGGER.debug("No multifactor providers could be located to satisfy the requested context for [{}]", provider);
-        return Pair.of(Boolean.FALSE, requestedProvider);
+        LOGGER.warn("No multifactor providers could be located to satisfy the requested context for [{}]", provider);
+        return MultifactorAuthenticationContextValidationResult.builder().success(false).provider(requestedProvider).build();
     }
 
     private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(final Authentication authentication,
                                                                                               final Collection<MultifactorAuthenticationProvider> providers) {
         val contexts = CollectionUtils.toCollection(authentication.getAttributes().get(this.authenticationContextAttribute));
-        if (contexts == null || contexts.isEmpty()) {
-            LOGGER.debug("No authentication context could be determined based on authentication attribute [{}]", this.authenticationContextAttribute);
-            return null;
-        }
-        return providers.stream()
+        LOGGER.debug("Available authentication context(s) are [{}]", contexts);
+        
+        return providers
+            .stream()
+            .map(p -> {
+                if (p instanceof ChainingMultifactorAuthenticationProvider) {
+                    return ((ChainingMultifactorAuthenticationProvider) p).getMultifactorAuthenticationProviders();
+                }
+                return List.of(p);
+            })
+            .flatMap(Collection::stream)
+            .sorted(Comparator.comparing(MultifactorAuthenticationProvider::getOrder))
             .filter(p -> contexts.contains(p.getId()))
             .collect(Collectors.toCollection(LinkedHashSet::new));
     }

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -33,7 +34,7 @@ public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Autowired
@@ -41,6 +42,7 @@ public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration {
     private ObjectProvider<SSLContext> sslContext;
     
     @Bean
+    @RefreshScope
     public SamlRegisteredServiceMetadataResolver mongoDbSamlRegisteredServiceMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new MongoDbSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getObject(), mongoDbSamlMetadataResolverTemplate());
@@ -48,6 +50,7 @@ public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "mongoDbSamlMetadataResolverTemplate")
     @Bean
+    @RefreshScope
     public MongoTemplate mongoDbSamlMetadataResolverTemplate() {
         val mongo = casProperties.getAuthn().getSamlIdp().getMetadata().getMongo();
         val factory = new MongoDbConnectionFactory(sslContext.getObject());
@@ -57,6 +60,7 @@ public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration {
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "mongoDbSamlRegisteredServiceMetadataResolutionPlanConfigurer")
     public SamlRegisteredServiceMetadataResolutionPlanConfigurer mongoDbSamlRegisteredServiceMetadataResolutionPlanConfigurer() {
         return plan -> plan.registerMetadataResolver(mongoDbSamlRegisteredServiceMetadataResolver());

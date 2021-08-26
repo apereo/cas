@@ -13,10 +13,12 @@ import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.connection.ConnectionPoolSettings;
 import com.mongodb.connection.ServerSettings;
 import com.mongodb.connection.SocketSettings;
 import com.mongodb.connection.SslSettings;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +40,7 @@ import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
+import org.springframework.data.mongodb.core.index.IndexDefinition;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.util.ClassUtils;
@@ -62,6 +65,8 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class MongoDbConnectionFactory {
+    private static final Set<String> MONGO_INDEX_KEYS = Set.of("v", "key", "name", "ns");
+
     private static final int DEFAULT_PORT = 27017;
 
     private final MongoCustomConversions customConversions;
@@ -75,7 +80,6 @@ public class MongoDbConnectionFactory {
     public MongoDbConnectionFactory(final SSLContext sslContext) {
         this(new ArrayList<>(0), sslContext);
     }
-
 
     public MongoDbConnectionFactory(final Converter... converters) {
         this(Stream.of(converters).collect(Collectors.toList()), SSLContexts.createSystemDefault());
@@ -131,6 +135,58 @@ public class MongoDbConnectionFactory {
     }
 
     /**
+     * Remove any index with the same indexKey but differing indexOptions in anticipation of recreating it.
+     *
+     * @param mongoTemplate   the mongo template
+     * @param collection      The collection to check the indexes of
+     * @param indexesToCreate the indexes to create
+     */
+    public static void createOrUpdateIndexes(final MongoTemplate mongoTemplate,
+                                             final MongoCollection<org.bson.Document> collection,
+                                             final List<? extends IndexDefinition> indexesToCreate) {
+        val indexes = collection.listIndexes();
+        LOGGER.debug("Existing indexes on collection [{}] are [{}]", collection.getNamespace(), indexes);
+        indexesToCreate.forEach(index -> {
+            var indexExistsWithDifferentOptions = false;
+            val indexKeys = index.getIndexKeys();
+            val indexOptions = index.getIndexOptions();
+            for (val existingIndex : indexes) {
+                val keyMatches = existingIndex.get("key").equals(indexKeys);
+                val optionsMatch = indexOptions.entrySet().stream()
+                    .allMatch(entry -> entry.getValue().equals(existingIndex.get(entry.getKey())));
+                val noExtraOptions = existingIndex.keySet().stream()
+                    .allMatch(key -> MONGO_INDEX_KEYS.contains(key) || indexOptions.keySet().contains(key));
+                indexExistsWithDifferentOptions |= keyMatches && !(optionsMatch && noExtraOptions);
+            }
+
+            if (indexExistsWithDifferentOptions) {
+                LOGGER.debug("Removing MongoDb index [{}] from [{}]", indexKeys, collection.getNamespace());
+                collection.dropIndex(indexKeys);
+            }
+            val collectionName = collection.getNamespace().getCollectionName();
+            LOGGER.debug("Creating index [{}] on collection [{}]", index, collectionName);
+            mongoTemplate.indexOps(collectionName).ensureIndex(index);
+        });
+    }
+
+    private static MongoDatabaseFactory mongoDbFactory(final MongoClient mongo, final BaseMongoDbProperties props) {
+        if (StringUtils.isNotBlank(props.getDatabaseName())) {
+            return new SimpleMongoClientDatabaseFactory(mongo, props.getDatabaseName());
+        }
+        val connectionString = new ConnectionString(props.getClientUri());
+        return new SimpleMongoClientDatabaseFactory(mongo, Objects.requireNonNull(connectionString.getDatabase()));
+    }
+
+    private static FieldNamingStrategy fieldNamingStrategy() {
+        return PropertyNameFieldNamingStrategy.INSTANCE;
+    }
+
+    private static MongoCredential buildMongoCredential(final BaseMongoDbProperties mongo) {
+        val dbName = StringUtils.defaultIfBlank(mongo.getAuthenticationDatabaseName(), mongo.getDatabaseName());
+        return MongoCredential.createCredential(mongo.getUserId(), dbName, mongo.getPassword().toCharArray());
+    }
+
+    /**
      * Build mongo db client.
      *
      * @param mongo the mongo
@@ -173,11 +229,11 @@ public class MongoDbConnectionFactory {
                 .applyToConnectionPoolSettings(builder -> {
                     val poolConfig = mongo.getPool();
                     val pool = ConnectionPoolSettings.builder()
-                        .maxConnectionLifeTime(poolConfig.getLifeTime(), TimeUnit.MILLISECONDS)
-                        .maxConnectionIdleTime(poolConfig.getIdleTime(), TimeUnit.MILLISECONDS)
+                        .maxConnectionLifeTime(Beans.newDuration(poolConfig.getLifeTime()).toMillis(), TimeUnit.MILLISECONDS)
+                        .maxConnectionIdleTime(Beans.newDuration(poolConfig.getIdleTime()).toMillis(), TimeUnit.MILLISECONDS)
                         .maxSize(poolConfig.getMaxSize())
                         .minSize(poolConfig.getMinSize())
-                        .maxWaitTime(poolConfig.getMaxWaitTime(), TimeUnit.MILLISECONDS)
+                        .maxWaitTime(Beans.newDuration(poolConfig.getMaxWaitTime()).toMillis(), TimeUnit.MILLISECONDS)
                         .build();
                     builder.applySettings(pool);
                 })
@@ -217,6 +273,10 @@ public class MongoDbConnectionFactory {
         return new MongoTemplate(mongoDbFactory, mappingMongoConverter(mongoDbFactory));
     }
 
+    protected Collection<String> getMappingBasePackages() {
+        return CollectionUtils.wrap(getClass().getPackage().getName());
+    }
+
     private MongoMappingContext mongoMappingContext() {
         val mappingContext = new MongoMappingContext();
         mappingContext.setInitialEntitySet(getInitialEntitySet());
@@ -234,14 +294,6 @@ public class MongoDbConnectionFactory {
         return converter;
     }
 
-    private static MongoDatabaseFactory mongoDbFactory(final MongoClient mongo, final BaseMongoDbProperties props) {
-        if (StringUtils.isNotBlank(props.getDatabaseName())) {
-            return new SimpleMongoClientDatabaseFactory(mongo, props.getDatabaseName());
-        }
-        val connectionString = new ConnectionString(props.getClientUri());
-        return new SimpleMongoClientDatabaseFactory(mongo, Objects.requireNonNull(connectionString.getDatabase()));
-    }
-
     private Set<Class<?>> getInitialEntitySet() {
         val initialEntitySet = new HashSet<Class<?>>();
         for (val basePackage : getMappingBasePackages()) {
@@ -251,7 +303,7 @@ public class MongoDbConnectionFactory {
     }
 
     private Set<Class<?>> scanForEntities(final String basePackage) {
-        if (!StringUtils.isBlank(basePackage)) {
+        if (StringUtils.isBlank(basePackage)) {
             return new HashSet<>(0);
         }
 
@@ -260,30 +312,20 @@ public class MongoDbConnectionFactory {
             val componentProvider = new ClassPathScanningCandidateComponentProvider(false);
             componentProvider.addIncludeFilter(new AnnotationTypeFilter(Document.class));
             componentProvider.addIncludeFilter(new AnnotationTypeFilter(Persistent.class));
-
-            for (val candidate : componentProvider.findCandidateComponents(basePackage)) {
-                try {
-                    val beanClassName = Objects.requireNonNull(candidate.getBeanClassName());
-                    initialEntitySet.add(ClassUtils.forName(beanClassName, getClass().getClassLoader()));
-                } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
-            }
+            initialEntitySet.addAll(findAndLoadComponents(basePackage, componentProvider));
         }
 
         return initialEntitySet;
     }
 
-    private static FieldNamingStrategy fieldNamingStrategy() {
-        return PropertyNameFieldNamingStrategy.INSTANCE;
-    }
-
-    private static MongoCredential buildMongoCredential(final BaseMongoDbProperties mongo) {
-        val dbName = StringUtils.defaultIfBlank(mongo.getAuthenticationDatabaseName(), mongo.getDatabaseName());
-        return MongoCredential.createCredential(mongo.getUserId(), dbName, mongo.getPassword().toCharArray());
-    }
-
-    protected Collection<String> getMappingBasePackages() {
-        return CollectionUtils.wrap(getClass().getPackage().getName());
+    @SneakyThrows
+    private Set<Class<?>> findAndLoadComponents(final String basePackage,
+                                                final ClassPathScanningCandidateComponentProvider componentProvider) {
+        val initialEntitySet = new HashSet<Class<?>>();
+        for (val candidate : componentProvider.findCandidateComponents(basePackage)) {
+            val beanClassName = Objects.requireNonNull(candidate.getBeanClassName());
+            initialEntitySet.add(ClassUtils.forName(beanClassName, getClass().getClassLoader()));
+        }
+        return initialEntitySet;
     }
 }

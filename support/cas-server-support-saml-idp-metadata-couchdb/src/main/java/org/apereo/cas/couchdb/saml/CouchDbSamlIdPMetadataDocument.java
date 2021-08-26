@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 /**
  * This is {@link CouchDbSamlIdPMetadataDocument}.
@@ -15,7 +16,10 @@ import lombok.NoArgsConstructor;
  */
 @NoArgsConstructor
 @Getter
+@SuperBuilder
 public class CouchDbSamlIdPMetadataDocument extends SamlIdPMetadataDocument {
+    private static final long serialVersionUID = 915217132219326234L;
+
     @JsonProperty("_id")
     private String cid;
 

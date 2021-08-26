@@ -9,12 +9,17 @@ test-output/
 bin/
 *.ignore
 *.ipr
+*.war
+**/gh-pages/
 *.iml
 *.iws
+**/ignite/work/marshaller/
 **/.history
 *.orig
 .idea/
+*.class
 .DS_Store
+production/
 .idea
 overlays/
 pom.xml.versionsBackup
@@ -38,10 +43,13 @@ classes/
 out
 ajcore.*
 reports
+apache-jmeter-*
 
 *.asc
 /.nb-gradle/
 **/.sts4-cache/**
+**/work/**
+**/conformance-suite/**
 etc/loadtests/loadtests/**
 etc/loadtests/locustfiles/**
 etc/loadtests/__pycache__/**
@@ -49,3 +57,11 @@ webapp/resources/static/js/*-bundle.js
 **/k/
 **/dist/
 **/.sts4-cache/*
+ci/tests/puppeteer/package-*.json
+ci/tests/puppeteer/overlay
+ci/tests/puppeteer/scenarios/**/screenshot*.png
+ci/tests/puppeteer/**/screenshot*.png
+ci/tests/puppeteer/**/strapi
+ci/tests/puppeteer/**/*.jwks
+ci/tests/puppeteer/scenarios/pac4j-delegated-login-saml2-shibidp/shibcasauthn
+ci/tests/puppeteer/scenarios/pac4j-delegated-login-saml2-shibidp/saml-md

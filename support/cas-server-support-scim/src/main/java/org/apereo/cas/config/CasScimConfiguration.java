@@ -37,7 +37,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("casScimConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-@ConditionalOnProperty(name = "cas.scim.target")
+@ConditionalOnProperty(prefix = "cas.scim", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasScimConfiguration {
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -79,16 +79,10 @@ public class CasScimConfiguration {
     @ConditionalOnMissingBean(name = "scimProvisioner")
     public PrincipalProvisioner scimProvisioner() {
         val scim = casProperties.getScim();
-        if (casProperties.getScim().getVersion() == 1) {
-            return new ScimV1PrincipalProvisioner(scim.getTarget(),
-                scim.getOauthToken(),
-                scim.getUsername(),
-                scim.getPassword(),
-                scim1PrincipalAttributeMapper());
+        if (scim.getVersion() == 1) {
+            return new ScimV1PrincipalProvisioner(scim, scim1PrincipalAttributeMapper());
         }
-        return new ScimV2PrincipalProvisioner(scim.getTarget(),
-            scim.getOauthToken(), scim.getUsername(), scim.getPassword(),
-            scim2PrincipalAttributeMapper());
+        return new ScimV2PrincipalProvisioner(scim, scim2PrincipalAttributeMapper());
     }
 
     @ConditionalOnMissingBean(name = "principalScimProvisionerAction")

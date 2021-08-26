@@ -8,8 +8,6 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKeySet;
 
-import java.io.IOException;
-
 /**
  * This is {@link OidcJsonWebKeyStoreJacksonDeserializer}.
  *
@@ -20,7 +18,7 @@ public class OidcJsonWebKeyStoreJacksonDeserializer extends JsonDeserializer<Jso
 
     @Override
     @SneakyThrows
-    public JsonWebKeySet deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
+    public JsonWebKeySet deserialize(final JsonParser jp, final DeserializationContext ctx) {
         val mapper = (ObjectMapper) jp.getCodec();
         val node = mapper.readTree(jp);
         val json = mapper.writeValueAsString(node);

@@ -27,11 +27,4 @@ public interface CredentialMetaData extends Serializable {
      * @return Non -null credential class.
      */
     Class<? extends Credential> getCredentialClass();
-
-    /**
-     * Reconstruct the credential from metadata.
-     *
-     * @return the credential
-     */
-    Credential toCredential();
 }

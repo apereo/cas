@@ -4,9 +4,8 @@ import org.apereo.cas.entity.SamlIdentityProviderEntityParserTests;
 import org.apereo.cas.web.SamlIdentityProviderDiscoveryFeedControllerTests;
 import org.apereo.cas.web.flow.SamlIdentityProviderDiscoveryWebflowConfigurerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -19,6 +18,6 @@ import org.junit.runner.RunWith;
     SamlIdentityProviderDiscoveryFeedControllerTests.class,
     SamlIdentityProviderDiscoveryWebflowConfigurerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

@@ -25,7 +25,7 @@ public class NeverRegisteredServiceSingleSignOnParticipationPolicy implements Re
     private static final long serialVersionUID = -1123946898337761319L;
 
     @Override
-    public boolean shouldParticipateInSso(final TicketState ticketState) {
+    public boolean shouldParticipateInSso(final RegisteredService registeredService, final TicketState ticketState) {
         return false;
     }
 }

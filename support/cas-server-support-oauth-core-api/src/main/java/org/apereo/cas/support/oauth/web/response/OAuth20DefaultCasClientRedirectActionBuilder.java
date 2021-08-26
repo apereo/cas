@@ -37,7 +37,8 @@ public class OAuth20DefaultCasClientRedirectActionBuilder implements OAuth20CasC
      * @param gateway   skip asking for credentials
      * @return the redirect action
      */
-    protected Optional<RedirectionAction> build(final CasClient casClient, final WebContext context, final boolean renew, final boolean gateway) {
+    protected Optional<RedirectionAction> build(final CasClient casClient, final WebContext context,
+        final boolean renew, final boolean gateway) {
         val serviceUrl = casClient.computeFinalCallbackUrl(context);
         val casServerLoginUrl = casClient.getConfiguration().getLoginUrl();
         val redirectionUrl = casServerLoginUrl + (casServerLoginUrl.contains("?") ? "&" : "?")

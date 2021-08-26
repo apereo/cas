@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration;
 
 import org.apereo.cas.util.CasVersion;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,13 +45,13 @@ public class CasConfigurationPropertiesValidator {
         val validationResults = new ArrayList<String>(0);
         validateCasConfiguration(validationResults);
         if (validationResults.isEmpty()) {
-            LOGGER.info("Application context has validated CAS property sources and configuration successfully.");
+            LOGGER.info("Validated CAS property sources and configuration successfully.");
         } else {
             var message = String.join("\n", validationResults);
             message += "\n\nListed settings above are no longer recognized by CAS " + CasVersion.getVersion() + ". They may have been renamed, removed, or relocated "
-                + "to a new address in the CAS configuration schema. CAS will ignore such settings and will proceed with its normal initialization sequence. "
+                + "to a new namespace in the CAS configuration schema. CAS will ignore such settings to proceed with its normal initialization sequence. "
                 + "Please consult the CAS documentation to review and adjust each setting to find an alternative or remove the "
-                + "definition. Failure to do so puts the stability of the CAS server deployment in danger and complicates future upgrades.\n";
+                + "definition from the property source. Failure to do so puts the server stability in danger and complicates future upgrades.\n";
             LOGGER.error(message);
         }
         return validationResults;
@@ -60,11 +61,7 @@ public class CasConfigurationPropertiesValidator {
         try {
             validateConfiguration(CasConfigurationProperties.class, validationResults);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
     }
 

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{cas.inwebo.checkresult.title}">Checking authentication...</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" class="banner banner-message mdc-card p-4 m-auto w-lg-66">
+        <h2 th:utext="#{cas.inwebo.checkresult.heading}">Waiting for the notification to be approved...</h2>
+        <p th:utext="#{cas.inwebo.checkresult.message}">Please validate it on your phone/desktop.</p>
+
+        <form method="POST" id="pendingCheckResultForm">
+            <input type="hidden" name="_eventId" value="success" />
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+        </form>
+        <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+            setTimeout(function () {
+                $('#pendingCheckResultForm').submit();
+            }, 2500);
+        </script>
+    </div>
+</main>
+</body>
+</html>

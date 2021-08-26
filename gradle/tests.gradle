@@ -1,365 +1,152 @@
-if (hasTestsOfCategory(project, "Kafka")) {
-    task testKafka(type: Test) {
-        enabled = shouldTest(project, "Kafka")
-        useJUnitPlatform {
-            includeTags "Kafka"
+enum TestCategories {
+    ActuatorEndpoint,
+    AmazonWebServices,
+    Attributes,
+    Audits,
+    Authentication,
+    AuthenticationHandler,
+    AuthenticationPolicy,
+    AuthenticationMetadata,
+    AuthenticationThrottling,
+    CAS,
+    CasConfiguration,
+    Cassandra,
+    Cookie,
+    CosmosDb,
+    Couchbase,
+    CouchDb,
+    Delegation,
+    DynamoDb,
+    Ehcache,
+    ExpirationPolicy,
+    Events,
+    FileSystem,
+    Groovy,
+    Hazelcast,
+    Ignite,
+    Impersonation,
+    Infinispan,
+    InfluxDb,
+    JDBC,
+    JDBCAuthentication,
+    JMS,
+    JMX,
+    Kafka,
+    Ldap,
+    Logout,
+    Mail,
+    MariaDb,
+    Memcached,
+    Metrics,
+    MFA,
+    MFATrigger,
+    MFATrustedDevices,
+    MongoDb,
+    MsSqlServer,
+    MySQL,
+    OAuth,
+    OIDC,
+    Oracle,
+    PasswordOps,
+    Postgres,
+    Radius,
+    Redis,
+    RegisteredService,
+    RestfulApi,
+    RestfulApiAuthentication,
+    SAML,
+    SAMLMetadata,
+    SAMLServiceProvider,
+    SHELL,
+    Simple,
+    SMS,
+    Spnego,
+    Tickets,
+    UMA,
+    Utility,
+    Web,
+    WebApp,
+    Webflow,
+    WebflowActions,
+    WebflowAuthenticationActions,
+    WebflowConfig,
+    WebflowMfaConfig,
+    WebflowEvents,
+    WebflowMfaActions,
+    WSFederation,
+    X509,
+    ZooKeeper
+}
+
+if (rootProject.tasks.findByName("testCategories") == null) {
+    rootProject.tasks.create(name: "testCategories", description: "Display all available test categories") {
+        doLast {
+            def categoryMatchPattern = System.getenv().get("CATEGORY_REGEX") ?: ".*"
+            def result = TestCategories.values()
+                    .findAll { it.name().matches(categoryMatchPattern) }
+                    .toSorted({ o1, o2 ->
+                        o1.name().compareTo(o2.name())
+                    })
+                    .collect { it.name().toLowerCase() }
+            println(groovy.json.JsonOutput.toJson(result))
         }
     }
 }
 
-if (hasTestsOfCategory(project, "Hazelcast")) {
-    task testHazelcast(type: Test) {
-        enabled = shouldTest(project, "Hazelcast")
-        useJUnitPlatform {
-            includeTags "Hazelcast"
+if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
+    rootProject.tasks.create(name: "puppeteerScenarios", description: "Display all available puppeteer scenarios") {
+        doLast {
+            def scenarios = new TreeSet<String>()
+            def scenarioMatchPattern = System.getenv().get("SCENARIO_REGEX") ?: ".*"
+            rootProject.file("ci/tests/puppeteer/scenarios").eachDirMatch(~scenarioMatchPattern) {
+                scenarios += it.getName()
+            }
+            println(groovy.json.JsonOutput.toJson(scenarios))
         }
     }
 }
 
-if (hasTestsOfCategory(project, "JMX")) {
-    task testJMX(type: Test) {
-        enabled = shouldTest(project, "JMX")
-        useJUnitPlatform {
-            includeTags "JMX"
+TestCategories.values().each({ category ->
+    if (hasTestsOfCategory(project, category.name())) {
+        def taskName = "test${category.name()}"
+        if (tasks.findByName(taskName) == null) {
+            // println "Creating task ${taskName} for ${project.name}"
+            tasks.create(name: taskName, type: Test, description: "Testing category ${category.name()}") {
+                enabled = shouldTest(project, category.name())
+                //finalizedBy jacocoTestReport
+                useJUnitPlatform {
+                    includeTags category.name()
+                }
+            }
         }
     }
-}
-
-if (hasTestsOfCategory(project, "Simple")) {
-    task testSimple(type: Test) {
-        enabled = shouldTest(project, "Simple")
-        useJUnitPlatform {
-            includeTags "Simple"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "MFA")) {
-    task testMFA(type: Test) {
-        enabled = shouldTest(project, "MFA")
-        useJUnitPlatform {
-            includeTags "MFA"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "X509")) {
-    task testX509(type: Test) {
-        enabled = shouldTest(project, "X509")
-        useJUnitPlatform {
-            includeTags "X509"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "SHELL")) {
-    task testSHELL(type: Test) {
-        enabled = shouldTest(project, "SHELL")
-        useJUnitPlatform {
-            includeTags "SHELL"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Cassandra")) {
-    task testCassandra(type: Test) {
-        enabled = shouldTest(project, "Cassandra")
-        useJUnitPlatform {
-            includeTags "Cassandra"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Webflow")) {
-    task testWebflow(type: Test) {
-        enabled = shouldTest(project, "Webflow")
-        useJUnitPlatform {
-            includeTags "Webflow"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "CosmosDb")) {
-    task testCosmosDb(type: Test) {
-        enabled = shouldTest(project, "CosmosDb")
-        useJUnitPlatform {
-            includeTags "CosmosDb"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "ZooKeeper")) {
-    task testZooKeeper(type: Test) {
-        enabled = shouldTest(project, "ZooKeeper")
-        useJUnitPlatform {
-            includeTags "ZooKeeper"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "JMS")) {
-    task testJMS(type: Test) {
-        enabled = shouldTest(project, "JMS")
-        useJUnitPlatform {
-            includeTags "JMS"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "AmazonWebServices")) {
-    task testAWS(type: Test) {
-        enabled = shouldTest(project, "AmazonWebServices")
-        useJUnitPlatform {
-            includeTags "AmazonWebServices"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Radius")) {
-    task testRadius(type: Test) {
-        enabled = shouldTest(project, "Radius")
-        useJUnitPlatform {
-            includeTags "Radius"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Couchbase")) {
-    task testCouchbase(type: Test) {
-        enabled = shouldTest(project, "Couchbase")
-        useJUnitPlatform {
-            includeTags "Couchbase"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "CouchDb")) {
-    task testCouchDb(type: Test) {
-        enabled = shouldTest(project, "CouchDb")
-        useJUnitPlatform {
-            includeTags "CouchDb"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "MySQL")) {
-    task testMySQL(type: Test) {
-        enabled = shouldTest(project, "MySQL")
-        useJUnitPlatform {
-            includeTags "MySQL"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Postgres")) {
-    task testPostgres(type: Test) {
-        enabled = shouldTest(project, "Postgres")
-        useJUnitPlatform {
-            includeTags "Postgres"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "MsSqlServer")) {
-    task testMsSqlServer(type: Test) {
-        enabled = shouldTest(project, "MsSqlServer")
-        useJUnitPlatform {
-            includeTags "MsSqlServer"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "MariaDb")) {
-    task testMariaDb(type: Test) {
-        enabled = shouldTest(project, "MariaDb")
-        useJUnitPlatform {
-            includeTags "MariaDb"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "DynamoDb")) {
-    task testDynamoDb(type: Test) {
-        enabled = shouldTest(project, "DynamoDb")
-        useJUnitPlatform {
-            includeTags "DynamoDb"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Ehcache")) {
-    task testEhcache(type: Test) {
-        enabled = shouldTest(project, "Ehcache")
-        useJUnitPlatform {
-            includeTags "Ehcache"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "FileSystem")) {
-    task testFileSystem(type: Test) {
-        enabled = shouldTest(project, "FileSystem")
-        useJUnitPlatform {
-            includeTags "FileSystem"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Ignite")) {
-    task testIgnite(type: Test) {
-        enabled = shouldTest(project, "Ignite")
-        useJUnitPlatform {
-            includeTags "Ignite"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "InfluxDb")) {
-    task testInfluxDb(type: Test) {
-        enabled = shouldTest(project, "InfluxDb")
-        useJUnitPlatform {
-            includeTags "InfluxDb"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Oracle")) {
-    task testOracle(type: Test) {
-        enabled = shouldTest(project, "Oracle")
-        useJUnitPlatform {
-            includeTags "Oracle"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Ldap")) {
-    task testLdap(type: Test) {
-        enabled = shouldTest(project, "Ldap")
-        useJUnitPlatform {
-            includeTags "Ldap"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Groovy")) {
-    task testGroovy(type: Test) {
-        enabled = shouldTest(project, "Groovy")
-        useJUnitPlatform {
-            includeTags "Groovy"
-        }
-    }
-}
-
-
-if (hasTestsOfCategory(project, "Mail")) {
-    task testMail(type: Test) {
-        enabled = shouldTest(project, "Mail")
-        useJUnitPlatform {
-            includeTags "Mail"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "RestfulApi")) {
-    task testRestful(type: Test) {
-        enabled = shouldTest(project, "RestfulApi")
-        useJUnitPlatform {
-            includeTags "RestfulApi"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Memcached")) {
-    task testMemcached(type: Test) {
-        enabled = shouldTest(project, "Memcached")
-        useJUnitPlatform {
-            includeTags "Memcached"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "MongoDb")) {
-    task testMongoDb(type: Test) {
-        enabled = shouldTest(project, "MongoDb")
-        useJUnitPlatform {
-            includeTags "MongoDb"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Redis")) {
-    task testRedis(type: Test) {
-        enabled = shouldTest(project, "Redis")
-        useJUnitPlatform {
-            includeTags "Redis"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "OAuth")) {
-    task testOAuth(type: Test) {
-        enabled = shouldTest(project, "OAuth")
-        useJUnitPlatform {
-            includeTags "OAuth"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "UMA")) {
-    task testUma(type: Test) {
-        enabled = shouldTest(project, "UMA")
-        useJUnitPlatform {
-            includeTags "UMA"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "OIDC")) {
-    task testOIDC(type: Test) {
-        enabled = shouldTest(project, "OIDC")
-        useJUnitPlatform {
-            includeTags "OIDC"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "SAML")) {
-    task testSAML(type: Test) {
-        enabled = shouldTest(project, "SAML")
-        useJUnitPlatform {
-            includeTags "SAML"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "JDBC")) {
-    task testJDBC(type: Test) {
-        enabled = shouldTest(project, "JDBC")
-        useJUnitPlatform {
-            includeTags "JDBC"
-        }
-    }
-}
+})
 
 test {
     enabled = false
+    onlyIf = {
+        false
+    }
 }
 
 tasks.withType(Test) {
     scanForTestClasses = false
-    ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
-    forkEvery = 1000
-    reports.html.enabled = false
-    reports.junitXml.enabled = false
+    ignoreFailures = providers.systemProperty("ignoreTestFailures").forUseAtConfigurationTime().present
+    forkEvery = 2000
     doFirst {
-        maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 2)
+        maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 4)
         if (maxParallelForks != 2) {
             logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
         }
     }
+
+    def ci = System.getenv().containsKey("CI")
+    if (ci) {
+        outputs.upToDateWhen { false }
+    }
     systemProperty("spring.main.banner-mode", "off")
-    systemProperty("spring.main.lazy-initialization", "true")
-    systemProperty("CI", System.getProperty("CI"))
+//    systemProperty("spring.main.lazy-initialization", "true")
+    systemProperty("CI", ci)
 
     failFast = true
 
@@ -378,32 +165,52 @@ tasks.withType(Test) {
     list.add("java.management/sun.management=ALL-UNNAMED")
     list.add("--add-opens")
     list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/sun.security.action=jdk.crypto.ec")
     list.add("-Xms512m")
     list.add("-Xmx4g")
     jvmArgs = list
-    
+
     classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
     testLogging {
-        events = ["FAILED", "STANDARD_OUT"]
+        events "PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
         exceptionFormat = "full"
-        showStandardStreams = Boolean.getBoolean("showStandardStreams")
-        showExceptions = true
-        showCauses = true
-        beforeSuite { desc ->
-            if (!desc.parent) {
-                println "Started running test suite [${desc.displayName}] @ ${new java.util.Date()} "
+
+        def verbose = providers.systemProperty("verbose").forUseAtConfigurationTime().present
+
+        showStandardStreams = verbose
+        showExceptions = verbose
+        showCauses = verbose
+
+        if (verbose) {
+            beforeSuite { desc ->
+                if (!desc.parent) {
+                    ansi.cyan "Started running test suite [${desc.displayName}] @ ${new java.util.Date()} "
+                }
             }
-        }
-        afterSuite { desc, result ->
-            if (!desc.parent) {
-                println """
-Results: ${result.resultType} @ ${new java.util.Date()} 
+
+            beforeTest { desc ->
+                ansi.cyan "Started running test [${desc.className}:${desc.displayName}] @ ${new java.util.Date()} "
+            }
+            
+            afterTest { desc, result ->
+                ansi.green """
+Results for test [${desc.className}:${desc.displayName}]: ${result.resultType} @ ${new java.util.Date()} 
 (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)
 """
             }
+            afterSuite { desc, result ->
+                if (!desc.parent) {
+                    ansi.green """
+Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.util.Date()} 
+(${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)
+"""
+                }
+            }
         }
     }
-    if (!Boolean.getBoolean("skipTestRetry")) {
+    def skipRetry = providers.systemProperty('skipTestRetry').forUseAtConfigurationTime().present
+    if (!skipRetry) {
         retry {
             maxRetries = 3
             maxFailures = 5
@@ -411,13 +218,17 @@ Results: ${result.resultType} @ ${new java.util.Date()}
         }
     }
     jacoco {
+        dumpOnExit = true
         excludes = rootProject.excludedFilesFromTestCoverage
     }
 }
 
 def shouldTest(Project project, String category) {
-    def foundTest = gradle.startParameter.taskNames.any {task -> task.toLowerCase().contains(category.toLowerCase())}
-    return !Boolean.getBoolean("skipTests") && foundTest && hasTestsOfCategory(project, category)
+    def foundTest = gradle.startParameter.taskNames.any { task -> task.matches(/^test${category}$/) }
+    if (!foundTest) {
+        logger.debug "No tests with category ${category} found for ${project.name}"
+    }
+    return !providers.systemProperty("skipTests").forUseAtConfigurationTime().present && foundTest && hasTestsOfCategory(project, category)
 }
 
 def hasTestsOfCategory(Project project, String category) {

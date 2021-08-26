@@ -26,7 +26,7 @@ public class ScimV2PrincipalAttributeMapper {
      * @param attributeName the attribute name
      * @return the principal attribute value
      */
-    public String getPrincipalAttributeValue(final Principal p, final String attributeName) {
+    protected String getPrincipalAttributeValue(final Principal p, final String attributeName) {
         val attributes = p.getAttributes();
         if (attributes.containsKey(attributeName)) {
             return CollectionUtils.toCollection(attributes.get(attributeName)).iterator().next().toString();

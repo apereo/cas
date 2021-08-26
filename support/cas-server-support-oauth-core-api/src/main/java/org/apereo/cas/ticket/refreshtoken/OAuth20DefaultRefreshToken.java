@@ -2,6 +2,8 @@ package org.apereo.cas.ticket.refreshtoken;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.code.OAuth20DefaultCode;
@@ -9,14 +11,10 @@ import org.apereo.cas.ticket.code.OAuth20DefaultCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * An OAuth refresh token implementation.
@@ -24,8 +22,6 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-@Entity
-@DiscriminatorValue(OAuth20RefreshToken.PREFIX)
 @Getter
 @NoArgsConstructor
 public class OAuth20DefaultRefreshToken extends OAuth20DefaultCode implements OAuth20RefreshToken {
@@ -35,9 +31,7 @@ public class OAuth20DefaultRefreshToken extends OAuth20DefaultCode implements OA
     /**
      * The ticket ids which are tied to this ticket.
      */
-    @Lob
-    @Column(name = "ACCESS_TOKENS", length = Integer.MAX_VALUE)
-    private HashSet<String> accessTokens = new HashSet<>(0);
+    private Set<String> accessTokens = new HashSet<>(0);
 
     public OAuth20DefaultRefreshToken(final String id, final Service service,
                                       final Authentication authentication,
@@ -48,10 +42,13 @@ public class OAuth20DefaultRefreshToken extends OAuth20DefaultCode implements OA
                                       final String codeChallengeMethod,
                                       final String clientId,
                                       final String accessToken,
-                                      final Map<String, Map<String, Object>> requestClaims) {
+                                      final Map<String, Map<String, Object>> requestClaims,
+                                      final OAuth20ResponseTypes responseType,
+                                      final OAuth20GrantTypes grantType) {
         super(id, service, authentication, expirationPolicy,
             ticketGrantingTicket, scopes,
-            codeChallenge, codeChallengeMethod, clientId, requestClaims);
+            codeChallenge, codeChallengeMethod, clientId,
+            requestClaims, responseType, grantType);
         this.accessTokens.add(accessToken);
     }
 
@@ -62,9 +59,12 @@ public class OAuth20DefaultRefreshToken extends OAuth20DefaultCode implements OA
                                       final Collection<String> scopes,
                                       final String clientId,
                                       final String accessToken,
-                                      final Map<String, Map<String, Object>> requestClaims) {
+                                      final Map<String, Map<String, Object>> requestClaims,
+                                      final OAuth20ResponseTypes responseType,
+                                      final OAuth20GrantTypes grantType) {
         this(id, service, authentication, expirationPolicy,
-            ticketGrantingTicket, scopes, null, null, clientId, accessToken, requestClaims);
+            ticketGrantingTicket, scopes, null, null,
+            clientId, accessToken, requestClaims, responseType, grantType);
     }
 
     @Override

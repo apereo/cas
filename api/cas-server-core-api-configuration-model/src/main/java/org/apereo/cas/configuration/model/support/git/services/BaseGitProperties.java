@@ -1,13 +1,16 @@
 package org.apereo.cas.configuration.model.support.git.services;
 
+import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.apache.commons.io.FileUtils;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-import java.io.File;
 import java.io.Serializable;
 
 /**
@@ -27,19 +30,25 @@ public abstract class BaseGitProperties implements Serializable {
      * The address of the git repository.
      * Could be a URL or a file-system path.
      */
+    @RequiredProperty
+    @ExpressionLanguageCapable
     private String repositoryUrl;
 
     /**
-     * The branch to checkout and activate.
+     * The branch to checkout and activate, defaults to {@code master}.
      */
+    @RequiredProperty
+    @ExpressionLanguageCapable
     private String activeBranch = "master";
 
     /**
      * If the repository is to be cloned,
-     * this will allow the list of branches to be fetched
-     * separated by commas.
+     * this will allow a select list of branches to be fetched.
+     * List the branch names separated by commas or use {@code *} to clone all branches.
+     * Defaults to all branches.
      */
-    private String branchesToClone = "master";
+    @RequiredProperty
+    private String branchesToClone = "*";
 
     /**
      * Username used to access or push to the repository.
@@ -62,14 +71,17 @@ public abstract class BaseGitProperties implements Serializable {
     private boolean signCommits;
 
     /**
-     * Path to the SSH private key identity.
+     * Password for the SSH private key.
      */
     private String privateKeyPassphrase;
 
     /**
-     * Password for the SSH private key.
+     * Path to the SSH private key identity.
+     * Must be a resource that can resolve to an absolute file on disk due to Jsch library needing String path.
+     * Classpath resource would work if file on disk rather than inside archive.
      */
-    private File privateKeyPath;
+    @NestedConfigurationProperty
+    private SpringResourceProperties privateKey = new SpringResourceProperties();
 
     /**
      * As with using SSH with public keys, an SSH session
@@ -79,12 +91,52 @@ public abstract class BaseGitProperties implements Serializable {
     private String sshSessionPassword;
 
     /**
+     * Whether on not to turn on strict host key checking.
+     * true will be "yes", false will be "no", "ask" not supported.
+     */
+    private boolean strictHostKeyChecking = true;
+
+    /**
+     * When establishing an ssh session, determine if default
+     * identities loaded on the machine should be excluded/removed
+     * and identity should only be limited to those loaded from given keys.
+     */
+    private boolean clearExistingIdentities;
+
+    /**
      * Timeout for git operations such as push and pull in seconds.
      */
+    @DurationCapable
     private String timeout = "PT10S";
 
     /**
      * Directory into which the repository would be cloned.
      */
-    private File cloneDirectory = new File(FileUtils.getTempDirectory(), "cas-git-clone");
+    @NestedConfigurationProperty
+    @RequiredProperty
+    private SpringResourceProperties cloneDirectory = new SpringResourceProperties();
+
+    /**
+     * Implementation of HTTP client to use when doing git operations via http/https.
+     * The jgit library sets the connection factory statically (globally) so this property should
+     * be set to the same value for all git repositories (services, saml, etc). Not doing
+     * so might result in one connection factory being used for clone and another for subsequent
+     * fetches.
+     */
+    private HttpClientTypes httpClientType = HttpClientTypes.JDK;
+
+    /**
+     * The jgit library supports multiple HTTP client implementations.
+     */
+    public enum HttpClientTypes {
+        /**
+         * Built-in JDK http/https client.
+         */
+        JDK,
+        /**
+         * Apache HTTP Client http/https client.
+         */
+        HTTP_CLIENT
+    }
+
 }

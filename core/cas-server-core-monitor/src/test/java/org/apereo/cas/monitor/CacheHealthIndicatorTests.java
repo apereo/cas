@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link AbstractCacheHealthIndicator}.
@@ -25,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
     AopAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Simple")
+@Tag("Metrics")
 public class CacheHealthIndicatorTests {
 
     @Autowired
@@ -99,5 +100,45 @@ public class CacheHealthIndicatorTests {
     public void verifyToString() {
         val stat = new SimpleCacheStatistics(100, 110, 0, "test");
         assertNotNull(stat.toString(new StringBuilder()));
+    }
+
+    @Test
+    public void verifyOut() {
+        val indicator = new AbstractCacheHealthIndicator(0, 0) {
+            @Override
+            protected CacheStatistics[] getStatistics() {
+                return null;
+            }
+        };
+        assertEquals(Status.OUT_OF_SERVICE, indicator.health().getStatus());
+    }
+
+    @Test
+    public void verifyDown() {
+        val indicator = new AbstractCacheHealthIndicator(0, 0) {
+            @Override
+            protected CacheStatistics[] getStatistics() {
+                return new CacheStatistics[]{
+                    mock(CacheStatistics.class)
+                };
+            }
+
+            @Override
+            protected Status status(final CacheStatistics statistics) {
+                return Status.DOWN;
+            }
+        };
+        assertEquals(Status.DOWN, indicator.health().getStatus());
+    }
+
+    @Test
+    public void verifyError() {
+        val indicator = new AbstractCacheHealthIndicator(0, 0) {
+            @Override
+            protected CacheStatistics[] getStatistics() {
+                throw new IllegalArgumentException();
+            }
+        };
+        assertEquals(Status.DOWN, indicator.health().getStatus());
     }
 }

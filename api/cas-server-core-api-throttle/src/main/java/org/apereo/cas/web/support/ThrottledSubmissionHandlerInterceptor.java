@@ -5,6 +5,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * This is {@link ThrottledSubmissionHandlerInterceptor}.
@@ -13,6 +15,16 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.0.0
  */
 public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInterceptor {
+
+    /**
+     * No op throttled submission handler interceptor.
+     *
+     * @return the throttled submission handler interceptor
+     */
+    static ThrottledSubmissionHandlerInterceptor noOp() {
+        return new ThrottledSubmissionHandlerInterceptor() {
+        };
+    }
 
     /**
      * Record submission failure.
@@ -47,40 +59,39 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
     default void decrement() {
     }
 
+    /**
+     * Gets all records.
+     *
+     * @return the all records
+     */
+    default Collection getRecords() {
+        return List.of();
+    }
+
     @Override
     default boolean preHandle(final HttpServletRequest request,
-                              final HttpServletResponse response,
-                              final Object handler) throws Exception {
+        final HttpServletResponse response,
+        final Object handler) throws Exception {
         return true;
     }
 
     @Override
     default void postHandle(final HttpServletRequest request,
-                            final HttpServletResponse response,
-                            final Object handler,
-                            final ModelAndView modelAndView) {
-    }
-
-    @Override
-    default void afterConcurrentHandlingStarted(final HttpServletRequest request,
-                                                final HttpServletResponse response,
-                                                final Object handler) throws Exception {
+        final HttpServletResponse response,
+        final Object handler,
+        final ModelAndView modelAndView) {
     }
 
     @Override
     default void afterCompletion(final HttpServletRequest request,
-                                 final HttpServletResponse response,
-                                 final Object handler,
-                                 final Exception e) throws Exception {
+        final HttpServletResponse response,
+        final Object handler,
+        final Exception e) throws Exception {
     }
 
-    /**
-     * No op throttled submission handler interceptor.
-     *
-     * @return the throttled submission handler interceptor
-     */
-    static ThrottledSubmissionHandlerInterceptor noOp() {
-        return new ThrottledSubmissionHandlerInterceptor() {
-        };
+    @Override
+    default void afterConcurrentHandlingStarted(final HttpServletRequest request,
+        final HttpServletResponse response,
+        final Object handler) throws Exception {
     }
 }

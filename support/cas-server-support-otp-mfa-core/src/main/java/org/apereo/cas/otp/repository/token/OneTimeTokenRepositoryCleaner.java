@@ -27,6 +27,6 @@ public class OneTimeTokenRepositoryCleaner {
         val now = ZonedDateTime.now(ZoneId.systemDefault());
         LOGGER.debug("Starting to clean previously used authenticator tokens from [{}] at [{}]", this.tokenRepository, now);
         tokenRepository.clean();
-        LOGGER.info("Finished cleaning authenticator tokens at [{}]", now);
+        LOGGER.debug("Finished cleaning authenticator tokens at [{}]", now);
     }
 }

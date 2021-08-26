@@ -2,6 +2,7 @@ package org.apereo.cas.audit;
 
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.apereo.inspektr.common.spi.PrincipalResolver;
 
 import java.util.Map;
 
@@ -20,6 +21,15 @@ public interface AuditTrailRecordResolutionPlan {
      * @param resolver the resolver
      */
     void registerAuditResourceResolver(String key, AuditResourceResolver resolver);
+
+    /**
+     * Register audit principal resolver.
+     *
+     * @param key      the key
+     * @param resolver the resolver
+     */
+    void registerAuditPrincipalResolver(String key, PrincipalResolver resolver);
+
 
     /**
      * Register audit action resolver.
@@ -56,4 +66,11 @@ public interface AuditTrailRecordResolutionPlan {
      * @return the audit action resolvers
      */
     Map<String, AuditActionResolver> getAuditActionResolvers();
+
+    /**
+     * Gets audit principal resolvers.
+     *
+     * @return the audit action resolvers
+     */
+    Map<String, PrincipalResolver> getAuditPrincipalResolvers();
 }

@@ -23,7 +23,8 @@ public class ServiceTicketProperties implements Serializable {
     private static final long serialVersionUID = -7445209580598499921L;
 
     /**
-     * Controls number of times a service ticket can be used within CAS server. Usage in CAS context means service ticket validation
+     * Controls number of times a service ticket can be used within CAS server. Usage
+     * in CAS context means service ticket validation
      * transaction.
      */
     private int numberOfUses = 1;

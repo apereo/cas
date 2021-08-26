@@ -1,8 +1,70 @@
 description = "Apereo CAS ‌‌Bill of Material"
+
+def getProjectNamePattern() {
+    return "^cas-server-(core-api|core|support|webapp).*"
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             artifact file("cas-server-support-bom.md")
+
+            pom.withXml {
+                ansi.green "Creating BOM with all project dependencies for ${project.name}"
+
+                def iter = asNode().iterator()
+                while (iter.hasNext()) {
+                    def node = iter.next()
+                    if (node.name().getLocalPart().equals("dependencies")) {
+                        ansi.green "Removing dependencies block from generated POM"
+                        iter.remove()
+                    }
+                    if (node.name().getLocalPart().equals("properties")) {
+                        ansi.green "Removing properties block from generated POM"
+                        iter.remove()
+                    }
+                }
+
+                def dependencyManagement = asNode().appendNode("dependencyManagement")
+                def dependencies = dependencyManagement.appendNode("dependencies")
+
+                def dependencyVersions = [:]
+                def allLibraries = []
+
+                rootProject.subprojects
+                        .findAll { p -> p != project && p.name.matches(getProjectNamePattern()) }
+                        .each { p ->
+                            createDependency(dependencies, groupId, p.name,
+                                    p.version, dependencyVersions, allLibraries)
+                        }
+
+                libraries.each {
+                    def artifact = it.value
+                    if (artifact instanceof List) {
+                        artifact.each { art ->
+                            if (art.class.isArray()) {
+                                art.each { coords ->
+                                    def elem = coords.toString().split(":")
+                                    createDependency(dependencies, elem[0], elem[1], elem[2],
+                                            dependencyVersions, allLibraries)
+                                }
+                            } else {
+                                createDependency(dependencies, art.group, art.name,
+                                        art.version, dependencyVersions, allLibraries)
+                            }
+                        }
+                    } else {
+                        createDependency(dependencies, artifact.group, artifact.name,
+                                artifact.version, dependencyVersions, allLibraries)
+                    }
+                }
+
+                def properties = asNode().appendNode("properties")
+                dependencyVersions.each { ver ->
+                    properties.appendNode(ver.key, ver.value)
+                }
+            }
+
             pom {
                 url = "$projectUrl"
                 inceptionYear = project.projectInceptionYear
@@ -36,44 +98,28 @@ publishing {
                     }
                 }
             }
-
-            pom.withXml {
-                println "Creating BOM with all project dependencies for ${project.name}"
-
-                def dependencyManagement = asNode().appendNode("dependencyManagement")
-                def dependencies = dependencyManagement.appendNode("dependencies")
-
-                rootProject.subprojects
-                        .findAll { p -> p != project && p.tasks.asMap['generatePomFileForMavenJavaPublication']?.enabled }
-                        .each { p ->
-                            createDependency(dependencies, groupId, p.name, version)
-                        }
-
-                libraries.each {
-                    def artifact = it.value
-                    if (artifact instanceof List) {
-                        artifact.each { art ->
-                            if (art.class.isArray()) {
-                                art.each { coords ->
-                                    def elem = coords.toString().split(":")
-                                    createDependency(dependencies, elem[0], elem[1], elem[2])
-                                }
-                            } else {
-                                createDependency(dependencies, art.group, art.name, art.version)
-                            }
-                        }
-                    } else {
-                        createDependency(dependencies, artifact.group, artifact.name, artifact.version)
-                    }
-                }
-            }
         }
     }
 }
 
-def createDependency(dependencies, group, name, version) {
-    def dependency = dependencies.appendNode("dependency")
-    dependency.appendNode("groupId", group)
-    dependency.appendNode("artifactId", name)
-    dependency.appendNode("version", version)
+def createDependency(dependencies, group, name, version, dependencyVersions, allLibraries) {
+    def key = "${group}@${name}"
+    if (!allLibraries.contains(key)) {
+        logger.info "Dependency: ${group}:${name}:${version}"
+        
+        def dependency = dependencies.appendNode("dependency")
+        dependency.appendNode("groupId", group)
+        dependency.appendNode("artifactId", name)
+
+        if (name.matches(getProjectNamePattern())) {
+            dependency.appendNode("version", "\${cas.version}")
+            dependencyVersions.put("cas.version", version)
+        } else {
+            def versionProp = "${group}.${name}.version"
+            
+            dependency.appendNode("version", String.format("\${%s}", versionProp))
+            dependencyVersions.put(versionProp, version)
+        }
+        allLibraries.add(key)
+    }
 }

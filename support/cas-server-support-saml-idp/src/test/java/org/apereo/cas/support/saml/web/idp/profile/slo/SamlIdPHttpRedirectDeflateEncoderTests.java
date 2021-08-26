@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Issuer;
@@ -48,7 +49,8 @@ public class SamlIdPHttpRedirectDeflateEncoderTests extends BaseSamlIdPConfigura
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
             .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
         logoutRequest = samlIdPObjectSigner.encode(logoutRequest, service,
-            adaptor, response, request, SAMLConstants.SAML2_REDIRECT_BINDING_URI, logoutRequest);
+            adaptor, response, request, SAMLConstants.SAML2_REDIRECT_BINDING_URI,
+            logoutRequest, new MessageContext());
 
         val encoder = new SamlIdPHttpRedirectDeflateEncoder("https://cas.example.org/logout", logoutRequest);
         encoder.doEncode();

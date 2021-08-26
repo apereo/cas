@@ -15,7 +15,6 @@ import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,7 +76,7 @@ public class SmartOpenIdController extends AbstractDelegateController implements
 
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
-        val parameters = new HashMap<String, String>(getAssociationResponse(request));
+        val parameters = new HashMap<>(getAssociationResponse(request));
         return new ModelAndView(this.successView, parameters);
     }
 }

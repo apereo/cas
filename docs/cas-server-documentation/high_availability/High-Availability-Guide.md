@@ -4,6 +4,8 @@ title: CAS - High Availability Guide
 category: High Availability
 ---
 
+{% include variables.html %}
+
 # High Availability Guide (HA/Clustering)
 
 A highly available CAS deployment is one that offers resilience in response to various failure modes such that CAS
@@ -40,7 +42,7 @@ It's worth pointing out some important characteristics of this architecture:
 * CAS itself can tolerate up to N-1 node failures.
 * Loss of a cache node DOES NOT cause loss of SSO state data (i.e. tickets) in replicating caches.
 * Loss of a cache node MAY cause loss of SSO state data in non-replicating caches (e.g. memcached).
-* Loss of SSO state data is always graceful: users simply re-authenticate.
+* Loss of SSO state data is always graceful: users re-authenticate.
 
 Before proceeding into a detailed discussion of various aspects of the recommended architecture, we offer a guiding
 principle for planning a highly available deployment:
@@ -145,7 +147,7 @@ data from other nodes without any manual configuration or adjustment. See below 
 
 #### Scalability
 
-Scalability is simply achieved by adding new CAS nodes to the cluster.
+Scalability is achieved by adding new CAS nodes to the cluster.
 
 #### Active/Passive Mode
 
@@ -154,7 +156,7 @@ ticket storage requirements since it is not necessary to share ticket state amon
 
 In particular, the default ticket registry component that stores tickets in memory is suitable for active/failover
 setups with the understanding that a node failure would result in ticket loss. It's worth repeating that ticket loss 
-results in graceful application failure where users simply re-authenticate to CAS to create new SSO sessions;
+results in graceful application failure where users re-authenticate to CAS to create new SSO sessions;
 CAS client sessions created under previous SSO sessions would suffer no interruption or loss of data.
 
 

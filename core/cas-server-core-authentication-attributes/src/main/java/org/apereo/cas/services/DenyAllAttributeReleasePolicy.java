@@ -21,7 +21,7 @@ import java.util.Map;
 @Slf4j
 @Getter
 @EqualsAndHashCode(callSuper = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -6215588543966639050L;
@@ -36,7 +36,7 @@ public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttr
 
     @Override
     public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attributes,
-                                                     final RegisteredService registeredService, final Service selectedService) {
+                                                           final RegisteredService registeredService, final Service selectedService) {
         LOGGER.trace("Ignoring all attributes given the service is designed to never receive any.");
         return new HashMap<>(0);
     }
@@ -66,9 +66,10 @@ public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttr
 
     @Override
     protected Map<String, List<Object>> returnFinalAttributesCollection(final Map<String, List<Object>> attributesToRelease, final RegisteredService service) {
-        LOGGER.info("CAS will not authorize anything for release, given the service is denied access to all attributes. "
+        LOGGER.debug("CAS will not authorize anything for release, given the service is denied access to all attributes. "
             + "If there are any default attributes set to be released to all services, "
-            + "those are also skipped for [{}]", service);
+            + "those are also skipped for service id: [{}], id: [{}] and description: [{}]",
+            service.getServiceId(), service.getId(), service.getDescription());
         return new HashMap<>(0);
     }
 }

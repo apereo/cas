@@ -1,0 +1,89 @@
+name: Publish Fork Release to Azure Artifacts Repository
+env:
+  JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  TERM: xterm-256color
+  REPOSITORY_USER: ${{ secrets.ARTIFACTS_REPOSITORY_USER }}
+  REPOSITORY_PWD: ${{ secrets.ARTIFACTS_REPOSITORY_PWD }}
+  REPOSITORY_URL: ${{ secrets.ARTIFACTS_REPOSITORY_URL }}
+  JDK_CURRENT: 11.0.12
+  TIMEOUT: 640000
+
+##########################################################################
+
+# Trigger on four digit tags where the fourth digit differentiates build from official builds
+on:
+  push:
+    tags:
+      - 6.*.*.*
+      - 7.*.*.*
+
+##########################################################################
+
+jobs:
+  initialize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'zulu'
+      - name: Initialize
+        run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+
+  ##########################################################################
+
+  cache:
+    runs-on: ubuntu-latest
+    needs: [initialize]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'zulu'
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/checkout@v2
+      - name: Download Dependencies
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+  ##########################################################################
+
+  publish-release:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    continue-on-error: false
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'zulu'
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Output Config
+        run: echo "username=${REPOSITORY_USER} releaseRepositoryUrl=${REPOSITORY_URL} on tag ${{ github.ref }} Token Length is [$(echo -n REPOSITORY_PWD | wc -c)] Tag is ${GITHUB_REF/refs\/tags\//}"
+        if: ${{ env.REPOSITORY_USER != null && env.REPOSITORY_PWD != null && env.REPOSITORY_URL != null }}
+      - name: Publish Release to GH Package Repository
+        run: ./gradlew -DpublishReleases=true -DskipArtifactSigning=true --parallel --build-cache --configure-on-demand --no-daemon -Dorg.gradle.internal.http.socketTimeout="${TIMEOUT}" -Dorg.gradle.internal.http.connectionTimeout="${TIMEOUT}"  build publish -x test -x javadoc -x check -PrepositoryUsername=${REPOSITORY_USER} -PrepositoryPassword=${REPOSITORY_PWD} -PreleaseRepositoryUrl=${REPOSITORY_URL} -Pversion=${GITHUB_REF/refs\/tags\//}
+        if: ${{ env.REPOSITORY_USER != null && env.REPOSITORY_PWD != null && env.REPOSITORY_URL != null }}

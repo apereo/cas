@@ -4,10 +4,13 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.security.credential.BasicCredential;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link BasicResourceCredentialFactoryBeanTests}.
@@ -29,27 +32,36 @@ public class BasicResourceCredentialFactoryBeanTests {
     }
 
     @Test
-    public void verifyMissingPrivKeys() throws Exception {
+    public void verifyMissingPrivKeys() {
         val factory = new BasicResourceCredentialFactoryBean();
         factory.setPrivateKeyInfo(new ClassPathResource("keys/badprivate.pem"));
         assertThrows(BeanCreationException.class, factory::getObject);
     }
 
     @Test
-    public void verifyMissingSecretKeys() throws Exception {
+    public void verifyMissingSecretKeys() {
         val factory = new BasicResourceCredentialFactoryBean();
         factory.setSecretKeyInfo(new ClassPathResource("keys/badsec.pem"));
         assertThrows(BeanCreationException.class, factory::getObject);
     }
 
     @Test
-    public void verifyNoKeys() throws Exception {
+    public void verifyNoKeys() {
         val factory = new BasicResourceCredentialFactoryBean();
         assertThrows(BeanCreationException.class, factory::getObject);
     }
 
     @Test
-    public void verifyMismatchedKeys() throws Exception {
+    public void verifyNoKeyInfo() {
+        val factory = new BasicResourceCredentialFactoryBean();
+        factory.setPrivateKeyInfo(null);
+        assertThrows(FatalBeanException.class, factory::getObject);
+        factory.setPublicKeyInfo(mock(Resource.class));
+        assertThrows(FatalBeanException.class, factory::getPublicKey);
+    }
+
+    @Test
+    public void verifyMismatchedKeys() {
         val factory = new BasicResourceCredentialFactoryBean();
         factory.setPrivateKeyInfo(new ClassPathResource("keys/private.pem"));
         factory.setPublicKeyInfo(new ClassPathResource("keys/badpublic.key"));

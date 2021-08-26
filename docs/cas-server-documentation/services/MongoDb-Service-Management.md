@@ -4,23 +4,18 @@ title: CAS - Mongo Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # Mongo Service Registry
 
 This registry uses a [MongoDb](https://www.mongodb.org/) instance to load and persist service definitions.
 Support is enabled by adding the following module into the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-mongo-service-registry</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-mongo-service-registry" %}
 
 ## Configuration
 
-This implementation auto-configures most of the internal details.
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-service-registry).
+{% include casproperties.html properties="cas.service-registry.mongo" %}
 
 ## Auto Initialization
 

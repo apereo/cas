@@ -6,6 +6,7 @@ import org.apereo.cas.services.CosmosDbServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.microsoft.azure.documentdb.ConsistencyLevel;
 import com.microsoft.azure.documentdb.IndexingMode;
@@ -33,7 +34,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "cosmosDbServiceRegistryConfiguration", proxyBeanMethods = true)
+@Configuration(value = "cosmosDbServiceRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CosmosDbServiceRegistryConfiguration {
@@ -60,25 +61,27 @@ public class CosmosDbServiceRegistryConfiguration {
 
     @ConditionalOnMissingBean(name = "cosmosDbDocumentDbTemplate")
     @Bean
-    public DocumentDbTemplate cosmosDbDocumentDbTemplate() {
-        val factory = cosmosDbObjectFactory();
+    public DocumentDbTemplate cosmosDbDocumentDbTemplate(@Qualifier("cosmosDbObjectFactory") final CosmosDbObjectFactory cosmosDbObjectFactory) {
         val cosmosDb = casProperties.getServiceRegistry().getCosmosDb();
-        val dbFactory = factory.createDocumentDbFactory(cosmosDb);
-        return factory.createDocumentDbTemplate(dbFactory, cosmosDb);
+        val dbFactory = cosmosDbObjectFactory.createDocumentDbFactory(cosmosDb);
+        return cosmosDbObjectFactory.createDocumentDbTemplate(dbFactory, cosmosDb);
     }
 
     @ConditionalOnMissingBean(name = "cosmosDbDocumentDbFactory")
     @Bean
-    public DocumentDbFactory cosmosDbDocumentDbFactory() {
+    @Autowired
+    public DocumentDbFactory cosmosDbDocumentDbFactory(@Qualifier("cosmosDbObjectFactory") final CosmosDbObjectFactory cosmosDbObjectFactory) {
         val cosmosDb = casProperties.getServiceRegistry().getCosmosDb();
-        return cosmosDbObjectFactory().createDocumentDbFactory(cosmosDb);
+        return cosmosDbObjectFactory.createDocumentDbFactory(cosmosDb);
     }
 
     @Bean
     @RefreshScope
-    public ServiceRegistry cosmosDbServiceRegistry() {
+    @Autowired
+    public ServiceRegistry cosmosDbServiceRegistry(
+        @Qualifier("cosmosDbDocumentDbTemplate") final DocumentDbTemplate cosmosDbDocumentDbTemplate,
+        @Qualifier("cosmosDbDocumentDbFactory") final DocumentDbFactory cosmosDbDocumentDbFactory) {
         val cosmosDb = casProperties.getServiceRegistry().getCosmosDb();
-        val dbFactory = cosmosDbDocumentDbFactory();
 
         if (cosmosDb.isDropCollection()) {
             val collectionLink = CosmosDbObjectFactory.getCollectionLink(cosmosDb.getDatabase(), cosmosDb.getCollection());
@@ -86,26 +89,28 @@ public class CosmosDbServiceRegistryConfiguration {
             options.setConsistencyLevel(ConsistencyLevel.valueOf(cosmosDb.getConsistencyLevel()));
             options.setOfferThroughput(cosmosDb.getThroughput());
             try {
-                dbFactory.getDocumentClient().deleteCollection(collectionLink, options);
+                cosmosDbDocumentDbFactory.getDocumentClient().deleteCollection(collectionLink, options);
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                LoggingUtils.error(LOGGER, e);
             }
         }
         val indexingPolicy = new IndexingPolicy();
         indexingPolicy.setAutomatic(true);
         indexingPolicy.setIndexingMode(IndexingMode.valueOf(cosmosDb.getIndexingMode()));
 
-        val db = cosmosDbDocumentDbTemplate();
-        db.createCollectionIfNotExists(cosmosDb.getCollection(), PARTITION_KEY_FIELD_NAME,
+        cosmosDbDocumentDbTemplate.createCollectionIfNotExists(cosmosDb.getCollection(), PARTITION_KEY_FIELD_NAME,
             cosmosDb.getThroughput(), indexingPolicy);
-        return new CosmosDbServiceRegistry(db, dbFactory, cosmosDb.getCollection(),
+        return new CosmosDbServiceRegistry(cosmosDbDocumentDbTemplate, cosmosDbDocumentDbFactory, cosmosDb.getCollection(),
             cosmosDb.getDatabase(), applicationContext, serviceRegistryListeners.getObject());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "cosmosDbServiceRegistryExecutionPlanConfigurer")
-    public ServiceRegistryExecutionPlanConfigurer cosmosDbServiceRegistryExecutionPlanConfigurer() {
-        return plan -> plan.registerServiceRegistry(cosmosDbServiceRegistry());
+    @RefreshScope
+    @Autowired
+    public ServiceRegistryExecutionPlanConfigurer cosmosDbServiceRegistryExecutionPlanConfigurer(
+        @Qualifier("cosmosDbServiceRegistry") final ServiceRegistry cosmosDbServiceRegistry) {
+        return plan -> plan.registerServiceRegistry(cosmosDbServiceRegistry);
     }
 
 }

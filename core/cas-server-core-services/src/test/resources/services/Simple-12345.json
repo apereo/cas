@@ -1,0 +1,8 @@
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "https://init.cas.org",
+  "name": "Simple",
+  "id": 12345,
+  "description": "This service definition authorizes all application urls that support HTTPS and IMAPS protocols.",
+  "evaluationOrder": 10000
+}

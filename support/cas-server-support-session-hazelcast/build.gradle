@@ -5,8 +5,18 @@ dependencies {
     
     implementation libraries.springsession
     implementation libraries.springsessionhazelcast
-    // implementation libraries.hazelcast
+//    implementation libraries.hazelcast
     
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+
+    configurations.all {
+        resolutionStrategy {
+            eachDependency { DependencyResolveDetails details ->
+                if (requested.group == "com.hazelcast" && requested.name == "hazelcast")  {
+                    details.useVersion("3.12.7")
+                }
+            }
+        }
+    }
 }

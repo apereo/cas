@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.configuration.model.RestEndpointProperties;
+
 import lombok.experimental.UtilityClass;
 import org.springframework.core.io.Resource;
 
@@ -34,22 +36,10 @@ public class PrincipalFactoryUtils {
     /**
      * New restful principal factory .
      *
-     * @param url      the url
-     * @param username the username
-     * @param password the password
+     * @param properties the properties
      * @return the principal factory
      */
-    public static PrincipalFactory newRestfulPrincipalFactory(final String url, final String username, final String password) {
-        return new RestfulPrincipalFactory(url, username, password);
-    }
-
-    /**
-     * New restful principal factory.
-     *
-     * @param url the url
-     * @return the principal factory
-     */
-    public static PrincipalFactory newRestfulPrincipalFactory(final String url) {
-        return newRestfulPrincipalFactory(url, null, null);
+    public static PrincipalFactory newRestfulPrincipalFactory(final RestEndpointProperties properties) {
+        return new RestfulPrincipalFactory(properties);
     }
 }

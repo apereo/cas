@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasRemoteAuthenticationConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
-@Tag("Webflow")
+@Tag("WebflowConfig")
 public class RemoteAddressWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

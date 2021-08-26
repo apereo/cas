@@ -4,6 +4,8 @@ title: CAS - Custom Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # Custom Service Registry
 
 If you wish to design your own implementation of a service registry, you will need to inject your implementation into CAS as such:
@@ -30,12 +32,6 @@ public class MyConfiguration implements ServiceRegistryExecutionPlanConfigurer {
 
 At a minimum, your overlay will need to include the following modules:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-services</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-core-services" %}
 
 [See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.

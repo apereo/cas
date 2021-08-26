@@ -4,6 +4,8 @@ title: CAS - Attribute Release
 category: Attributes
 ---
 
+{% include variables.html %}
+
 # Attribute Release
 
 Attributes are returned to scoped services and pass through a two-step process:

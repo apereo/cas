@@ -4,9 +4,8 @@ import org.apereo.cas.web.support.JdbcThrottledSubmissionHandlerInterceptorAdapt
 import org.apereo.cas.web.support.MySQLJdbcThrottledSubmissionHandlerInterceptorAdapterTests;
 import org.apereo.cas.web.support.PostgresJdbcThrottledSubmissionHandlerInterceptorAdapterTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link JdbcThrottledAllTestsSuite}.
@@ -19,6 +18,6 @@ import org.junit.runner.RunWith;
     PostgresJdbcThrottledSubmissionHandlerInterceptorAdapterTests.class,
     MySQLJdbcThrottledSubmissionHandlerInterceptorAdapterTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class JdbcThrottledAllTestsSuite {
 }

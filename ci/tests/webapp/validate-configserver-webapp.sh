@@ -1,6 +1,10 @@
 #!/bin/bash
 
-mv webapp/cas-server-webapp-config-server/build/libs/cas-server-webapp-config-server-*.war \
+./gradlew :webapp:cas-server-webapp-config-server:build \
+  -DskipNestedConfigMetadataGen=true -x check -x javadoc \
+  --no-daemon --build-cache --configure-on-demand --parallel
+  
+mv webapp/cas-server-webapp-config-server/build/libs/cas-server-webapp-config-server-*-SNAPSHOT.war \
   webapp/cas-server-webapp-config-server/build/libs/casconfigserver.war
 
 dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
@@ -13,10 +17,11 @@ keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass ch
 
 echo "Launching CAS config server web application..."
 java -jar webapp/cas-server-webapp-config-server/build/libs/casconfigserver.war \
-  --spring.security.user.password=Mellon --server.ssl.key-store="${keystore}" &> /dev/null &
+  --spring.security.user.password=Mellon --server.ssl.key-store="${keystore}" \
+  --encrypt.key-store.location=file:${keystore} &
 pid=$!
 echo "Launched CAS config server with pid ${pid}. Waiting for CAS config server to come online..."
-sleep 60
+sleep 30
 cmd=`curl -L -k --user casuser:Mellon --connect-timeout 60 -s \
 -o /dev/null -I -w "%{http_code}" https://localhost:8888/casconfigserver/actuator/cas/default`
 kill -9 "${pid}"

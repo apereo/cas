@@ -15,6 +15,7 @@ dependencies {
     
     
     implementation libraries.influxdb
+    implementation libraries.squareup
     implementation libraries.okhttp
 
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")

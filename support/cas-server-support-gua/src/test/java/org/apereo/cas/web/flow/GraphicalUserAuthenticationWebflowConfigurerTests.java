@@ -22,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
     GraphicalUserAuthenticationConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
-@TestPropertySource(properties = "cas.authn.gua.resource.location=classpath:example.png")
-@Tag("Webflow")
+@TestPropertySource(properties = "cas.authn.gua.simple.casuser=classpath:image.jpg")
+@Tag("WebflowConfig")
 public class GraphicalUserAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

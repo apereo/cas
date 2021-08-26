@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -18,13 +20,13 @@ public class StaticUserGraphicalAuthenticationRepositoryTests {
 
     @Test
     public void verifyImage() throws Exception {
-        val repo = new StaticUserGraphicalAuthenticationRepository(new ClassPathResource("image.jpg"));
+        val repo = new StaticUserGraphicalAuthenticationRepository(Map.of("casuser", new ClassPathResource("image.jpg")));
         assertFalse(repo.getGraphics("casuser").isEmpty());
     }
 
     @Test
     public void verifyBadImage() throws Exception {
-        val repo = new StaticUserGraphicalAuthenticationRepository(new ClassPathResource("missing.jpg"));
+        val repo = new StaticUserGraphicalAuthenticationRepository(Map.of("casuser", new ClassPathResource("missing.jpg")));
         assertTrue(repo.getGraphics("casuser").isEmpty());
     }
 }

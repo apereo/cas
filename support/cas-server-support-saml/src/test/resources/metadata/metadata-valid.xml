@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<md:EntityDescriptor entityID="urn:app.e2ma.net" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata">
+    <md:SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"><md:KeyDescriptor use="signing" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:KeyInfo><ds:X509Data><ds:X509Certificate>MIIDUjCCArugAwIBAgIJAJZgTIliYAkVMA0GCSqGSIb3DQEBBQUAMHoxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJUTjESMBAGA1UEBxMJTmFzaHZpbGxlMRMwEQYDVQQKEwpFbW1hLCBJbmMuMRQwEgYDVQQLEwtFbmdpbmVlcmluZzEfMB0GCSqGSIb3DQEJARYQam1vY2tAbXllbW1hLmNvbTAeFw0xNzA1MDgxODQ3MzNaFw0yNzA1MDgxODQ3MzNaMHoxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJUTjESMBAGA1UEBxMJTmFzaHZpbGxlMRMwEQYDVQQKEwpFbW1hLCBJbmMuMRQwEgYDVQQLEwtFbmdpbmVlcmluZzEfMB0GCSqGSIb3DQEJARYQam1vY2tAbXllbW1hLmNvbTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEA1WK2gRBuq1QXcMDU3Dy5BUIxVfeNV/+bM4MwW4Eqgta1IdbUSMY+lsVfhGESdkV03psZxLCuO40MHO2Jz8UXf2EZEKeZ6NvRBOnb1mb0JAYLA0RaIFCPObwZWysbx8QQG1lb+5tsfuXhD6qUDse0+lAKuXt7t/Mbo60WxmEshV8CAwEAAaOB3zCB3DAdBgNVHQ4EFgQUxZua3o+Fd7amzPywh9PrBx8ZJuUwgawGA1UdIwSBpDCBoYAUxZua3o+Fd7amzPywh9PrBx8ZJuWhfqR8MHoxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJUTjESMBAGA1UEBxMJTmFzaHZpbGxlMRMwEQYDVQQKEwpFbW1hLCBJbmMuMRQwEgYDVQQLEwtFbmdpbmVlcmluZzEfMB0GCSqGSIb3DQEJARYQam1vY2tAbXllbW1hLmNvbYIJAJZgTIliYAkVMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEFBQADgYEAX1oEkteXJwv1I7gnYSdFxoptUBo4vxRgguR1EyC5//mi463VJmDKQ6NjDSUaJpNEguGcJ2qXSfOcMiVcCt1rnrPPAnjD/2oZZvKUKfefNHYXRFNw2KUhORPolhglGe5ef+IyZW+WeQM5CJxdTMIMxdAMkxbNt9pAGu1o2YN9K7k=</ds:X509Certificate></ds:X509Data></ds:KeyInfo></md:KeyDescriptor>
+        <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://app2.e2ma.net/app2/sso/request_logout/"/>
+        <md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat>
+        <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://app.e2ma.net/app2/sso/assert_identity/" index="1"/>
+    </md:SPSSODescriptor>
+    <md:Organization>
+        <md:OrganizationName xml:lang="en-US">emma</md:OrganizationName>
+        <md:OrganizationDisplayName xml:lang="en-US">Emma, Inc.</md:OrganizationDisplayName>
+        <md:OrganizationURL xml:lang="en-US">https://help.myemma.com/s/</md:OrganizationURL>
+    </md:Organization>
+</md:EntityDescriptor>

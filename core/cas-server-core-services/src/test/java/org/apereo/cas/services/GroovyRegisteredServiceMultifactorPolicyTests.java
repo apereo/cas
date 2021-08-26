@@ -1,5 +1,8 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -23,7 +26,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("SuppressWarningsDeprecated")
 public class GroovyRegisteredServiceMultifactorPolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "GroovyRegisteredServiceMultifactorPolicyTests.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
 
     @Test
@@ -31,7 +36,7 @@ public class GroovyRegisteredServiceMultifactorPolicyTests {
         val authz = new GroovyRegisteredServiceMultifactorPolicy();
         authz.setGroovyScript("classpath:mfapolicy.groovy");
 
-        assertEquals(RegisteredServiceMultifactorPolicyFailureModes.OPEN, authz.getFailureMode());
+        assertEquals(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.OPEN, authz.getFailureMode());
         assertEquals("Test", authz.getPrincipalAttributeNameTrigger());
         assertEquals("TestMatch", authz.getPrincipalAttributeValueToMatch());
         assertTrue(authz.getMultifactorAuthenticationProviders().contains("mfa-something"));

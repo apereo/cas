@@ -24,14 +24,15 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
+@Tag("SAMLMetadata")
 public class SamlRegisteredServiceServiceProviderMetadataFacadeTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     public void verifyResolver() {
         val service = getSamlRegisteredServiceForTestShib();
         val authnRequest = getAuthnRequestFor(service);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, authnRequest).get();
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+            service, authnRequest).get();
         assertNotNull(adaptor);
         assertNull(adaptor.getValidUntil());
         assertNull(adaptor.getOrganization());
@@ -42,13 +43,16 @@ public class SamlRegisteredServiceServiceProviderMetadataFacadeTests extends Bas
         assertNotNull(adaptor.getExtensions());
         assertNotNull(adaptor.getSupportedProtocols());
         assertNotNull(adaptor.getSingleLogoutService());
-        assertNotNull(adaptor.getAssertionConsumerServiceForPostBinding());
+        val acs = adaptor.getAssertionConsumerServiceForPostBinding();
+        assertNotNull(acs);
+        assertEquals(7, acs.getIndex());
         assertNotNull(adaptor.getAssertionConsumerServiceForArtifactBinding());
         assertTrue(adaptor.assertionConsumerServicesSize() > 0);
         assertFalse(adaptor.isWantAssertionsSigned());
         assertFalse(adaptor.isAuthnRequestsSigned());
         assertFalse(adaptor.isSupportedProtocol("example"));
         assertFalse(adaptor.isSupportedProtocol("example"));
+        assertTrue(adaptor.getAssertionConsumerServiceLocations(SAMLConstants.SAML2_POST_BINDING_URI).size() > 1);
     }
 
     @Test

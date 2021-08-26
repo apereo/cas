@@ -3,6 +3,8 @@ package org.apereo.cas.oidc.claims;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.services.ChainingAttributeReleasePolicy;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -32,5 +34,19 @@ public class OidcPhoneScopeAttributeReleasePolicyTests extends AbstractOidcTests
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
         assertTrue(policy.getAllowedAttributes().stream().allMatch(attrs::containsKey));
+        assertTrue(policy.determineRequestedAttributeDefinitions().containsAll(policy.getAllowedAttributes()));
+    }
+
+    @Test
+    public void verifySerialization() {
+        val policy = new OidcPhoneScopeAttributeReleasePolicy();
+        val chain = new ChainingAttributeReleasePolicy();
+        chain.addPolicy(policy);
+        val service = getOidcRegisteredService();
+        service.setAttributeReleasePolicy(chain);
+        val serializer = new RegisteredServiceJsonSerializer();
+        val json = serializer.toString(service);
+        assertNotNull(json);
+        assertNotNull(serializer.from(json));
     }
 }

@@ -22,7 +22,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceOAuthCodeExpirationPolicy implements RegisteredServiceOAuthCodeExpirationPolicy {
     private static final long serialVersionUID = 8435436756392637728L;
 

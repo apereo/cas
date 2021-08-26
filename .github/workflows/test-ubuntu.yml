@@ -1,0 +1,178 @@
+name: Tests - Ubuntu
+
+env:
+  JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  TERM: xterm-256color
+  GRADLE_BUILDCACHE_USER: ${{ secrets.GRADLE_BUILDCACHE_USER }}
+  GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
+  CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+  SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  JDK_CURRENT: 11.0.12
+  CATEGORY_REGEX: ".*" # Use this to limit which tests run
+
+##########################################################################
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    types: [ labeled ]
+    branches: [ master ]
+
+##########################################################################
+
+jobs:
+  cancel-previous-runs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    if: ${{ (github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
+    steps:
+      - uses: styfle/cancel-workflow-action@0.8.0
+        with:
+          access_token: ${{ github.token }}
+          
+##########################################################################
+
+  initialize:
+    runs-on: ubuntu-latest
+    needs: [cancel-previous-runs]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'zulu'
+      - name: Initialize
+        run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+
+##########################################################################
+
+  cache:
+    runs-on: ubuntu-latest
+    needs: [initialize]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'zulu'
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/checkout@v2
+      - name: Download Dependencies
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+            
+##########################################################################
+  testcategories:
+    needs: [cache]
+    runs-on: ubuntu-latest
+    outputs:
+      categories: ${{ steps.get-categories.outputs.categories }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'zulu'
+      - id: print-categories
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon -q testCategories
+      - id: get-categories
+        run: echo "::set-output name=categories::$(./gradlew --build-cache --configure-on-demand --no-daemon -q testCategories)]}"
+##########################################################################
+  
+  tests:
+    needs: [testcategories]
+    continue-on-error: false
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        category: ${{fromJSON(needs.testcategories.outputs.categories)}}
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.category }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'zulu'
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+        shell: bash
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+#      - name: Setup tmate session
+#        uses: mxschmitt/action-tmate@v3
+      - name: Run Tests
+        run: ./testcas.sh --no-retry --no-watch --with-coverage --category ${{ matrix.category }}
+      - name: "Upload to Codecov"
+        uses: "codecov/codecov-action@v2"
+        with:
+          files: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
+          flags: ${{ matrix.category }}
+          name: ${{ matrix.category }}
+          verbose: false
+      - name: "Upload Coverage Report"
+        uses: "actions/upload-artifact@v2"
+        with:
+          name: "cas-tests-${{ matrix.category }}.coverage"
+          path: "./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
+
+##########################################################################
+
+  upload_coverage:
+    runs-on: ubuntu-latest
+    needs: [tests]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'zulu'
+      - name: "Download coverage files"
+        uses: "actions/download-artifact@v2"
+        with:
+          path: "reports"
+      - name: "Collect Files for SonarCloud"
+        run: |
+          find $PWD -type f -name 'jacocoRootReport.xml'
+          export files=''
+          for file in $(find $PWD -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
+          export files="${files%?}"
+          echo $files
+          echo "SONAR_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
+      - name: Upload Coverage to SonarCloud
+        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.SONARCLOUD_TOKEN != null }}
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -Dverbose=true -Dsonar.coverage.jacoco.xmlReportPaths="${SONAR_COVERAGE_REPORTS}"
+      - name: "Collect Files for Codacy"
+        run: |
+          find $PWD -type f -name 'jacocoRootReport.xml'
+          export files=''
+          for file in $(find . -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
+          export files="${files%?}"
+          echo $files
+          echo "CODACY_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
+      - name: Upload Coverage to Codacy
+        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.CODACY_PROJECT_TOKEN != null }}
+        uses: codacy/codacy-coverage-reporter-action@v1
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: ${{ env.CODACY_COVERAGE_REPORTS }}
+

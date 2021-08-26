@@ -6,7 +6,9 @@ import org.apereo.cas.configuration.model.support.pm.PasswordManagementPropertie
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
+import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,7 +36,8 @@ import java.util.Optional;
  */
 @Slf4j
 public class JsonResourcePasswordManagementService extends BasePasswordManagementService {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final Resource jsonResource;
 
@@ -71,50 +74,42 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
         return writeAccountToJsonResource();
     }
 
-    @SneakyThrows
-    private boolean writeAccountToJsonResource() {
-        MAPPER.writerWithDefaultPrettyPrinter().writeValue(this.jsonResource.getFile(), this.jsonBackedAccounts);
-        readAccountsFromJsonResource();
-        return true;
-    }
-
     @Override
-    public String findEmail(final String username) {
-        val account = this.jsonBackedAccounts.getOrDefault(username, null);
+    public String findEmail(final PasswordManagementQuery query) {
+        val account = this.jsonBackedAccounts.getOrDefault(query.getUsername(), null);
         return Optional.ofNullable(account).map(JsonBackedAccount::getEmail).orElse(null);
     }
 
     @Override
-    public String findPhone(final String username) {
-        val account = this.jsonBackedAccounts.getOrDefault(username, null);
+    public String findPhone(final PasswordManagementQuery query) {
+        val account = this.jsonBackedAccounts.getOrDefault(query.getUsername(), null);
         return Optional.ofNullable(account).map(JsonBackedAccount::getPhone).orElse(null);
     }
 
     @Override
-    public String findUsername(final String email) {
+    public String findUsername(final PasswordManagementQuery query) {
         val result = this.jsonBackedAccounts.entrySet()
             .stream()
-            .filter(entry -> entry.getValue().getEmail().equalsIgnoreCase(email))
+            .filter(entry -> entry.getValue().getEmail().equalsIgnoreCase(query.getEmail()))
             .findFirst();
         return result.map(Map.Entry::getKey).orElse(null);
     }
 
     @Override
-    public Map<String, String> getSecurityQuestions(final String username) {
-        val account = this.jsonBackedAccounts.getOrDefault(username, null);
+    public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) {
+        val account = this.jsonBackedAccounts.getOrDefault(query.getUsername(), null);
         if (account != null) {
             return account.getSecurityQuestions();
         }
         return new HashMap<>(0);
     }
 
-    private void readAccountsFromJsonResource() {
-        try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
-            final TypeReference<Map<String, JsonBackedAccount>> personList = new TypeReference<>() {
-            };
-            this.jsonBackedAccounts = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
-        } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+    @Override
+    public void updateSecurityQuestions(final PasswordManagementQuery query) {
+        val account = this.jsonBackedAccounts.getOrDefault(query.getUsername(), null);
+        if (account != null) {
+            account.setSecurityQuestions(query.getSecurityQuestions().toSingleValueMap());
+            writeAccountToJsonResource();
         }
     }
 
@@ -127,7 +122,23 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
         private String password;
 
         private String phone;
-        
+
         private Map<String, String> securityQuestions = new HashMap<>(0);
+    }
+
+    @SneakyThrows
+    private boolean writeAccountToJsonResource() {
+        MAPPER.writerWithDefaultPrettyPrinter().writeValue(this.jsonResource.getFile(), this.jsonBackedAccounts);
+        readAccountsFromJsonResource();
+        return true;
+    }
+
+    @SneakyThrows
+    private void readAccountsFromJsonResource() {
+        try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
+            val personList = new TypeReference<Map<String, JsonBackedAccount>>() {
+            };
+            this.jsonBackedAccounts = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
+        }
     }
 }

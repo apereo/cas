@@ -12,6 +12,7 @@ import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.util.CompressionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -36,6 +37,7 @@ import static org.mockito.Mockito.*;
 /**
  * @author Scott Battaglia
  * @since 3.1
+ * @deprecated Since 6.2
  */
 @SpringBootTest(classes = {
     SamlGoogleAppsConfiguration.class,
@@ -43,18 +45,24 @@ import static org.mockito.Mockito.*;
 })
 @Tag("SAML")
 @TestPropertySource(properties = {
+    "spring.main.allow-bean-definition-overriding=true",
+
     "cas.server.name=http://localhost:8080",
     "cas.server.prefix=${server.name}/cas",
-    "cas.samlCore.issuer=localhost",
-    "cas.samlCore.skewAllowance=200",
-    "cas.samlCore.ticketidSaml2=false",
-    "cas.googleApps.keyAlgorithm=DSA",
-    "cas.googleApps.publicKeyLocation=classpath:DSAPublicKey01.key",
-    "cas.googleApps.privateKeyLocation=classpath:DSAPrivateKey01.key"
+
+    "cas.saml-core.issuer=localhost",
+    "cas.saml-core.skew-allowance=200",
+    "cas.saml-core.ticketid-saml2=false",
+    
+    "cas.google-apps.key-algorithm=DSA",
+    "cas.google-apps.public-key-location=classpath:DSAPublicKey01.key",
+    "cas.google-apps.private-key-location=classpath:DSAPrivateKey01.key"
 })
+@Deprecated(since = "6.2.0")
 public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     private static final File FILE = new File(FileUtils.getTempDirectoryPath(), "service.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
     @Qualifier("googleAccountsServiceFactory")

@@ -4,23 +4,19 @@ title: CAS - CosmosDb Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # CosmosDb Service Registry
 
 Stores registered service data in an [Azure CosmosDb](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction) instance.
 
 Support is enabled by adding the following module into the overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-cosmosdb-service-registry</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-cosmosdb-service-registry" %}
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#cosmosdb-service-registry).
+{% include casproperties.html properties="cas.service-registry.cosmos-db" %}
 
 ## Troubleshooting
 
@@ -28,10 +24,10 @@ To enable additional logging, configure the log4j configuration file to add the 
 
 ```xml
 ...
-<AsyncLogger name="com.microsoft.azure" level="debug" additivity="false">
+<Logger name="com.microsoft.azure" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</AsyncLogger>
+</Logger>
 ...
 ```
 

@@ -1,7 +1,64 @@
 import org.gradle.internal.logging.*
 import org.gradle.internal.logging.events.*
 
-import java.util.regex.Pattern
+class Ansi {
+    static final String NORMAL          = "\u001B[0m"
+
+    static final String	BOLD            = "\u001B[1m"
+    static final String	ITALIC	        = "\u001B[3m"
+    static final String	UNDERLINE       = "\u001B[4m"
+    static final String	BLINK           = "\u001B[5m"
+    static final String	RAPID_BLINK	    = "\u001B[6m"
+    static final String	REVERSE_VIDEO   = "\u001B[7m"
+    static final String	INVISIBLE_TEXT  = "\u001B[8m"
+
+    static final String	BLACK           = "\u001B[30m"
+    static final String	RED             = "\u001B[31m"
+    static final String	GREEN           = "\u001B[32m"
+    static final String	YELLOW          = "\u001B[33m"
+    static final String	BLUE            = "\u001B[34m"
+    static final String	MAGENTA         = "\u001B[35m"
+    static final String	CYAN            = "\u001B[36m"
+    static final String	WHITE           = "\u001B[37m"
+
+    static final String	DARK_GRAY       = "\u001B[1;30m"
+    static final String	LIGHT_RED       = "\u001B[1;31m"
+    static final String	LIGHT_GREEN     = "\u001B[1;32m"
+    static final String LIGHT_YELLOW    = "\u001B[1;33m"
+    static final String	LIGHT_BLUE      = "\u001B[1;34m"
+    static final String	LIGHT_PURPLE    = "\u001B[1;35m"
+    static final String	LIGHT_CYAN      = "\u001B[1;36m"
+
+    static String color(String text, String ansiValue) {
+        ansiValue + text + NORMAL
+    }
+
+    static void write(String text, String ansiValue) {
+        println(color(text, ansiValue))
+    }
+
+    static void green(String text) {
+        write(text, Ansi.GREEN)
+    }
+
+    static void cyan(String text) {
+        write(text, Ansi.CYAN)
+    }
+
+    static void red(String text) {
+        write(text, Ansi.RED)
+    }
+
+    static void yellow(String text) {
+        write(text, Ansi.YELLOW)
+    }
+
+    static void blue(String text) {
+        write(text, Ansi.BLUE)
+    }
+}
+
+Object.metaClass.ansi = new Ansi()
 
 tasks.withType(Javadoc) {
     def exceptions = []
@@ -23,7 +80,7 @@ tasks.withType(Javadoc) {
 
 task pathingJar(type: Jar, description: "Produces a 'pathing' JAR whose manifest class-path contains project runtime dependencies") {
     dependsOn configurations.runtimeClasspath
-    appendix = "pathing"
+    archiveAppendix.set("pathing")
 
     doFirst {
         manifest {
@@ -37,13 +94,13 @@ task pathingJar(type: Jar, description: "Produces a 'pathing' JAR whose manifest
 }
 
 task testJar(type: Jar, dependsOn: testClasses, description: "archive the testClasses") {
-    baseName = "${project.archivesBaseName}-tests"
-    classifier = "tests"
+    archiveBaseName.set("${project.archivesBaseName}-tests")
+    archiveClassifier.set("tests")
     from sourceSets.test.output
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = "sources"
+    archiveClassifier.set("sources")
     from sourceSets.main.allSource
 }
 
@@ -53,12 +110,8 @@ task resourcesJar(type: Jar) {
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = "javadoc"
+    archiveClassifier.set("javadoc")
     from javadoc.destinationDir
-}
-
-task cleanLogs(description: "Clean build log files") {
-    delete fileTree(dir: project.projectDir, includes: ["**/*.log", "**/*.gz", "**/*.log.gz", "**/*.orig"])
 }
 
 task showConfiguration {
@@ -83,111 +136,17 @@ task downloadDependencies {
     }
 }
 
-task verifySpringConfigurationFactories(description: "Examine spring.factories file and ensure @Configuration classes can be located") {
+task outputDependenciesWithoutLicense(description: "Output dependencies without approved license") {
     doLast {
-        def springFactoriesFile = new File(project.projectDir, "src/main/resources/META-INF/spring.factories")
-        if (springFactoriesFile.exists()) {
-            def properties = new Properties()
-            properties.load(new FileReader(springFactoriesFile))
-
-            if (properties.containsKey("org.springframework.cloud.bootstrap.BootstrapConfiguration")) {
-                def classes = properties.get("org.springframework.cloud.bootstrap.BootstrapConfiguration")
-                checkForSpringConfigurationFactories(project.projectDir.getCanonicalPath(), classes)
-            }
-            if (properties.containsKey("org.springframework.boot.autoconfigure.EnableAutoConfiguration")) {
-                def classes = properties.get("org.springframework.boot.autoconfigure.EnableAutoConfiguration")
-                checkForSpringConfigurationFactories(project.projectDir.getCanonicalPath(), classes)
+        def results = file("${project.buildDir}/licenses/dependencies-without-allowed-license.json")
+        if (results.exists()) {
+            def slurper = new groovy.json.JsonSlurper()
+            def dependencies = slurper.parseText(results.text)
+            if (!dependencies.dependenciesWithoutAllowedLicenses.isEmpty()) {
+                ansi.red results.text
+                throw new GradleException("Dependencies found without allowed licenses")
             }
         }
     }
 }
 
-task verifySpringConfigurationCanDisableBeanProxying(description: "Examine @Configuration files and check whether proxying bean methods can be disabled") {
-     doLast {
-         def patternBeanMethods = Pattern.compile("public\\s\\w+(<\\w+>)*\\s(\\w+)\\(")
-         
-         def results = []
-         new File('.').eachFileRecurse(groovy.io.FileType.FILES) {
-             if (it.name.endsWith('Configuration.java') && it.text.contains("@Configuration")) {
-                 def canProxyBeans = true
-                 def matcher = patternBeanMethods.matcher(it.text)
-                 results.clear()
-                 while (matcher.find()) {
-                     results += matcher.group(2)
-                 }
-                 for (def r in results) {
-                     def patternMethodCall = Pattern.compile(r + "\\(");
-                     def matcher2 = patternMethodCall.matcher(it.text)
-                     def count = 0
-                     while (matcher2.find()) {
-                         count++
-                     }
-                     if (count > 1) {
-                         canProxyBeans = false
-                         break
-                     }
-                 }
-                 if (canProxyBeans) {
-                     def proxyPattern = Pattern.compile("@Configuration\\(value\\s*=\\s*\"(\\w+)\",\\s*proxyBeanMethods\\s*=\\s*(false|true)\\)") .matcher(it.text)
-                     if (!proxyPattern.find()) {
-                         throw new GradleException("Configuration class ${it.name} should be marked with proxyBeanMethods = false")
-                     }
-                 }
-             }
-         }
-     }
-}
-
-task validateTestsSuites(description: "Ensure all projects contain a tests suite that contains test classes") {
-    doLast {
-        def testSources = new File(project.getProjectDir(), "src/test/java")
-        if (testSources.exists()) {
-            def testSuites = new FileNameByRegexFinder().getFileNames(testSources.canonicalPath, /.*TestsSuite\.java/)
-            def testClasses = new FileNameByRegexFinder().getFileNames(testSources.canonicalPath, /.*Tests\.java/, /.*(Base|Abstract).+Tests\.java/)
-
-            if (testClasses.size() > 1 && testSuites.isEmpty()) {
-                throw new GradleException("Project ${project.displayName} is missing a TestsSuite class, while it contains ${testClasses.size()} tests")
-            }
-
-            if (testSuites.size() > 1) {
-                throw new GradleException("Project ${project.displayName} has more than one TestsSuite")
-            }
-
-            if (!testSuites.isEmpty()) {
-                def testSuiteFile = new File(testSuites.get(0))
-                def testSuiteFileBody = testSuiteFile.text
-                def missingClasses = testClasses.findAll({
-                    def testClass = new File(it).name.replace(".java", ".class")
-                    !testSuiteFileBody.contains(testClass)
-                })
-                if (!missingClasses.isEmpty()) {
-                    println "${testSuiteFile.name} of ${project.displayName} does not include:"
-                    println missingClasses
-                            .sort()
-                            .collect({ new File(it).name.replace(".java", ".class") })
-                            .join(", ")
-
-                    throw new GradleException("Found ${missingClasses.size()} missing test class(es) in test suites")
-                }
-            } 
-        }
-    }
-}
-
-def checkForSpringConfigurationFactories(String projectPath, String configurations) {
-    def classes = configurations.split(",")
-    classes.each {
-        def sourcePath = "/src/main/java/".replace("/", String.valueOf(File.separator))
-        def clazz = projectPath + sourcePath + it.replace(".", String.valueOf(File.separator)) + ".java"
-        def configurationFile = new File(clazz)
-        if (!configurationFile.exists()) {
-            throw new GradleException("Spring configuration class does not exist: ${clazz}")
-        }
-    }
-}
-
-gradle.buildFinished { buildResult ->
-    cleanLogs
-}
-
-clean.dependsOn("cleanLogs")

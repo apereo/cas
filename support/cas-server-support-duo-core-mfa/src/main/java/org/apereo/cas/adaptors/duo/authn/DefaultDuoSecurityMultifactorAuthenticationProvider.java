@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.AllArgsConstructor;
@@ -25,7 +25,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 @AllArgsConstructor
 @NoArgsConstructor
 @RefreshScope
-public class DefaultDuoSecurityMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider implements DuoSecurityMultifactorAuthenticationProvider {
+public class DefaultDuoSecurityMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider
+    implements DuoSecurityMultifactorAuthenticationProvider {
 
     private static final long serialVersionUID = 4789727148634156909L;
 
@@ -40,7 +41,7 @@ public class DefaultDuoSecurityMultifactorAuthenticationProvider extends Abstrac
 
     @Override
     public String getId() {
-        return StringUtils.defaultIfBlank(super.getId(), DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
+        return StringUtils.defaultIfBlank(super.getId(), DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
     }
 
     @Override

@@ -52,8 +52,7 @@ public class GrouperFacade {
      */
     public Collection<WsGetGroupsResult> getGroupsForSubjectId(final String subjectId) {
         try {
-            val groupsClient = new GcGetGroups().addSubjectId(subjectId);
-            val results = groupsClient.execute().getResults();
+            val results = fetchGroupsFor(subjectId);
             if (results == null || results.length == 0) {
                 LOGGER.warn("Subject id [{}] could not be located.", subjectId);
                 return new ArrayList<>(0);
@@ -65,5 +64,16 @@ public class GrouperFacade {
                 + ", the url endpoint for Grouper WS is correctly configured and the subject [{}] exists in Grouper.", subjectId, e);
         }
         return new ArrayList<>(0);
+    }
+
+    /**
+     * Fetch groups.
+     *
+     * @param subjectId the subject id
+     * @return the groups
+     */
+    protected WsGetGroupsResult[] fetchGroupsFor(final String subjectId) {
+        val groupsClient = new GcGetGroups().addSubjectId(subjectId);
+        return groupsClient.execute().getResults();
     }
 }

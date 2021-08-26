@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket;
 
-import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 
 import java.util.Map;
 import java.util.Set;
@@ -11,14 +12,7 @@ import java.util.Set;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-public interface OAuth20Token extends ServiceTicket {
-
-    /**
-     * Get the current authentication.
-     *
-     * @return the current authentication.
-     */
-    Authentication getAuthentication();
+public interface OAuth20Token extends ServiceTicket, AuthenticationAwareTicket {
 
     /**
      * Get requested scopes requested at the time of issuing this code.
@@ -39,4 +33,19 @@ public interface OAuth20Token extends ServiceTicket {
      * @return client id.
      */
     String getClientId();
+
+    /**
+     * Gets response type.
+     *
+     * @return the response type
+     */
+    OAuth20ResponseTypes getResponseType();
+
+    /**
+     * Gets grant type.
+     *
+     * @return the grant type
+     */
+    OAuth20GrantTypes getGrantType();
+
 }

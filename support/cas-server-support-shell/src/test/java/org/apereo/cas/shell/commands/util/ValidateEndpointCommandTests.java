@@ -20,6 +20,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ValidateEndpointCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() {
+
+        val result0 = shell.evaluate(
+            () -> "validate-endpoint --url http://http.badssl.com/");
+        assertTrue((Boolean) result0);
+
         val result = shell.evaluate(
             () -> "validate-endpoint --url https://github.com");
         assertTrue((Boolean) result);
@@ -27,6 +32,15 @@ public class ValidateEndpointCommandTests extends BaseCasShellCommandTests {
         val result2 = shell.evaluate(
             () -> "validate-endpoint --timeout 1000 --url https://wrong.host.badssl.com/");
         assertFalse((Boolean) result2);
+
+        val result3 = shell.evaluate(
+            () -> "validate-endpoint --url https://self-signed.badssl.com");
+        assertFalse((Boolean) result3);
+
+        val result4 = shell.evaluate(
+            () -> "validate-endpoint --proxy https://httpbin.org:443 --url https://self-signed.badssl.com");
+        assertFalse((Boolean) result4);
+
     }
 }
 

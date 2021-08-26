@@ -38,6 +38,11 @@ public class DynamoDbServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
+    public void deleteAll() {
+        this.dbTableService.deleteAll();
+    }
+
+    @Override
     public Collection<RegisteredService> load() {
         val svc = dbTableService.getAll();
         return svc

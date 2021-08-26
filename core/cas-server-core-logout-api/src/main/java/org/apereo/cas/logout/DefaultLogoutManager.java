@@ -1,8 +1,8 @@
 package org.apereo.cas.logout;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.logout.slo.SingleLogoutRequest;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
+import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +12,14 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,17 +34,19 @@ import java.util.stream.Stream;
 @Getter
 public class DefaultLogoutManager implements LogoutManager {
     private final boolean singleLogoutCallbacksDisabled;
+
     private final LogoutExecutionPlan logoutExecutionPlan;
 
     @Override
-    public List<SingleLogoutRequest> performLogout(final TicketGrantingTicket ticket) {
+    public List<SingleLogoutRequestContext> performLogout(final SingleLogoutExecutionRequest context) {
+        val ticket = context.getTicketGrantingTicket();
         LOGGER.info("Performing logout operations for [{}]", ticket.getId());
         if (this.singleLogoutCallbacksDisabled) {
             LOGGER.info("Single logout callbacks are disabled");
             return new ArrayList<>(0);
         }
-        val logoutRequests = performLogoutForTicket(ticket);
-        this.logoutExecutionPlan.getLogoutPostProcessor().forEach(h -> {
+        val logoutRequests = performLogoutForTicket(context);
+        logoutExecutionPlan.getLogoutPostProcessors().forEach(h -> {
             LOGGER.debug("Invoking logout handler [{}] to process ticket [{}]", h.getClass().getSimpleName(), ticket.getId());
             h.handle(ticket);
         });
@@ -48,8 +54,11 @@ public class DefaultLogoutManager implements LogoutManager {
         return logoutRequests;
     }
 
-    private List<SingleLogoutRequest> performLogoutForTicket(final TicketGrantingTicket ticketToBeLoggedOut) {
-        val streamServices = Stream.concat(Stream.of(ticketToBeLoggedOut.getServices()), Stream.of(ticketToBeLoggedOut.getProxyGrantingTickets()));
+    private List<SingleLogoutRequestContext> performLogoutForTicket(final SingleLogoutExecutionRequest context) {
+        val ticketToBeLoggedOut = context.getTicketGrantingTicket();
+        val streamServices = Stream.concat(
+            Stream.of(ticketToBeLoggedOut.getServices()),
+            Stream.of(ticketToBeLoggedOut.getProxyGrantingTickets()));
         val logoutServices = streamServices
             .map(Map::entrySet)
             .flatMap(Set::stream)
@@ -57,21 +66,29 @@ public class DefaultLogoutManager implements LogoutManager {
             .filter(Objects::nonNull)
             .map(entry -> Pair.of(entry.getKey(), (WebApplicationService) entry.getValue()))
             .collect(Collectors.toList());
-
+        
         val sloHandlers = logoutExecutionPlan.getSingleLogoutServiceMessageHandlers();
-        return logoutServices.stream()
+        return logoutServices
+            .stream()
             .map(entry -> sloHandlers
                 .stream()
-                .filter(handler -> handler.supports(entry.getValue()))
+                .sorted(Comparator.comparing(SingleLogoutServiceMessageHandler::getOrder))
+                .filter(handler -> handler.supports(context, entry.getValue()))
                 .map(handler -> {
                     val service = entry.getValue();
                     LOGGER.trace("Handling single logout callback for [{}]", service.getId());
-                    return handler.handle(service, entry.getKey(), ticketToBeLoggedOut);
+                    return handler.handle(service, entry.getKey(), context);
                 })
                 .flatMap(Collection::stream)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList()))
             .flatMap(Collection::stream)
+            .filter(distinctByKey(request -> request.getService()))
             .collect(Collectors.toList());
+    }
+
+    private static <T> Predicate<T> distinctByKey(final Function<? super T, Object> keyExtractor) {
+        val seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 }

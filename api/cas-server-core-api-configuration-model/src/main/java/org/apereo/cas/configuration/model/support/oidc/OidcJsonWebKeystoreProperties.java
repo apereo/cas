@@ -1,12 +1,14 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.configuration.support.RestEndpointProperties;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -20,6 +22,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("OidcJsonWebKeystoreProperties")
 public class OidcJsonWebKeystoreProperties implements Serializable {
     private static final long serialVersionUID = -1696060572027445151L;
 
@@ -32,6 +35,7 @@ public class OidcJsonWebKeystoreProperties implements Serializable {
      * Path to the JWKS file resource used to handle signing/encryption of authentication tokens.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String jwksFile = "file:/etc/cas/config/keystore.jwks";
 
     /**
@@ -53,13 +57,7 @@ public class OidcJsonWebKeystoreProperties implements Serializable {
     /**
      * Fetch JWKS via a REST endpoint.
      */
-    private Rest rest = new Rest();
+    @NestedConfigurationProperty
+    private RestfulOidcJsonWebKeystoreProperties rest = new RestfulOidcJsonWebKeystoreProperties();
 
-    @RequiresModule(name = "cas-server-support-oidc", automated = true)
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Rest extends RestEndpointProperties {
-        private static final long serialVersionUID = 3659099897056632608L;
-    }
 }

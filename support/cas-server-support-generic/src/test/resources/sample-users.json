@@ -8,6 +8,7 @@
       "firstName" : [ "java.util.List", ["Apereo"]]
     },
     "status" : "OK",
-    "expirationDate" : "2050-01-19"
+    "expirationDate" : "2050-01-19",
+    "warnings" : [ "java.util.ArrayList", [ "warning.code1" ] ]
   }
 }

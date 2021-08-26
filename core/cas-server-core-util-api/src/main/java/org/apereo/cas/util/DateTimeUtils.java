@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.joda.time.DateTime;
@@ -19,15 +21,18 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAccessor;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Date/Time utility methods.
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
  */
+@SuppressWarnings("JavaUtilDate")
 @UtilityClass
 public class DateTimeUtils {
-
 
     /**
      * Parse the given value as a local datetime.
@@ -125,17 +130,29 @@ public class DateTimeUtils {
     }
 
     /**
+     * Local date time local date.
+     *
+     * @param time the time
+     * @return the local date
+     */
+    public static LocalDate localDateTime(final long time) {
+        return LocalDate.ofInstant(Instant.ofEpochMilli(time), ZoneOffset.UTC);
+    }
+
+    /**
      * Parse the given value as a zoned datetime.
      *
      * @param value the value
      * @return the date/time instance
      */
     public static ZonedDateTime zonedDateTimeOf(final String value) {
-        try {
-            return ZonedDateTime.parse(value);
-        } catch (final Exception e) {
-            return null;
-        }
+        val parsers = List.of(DateTimeFormatter.ISO_ZONED_DATE_TIME, DateTimeFormatter.RFC_1123_DATE_TIME);
+        return parsers
+            .stream()
+            .map(parser -> FunctionUtils.doAndHandle(() -> ZonedDateTime.parse(value, parser), throwable -> null).get())
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
     }
 
     /**
@@ -155,7 +172,7 @@ public class DateTimeUtils {
      * @return the zoned date time
      */
     public static ZonedDateTime zonedDateTimeOf(final Instant time) {
-        return time != null ? ZonedDateTime.from(time.atZone(ZoneOffset.UTC)) : null;
+        return time != null ? time.atZone(ZoneOffset.UTC) : null;
     }
 
     /**
@@ -265,6 +282,7 @@ public class DateTimeUtils {
      * @param time Time object to be converted.
      * @return Date representing time
      */
+
     public static Date dateOf(final Instant time) {
         return Date.from(time);
     }
@@ -296,12 +314,12 @@ public class DateTimeUtils {
      * @return the zoned date time
      */
     public static ZonedDateTime convertToZonedDateTime(final String value) {
-        val dt = DateTimeUtils.zonedDateTimeOf(value);
+        val dt = zonedDateTimeOf(value);
         if (dt != null) {
             return dt;
         }
-        val lt = DateTimeUtils.localDateTimeOf(value);
-        return DateTimeUtils.zonedDateTimeOf(lt.atZone(ZoneOffset.UTC));
+        val lt = localDateTimeOf(value);
+        return zonedDateTimeOf(lt.atZone(ZoneOffset.UTC));
     }
 
     /**
@@ -351,16 +369,15 @@ public class DateTimeUtils {
                 return ChronoUnit.HOURS;
             case MINUTES:
                 return ChronoUnit.MINUTES;
-            case SECONDS:
-                return ChronoUnit.SECONDS;
             case MICROSECONDS:
                 return ChronoUnit.MICROS;
             case MILLISECONDS:
                 return ChronoUnit.MILLIS;
             case NANOSECONDS:
                 return ChronoUnit.NANOS;
+            case SECONDS:
             default:
-                return null;
+                return ChronoUnit.SECONDS;
         }
     }
 }

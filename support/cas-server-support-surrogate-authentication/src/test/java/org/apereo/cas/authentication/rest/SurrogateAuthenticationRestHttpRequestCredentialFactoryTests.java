@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.rest;
 
+import org.apereo.cas.authentication.SurrogateAuthenticationException;
 import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
@@ -31,11 +32,24 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Simple")
+@Tag("Impersonation")
 public class SurrogateAuthenticationRestHttpRequestCredentialFactoryTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Test
+    public void verifyUnAuthz() {
+        val request = new MockHttpServletRequest();
+        val requestBody = new LinkedMultiValueMap<String, String>();
+        request.addHeader(SurrogateAuthenticationRestHttpRequestCredentialFactory.REQUEST_HEADER_SURROGATE_PRINCIPAL, "surrogate");
+        requestBody.add("username", "test");
+        requestBody.add("password", "password");
+
+        val service = new SimpleSurrogateAuthenticationService(Map.of("test", List.of("other-user")), mock(ServicesManager.class));
+        val factory = new SurrogateAuthenticationRestHttpRequestCredentialFactory(service, casProperties.getAuthn().getSurrogate());
+        assertThrows(SurrogateAuthenticationException.class, () -> factory.fromRequest(request, requestBody));
+    }
 
     @Test
     public void verifyOperationByHeader() {
@@ -47,12 +61,22 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactoryTests {
 
         val service = new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class));
         val factory = new SurrogateAuthenticationRestHttpRequestCredentialFactory(service, casProperties.getAuthn().getSurrogate());
+        assertTrue(factory.getOrder() > 0);
         val results = factory.fromRequest(request, requestBody);
         assertFalse(results.isEmpty());
         val credential = (SurrogateUsernamePasswordCredential) results.get(0);
         assertNotNull(credential);
         assertEquals("surrogate", credential.getSurrogateUsername());
         assertEquals("test", credential.getUsername());
+    }
+
+    @Test
+    public void verifyEmptyCreds() {
+        val request = new MockHttpServletRequest();
+        val requestBody = new LinkedMultiValueMap<String, String>();
+        val service = new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class));
+        val factory = new SurrogateAuthenticationRestHttpRequestCredentialFactory(service, casProperties.getAuthn().getSurrogate());
+        assertTrue(factory.fromRequest(request, requestBody).isEmpty());
     }
 
     @Test

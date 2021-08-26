@@ -8,23 +8,25 @@ import java.sql.DriverManager;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link JdbcServletContextListenerTest}.
+ * This is {@link JdbcServletContextListenerTests}.
  *
  * @author leeyc0
  * @since 6.2.0
  */
 @Tag("JDBC")
+@SuppressWarnings("JdkObsolete")
 public class JdbcServletContextListenerTests {
 
     private final JdbcServletContextListener listener = new JdbcServletContextListener();
 
     @Test
-    public void verifyContextInitialized() throws Exception {
+    public void verifyContextInitialized() {
         listener.contextInitialized(null);
         assertFalse(DriverManager.getDrivers().hasMoreElements());
     }
 
     @Test
+
     public void verifyContextDestroyed() throws Exception {
         /* registers all drivers */
         Class.forName("org.hsqldb.jdbc.JDBCDriver");

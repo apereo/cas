@@ -4,6 +4,8 @@ title: CAS - Sentry Monitoring Integration
 category: Logs & Audits
 ---
 
+{% include variables.html %}
+
 # Overview
 
 [Sentry](https://sentry.io) allows you to track logs and error in real time. It provides insight into production deployments and information to reproduce and fix crashes.
@@ -12,13 +14,7 @@ category: Logs & Audits
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-sentry</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-sentry" %}
 
 The [Logging](../logging/Logging.html) configuration file must be adjusted to match the following:
 
@@ -34,11 +30,11 @@ The [Logging](../logging/Logging.html) configuration file must be adjusted to ma
     ...
     <Loggers>
         ...
-        <AsyncLogger name="org.apereo" level="info" additivity="false" includeLocation="true">
+        <Logger name="org.apereo" level="info" additivity="false" includeLocation="true">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
             <AppenderRef ref="Sentry"/>
-        </AsyncLogger>
+        </Logger>
         ...
     </Loggers>
 ...

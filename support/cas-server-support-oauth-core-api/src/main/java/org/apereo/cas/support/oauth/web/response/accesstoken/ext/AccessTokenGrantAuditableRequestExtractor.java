@@ -1,5 +1,8 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.audit.BaseAuditableExecution;
@@ -23,9 +26,9 @@ import java.util.Collection;
 public class AccessTokenGrantAuditableRequestExtractor extends BaseAuditableExecution {
     private final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
 
-    @Audit(action = "OAUTH2_ACCESS_TOKEN_REQUEST",
-        actionResolverName = "OAUTH2_ACCESS_TOKEN_REQUEST_ACTION_RESOLVER",
-        resourceResolverName = "OAUTH2_ACCESS_TOKEN_REQUEST_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.OAUTH2_ACCESS_TOKEN_REQUEST,
+        actionResolverName = AuditActionResolvers.OAUTH2_ACCESS_TOKEN_REQUEST_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.OAUTH2_ACCESS_TOKEN_REQUEST_RESOURCE_RESOLVER)
     @Override
     public AuditableExecutionResult execute(final AuditableContext context) {
         val request = (HttpServletRequest) context.getRequest().orElseThrow();

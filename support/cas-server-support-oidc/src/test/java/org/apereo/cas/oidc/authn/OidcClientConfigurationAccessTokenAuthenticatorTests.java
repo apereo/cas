@@ -7,6 +7,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -29,16 +30,29 @@ public class OidcClientConfigurationAccessTokenAuthenticatorTests extends Abstra
     public void verifyOperation() {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        val auth = new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
+        val auth = new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry, oidcAccessTokenJwtBuilder);
         val at = getAccessToken();
         when(at.getScopes()).thenReturn(Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
-
-        auth.validate(credentials, ctx);
+        auth.validate(credentials, ctx, JEESessionStore.INSTANCE);
 
         val userProfile = credentials.getUserProfile();
         assertNotNull(userProfile);
         assertEquals("casuser", userProfile.getId());
+    }
+
+    @Test
+    public void verifyFailsOperation() {
+        val request = new MockHttpServletRequest();
+        val ctx = new JEEContext(request, new MockHttpServletResponse());
+        val auth = new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry, oidcAccessTokenJwtBuilder);
+        val at = getAccessToken();
+        when(at.getScopes()).thenThrow(new IllegalArgumentException());
+        ticketRegistry.addTicket(at);
+        val credentials = new TokenCredentials(at.getId());
+        auth.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        val userProfile = credentials.getUserProfile();
+        assertNull(userProfile);
     }
 }

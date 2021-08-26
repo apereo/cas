@@ -1,8 +1,10 @@
 package org.apereo.cas.support.wsfederation.config.support.authentication;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegatedCookieProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegationProperties;
@@ -17,6 +19,7 @@ import org.apereo.cas.support.wsfederation.web.WsFederationCookieCipherExecutor;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieGenerator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 
@@ -50,7 +53,7 @@ import java.util.HashSet;
 public class WsFedAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Autowired
@@ -62,34 +65,6 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    private WsFederationConfiguration getWsFederationConfiguration(final WsFederationDelegationProperties wsfed) {
-        val config = new WsFederationConfiguration();
-        config.setAttributesType(WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.valueOf(wsfed.getAttributesType()));
-        config.setIdentityAttribute(wsfed.getIdentityAttribute());
-        config.setIdentityProviderIdentifier(wsfed.getIdentityProviderIdentifier());
-        config.setIdentityProviderUrl(wsfed.getIdentityProviderUrl());
-        config.setTolerance(Beans.newDuration(wsfed.getTolerance()).toMillis());
-        config.setRelyingPartyIdentifier(wsfed.getRelyingPartyIdentifier());
-
-        org.springframework.util.StringUtils.commaDelimitedListToSet(wsfed.getSigningCertificateResources())
-            .forEach(s -> config.getSigningCertificateResources().add(this.resourceLoader.getResource(s)));
-
-        org.springframework.util.StringUtils.commaDelimitedListToSet(wsfed.getEncryptionPrivateKey())
-            .forEach(s -> config.setEncryptionPrivateKey(this.resourceLoader.getResource(s)));
-
-        org.springframework.util.StringUtils.commaDelimitedListToSet(wsfed.getEncryptionCertificate())
-            .forEach(s -> config.setEncryptionCertificate(this.resourceLoader.getResource(s)));
-
-        config.setEncryptionPrivateKeyPassword(wsfed.getEncryptionPrivateKeyPassword());
-        config.setAttributeMutator(getAttributeMutatorForWsFederationConfig(wsfed));
-        config.setAutoRedirect(wsfed.isAutoRedirect());
-        config.setName(wsfed.getName());
-        config.setCookieGenerator(getCookieGeneratorForWsFederationConfig(wsfed));
-
-        config.initialize();
-        return config;
-    }
 
     private static WsFederationAttributeMutator getAttributeMutatorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
         val location = wsfed.getAttributeMutatorScript().getLocation();
@@ -115,6 +90,34 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
             + "Consider using other choices to handle encryption, signing and verification of "
             + "delegated authentication cookie.");
         return CipherExecutor.noOp();
+    }
+
+    private WsFederationConfiguration getWsFederationConfiguration(final WsFederationDelegationProperties wsfed) {
+        val config = new WsFederationConfiguration();
+        config.setAttributesType(WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.valueOf(wsfed.getAttributesType()));
+        config.setIdentityAttribute(wsfed.getIdentityAttribute());
+        config.setIdentityProviderIdentifier(wsfed.getIdentityProviderIdentifier());
+        config.setIdentityProviderUrl(wsfed.getIdentityProviderUrl());
+        config.setTolerance(Beans.newDuration(wsfed.getTolerance()).toMillis());
+        config.setRelyingPartyIdentifier(wsfed.getRelyingPartyIdentifier());
+
+        org.springframework.util.StringUtils.commaDelimitedListToSet(wsfed.getSigningCertificateResources())
+            .forEach(s -> config.getSigningCertificateResources().add(this.resourceLoader.getResource(s)));
+
+        org.springframework.util.StringUtils.commaDelimitedListToSet(wsfed.getEncryptionPrivateKey())
+            .forEach(s -> config.setEncryptionPrivateKey(this.resourceLoader.getResource(s)));
+
+        org.springframework.util.StringUtils.commaDelimitedListToSet(wsfed.getEncryptionCertificate())
+            .forEach(s -> config.setEncryptionCertificate(this.resourceLoader.getResource(s)));
+
+        config.setEncryptionPrivateKeyPassword(wsfed.getEncryptionPrivateKeyPassword());
+        config.setAttributeMutator(getAttributeMutatorForWsFederationConfig(wsfed));
+        config.setAutoRedirect(wsfed.isAutoRedirect());
+        config.setName(wsfed.getName());
+        config.setCookieGenerator(getCookieGeneratorForWsFederationConfig(wsfed));
+        FunctionUtils.doIfNotNull(wsfed.getId(), config::setId);
+        config.initialize();
+        return config;
     }
 
     @ConditionalOnMissingBean(name = "wsFederationConfigurations")
@@ -159,17 +162,14 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                             + wsfed.getIdentityProviderUrl()));
 
                     val principal = wsfed.getPrincipal();
-                    val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(),
-                        personDirectory.getPrincipalAttribute());
-                    val r = new WsFederationCredentialsToPrincipalResolver(attributeRepository.getObject(),
-                        wsfedPrincipalFactory(),
-                        principal.isReturnNull() || personDirectory.isReturnNull(),
-                        principalAttribute,
-                        cfg,
-                        personDirectory.isUseExistingPrincipalId() || principal.isUseExistingPrincipalId(),
-                        principal.isAttributeResolutionEnabled(),
-                        org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()));
-                    plan.registerAuthenticationHandlerWithPrincipalResolver(handler, r);
+
+                    val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(wsfedPrincipalFactory(),
+                        attributeRepository.getObject(),
+                        CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+                        WsFederationCredentialsToPrincipalResolver.class,
+                        principal, personDirectory);
+                    resolver.setConfiguration(cfg);
+                    plan.registerAuthenticationHandlerWithPrincipalResolver(handler, resolver);
                 }
             });
     }

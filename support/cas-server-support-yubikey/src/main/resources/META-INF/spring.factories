@@ -1,5 +1,6 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.support.authentication.YubiKeyAuthenticationEventExecutionPlanConfiguration,\
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.YubiKeyAuthenticationEventExecutionPlanConfiguration,\
   org.apereo.cas.config.YubiKeyConfiguration,\
-  org.apereo.cas.config.support.authentication.YubiKeyRestConfiguration,\
-  org.apereo.cas.config.support.authentication.YubiKeyComponentSerializationConfiguration,\
-  org.apereo.cas.config.support.authentication.YubiKeyAuthenticationMultifactorProviderBypassConfiguration
+  org.apereo.cas.config.YubiKeyAuthenticationWebflowConfiguration,\
+  org.apereo.cas.config.YubiKeyRestConfiguration,\
+  org.apereo.cas.config.YubiKeyComponentSerializationConfiguration,\
+  org.apereo.cas.config.YubiKeyAuthenticationMultifactorProviderBypassConfiguration

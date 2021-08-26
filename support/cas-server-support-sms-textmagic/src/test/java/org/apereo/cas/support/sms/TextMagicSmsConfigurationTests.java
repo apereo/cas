@@ -2,7 +2,7 @@ package org.apereo.cas.support.sms;
 
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.TextMagicSmsConfiguration;
-import org.apereo.cas.util.io.SmsSender;
+import org.apereo.cas.notifications.sms.SmsSender;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     TextMagicSmsConfiguration.class
 })
-@Tag("Simple")
+@Tag("SMS")
 public class TextMagicSmsConfigurationTests {
     @Autowired
     @Qualifier("smsSender")

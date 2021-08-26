@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.ldap;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,11 +20,14 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("LdapValidatorProperties")
 public class LdapValidatorProperties implements Serializable {
 
     private static final long serialVersionUID = 1150417354213235193L;
 
     /**
+     * Determine the LDAP validator type.
+     * 
      * The following LDAP validators can be used to test connection health status:
      * <ul>
      * <li>{@code search}: Validates a connection is healthy by performing a search operation.

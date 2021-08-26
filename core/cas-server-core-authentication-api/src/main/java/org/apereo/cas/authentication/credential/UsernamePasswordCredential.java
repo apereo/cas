@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.credential;
 
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,7 +15,6 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.validation.ValidationContext;
 
 import javax.validation.constraints.Size;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -37,17 +37,16 @@ public class UsernamePasswordCredential extends AbstractCredential {
      **/
     public static final String AUTHENTICATION_ATTRIBUTE_PASSWORD = "credential";
 
-    private static final int MAP_SIZE = 8;
-
     private static final long serialVersionUID = -700605081472810939L;
 
     private @Size(min = 1, message = "username.required") String username;
 
+    @JsonIgnore
     private @Size(min = 1, message = "password.required") String password;
 
     private String source;
 
-    private Map<String, Object> customFields = new LinkedHashMap<>(MAP_SIZE);
+    private Map<String, Object> customFields = new LinkedHashMap<>();
 
     public UsernamePasswordCredential(final String username, final String password) {
         this.username = username;

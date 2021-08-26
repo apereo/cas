@@ -4,6 +4,8 @@ title: CAS - YAML Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # YAML Service Registry
 
 This registry reads services definitions from YAML configuration files at the application context initialization time.
@@ -12,15 +14,9 @@ the directory structure to find relevant files.
 
 Support is enabled by adding the following module into the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-yaml-service-registry</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yaml-service-registry" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#yaml-service-registry).
+{% include casproperties.html properties="cas.service-registry.yaml" %}
 
 
 A sample YAML file follows:

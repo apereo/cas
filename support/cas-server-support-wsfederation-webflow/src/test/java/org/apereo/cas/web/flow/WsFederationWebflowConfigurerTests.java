@@ -33,13 +33,13 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
 @TestPropertySource(properties = {
-    "cas.authn.wsfed[0].identityProviderUrl=https://example.org/adfs/ls/",
-    "cas.authn.wsfed[0].identityProviderIdentifier=https://example.org/adfs/services/trust",
-    "cas.authn.wsfed[0].relyingPartyIdentifier=urn:cas:example",
-    "cas.authn.wsfed[0].signingCertificateResources=classpath:adfs-signing.cer",
-    "cas.authn.wsfed[0].identityAttribute=upn"
+    "cas.authn.wsfed[0].identity-provider-url=https://example.org/adfs/ls/",
+    "cas.authn.wsfed[0].identity-provider-identifier=https://example.org/adfs/services/trust",
+    "cas.authn.wsfed[0].relying-party-identifier=urn:cas:example",
+    "cas.authn.wsfed[0].signing-certificate-resources=classpath:adfs-signing.crt",
+    "cas.authn.wsfed[0].identity-attribute=upn"
 })
-@Tag("Webflow")
+@Tag("WebflowConfig")
 public class WsFederationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

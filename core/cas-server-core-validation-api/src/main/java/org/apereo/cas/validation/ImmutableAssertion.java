@@ -1,7 +1,7 @@
 package org.apereo.cas.validation;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -48,5 +48,5 @@ public class ImmutableAssertion implements Assertion, Serializable {
     /**
      * The service we are asserting this ticket for.
      */
-    private final @NonNull Service service;
+    private final @NonNull WebApplicationService service;
 }

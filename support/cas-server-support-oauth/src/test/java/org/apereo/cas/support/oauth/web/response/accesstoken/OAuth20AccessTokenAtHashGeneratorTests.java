@@ -23,7 +23,7 @@ public class OAuth20AccessTokenAtHashGeneratorTests extends AbstractOAuth20Tests
     @Test
     public void verifyNoneAlgorithm() {
         val hash = generateHashWithAlgorithm("none");
-        assertEquals("QUJDRA", hash);
+        assertEquals("QVQtMTIzNDU2", hash);
     }
 
     private String generateHashWithAlgorithm(final String alg) {
@@ -50,19 +50,19 @@ public class OAuth20AccessTokenAtHashGeneratorTests extends AbstractOAuth20Tests
     @Test
     public void verifySha512Algorithm() {
         val hash = generateHashWithAlgorithm(AlgorithmIdentifiers.RSA_USING_SHA512);
-        assertEquals("SexVvYP81ng449OFzoMWaeP4Faf0S3ql-NUrXUI1TEY", hash);
+        assertEquals("EZsVCVYBY_zw4RAkJ3s759RxOZ8UingrP-52KQX4G6E", hash);
     }
 
     @Test
     public void verifySha256Algorithm() {
         val hash = generateHashWithAlgorithm(AlgorithmIdentifiers.RSA_USING_SHA256);
-        assertEquals("4S4RWs9FUrJWi1XpPL05OQ", hash);
+        assertEquals("IzG3xSUlcgF_gHDCvKd3fQ", hash);
     }
 
     @Test
     public void verifySha384Algorithm() {
         val hash = generateHashWithAlgorithm(AlgorithmIdentifiers.RSA_USING_SHA384);
-        assertEquals("bxfiOJnSNFoVa69p58Arvdo74Fc2eEnA", hash);
+        assertEquals("9Kb1tRRQ1YATHOB95-YAH3LHmnF2Lu7l", hash);
     }
 
     @Test

@@ -11,9 +11,12 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.oauth2.sdk.auth.ClientSecretJWT;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.context.ApplicationContext;
@@ -41,30 +44,27 @@ public class OidcClientSecretJwtAuthenticator extends BaseOidcJwtAuthenticator {
     }
 
     @Override
-    protected boolean validateJwtAlgorithm(final Algorithm alg) {
-        return JWSAlgorithm.Family.HMAC_SHA.contains(alg);
-    }
-
-    @Override
-    public void validate(final UsernamePasswordCredentials credentials,
-                         final WebContext webContext) {
+    @SneakyThrows
+    public void validate(final Credentials creds,
+                         final WebContext webContext,
+                         final SessionStore sessionStore) {
+        val credentials = (UsernamePasswordCredentials) creds;
         val registeredService = verifyCredentials(credentials, webContext);
         if (registeredService == null) {
             LOGGER.warn("Unable to verify credentials");
             return;
         }
-        try {
+        val params = new HashMap<String, List<String>>();
+        params.put(OAuth20Constants.CLIENT_ASSERTION_TYPE, List.of(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER));
+        params.put(OAuth20Constants.CLIENT_ASSERTION, List.of(credentials.getPassword()));
+        val jwt = ClientSecretJWT.parse(params);
+        val userProfile = new CommonProfile(true);
+        userProfile.setId(jwt.getClientID().getValue());
+        credentials.setUserProfile(userProfile);
+    }
 
-            val params = new HashMap<String, List<String>>();
-            params.put(OAuth20Constants.CLIENT_ASSERTION_TYPE, List.of(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER));
-            params.put(OAuth20Constants.CLIENT_ASSERTION, List.of(credentials.getPassword()));
-            val jwt = ClientSecretJWT.parse(params);
-            val userProfile = new CommonProfile(true);
-            userProfile.setId(jwt.getClientID().getValue());
-            credentials.setUserProfile(userProfile);
-        } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
-        }
-
+    @Override
+    protected boolean validateJwtAlgorithm(final Algorithm alg) {
+        return JWSAlgorithm.Family.HMAC_SHA.contains(alg);
     }
 }

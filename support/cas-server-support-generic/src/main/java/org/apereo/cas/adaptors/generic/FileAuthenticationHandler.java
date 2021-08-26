@@ -75,7 +75,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 return createHandlerResult(transformedCredential, principal, new ArrayList<>(0));
             }
         } catch (final IOException e) {
-            throw new PreventedException("IO error reading backing file", e);
+            throw new PreventedException(e);
         }
         throw new FailedLoginException();
     }

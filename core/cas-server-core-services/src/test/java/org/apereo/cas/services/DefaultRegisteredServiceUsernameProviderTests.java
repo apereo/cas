@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,19 +22,20 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Tag("Simple")
+@Tag("RegisteredService")
 public class DefaultRegisteredServiceUsernameProviderTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultRegisteredServiceUsernameProvider.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
     public void verifyNoCanonAndEncrypt() {
         val applicationContext = new StaticApplicationContext();
         val beanFactory = applicationContext.getBeanFactory();
         val cipher = RegisteredServiceCipherExecutor.noOp();
-        beanFactory.initializeBean(cipher, "registeredServiceCipherExecutor");
+        beanFactory.initializeBean(cipher, RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME);
         beanFactory.autowireBean(cipher);
-        beanFactory.registerSingleton("registeredServiceCipherExecutor", cipher);
+        beanFactory.registerSingleton(RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME, cipher);
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         
@@ -50,8 +52,7 @@ public class DefaultRegisteredServiceUsernameProviderTests {
 
     @Test
     public void verifyRegServiceUsernameUpper() {
-        val provider = new DefaultRegisteredServiceUsernameProvider();
-        provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
+        val provider = new DefaultRegisteredServiceUsernameProvider(CaseCanonicalizationMode.UPPER.name());
         val principal = mock(Principal.class);
         when(principal.getId()).thenReturn("id");
         val id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),

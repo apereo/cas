@@ -4,6 +4,8 @@ title: CAS - Getting Started Guide
 category: Planning
 ---
 
+{% include variables.html %}
+
 # Getting Started
 
 This document provides a high-level guide on how to get started with a CAS server deployment. 
@@ -20,7 +22,7 @@ that may already have solved the same issues you face today.
 
 <div class="alert alert-warning"><strong>KISS</strong><p>In general, avoid designing and/or adopting
 use cases and workflows that heavily alter the CAS internal components, induce a heavy burden on your management
-and maintenance of the configuration or re-invent the CAS software and its supported protocols. All options simply
+and maintenance of the configuration or re-invent the CAS software and its supported protocols. All options 
 add to maintenance cost and headache.</p></div>
 
 ## Study Architecture
@@ -42,7 +44,7 @@ announcements as much as possible, and do not shy away from writing and contribu
 
 ## Prepare Environment
 
-Quite simply, study the [installation requirements](Installation-Requirements.html) for the deployment environment.
+Study the [installation requirements](Installation-Requirements.html) for the deployment environment.
 
 ## Deploy CAS
 

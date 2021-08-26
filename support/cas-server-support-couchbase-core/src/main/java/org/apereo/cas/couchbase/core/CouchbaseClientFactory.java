@@ -3,6 +3,7 @@ package org.apereo.cas.couchbase.core;
 import org.apereo.cas.configuration.model.support.couchbase.BaseCouchbaseProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.couchbase.client.core.env.IoConfig;
 import com.couchbase.client.core.env.NetworkResolution;
@@ -20,7 +21,6 @@ import com.couchbase.client.java.kv.UpsertOptions;
 import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.query.QueryResult;
 import com.couchbase.client.java.query.QueryScanConsistency;
-import com.couchbase.client.java.query.QueryStatus;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -102,6 +102,15 @@ public class CouchbaseClientFactory {
     }
 
     /**
+     * Gets idle connection timeout.
+     *
+     * @return the idle connection timeout
+     */
+    public Duration getIdleConnectionTimeout() {
+        return Beans.newDuration(properties.getIdleConnectionTimeout());
+    }
+
+    /**
      * Gets search timeout.
      *
      * @return the search timeout
@@ -159,9 +168,6 @@ public class CouchbaseClientFactory {
         val options = QueryOptions.queryOptions().scanConsistency(QueryScanConsistency.valueOf(properties.getScanConsistency()));
         parameters.ifPresent(options::parameters);
         val result = executeQuery(options, formattedQuery);
-        if (result.metaData().status() == QueryStatus.ERRORS) {
-            throw new CouchbaseException("Could not execute query");
-        }
         return result.rowsAsObject().get(0).getLong("count");
     }
 
@@ -323,9 +329,21 @@ public class CouchbaseClientFactory {
         return bucketGet(id, GetOptions.getOptions());
     }
 
+    /**
+     * Bucket get get result.
+     *
+     * @param id      the id
+     * @param options the options
+     * @return the get result
+     */
     public GetResult bucketGet(final String id, final GetOptions options) {
-        val bucket = this.cluster.bucket(properties.getBucket());
-        return bucket.defaultCollection().get(id, options);
+        try {
+            val bucket = cluster.bucket(properties.getBucket());
+            return bucket.defaultCollection().get(id, options);
+        } catch (final DocumentNotFoundException e) {
+            LoggingUtils.warn(LOGGER, e);
+        }
+        return null;
     }
 
     private void initializeCluster() {
@@ -334,6 +352,7 @@ public class CouchbaseClientFactory {
 
         val env = ClusterEnvironment
             .builder()
+            .maxNumRequestsInRetry(properties.getMaxNumRequestsInRetry())
             .timeoutConfig(TimeoutConfig
                 .connectTimeout(getConnectionTimeout())
                 .kvTimeout(getKvTimeout())
@@ -341,6 +360,7 @@ public class CouchbaseClientFactory {
                 .searchTimeout(getSearchTimeout())
                 .viewTimeout(getViewTimeout()))
             .ioConfig(IoConfig
+                .idleHttpConnectionTimeout(getIdleConnectionTimeout())
                 .maxHttpConnections(properties.getMaxHttpConnections())
                 .networkResolution(NetworkResolution.AUTO))
             .build();
@@ -366,11 +386,7 @@ public class CouchbaseClientFactory {
         if (properties.getMaxParallelism() > 0) {
             options.maxParallelism(properties.getMaxParallelism());
         }
-        val result = cluster.query(formattedQuery, options);
-        if (result.metaData().status() == QueryStatus.ERRORS) {
-            throw new CouchbaseException("Could not execute query");
-        }
-        return result;
+        return cluster.query(formattedQuery, options);
     }
 }
 

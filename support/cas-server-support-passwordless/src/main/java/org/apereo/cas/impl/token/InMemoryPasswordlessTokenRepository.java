@@ -1,8 +1,7 @@
 package org.apereo.cas.impl.token;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -13,13 +12,12 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 public class InMemoryPasswordlessTokenRepository extends BasePasswordlessTokenRepository {
     private static final int INITIAL_CACHE_SIZE = 50;
 
     private static final long MAX_CACHE_SIZE = 100_000_000;
 
-    private final LoadingCache<String, String> storage;
+    private final Cache<String, String> storage;
 
     public InMemoryPasswordlessTokenRepository(final int tokenExpirationInSeconds) {
         super(tokenExpirationInSeconds);
@@ -27,10 +25,7 @@ public class InMemoryPasswordlessTokenRepository extends BasePasswordlessTokenRe
             .initialCapacity(INITIAL_CACHE_SIZE)
             .maximumSize(MAX_CACHE_SIZE)
             .expireAfterWrite(Duration.ofSeconds(tokenExpirationInSeconds))
-            .build(s -> {
-                LOGGER.error("Load operation of the cache is not supported.");
-                return null;
-            });
+            .build();
     }
 
     @Override

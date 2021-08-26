@@ -45,7 +45,8 @@ public class CouchDbProfileDocument extends CouchDbDocument implements Principal
     private String linkedid;
 
     /**
-     `* Map for storing extra properties when AUP support uses shared database (e.g., user database).
+     * Map for storing extra properties when AUP support
+     * uses shared database (e.g., user database).
      */
     @JsonAnySetter
     private Map<String, List<Object>> attributes = new LinkedHashMap<>(0);

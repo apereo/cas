@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration shutdownHook="disable">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}"/>
+        </Console>
+        <SQSAppender name="SQSAppender"
+                     region="us-west-1"
+                     credentialAccessKey="AKIAIPPIGGUNIO74C63Z"
+                     credentialSecretKey="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"
+                     queueName="CAS"
+                     endpoint="http://127.0.0.1:4566"
+                     queueTags="key1->value1,key2->value2">
+            <PatternLayout>
+                <Pattern>%5p | %d{ISO8601}{UTC} | %t | %C | %M:%L | %m %ex %n</Pattern>
+            </PatternLayout>
+        </SQSAppender>
+
+    </Appenders>
+    <Loggers>
+        <Logger name="org.apereo" level="error" additivity="false"/>
+        <Logger name="com.amazonaws" level="warn"/>
+        <Logger name="org.apereo.cas.logging.SQSAppender" level="trace" additivity="false">
+            <AppenderRef ref="SQSAppender"/>
+        </Logger>
+        <Root level="off">
+            <AppenderRef ref="console"/>
+        </Root>
+    </Loggers>
+</Configuration>

@@ -68,10 +68,8 @@ public class CouchDbAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public ProfileCouchDbRepository authenticationCouchDbRepository(@Qualifier("authenticationCouchDbFactory") final CouchDbConnectorFactory authenticationCouchDbFactory) {
-        val repository = new ProfileCouchDbRepository(authenticationCouchDbFactory.getCouchDbConnector(),
+        return new ProfileCouchDbRepository(authenticationCouchDbFactory.getCouchDbConnector(),
             casProperties.getAuthn().getCouchDb().isCreateIfNotExists());
-        repository.initStandardDesignDocument();
-        return repository;
     }
 
     @ConditionalOnMissingBean(name = "couchDbAuthenticationEventExecutionPlanConfigurer")

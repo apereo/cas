@@ -3,8 +3,11 @@ package org.apereo.cas.adaptors.duo.web;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -26,8 +29,6 @@ import java.util.Objects;
  */
 @Endpoint(id = "duoAccountStatus", enableByDefault = false)
 public class DuoSecurityUserAccountStatusEndpoint extends BaseCasActuatorEndpoint {
-    private static final int MAP_SIZE = 8;
-
     private final ApplicationContext applicationContext;
 
     public DuoSecurityUserAccountStatusEndpoint(final CasConfigurationProperties casProperties,
@@ -44,8 +45,13 @@ public class DuoSecurityUserAccountStatusEndpoint extends BaseCasActuatorEndpoin
      * @return the map
      */
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Fetch Duo Security user account status", parameters = {
+        @Parameter(name = "username", required = true),
+        @Parameter(name = "providerId")
+    })
     public Map<?, ?> fetchAccountStatus(@Selector final String username, @Nullable final String providerId) {
-        val results = new LinkedHashMap<>(MAP_SIZE);
+        val resolver = SpringExpressionLanguageValueResolver.getInstance();
+        val results = new LinkedHashMap<>();
         val providers = applicationContext.getBeansOfType(DuoSecurityMultifactorAuthenticationProvider.class).values();
         providers
             .stream()
@@ -56,7 +62,7 @@ public class DuoSecurityUserAccountStatusEndpoint extends BaseCasActuatorEndpoin
                 val duoService = p.getDuoAuthenticationService();
                 val accountStatus = duoService.getUserAccount(username);
                 results.put(p.getId(),
-                    CollectionUtils.wrap("duoApiHost", duoService.getApiHost(),
+                    CollectionUtils.wrap("duoApiHost", resolver.resolve(duoService.getProperties().getDuoApiHost()),
                         "name", p.getFriendlyName(),
                         "accountStatus", accountStatus
                     ));

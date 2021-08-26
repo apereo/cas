@@ -3,8 +3,8 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +20,7 @@ import java.util.function.Predicate;
  * @since 5.2.0
  */
 @Slf4j
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegistry {
 
     /**
@@ -28,12 +28,12 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
      *
      * @param cipherExecutor the cipher executor
      */
-    public AbstractMapBasedTicketRegistry(final CipherExecutor cipherExecutor) {
+    protected AbstractMapBasedTicketRegistry(final CipherExecutor cipherExecutor) {
         setCipherExecutor(cipherExecutor);
     }
 
     @Override
-    public void addTicket(final @NonNull Ticket ticket) {
+    public void addTicketInternal(final Ticket ticket) {
         val encTicket = encodeTicket(ticket);
         LOGGER.debug("Added ticket [{}] to registry.", ticket.getId());
         getMapInstance().put(encTicket.getId(), encTicket);

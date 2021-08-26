@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.loader;
 
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ArrayUtils;
@@ -19,7 +20,7 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class BaseConfigurationPropertiesLoader {
     /**

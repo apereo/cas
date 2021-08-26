@@ -1,0 +1,9 @@
+{
+  "dependencies": "webauthn",
+  "properties": [
+    "--cas.authn.mfa.web-authn.core.allowed-origins=https://localhost:8443",
+    "--cas.authn.mfa.web-authn.core.application-id=https://localhost:8443",
+    "--cas.authn.mfa.web-authn.core.relying-party-name=CAS WebAuthn Demo",
+    "--cas.authn.mfa.web-authn.core.relying-party-id=cas.example.org"
+  ]
+}

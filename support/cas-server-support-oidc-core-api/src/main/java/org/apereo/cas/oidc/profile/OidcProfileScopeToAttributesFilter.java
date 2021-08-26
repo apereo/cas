@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.scopes.OidcAttributeReleasePolicyFactory;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
@@ -16,7 +17,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
@@ -38,20 +39,20 @@ import java.util.Map;
  */
 @Slf4j
 public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileScopeToAttributesFilter {
-    private static final int MAP_SIZE = 8;
-    private final Map<String, BaseOidcScopeAttributeReleasePolicy> attributeReleasePolicies = new LinkedHashMap<>(MAP_SIZE);
+    private final Map<String, BaseOidcScopeAttributeReleasePolicy> attributeReleasePolicies = new LinkedHashMap<>();
 
     private final PrincipalFactory principalFactory;
+
     private final CasConfigurationProperties casProperties;
+
     private final Collection<OidcCustomScopeAttributeReleasePolicy> userScopes;
 
     public OidcProfileScopeToAttributesFilter(final PrincipalFactory principalFactory,
                                               final CasConfigurationProperties casProperties,
-                                              final Collection<OidcCustomScopeAttributeReleasePolicy> userScopes) {
+                                              final OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory) {
         this.principalFactory = principalFactory;
         this.casProperties = casProperties;
-        this.userScopes = userScopes;
-
+        this.userScopes = oidcAttributeReleasePolicyFactory.getUserDefinedScopes();
         configureAttributeReleasePoliciesByScope();
     }
 
@@ -59,7 +60,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     public Principal filter(final Service service,
                             final Principal profile,
                             final RegisteredService registeredService,
-                            final JEEContext context,
+                            final WebContext context,
                             final OAuth20AccessToken accessToken) {
         val principal = super.filter(service, profile, registeredService, context, accessToken);
         if (registeredService instanceof OidcRegisteredService) {
@@ -80,30 +81,6 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             return this.principalFactory.createPrincipal(profile.getId(), attributes);
         }
         return principal;
-    }
-
-    /**
-     * Get all attributes allowed by the service.
-     * If a service is registered with {@code scopes}, get attributes allowed as per defined release policies for scopes.
-     * If a service registered with no {@code scopes}, then service {@code attributeReleasePolicy} will be used to get allowed attributes.
-     *
-     * @param scopes            the scopes
-     * @param principal         the principal
-     * @param service           the service
-     * @param oidcService       the registered service
-     * @param accessToken       the access token
-     * @return Attributes allowed by the service
-     */
-    private Map<String, List<Object>> getAttributesAllowedForService(final Collection<String> scopes,
-                                                                     final Principal principal,
-                                                                     final Service service,
-                                                                     final OidcRegisteredService oidcService,
-                                                                     final OAuth20AccessToken accessToken) {
-        if (!oidcService.getScopes().isEmpty()) {
-            scopes.retainAll(oidcService.getScopes());
-            return filterAttributesByScope(scopes, principal, service, oidcService, accessToken);
-        }
-        return oidcService.getAttributeReleasePolicy().getAttributes(principal, service, oidcService);
     }
 
     /**
@@ -186,7 +163,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         subTypes.forEach(Unchecked.consumer(t -> {
             if (ClassUtils.hasConstructor(t)) {
                 val ex = t.getDeclaredConstructor().newInstance();
-                if (oidc.getScopes().contains(ex.getScopeType())) {
+                if (oidc.getDiscovery().getScopes().contains(ex.getScopeType())) {
                     LOGGER.trace("Found standard OpenID Connect scope [{}] to filter attributes", ex.getScopeType());
                     this.attributeReleasePolicies.put(ex.getScopeType(), ex);
                 } else {
@@ -199,5 +176,35 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             LOGGER.debug("Configuring attributes release policies for user-defined scopes [{}]", userScopes);
             userScopes.forEach(t -> attributeReleasePolicies.put(t.getScopeName(), t));
         }
+    }
+
+    /**
+     * Get all attributes allowed by the service.
+     * If a service is registered with {@code scopes}, get attributes allowed as per defined release policies for scopes.
+     * If a service registered with no {@code scopes}, then service {@code attributeReleasePolicy} will be used to get allowed attributes.
+     *
+     * @param scopes      the scopes
+     * @param principal   the principal
+     * @param service     the service
+     * @param oidcService the registered service
+     * @param accessToken the access token
+     * @return Attributes allowed by the service
+     */
+    private Map<String, List<Object>> getAttributesAllowedForService(final Collection<String> scopes,
+                                                                     final Principal principal,
+                                                                     final Service service,
+                                                                     final OidcRegisteredService oidcService,
+                                                                     final OAuth20AccessToken accessToken) {
+        val serviceScopes = oidcService.getScopes();
+        LOGGER.trace("Scopes assigned to service definition [{}] are [{}]", oidcService.getName(), serviceScopes);
+        val scopeFree = serviceScopes.isEmpty() || (serviceScopes.size() == 1
+            && serviceScopes.contains(OidcConstants.StandardScopes.OPENID.getScope()));
+        if (!scopeFree) {
+            scopes.retainAll(serviceScopes);
+            LOGGER.trace("Service definition [{}] will filter attributes based on scopes [{}]", oidcService.getName(), scopes);
+            return filterAttributesByScope(scopes, principal, service, oidcService, accessToken);
+        }
+        LOGGER.trace("Service definition [{}] invokes the assigned attribute release policy without using scopes", oidcService.getName());
+        return oidcService.getAttributeReleasePolicy().getAttributes(principal, service, oidcService);
     }
 }

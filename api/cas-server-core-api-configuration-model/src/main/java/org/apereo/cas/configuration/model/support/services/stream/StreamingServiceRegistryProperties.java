@@ -1,8 +1,10 @@
 package org.apereo.cas.configuration.model.support.services.stream;
 
 import org.apereo.cas.configuration.model.support.services.stream.hazelcast.StreamServicesHazelcastProperties;
+import org.apereo.cas.configuration.model.support.services.stream.hazelcast.StreamServicesKafkaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,9 +22,11 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("StreamingServiceRegistryProperties")
 public class StreamingServiceRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = 4957127900906059461L;
+
     /**
      * Indicates the replication mode. Accepted values are:
      *
@@ -32,20 +36,28 @@ public class StreamingServiceRegistryProperties implements Serializable {
      * </ul>
      */
     private ReplicationModes replicationMode = ReplicationModes.ACTIVE_PASSIVE;
+
     /**
      * Whether service registry events should be streamed and published
      * across a CAS cluster. One typical workflow is to enable the
-     * publisher on one master node and simply have others consume definitions
+     * publisher on one master node and have others consume definitions
      * and changes from the upstream master node in order to avoid overrides
      * and timing issues as changes may step over each other if
      * the service registry schedule is not timed correctly.
      */
     private boolean enabled = true;
+
     /**
      * Stream services with hazelcast.
      */
     @NestedConfigurationProperty
     private StreamServicesHazelcastProperties hazelcast = new StreamServicesHazelcastProperties();
+
+    /**
+     * Stream services with Kafka.
+     */
+    @NestedConfigurationProperty
+    private StreamServicesKafkaProperties kafka = new StreamServicesKafkaProperties();
 
     public enum ReplicationModes {
 

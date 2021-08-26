@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -25,6 +27,7 @@ import java.util.Map;
 public class GroovySurrogateRegisteredServiceAccessStrategy extends BaseSurrogateRegisteredServiceAccessStrategy {
     private static final long serialVersionUID = -3998531629984937388L;
 
+    @ExpressionLanguageCapable
     private String groovyScript;
 
     @Override
@@ -35,7 +38,7 @@ public class GroovySurrogateRegisteredServiceAccessStrategy extends BaseSurrogat
                 val resource = ResourceUtils.getResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(this.groovyScript));
                 return ScriptingUtils.executeGroovyScript(resource, args, Boolean.class, true);
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                LoggingUtils.error(LOGGER, e);
             }
             return false;
         }

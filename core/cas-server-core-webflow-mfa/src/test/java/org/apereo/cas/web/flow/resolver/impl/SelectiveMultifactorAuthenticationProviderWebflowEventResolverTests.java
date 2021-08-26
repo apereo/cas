@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Webflow")
+@Tag("WebflowEvents")
 public class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
@@ -66,6 +66,31 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests
     }
 
     @Test
+    public void verifyEmptyOperation() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+        val service = RegisteredServiceTestUtils.getRegisteredService();
+        servicesManager.save(service);
+        WebUtils.putRegisteredService(context, service);
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+
+        val targetResolver = new DefaultTargetStateResolver(TestMultifactorAuthenticationProvider.ID);
+        val transition = new Transition(new DefaultTransitionCriteria(
+            new LiteralExpression(TestMultifactorAuthenticationProvider.ID)), targetResolver);
+        context.getRootFlow().getGlobalTransitionSet().add(transition);
+
+        val resolvedEvents = CollectionUtils.wrapHashSet(new EventFactorySupport().event(this, "mfa-something"));
+        WebUtils.putResolvedEventsAsAttribute(context, resolvedEvents);
+        val result = selectiveAuthenticationProviderWebflowEventResolver.resolve(context);
+        assertNotNull(result);
+        assertTrue(WebUtils.getResolvedMultifactorAuthenticationProviders(context).isEmpty());
+    }
+
+    @Test
     public void verifyNoProvider() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -88,7 +113,7 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests
         WebUtils.putResolvedEventsAsAttribute(context, resolvedEvents);
         val result = selectiveAuthenticationProviderWebflowEventResolver.resolve(context);
         assertNotNull(result);
-        assertTrue(result.isEmpty());
+        assertFalse(result.isEmpty());
     }
 
 }

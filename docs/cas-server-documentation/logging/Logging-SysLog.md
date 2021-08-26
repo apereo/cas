@@ -4,6 +4,8 @@ title: CAS - SysLog Logging Configuration
 category: Logs & Audits
 ---
 
+{% include variables.html %}
+
 # SysLog Logging
 
 CAS logging framework does have the ability to route messages to an external
@@ -20,12 +22,16 @@ messages needs to be routed over to this instance:
             messageId="Audit" id="App"/>
 </Appenders>
 ...
-<AsyncLogger name="org.apereo" additivity="true" level="debug">
+<Logger name="org.apereo" additivity="true" level="debug">
     <appender-ref ref="cas" />
     <appender-ref ref="SYSLOG" />
-</AsyncLogger>
+</Logger>
 
 ```
+
+<div class="alert alert-warning">
+  <strong>Pay Attention</strong><br /><a href="Logging-MDC.html">Mapped Diagnostic Context</a> (<code>MDC</code>) may contain the password. Setting <code>includeMDC=true</code> sends clear password as a variable to SysLog.
+</div>
 
 You can also configure the remote destination output over
 SSL and specify the related keystore configuration:

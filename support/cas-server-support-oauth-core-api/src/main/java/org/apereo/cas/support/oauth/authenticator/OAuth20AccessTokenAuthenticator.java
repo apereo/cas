@@ -10,6 +10,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.profile.CommonProfile;
@@ -24,7 +26,7 @@ import java.util.HashMap;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class OAuth20AccessTokenAuthenticator implements Authenticator<TokenCredentials> {
+public class OAuth20AccessTokenAuthenticator implements Authenticator {
     private final TicketRegistry ticketRegistry;
     private final JwtBuilder accessTokenJwtBuilder;
 
@@ -37,7 +39,8 @@ public class OAuth20AccessTokenAuthenticator implements Authenticator<TokenCrede
 
     @SneakyThrows
     @Override
-    public void validate(final TokenCredentials tokenCredentials, final WebContext webContext) {
+    public void validate(final Credentials credentials, final WebContext webContext, final SessionStore sessionStore) {
+        val tokenCredentials = (TokenCredentials) credentials;
         val token = extractAccessTokenFrom(tokenCredentials);
         LOGGER.trace("Received access token [{}] for authentication", token);
 

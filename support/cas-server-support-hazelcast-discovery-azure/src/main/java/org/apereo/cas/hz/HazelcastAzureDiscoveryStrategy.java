@@ -21,7 +21,8 @@ import java.util.HashMap;
  */
 public class HazelcastAzureDiscoveryStrategy implements HazelcastDiscoveryStrategy {
     @Override
-    public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig, final Config configuration, final NetworkConfig networkConfig) {
+    public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig,
+                                       final Config configuration, final NetworkConfig networkConfig) {
         val azure = cluster.getDiscovery().getAzure();
         val properties = new HashMap<String, Comparable>();
         if (StringUtils.hasText(azure.getClientId())) {

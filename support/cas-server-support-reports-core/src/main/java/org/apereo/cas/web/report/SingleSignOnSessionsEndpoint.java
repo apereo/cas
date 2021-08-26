@@ -1,13 +1,18 @@
 package org.apereo.cas.web.report;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ISOStandardDateFormat;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -21,11 +26,12 @@ import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.lang.Nullable;
 
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -55,68 +61,23 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
     }
 
     /**
-     * Gets sso sessions.
-     *
-     * @param option the option
-     * @return the sso sessions
-     */
-    private Collection<Map<String, Object>> getActiveSsoSessions(final SsoSessionReportOptions option) {
-        val dateFormat = new ISOStandardDateFormat();
-        return getNonExpiredTicketGrantingTickets()
-            .stream()
-            .map(TicketGrantingTicket.class::cast)
-            .filter(tgt -> !(option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null))
-            .map(tgt -> {
-                val authentication = tgt.getAuthentication();
-                val principal = authentication.getPrincipal();
-                val sso = new HashMap<String, Object>(SsoSessionAttributeKeys.values().length);
-                sso.put(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.getAttributeKey(), principal.getId());
-                sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE.getAttributeKey(), authentication.getAuthenticationDate());
-                sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE_FORMATTED.getAttributeKey(),
-                    dateFormat.format(DateTimeUtils.dateOf(authentication.getAuthenticationDate())));
-                sso.put(SsoSessionAttributeKeys.NUMBER_OF_USES.getAttributeKey(), tgt.getCountOfUses());
-                sso.put(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.getAttributeKey(), tgt.getId());
-                sso.put(SsoSessionAttributeKeys.PRINCIPAL_ATTRIBUTES.getAttributeKey(), principal.getAttributes());
-                sso.put(SsoSessionAttributeKeys.AUTHENTICATION_ATTRIBUTES.getAttributeKey(), authentication.getAttributes());
-                if (option != SsoSessionReportOptions.DIRECT) {
-                    if (tgt.getProxiedBy() != null) {
-                        sso.put(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey(), Boolean.TRUE);
-                        sso.put(SsoSessionAttributeKeys.PROXIED_BY.getAttributeKey(), tgt.getProxiedBy().getId());
-                    } else {
-                        sso.put(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey(), Boolean.FALSE);
-                    }
-                }
-                sso.put(SsoSessionAttributeKeys.AUTHENTICATED_SERVICES.getAttributeKey(), tgt.getServices());
-                return sso;
-            })
-            .collect(Collectors.toList());
-    }
-
-    /**
-     * Gets non expired ticket granting tickets.
-     *
-     * @return the non expired ticket granting tickets
-     */
-    private Collection<Ticket> getNonExpiredTicketGrantingTickets() {
-        return this.centralAuthenticationService.getTickets(ticket -> ticket instanceof TicketGrantingTicket && !ticket.isExpired());
-    }
-
-    /**
      * Endpoint for getting SSO Sessions in JSON format.
      *
      * @param type the type
      * @return the sso sessions
      */
     @ReadOperation
-    public Map<String, Object> getSsoSessions(final String type) {
+    @Operation(summary = "Get all single sign-on sessions with the given type",
+        parameters = {@Parameter(name = "type", required = true)})
+    public Map<String, Object> getSsoSessions(@Nullable final String type) {
         val sessionsMap = new HashMap<String, Object>();
-        val option = SsoSessionReportOptions.valueOf(type);
+        val option = Optional.ofNullable(type).map(SsoSessionReportOptions::valueOf).orElse(SsoSessionReportOptions.ALL);
         val activeSsoSessions = getActiveSsoSessions(option);
         sessionsMap.put("activeSsoSessions", activeSsoSessions);
         val totalTicketGrantingTickets = new AtomicLong();
         val totalProxyGrantingTickets = new AtomicLong();
         val totalUsageCount = new AtomicLong();
-        val uniquePrincipals = new HashSet<Object>(activeSsoSessions.size());
+        val uniquePrincipals = new HashSet<>(activeSsoSessions.size());
         for (val activeSsoSession : activeSsoSessions) {
             if (activeSsoSession.containsKey(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey())) {
                 val isProxied = Boolean.valueOf(activeSsoSession.get(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey()).toString());
@@ -150,19 +111,19 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @return result map
      */
     @DeleteOperation
+    @Operation(summary = "Remove single sign-on session for ticket id",
+        parameters = {@Parameter(name = "ticketGrantingTicket", required = true)})
     public Map<String, Object> destroySsoSession(@Selector final String ticketGrantingTicket) {
 
         val sessionsMap = new HashMap<String, Object>(1);
         try {
-            this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
+            if (centralAuthenticationService.deleteTicket(ticketGrantingTicket) == 0) {
+                throw new InvalidTicketException(ticketGrantingTicket);
+            }
             sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
             sessionsMap.put(TICKET_GRANTING_TICKET, ticketGrantingTicket);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             sessionsMap.put(STATUS, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             sessionsMap.put(TICKET_GRANTING_TICKET, ticketGrantingTicket);
             sessionsMap.put("message", e.getMessage());
@@ -177,9 +138,10 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @param username the username
      * @return the map
      */
+    @Operation(summary = "Remove single sign-on session for type and user",
+        parameters = {@Parameter(name = "type"), @Parameter(name = "username")})
     @DeleteOperation
     public Map<String, Object> destroySsoSessions(@Nullable final String type, @Nullable final String username) {
-
         if (StringUtils.isBlank(username) && StringUtils.isBlank(type)) {
             return Map.of(STATUS, HttpServletResponse.SC_BAD_REQUEST);
         }
@@ -198,16 +160,12 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
         val collection = getActiveSsoSessions(option);
         collection
             .stream()
-            .map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.toString()).toString())
+            .map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.getAttributeKey()).toString())
             .forEach(ticketGrantingTicket -> {
                 try {
-                    this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
+                    centralAuthenticationService.deleteTicket(ticketGrantingTicket);
                 } catch (final Exception e) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.error(e.getMessage(), e);
-                    } else {
-                        LOGGER.error(e.getMessage());
-                    }
+                    LoggingUtils.error(LOGGER, e);
                     failedTickets.put(ticketGrantingTicket, e.getMessage());
                 }
             });
@@ -237,7 +195,6 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      */
     @Getter
     enum SsoSessionAttributeKeys {
-
         AUTHENTICATED_PRINCIPAL("authenticated_principal"),
         PRINCIPAL_ATTRIBUTES("principal_attributes"),
         AUTHENTICATION_DATE("authentication_date"),
@@ -247,6 +204,8 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
         PROXIED_BY("proxied_by"),
         AUTHENTICATED_SERVICES("authenticated_services"),
         IS_PROXIED("is_proxied"),
+        REMEMBER_ME("remember_me"),
+        EXPIRATION_POLICY("expiration_policy"),
         NUMBER_OF_USES("number_of_uses");
 
         private final String attributeKey;
@@ -260,4 +219,61 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
             this.attributeKey = attributeKey;
         }
     }
+
+    /**
+     * Gets sso sessions.
+     *
+     * @param option the option
+     * @return the sso sessions
+     */
+    private Collection<Map<String, Object>> getActiveSsoSessions(final SsoSessionReportOptions option) {
+        val dateFormat = new ISOStandardDateFormat();
+        return getNonExpiredTicketGrantingTickets()
+            .stream()
+            .map(TicketGrantingTicket.class::cast)
+            .filter(tgt -> !(option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null))
+            .map(tgt -> {
+                val authentication = tgt.getAuthentication();
+                val principal = authentication.getPrincipal();
+                val sso = new HashMap<String, Object>(SsoSessionAttributeKeys.values().length);
+                sso.put(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.getAttributeKey(), principal.getId());
+                sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE.getAttributeKey(), authentication.getAuthenticationDate());
+                sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE_FORMATTED.getAttributeKey(),
+                    dateFormat.format(DateTimeUtils.dateOf(authentication.getAuthenticationDate())));
+                sso.put(SsoSessionAttributeKeys.NUMBER_OF_USES.getAttributeKey(), tgt.getCountOfUses());
+                sso.put(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.getAttributeKey(), tgt.getId());
+                sso.put(SsoSessionAttributeKeys.PRINCIPAL_ATTRIBUTES.getAttributeKey(), principal.getAttributes());
+                sso.put(SsoSessionAttributeKeys.AUTHENTICATION_ATTRIBUTES.getAttributeKey(), authentication.getAttributes());
+
+                val policy = new LinkedHashMap<String, Object>();
+                policy.put("timeToIdle", tgt.getExpirationPolicy().getTimeToIdle());
+                policy.put("timeToLive", tgt.getExpirationPolicy().getTimeToLive());
+                policy.put("clock", tgt.getExpirationPolicy().getClock().toString());
+                policy.put("name", tgt.getExpirationPolicy().getName());
+                sso.put(SsoSessionAttributeKeys.EXPIRATION_POLICY.getAttributeKey(), policy);
+                sso.put(SsoSessionAttributeKeys.REMEMBER_ME.getAttributeKey(),
+                    CoreAuthenticationUtils.isRememberMeAuthentication(authentication));
+                if (option != SsoSessionReportOptions.DIRECT) {
+                    if (tgt.getProxiedBy() != null) {
+                        sso.put(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey(), Boolean.TRUE);
+                        sso.put(SsoSessionAttributeKeys.PROXIED_BY.getAttributeKey(), tgt.getProxiedBy().getId());
+                    } else {
+                        sso.put(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey(), Boolean.FALSE);
+                    }
+                }
+                sso.put(SsoSessionAttributeKeys.AUTHENTICATED_SERVICES.getAttributeKey(), tgt.getServices());
+                return sso;
+            })
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets non expired ticket granting tickets.
+     *
+     * @return the non expired ticket granting tickets
+     */
+    private Collection<Ticket> getNonExpiredTicketGrantingTickets() {
+        return this.centralAuthenticationService.getTickets(ticket -> ticket instanceof TicketGrantingTicket && !ticket.isExpired());
+    }
+
 }

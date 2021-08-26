@@ -42,7 +42,7 @@ public class AuthenticationException extends RootCasException {
     }
 
     public AuthenticationException() {
-        this("No supported authentication handlers found for given credentials");
+        this("The authentication attempt has failed for given credentials");
     }
 
     /**

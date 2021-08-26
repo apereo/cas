@@ -1,5 +1,6 @@
 description = "Apereo CAS Core Events - Configuration Events"
 dependencies {
-    provided project(":core:cas-server-core-configuration")
-    provided project(":core:cas-server-core-events")
+    api project(":api:cas-server-core-api-configuration-model")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-events")
 }

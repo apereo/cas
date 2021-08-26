@@ -9,9 +9,10 @@ dependencies {
     implementation project(":core:cas-server-core-monitor")
     
     implementation libraries.mongo
-    implementation libraries.springbootredis
+    implementation libraries.redis
     implementation libraries.metrics
     implementation libraries.influxdb
+    implementation libraries.squareup
     implementation libraries.okhttp
 
     implementation project(":support:cas-server-support-redis-core")

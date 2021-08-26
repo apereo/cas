@@ -8,12 +8,10 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -32,10 +30,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfPortOpen(port = 10389)
 @TestPropertySource(properties = {
     "cas.authn.passwordless.accounts.ldap.ldap-url=ldap://localhost:10389",
-    "cas.authn.passwordless.accounts.ldap.baseDn=ou=people,dc=example,dc=org",
-    "cas.authn.passwordless.accounts.ldap.searchFilter=cn={0}",
-    "cas.authn.passwordless.accounts.ldap.bindDn=cn=Directory Manager",
-    "cas.authn.passwordless.accounts.ldap.bindCredential=password",
+    "cas.authn.passwordless.accounts.ldap.base-dn=ou=people,dc=example,dc=org",
+    "cas.authn.passwordless.accounts.ldap.search-filter=cn={0}",
+    "cas.authn.passwordless.accounts.ldap.bind-dn=cn=Directory Manager",
+    "cas.authn.passwordless.accounts.ldap.bind-credential=password",
     "cas.authn.passwordless.accounts.ldap.email-attribute=mail",
     "cas.authn.passwordless.accounts.ldap.phone-attribute=telephoneNumber"
 })
@@ -46,18 +44,13 @@ public class LdapPasswordlessUserAccountStoreTests extends BasePasswordlessUserA
     @Qualifier("passwordlessUserAccountStore")
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
-    @BeforeAll
-    @SneakyThrows
-    public static void bootstrap() {
+    @RetryingTest(3)
+    public void verifyAction() throws Exception {
         @Cleanup
         val localhost = new LDAPConnection("localhost", 10389, "cn=Directory Manager", "password");
         val resource = new ClassPathResource("ldif/ldap-passwordless.ldif");
         LOGGER.debug("Populating LDAP entries from [{}]", resource);
         LdapIntegrationTestsOperations.populateEntries(localhost, resource.getInputStream(), "ou=people,dc=example,dc=org");
-    }
-
-    @Test
-    public void verifyAction() {
         val user = passwordlessUserAccountStore.findUser("passwordlessuser");
         assertTrue(user.isPresent());
         assertEquals("passwordlessuser@example.org", user.get().getEmail());

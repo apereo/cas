@@ -32,8 +32,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreWebConfiguration.class
 }, properties = {
     "cas.audit.couchbase.bucket=testbucket",
-    "cas.audit.couchbase.clusterUsername=admin",
-    "cas.audit.couchbase.clusterPassword=password",
+    "cas.audit.couchbase.cluster-username=admin",
+    "cas.audit.couchbase.cluster-password=password",
     "cas.audit.couchbase.asynchronous=false"
 })
 @Tag("Couchbase")

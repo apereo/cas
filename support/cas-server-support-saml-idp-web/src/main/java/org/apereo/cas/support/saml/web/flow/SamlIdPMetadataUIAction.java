@@ -33,9 +33,9 @@ public class SamlIdPMetadataUIAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val service = this.serviceSelectionStrategy.resolveService(WebUtils.getService(requestContext));
+        val service = serviceSelectionStrategy.resolveService(WebUtils.getService(requestContext));
         if (service != null) {
-            val samlService = this.servicesManager.findServiceBy(service, SamlRegisteredService.class);
+            val samlService = servicesManager.findServiceBy(service, SamlRegisteredService.class);
             if (samlService != null) {
                 RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, samlService);
                 val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlService, service.getId());

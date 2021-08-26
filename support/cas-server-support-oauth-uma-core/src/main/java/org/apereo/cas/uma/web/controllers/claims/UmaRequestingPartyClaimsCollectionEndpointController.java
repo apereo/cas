@@ -56,13 +56,14 @@ public class UmaRequestingPartyClaimsCollectionEndpointController extends BaseUm
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(getUmaConfigurationContext().getServicesManager(), clientId);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service);
 
-        val ticket = getUmaConfigurationContext().getTicketRegistry().getTicket(ticketId, UmaPermissionTicket.class);
+        val ticketRegistry = getUmaConfigurationContext().getTicketRegistry();
+        val ticket = ticketRegistry.getTicket(ticketId, UmaPermissionTicket.class);
         if (ticket == null || ticket.isExpired()) {
             throw new InvalidTicketException(ticketId);
         }
 
         ticket.getClaims().putAll(profileResult.getAttributes());
-        getUmaConfigurationContext().getTicketRegistry().updateTicket(ticket);
+        ticketRegistry.updateTicket(ticket);
 
         if (StringUtils.isBlank(redirectUri) || !service.matches(redirectUri)) {
             throw new UnauthorizedServiceException("Redirect URI is unauthorized for this service definition");

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.login.InitializeLoginAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -16,8 +17,9 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class PrepareForGraphicalAuthenticationAction extends InitializeLoginAction {
 
-    public PrepareForGraphicalAuthenticationAction(final ServicesManager servicesManager) {
-        super(servicesManager);
+    public PrepareForGraphicalAuthenticationAction(final ServicesManager servicesManager,
+        final CasConfigurationProperties casProperties) {
+        super(servicesManager, casProperties);
     }
 
     @Override

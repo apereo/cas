@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration shutdownHook="disable">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%highlight{%d %p [%C{1}] - &lt;%m&gt;%n}" />
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.apache.xml.security" level="off" />
+        <Logger name="org.apereo" level="error"  />
+        <Logger name="org.apache.ignite" level="error" />
+        <Root level="off">
+            <AppenderRef ref="console"/>
+        </Root>
+    </Loggers>
+</Configuration>

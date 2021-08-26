@@ -5,9 +5,11 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.springframework.http.MediaType;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * This is {@link RegisteredServiceYamlSerializer}.
@@ -38,5 +40,10 @@ public class RegisteredServiceYamlSerializer extends RegisteredServiceJsonSerial
     @Override
     public boolean supports(final String content) {
         return content.startsWith("--- !<");
+    }
+
+    @Override
+    public List<MediaType> getContentTypes() {
+        return List.of(MediaType.valueOf("application/yaml"), MediaType.valueOf("application/yml"));
     }
 }

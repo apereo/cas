@@ -13,7 +13,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.util.InitializableObject;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,8 +54,6 @@ public class SamlIdentityProviderDiscoveryFeedController {
 
     private final ArgumentExtractor argumentExtractor;
 
-    private final SessionStore<JEEContext> sessionStore;
-
     @GetMapping(path = "/feed", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<SamlIdentityProviderEntity> getDiscoveryFeed() {
         return parsers
@@ -65,6 +63,11 @@ public class SamlIdentityProviderDiscoveryFeedController {
             .collect(Collectors.toSet());
     }
 
+    /**
+     * Home.
+     *
+     * @return the model and view
+     */
     @GetMapping
     public ModelAndView home() {
         val model = new HashMap<String, Object>();
@@ -73,6 +76,7 @@ public class SamlIdentityProviderDiscoveryFeedController {
             .stream()
             .filter(c -> c instanceof SAML2Client)
             .map(SAML2Client.class::cast)
+            .peek(InitializableObject::init)
             .map(SAML2Client::getServiceProviderResolvedEntityId)
             .collect(Collectors.toList());
 
@@ -80,14 +84,23 @@ public class SamlIdentityProviderDiscoveryFeedController {
         model.put("entityIds", entityIds);
 
         model.put("casServerPrefix", casProperties.getServer().getPrefix());
-        return new ModelAndView("casSamlIdPDiscoveryView", model);
+        return new ModelAndView("saml2-discovery/casSamlIdPDiscoveryView", model);
     }
 
+    /**
+     * Redirect.
+     *
+     * @param entityID            the entity id
+     * @param httpServletRequest  the http servlet request
+     * @param httpServletResponse the http servlet response
+     * @return the view
+     */
     @GetMapping(path = "redirect")
     public View redirect(@RequestParam("entityID") final String entityID,
                          final HttpServletRequest httpServletRequest,
                          final HttpServletResponse httpServletResponse) {
-        val idp = getDiscoveryFeed().stream()
+        val idp = getDiscoveryFeed()
+            .stream()
             .filter(entity -> entity.getEntityID().equals(entityID))
             .findFirst()
             .orElseThrow();
@@ -95,13 +108,14 @@ public class SamlIdentityProviderDiscoveryFeedController {
             .stream()
             .filter(c -> c instanceof SAML2Client)
             .map(SAML2Client.class::cast)
+            .peek(InitializableObject::init)
             .filter(c -> c.getIdentityProviderResolvedEntityId().equalsIgnoreCase(idp.getEntityID()))
             .findFirst()
             .orElseThrow();
 
-        val webContext = new JEEContext(httpServletRequest, httpServletResponse, this.sessionStore);
+        val webContext = new JEEContext(httpServletRequest, httpServletResponse);
         val service = this.argumentExtractor.extractService(httpServletRequest);
-        if (delegatedAuthenticationAccessStrategyHelper.isDelegatedClientAuthorizedForService(samlClient, service)) {
+        if (delegatedAuthenticationAccessStrategyHelper.isDelegatedClientAuthorizedForService(samlClient, service, httpServletRequest)) {
             val provider = DelegatedClientIdentityProviderConfigurationFactory.builder()
                 .service(service)
                 .client(samlClient)

@@ -17,6 +17,7 @@ import java.io.Serializable;
 @ToString
 @Getter
 @Builder
+@Setter
 public class CookieGenerationContext implements Serializable {
     /**
      * Empty cookie generation context.

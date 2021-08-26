@@ -1,6 +1,7 @@
 package org.apereo.cas.ws.idp.metadata;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,7 @@ public class WSFederationMetadataController {
             val metadata = WSFederationMetadataWriter.produceMetadataDocument(casProperties);
             out.write(DOM2Writer.nodeToString(metadata));
         } catch (final Exception ex) {
-            LOGGER.error("Failed to get metadata document", ex);
+            LoggingUtils.error(LOGGER, "Failed to get metadata document", ex);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }

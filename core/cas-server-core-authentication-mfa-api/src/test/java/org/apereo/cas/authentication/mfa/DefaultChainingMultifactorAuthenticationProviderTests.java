@@ -4,8 +4,8 @@ import org.apereo.cas.authentication.DefaultChainingMultifactorAuthenticationPro
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.bypass.HttpRequestMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
-import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -41,14 +41,14 @@ public class DefaultChainingMultifactorAuthenticationProviderTests {
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         provider.setBypassEvaluator(new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId()));
         val casProperties = new CasConfigurationProperties();
-        casProperties.getAuthn().getMfa().setGlobalFailureMode(RegisteredServiceMultifactorPolicyFailureModes.OPEN.toString());
+        casProperties.getAuthn().getMfa().getCore().setGlobalFailureMode(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.OPEN);
         val failureEvaluator = new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties);
         val p = new DefaultChainingMultifactorAuthenticationProvider(failureEvaluator);
         p.addMultifactorAuthenticationProviders(provider);
         assertNotNull(p.getBypassEvaluator());
         assertNotNull(p.getId());
         assertNotNull(p.getFriendlyName());
-        assertEquals(RegisteredServiceMultifactorPolicyFailureModes.NONE, p.getFailureMode());
+        assertEquals(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.NONE, p.getFailureMode());
 
         assertFalse(p.getMultifactorAuthenticationProviders().isEmpty());
         val service = MultifactorAuthenticationTestUtils.getRegisteredService();

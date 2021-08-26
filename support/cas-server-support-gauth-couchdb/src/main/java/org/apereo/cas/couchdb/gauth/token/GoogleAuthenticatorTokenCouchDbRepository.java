@@ -32,7 +32,7 @@ public class GoogleAuthenticatorTokenCouchDbRepository extends CouchDbRepository
      */
     @View(name = "by_uid_otp", map = "function(doc) { if(doc.token && doc.userId) { emit([doc.userId, doc.token], doc) } }")
     public CouchDbGoogleAuthenticatorToken findOneByUidForOtp(final String uid, final Integer otp) {
-        val view = createQuery("by_uid_otp").key(ComplexKey.of(uid, otp)).limit(1);
+        val view = createQuery("by_uid_otp").key(ComplexKey.of(uid.trim().toLowerCase(), otp)).limit(1);
         return db.queryView(view, CouchDbGoogleAuthenticatorToken.class).stream().findFirst().orElse(null);
     }
 
@@ -56,7 +56,7 @@ public class GoogleAuthenticatorTokenCouchDbRepository extends CouchDbRepository
      */
     @View(name = "by_userId", map = "function(doc) { if(doc.token && doc.userId) { emit(doc.userId, doc) } }")
     public List<CouchDbGoogleAuthenticatorToken> findByUserId(final String userId) {
-        return queryView("by_userId", userId);
+        return queryView("by_userId", userId.trim().toLowerCase());
     }
 
     /**
@@ -67,7 +67,7 @@ public class GoogleAuthenticatorTokenCouchDbRepository extends CouchDbRepository
      */
     @View(name = "count_by_userId", map = "function(doc) { if(doc.token && doc.userId) { emit(doc.userId, doc) } }", reduce = "_count")
     public long countByUserId(final String userId) {
-        val view = createQuery("count_by_userId").key(userId);
+        val view = createQuery("count_by_userId").key(userId.trim().toLowerCase());
         val rows = db.queryView(view).getRows();
         if (rows.isEmpty()) {
             return 0;
@@ -109,7 +109,7 @@ public class GoogleAuthenticatorTokenCouchDbRepository extends CouchDbRepository
      */
     @View(name = "by_uid_otp", map = "function(doc) { if(doc.token && doc.userId) { emit([doc.userId, doc.token], doc) } }")
     public List<CouchDbGoogleAuthenticatorToken> findByUidForOtp(final String uid, final Integer otp) {
-        val view = createQuery("by_uid_otp").key(ComplexKey.of(uid, otp));
+        val view = createQuery("by_uid_otp").key(ComplexKey.of(uid.trim().toLowerCase(), otp));
         return db.queryView(view, CouchDbGoogleAuthenticatorToken.class);
     }
 

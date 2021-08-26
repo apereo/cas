@@ -22,7 +22,7 @@ public class OAuth20JwtAccessTokenCipherExecutorTests extends AbstractOAuth20Tes
         val c = new OAuth20JwtAccessTokenCipherExecutor(true, true);
         assertNotNull(c.getSigningKey());
         assertNotNull(c.getSigningKeySetting());
-        assertNotNull(c.getSecretKeyEncryptionKey());
+        assertNotNull(c.getEncryptionKey());
         assertNotNull(c.getEncryptionKeySetting());
         assertNotNull(c.getName());
         val token = c.encode("example");

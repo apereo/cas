@@ -22,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @TestPropertySource(properties = {
-    "cas.authn.oidc.claimsMap.email=mail",
-    "cas.authn.oidc.claimsMap.email_verified=mail_confirmed"
+    "cas.authn.oidc.core.claims-map.email=mail",
+    "cas.authn.oidc.core.claims-map.email_verified=mail_confirmed"
 })
 @Tag("OIDC")
 public class OidcDefaultAttributeToScopeClaimMapperTests extends AbstractOidcTests {
@@ -46,5 +46,6 @@ public class OidcDefaultAttributeToScopeClaimMapperTests extends AbstractOidcTes
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
         assertTrue(policy.getAllowedAttributes().stream().allMatch(attrs::containsKey));
+        assertTrue(policy.determineRequestedAttributeDefinitions().containsAll(policy.getAllowedAttributes()));
     }
 }

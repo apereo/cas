@@ -1,7 +1,7 @@
 package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 
 import org.springframework.core.Ordered;
 
@@ -19,12 +19,13 @@ public interface SingleLogoutServiceMessageHandler extends Ordered {
     /**
      * Handle logout for slo service.
      *
-     * @param singleLogoutService  the service
-     * @param ticketId             the ticket id
-     * @param ticketGrantingTicket the ticket granting ticket
+     * @param singleLogoutService the service
+     * @param sessionIdentifier            the ticket id
+     * @param context             the ticket granting ticket
      * @return the logout request
      */
-    Collection<SingleLogoutRequest> handle(WebApplicationService singleLogoutService, String ticketId, TicketGrantingTicket ticketGrantingTicket);
+    Collection<SingleLogoutRequestContext> handle(WebApplicationService singleLogoutService,
+                                                  String sessionIdentifier, SingleLogoutExecutionRequest context);
 
     /**
      * Gets name.
@@ -38,10 +39,11 @@ public interface SingleLogoutServiceMessageHandler extends Ordered {
     /**
      * Supports handling the logout message.
      *
+     * @param context the context
      * @param service the service
-     * @return true/false
+     * @return true /false
      */
-    default boolean supports(final WebApplicationService service) {
+    default boolean supports(final SingleLogoutExecutionRequest context, final WebApplicationService service) {
         return service != null;
     }
 
@@ -51,7 +53,7 @@ public interface SingleLogoutServiceMessageHandler extends Ordered {
      * @param request the logout request.
      * @return if the logout has been performed.
      */
-    boolean performBackChannelLogout(SingleLogoutRequest request);
+    boolean performBackChannelLogout(SingleLogoutRequestContext request);
 
     /**
      * Create a logout message typically for front channel logout.
@@ -59,7 +61,7 @@ public interface SingleLogoutServiceMessageHandler extends Ordered {
      * @param logoutRequest the logout request.
      * @return the single logout message payload
      */
-    SingleLogoutMessage createSingleLogoutMessage(SingleLogoutRequest logoutRequest);
+    SingleLogoutMessage createSingleLogoutMessage(SingleLogoutRequestContext logoutRequest);
 
     @Override
     default int getOrder() {

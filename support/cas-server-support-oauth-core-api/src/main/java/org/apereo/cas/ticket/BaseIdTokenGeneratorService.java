@@ -4,17 +4,15 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link BaseIdTokenGeneratorService}.
@@ -22,23 +20,21 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 @Getter
-public abstract class BaseIdTokenGeneratorService implements IdTokenGeneratorService {
-    private final OAuth20ConfigurationContext configurationContext;
+public abstract class BaseIdTokenGeneratorService<T extends OAuth20ConfigurationContext> implements IdTokenGeneratorService {
+    private final T configurationContext;
 
     /**
      * Gets authenticated profile.
      *
-     * @param request  the request
-     * @param response the response
+     * @param context the context
      * @return the authenticated profile
      */
-    protected UserProfile getAuthenticatedProfile(final HttpServletRequest request, final HttpServletResponse response) {
-        val context = new JEEContext(request, response, getConfigurationContext().getSessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
-        val profile = manager.get(true);
+    protected UserProfile getAuthenticatedProfile(final WebContext context) {
+        val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
+        val profile = manager.getProfile();
 
         if (profile.isEmpty()) {
             throw new IllegalArgumentException("Unable to determine the user profile from the context");

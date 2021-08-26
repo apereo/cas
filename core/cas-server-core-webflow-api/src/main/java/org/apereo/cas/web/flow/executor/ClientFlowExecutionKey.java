@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.executor;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import com.google.common.base.Splitter;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -46,6 +48,13 @@ public class ClientFlowExecutionKey extends FlowExecutionKey {
         this.data = data;
     }
 
+    /**
+     * Parse.
+     *
+     * @param key the key
+     * @return the client flow execution key
+     * @throws BadlyFormattedFlowExecutionKeyException the badly formatted flow execution key exception
+     */
     public static ClientFlowExecutionKey parse(final String key) throws BadlyFormattedFlowExecutionKeyException {
         val tokens = Splitter.on('_').splitToList(key);
         if (tokens.size() != 2) {
@@ -56,7 +65,7 @@ public class ClientFlowExecutionKey extends FlowExecutionKey {
             val decoded = CodecUtil.b64(tokens.get(1));
             return new ClientFlowExecutionKey(uuid, decoded);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw new BadlyFormattedFlowExecutionKeyException(key, KEY_FORMAT);
         }
     }

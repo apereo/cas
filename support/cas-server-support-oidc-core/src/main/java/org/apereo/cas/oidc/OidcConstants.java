@@ -35,6 +35,13 @@ public interface OidcConstants {
      * The Authorization Server SHOULD prompt the End-User consent.
      */
     String PROMPT_CONSENT = "consent";
+
+    /**
+     * Hint to the Authorization Server about the login identifier
+     * the End-User might use to log in (if necessary).
+     */
+    String LOGIN_HINT = "login_hint";
+
     /**
      * The sub claim.
      */
@@ -54,11 +61,15 @@ public interface OidcConstants {
     /**
      * The session identifier claim.
      */
-    String CLAIM_SESSIOND_ID = "sid";
+    String CLAIM_SESSION_ID = "sid";
     /**
      * The id token.
      */
     String ID_TOKEN = "id_token";
+    /**
+     * The issuer parameter.
+     */
+    String ISS = "iss";
     /**
      * The max age.
      */
@@ -67,6 +78,14 @@ public interface OidcConstants {
      * The prompt parameter.
      */
     String PROMPT = "prompt";
+
+    /**
+     * The {@code ui_locales} parameter.
+     * End-User's preferred languages and scripts for the user interface, represented
+     * as a space-separated list of language tag values, ordered by preference.
+     */
+    String UI_LOCALES = "ui_locales";
+
     /**
      * Base OIDC URL.
      */
@@ -75,7 +94,28 @@ public interface OidcConstants {
     /**
      * Logout url.
      */
-    String LOGOUT_URL = "logout";
+    String LOGOUT_URL = "oidcLogout";
+
+    /**
+     * Oidc authorize url path segment url.
+     */
+    String AUTHORIZE_URL = "oidcAuthorize";
+
+    /**
+     * Oidc access token url path segment url.
+     */
+    String ACCESS_TOKEN_URL = "oidcAccessToken";
+
+    /**
+     * Oidc token url path segment url.
+     */
+    String TOKEN_URL = "oidcToken";
+
+    /**
+     * Oidc profile url path segment url.
+     */
+    String PROFILE_URL = "oidcProfile";
+
     /**
      * JWKS Endpoint url.
      */
@@ -108,6 +148,16 @@ public interface OidcConstants {
      * Rel value for webfinger protocol.
      */
     String WEBFINGER_REL = "http://openid.net/specs/connect/1.0/issuer";
+
+    /**
+     * .well-known path url.
+     */
+    String WELL_KNOWN_URL = ".well-known";
+
+    /**
+     * .well-known/openid-configuration path url.
+     */
+    String WELL_KNOWN_OPENID_CONFIGURATION_URL = WELL_KNOWN_URL + "/openid-configuration";
 
     /**
      * Scope assigned to access token internally

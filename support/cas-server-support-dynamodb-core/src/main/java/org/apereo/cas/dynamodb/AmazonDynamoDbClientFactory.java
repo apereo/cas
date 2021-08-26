@@ -4,13 +4,13 @@ import org.apereo.cas.aws.AmazonClientConfigurationBuilder;
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
 
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+
+import java.net.URI;
 
 /**
  * This is {@link AmazonDynamoDbClientFactory}.
@@ -28,40 +28,20 @@ public class AmazonDynamoDbClientFactory {
      * @return the amazon dynamo db
      */
     @SneakyThrows
-    public AmazonDynamoDB createAmazonDynamoDb(final AbstractDynamoDbProperties props) {
+    public DynamoDbClient createAmazonDynamoDb(final AbstractDynamoDbProperties props) {
         if (props.isLocalInstance()) {
             LOGGER.debug("Creating DynamoDb standard client with endpoint [{}] and region [{}]",
                 props.getEndpoint(), props.getRegion());
-            val endpoint = new AwsClientBuilder.EndpointConfiguration(
-                props.getEndpoint(), props.getRegion());
-            return AmazonDynamoDBClientBuilder.standard()
-                .withEndpointConfiguration(endpoint)
+            return DynamoDbClient.builder()
+                .endpointOverride(new URI(props.getEndpoint()))
+                .region(Region.of(props.getRegion()))
                 .build();
         }
 
-        val provider = ChainingAWSCredentialsProvider.getInstance(props.getCredentialAccessKey(),
-            props.getCredentialSecretKey(), props.getCredentialsPropertiesFile());
-
+        val provider = ChainingAWSCredentialsProvider.getInstance(props.getCredentialAccessKey(), props.getCredentialSecretKey());
         LOGGER.trace("Creating DynamoDb client configuration...");
-        val cfg = AmazonClientConfigurationBuilder.buildClientConfiguration(props);
-
-        LOGGER.debug("Creating DynamoDb client instance...");
-        val clientBuilder = AmazonDynamoDBClientBuilder
-            .standard()
-            .withClientConfiguration(cfg)
-            .withCredentials(provider);
-
-        val region = StringUtils.defaultIfBlank(props.getRegionOverride(), props.getRegion());
-
-        if (StringUtils.isNotBlank(props.getEndpoint())) {
-            LOGGER.trace("Setting DynamoDb client endpoint [{}]", props.getEndpoint());
-            clientBuilder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(props.getEndpoint(), region));
-        }
-
-        if (StringUtils.isNotBlank(region)) {
-            LOGGER.trace("Setting DynamoDb client region [{}]", props.getRegion());
-            clientBuilder.withRegion(region);
-        }
-        return clientBuilder.build();
+        val builder = DynamoDbClient.builder();
+        AmazonClientConfigurationBuilder.prepareClientBuilder(builder, provider, props);
+        return builder.build();
     }
 }

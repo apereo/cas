@@ -38,7 +38,7 @@ public class CoreSamlConfigurationTests {
     protected VelocityEngine velocityEngineFactoryBean;
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     protected OpenSamlConfigBean openSamlConfigBean;
 
     @Autowired
@@ -89,6 +89,7 @@ public class CoreSamlConfigurationTests {
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasCoreConfiguration.class

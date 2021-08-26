@@ -10,6 +10,7 @@ import org.apereo.cas.support.events.config.CasCoreEventsConfiguration;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
+import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 
@@ -30,7 +31,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.security.auth.login.FailedLoginException;
-
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreEventsConfiguration.class,
     RefreshAutoConfiguration.class
 })
-@Tag("Simple")
+@Tag("Events")
 public class DefaultCasEventListenerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -63,6 +63,16 @@ public class DefaultCasEventListenerTests {
         request.setLocalAddr("123.456.789.000");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
+    }
+
+    @Test
+    public void verifyCasAuthenticationWithNoClientInfo() {
+        ClientInfoHolder.setClientInfo(null);
+        val event = new CasAuthenticationTransactionFailureEvent(this,
+            CollectionUtils.wrap("error", new FailedLoginException()),
+            CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+        applicationContext.publishEvent(event);
+        assertFalse(casEventRepository.load().isEmpty());
     }
 
     @Test
@@ -103,6 +113,14 @@ public class DefaultCasEventListenerTests {
         assertFalse(casEventRepository.load().isEmpty());
     }
 
+    @Test
+    public void verifyCasTicketGrantingTicketDestroyed() {
+        val event = new CasTicketGrantingTicketDestroyedEvent(this,
+            new MockTicketGrantingTicket("casuser"));
+        applicationContext.publishEvent(event);
+        assertFalse(casEventRepository.load().isEmpty());
+    }
+
     @TestConfiguration("EventTestConfiguration")
     @Lazy(false)
     public static class EventTestConfiguration {
@@ -112,8 +130,9 @@ public class DefaultCasEventListenerTests {
                 private final Collection<CasEvent> events = new LinkedHashSet<>();
 
                 @Override
-                public void saveInternal(final CasEvent event) {
+                public CasEvent saveInternal(final CasEvent event) {
                     events.add(event);
+                    return event;
                 }
 
                 @Override

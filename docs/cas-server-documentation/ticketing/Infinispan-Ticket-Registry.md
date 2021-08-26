@@ -4,19 +4,15 @@ title: CAS - Infinispan Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # Infinispan Ticket Registry
 
 Infinispan integration is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-infinispan-ticket-registry</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-infinispan-ticket-registry" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#infinispan-ticket-registry).
+{% include casproperties.html properties="cas.ticket.registry.infinispan" %}
 
 [Infinispan](http://infinispan.org/) is a distributed in-memory key/value data store with optional schema.
 It can be used both as an embedded Java library and as a language-independent service accessed remotely over a variety of protocols.
@@ -45,7 +41,7 @@ There are a variety of cache stores available to choose from, some of which are:
 - HBase
 - MongoDB
 
-See the [full list of implementations](http://infinispan.org/cache-store-implementations/).
+See the [full list of implementations](https://infinispan.org/cache-store-implementations).
 
 ## Distributed Cache
 

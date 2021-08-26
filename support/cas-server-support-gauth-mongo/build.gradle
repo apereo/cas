@@ -12,7 +12,8 @@ dependencies {
     implementation project(":support:cas-server-support-mongo-core")
 
     implementation libraries.mongo
-    
+
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-logout")
@@ -35,4 +36,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-gauth-core", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-gauth", configuration: "tests")
 }

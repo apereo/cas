@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.actions.AbstractAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -59,7 +60,7 @@ public class WsFederationAction extends AbstractAuthenticationAction {
             }
             return wsFederationRequestBuilder.buildAuthenticationRequestEvent(context);
         } catch (final Exception ex) {
-            LOGGER.error(ex.getMessage(), ex);
+            LoggingUtils.error(LOGGER, ex);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, ex.getMessage());
         }
     }

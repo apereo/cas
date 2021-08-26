@@ -2,9 +2,9 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
-import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -13,10 +13,10 @@ import org.apereo.cas.support.spnego.authentication.handler.support.JcifsConfig;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandler;
 import org.apereo.cas.support.spnego.authentication.handler.support.NtlmAuthenticationHandler;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import jcifs.spnego.Authentication;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +25,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ResourceLoader;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,18 +44,18 @@ import java.util.stream.Collectors;
 public class SpnegoConfiguration {
 
     @Autowired
-    private ResourceLoader resourceLoader;
-
-    @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @RefreshScope
     @Bean
@@ -63,8 +63,11 @@ public class SpnegoConfiguration {
     public List<Authentication> spnegoAuthentications() {
         val spnegoSystem = casProperties.getAuthn().getSpnego().getSystem();
 
-        JcifsConfig.SystemSettings.initialize(resourceLoader, spnegoSystem.getLoginConf());
-        JcifsConfig.SystemSettings.setKerberosConf(spnegoSystem.getKerberosConf());
+        JcifsConfig.SystemSettings.initialize(applicationContext, spnegoSystem.getLoginConf());
+
+        val kerbConf = applicationContext.getResource(spnegoSystem.getKerberosConf());
+        FunctionUtils.doAndIgnore(o -> JcifsConfig.SystemSettings.setKerberosConf(kerbConf.getFile().getCanonicalPath()));
+        
         JcifsConfig.SystemSettings.setKerberosDebug(spnegoSystem.getKerberosDebug());
         JcifsConfig.SystemSettings.setKerberosKdc(spnegoSystem.getKerberosKdc());
         JcifsConfig.SystemSettings.setKerberosRealm(spnegoSystem.getKerberosRealm());
@@ -128,17 +131,13 @@ public class SpnegoConfiguration {
     @ConditionalOnMissingBean(name = "spnegoPrincipalResolver")
     public PrincipalResolver spnegoPrincipalResolver() {
         val personDirectory = casProperties.getPersonDirectory();
-        val spnegoProperties = casProperties.getAuthn().getSpnego();
-        val spnegoPrincipal = spnegoProperties.getPrincipal();
-        val principalAttribute = StringUtils.defaultIfBlank(spnegoPrincipal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-        return new SpnegoPrincipalResolver(attributeRepository.getObject(),
-            spnegoPrincipalFactory(),
-            spnegoPrincipal.isReturnNull() || personDirectory.isReturnNull(),
-            PrincipalNameTransformerUtils.newPrincipalNameTransformer(spnegoProperties.getPrincipalTransformation()),
-            principalAttribute,
-            spnegoPrincipal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
-            spnegoPrincipal.isAttributeResolutionEnabled(),
-            org.springframework.util.StringUtils.commaDelimitedListToSet(spnegoPrincipal.getActiveAttributeRepositoryIds()));
+        val spnegoPrincipal = casProperties.getAuthn().getSpnego().getPrincipal();
+
+        return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(spnegoPrincipalFactory(),
+            attributeRepository.getObject(),
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            SpnegoPrincipalResolver.class,
+            spnegoPrincipal, personDirectory);
     }
 
     @ConditionalOnMissingBean(name = "spnegoPrincipalFactory")

@@ -1,13 +1,10 @@
 package org.apereo.cas.support.saml;
 
-import org.apereo.cas.util.function.FunctionUtils;
-
 import com.codahale.metrics.MetricRegistry;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.opensaml.core.config.ConfigurationService;
 import org.opensaml.core.config.InitializationService;
@@ -27,10 +24,19 @@ import org.opensaml.xmlsec.config.DecryptionParserPool;
 @Getter
 public class OpenSamlConfigBean {
 
+    /**
+     * Default bean name.
+     */
+    public static final String DEFAULT_BEAN_NAME = "shibboleth.OpenSAMLConfig";
+    
     private final ParserPool parserPool;
+
     private final XMLObjectBuilderFactory builderFactory;
+
     private final MarshallerFactory marshallerFactory;
+
     private final UnmarshallerFactory unmarshallerFactory;
+
     private final XMLObjectProviderRegistry xmlObjectProviderRegistry;
 
     @SneakyThrows
@@ -40,16 +46,7 @@ public class OpenSamlConfigBean {
         LOGGER.trace("Initializing OpenSaml configuration...");
         InitializationService.initialize();
 
-        val currentProvider = ConfigurationService.get(XMLObjectProviderRegistry.class);
-        this.xmlObjectProviderRegistry = FunctionUtils.doIfNull(currentProvider,
-            () -> {
-                LOGGER.trace("XMLObjectProviderRegistry did not exist in ConfigurationService and it will be created");
-                var provider = new XMLObjectProviderRegistry();
-                ConfigurationService.register(XMLObjectProviderRegistry.class, provider);
-                return provider;
-            },
-            () -> currentProvider).get();
-
+        this.xmlObjectProviderRegistry = ConfigurationService.get(XMLObjectProviderRegistry.class);
         xmlObjectProviderRegistry.setParserPool(this.parserPool);
 
         ConfigurationService.register(DecryptionParserPool.class, new DecryptionParserPool(this.parserPool));

@@ -1,0 +1,9 @@
+{
+  "dependencies": "reports",
+  "properties": [
+    "--cas.monitor.endpoints.endpoint.sso.access=AUTHENTICATED",
+    "--cas.monitor.endpoints.form-login-enabled=true",
+    "--management.endpoint.sso.enabled=true",
+    "--management.endpoints.web.exposure.include=sso"
+  ]
+}

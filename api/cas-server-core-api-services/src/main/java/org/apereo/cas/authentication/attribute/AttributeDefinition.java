@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link AttributeDefinition}.
@@ -16,7 +17,7 @@ import java.util.List;
  * @since 6.2.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public interface AttributeDefinition extends Serializable, Comparable<AttributeDefinition> {
 
     /**
@@ -75,12 +76,29 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
     String getScript();
 
     /**
+     * When constructing the final attribute value(s),
+     * indicate how each value should be canonicalized.
+     * Accepted values are:
+     * <ul>
+     * <li>{@code UPPER}: Transform the value into uppercase characters.</li>
+     * <li>{@code LOWER}: Transform the value into lowercase characters.</li>
+     * <li>{@code NONE}: Do nothing.</li>
+     * </ul>
+     *
+     * @return the canonicalization mode
+     */
+    String getCanonicalizationMode();
+
+    /**
      * Resolve attribute values as list.
      *
      * @param attributeValues   the attribute values
      * @param scope             the scope
      * @param registeredService the registered service
+     * @param attributes        the attributes
      * @return the list
      */
-    List<Object> resolveAttributeValues(List<Object> attributeValues, String scope, RegisteredService registeredService);
+    List<Object> resolveAttributeValues(List<Object> attributeValues, String scope,
+                                        RegisteredService registeredService,
+                                        Map<String, List<Object>> attributes);
 }

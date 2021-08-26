@@ -21,7 +21,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasEventsInfluxDbRepositoryConfiguration.class
-}, properties = "cas.events.influxDb.batchInterval=PT0.001S")
+}, properties = "cas.events.influx-db.batch-interval=PT0.001S")
 @Tag("InfluxDb")
 @EnabledIfPortOpen(port = 8086)
 @Getter

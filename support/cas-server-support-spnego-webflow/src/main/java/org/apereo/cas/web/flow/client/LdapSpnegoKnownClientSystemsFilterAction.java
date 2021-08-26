@@ -49,18 +49,12 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
     }
 
     @Override
+    public void destroy() {
+        this.searchOperation.getConnectionFactory().close();
+    }
+
+    @Override
     protected boolean shouldDoSpnego(final String remoteIp) {
-
-        if (StringUtils.isBlank(this.spnegoAttributeName)) {
-            LOGGER.warn("Ignoring Spnego. Attribute name is not configured");
-            return false;
-        }
-
-        if (this.searchOperation == null) {
-            LOGGER.warn("Ignoring Spnego. LDAP search operation is not configured");
-            return false;
-        }
-
         val ipCheck = ipPatternCanBeChecked(remoteIp);
         if (ipCheck && !ipPatternMatches(remoteIp)) {
             return false;
@@ -122,17 +116,12 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
 
     /**
      * Verify spnego attribute value.
-     * This impl simply makes sure the attribute exists and has a value.
+     * This impl makes sure the attribute exists and has a value.
      *
      * @param attribute the ldap attribute
      * @return true if available. false otherwise.
      */
     protected boolean verifySpnegoAttributeValue(final LdapAttribute attribute) {
         return attribute != null && StringUtils.isNotBlank(attribute.getStringValue());
-    }
-
-    @Override
-    public void destroy() {
-        this.searchOperation.getConnectionFactory().close();
     }
 }

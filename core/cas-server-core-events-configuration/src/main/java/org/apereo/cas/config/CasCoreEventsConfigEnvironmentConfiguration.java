@@ -44,5 +44,4 @@ public class CasCoreEventsConfigEnvironmentConfiguration {
         return new CasConfigurationEventListener(manager.getObject(), binder.getObject(),
             contextRefresher.getObject(), applicationContext);
     }
-
 }

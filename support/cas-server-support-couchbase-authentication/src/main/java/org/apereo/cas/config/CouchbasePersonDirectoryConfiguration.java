@@ -7,10 +7,10 @@ import org.apereo.cas.persondir.support.CouchbasePersonAttributeDao;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 5.2.0
  */
 @Configuration("couchbasePersonDirectoryConfiguration")
+@ConditionalOnProperty(prefix = "cas.authn.attribute-repository.couchbase", name = "username-attribute")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchbasePersonDirectoryConfiguration {
     @Autowired
@@ -44,11 +45,6 @@ public class CouchbasePersonDirectoryConfiguration {
     @Bean
     @RefreshScope
     public PersonDirectoryAttributeRepositoryPlanConfigurer couchbaseAttributeRepositoryPlanConfigurer() {
-        val couchbase = casProperties.getAuthn().getAttributeRepository().getCouchbase();
-        return plan -> {
-            if (StringUtils.isNotBlank(couchbase.getUsernameAttribute())) {
-                plan.registerAttributeRepository(couchbasePersonAttributeDao());
-            }
-        };
+        return plan -> plan.registerAttributeRepository(couchbasePersonAttributeDao());
     }
 }

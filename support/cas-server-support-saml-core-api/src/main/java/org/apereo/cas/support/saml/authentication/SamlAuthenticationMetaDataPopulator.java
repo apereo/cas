@@ -78,10 +78,10 @@ public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetaD
     /**
      * Map of user-defined mappings. Note it is possible to override the
      * defaults. Mapping should be of the following type:
-     * <pre>Package/Class Name as String -&gt; Name SAML Type</pre>
+     * &lt;pre&gt;Package/Class Name as String -&gt; Name SAML Type&lt;/pre&gt;
      * <p>
      * Example: ({@code "HttpBasedServiceCredential"
-     * -&gt; SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client})
+     * -> SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client})
      *
      * @param userDefinedMappings map of user defined authentication types.
      */

@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.saml.idp;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,6 +21,7 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("SamlIdPAlgorithmsProperties")
 public class SamlIdPAlgorithmsProperties implements Serializable {
 
     private static final long serialVersionUID = 6547093517788229284L;
@@ -37,12 +39,12 @@ public class SamlIdPAlgorithmsProperties implements Serializable {
     /**
      * The Override black listed encryption algorithms.
      */
-    private List<String> overrideBlackListedEncryptionAlgorithms = new ArrayList<>(0);
+    private List<String> overrideBlockedEncryptionAlgorithms = new ArrayList<>(0);
 
     /**
      * The Override white listed algorithms.
      */
-    private List<String> overrideWhiteListedAlgorithms = new ArrayList<>(0);
+    private List<String> overrideAllowedAlgorithms = new ArrayList<>(0);
 
     /**
      * The Override signature reference digest methods.
@@ -55,17 +57,23 @@ public class SamlIdPAlgorithmsProperties implements Serializable {
     private List<String> overrideSignatureAlgorithms = new ArrayList<>(0);
 
     /**
-     * The Override black listed signature signing algorithms.
+     * The Override blocked signature signing algorithms.
      */
-    private List<String> overrideBlackListedSignatureSigningAlgorithms = new ArrayList<>(0);
+    private List<String> overrideBlockedSignatureSigningAlgorithms = new ArrayList<>(0);
 
     /**
-     * The Override white listed signature signing algorithms.
+     * The Override allowed signature signing algorithms.
      */
-    private List<String> overrideWhiteListedSignatureSigningAlgorithms = new ArrayList<>(0);
+    private List<String> overrideAllowedSignatureSigningAlgorithms = new ArrayList<>(0);
 
     /**
      * The Override signature canonicalization algorithm.
      */
     private String overrideSignatureCanonicalizationAlgorithm;
+
+    /**
+     * Algorithm name to use when generating or locating private key
+     * for signing operations..
+     */
+    private String privateKeyAlgName = "RSA";
 }

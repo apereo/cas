@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfi
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,7 @@ import org.springframework.context.annotation.Configuration;
 public class CasCoreAuthenticationServiceSelectionStrategyConfiguration {
 
     @Bean
+    @ConditionalOnMissingBean(name = "casCoreAuthenticationServiceSelectionStrategyConfigurer")
     public AuthenticationServiceSelectionStrategyConfigurer casCoreAuthenticationServiceSelectionStrategyConfigurer() {
         return plan -> plan.registerStrategy(new DefaultAuthenticationServiceSelectionStrategy());
     }

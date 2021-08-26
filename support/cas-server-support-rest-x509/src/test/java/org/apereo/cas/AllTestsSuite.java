@@ -6,9 +6,8 @@ import org.apereo.cas.support.x509.rest.X509RestMultipartBodyCredentialFactoryTe
 import org.apereo.cas.support.x509.rest.X509RestTlsClientCertCredentialFactoryTests;
 import org.apereo.cas.support.x509.rest.config.X509RestConfigurationTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -22,6 +21,6 @@ import org.junit.runner.RunWith;
     X509RestMultipartBodyCredentialFactoryTests.class,
     X509RestTlsClientCertCredentialFactoryTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

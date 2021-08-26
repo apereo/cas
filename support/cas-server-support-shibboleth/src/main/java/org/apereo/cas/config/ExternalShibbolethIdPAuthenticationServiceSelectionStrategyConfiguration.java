@@ -50,9 +50,10 @@ public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfigur
     @Bean
     @RefreshScope
     public AuthenticationServiceSelectionStrategy shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy() {
-        return new ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy(webApplicationServiceFactory,
-            casProperties.getAuthn().getShibIdp().getServerUrl(),
+        return new ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy(
             servicesManager.getObject(),
+            webApplicationServiceFactory,
+            casProperties.getAuthn().getShibIdp().getServerUrl(),
             registeredServiceAccessStrategyEnforcer.getObject());
     }
 

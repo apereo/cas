@@ -1,9 +1,10 @@
 package org.apereo.cas.adaptors.yubikey;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.YubiKeyMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.yubikey.YubiKeyMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
 
@@ -31,7 +32,18 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
     private static final long serialVersionUID = 4789727148634156909L;
 
     private transient YubicoClient client;
+
     private transient HttpClient httpClient;
+
+    @Override
+    public String getFriendlyName() {
+        return "YubiKey";
+    }
+
+    @Override
+    public String getId() {
+        return StringUtils.defaultIfBlank(super.getId(), YubiKeyMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
+    }
 
     @Override
     public boolean isAvailable(final RegisteredService service) {
@@ -48,18 +60,8 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
                 }
             }
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
         return false;
-    }
-
-    @Override
-    public String getFriendlyName() {
-        return "YubiKey";
-    }
-
-    @Override
-    public String getId() {
-        return StringUtils.defaultIfBlank(super.getId(), YubiKeyMultifactorProperties.DEFAULT_IDENTIFIER);
     }
 }

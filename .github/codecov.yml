@@ -4,13 +4,13 @@ codecov:
 
 coverage:
   round: up
-  range: "70...100"
+  range: "90...100"
   precision: 5
   status:
     project:
       default:
         # basic
-        target: 70%
+        target: 90%
         threshold: 0%
         base: auto 
         flags: 
@@ -24,3 +24,5 @@ coverage:
         if_ci_failed: error
         informational: false
         only_pulls: false
+fixes:
+  - "/home/runner/work/cas/cas/::"

@@ -13,14 +13,16 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@FunctionalInterface
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceAuthenticationPolicyCriteria extends Serializable {
 
     /**
      * To authentication policy.
      *
+     * @param registeredService the registered service
      * @return the authentication policy
      */
     @JsonIgnore
-    AuthenticationPolicy toAuthenticationPolicy();
+    AuthenticationPolicy toAuthenticationPolicy(RegisteredService registeredService);
 }

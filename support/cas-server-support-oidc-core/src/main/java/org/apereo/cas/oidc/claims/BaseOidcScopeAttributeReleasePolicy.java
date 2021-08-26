@@ -11,6 +11,7 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -38,17 +39,18 @@ import java.util.TreeMap;
 @Getter
 @EqualsAndHashCode(callSuper = true)
 @Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -7302163334687300920L;
 
+    @JsonProperty
     private List<String> allowedAttributes;
 
     @JsonIgnore
     private String scopeType;
 
-    public BaseOidcScopeAttributeReleasePolicy(final String scopeType) {
+    protected BaseOidcScopeAttributeReleasePolicy(final String scopeType) {
         this.scopeType = scopeType;
     }
 
@@ -67,9 +69,9 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         LOGGER.debug("Attempting to map and filter claims based on resolved attributes [{}]", resolvedAttributes);
 
         val properties = applicationContext.getBean(CasConfigurationProperties.class);
-        val supportedClaims = properties.getAuthn().getOidc().getClaims();
+        val supportedClaims = properties.getAuthn().getOidc().getDiscovery().getClaims();
         
-        val allowedClaims = new LinkedHashSet<String>(getAllowedAttributes());
+        val allowedClaims = new LinkedHashSet<>(getAllowedAttributes());
         allowedClaims.retainAll(supportedClaims);
         LOGGER.debug("[{}] is designed to allow claims [{}] for scope [{}]. After cross-checking with "
                 + "supported claims [{}], the final collection of allowed attributes is [{}]", getClass().getSimpleName(),
@@ -84,7 +86,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
     private static Pair<String, Object> mapClaimToAttribute(final String claim, final Map<String, List<Object>> resolvedAttributes) {
         val applicationContext = ApplicationContextProvider.getApplicationContext();
         val attributeToScopeClaimMapper =
-            applicationContext.getBean("oidcAttributeToScopeClaimMapper", OidcAttributeToScopeClaimMapper.class);
+            applicationContext.getBean(OidcAttributeToScopeClaimMapper.DEFAULT_BEAN_NAME, OidcAttributeToScopeClaimMapper.class);
         LOGGER.debug("Attempting to process claim [{}]", claim);
         if (attributeToScopeClaimMapper.containsMappedAttribute(claim)) {
             val mappedAttr = attributeToScopeClaimMapper.getMappedAttribute(claim);
@@ -100,5 +102,11 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         val value = resolvedAttributes.get(claim);
         LOGGER.debug("No mapped attribute is defined for claim [{}]; Used [{}] to locate value [{}]", claim, claim, value);
         return Pair.of(claim, value);
+    }
+
+    @Override
+    public List<String> determineRequestedAttributeDefinitions() {
+        val attributes = getAllowedAttributes();
+        return attributes != null ? attributes : new ArrayList<>();
     }
 }

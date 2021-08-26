@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.consent.ChainingRegisteredServiceConsentPolicy;
 
 import lombok.EqualsAndHashCode;
@@ -38,7 +39,8 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
 
     private List<RegisteredServiceAttributeReleasePolicy> policies = new ArrayList<>(0);
 
-    private String mergingPolicy = "replace";
+    private PrincipalAttributesCoreProperties.MergingStrategyTypes mergingPolicy =
+        PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE;
 
     private int order;
 

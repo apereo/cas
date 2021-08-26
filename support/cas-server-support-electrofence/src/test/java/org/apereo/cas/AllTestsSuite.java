@@ -6,11 +6,12 @@ import org.apereo.cas.impl.calcs.IpAddressAuthenticationRequestRiskCalculatorTes
 import org.apereo.cas.impl.calcs.UserAgentAuthenticationRequestRiskCalculatorTests;
 import org.apereo.cas.impl.notify.AuthenticationRiskEmailNotifierTests;
 import org.apereo.cas.impl.notify.AuthenticationRiskSmsNotifierTests;
+import org.apereo.cas.impl.plans.MultifactorAuthenticationContingencyPlanTests;
 import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowConfigurerTests;
+import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowEventResolverTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Test suite that runs all test in a batch.
@@ -25,8 +26,10 @@ import org.junit.runner.RunWith;
     UserAgentAuthenticationRequestRiskCalculatorTests.class,
     RiskAwareAuthenticationWebflowConfigurerTests.class,
     AuthenticationRiskEmailNotifierTests.class,
+    MultifactorAuthenticationContingencyPlanTests.class,
+    RiskAwareAuthenticationWebflowEventResolverTests.class,
     AuthenticationRiskSmsNotifierTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

@@ -19,9 +19,9 @@ public class BasicAuthenticationWebflowConfigurer extends AbstractCasWebflowConf
     static final String STATE_ID_BASIC_AUTHENTICATION_CHECK = "basicAuthenticationCheck";
 
     public BasicAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                final ConfigurableApplicationContext applicationContext,
-                                                final CasConfigurationProperties casProperties) {
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
@@ -29,13 +29,15 @@ public class BasicAuthenticationWebflowConfigurer extends AbstractCasWebflowConf
     protected void doInitialize() {
         val flow = getLoginFlow();
         if (flow != null) {
-            val actionState = createActionState(flow, STATE_ID_BASIC_AUTHENTICATION_CHECK, createEvaluateAction("basicAuthenticationAction"));
+            val actionState = createActionState(flow, STATE_ID_BASIC_AUTHENTICATION_CHECK, "basicAuthenticationAction");
             val transitionSet = actionState.getTransitionSet();
-            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
+            transitionSet.add(
+                createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
             transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN, CasWebflowConstants.TRANSITION_ID_WARN));
+            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
+            transitionSet.add(
+                createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS));
             actionState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
-
-            createStateDefaultTransition(actionState, getStartState(flow).getId());
             setStartState(flow, actionState);
         }
     }

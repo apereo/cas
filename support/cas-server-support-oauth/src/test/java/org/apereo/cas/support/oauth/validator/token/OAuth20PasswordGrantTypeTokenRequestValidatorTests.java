@@ -61,12 +61,14 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
 
         when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(
                 supportingService, nonSupportingService, promiscuousService));
+        when(serviceManager.getAllServicesOfType(any())).thenReturn(CollectionUtils.wrapList(
+            supportingService, nonSupportingService, promiscuousService));
 
         val context = OAuth20ConfigurationContext.builder()
             .servicesManager(serviceManager)
             .webApplicationServiceServiceFactory(new WebApplicationServiceFactory())
             .registeredServiceAccessStrategyEnforcer(new RegisteredServiceAccessStrategyAuditableEnforcer())
-            .sessionStore(new JEESessionStore())
+            .sessionStore(JEESessionStore.INSTANCE)
             .build();
         this.validator = new OAuth20PasswordGrantTypeTokenRequestValidator(context);
     }

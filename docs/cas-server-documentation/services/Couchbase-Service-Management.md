@@ -4,26 +4,20 @@ title: CAS - Couchbase Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # Couchbase Service Registry
+
 Couchbase integration is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-couchbase-service-registry</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-couchbase-service-registry" %}
 
 [Couchbase](http://www.couchbase.com) is a highly available, open source NoSQL database server based on
-[Erlang/OTP](http://www.erlang.org) and its mnesia database. The intention of this registry is to leverage the capability of Couchbase
-server to provide high availability to CAS.
-
-<div class="alert alert-info"><strong>Compatibility</strong><p>Couchbase support in CAS at the moment is limited to Couchbase v4.</p></div>
+[Erlang/OTP](http://www.erlang.org) and its mnesia database. The intention of this registry is to leverage the capability of Couchbase server to provide high availability to CAS.
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchbase-service-registry).
+{% include casproperties.html properties="cas.service-registry.couchbase" %}
 
 The Couchbase integration currently assumes that the service registries are stored
 in their own buckets. Optionally set passwords for the buckets, optionally setup
@@ -45,9 +39,9 @@ levels:
 
 ```xml
 ...
-<AsyncLogger name="com.couchbase" level="debug" additivity="false">
+<Logger name="com.couchbase" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</AsyncLogger>
+</Logger>
 ...
 ```

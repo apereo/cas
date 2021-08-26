@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.geo.googlemaps;
 
 import org.apereo.cas.configuration.model.support.geo.BaseGeoLocationProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -43,6 +44,7 @@ public class GoogleMapsProperties extends BaseGeoLocationProperties {
     /**
      * The connection timeout when reaching out to google maps.
      */
+    @DurationCapable
     private String connectTimeout = "PT3S";
 
     /**

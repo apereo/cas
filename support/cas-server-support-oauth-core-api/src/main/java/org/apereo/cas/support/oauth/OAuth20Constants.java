@@ -59,6 +59,11 @@ public interface OAuth20Constants {
     String CLAIMS = "claims";
 
     /**
+     * {@code userinfo} claims found as claims request parameter.
+     */
+    String CLAIMS_USERINFO = "userinfo";
+
+    /**
      * The request passed as a jwt.
      */
     String REQUEST = "request";
@@ -114,6 +119,26 @@ public interface OAuth20Constants {
     String ERROR = "error";
 
     /**
+     * The error description.
+     */
+    String ERROR_DESCRIPTION = "error_description";
+
+    /**
+     * The error with callback.
+     */
+    String ERROR_WITH_CALLBACK = "error_with_callback";
+
+    /**
+     * Request parameter is not supported.
+     */
+    String REQUEST_NOT_SUPPORTED = "request_not_supported";
+
+    /**
+     * Unsupported response_type error.
+     */
+    String UNSUPPORTED_RESPONSE_TYPE = "unsupported_response_type";
+
+    /**
      * The state.
      */
     String STATE = "state";
@@ -132,14 +157,16 @@ public interface OAuth20Constants {
      * The refresh token.
      */
     String REFRESH_TOKEN = "refresh_token";
+
     /**
      * The client assertion type.
      */
     String CLIENT_ASSERTION_TYPE = "client_assertion_type";
+
     /**
      * The client assertion jwt.
      */
-    String CLIENT_ASSERTION ="client_assertion";
+    String CLIENT_ASSERTION = "client_assertion";
 
     /**
      * The missing access token.
@@ -257,8 +284,8 @@ public interface OAuth20Constants {
     String PROFILE_URL = "profile";
 
     /**
-    * The revocation url.
-    */
+     * The revocation url.
+     */
     String REVOCATION_URL = "revoke";
 
     /**
@@ -315,6 +342,7 @@ public interface OAuth20Constants {
      * claims collection endpoint URL.
      */
     String UMA_CLAIMS_COLLECTION_URL = "rqpClaims";
+
     /**
      * URL endpoint that exposes JWKS for token signing.
      */

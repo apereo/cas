@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
+@Tag("SAMLMetadata")
 public class SamlIdPMetadataControllerTests extends BaseSamlIdPConfigurationTests {
 
     @Autowired
@@ -45,6 +45,17 @@ public class SamlIdPMetadataControllerTests extends BaseSamlIdPConfigurationTest
             @Override
             public void execute() throws Throwable {
                 samlIdPMetadataController.generateMetadataForIdp("1000", response);
+            }
+        });
+    }
+
+    @Test
+    public void verifyNoServiceOperation() {
+        val response = new MockHttpServletResponse();
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                samlIdPMetadataController.generateMetadataForIdp(null, response);
             }
         });
     }

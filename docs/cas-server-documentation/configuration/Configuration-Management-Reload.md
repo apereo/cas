@@ -4,6 +4,8 @@ title: CAS - Configuration Management - Reloading Changes
 category: Configuration
 ---
 
+{% include variables.html %}
+
 # Reloading Changes
 
 The CAS spring cloud configuration server is able to consume properties and settings
@@ -14,7 +16,7 @@ server* expecting change notifications to quietly reload its configuration.
 
 Therefore, in order to broadcast such `change` events CAS
 presents [various endpoints](../monitoring/Monitoring-Statistics.html) that allow the adopter
-to **refresh** the configuration as needed. This means that an adopter would simply
+to **refresh** the configuration as needed. This means that an adopter would 
 change a required CAS settings and then would submit
 a request to CAS to refresh its current state. All CAS internal components that are affected
 by the external change are quietly reloaded
@@ -25,7 +27,8 @@ for reloads. CAS should be smart enough to reload the appropriate configuration,
 ends up using that setting. All is fair game, as the entire CAS web application inclusive of all modules and all
 relevant settings may be completely and utterly reloadable. If you find an instance where this statement does not hold, please speak up.</p></div>
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#cloud-configuration-bus).
+To see the relevant list of CAS properties for this
+feature, please [review this guide](Configuration-Management-Clustered.html).
 
 ## Reload Strategy
 
@@ -39,11 +42,11 @@ that house CAS settings and upon changes will auto-refresh itself.
 The CAS application context and runtime environment that contains all Spring components and bean definitions
 can be reloaded using the following administrative endpoint:
 
-The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|----------------------------------------------------------------------------
-| `reloadContext`          | Reloads the CAS application context and all bean definitions where necessary.
+## Actuator Endpoints
+
+The following endpoints are provided by Spring Cloud:
+
+{% include actuators.html endpoints="features,refresh,busenv,bus-refresh,busrefresh,serviceregistry" %}
 
 ### Configuration
 
@@ -59,13 +62,7 @@ via the CAS admin endpoints.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-core-events-configuration</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-core-events-configuration" %}
 
 #### Spring Cloud
 

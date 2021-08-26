@@ -9,7 +9,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.Assertion;
+import org.apereo.cas.web.UrlValidator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -27,8 +29,8 @@ import java.util.Map;
  * Builds responses to Openid authN requests.
  *
  * @author Misagh Moayyed
- * @deprecated 6.2
  * @since 4.2
+ * @deprecated 6.2
  */
 @Slf4j
 @Deprecated(since = "6.2.0")
@@ -44,8 +46,8 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
 
     public OpenIdServiceResponseBuilder(final String openIdPrefixUrl, final ServerManager serverManager,
                                         final CentralAuthenticationService centralAuthenticationService,
-                                        final ServicesManager servicesManager) {
-        super(servicesManager);
+                                        final ServicesManager servicesManager, final UrlValidator urlValidator) {
+        super(servicesManager, urlValidator);
         this.serverManager = serverManager;
         this.openIdPrefixUrl = openIdPrefixUrl;
         this.centralAuthenticationService = centralAuthenticationService;
@@ -93,11 +95,16 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
                 successFullAuthentication = false;
             }
         } catch (final AbstractTicketException e) {
-            LOGGER.error("Could not validate ticket : [{}]", e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             successFullAuthentication = false;
         }
         val id = determineIdentity(service, assertion);
         return buildAuthenticationResponse(service, parameters, successFullAuthentication, id, parameterList);
+    }
+
+    @Override
+    public boolean supports(final WebApplicationService service) {
+        return service instanceof OpenIdService;
     }
 
     /**
@@ -158,14 +165,9 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
                 }
             }
         } catch (final MessageException e) {
-            LOGGER.error("Message exception : [{}]", e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
-    }
-
-    @Override
-    public boolean supports(final WebApplicationService service) {
-        return service instanceof OpenIdService;
     }
 
     /**

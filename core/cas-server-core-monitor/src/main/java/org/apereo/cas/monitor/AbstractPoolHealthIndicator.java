@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -20,7 +21,7 @@ import java.util.concurrent.TimeoutException;
  * @since 3.5.0
  */
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicator implements DisposableBean {
 
     /**

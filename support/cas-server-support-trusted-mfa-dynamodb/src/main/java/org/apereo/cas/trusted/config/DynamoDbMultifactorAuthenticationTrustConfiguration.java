@@ -8,8 +8,6 @@ import org.apereo.cas.trusted.authentication.storage.DynamoDbMultifactorAuthenti
 import org.apereo.cas.trusted.authentication.storage.DynamoDbMultifactorTrustEngineFacilitator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +17,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 /**
  * This is {@link DynamoDbMultifactorAuthenticationTrustConfiguration}.
@@ -42,9 +41,8 @@ public class DynamoDbMultifactorAuthenticationTrustConfiguration {
 
     @RefreshScope
     @Bean
-    @SneakyThrows
     @ConditionalOnMissingBean(name = "amazonDynamoDbMultifactorTrustEngineClient")
-    public AmazonDynamoDB amazonDynamoDbMultifactorTrustEngineClient() {
+    public DynamoDbClient amazonDynamoDbMultifactorTrustEngineClient() {
         val db = casProperties.getAuthn().getMfa().getTrusted().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();
         return factory.createAmazonDynamoDb(db);

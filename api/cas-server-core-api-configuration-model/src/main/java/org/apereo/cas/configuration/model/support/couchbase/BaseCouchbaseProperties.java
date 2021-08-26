@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.couchbase;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -35,31 +36,43 @@ public abstract class BaseCouchbaseProperties implements Serializable {
     /**
      * String representation of connection timeout.
      */
+    @DurationCapable
     private String connectionTimeout = "PT60S";
+
+    /**
+     * String representation of idle connection timeout.
+     */
+    @DurationCapable
+    private String idleConnectionTimeout = "PT60S";
 
     /**
      * String representation of search timeout.
      */
+    @DurationCapable
     private String searchTimeout = "PT30S";
 
     /**
      * String representation of query timeout.
      */
+    @DurationCapable
     private String queryTimeout = "PT30S";
 
     /**
      * String representation of view timeout.
      */
+    @DurationCapable
     private String viewTimeout = "PT30S";
 
     /**
      * String representation of KV timeout.
      */
+    @DurationCapable
     private String kvTimeout = "PT30S";
 
     /**
      * String representation of scan timeout.
      */
+    @DurationCapable
     private String scanWaitTimeout = "PT30S";
 
     /**
@@ -78,10 +91,17 @@ public abstract class BaseCouchbaseProperties implements Serializable {
      * Maximum number of connections made to the cluster.
      */
     private int maxHttpConnections = 5;
+
     /**
      * Maximum number of parallel threads made for queries.
      */
     private int maxParallelism;
+
+    /**
+     * Allows to customize the maximum number of
+     * requests allowed in the retry timer.
+     */
+    private long maxNumRequestsInRetry = 32768;
 
     /**
      * Bucket name.

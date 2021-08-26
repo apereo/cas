@@ -43,13 +43,13 @@ public class FileWatcherServiceTests {
         val watch1 = new AtomicBoolean();
         watcher1 = new FileWatcherService(file1, file -> {
             watch1.set(true);
-            LOGGER.debug("{} is modified", file1.getName());
+            LOGGER.debug("[{}] is modified", file1.getName());
         });
 
         val watch2 = new AtomicBoolean();
         watcher2 = new FileWatcherService(file2, file -> {
             watch2.set(true);
-            LOGGER.debug("{} is modified", file2.getName());
+            LOGGER.debug("[{}] is modified", file2.getName());
         });
 
         val changeThread = new Thread(Unchecked.runnable(() -> {

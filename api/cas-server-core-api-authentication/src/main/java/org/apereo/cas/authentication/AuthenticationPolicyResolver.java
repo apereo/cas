@@ -10,6 +10,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@FunctionalInterface
 public interface AuthenticationPolicyResolver extends Ordered {
     /**
      * Resolve set of authentication handlers.

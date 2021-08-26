@@ -4,5 +4,5 @@ dependencies {
     
     implementation libraries.springsession
     implementation libraries.springsessionredis
-    implementation libraries.springbootredis
+    implementation libraries.redis
 }

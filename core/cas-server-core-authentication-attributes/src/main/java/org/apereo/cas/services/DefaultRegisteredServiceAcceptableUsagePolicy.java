@@ -18,7 +18,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceAcceptableUsagePolicy implements RegisteredServiceAcceptableUsagePolicy {
 
     private static final long serialVersionUID = -1441506976879419151L;

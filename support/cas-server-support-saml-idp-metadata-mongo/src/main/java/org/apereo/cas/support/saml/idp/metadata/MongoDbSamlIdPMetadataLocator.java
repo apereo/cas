@@ -1,10 +1,12 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.AbstractSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -26,9 +28,10 @@ public class MongoDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
     private final String collectionName;
 
     public MongoDbSamlIdPMetadataLocator(final CipherExecutor<String, String> metadataCipherExecutor,
+                                         final Cache<String, SamlIdPMetadataDocument> metadataCache,
                                          final MongoTemplate mongoTemplate,
                                          final String collectionName) {
-        super(metadataCipherExecutor);
+        super(metadataCipherExecutor, metadataCache);
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
     }
@@ -37,7 +40,7 @@ public class MongoDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
     public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
         if (registeredService.isPresent()) {
             val query = new Query();
-            val appliesTo = getAppliesToFor(registeredService);
+            val appliesTo = SamlIdPMetadataGenerator.getAppliesToFor(registeredService);
             query.addCriteria(Criteria.where("appliesTo").is(appliesTo));
             LOGGER.trace("Fetching SAML IdP metadata document for [{}] from [{}]", appliesTo, this.collectionName);
             val document = mongoTemplate.findOne(query, SamlIdPMetadataDocument.class, this.collectionName);
@@ -48,13 +51,5 @@ public class MongoDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
         }
         LOGGER.trace("Fetching SAML IdP metadata document from [{}]", this.collectionName);
         return mongoTemplate.findOne(new Query(), SamlIdPMetadataDocument.class, this.collectionName);
-    }
-
-    private static String getAppliesToFor(final Optional<SamlRegisteredService> result) {
-        if (result.isPresent()) {
-            val registeredService = result.get();
-            return registeredService.getName() + '-' + registeredService.getId();
-        }
-        return "CAS";
     }
 }

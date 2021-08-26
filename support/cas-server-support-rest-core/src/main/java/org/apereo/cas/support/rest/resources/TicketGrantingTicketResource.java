@@ -2,12 +2,11 @@ package org.apereo.cas.support.rest.resources;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.rest.BadRestRequestException;
-import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
+import org.apereo.cas.rest.authentication.RestAuthenticationService;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.security.auth.login.FailedLoginException;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -45,14 +45,9 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @RequiredArgsConstructor
 public class TicketGrantingTicketResource {
-
-    private final AuthenticationSystemSupport authenticationSystemSupport;
-
-    private final RestHttpRequestCredentialFactory credentialFactory;
+    private final RestAuthenticationService authenticationService;
 
     private final CentralAuthenticationService centralAuthenticationService;
-
-    private final ServiceFactory serviceFactory;
 
     private final TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory;
 
@@ -63,7 +58,7 @@ public class TicketGrantingTicketResource {
      *
      * @return the response entity
      */
-    @GetMapping("/v1/tickets")
+    @GetMapping(RestProtocolConstants.ENDPOINT_TICKETS)
     public ResponseEntity<String> rejectGetResponse() {
         return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
     }
@@ -75,7 +70,17 @@ public class TicketGrantingTicketResource {
      * @param request     raw HttpServletRequest used to call this method
      * @return ResponseEntity representing RESTful response
      */
-    @PostMapping(value = "/v1/tickets", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(value = RestProtocolConstants.ENDPOINT_TICKETS,
+        consumes = {
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.TEXT_HTML_VALUE
+        },
+        produces = {
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.TEXT_HTML_VALUE
+        })
     public ResponseEntity<String> createTicketGrantingTicket(@RequestBody(required = false) final MultiValueMap<String, String> requestBody,
                                                              final HttpServletRequest request) {
         try {
@@ -84,18 +89,10 @@ public class TicketGrantingTicketResource {
         } catch (final AuthenticationException e) {
             return RestResourceUtils.createResponseEntityForAuthnFailure(e, request, applicationContext);
         } catch (final BadRestRequestException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -107,9 +104,9 @@ public class TicketGrantingTicketResource {
      * @return {@link ResponseEntity} representing RESTful response. Signals
      * {@link HttpStatus#OK} when successful.
      */
-    @DeleteMapping(value = "/v1/tickets/{tgtId:.+}")
+    @DeleteMapping(value = RestProtocolConstants.ENDPOINT_TICKETS + "/{tgtId:.+}")
     public ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
-        this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
+        this.centralAuthenticationService.deleteTicket(tgtId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -123,7 +120,7 @@ public class TicketGrantingTicketResource {
      */
     protected ResponseEntity<String> createResponseEntityForTicket(final HttpServletRequest request,
                                                                    final TicketGrantingTicket tgtId) throws Exception {
-        return this.ticketGrantingTicketResourceEntityResponseFactory.build(tgtId, request);
+        return ticketGrantingTicketResourceEntityResponseFactory.build(tgtId, request);
     }
 
     /**
@@ -132,15 +129,12 @@ public class TicketGrantingTicketResource {
      * @param requestBody the request body
      * @param request     the request
      * @return the ticket granting ticket
+     * @throws Exception the authentication exception
      */
     protected TicketGrantingTicket createTicketGrantingTicketForRequest(final MultiValueMap<String, String> requestBody,
-                                                                        final HttpServletRequest request) {
-        val credential = this.credentialFactory.fromRequest(request, requestBody);
-        if (credential == null || credential.isEmpty()) {
-            throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
-        }
-        val service = this.serviceFactory.createService(request);
-        val authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
-        return centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
+                                                                        final HttpServletRequest request) throws Exception {
+        val authenticationResult = authenticationService.authenticate(requestBody, request);
+        val result = authenticationResult.orElseThrow(FailedLoginException::new);
+        return centralAuthenticationService.createTicketGrantingTicket(result);
     }
 }

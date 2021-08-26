@@ -8,8 +8,10 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import org.apache.http.HttpStatus;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
 import org.springframework.webflow.execution.RequestContextHolder;
 
@@ -63,25 +66,18 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
 
     @Override
     public String resolveThemeName(final HttpServletRequest request) {
-        if (this.servicesManager == null) {
-            return rememberThemeName(request);
-        }
-
         val userAgent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
-
-        if (StringUtils.isBlank(userAgent)) {
-            return rememberThemeName(request);
+        if (StringUtils.isNotBlank(userAgent)) {
+            overrides.entrySet()
+                .stream()
+                .filter(entry -> entry.getKey().matcher(userAgent).matches())
+                .findFirst()
+                .ifPresent(entry -> {
+                    request.setAttribute("isMobile", Boolean.TRUE.toString());
+                    request.setAttribute("browserType", entry.getValue());
+                });
         }
-
-        overrides.entrySet()
-            .stream()
-            .filter(entry -> entry.getKey().matcher(userAgent).matches())
-            .findFirst()
-            .ifPresent(entry -> {
-                request.setAttribute("isMobile", Boolean.TRUE.toString());
-                request.setAttribute("browserType", entry.getValue());
-            });
-
+        
         val context = RequestContextHolder.getRequestContext();
         val serviceContext = WebUtils.getService(context);
         val service = this.authenticationRequestServiceSelectionStrategies.resolveService(serviceContext);
@@ -133,26 +129,28 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             if (resource instanceof UrlResource) {
                 val url = resource.getURL().toExternalForm();
                 LOGGER.debug("Executing URL [{}] to determine theme for [{}]", url, service.getId());
-                response = HttpUtils.executeGet(url, CollectionUtils.wrap("service", service.getId()));
+                val exec = HttpUtils.HttpExecutionRequest.builder()
+                    .parameters(CollectionUtils.wrap("service", service.getId()))
+                    .url(url)
+                    .method(HttpMethod.GET)
+                    .build();
+                response = HttpUtils.execute(exec);
                 if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                     val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                     return StringUtils.defaultIfBlank(result, getDefaultThemeName());
                 }
             }
-
             val messageSource = new CasThemeResourceBundleMessageSource();
-            messageSource.setBasename(rService.getTheme());
-            if (messageSource.doGetBundle(rService.getTheme(), request.getLocale()) != null) {
-                LOGGER.trace("Found custom theme [{}] for service [{}]", rService.getTheme(), rService);
-                return rService.getTheme();
+            val theme = SpringExpressionLanguageValueResolver.getInstance().resolve(rService.getTheme());
+            messageSource.setBasename(theme);
+            if (messageSource.doGetBundle(theme, request.getLocale()) != null) {
+                LOGGER.trace("Found custom theme [{}] for service [{}]", theme, rService);
+                return theme;
             }
-            LOGGER.warn("Custom theme [{}] for service [{}] cannot be located. Falling back to default theme...", rService.getTheme(), rService);
+            LOGGER.warn("Custom theme [{}] for service [{}] cannot be located. Falling back to default theme...",
+                rService.getTheme(), rService);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -184,7 +182,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
     }
 
     /**
-     * An extension of the default where the exceptions are simply logged
+     * An extension of the default where the exceptions are logged
      * so CAS can fall back onto default themes.
      */
     private static class CasThemeResourceBundleMessageSource extends ResourceBundleMessageSource {

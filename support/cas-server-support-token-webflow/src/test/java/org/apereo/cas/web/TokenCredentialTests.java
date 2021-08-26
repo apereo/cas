@@ -16,12 +16,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class TokenCredentialTests {
     @Test
     public void verifyTokenFromParameter() {
         val credential = new TokenCredential("tokenid", RegisteredServiceTestUtils.getService());
         val metadata = new BasicCredentialMetaData(credential);
-        assertNotNull(metadata.toCredential());
+        assertNotNull(metadata.getCredentialClass());
     }
 }

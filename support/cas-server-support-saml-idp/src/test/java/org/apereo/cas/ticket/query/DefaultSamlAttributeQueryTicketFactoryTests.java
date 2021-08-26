@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.query;
 
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -25,12 +26,19 @@ public class DefaultSamlAttributeQueryTicketFactoryTests extends BaseSamlIdPConf
 
     @Test
     public void verifyOperation() {
+
         val tgt = new MockTicketGrantingTicket("casuser");
         val ticketId = samlAttributeQueryTicketFactory.create("ATTR_QUERY",
             getAuthnRequestFor("helloworld"), "https://www.example.org", tgt);
         assertNotNull(ticketId);
-        assertNotNull(ticketId.getRelyingParty());
+        assertNotNull(ticketId.getPrefix());
+        assertNotNull(ticketId.getTicketGrantingTicket());
         assertNotNull(ticketId.getObject());
+        assertNotNull(ticketId.getRelyingParty());
         assertNotNull(ticketId.getExpirationPolicy());
+        assertTrue(ticketId.isFromNewLogin());
+        assertThrows(UnsupportedOperationException.class,
+            () -> ticketId.grantProxyGrantingTicket("id",
+                tgt.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE));
     }
 }

@@ -15,7 +15,7 @@ import java.util.Map;
 
 /**
  * Renders and prepares CAS2 views. This view is responsible
- * to simply just prep the base model, and delegates to
+ * to just prep the base model, and delegates to
  * a the real view to render the final output.
  *
  * @author Misagh Moayyed

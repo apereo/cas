@@ -5,27 +5,26 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
-import java.nio.charset.StandardCharsets;
+import javax.security.auth.login.FailedLoginException;
 
+import static java.nio.charset.StandardCharsets.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.webflow.execution.RequestContextHolder.*;
 
 /**
  * This is {@link SwivelAuthenticationHandlerTests}.
@@ -35,9 +34,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseSwivelAuthenticationTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.mfa.swivel.swivelUrl=http://localhost:9191",
-        "cas.authn.mfa.swivel.sharedSecret=$ecret",
-        "cas.authn.mfa.swivel.ignoreSslErrors=true"
+        "cas.authn.mfa.swivel.swivel-url=http://localhost:9191",
+        "cas.authn.mfa.swivel.shared-secret=$ecret",
+        "cas.authn.mfa.swivel.ignore-ssl-errors=true"
     })
 @Tag("MFA")
 public class SwivelAuthenticationHandlerTests {
@@ -45,41 +44,60 @@ public class SwivelAuthenticationHandlerTests {
     @Qualifier("swivelAuthenticationHandler")
     private AuthenticationHandler swivelAuthenticationHandler;
 
-    private MockWebServer webServer;
+    @Test
+    public void verifySupports() {
+        assertFalse(swivelAuthenticationHandler.supports(
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword().getCredentialClass()));
+        assertTrue(swivelAuthenticationHandler.supports(new SwivelTokenCredential("123456")));
+    }
 
-    @BeforeEach
-    public void initialize() {
+    @Test
+    public void verifyAuthn() throws Exception {
         val data = "<?xml version=\"1.0\" ?>"
             + "<SASResponse secret=\"MyAdminAgent\" version=\"3.4\">"
             + "<Version>3.6</Version>\n"
             + "<Result>PASS</Result>\n"
             + "<SessionID>c7379ef1b41f90a4900548a75e13f62a</SessionID>"
             + "</SASResponse>";
-        this.webServer = new MockWebServer(9191,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
-            MediaType.APPLICATION_JSON_VALUE);
-        this.webServer.start();
-    }
 
-    @AfterEach
-    public void cleanup() {
-        this.webServer.stop();
+        try (val webServer = new MockWebServer(9191,
+            new ByteArrayResource(data.getBytes(UTF_8), "Output"), HttpStatus.OK)) {
+            webServer.start();
+            val c = new SwivelTokenCredential("123456");
+            val context = new MockRequestContext();
+            val request = new MockHttpServletRequest();
+            val response = new MockHttpServletResponse();
+            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+            setRequestContext(context);
+            ExternalContextHolder.setExternalContext(context.getExternalContext());
+            WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
+            setRequestContext(context);
+            assertNotNull(swivelAuthenticationHandler.authenticate(c));
+        }
     }
 
     @Test
-    public void verifySupports() {
-        assertFalse(swivelAuthenticationHandler.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
-        assertTrue(swivelAuthenticationHandler.supports(new SwivelTokenCredential("123456")));
-    }
+    public void verifyAuthnFails() throws Exception {
+        val data = "<?xml version=\"1.0\" ?>"
+            + "<SASResponse secret=\"MyAdminAgent\" version=\"3.4\">"
+            + "<Version>3.6</Version>\n"
+            + "<Result>FAIL</Result>\n"
+            + "<SessionID>c7379ef1b41f90a4900548a75e13f62a</SessionID>"
+            + "</SASResponse>";
 
-    @Test
-    @SneakyThrows
-    public void verifyAuthn() {
-        val c = new SwivelTokenCredential("123456");
-        val context = new MockRequestContext();
-        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
-        RequestContextHolder.setRequestContext(context);
-        assertNotNull(swivelAuthenticationHandler.authenticate(c));
+        try (val webServer = new MockWebServer(9191,
+            new ByteArrayResource(data.getBytes(UTF_8), "Output"), HttpStatus.OK)) {
+            webServer.start();
+            val c = new SwivelTokenCredential("123456");
+            val context = new MockRequestContext();
+            val request = new MockHttpServletRequest();
+            val response = new MockHttpServletResponse();
+            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+            setRequestContext(context);
+            ExternalContextHolder.setExternalContext(context.getExternalContext());
+            WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
+            setRequestContext(context);
+            assertThrows(FailedLoginException.class, () -> swivelAuthenticationHandler.authenticate(c));
+        }
     }
 }

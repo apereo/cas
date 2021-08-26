@@ -1,21 +1,23 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,7 +30,8 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20AccessTokenResponseGenerator {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     /**
      * JWT builder.
@@ -45,31 +48,29 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
             && generatedToken.getAccessToken().isEmpty();
     }
 
-    @Audit(action = "OAUTH2_ACCESS_TOKEN_RESPONSE",
-        actionResolverName = "OAUTH2_ACCESS_TOKEN_RESPONSE_ACTION_RESOLVER",
-        resourceResolverName = "OAUTH2_ACCESS_TOKEN_RESPONSE_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.OAUTH2_ACCESS_TOKEN_RESPONSE,
+        actionResolverName = AuditActionResolvers.OAUTH2_ACCESS_TOKEN_RESPONSE_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.OAUTH2_ACCESS_TOKEN_RESPONSE_RESOURCE_RESOLVER)
     @Override
     @SneakyThrows
-    public ModelAndView generate(final HttpServletRequest request, final HttpServletResponse response,
+    public ModelAndView generate(final WebContext webContext,
                                  final OAuth20AccessTokenResponseResult result) {
         if (shouldGenerateDeviceFlowResponse(result)) {
-            return generateResponseForDeviceToken(request, response, result);
+            return generateResponseForDeviceToken(webContext, result);
         }
 
-        return generateResponseForAccessToken(request, response, result);
+        return generateResponseForAccessToken(webContext, result);
     }
 
     /**
      * Generate response for device token model and view.
      *
-     * @param request  the request
-     * @param response the response
-     * @param result   the result
+     * @param webContext the web context
+     * @param result     the result
      * @return the model and view
      */
     @SneakyThrows
-    protected ModelAndView generateResponseForDeviceToken(final HttpServletRequest request,
-                                                          final HttpServletResponse response,
+    protected ModelAndView generateResponseForDeviceToken(final WebContext webContext,
                                                           final OAuth20AccessTokenResponseResult result) {
         val model = getDeviceTokenResponseModel(result);
         return new ModelAndView(new MappingJackson2JsonView(MAPPER), model);
@@ -99,38 +100,34 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
     /**
      * Generate response for access token model and view.
      *
-     * @param request  the request
-     * @param response the response
-     * @param result   the result
+     * @param webContext the web context
+     * @param result     the result
      * @return the model and view
      */
-    protected ModelAndView generateResponseForAccessToken(final HttpServletRequest request,
-                                                          final HttpServletResponse response,
+    protected ModelAndView generateResponseForAccessToken(final WebContext webContext,
                                                           final OAuth20AccessTokenResponseResult result) {
-        val model = getAccessTokenResponseModel(request, response, result);
+        val model = getAccessTokenResponseModel(webContext, result);
         return new ModelAndView(new MappingJackson2JsonView(MAPPER), model);
     }
 
     /**
      * Generate internal.
      *
-     * @param request  the request
-     * @param response the response
-     * @param result   the result
+     * @param webContext the web context
+     * @param result     the result
      * @return the access token response model
      */
-    protected Map<String, Object> getAccessTokenResponseModel(final HttpServletRequest request,
-                                                              final HttpServletResponse response,
+    protected Map<String, Object> getAccessTokenResponseModel(final WebContext webContext,
                                                               final OAuth20AccessTokenResponseResult result) {
         val model = new LinkedHashMap<String, Object>();
         val generatedToken = result.getGeneratedToken();
         generatedToken.getAccessToken().ifPresent(t -> {
             model.put(OAuth20Constants.ACCESS_TOKEN, encodeAccessToken(t, result));
             model.put(OAuth20Constants.SCOPE, String.join(" ", t.getScopes()));
+            model.put(OAuth20Constants.EXPIRES_IN, t.getExpiresIn());
         });
         generatedToken.getRefreshToken().ifPresent(t -> model.put(OAuth20Constants.REFRESH_TOKEN, t.getId()));
         model.put(OAuth20Constants.TOKEN_TYPE, OAuth20Constants.TOKEN_TYPE_BEARER);
-        model.put(OAuth20Constants.EXPIRES_IN, result.getAccessTokenTimeout());
         return model;
     }
 
@@ -143,13 +140,23 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
      */
     protected String encodeAccessToken(final OAuth20AccessToken accessToken,
                                        final OAuth20AccessTokenResponseResult result) {
+        return getAccessTokenBuilder(accessToken, result).build().encode();
+    }
+
+    /**
+     * Gets access token builder.
+     *
+     * @param accessToken the access token
+     * @param result      the result
+     * @return the jwt access token builder
+     */
+    protected OAuth20JwtAccessTokenEncoder.OAuth20JwtAccessTokenEncoderBuilder getAccessTokenBuilder(
+        final OAuth20AccessToken accessToken, final OAuth20AccessTokenResponseResult result) {
         return OAuth20JwtAccessTokenEncoder.builder()
             .accessToken(accessToken)
             .registeredService(result.getRegisteredService())
             .service(result.getService())
             .accessTokenJwtBuilder(accessTokenJwtBuilder)
-            .casProperties(casProperties)
-            .build()
-            .encode();
+            .casProperties(casProperties);
     }
 }

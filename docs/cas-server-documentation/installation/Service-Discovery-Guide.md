@@ -3,6 +3,8 @@ layout: default
 title: CAS - Service Discovery
 category: High Availability
 ---
+{% include variables.html %}
+
 
 # Service Discovery
 

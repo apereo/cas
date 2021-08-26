@@ -2,9 +2,11 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
+import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
@@ -36,7 +38,9 @@ import javax.servlet.http.HttpServletResponse;
 public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<AuthnStatement> {
 
     private static final long serialVersionUID = 8761566449790497226L;
+
     private final transient AuthnContextClassRefBuilder authnContextClassRefBuilder;
+
     private final CasConfigurationProperties casProperties;
 
     public SamlProfileSamlAuthNStatementBuilder(final OpenSamlConfigBean configBean,
@@ -60,14 +64,40 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     }
 
     /**
+     * Build subject locality subject locality.
+     *
+     * @param assertion    the assertion
+     * @param authnRequest the authn request
+     * @param adaptor      the adaptor
+     * @param binding      the binding
+     * @param service      the service
+     * @return the subject locality
+     * @throws SamlException the saml exception
+     */
+    protected SubjectLocality buildSubjectLocality(final Assertion assertion,
+                                                   final RequestAbstractType authnRequest,
+                                                   final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                   final String binding,
+                                                   final SamlRegisteredService service) throws SamlException {
+        val subjectLocality = SamlUtils.newSamlObject(SubjectLocality.class);
+        val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
+        val hostAddress = StringUtils.defaultString(service.getSubjectLocality(),
+            InetAddressUtils.getCasServerHostAddress(casProperties.getServer().getName()));
+
+        LOGGER.debug("Built SAML2 subject locality address [{}] for [{}]", hostAddress, issuer);
+        subjectLocality.setAddress(hostAddress);
+        return subjectLocality;
+    }
+
+    /**
      * Creates an authentication statement for the current request.
      *
-     * @param casAssertion   the cas assertion
-     * @param authnRequest   the authn request
-     * @param adaptor        the adaptor
-     * @param service        the service
-     * @param binding        the binding
-     * @param request        the request
+     * @param casAssertion the cas assertion
+     * @param authnRequest the authn request
+     * @param adaptor      the adaptor
+     * @param service      the service
+     * @param binding      the binding
+     * @param request      the request
      * @return constructed authentication statement
      * @throws SamlException the saml exception
      */
@@ -77,11 +107,12 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
                                                final SamlRegisteredService service,
                                                final String binding,
                                                final HttpServletRequest request) throws SamlException {
+
         val assertion = Assertion.class.cast(casAssertion);
         val authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
         var id = request != null ? CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET) : StringUtils.EMPTY;
         if (StringUtils.isBlank(id)) {
-            LOGGER.warn("Unable to locate service ticket as the session index; Generating random identifier instead...");
+            LOGGER.info("Unable to locate service ticket as the session index; Generating random identifier instead...");
             id = '_' + String.valueOf(RandomUtils.nextLong());
         }
         val statement = newAuthnStatement(authenticationMethod, DateTimeUtils.zonedDateTimeOf(assertion.getAuthenticationDate()), id);
@@ -90,32 +121,11 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
 
             val skewAllowance = service.getSkewAllowance() > 0
                 ? service.getSkewAllowance()
-                : casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance();
+                : Beans.newDuration(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()).toSeconds();
             statement.setSessionNotOnOrAfter(dt.plusSeconds(skewAllowance).toInstant());
         }
-        val subjectLocality = buildSubjectLocality(assertion, authnRequest, adaptor, binding);
+        val subjectLocality = buildSubjectLocality(assertion, authnRequest, adaptor, binding, service);
         statement.setSubjectLocality(subjectLocality);
         return statement;
-    }
-
-    /**
-     * Build subject locality subject locality.
-     *
-     * @param assertion    the assertion
-     * @param authnRequest the authn request
-     * @param adaptor      the adaptor
-     * @param binding      the binding
-     * @return the subject locality
-     * @throws SamlException the saml exception
-     */
-    protected SubjectLocality buildSubjectLocality(final Assertion assertion, final RequestAbstractType authnRequest,
-                                                   final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                   final String binding) throws SamlException {
-        val subjectLocality = newSamlObject(SubjectLocality.class);
-        val hostAddress = InetAddressUtils.getCasServerHostAddress(casProperties.getServer().getName());
-        val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
-        LOGGER.debug("Built subject locality address [{}] for the saml authentication statement prepped for [{}]", hostAddress, issuer);
-        subjectLocality.setAddress(hostAddress);
-        return subjectLocality;
     }
 }

@@ -1,14 +1,19 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.AttributeConsentReportEndpoint;
 import org.apereo.cas.consent.AttributeReleaseConsentCipherExecutor;
+import org.apereo.cas.consent.ConsentActivationStrategy;
 import org.apereo.cas.consent.ConsentDecisionBuilder;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentRepository;
+import org.apereo.cas.consent.DefaultConsentActivationStrategy;
 import org.apereo.cas.consent.DefaultConsentDecisionBuilder;
 import org.apereo.cas.consent.DefaultConsentEngine;
+import org.apereo.cas.consent.GroovyConsentActivationStrategy;
 import org.apereo.cas.consent.GroovyConsentRepository;
 import org.apereo.cas.consent.InMemoryConsentRepository;
 import org.apereo.cas.consent.JsonConsentRepository;
@@ -78,6 +83,17 @@ public class CasConsentCoreConfiguration {
         return new DefaultConsentDecisionBuilder(consentCipherExecutor());
     }
 
+    @ConditionalOnMissingBean(name = "consentActivationStrategy")
+    @Bean
+    @RefreshScope
+    public ConsentActivationStrategy consentActivationStrategy() {
+        val location = casProperties.getConsent().getActivationStrategyGroovyScript().getLocation();
+        if (location != null) {
+            return new GroovyConsentActivationStrategy(location, consentEngine(), casProperties);
+        }
+        return new DefaultConsentActivationStrategy(consentEngine(), casProperties);
+    }
+
     @ConditionalOnMissingBean(name = "consentRepository")
     @Bean
     @RefreshScope
@@ -99,10 +115,13 @@ public class CasConsentCoreConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "casConsentAuditTrailRecordResolutionPlanConfigurer")
     public AuditTrailRecordResolutionPlanConfigurer casConsentAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
-            plan.registerAuditActionResolver("SAVE_CONSENT_ACTION_RESOLVER", authenticationActionResolver.getObject());
-            plan.registerAuditResourceResolver("SAVE_CONSENT_RESOURCE_RESOLVER", returnValueResourceResolver.getObject());
+            plan.registerAuditActionResolver(AuditActionResolvers.SAVE_CONSENT_ACTION_RESOLVER,
+                authenticationActionResolver.getObject());
+            plan.registerAuditResourceResolver(AuditResourceResolvers.SAVE_CONSENT_RESOURCE_RESOLVER,
+                returnValueResourceResolver.getObject());
         };
     }
 

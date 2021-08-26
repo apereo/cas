@@ -7,6 +7,8 @@ import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.util.CollectionUtils;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,13 +19,15 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "samlServiceFactoryConfiguration")
+@Configuration(value = "samlServiceFactoryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SamlServiceFactoryConfiguration {
 
     @Bean
-    public ServiceFactoryConfigurer samlServiceFactoryConfigurer() {
-        return () -> CollectionUtils.wrap(samlServiceFactory());
+    @Autowired
+    public ServiceFactoryConfigurer samlServiceFactoryConfigurer(@Qualifier("samlServiceFactory")
+                                                                 final ServiceFactory<SamlService> samlServiceFactory) {
+        return () -> CollectionUtils.wrap(samlServiceFactory);
     }
 
     @Bean

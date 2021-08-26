@@ -4,6 +4,8 @@ title: CAS - Configuring Service Access Strategy
 category: Services
 ---
 
+{% include variables.html %}
+
 # Configure Service Access Strategy
 
 The access strategy of a registered service provides fine-grained control over the service authorization rules.
@@ -174,7 +176,7 @@ import java.util.*
 import java.net.*
 import org.apereo.cas.authentication.*
 
-def URI run(final Object... args) {
+URI run(final Object... args) {
     def registeredService = args[0]
     def requestContext = args[1]
     def applicationContext = args[2]
@@ -278,10 +280,14 @@ Service access is only allowed within `startingDateTime` and `endingDateTime`:
     "ssoEnabled" : true,
     "unauthorizedRedirectUrl" : "https://www.github.com",
     "startingDateTime" : "2015-11-01T13:19:54.132-07:00",
-    "endingDateTime" : "2015-11-10T13:19:54.248-07:00"
+    "endingDateTime" : "2015-11-10T13:19:54.248-07:00",
+    "zoneId" : "UTC"
   }
 }
 ```
+
+The configuration of the public key component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
+
 
 ## Remote Endpoint
 
@@ -358,15 +364,9 @@ The configuration of this component qualifies to use the [Spring Expression Lang
 
 The grouper access strategy is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-grouper-core</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-grouper-core" %}
 
-This access strategy attempts to locate [Grouper](https://www.internet2.edu/products-services/trust-identity-middleware/grouper/) 
+This access strategy attempts to locate [Grouper](https://incommon.org/software/grouper/) 
 groups for the CAS principal. The groups returned by Grouper
 are collected as CAS attributes and examined against the list of required attributes for service access.
 
@@ -380,7 +380,7 @@ You will also need to ensure `grouper.client.properties` is available on the cla
 with the following configured properties:
 
 ```properties
-grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest
+grouperClient.webService.url = http://grouper.example.com/grouper-ws/servicesRest
 grouperClient.webService.login = banderson
 grouperClient.webService.password = password
 ```
@@ -401,6 +401,26 @@ Grouper access strategy based on group's display extension:
     "requiredAttributes" : {
       "@class" : "java.util.HashMap",
       "grouperAttributes" : [ "java.util.HashSet", [ "faculty" ] ]
+    },
+    "groupField" : "DISPLAY_EXTENSION"
+  }
+}
+```
+      
+While the `grouper.client.properties` is a hard requirement and must be presented, configuration properties can always be assigned to the strategy
+to override the defaults: 
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://.+",
+  "name" : "test",
+  "id" : 62,
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.grouper.services.GrouperRegisteredServiceAccessStrategy",
+    "configProperties" : {
+      "@class" : "java.util.HashMap",
+      "grouperClient.webService.url" : "http://grouper.example.com/grouper-ws/servicesRest"
     },
     "groupField" : "DISPLAY_EXTENSION"
   }

@@ -61,9 +61,7 @@ public class RejectUsersAuthenticationHandlerTests {
         c.setUsername("scott");
         c.setPassword("rutgers");
 
-        assertThrows(FailedLoginException.class, () -> {
-            this.authenticationHandler.authenticate(c);
-        });
+        assertThrows(FailedLoginException.class, () -> this.authenticationHandler.authenticate(c));
     }
 
     @Test
@@ -83,15 +81,11 @@ public class RejectUsersAuthenticationHandlerTests {
         c.setUsername(null);
         c.setPassword("user");
 
-        assertThrows(AccountNotFoundException.class, () -> {
-            this.authenticationHandler.authenticate(c);
-        });
+        assertThrows(AccountNotFoundException.class, () -> this.authenticationHandler.authenticate(c));
     }
 
     @Test
     public void verifyPassesNullUserNameAndPassword() {
-        assertThrows(AccountNotFoundException.class, () -> {
-            this.authenticationHandler.authenticate(new UsernamePasswordCredential());
-        });
+        assertThrows(AccountNotFoundException.class, () -> this.authenticationHandler.authenticate(new UsernamePasswordCredential()));
     }
 }

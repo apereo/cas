@@ -3,10 +3,13 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Service;
 
 import lombok.val;
+import org.springframework.core.Ordered;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -16,22 +19,28 @@ import java.util.stream.Stream;
  * @author Scott Battaglia
  * @since 3.1
  */
-public interface ServicesManager {
+public interface ServicesManager extends Ordered {
+    /**
+     * Save.
+     *
+     * @param toSave the services to import and save
+     */
+    void save(Stream<RegisteredService> toSave);
 
     /**
      * Register a service with CAS, or update an existing an entry.
      *
-     * @param registeredService the RegisteredService to update or add.
-     * @return newly persisted RegisteredService instance
+     * @param registeredService the {@link RegisteredService} to update or add.
+     * @return newly persisted {@link RegisteredService} instance
      */
     RegisteredService save(RegisteredService registeredService);
 
     /**
      * Register a service with CAS, or update an existing an entry.
      *
-     * @param registeredService the RegisteredService to update or add.
+     * @param registeredService the {@link RegisteredService} to update or add.
      * @param publishEvent      whether events should be published to indicate the save operation.
-     * @return newly persisted RegisteredService instance
+     * @return newly persisted {@link RegisteredService} instance
      */
     RegisteredService save(RegisteredService registeredService, boolean publishEvent);
 
@@ -45,12 +54,23 @@ public interface ServicesManager {
     }
 
     /**
+     * Save.
+     *
+     * @param supplier       the supplier
+     * @param andThenConsume the and then consume
+     * @param countExclusive the count exclusive
+     */
+    void save(Supplier<RegisteredService> supplier,
+              Consumer<RegisteredService> andThenConsume,
+              long countExclusive);
+
+    /**
      * Delete all entries in the underlying storage service.
      */
     void deleteAll();
 
     /**
-     * Delete the entry for this RegisteredService.
+     * Delete the entry for this {@link RegisteredService}.
      *
      * @param id the id of the registeredService to delete.
      * @return the registered service that was deleted, null if there was none.
@@ -58,7 +78,7 @@ public interface ServicesManager {
     RegisteredService delete(long id);
 
     /**
-     * Delete the entry for this RegisteredService.
+     * Delete the entry for this {@link RegisteredService}.
      *
      * @param svc the registered service to delete.
      * @return the registered service that was deleted, null if there was none.
@@ -66,18 +86,10 @@ public interface ServicesManager {
     RegisteredService delete(RegisteredService svc);
 
     /**
-     * Find a RegisteredService by matching with the supplied service.
-     *
-     * @param serviceId the service to match with.
-     * @return the RegisteredService that matches the supplied service.
-     */
-    RegisteredService findServiceBy(String serviceId);
-
-    /**
-     * Find a RegisteredService by matching with the supplied service.
+     * Find a {@link RegisteredService} by matching with the supplied service.
      *
      * @param service the service to match with.
-     * @return the RegisteredService that matches the supplied service.
+     * @return the {@link RegisteredService} that matches the supplied service.
      */
     RegisteredService findServiceBy(Service service);
 
@@ -100,33 +112,47 @@ public interface ServicesManager {
     <T extends RegisteredService> T findServiceBy(Service serviceId, Class<T> clazz);
 
     /**
-     * Find service by type.
-     *
-     * @param <T>       the type parameter
-     * @param serviceId the service id
-     * @param clazz     the clazz
-     * @return the t
-     */
-    <T extends RegisteredService> T findServiceBy(String serviceId, Class<T> clazz);
-
-    /**
-     * Find a RegisteredService by matching with the supplied id.
+     * Find a {@link RegisteredService} by matching with the supplied id.
      *
      * @param id the id to match with.
-     * @return the RegisteredService that matches the supplied service.
+     * @return the {@link RegisteredService} that matches the supplied service.
      */
     RegisteredService findServiceBy(long id);
 
     /**
-     * Find a RegisteredService by matching with the supplied id.
+     * Find a {@link RegisteredService} by matching with the supplied id.
      *
      * @param <T>   the type parameter
      * @param id    the id to match with.
      * @param clazz the clazz
-     * @return the RegisteredService that matches the supplied service.
+     * @return the {@link RegisteredService} that matches the supplied service.
      */
     default <T extends RegisteredService> T findServiceBy(final long id, final Class<T> clazz) {
         val service = findServiceBy(id);
+        if (service != null && clazz.isAssignableFrom(service.getClass())) {
+            return (T) service;
+        }
+        return null;
+    }
+
+    /**
+     * Find a {@link RegisteredService} by matching with the supplied name.
+     *
+     * @param name the name to match with.
+     * @return the {@link RegisteredService}  that matches the supplied service.
+     */
+    RegisteredService findServiceByName(String name);
+
+    /**
+     * Find a {@link RegisteredService} by matching with the supplied name.
+     *
+     * @param <T>   the type parameter
+     * @param name  the name to match with.
+     * @param clazz the clazz
+     * @return the {@link RegisteredService} that matches the supplied service.
+     */
+    default <T extends RegisteredService> T findServiceByName(final String name, final Class<T> clazz) {
+        val service = findServiceByName(name);
         if (service != null && clazz.isAssignableFrom(service.getClass())) {
             return (T) service;
         }
@@ -144,6 +170,18 @@ public interface ServicesManager {
     Collection<RegisteredService> getAllServices();
 
     /**
+     * Retrieve the collection of all registered services that are of the class type passed.
+     * Services that are returned are valid, non-expired, etc.
+     * Operation should perform no reloads, and must return a cached
+     * copy of services that are already loaded.
+     *
+     * @param <T>   the type parameter
+     * @param clazz type of registered service to return.
+     * @return the collection of all services that match the class type.
+     */
+    <T extends RegisteredService> Collection<T> getAllServicesOfType(Class<T> clazz);
+
+    /**
      * Gets services stream.
      * <p>
      * The returning stream may be bound to an IO channel (such as database connection),
@@ -151,7 +189,7 @@ public interface ServicesManager {
      *
      * @return the services stream
      */
-    default Stream<? extends RegisteredService> getAllServicesStream() {
+    default Stream<? extends RegisteredService> stream() {
         return getAllServices().stream();
     }
 
@@ -169,7 +207,7 @@ public interface ServicesManager {
      *
      * @return the count/size of registry.
      */
-    default int count() {
+    default long count() {
         return 0;
     }
 
@@ -211,4 +249,28 @@ public interface ServicesManager {
     default boolean supports(final Class clazz) {
         return true;
     }
+
+    @Override
+    default int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
+    }
+
+    /**
+     * Returns a list of domains being managed by the ServiceManager.
+     *
+     * @return list of domain names
+     */
+    default Stream<String> getDomains() {
+        return Stream.of("default");
+    }
+
+    /**
+     * Return a list of services for the passed domain.
+     *
+     * @param domain the domain name
+     * @return list of services
+     */
+    Collection<RegisteredService> getServicesForDomain(String domain);
+
+
 }

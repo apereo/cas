@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.view.AbstractCasView;
 import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -39,9 +40,8 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     private final ArgumentExtractor samlArgumentExtractor;
 
     private final String encoding;
-
-
-    public AbstractSaml10ResponseView(final boolean successResponse,
+    
+    protected AbstractSaml10ResponseView(final boolean successResponse,
                                       final ProtocolAttributeEncoder protocolAttributeEncoder,
                                       final ServicesManager servicesManager,
                                       final ArgumentExtractor samlArgumentExtractor,
@@ -69,7 +69,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
             prepareResponse(samlResponse, model);
             finalizeSamlResponse(request, response, serviceId, samlResponse);
         } catch (final Exception e) {
-            LOGGER.error("Error generating SAML response for service", e);
+            LoggingUtils.error(LOGGER, "Error generating SAML response for service", e);
             throw e;
         }
     }

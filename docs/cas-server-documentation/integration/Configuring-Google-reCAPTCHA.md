@@ -4,23 +4,20 @@ title: CAS - Google reCAPTCHA
 category: Integration
 ---
 
+{% include variables.html %}
+
 # Google reCAPTCHA
 
 reCAPTCHA is a [Google service](https://developers.google.com/recaptcha) that protects your CAS deployment from spam and abuse.
 It uses advanced risk analysis techniques to tell humans and bots apart. CAS supports the reCAPTCHA API `v2` and `v3`.
 
-Support is enabled by including the following module in the Overlay:
+Support is enabled by including the following module in the WAR Overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-captcha</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-captcha" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-recaptcha-integration).
+{% include casproperties.html properties="cas.google-recaptcha" %}
 
 ## Internet Explorer
 
-Remember to disable Internet Explorer's "Compatibility View" mode. reCAPTCHA may not render correctly when that mode is turned on.
+Remember to disable Internet Explorer's "Compatibility View" mode. reCAPTCHA
+may not render correctly when that mode is turned on.

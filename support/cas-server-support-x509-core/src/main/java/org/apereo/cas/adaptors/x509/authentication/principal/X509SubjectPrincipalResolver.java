@@ -1,13 +1,12 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.cryptacular.x509.dn.AttributeType;
 import org.cryptacular.x509.dn.NameReader;
 import org.cryptacular.x509.dn.RDNSequence;
@@ -16,7 +15,6 @@ import org.cryptacular.x509.dn.StandardAttributeType;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -27,8 +25,8 @@ import java.util.regex.Pattern;
  * @since 3.4.4
  */
 @Slf4j
+@Setter
 @ToString(callSuper = true)
-@RequiredArgsConstructor
 public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver {
 
     /**
@@ -38,54 +36,32 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
 
     /**
      * Descriptor representing an abstract format of the principal to be resolved.
+     * Descriptor string where attribute names are prefixed with "$"
+     * to identify replacement by real attribute values from the subject DN.
+     * Valid attributes include common X.509 DN attributes such as the following:
+     * <ul><li>C</li><li>CN</li><li>DC</li><li>EMAILADDRESS</li>
+     * <li>L</li><li>O</li><li>OU</li><li>SERIALNUMBER</li>
+     * <li>ST</li><li>UID</li><li>UNIQUEIDENTIFIER</li></ul>
+     * For a complete list of supported attributes, see {@link org.cryptacular.x509.dn.StandardAttributeType}.
      */
-    private final String descriptor;
+    private String principalDescriptor;
 
     /**
      * Sets the descriptor that describes for format of the principal ID to
      * create from X.509 subject DN attributes.  The descriptor is made up of
      * common X.509 attribute names prefixed by "$", which are replaced by
-     * attribute values extracted from DN attribute values.
-     * <p>
-     * EXAMPLE:
-     * </p>
-     * {@code
-     * {@code
-     * <bean class="X509SubjectPrincipalResolver"
-     * p:descriptor="$UID@$DC.$DC"
-     * }
-     * }**
-     * <p>
-     * The above bean when applied to a certificate with the DN
+     * attribute values extracted from DN attribute values. (i.e. $UID@$DC.$DC)
+     *
+     * The resolver when applied to a certificate with the DN
      * <p>
      * <b>DC=edu, DC=vt/UID=jacky, CN=Jascarnella Ellagwonto</b></p>
      * <p>
      * produces the principal <strong>jacky@vt.edu</strong>.</p>
      *
-     * @param attributeRepository                  the attribute repository
-     * @param principalFactory                     the principal factory
-     * @param returnNullIfNoAttributes             the return null if no attributes
-     * @param principalAttributeName               the principal attribute name
-     * @param descriptor                           Descriptor string where attribute names are prefixed with "$"
-     *                                             to identify replacement by real attribute values from the subject DN.
-     *                                             Valid attributes include common X.509 DN attributes such as the following:
-     *                                             <ul><li>C</li><li>CN</li><li>DC</li><li>EMAILADDRESS</li>
-     *                                             <li>L</li><li>O</li><li>OU</li><li>SERIALNUMBER</li>
-     *                                             <li>ST</li><li>UID</li><li>UNIQUEIDENTIFIER</li></ul>
-     *                                             For a complete list of supported attributes, see {@link org.cryptacular.x509.dn.StandardAttributeType}.
-     * @param useCurrentPrincipalId                whether the principal id from the resolved principal should be used
-     * @param resolveAttributes                    the resolve attributes
-     * @param activeAttributeRepositoryIdentifiers the active attribute repository identifiers
+     * @param context    configuration context.
      */
-    public X509SubjectPrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                        final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
-                                        final String principalAttributeName, final String descriptor,
-                                        final boolean useCurrentPrincipalId, final boolean resolveAttributes,
-                                        final Set<String> activeAttributeRepositoryIdentifiers) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
-            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
-            activeAttributeRepositoryIdentifiers);
-        this.descriptor = descriptor;
+    public X509SubjectPrincipalResolver(final PrincipalResolutionContext context) {
+        super(context);
     }
 
     /**
@@ -118,8 +94,8 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
         LOGGER.debug("Resolving principal for [{}]", certificate);
-        val sb = new StringBuffer();
-        val m = ATTR_PATTERN.matcher(this.descriptor);
+        val sb = new StringBuilder();
+        val m = ATTR_PATTERN.matcher(this.principalDescriptor);
         val attrMap = new HashMap<String, AttributeContext>();
         val rdnSequence = new NameReader(certificate).readSubject();
         while (m.find()) {

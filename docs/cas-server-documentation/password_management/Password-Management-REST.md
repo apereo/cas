@@ -4,6 +4,8 @@ title: CAS - Password Management
 category: Password Management
 ---
 
+{% include variables.html %}
+
 # Password Management - REST
 
 Tasks such as locating users' email and security questions as well as management
@@ -11,15 +13,9 @@ and updating of the password are delegated to user-defined rest endpoints.
 
 REST support is enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-pm-rest</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-pm-rest" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-password-management).
+{% include casproperties.html properties="cas.authn.pm.rest" %}
 
 | Endpoint                  | Method    | Headers             | Expected Response
 |---------------------------|-----------|------------------------------------------------------------------------

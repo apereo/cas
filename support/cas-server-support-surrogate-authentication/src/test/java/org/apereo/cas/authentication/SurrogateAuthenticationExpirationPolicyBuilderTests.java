@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Simple")
+@Tag("ExpirationPolicy")
 public class SurrogateAuthenticationExpirationPolicyBuilderTests {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -32,6 +32,6 @@ public class SurrogateAuthenticationExpirationPolicyBuilderTests {
         val builder = new SurrogateAuthenticationExpirationPolicyBuilder(
             new TicketGrantingTicketExpirationPolicyBuilder(casProperties), casProperties);
         assertEquals(TicketGrantingTicket.class, builder.getTicketType());
-        assertNotNull(builder.toTicketExpirationPolicy());
+        assertNotNull(builder.buildTicketExpirationPolicy());
     }
 }

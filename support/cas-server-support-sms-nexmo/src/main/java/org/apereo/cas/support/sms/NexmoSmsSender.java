@@ -1,7 +1,8 @@
 package org.apereo.cas.support.sms;
 
 import org.apereo.cas.configuration.model.support.sms.NexmoProperties;
-import org.apereo.cas.util.io.SmsSender;
+import org.apereo.cas.notifications.sms.SmsSender;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.nexmo.client.NexmoClient;
 import com.nexmo.client.sms.MessageStatus;
@@ -48,11 +49,7 @@ public class NexmoSmsSender implements SmsSender {
                 LOGGER.error("No text messages could be sent. Response [{}]", response);
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

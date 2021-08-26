@@ -4,7 +4,9 @@ import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -38,64 +39,39 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).singleValueAsArray(true).build().toObjectMapper();
 
     private final GoogleAuthenticatorMultifactorProperties gauth;
 
     public RestGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
-                                                            final GoogleAuthenticatorMultifactorProperties gauth,
-                                                            final CipherExecutor<String, String> tokenCredentialCipher) {
+        final GoogleAuthenticatorMultifactorProperties gauth,
+        final CipherExecutor<String, String> tokenCredentialCipher) {
         super(tokenCredentialCipher, googleAuthenticator);
         this.gauth = gauth;
     }
 
     @Override
-    public Collection<? extends OneTimeTokenAccount> load() {
+    public OneTimeTokenAccount get(final long id) {
         val rest = gauth.getRest();
         HttpResponse response = null;
         try {
-            response = HttpUtils.executeGet(rest.getUrl(), rest.getBasicAuthUsername(),
-                rest.getBasicAuthUsername(), Map.of(), CollectionUtils.wrap("Accept", MediaType.APPLICATION_JSON));
+            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE, "id", id);
+            headers.putAll(rest.getHeaders());
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(rest.getUrl())
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
             if (response != null) {
                 val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
                 if (status.is2xxSuccessful()) {
                     val content = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                     if (content != null) {
-                        final TypeReference<List<GoogleAuthenticatorAccount>> values = new TypeReference<>() {
-                        };
-                        val results = MAPPER.readValue(JsonValue.readHjson(content).toString(), values);
-                        return results.stream().map(this::decode).collect(Collectors.toList());
-                    }
-                }
-            }
-        } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
-        } finally {
-            HttpUtils.close(response);
-        }
-        return new ArrayList<>(0);
-    }
-
-    @Override
-    public OneTimeTokenAccount get(final String username) {
-        val rest = gauth.getRest();
-        HttpResponse response = null;
-        try {
-            val parameters = new HashMap<String, Object>();
-            response = HttpUtils.execute(rest.getUrl(), HttpMethod.GET.name(),
-                rest.getBasicAuthUsername(), rest.getBasicAuthPassword(),
-                parameters, Map.of("username", username));
-
-            if (response != null) {
-                val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
-                if (status.is2xxSuccessful()) {
-                    val content = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                    if (content != null) {
-                        final TypeReference<OneTimeTokenAccount> values = new TypeReference<>() {
+                        val values = new TypeReference<GoogleAuthenticatorAccount>() {
                         };
                         val result = MAPPER.readValue(JsonValue.readHjson(content).toString(), values);
                         return decode(Objects.requireNonNull(result));
@@ -103,11 +79,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 }
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -115,74 +87,120 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     }
 
     @Override
-    public void save(final String userName, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
-        val account = new GoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
-        update(account);
-    }
-
-    @Override
-    public void deleteAll() {
-        val rest = gauth.getRest();
+    public OneTimeTokenAccount get(final String username, final long id) {
         HttpResponse response = null;
         try {
-            val parameters = new HashMap<String, Object>();
-            response = HttpUtils.execute(rest.getUrl(), HttpMethod.GET.name(),
-                rest.getBasicAuthUsername(), rest.getBasicAuthPassword(),
-                parameters, new HashMap<>(0));
-        } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
+            val rest = gauth.getRest();
+
+            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE,
+                "id", id, "username", username);
+            headers.putAll(rest.getHeaders());
+
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(rest.getUrl())
+                .headers(headers)
+                .build();
+
+            response = HttpUtils.execute(exec);
+            if (response != null) {
+                val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+                if (status.is2xxSuccessful()) {
+                    val content = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                    if (content != null) {
+                        val values = new TypeReference<GoogleAuthenticatorAccount>() {
+                        };
+                        val result = MAPPER.readValue(JsonValue.readHjson(content).toString(), values);
+                        return decode(Objects.requireNonNull(result));
+                    }
+                }
             }
-        } finally {
-            HttpUtils.close(response);
-        }
-    }
-
-    @Override
-    public void delete(final String username) {
-        val rest = gauth.getRest();
-        HttpResponse response = null;
-        try {
-            val parameters = new HashMap<String, Object>();
-            response = HttpUtils.execute(rest.getUrl(), HttpMethod.GET.name(),
-                rest.getBasicAuthUsername(), rest.getBasicAuthPassword(),
-                parameters, CollectionUtils.wrap("Accept", MediaType.APPLICATION_JSON,
-                    "username", username));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
+        return null;
     }
 
     @Override
-    public long count() {
+    public Collection<? extends OneTimeTokenAccount> get(final String username) {
         val rest = gauth.getRest();
         HttpResponse response = null;
         try {
-            val parameters = new HashMap<String, Object>();
-            val countUrl = StringUtils.appendIfMissing(rest.getUrl(), "/").concat("count");
-            response = HttpUtils.execute(countUrl, HttpMethod.GET.name(),
-                rest.getBasicAuthUsername(), rest.getBasicAuthPassword(),
-                parameters, new HashMap<>(0));
+            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE, "username", username);
+            headers.putAll(rest.getHeaders());
+
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(rest.getUrl())
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
 
             if (response != null) {
                 val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
                 if (status.is2xxSuccessful()) {
                     val content = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                     if (content != null) {
-                        return MAPPER.readValue(JsonValue.readHjson(content).toString(), Long.class);
+                        val values = new TypeReference<List<GoogleAuthenticatorAccount>>() {
+                        };
+                        val result = MAPPER.readValue(JsonValue.readHjson(content).toString(), values);
+                        return decode(Objects.requireNonNull(result));
                     }
                 }
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
-        return 0;
+        return null;
+    }
+
+    @Override
+    public Collection<? extends OneTimeTokenAccount> load() {
+        val rest = gauth.getRest();
+        HttpResponse response = null;
+        try {
+            val headers = CollectionUtils.<String, Object>wrap("Accept", MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(rest.getHeaders());
+
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(rest.getUrl())
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
+            if (response != null) {
+                val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+                if (status.is2xxSuccessful()) {
+                    val content = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                    if (content != null) {
+                        val results = MAPPER.readValue(JsonValue.readHjson(content).toString(),
+                            new TypeReference<List<GoogleAuthenticatorAccount>>() {
+                            });
+                        return results.stream().map(this::decode).collect(Collectors.toList());
+                    }
+                }
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        } finally {
+            HttpUtils.close(response);
+        }
+        return new ArrayList<>(0);
+    }
+
+    @Override
+    public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
+        return update(account);
     }
 
     @Override
@@ -198,10 +216,16 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             headers.put("secretKey", CollectionUtils.wrap(account.getSecretKey()));
             headers.put("scratchCodes", account.getScratchCodes().stream().map(String::valueOf).collect(Collectors.toList()));
 
-            val parameters = new HashMap<String, Object>();
-            response = HttpUtils.execute(rest.getUrl(), HttpMethod.POST.name(),
-                rest.getBasicAuthUsername(), rest.getBasicAuthPassword(),
-                parameters, headers);
+            headers.putAll(rest.getHeaders());
+
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
+                .method(HttpMethod.POST)
+                .url(rest.getUrl())
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
 
             if (response != null) {
                 val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
@@ -211,15 +235,136 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 }
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
         LOGGER.warn("Failed to save google authenticator account successfully");
         return null;
+    }
+
+    @Override
+    public void deleteAll() {
+        val rest = gauth.getRest();
+        HttpResponse response = null;
+        try {
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(rest.getUrl())
+                .build();
+            response = HttpUtils.execute(exec);
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+    @Override
+    public void delete(final String username) {
+        val rest = gauth.getRest();
+        HttpResponse response = null;
+        try {
+            val headers = CollectionUtils.wrap("Accept", MediaType.APPLICATION_JSON_VALUE, "username", username);
+            headers.putAll(rest.getHeaders());
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(rest.getUrl())
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+    @Override
+    public void delete(final long id) {
+        val rest = gauth.getRest();
+        HttpResponse response = null;
+        try {
+            val headers = CollectionUtils.wrap("Accept", MediaType.APPLICATION_JSON_VALUE, "id", id);
+            headers.putAll(rest.getHeaders());
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(rest.getUrl())
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+    @Override
+    public long count() {
+        val rest = gauth.getRest();
+        HttpResponse response = null;
+        try {
+            val headers = CollectionUtils.<String, Object>wrap("Accept", MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(rest.getHeaders());
+            val countUrl = StringUtils.appendIfMissing(rest.getUrl(), "/").concat("count");
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(countUrl)
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
+            if (response != null) {
+                val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+                if (status.is2xxSuccessful()) {
+                    val content = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                    if (content != null) {
+                        return MAPPER.readValue(JsonValue.readHjson(content).toString(), Long.class);
+                    }
+                }
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        } finally {
+            HttpUtils.close(response);
+        }
+        return 0;
+    }
+
+    @Override
+    public long count(final String username) {
+        val rest = gauth.getRest();
+        HttpResponse response = null;
+        try {
+            val headers = CollectionUtils.<String, Object>wrap("Accept", MediaType.APPLICATION_JSON_VALUE, "username", username);
+            headers.putAll(rest.getHeaders());
+
+            val countUrl = StringUtils.appendIfMissing(rest.getUrl(), "/").concat("count");
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(countUrl)
+                .headers(headers)
+                .build();
+
+            response = HttpUtils.execute(exec);
+            if (response != null) {
+                val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+                if (status.is2xxSuccessful()) {
+                    val content = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                    if (content != null) {
+                        return MAPPER.readValue(JsonValue.readHjson(content).toString(), Long.class);
+                    }
+                }
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        } finally {
+            HttpUtils.close(response);
+        }
+        return 0;
     }
 }

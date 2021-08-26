@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJ
 import org.apereo.cas.configuration.model.support.cassandra.authentication.BaseCassandraProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,6 +19,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Getter
 @Accessors(chain = true)
 @Setter
+@JsonFilter("CassandraTicketRegistryProperties")
 public class CassandraTicketRegistryProperties extends BaseCassandraProperties {
     private static final long serialVersionUID = -2468250557119133004L;
 

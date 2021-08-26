@@ -15,6 +15,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,7 +29,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.1
  */
 @Setter
-@Tag("Simple")
+@Tag("Tickets")
+@SpringBootTest(classes = BaseTicketRegistryTests.SharedTestConfiguration.class)
 public class DistributedTicketRegistryTests {
 
     private static final String TGT_NAME = "TGT";
@@ -129,7 +131,7 @@ public class DistributedTicketRegistryTests {
         }
 
         @Override
-        public void addTicket(final Ticket ticket) {
+        public void addTicketInternal(final Ticket ticket) {
             this.tickets.put(ticket.getId(), ticket);
             updateTicket(ticket);
         }
