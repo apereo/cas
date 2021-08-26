@@ -48,6 +48,19 @@ public class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
+    public void verifyCookiePathNotModified() {
+        val request = new MockHttpServletRequest();
+        var response = new MockHttpServletResponse();
+        var gen1 = new CookieRetrievingCookieGenerator(getCookieGenerationContext("/custom/path/"));
+        var cookie1 = gen1.addCookie(request, response, "some-value");
+        assertEquals("/custom/path/", cookie1.getPath());
+
+        gen1 = new CookieRetrievingCookieGenerator(getCookieGenerationContext(StringUtils.EMPTY));
+        cookie1 = gen1.addCookie(request, response, "some-value");
+        assertEquals("/", cookie1.getPath());
+    }
+
+    @Test
     public void verifyRemoveAllCookiesByName() {
         val request = new MockHttpServletRequest();
         var response = new MockHttpServletResponse();
