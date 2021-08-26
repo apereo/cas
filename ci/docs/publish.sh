@@ -164,7 +164,7 @@ if [[ $preBuild == "true" ]]; then
   fi
 fi 
 
-rm -Rf .jekyll-metadata .sass-cache "$branchVersion/build"
+rm -Rf .jekyll-cache .jekyll-metadata .sass-cache "$branchVersion/build"
 
 echo -e "\nConfiguring git repository settings...\n"
 rm -Rf .git
