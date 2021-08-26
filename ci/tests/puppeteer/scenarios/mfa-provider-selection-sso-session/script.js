@@ -2,12 +2,6 @@ const puppeteer = require("puppeteer");
 const assert = require("assert");
 const cas = require("../../cas.js");
 
-async function fetchScratch() {
-    console.log("Fetching Scratch codes from /cas/actuator...");
-    const response = await cas.doRequest("https://localhost:8443/cas/actuator/gauthCredentialRepository/casuser");
-    return JSON.stringify(JSON.parse(response)[0].scratchCodes[0]);
-}
-
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
@@ -30,7 +24,7 @@ async function fetchScratch() {
     await cas.submitForm(page, "#mfa-gauth > form[name=fm1]")
     await page.waitForTimeout(500);
 
-    let scratch = await fetchScratch();
+    let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     console.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,'#token', scratch);
     await page.keyboard.press('Enter');
@@ -58,7 +52,7 @@ async function fetchScratch() {
     await cas.submitForm(page, "#mfa-gauth > form[name=fm1]")
     await page.waitForTimeout(500);
 
-    scratch = await fetchScratch();
+    scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     console.log(`Using scratch code ${scratch} to login...`);
     await cas.type(page,'#token', scratch);
     await page.keyboard.press('Enter');

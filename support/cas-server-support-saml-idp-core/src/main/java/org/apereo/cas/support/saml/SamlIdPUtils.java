@@ -55,7 +55,6 @@ import java.util.zip.InflaterInputStream;
 @UtilityClass
 public class SamlIdPUtils {
 
-
     /**
      * Retrieve authn request authn request.
      *
@@ -163,7 +162,8 @@ public class SamlIdPUtils {
         }
         val missingLocation = StringUtils.isBlank(endpoint.getResponseLocation()) && StringUtils.isBlank(endpoint.getLocation());
         if (StringUtils.isBlank(endpoint.getBinding()) || missingLocation) {
-            throw new SamlException("Endpoint for " + authnRequest.getSchemaType() + " does not define a binding or location for " + binding);
+            throw new SamlException("Endpoint for " + authnRequest.getSchemaType()
+                + " does not define a binding or location for binding " + binding);
         }
         return endpoint;
     }
@@ -174,9 +174,14 @@ public class SamlIdPUtils {
                                                                         final AssertionConsumerService acsFromRequest,
                                                                         final AssertionConsumerService acsFromMetadata,
                                                                         final MessageContext authenticationContext) {
+        LOGGER.trace("ACS from authentication request is [{}], ACS from metadata is [{}] with binding [{}]",
+            acsFromRequest, acsFromMetadata, binding);
+        
         if (acsFromRequest != null) {
             if (!authnRequest.isSigned() && !SAMLBindingSupport.isMessageSigned(authenticationContext)) {
-                val locations = adaptor.getAssertionConsumerServiceLocations(binding);
+                val locations = StringUtils.isNotBlank(binding)
+                    ? adaptor.getAssertionConsumerServiceLocations(binding)
+                    : adaptor.getAssertionConsumerServiceLocations();
                 val acsUrl = StringUtils.defaultIfBlank(acsFromRequest.getResponseLocation(), acsFromRequest.getLocation());
                 val acsIndex = authnRequest instanceof AuthnRequest
                     ? AuthnRequest.class.cast(authnRequest).getAssertionConsumerServiceIndex()

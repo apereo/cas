@@ -67,6 +67,10 @@ public interface OidcConstants {
      */
     String ID_TOKEN = "id_token";
     /**
+     * The issuer parameter.
+     */
+    String ISS = "iss";
+    /**
      * The max age.
      */
     String MAX_AGE = "max_age";

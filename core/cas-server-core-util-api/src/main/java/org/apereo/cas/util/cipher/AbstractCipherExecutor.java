@@ -41,8 +41,6 @@ import java.util.Map;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, R> {
-    private static final int MAP_SIZE = 8;
-
     private static final BigInteger RSA_PUBLIC_KEY_EXPONENT = BigInteger.valueOf(65537);
 
     static {
@@ -51,7 +49,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
 
     private Key signingKey;
 
-    private Map<String, Object> customHeaders = new LinkedHashMap<>(MAP_SIZE);
+    private Map<String, Object> customHeaders = new LinkedHashMap<>();
 
     /**
      * Extract private key from resource private key.

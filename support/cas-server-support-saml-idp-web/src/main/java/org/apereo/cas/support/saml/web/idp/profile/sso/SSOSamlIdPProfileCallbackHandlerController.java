@@ -95,7 +95,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
 
         val authenticationContext = buildAuthenticationContextPair(request, response, authnContext);
         val assertion = validateRequestAndBuildCasAssertion(response, request, authenticationContext);
-        val binding = determineProfileBinding(authenticationContext, assertion);
+        val binding = determineProfileBinding(authenticationContext);
         if (StringUtils.isBlank(binding)) {
             LOGGER.error("Unable to determine profile binding");
             return WebUtils.produceErrorView(new IllegalArgumentException("Unable to determine profile binding"));

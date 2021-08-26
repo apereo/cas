@@ -1,6 +1,7 @@
 package org.apereo.cas.ws.idp.web;
 
 import org.apereo.cas.BaseCoreWsSecurityIdentityProviderConfigurationTests;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -15,6 +16,7 @@ import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import lombok.val;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,7 +130,7 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
     }
 
     @Test
-    public void verifyLogin() {
+    public void verifyLogin() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -142,14 +144,15 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
             return null;
         });
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
-        assertEquals("https://cas.example.org:8443/cas/login?"
-                + "service=%2Fws%2Fidp%2Ffederationcallback%3Fwa%3Dwsignin1.0%26wreply%3Dhttp%253A%252F%252Fapp.example5"
-                + ".org%252Fwsfed-idp%26wtrealm%3Durn%253Aorg%253Aapereo%253Acas%253Aws%253Aidp%253Arealm-CAS",
-            response.getHeader("Location"));
+
+        val builder = new URIBuilder(response.getHeader("Location"));
+        assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(CasProtocolConstants.PARAMETER_SERVICE)));
+        assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(WSFederationConstants.WTREALM)));
+        assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(WSFederationConstants.WREPLY)));
     }
 
     @Test
-    public void verifyLoginRenewWithNoToken() {
+    public void verifyLoginRenewWithNoToken() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -167,14 +170,15 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
             return null;
         });
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
-        assertEquals("https://cas.example.org:8443/cas/login?service="
-                + "%2Fws%2Fidp%2Ffederationcallback%3Fwa%3Dwsignin1.0%26wreply%3Dhttp%253A%252F%252Fapp.example5"
-                + ".org%252Fwsfed-idp%26wtrealm%3Durn%253Aorg%253Aapereo%253Acas%253Aws%253Aidp%253Arealm-CAS%26wfresh%3D5000&renew=true",
-            response.getHeader("Location"));
+        val builder = new URIBuilder(response.getHeader("Location"));
+        assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(CasProtocolConstants.PARAMETER_SERVICE)));
+        assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(CasProtocolConstants.PARAMETER_RENEW)));
+        assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(WSFederationConstants.WTREALM)));
+        assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(WSFederationConstants.WREPLY)));
     }
 
     @Test
-    public void verifyLoginRenewDisabled() {
+    public void verifyLoginRenewDisabled() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -193,14 +197,14 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
         });
         assertNotNull(federationValidateRequestController.handleUnauthorizedServiceException(request, new RuntimeException()));
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
-        assertEquals("https://cas.example.org:8443/cas/login?service="
-                + "%2Fws%2Fidp%2Ffederationcallback%3Fwa%3Dwsignin1.0%26wreply%3Dhttp%253A%252F%252Fapp.example5"
-                + ".org%252Fwsfed-idp%26wtrealm%3Durn%253Aorg%253Aapereo%253Acas%253Aws%253Aidp%253Arealm-CAS%26wfresh%3D0",
-            response.getHeader("Location"));
+        val builder = new URIBuilder(response.getHeader("Location"));
+        assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(CasProtocolConstants.PARAMETER_SERVICE)));
+        assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(WSFederationConstants.WTREALM)));
+        assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(WSFederationConstants.WREPLY)));
     }
 
     @Test
-    public void verifyLoginRenewWithToken() {
+    public void verifyLoginRenewWithToken() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -234,10 +238,11 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
             return null;
         });
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
-        assertEquals("https://cas.example.org:8443/cas/login?service="
-                + "%2Fws%2Fidp%2Ffederationcallback%3Fwa%3Dwsignin1.0%26wreply%3Dhttp%253A%252F%252Fapp.example5"
-                + ".org%252Fwsfed-idp%26wtrealm%3Durn%253Aorg%253Aapereo%253Acas%253Aws%253Aidp%253Arealm-CAS%26wfresh%3D1&renew=true",
-            response.getHeader("Location"));
+        val builder = new URIBuilder(response.getHeader("Location"));
+        assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(CasProtocolConstants.PARAMETER_SERVICE)));
+        assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(CasProtocolConstants.PARAMETER_RENEW)));
+        assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(WSFederationConstants.WTREALM)));
+        assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(WSFederationConstants.WREPLY)));
     }
 
     private WSFederationRegisteredService getWsFederationRegisteredService() {

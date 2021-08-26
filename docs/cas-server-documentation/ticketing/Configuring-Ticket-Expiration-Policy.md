@@ -15,7 +15,7 @@ tickets (`TGT`), proxy-granting tickets (`PGT`), service tickets (`ST`), proxy t
 artifacts in CAS that take the base form of a ticket abstraction. Each protocol or feature may 
 introduce a new ticket type that carries its own expiration policy and you will need to 
 consult the documentation for that feature or behavior to realize how expiration 
-policies for its own ticket types may be tuned and controlled.</p></div>
+policies for a specific ticket type may be tuned and controlled.</p></div>
 
 ## Actuator Endpoints
 

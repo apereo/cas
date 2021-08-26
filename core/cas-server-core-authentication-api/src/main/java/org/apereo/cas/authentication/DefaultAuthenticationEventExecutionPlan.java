@@ -30,8 +30,6 @@ import java.util.stream.IntStream;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEventExecutionPlan {
-    private static final int MAP_SIZE = 8;
-
     private final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulatorList = new ArrayList<>(0);
 
     private final List<AuthenticationPostProcessor> authenticationPostProcessors = new ArrayList<>(0);
@@ -44,7 +42,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     private final List<AuthenticationPolicyResolver> authenticationPolicyResolvers = new ArrayList<>(0);
 
-    private final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlerPrincipalResolverMap = new LinkedHashMap<>(MAP_SIZE);
+    private final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlerPrincipalResolverMap = new LinkedHashMap<>();
 
     @Getter
     private final AuthenticationSystemSupport authenticationSystemSupport;

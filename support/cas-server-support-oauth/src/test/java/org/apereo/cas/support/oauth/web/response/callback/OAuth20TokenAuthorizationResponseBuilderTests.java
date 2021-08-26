@@ -38,49 +38,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuth")
 public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth20Tests {
-
     private static final String STATE = "%123=";
 
     private static final String NONCE = "%123=";
-
-    @Test
-    public void verifyUnchangedStateAndNonceParameter() throws Exception {
-
-        val registeredService = getRegisteredService("example", CLIENT_SECRET, new LinkedHashSet<>());
-        registeredService.setJwtAccessToken(true);
-        servicesManager.save(registeredService);
-
-        val service = RegisteredServiceTestUtils.getService("example");
-        val attributes = new HashMap<String, List<Object>>();
-        attributes.put(OAuth20Constants.STATE, Collections.singletonList(STATE));
-        attributes.put(OAuth20Constants.NONCE, Collections.singletonList(NONCE));
-
-        val holder = AccessTokenRequestDataHolder
-            .builder()
-            .clientId(registeredService.getClientId())
-            .service(service)
-            .authentication(RegisteredServiceTestUtils.getAuthentication(RegisteredServiceTestUtils.getPrincipal(ID), attributes))
-            .registeredService(registeredService)
-            .grantType(OAuth20GrantTypes.NONE)
-            .responseType(OAuth20ResponseTypes.TOKEN)
-            .ticketGrantingTicket(new MockTicketGrantingTicket(ID))
-            .generateRefreshToken(true)
-            .build();
-        val tokenAuthorizationResponseBuilder = new OAuth20TokenAuthorizationResponseBuilder(oauthTokenGenerator,
-            servicesManager, accessTokenJwtBuilder, casProperties);
-        val modelAndView = tokenAuthorizationResponseBuilder.build(
-            new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()),
-            CLIENT_ID,
-            holder);
-        assertTrue(modelAndView.getView() instanceof RedirectView, "Expected RedirectView");
-        assertTrue(modelAndView.getModel().isEmpty());
-
-        val redirectUrl = ((RedirectView) modelAndView.getView()).getUrl();
-        val params = splitQuery(new URIBuilder(redirectUrl).getFragment());
-
-        verifyParam(params, OAuth20Constants.STATE, STATE);
-        verifyParam(params, OAuth20Constants.NONCE, NONCE);
-    }
 
     private static void verifyParam(final Map<String, List<String>> params, final String paramName, final String expectedParamValue) {
         assertTrue(params.containsKey(paramName), () -> "Expected " + paramName + "  param in redirect URL");
@@ -114,4 +74,37 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
         return new AbstractMap.SimpleImmutableEntry<>(key, value);
     }
 
+    @Test
+    public void verifyUnchangedStateAndNonceParameter() {
+        val registeredService = getRegisteredService("example", CLIENT_SECRET, new LinkedHashSet<>());
+        registeredService.setJwtAccessToken(true);
+        servicesManager.save(registeredService);
+
+        val service = RegisteredServiceTestUtils.getService("example");
+        val attributes = new HashMap<String, List<Object>>();
+        attributes.put(OAuth20Constants.STATE, Collections.singletonList(STATE));
+        attributes.put(OAuth20Constants.NONCE, Collections.singletonList(NONCE));
+
+        val holder = AccessTokenRequestDataHolder
+            .builder()
+            .clientId(registeredService.getClientId())
+            .service(service)
+            .authentication(RegisteredServiceTestUtils.getAuthentication(RegisteredServiceTestUtils.getPrincipal(ID), attributes))
+            .registeredService(registeredService)
+            .grantType(OAuth20GrantTypes.NONE)
+            .responseType(OAuth20ResponseTypes.TOKEN)
+            .ticketGrantingTicket(new MockTicketGrantingTicket(ID))
+            .generateRefreshToken(true)
+            .build();
+        val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
+        val modelAndView = oauthTokenResponseBuilder.build(context, CLIENT_ID, holder);
+        assertTrue(modelAndView.getView() instanceof RedirectView, "Expected RedirectView");
+        assertTrue(modelAndView.getModel().isEmpty());
+
+        val redirectUrl = ((RedirectView) modelAndView.getView()).getUrl();
+        val params = splitQuery(new URIBuilder(redirectUrl).getFragment());
+
+        verifyParam(params, OAuth20Constants.STATE, STATE);
+        verifyParam(params, OAuth20Constants.NONCE, NONCE);
+    }
 }

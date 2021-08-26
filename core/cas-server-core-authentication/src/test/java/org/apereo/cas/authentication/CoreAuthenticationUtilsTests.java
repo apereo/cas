@@ -295,7 +295,7 @@ public class CoreAuthenticationUtilsTests {
         assertTrue(principalResolutionContext2.isUseCurrentPrincipalId());
         assertFalse(principalResolutionContext2.isResolveAttributes());
         assertTrue(principalResolutionContext2.isReturnNullIfNoAttributes());
-        assertTrue(principalResolutionContext2.getActiveAttributeRepositoryIdentifiers().size()==2);
+        assertEquals(2, principalResolutionContext2.getActiveAttributeRepositoryIdentifiers().size());
         assertEquals("principalAttribute", principalResolutionContext2.getPrincipalAttributeNames());
 
         principal.setUseExistingPrincipalId(TriStateBoolean.FALSE);
@@ -312,7 +312,7 @@ public class CoreAuthenticationUtilsTests {
         assertFalse(principalResolutionContext3.isUseCurrentPrincipalId());
         assertTrue(principalResolutionContext3.isResolveAttributes());
         assertFalse(principalResolutionContext3.isReturnNullIfNoAttributes());
-        assertTrue(principalResolutionContext3.getActiveAttributeRepositoryIdentifiers().size()==3);
+        assertEquals(3, principalResolutionContext3.getActiveAttributeRepositoryIdentifiers().size());
         assertEquals("principalAttribute2", principalResolutionContext3.getPrincipalAttributeNames());
 
         val principalResolutionContext4 = CoreAuthenticationUtils.buildPrincipalResolutionContext(
@@ -323,7 +323,7 @@ public class CoreAuthenticationUtilsTests {
         assertTrue(principalResolutionContext4.isUseCurrentPrincipalId());
         assertFalse(principalResolutionContext4.isResolveAttributes());
         assertTrue(principalResolutionContext4.isReturnNullIfNoAttributes());
-        assertTrue(principalResolutionContext4.getActiveAttributeRepositoryIdentifiers().size()==2);
+        assertEquals(2, principalResolutionContext4.getActiveAttributeRepositoryIdentifiers().size());
         assertEquals("principalAttribute", principalResolutionContext4.getPrincipalAttributeNames());
     }
 }

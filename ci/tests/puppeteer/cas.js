@@ -6,6 +6,9 @@ const waitOn = require('wait-on');
 const jwt = require('jsonwebtoken');
 const colors = require('colors');
 const fs = require("fs");
+const {ImgurClient} = require('imgur');
+const path = require("path");
+const { PuppeteerScreenRecorder } = require('puppeteer-screen-recorder');
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
@@ -24,9 +27,10 @@ exports.browserOptions = (opt) => {
     };
 };
 
-exports.removeDirectory = async(directory) => {
+exports.removeDirectory = async (directory) => {
     console.log(colors.green(`Removing directory ${directory}`));
-    fs.rmdir(directory, { recursive: true }, () => {});
+    fs.rmdir(directory, {recursive: true}, () => {
+    });
 }
 
 exports.click = async (page, button) => {
@@ -56,10 +60,20 @@ exports.textContent = async (page, selector) => {
 }
 
 exports.inputValue = async (page, selector) => {
-    let element = await page.$(selector);
-    let text = await page.evaluate(element => element.value, element);
+    const element = await page.$(selector);
+    const text = await page.evaluate(element => element.value, element);
     console.log(`Input value for selector [${selector}] is: [${text}]`);
     return text;
+}
+
+exports.uploadImage = async (imagePath) => {
+    let clientId = process.env.IMGUR_CLIENT_ID;
+    if (clientId !== null && clientId !== undefined) {
+        console.log(`Uploading image ${imagePath}`);
+        const client = new ImgurClient({clientId: clientId});
+        const response = await client.upload(imagePath);
+        console.log(colors.green(response.data.link));
+    }
 }
 
 exports.loginWith = async (page, user, password,
@@ -72,6 +86,14 @@ exports.loginWith = async (page, user, password,
     await page.waitForNavigation();
 }
 
+exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
+    console.log(`Fetching Scratch codes for ${user}...`);
+    const response = await this.doRequest(`https://localhost:8443/cas/actuator/gauthCredentialRepository/${user}`,
+        "GET", {
+            'Accept': 'application/json'
+        });
+    return JSON.stringify(JSON.parse(response)[0].scratchCodes[0]);
+}
 exports.isVisible = async (page, selector) => {
     let element = await page.$(selector);
     console.log(`Checking visibility for ${selector}`);
@@ -84,18 +106,25 @@ exports.assertVisibility = async (page, selector) => {
 
 exports.assertInvisibility = async (page, selector) => {
     let element = await page.$(selector);
-    console.log(`Checking invisibility for ${selector}`);
+    console.log(`Checking element invisibility for ${selector}`);
     assert(element == null || await element.boundingBox() == null);
 }
 
 exports.assertTicketGrantingCookie = async (page) => {
-    let tgc = (await page.cookies()).filter(value => value.name === "TGC");
-    console.log(`Asserting ticket-granting cookie: ${tgc}`);
+    const tgc = (await page.cookies()).filter(value => {
+        console.log(`Checking cookie ${value.name}`)
+        return value.name === "TGC"
+    });
     assert(tgc.length !== 0);
+    console.log(`Asserting ticket-granting cookie: ${tgc[0].value}`);
+    return tgc[0];
 }
 
 exports.assertNoTicketGrantingCookie = async (page) => {
-    let tgc = (await page.cookies()).filter(value => value.name === "TGC");
+    let tgc = (await page.cookies()).filter(value => {
+        console.log(`Checking cookie ${value.name}`)
+        return value.name === "TGC"
+    });
     console.log(`Asserting no ticket-granting cookie: ${tgc}`);
     assert(tgc.length === 0);
 }
@@ -237,6 +266,24 @@ exports.waitFor = async (url, successHandler, failureHandler) => {
         });
 }
 
+exports.launchWsFedSp = async (spDir, opts = []) => {
+    let args = ['-q', '-x', 'test', '--no-daemon', `-Dsp.sslKeystorePath=${process.env.CAS_KEYSTORE}`];
+    args = args.concat(opts);
+    console.log(`Launching WSFED SP in ${spDir} with ${args}`);
+    const exec = spawn('./gradlew', args, {cwd: spDir});
+
+    exec.stdout.on('data', (data) => {
+        console.log(data.toString());
+    });
+    exec.stderr.on('data', (data) => {
+        console.error(data.toString());
+    });
+    exec.on('exit', (code) => {
+        console.log(`Child process exited with code ${code}`);
+    });
+    return exec;
+}
+
 exports.launchSamlSp = async (idpMetadataPath, samlSpDir, samlOpts) => {
     let args = ['-q', '-x', 'test', '--no-daemon',
         '-DidpMetadataType=idpMetadataFile',
@@ -279,6 +326,24 @@ exports.assertPageTitle = async (page, value) => {
     assert(title === value)
 }
 
+exports.recordScreen = async(page) => {
+    let index = Math.floor(Math.random() * 10000);
+    let filePath = path.join(__dirname, `/recording-${index}.mp4`)
+    const config = {
+        followNewTab: true,
+        fps: 60,
+        videoFrame: {
+            width: 1024,
+            height: 768,
+        },
+        aspectRatio: '4:3',
+    };
+    const recorder = new PuppeteerScreenRecorder(page, config);
+    console.log(`Recording screen to ${filePath}`)
+    await recorder.start(filePath);
+    return recorder;
+}
+
 exports.decodeJwt = async (token, complete = false) => {
     console.log(`Decoding token ${token}`);
     let decoded = jwt.decode(token, {complete: complete});
@@ -293,7 +358,7 @@ exports.decodeJwt = async (token, complete = false) => {
     return decoded;
 }
 
-exports.uploadSamlMetadata = async(page, metadata) => {
+exports.uploadSamlMetadata = async (page, metadata) => {
     await page.goto("https://samltest.id/upload.php");
     await page.waitForTimeout(1000)
     const fileElement = await page.$("input[type=file]");
@@ -303,4 +368,65 @@ exports.uploadSamlMetadata = async(page, metadata) => {
     await this.click(page, "input[name='submit']")
     await page.waitForNavigation();
     await page.waitForTimeout(2000)
+}
+
+exports.fetchDuoSecurityBypassCode = async (user = "casuser") => {
+    console.log(`Fetching Bypass codes from Duo Security for ${user}...`);
+    const response = await this.doRequest(`https://localhost:8443/cas/actuator/duoAdmin/bypassCodes?username=${user}`,
+        "POST", {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        });
+    return JSON.stringify(JSON.parse(response)["mfa-duo"][0]);
+}
+
+exports.screenshot = async (page) => {
+    let index = Math.floor(Math.random() * 10000);
+    let filePath = path.join(__dirname, `/screenshot${index}.png`)
+    try {
+        await page.screenshot({path: filePath, fullPage: true});
+        console.log(colors.green(`Screenshot saved at ${filePath}`));
+        await this.uploadImage(filePath);
+    } catch (e)  {
+        console.log(colors.red(`Unable to capture screenshot ${filePath}: ${e}`));
+    }
+}
+
+exports.assertTextContent = async (page, selector, value) => {
+    await page.waitForSelector(selector, {visible: true});
+    let header = await this.textContent(page, selector);
+    assert(header === value);
+}
+
+exports.assertTextContentStartsWith = async (page, selector, value) => {
+    await page.waitForSelector(selector, {visible: true});
+    let header = await this.textContent(page, selector);
+    assert(header.startsWith(value));
+}
+
+exports.loginDuoSecurityBypassCode = async (page, type) => {
+    await page.waitForTimeout(12000);
+    if (type === "websdk") {
+        const frame = await page.waitForSelector("iframe#duo_iframe");
+        await this.screenshot(page);
+        const rect = await page.evaluate(el => {
+            const {x, y, width, height} = el.getBoundingClientRect();
+            return {x, y, width, height};
+        }, frame);
+        let x1 = rect.x + rect.width - 120;
+        let y1 = rect.y + rect.height - 160;
+        await page.mouse.click(x1, y1);
+        await this.screenshot(page);
+    } else {
+        await this.click(page, "button#passcode");
+    }
+    let bypassCode = await this.fetchDuoSecurityBypassCode();
+    await page.keyboard.sendCharacter(bypassCode);
+    // await this.screenshot(page);
+    console.log(`Submitting Duo Security bypass code`);
+    await page.keyboard.down('Enter');
+    await page.keyboard.up('Enter');
+    await this.screenshot(page);
+    console.log(`Waiting for Duo Security to accept bypass code...`);
+    await page.waitForTimeout(13000)
 }

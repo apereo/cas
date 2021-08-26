@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -22,9 +21,7 @@ const cas = require('../../cas.js');
     await cas.click(page, "#allow");
     await page.waitForNavigation();
     await page.waitForTimeout(3000)
-
-    let header = await cas.textContent(page, "h1.green-text");
-    assert(header === "Success!")
+    await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     url = `${url}&prompt=login`;
     console.log(`Second attempt: navigating to ${url}`);
@@ -34,9 +31,7 @@ const cas = require('../../cas.js');
     
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(2000)
-
-    header = await cas.textContent(page, "h1.green-text");
-    assert(header === "Success!")
+    await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     await browser.close();
 })();

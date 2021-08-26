@@ -17,15 +17,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLException;
-import org.opensaml.saml.saml2.core.AuthnContextClassRef;
-import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,34 +37,18 @@ import static org.mockito.Mockito.*;
 @Tag("SAML")
 @Import(SSOSamlIdPProfileCallbackHandlerControllerTests.SamlIdPTestConfiguration.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@TestPropertySource(properties = {
-    "cas.authn.saml-idp.core.authentication-context-class-mappings=context1->mfa-dummy",
-    "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata"
-})
+@TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata")
 public class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("ssoPostProfileHandlerController")
     private SSOSamlIdPPostProfileHandlerController controller;
 
     @Test
-    public void verifyContextMapping() {
-        val classRef = mock(AuthnContextClassRef.class);
-        when(classRef.getURI()).thenReturn("context1");
-        val request = new MockHttpServletRequest();
-        val authnRequest = getAuthnRequestFor(UUID.randomUUID().toString());
-        val requestedContext = mock(RequestedAuthnContext.class);
-        when(requestedContext.getAuthnContextClassRefs()).thenReturn(List.of(classRef));
-        when(authnRequest.getRequestedAuthnContext()).thenReturn(requestedContext);
-        val results = controller.buildRedirectUrlByRequestedAuthnContext("https://google.com", authnRequest, request);
-        assertTrue(results.contains("mfa-dummy"));
-    }
-    
-    @Test
-    public void verifyNoMetadataForRequest() throws Exception {
+    public void verifyNoMetadataForRequest() {
         val service = new SamlRegisteredService();
         service.setServiceId(UUID.randomUUID().toString());
         servicesManager.save(service);
-        
+
         val request = new MockHttpServletRequest();
         val authnRequest = getAuthnRequestFor(service.getServiceId());
 
@@ -101,7 +82,7 @@ public class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         val results = controller.handleUnauthorizedServiceException(request, new IllegalStateException());
         assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, results.getViewName());
         assertTrue(results.getModel().containsKey(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION));
-        
+
         assertThrows(UnauthorizedServiceException.class,
             () -> controller.verifySamlRegisteredService(StringUtils.EMPTY));
     }
