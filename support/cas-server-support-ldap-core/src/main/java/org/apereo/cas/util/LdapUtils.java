@@ -921,7 +921,7 @@ public class LdapUtils {
                 entryResolver.setConnectionFactory(factory);
                 entryResolver.setAllowMultipleEntries(l.isAllowMultipleEntries());
                 entryResolver.setBinaryAttributes(l.getBinaryAttributes().toArray(new String[0]));
-
+                
                 if (StringUtils.isNotBlank(l.getDerefAliases())) {
                     entryResolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
                 }
@@ -1132,6 +1132,7 @@ public class LdapUtils {
                 resolver.setAllowMultipleDns(l.isAllowMultipleDns());
                 resolver.setConnectionFactory(connectionFactory);
                 resolver.setUserFilter(l.getSearchFilter());
+                resolver.setResolveFromAttribute(l.getResolveFromAttribute());
                 if (l.isFollowReferrals()) {
                     resolver.setSearchResultHandlers(new FollowSearchReferralHandler());
                 }
