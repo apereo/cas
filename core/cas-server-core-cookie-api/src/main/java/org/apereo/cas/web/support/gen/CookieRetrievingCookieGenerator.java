@@ -3,6 +3,7 @@ package org.apereo.cas.web.support.gen;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.cookie.CookieValueManager;
@@ -91,9 +92,11 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         return StringUtils.isNotBlank(value) && WebUtils.isRememberMeAuthenticationEnabled(requestContext);
     }
 
-    private static String cleanCookiePath(final String givenPath) {
-        val path = StringUtils.removeEndIgnoreCase(StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH), "/");
-        return StringUtils.defaultIfBlank(path, "/");
+    private String cleanCookiePath(final String givenPath) {
+        return FunctionUtils.doIf(StringUtils.isBlank(cookieGenerationContext.getPath()), () -> {
+            val path = StringUtils.removeEndIgnoreCase(StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH), "/");
+            return StringUtils.defaultIfBlank(path, "/");
+        }, () -> givenPath).get();
     }
 
     @Override
