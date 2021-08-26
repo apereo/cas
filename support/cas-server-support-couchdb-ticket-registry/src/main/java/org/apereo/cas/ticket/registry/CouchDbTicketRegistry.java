@@ -37,11 +37,7 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
         var exception = (DbAccessException) null;
         var success = false;
         val ticketDocument = new TicketDocument();
-        try {
-            ticketDocument.setRevision(couchDb.getCurrentRevision(ticketId));
-        } catch (final DocumentNotFoundException e) {
-            exception = e;
-        }
+        ticketDocument.setRevision(couchDb.getCurrentRevision(ticketId));
         ticketDocument.setId(ticketId);
         for (var retries = 0; retries < conflictRetries && exception == null && !success; retries++) {
             try {
@@ -58,36 +54,36 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
         }
 
         if (exception != null) {
-            LOGGER.debug("Could not delete [{}] [{}]", ticketId, exception.getMessage());
+            LOGGER.warn("Could not delete [{}] [{}]", ticketId, exception.getMessage());
         } else if (success) {
-            LOGGER.debug("Successfully deleted ticket [{}].", ticketId);
+            LOGGER.trace("Successfully deleted ticket [{}].", ticketId);
         } else {
-            LOGGER.debug("Could not delete [{}] - failed.", ticketId);
+            LOGGER.warn("Could not delete [{}] - failed.", ticketId);
         }
 
         return success;
     }
 
     @Override
-    public void addTicket(final Ticket ticketToAdd) {
+    public void addTicketInternal(final Ticket ticketToAdd) {
         val encodedTicket = encodeTicket(ticketToAdd);
-        LOGGER.debug("Adding ticket [{}]", encodedTicket.getId());
+        LOGGER.trace("Adding ticket [{}]", encodedTicket.getId());
         couchDb.add(new TicketDocument(encodedTicket));
     }
 
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
-        LOGGER.debug("Locating ticket id [{}]", ticketId);
+        LOGGER.trace("Locating ticket id [{}]", ticketId);
         val encTicketId = encodeTicketId(ticketId);
         if (StringUtils.isBlank(encTicketId)) {
-            LOGGER.debug("Ticket id [{}] could not be found", encTicketId);
+            LOGGER.trace("Ticket id [{}] could not be found", encTicketId);
             return null;
         }
 
         try {
             val document = this.couchDb.get(encTicketId);
             val t = document.getTicket();
-            LOGGER.debug("Got ticket [{}] from the registry.", t);
+            LOGGER.trace("Got ticket [{}] from the registry.", t);
 
             val decoded = decodeTicket(t);
             if (predicate.test(decoded)) {
@@ -95,7 +91,7 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
             }
             return null;
         } catch (final DocumentNotFoundException ignored) {
-            LOGGER.debug("Ticket [{}] not found in the registry.", encTicketId);
+            LOGGER.trace("Ticket [{}] not found in the registry.", encTicketId);
         }
         return null;
     }
@@ -113,27 +109,22 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Ticket updateTicket(final Ticket ticket) {
         val encodedTicket = encodeTicket(ticket);
-        LOGGER.debug("Updating [{}]", encodedTicket.getId());
-        var exception = (DbAccessException) null;
+        LOGGER.trace("Updating [{}]", encodedTicket.getId());
         var success = false;
         val doc = new TicketDocument(encodedTicket);
         doc.setRevision(couchDb.getCurrentRevision(encodedTicket.getId()));
         for (var retries = 0; retries < conflictRetries; retries++) {
             try {
-                exception = null;
                 couchDb.update(doc);
                 success = true;
             } catch (final DbAccessException e) {
                 doc.setRevision(couchDb.getCurrentRevision(encodedTicket.getId()));
-                exception = e;
+                LOGGER.warn("Could not update [{}] [{}]", encodedTicket.getId(), e.getMessage());
             }
             if (success) {
-                LOGGER.debug("Successfully updated ticket [{}].", encodedTicket.getId());
+                LOGGER.trace("Successfully updated ticket [{}].", encodedTicket.getId());
                 return ticket;
             }
-        }
-        if (exception != null) {
-            LOGGER.debug("Could not update [{}] [{}]", encodedTicket.getId(), exception.getMessage());
         }
         return null;
     }

@@ -2,9 +2,9 @@ package org.apereo.cas.ticket;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.core.Ordered;
 
 /**
  * This is {@link DefaultTicketDefinition}.
@@ -16,6 +16,7 @@ import org.springframework.core.Ordered;
 @Getter
 @Setter
 @EqualsAndHashCode
+@RequiredArgsConstructor
 public class DefaultTicketDefinition implements TicketDefinition {
 
     private final Class<? extends Ticket> implementationClass;
@@ -24,22 +25,5 @@ public class DefaultTicketDefinition implements TicketDefinition {
 
     private final TicketDefinitionProperties properties = new DefaultTicketDefinitionProperties();
 
-    private int order = Ordered.LOWEST_PRECEDENCE;
-
-    /**
-     * Instantiates a new Ticket definition.
-     *
-     * @param implementationClass the implementation class
-     * @param prefix              the prefix
-     * @param order               the order
-     */
-    public DefaultTicketDefinition(final Class<? extends Ticket> implementationClass, final String prefix, final int order) {
-        this.implementationClass = implementationClass;
-        this.prefix = prefix;
-        this.order = order;
-    }
-
-    public DefaultTicketDefinition(final Class<? extends Ticket> implementationClass, final String prefix) {
-        this(implementationClass, prefix, Ordered.LOWEST_PRECEDENCE);
-    }
+    private final int order;
 }

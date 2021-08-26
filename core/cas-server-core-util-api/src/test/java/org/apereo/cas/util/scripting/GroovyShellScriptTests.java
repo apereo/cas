@@ -20,12 +20,27 @@ public class GroovyShellScriptTests {
     @Test
     public void verifyExec() {
         val shell = new GroovyShellScript("println 'test'");
+        assertNotNull(shell.getGroovyScript());
+        assertNotNull(shell.getScript());
+        
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() throws Throwable {
+            public void execute() {
                 shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY);
             }
         });
         assertNotNull(shell.toString());
+    }
+
+    @Test
+    public void verifyUnknownBadScript() {
+        val shell = new GroovyShellScript("###$$@@@!!!***&&&");
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() {
+                shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY);
+                shell.execute("run", Void.class, ArrayUtils.EMPTY_OBJECT_ARRAY);
+            }
+        });
     }
 }

@@ -19,7 +19,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.Set;
 
 /**
@@ -35,15 +34,13 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
 
     private final AuthenticationRiskMitigator authenticationRiskMitigator;
 
-    private final double threshold;
 
-    public RiskAwareAuthenticationWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext,
-                                                       final AuthenticationRiskEvaluator authenticationRiskEvaluator,
-                                                       final AuthenticationRiskMitigator authenticationRiskMitigator) {
-        super(webflowEventResolutionConfigurationContext);
+    public RiskAwareAuthenticationWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext context,
+        final AuthenticationRiskEvaluator authenticationRiskEvaluator,
+        final AuthenticationRiskMitigator authenticationRiskMitigator) {
+        super(context);
         this.authenticationRiskEvaluator = authenticationRiskEvaluator;
         this.authenticationRiskMitigator = authenticationRiskMitigator;
-        threshold = webflowEventResolutionConfigurationContext.getCasProperties().getAuthn().getAdaptive().getRisk().getThreshold();
     }
 
     @Override
@@ -69,23 +66,23 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
      * @return the set
      */
     protected Set<Event> handlePossibleSuspiciousAttempt(final HttpServletRequest request, final Authentication authentication,
-                                                         final RegisteredService service) {
+        final RegisteredService service) {
 
-        val applicationContext = getWebflowEventResolutionConfigurationContext().getApplicationContext();
+        val applicationContext = getConfigurationContext().getApplicationContext();
         applicationContext
             .publishEvent(new CasRiskBasedAuthenticationEvaluationStartedEvent(this, authentication, service));
 
         LOGGER.debug("Evaluating possible suspicious authentication attempt for [{}]", authentication.getPrincipal());
         val score = authenticationRiskEvaluator.eval(authentication, service, request);
 
+        val threshold = getConfigurationContext()
+            .getCasProperties().getAuthn().getAdaptive().getRisk().getThreshold();
         if (score.isRiskGreaterThan(threshold)) {
             applicationContext
                 .publishEvent(new CasRiskyAuthenticationDetectedEvent(this, authentication, service, score));
 
             LOGGER.debug("Calculated risk score [{}] for authentication request by [{}] is above the risk threshold [{}].",
-                score.getScore(),
-                authentication.getPrincipal(),
-                threshold);
+                score.getScore(), authentication.getPrincipal(), threshold);
 
             applicationContext
                 .publishEvent(new CasRiskBasedAuthenticationMitigationStartedEvent(this, authentication, service, score));

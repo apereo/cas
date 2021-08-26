@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title th:text="#{cas.mfa.registerdevice.pagetitle}">CAS MFA Register Device View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+</head>
+
+<body>
+    <main role="main" class="container mt-3 mb-3">
+        <div layout:fragment="content" id="login" class="mdc-card mdc-card-content w-lg-50 p-4 m-auto">
+            <h2 th:text="#{cas.mfa.registerdevice.label.title}">Register Device</h2>
+            <p th:text="#{cas.mfa.registerdevice.label.intro}">Please name the current device.</p>
+
+            <form method="post" id="registerform" th:object="${mfaTrustRecord}" th:action="@{/login}">
+                <div class="d-flex caps-check">
+                    <label for="deviceName"
+                           class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
+
+                        <input class="mdc-text-field__input"
+                               type="text"
+                               name="deviceName"
+                               id="deviceName"
+                               th:field="*{deviceName}"
+                               size="25"
+                               autocomplete="off" required />
+
+                        <span class="mdc-notched-outline">
+                            <span class="mdc-notched-outline__leading"></span>
+                            <span class="mdc-notched-outline__notch">
+                              <span class="mdc-floating-label" th:utext="#{cas.mfa.registerdevice.label.name}">Name</span>
+                            </span>
+                            <span class="mdc-notched-outline__trailing"></span>
+                        </span>
+                    </label>
+                    <script>document.getElementById("deviceName").value = randomWord();</script>
+                </div>
+
+                <div><p>How long should we remember this device?</p></div>
+                <div class="d-flex mt-2">
+                    <div id="expirationField" class="mr-2" style="display:none">
+                        <label for="expiration" class="mdc-text-field mdc-text-field--outlined">
+                            <input class="mdc-text-field__input"
+                                   type="number"
+                                   name="expiration"
+                                   id="expiration"
+                                   th:field="*{expiration}"
+                                   autocomplete="off" required />
+
+                            <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                      <span class="mdc-floating-label">Expiration</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                        </label>
+                    </div>
+                    
+                    <select name="timeUnit" id="timeUnit" class="custom-select" th:field="*{timeUnit}"
+                            onchange="let hide = this.value!=='FOREVER'; $('#expirationField').toggle(hide)">
+                        <option value="SECONDS">Seconds</option>
+                        <option value="MINUTES">Minutes</option>
+                        <option value="HOURS">Hours</option>
+                        <option value="DAYS">Days</option>
+                        <option value="WEEKS">Weeks</option>
+                        <option value="MONTHS">Months</option>
+                        <option value="YEARS">Years</option>
+                        <option value="FOREVER">Forever</option>
+                    </select>
+                </div>
+
+                <div class="d-flex mt-3">
+                    <button class="mdc-button mdc-button--raised" accesskey="s">
+                        <span class="mdc-button__label"
+                            th:text="#{cas.mfa.registerdevice.button.register}">Register</span>
+                    </button>&nbsp;
+                    <button class="mdc-button mdc-button--raised" accesskey="k" formnovalidate
+                        onclick="$('#eventId').val('skip');">
+                        <span class="mdc-button__label" th:text="#{cas.mfa.registerdevice.button.skip}">Skip</span>
+                    </button>
+                </div>
+                <input type="hidden" id="eventId" name="_eventId" value="submit" />
+                <input type="hidden" name="geolocation" />
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+            </form>
+        </div>
+    </main>
+</body>
+
+</html>

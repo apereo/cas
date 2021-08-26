@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{cas.inwebo.error.title}">Inwebo error</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" class="banner banner-danger mdc-card p-4 m-auto w-lg-66">
+        <h2 th:utext="#{cas.inwebo.error.heading}">An Inwebo error has occurred.</h2>
+        <div id="errorPanel" class="banner banner-danger alert-dismissible mb-4"
+             th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+            <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
+               th:utext="#{${message.text}}">
+                Error Message Text
+            </p>
+        </div>
+
+        <div class="form-wrapper">
+            <form id="retryForm" method="POST">
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input type="hidden" name="_eventId" value="retry"/>
+                <button class="mdc-button mdc-button--raised" name="retry"
+                        type="submit" value="retry"
+                        th:value="#{cas.inwebo.retry.button}">
+                    <span class="mdc-button__label" th:text="#{cas.inwebo.retry.button}">Retry the Inwebo multi-factor authentication</span>
+                </button>
+            </form>
+        </div>
+        <div th:if="${mustEnroll}">
+            <p>
+                <script src="https://ult-inwebo.com/neon/3.6.0/simple-neon-lib.js " type="text/javascript"></script>
+            <form id="inweboErrorForm" method="POST">
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input type="hidden" name="_eventId" value="error"/>
+            </form>
+            <form id="startBrowserForm" method="POST">
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input type="hidden" name="_eventId" value="browser"/>
+            </form>
+            <div id="enrollError" class="banner banner-danger banner-dismissible" style="display:none;">
+                <p th:utext="#{cas.inwebo.enroll.failure}">The enrollment failed</p>
+            </div>
+            <script th:inline="javascript">
+                /*<![CDATA[*/
+                var siteAlias = /*[[${siteAlias}]]*/ '';
+                var siteDescription = /*[[${siteDescription}]]*/ '';
+
+                window.onload = function () {
+                    neon = new Neon.Neon(siteAlias, siteDescription);
+                    neon.initOnline()
+                        .then(logins => {
+                        })
+                        .catch(e => {
+                            $('#inweboErrorForm').submit();
+                        });
+                };
+
+                function doEnroll() {
+                    var code = document.getElementById('code').value;
+                    var pin = document.getElementById('pin').value;
+                    if (code !== '' && pin !== '') {
+                        neon.activateWithPin(code, pin)
+                            .then(login => {
+                                $('#startBrowserForm').submit();
+                            }).catch(e => {
+                            $('#enrollError').css('display', 'block');
+                        });
+                    }
+                    return false;
+                }
+
+                /*]]>*/
+            </script>
+            <div class="form-wrapper">
+                <form>
+                    <section class="cas-field my-3">
+                        <label for="code" class="mdc-text-field mdc-text-field--outlined">
+                            <input class="mdc-text-field__input"
+                                   id="code"
+                                   name="code"
+                                   tabindex="0"
+                                   size="25"
+                                   type="text"
+                                   maxlength="10"
+                                   required
+                                   autocomplete="off"
+                                   th:accesskey="#{screen.welcome.label.netid.accesskey}"
+                                   autocapitalize="none"
+                                   spellcheck="false"/>
+
+                            <span class="mdc-notched-outline">
+                                <span class="mdc-notched-outline__leading"></span>
+                                <span class="mdc-notched-outline__notch">
+                                  <span class="mdc-floating-label" th:utext="#{cas.inwebo.enroll.code}">Activation Code</span>
+                                </span>
+                                <span class="mdc-notched-outline__trailing"></span>
+                            </span>
+                        </label>
+                    </section>
+                    <section class="cas-field my-3">
+                        <label for="code" class="mdc-text-field mdc-text-field--outlined">
+                            <input class="mdc-text-field__input"
+                                   id="pin"
+                                   name="pin"
+                                   tabindex="0"
+                                   size="25"
+                                   type="text"
+                                   maxlength="10"
+                                   required
+                                   autocomplete="off"
+                                   th:accesskey="#{screen.welcome.label.netid.accesskey}"
+                                   autocapitalize="none"
+                                   spellcheck="false"/>
+
+                            <span class="mdc-notched-outline">
+                                <span class="mdc-notched-outline__leading"></span>
+                                <span class="mdc-notched-outline__notch">
+                                  <span class="mdc-floating-label" th:utext="#{cas.inwebo.pin}">PIN</span>
+                                </span>
+                                <span class="mdc-notched-outline__trailing"></span>
+                            </span>
+                        </label>
+                    </section>
+                    <button class="mdc-button mdc-button--raised" name="enroll"
+                            id="enrollButton" type="button" onclick="doEnroll()" value="Enroll"
+                            th:value="#{cas.inwebo.enroll.button}">
+                        <span class="mdc-button__label" th:text="#{cas.inwebo.enroll.button}">Enroll for browser authentication</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

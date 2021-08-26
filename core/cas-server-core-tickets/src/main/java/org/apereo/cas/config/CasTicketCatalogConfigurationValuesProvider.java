@@ -55,7 +55,7 @@ public interface CasTicketCatalogConfigurationValuesProvider {
      * @return TGT storage timeout function
      */
     default Function<CasConfigurationProperties, Integer> getTicketGrantingTicketStorageTimeout() {
-        return p -> p.getTicket().getTgt().getMaxTimeToLiveInSeconds();
+        return p -> p.getTicket().getTgt().getPrimary().getMaxTimeToLiveInSeconds();
     }
 
     /**
@@ -73,7 +73,7 @@ public interface CasTicketCatalogConfigurationValuesProvider {
      * @return PGT storage timeout function
      */
     default Function<CasConfigurationProperties, Integer> getProxyGrantingTicketStorageTimeout() {
-        return p -> p.getTicket().getTgt().getMaxTimeToLiveInSeconds();
+        return p -> p.getTicket().getTgt().getPrimary().getMaxTimeToLiveInSeconds();
     }
 
     /**

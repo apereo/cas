@@ -4,9 +4,6 @@ import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
-import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagement;
-import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClientBuilder;
-import com.amazonaws.services.simplesystemsmanagement.model.PutParameterRequest;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -17,6 +14,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.test.context.ActiveProfiles;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.ssm.SsmClient;
+import software.amazon.awssdk.services.ssm.model.PutParameterRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,19 +30,17 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration.class
 }, properties = {
-    "cas.spring.cloud.aws.ssm.endpoint="
-        + AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests.ENDPOINT,
-    "cas.spring.cloud.aws.ssm.credentialAccessKey="
-        + AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests.CREDENTIAL_ACCESS_KEY,
-    "cas.spring.cloud.aws.ssm.credentialSecretKey="
-        + AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests.CREDENTIAL_SECRET_KEY
+    "cas.spring.cloud.aws.ssm.endpoint=" + AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests.ENDPOINT,
+    "cas.spring.cloud.aws.ssm.region=us-east-1",
+    "cas.spring.cloud.aws.ssm.credential-access-key=" + AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests.CREDENTIAL_ACCESS_KEY,
+    "cas.spring.cloud.aws.ssm.credential-secret-key=" + AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests.CREDENTIAL_SECRET_KEY
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnabledIfPortOpen(port = 4583)
+@EnabledIfPortOpen(port = 4566)
 @Tag("AmazonWebServices")
 @ActiveProfiles("example")
 public class AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests {
-    static final String ENDPOINT = "http://127.0.0.1:4583";
+    static final String ENDPOINT = "http://localhost:4566";
 
     static final String CREDENTIAL_SECRET_KEY = "test";
 
@@ -57,26 +55,18 @@ public class AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests
     public static void initialize() {
         val environment = new MockEnvironment();
 
-        environment.setProperty(AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX
-            + '.' + "endpoint", ENDPOINT);
-        environment.setProperty(AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX
-            + '.' + "credentialAccessKey", CREDENTIAL_ACCESS_KEY);
-        environment.setProperty(AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX
-            + '.' + "credentialSecretKey", CREDENTIAL_SECRET_KEY);
+        environment.setProperty(AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "endpoint", ENDPOINT);
+        environment.setProperty(AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "region", Region.US_EAST_1.id());
+        environment.setProperty(AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-access-key", CREDENTIAL_ACCESS_KEY);
+        environment.setProperty(AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-secret-key", CREDENTIAL_SECRET_KEY);
 
         val builder = new AmazonEnvironmentAwareClientBuilder(
             AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX, environment);
-        val client = builder.build(AWSSimpleSystemsManagementClientBuilder.standard(), AWSSimpleSystemsManagement.class);
-
-        var request = new PutParameterRequest();
-        request.setName("/cas/cas.authn.accept.users");
-        request.setValue(STATIC_AUTHN_USERS);
-        request.setOverwrite(Boolean.TRUE);
+        val client = builder.build(SsmClient.builder(), SsmClient.class);
+        var request = PutParameterRequest.builder().name("/cas/cas.authn.accept.users").value(STATIC_AUTHN_USERS).overwrite(Boolean.TRUE).build();
         client.putParameter(request);
 
-        request.setName("/cas/example/cas.authn.accept.name");
-        request.setValue("Example");
-        request.setOverwrite(Boolean.TRUE);
+        request = PutParameterRequest.builder().name("/cas/example/cas.authn.accept.name").value("Example").overwrite(Boolean.TRUE).build();
         client.putParameter(request);
     }
 

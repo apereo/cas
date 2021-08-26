@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.redis;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -16,6 +17,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("RedisServiceRegistryProperties")
 public class RedisServiceRegistryProperties extends BaseRedisProperties {
 
     private static final long serialVersionUID = -9012996050439638782L;

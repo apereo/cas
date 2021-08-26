@@ -4,6 +4,7 @@ import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 
 import lombok.SneakyThrows;
@@ -14,7 +15,6 @@ import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.cryptacular.x509.ExtensionReader;
-import org.ehcache.StateTransitionException;
 import org.ehcache.Status;
 import org.ehcache.UserManagedCache;
 import org.springframework.beans.factory.DisposableBean;
@@ -87,9 +87,11 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     @Override
     public void destroy() {
         try {
-            this.crlCache.close();
-        } catch (final StateTransitionException e) {
-            LOGGER.warn("Error closing CRL cache {}", e.getMessage(), e);
+            if (!Status.UNINITIALIZED.equals(this.crlCache.getStatus())) {
+                this.crlCache.close();
+            }
+        } catch (final Exception e) {
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -116,14 +118,15 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                         try {
                             addURL(urls, DERIA5String.getInstance(name.getName()).getString());
                         } catch (final Exception e) {
-                            LOGGER.warn("[{}] not supported. String or GeneralNameList expected.", pointName);
+                            LOGGER.warn("[{}] not supported: [{}].", pointName, e.getMessage());
                         }
                     });
                 });
             }
             return urls.toArray(URI[]::new);
         } catch (final Exception e) {
-            LOGGER.error("Error reading CRLDistributionPoints extension field on [{}]", CertUtils.toString(cert), e);
+            LOGGER.debug("Error reading CRLDistributionPoints extension field on [{}]", CertUtils.toString(cert));
+            LoggingUtils.error(LOGGER, e);
             return new URI[0];
         }
     }
@@ -148,7 +151,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                 list.add(new URI(uriString));
             }
         } catch (final Exception e) {
-            LOGGER.warn("[{}] is not a valid distribution point URI.", uriString);
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -187,7 +190,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                         listOfLocations.add(crl);
                     }
                 } catch (final Exception e) {
-                    LOGGER.error("Error fetching CRL at [{}]", url, e);
+                    LoggingUtils.error(LOGGER, e);
                     if (this.throwOnFetchFailure) {
                         throw new RuntimeException(e.getMessage(), e);
                     }

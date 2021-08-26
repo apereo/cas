@@ -1,0 +1,21 @@
+{
+  "dependencies": "aup-webflow,duo",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.engine.enabled=false",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.authn.accept.users=duobypass::Mellon",
+
+    "--cas.authn.mfa.triggers.global.global-provider-id=mfa-duo",
+
+    "--logging.level.org.apereo.cas=debug",
+
+    "--cas.authn.mfa.duo[0].duo-secret-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_SKEY']}",
+    "--cas.authn.mfa.duo[0].duo-integration-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_IKEY']}",
+    "--cas.authn.mfa.duo[0].duo-api-host=${#environmentVars['DUO_SECURITY_API_HOST']}",
+
+    "--cas.authn.mfa.duo[0].account-status-enabled=false"
+  ]
+}

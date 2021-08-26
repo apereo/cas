@@ -61,6 +61,16 @@ public interface CasProtocolConstants {
     String PARAMETER_RENEW = "renew";
 
     /**
+     * Constant representing the username parameter in the request.
+     */
+    String PARAMETER_USERNAME = "username";
+
+    /**
+     * Constant representing the password parameter in the request.
+     */
+    String PARAMETER_PASSWORD = "password";
+
+    /**
      * Constant representing the gateway parameter in the request.
      */
     String PARAMETER_GATEWAY = "gateway";
@@ -177,4 +187,8 @@ public interface CasProtocolConstants {
      */
     String ENDPOINT_SERVICE_VALIDATE_V3 = "/p3/serviceValidate";
 
+    /**
+     * Constant representing proxy endpoint.
+     */
+    String ENDPOINT_PROXY = "/proxy";
 }

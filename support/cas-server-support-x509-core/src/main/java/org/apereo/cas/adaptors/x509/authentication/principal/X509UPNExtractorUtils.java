@@ -1,11 +1,14 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.google.common.base.Predicates;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -16,9 +19,9 @@ import org.bouncycastle.asn1.ASN1TaggedObject;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.cert.CertificateParsingException;
-import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Credential to principal resolver that extracts Subject Alternative Name UPN extension
@@ -42,7 +45,6 @@ public class X509UPNExtractorUtils {
      */
     private static final int SAN_TYPE_OTHER = 0;
 
-
     /**
      * Get UPN String.
      *
@@ -51,10 +53,7 @@ public class X509UPNExtractorUtils {
      * @return UPN string or null
      */
     private String getUPNStringFromSequence(final ASN1Sequence seq) {
-        if (seq == null) {
-            return null;
-        }
-        val id = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
+        val id = seq != null ? ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0)) : null;
         if (id != null && UPN_OBJECTID.equals(id.getId())) {
             val obj = (ASN1TaggedObject) seq.getObjectAt(1);
             val primitiveObj = obj.getObject();
@@ -111,38 +110,35 @@ public class X509UPNExtractorUtils {
              val input = new ASN1InputStream(bInput)) {
             return ASN1Sequence.getInstance(input.readObject());
         } catch (final IOException e) {
-            LOGGER.error("An error has occurred while reading the subject alternative name value: {}", e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
 
     /**
      * Return the first {@code X509UPNExtractorUtils.UPN_OBJECTID} found in the subject alternative names (SAN) extension field of the certificate.
-     * @param certificate X509 certificate
+     *
+     * @param subjectAltNames X509 certificate subject alt names
      * @return User principal name, or null if no SAN found matching UPN type.
-     * @throws CertificateParsingException if Java retrieval of subject alt names fails.
      */
-    public String extractUPNString(final X509Certificate certificate) throws CertificateParsingException {
-        val subjectAltNames = certificate.getSubjectAlternativeNames();
-        if (subjectAltNames != null) {
-            for (val sanItem : subjectAltNames) {
-                if (LOGGER.isTraceEnabled()) {
-                    if (sanItem.size() == 2) {
-                        val name = sanItem.get(1);
-                        LOGGER.trace("Found subject alt name of type [{}] with value [{}]",
-                            sanItem.get(0), name instanceof String ? name : name instanceof byte[] ? getAltnameSequence((byte[]) name) : name);
-                    } else {
-                        LOGGER.trace("SAN item of unexpected size found: [{}]", sanItem);
-                    }
-                }
-                val seq = getOtherNameTypeSAN(sanItem);
-                val upnString = getUPNStringFromSequence(seq);
-                if (upnString != null) {
-                    LOGGER.debug("Found user principal name in certificate: [{}]", upnString);
-                    return upnString;
+    public Optional<String> extractUPNString(final Collection<List<?>> subjectAltNames) {
+        for (val sanItem : subjectAltNames) {
+            if (LOGGER.isTraceEnabled()) {
+                if (sanItem.size() == 2) {
+                    val name = sanItem.get(1);
+                    val value = name instanceof String ? name : name instanceof byte[] ? getAltnameSequence((byte[]) name) : name;
+                    LOGGER.trace("Found subject alt name of type [{}] with value [{}]", sanItem.get(0), value);
+                } else {
+                    LOGGER.trace("SAN item of unexpected size found: [{}]", sanItem);
                 }
             }
+            val seq = getOtherNameTypeSAN(sanItem);
+            val upnString = getUPNStringFromSequence(seq);
+            if (StringUtils.isNotBlank(upnString)) {
+                LOGGER.debug("Found user principal name in certificate: [{}]", upnString);
+                return Optional.of(upnString);
+            }
         }
-        return null;
+        return Optional.empty();
     }
 }

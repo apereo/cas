@@ -6,6 +6,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,8 +27,10 @@ public class CasDefaultFlowUrlHandlerTests {
         request.setParameter("bar", "baz");
         request.setParameter("qux", "quux");
         val url = urlHandler.createFlowExecutionUrl("foo", "12345", request);
-
         assertEquals("/cas/app/foo?bar=baz&qux=quux&execution=12345", url);
+        request.addParameter(CasDefaultFlowUrlHandler.DEFAULT_FLOW_EXECUTION_KEY_PARAMETER, "12345");
+        assertNotNull(urlHandler.getFlowExecutionKey(request));
+        assertNotNull(urlHandler.createFlowDefinitionUrl("cas", new LocalAttributeMap<>(), request));
     }
 
     @Test

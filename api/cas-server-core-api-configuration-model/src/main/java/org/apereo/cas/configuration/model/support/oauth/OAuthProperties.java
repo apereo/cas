@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.model.support.oauth;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningOptionalJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.support.uma.UmaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -36,6 +38,12 @@ public class OAuthProperties implements Serializable {
     private boolean replicateSessions;
 
     /**
+     * Control the CSRF cookie settings in OAUTH authentication flows.
+     */
+    @NestedConfigurationProperty
+    private CsrfCookieProperties csrfCookie = new CsrfCookieProperties();
+
+    /**
      * Crypto settings that sign/encrypt secrets.
      */
     @NestedConfigurationProperty
@@ -44,28 +52,40 @@ public class OAuthProperties implements Serializable {
     /**
      * Settings related to oauth grants.
      */
+    @NestedConfigurationProperty
     private OAuthGrantsProperties grants = new OAuthGrantsProperties();
     /**
      * Settings related to oauth codes.
      */
+    @NestedConfigurationProperty
     private OAuthCodeProperties code = new OAuthCodeProperties();
     /**
      * Settings related to oauth access tokens.
      */
+    @NestedConfigurationProperty
     private OAuthAccessTokenProperties accessToken = new OAuthAccessTokenProperties();
     /**
      * Settings related to oauth refresh tokens.
      */
+    @NestedConfigurationProperty
     private OAuthRefreshTokenProperties refreshToken = new OAuthRefreshTokenProperties();
     /**
      * Settings related to oauth device tokens.
      */
+    @NestedConfigurationProperty
     private OAuthDeviceTokenProperties deviceToken = new OAuthDeviceTokenProperties();
-
+                                                                        
     /**
      * Settings related to oauth device user codes.
      */
+    @NestedConfigurationProperty
     private OAuthDeviceUserCodeProperties deviceUserCode = new OAuthDeviceUserCodeProperties();
+
+    /**
+     * OAuth UMA authentication settings.
+     */
+    @NestedConfigurationProperty
+    private UmaProperties uma = new UmaProperties();
 
     /**
      * User profile view type determines how the final user profile should be rendered
@@ -88,5 +108,10 @@ public class OAuthProperties implements Serializable {
          * where all attributes are flattened down to one level only.
          */
         FLAT
+    }
+
+    public OAuthProperties() {
+        crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+        crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }
 }

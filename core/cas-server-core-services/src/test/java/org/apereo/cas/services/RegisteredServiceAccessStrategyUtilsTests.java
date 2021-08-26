@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Simple")
+@Tag("Utility")
 public class RegisteredServiceAccessStrategyUtilsTests {
 
     @Test
@@ -51,7 +51,7 @@ public class RegisteredServiceAccessStrategyUtilsTests {
         val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
         assertThrows(PrincipalException.class, () ->
-            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(st, service, tgt, false));
+            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(st, service, tgt));
     }
 
 }

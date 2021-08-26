@@ -1,22 +1,18 @@
 package org.apereo.cas.ticket.registry.support;
 
+import org.apereo.cas.ticket.registry.generic.JpaLockEntity;
+
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.Id;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Table;
-import javax.persistence.Version;
-import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -30,53 +26,91 @@ import java.time.ZonedDateTime;
 @Slf4j
 @ToString
 @Getter
+@Setter
+@RequiredArgsConstructor
 public class JpaLockingStrategy implements LockingStrategy {
-    /**
-     * Transactional entity manager from Spring context.
-     */
-    @PersistenceContext(unitName = "ticketEntityManagerFactory")
-    protected EntityManager entityManager;
-
     /**
      * Application identifier that identifies rows in the locking table,
      * each one of which may be for a different application or usage within
      * a single application.
      */
     private final String applicationId;
+
     /**
      * Unique identifier that identifies the client using this lock instance.
      */
     private final String uniqueId;
+
     /**
      * Amount of time in seconds lock may be held.
      */
     private final long lockTimeout;
 
     /**
-     * @param applicationId Application identifier that identifies a row in the lock
-     *                      table for which multiple clients vie to hold the lock.
-     *                      This must be the same for all clients contending for a
-     *                      particular lock.
-     * @param uniqueId      Identifier used to identify this instance in a row of the
-     *                      lock table.  Must be unique across all clients vying for
-     *                      locks for a given application ID.
-     * @param lockTimeout   Maximum amount of time in seconds lock may be held.
-     *                      A value of zero indicates that locks are held indefinitely.
-     *                      Use of a reasonable timeout facilitates recovery from node failures,
-     *                      so setting to zero is discouraged.
+     * Transactional entity manager from Spring context.
      */
-    public JpaLockingStrategy(final String applicationId, final String uniqueId, final long lockTimeout) {
-        this.applicationId = applicationId;
-        this.uniqueId = uniqueId;
-        if (lockTimeout < 0) {
-            throw new IllegalArgumentException("Lock timeout must be non-negative.");
+    @PersistenceContext(unitName = "ticketEntityManagerFactory")
+    private EntityManager entityManager;
+
+    /**
+     * Acquire the lock object.
+     *
+     * @param lock the lock
+     * @return true, if successful
+     */
+    public boolean acquire(final JpaLockEntity lock) {
+        lock.setUniqueId(this.uniqueId);
+        if (this.lockTimeout > 0) {
+            lock.setExpirationDate(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(this.lockTimeout));
+        } else {
+            lock.setExpirationDate(null);
         }
-        this.lockTimeout = lockTimeout;
+        try {
+            if (lock.getApplicationId() != null) {
+                this.entityManager.merge(lock);
+            } else {
+                lock.setApplicationId(this.applicationId);
+                this.entityManager.persist(lock);
+            }
+            return true;
+        } catch (final Exception e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("[{}] could not obtain [{}] lock.", this.uniqueId, this.applicationId, e);
+            } else {
+                LOGGER.info("[{}] could not obtain [{}] lock.", this.uniqueId, this.applicationId);
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean acquire() {
+        try {
+            val lock = this.entityManager.find(JpaLockEntity.class, this.applicationId, LockModeType.OPTIMISTIC);
+            var result = false;
+            if (lock != null) {
+                val expDate = lock.getExpirationDate();
+                if (lock.getUniqueId() == null) {
+                    LOGGER.debug("[{}] trying to acquire [{}] lock.", this.uniqueId, this.applicationId);
+                    result = acquire(lock);
+                } else if (expDate == null || ZonedDateTime.now(ZoneOffset.UTC).isAfter(expDate)) {
+                    LOGGER.debug("[{}] trying to acquire expired [{}] lock.", this.uniqueId, this.applicationId);
+                    result = acquire(lock);
+                }
+            } else {
+                LOGGER.debug("Creating [{}] lock initially held by [{}].", applicationId, uniqueId);
+                result = acquire(new JpaLockEntity());
+            }
+            return result;
+        } catch (final Exception e) {
+            LOGGER.debug("[{}] failed querying for [{}] lock.", this.uniqueId, this.applicationId, e);
+            return false;
+        }
     }
 
     @Override
     public void release() {
-        val lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.OPTIMISTIC);
+        val lock = this.entityManager.find(JpaLockEntity.class, this.applicationId, LockModeType.OPTIMISTIC);
         if (lock == null) {
             return;
         }
@@ -90,96 +124,4 @@ public class JpaLockingStrategy implements LockingStrategy {
         this.entityManager.persist(lock);
     }
 
-    /**
-     * Acquire the lock object.
-     *
-     * @param lock the lock
-     * @return true, if successful
-     */
-    public boolean acquire(final Lock lock) {
-        lock.setUniqueId(this.uniqueId);
-        if (this.lockTimeout > 0) {
-            lock.setExpirationDate(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(this.lockTimeout));
-        } else {
-            lock.setExpirationDate(null);
-        }
-        var success = false;
-        try {
-            if (lock.getApplicationId() != null) {
-                this.entityManager.merge(lock);
-            } else {
-                lock.setApplicationId(this.applicationId);
-                this.entityManager.persist(lock);
-            }
-            success = true;
-        } catch (final Exception e) {
-            success = false;
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("[{}] could not obtain [{}] lock.", this.uniqueId, this.applicationId, e);
-            } else {
-                LOGGER.info("[{}] could not obtain [{}] lock.", this.uniqueId, this.applicationId);
-            }
-        }
-        return success;
-    }
-
-    @Override
-    public boolean acquire() {
-        try {
-            val lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.OPTIMISTIC);
-            var result = false;
-            if (lock != null) {
-                val expDate = lock.getExpirationDate();
-                if (lock.getUniqueId() == null) {
-                    LOGGER.debug("[{}] trying to acquire [{}] lock.", this.uniqueId, this.applicationId);
-                    result = acquire(lock);
-                } else if (expDate == null || ZonedDateTime.now(ZoneOffset.UTC).isAfter(expDate)) {
-                    LOGGER.debug("[{}] trying to acquire expired [{}] lock.", this.uniqueId, this.applicationId);
-                    result = acquire(lock);
-                }
-            } else {
-                LOGGER.debug("Creating [{}] lock initially held by [{}].", applicationId, uniqueId);
-                result = acquire(new Lock());
-            }
-            return result;
-        } catch (final Exception e) {
-            LOGGER.debug("[{}] failed querying for [{}] lock.", this.uniqueId, this.applicationId, e);
-            return false;
-        }
-    }
-
-    /**
-     * Describes a database lock.
-     *
-     * @author Marvin S. Addison
-     */
-    @Entity
-    @Table(name = "locks")
-    @Getter
-    @Setter
-    @Embeddable
-    public static class Lock implements Serializable {
-
-        private static final long serialVersionUID = -5750740484289616656L;
-        @Version
-        @Column(name = "lockVer", columnDefinition = "integer DEFAULT 0", nullable = false)
-        private final Long version = 0L;
-        /**
-         * column name that holds application identifier.
-         */
-        @org.springframework.data.annotation.Id
-        @Id
-        @Column(name = "application_id")
-        private String applicationId;
-        /**
-         * Database column name that holds unique identifier.
-         */
-        @Column(name = "unique_id")
-        private String uniqueId;
-        /**
-         * Database column name that holds expiration date.
-         */
-        @Column(name = "expiration_date")
-        private ZonedDateTime expirationDate;
-    }
 }

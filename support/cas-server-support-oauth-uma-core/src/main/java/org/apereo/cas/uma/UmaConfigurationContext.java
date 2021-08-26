@@ -1,5 +1,6 @@
 package org.apereo.cas.uma;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
@@ -15,7 +16,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 
 /**
@@ -30,14 +30,26 @@ import org.pac4j.core.context.session.SessionStore;
 @Builder
 public class UmaConfigurationContext {
     private final OAuth20TokenSigningAndEncryptionService signingService;
+
     private final ServicesManager servicesManager;
+
     private final TicketRegistry ticketRegistry;
+
     private final OAuth20TokenGenerator accessTokenGenerator;
+
     private final JwtBuilder accessTokenJwtBuilder;
+
     private final UmaPermissionTicketFactory umaPermissionTicketFactory;
+
     private final ResourceSetRepository umaResourceSetRepository;
+
     private final CasConfigurationProperties casProperties;
+
     private final UmaResourceSetClaimPermissionExaminer claimPermissionExaminer;
+
     private final IdTokenGeneratorService requestingPartyTokenGenerator;
-    private final SessionStore<JEEContext> sessionStore;
+
+    private final SessionStore sessionStore;
+
+    private final CentralAuthenticationService centralAuthenticationService;
 }

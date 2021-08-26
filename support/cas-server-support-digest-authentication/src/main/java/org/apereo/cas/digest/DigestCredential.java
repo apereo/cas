@@ -37,7 +37,8 @@ public class DigestCredential extends BasicIdentifiableCredential {
      * @param hash  the hash
      */
     @JsonCreator
-    public DigestCredential(@JsonProperty("id") final String id, @JsonProperty("realm") final String realm,
+    public DigestCredential(@JsonProperty("id") final String id,
+                            @JsonProperty("realm") final String realm,
                             @JsonProperty("hash") final String hash) {
         super(id);
         this.realm = realm;

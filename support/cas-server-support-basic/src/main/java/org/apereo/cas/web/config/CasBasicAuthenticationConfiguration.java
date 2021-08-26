@@ -5,9 +5,11 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.BasicAuthenticationAction;
+import org.apereo.cas.web.flow.BasicAuthenticationCasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.BasicAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -85,5 +88,12 @@ public class CasBasicAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "basicCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer basicCasWebflowExecutionPlanConfigurer() {
         return plan -> plan.registerWebflowConfigurer(basicAuthenticationWebflowConfigurer());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "basicAuthenticationCasMultifactorWebflowCustomizer")
+    @RefreshScope
+    public CasMultifactorWebflowCustomizer basicAuthenticationCasMultifactorWebflowCustomizer() {
+        return new BasicAuthenticationCasMultifactorWebflowCustomizer();
     }
 }

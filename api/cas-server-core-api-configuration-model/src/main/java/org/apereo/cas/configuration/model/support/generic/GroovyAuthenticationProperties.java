@@ -1,7 +1,8 @@
 package org.apereo.cas.configuration.model.support.generic;
 
+import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -30,4 +31,10 @@ public class GroovyAuthenticationProperties extends SpringResourceProperties {
      * Order of the authentication handler in the chain.
      */
     private Integer order;
+
+    /**
+     * Define the scope and state of this authentication handler
+     * and the lifecycle in which it can be invoked or activated.
+     */
+    private AuthenticationHandlerStates state = AuthenticationHandlerStates.ACTIVE;
 }

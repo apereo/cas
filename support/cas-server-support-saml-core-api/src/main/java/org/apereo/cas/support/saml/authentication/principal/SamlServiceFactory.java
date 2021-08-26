@@ -26,35 +26,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
     private static final Namespace NAMESPACE_ENVELOPE = Namespace.getNamespace("http://schemas.xmlsoap.org/soap/envelope/");
+
     private static final Namespace NAMESPACE_SAML1 = Namespace.getNamespace("urn:oasis:names:tc:SAML:1.0:protocol");
-
-    /**
-     * Gets the request body from the request.
-     *
-     * @param request the request
-     * @return the request body
-     */
-    private static String getRequestBody(final HttpServletRequest request) {
-        val body = readRequestBodyIfAny(request);
-        if (!StringUtils.hasText(body)) {
-            LOGGER.trace("Looking at the request attribute [{}] to locate SAML request body",
-                SamlProtocolConstants.PARAMETER_SAML_REQUEST);
-            return (String) request.getAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
-        }
-        return body;
-    }
-
-    private static String readRequestBodyIfAny(final HttpServletRequest request) {
-        try (val reader = request.getReader()) {
-            if (reader != null) {
-                return reader.lines().collect(Collectors.joining());
-            }
-            LOGGER.trace("Request body could not be read because it's empty.");
-        } catch (final Exception e) {
-            LOGGER.trace("Could not obtain the saml request body from the http request", e);
-        }
-        return null;
-    }
 
     @Override
     public SamlService createService(final HttpServletRequest request) {
@@ -85,6 +58,31 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
     @Override
     public SamlService createService(final String id) {
         throw new NotImplementedException("This operation is not supported. ");
+    }
+
+    /**
+     * Gets the request body from the request.
+     *
+     * @param request the request
+     * @return the request body
+     */
+    private static String getRequestBody(final HttpServletRequest request) {
+        val body = readRequestBodyIfAny(request);
+        if (!StringUtils.hasText(body)) {
+            LOGGER.trace("Looking at the request attribute [{}] to locate SAML request body",
+                SamlProtocolConstants.PARAMETER_SAML_REQUEST);
+            return (String) request.getAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
+        }
+        return body;
+    }
+
+    private static String readRequestBodyIfAny(final HttpServletRequest request) {
+        try (val reader = request.getReader()) {
+            return reader.lines().collect(Collectors.joining());
+        } catch (final Exception e) {
+            LOGGER.trace("Could not obtain the saml request body from the http request", e);
+        }
+        return null;
     }
 
     private static Element getRequestDocumentElement(final String requestBody) {

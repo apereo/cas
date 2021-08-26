@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.idp.metadata.generator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
@@ -43,5 +44,19 @@ public interface SamlIdPMetadataGenerator {
         var result = StringUtils.remove(cert, BEGIN_CERTIFICATE);
         result = StringUtils.remove(result, END_CERTIFICATE).trim();
         return result;
+    }
+
+    /**
+     * Gets applies to for.
+     *
+     * @param result the result
+     * @return the applies to for
+     */
+    static String getAppliesToFor(final Optional<SamlRegisteredService> result) {
+        if (result.isPresent()) {
+            val registeredService = result.get();
+            return registeredService.getName() + '-' + registeredService.getId();
+        }
+        return "CAS";
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.handler.support.jaas;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import com.google.common.base.Splitter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,12 +30,10 @@ import java.util.Map;
  */
 @Slf4j
 public class AccountsPreDefinedLoginModule implements LoginModule {
-    private static final int MAP_SIZE = 8;
-
     private Subject subject;
+
     private CallbackHandler callbackHandler;
-
-
+    
     private Map<String, String> accounts;
 
     private boolean succeeded;
@@ -43,7 +43,7 @@ public class AccountsPreDefinedLoginModule implements LoginModule {
                            final Map<String, ?> sharedState, final Map<String, ?> options) {
         this.subject = subject;
         this.callbackHandler = callbackHandler;
-        this.accounts = new LinkedHashMap<>(MAP_SIZE);
+        this.accounts = new LinkedHashMap<>();
 
         val providedAccounts = options.containsKey("accounts") ? options.get("accounts").toString() : null;
         if (StringUtils.isNotBlank(providedAccounts)) {
@@ -63,11 +63,7 @@ public class AccountsPreDefinedLoginModule implements LoginModule {
         try {
             callbackHandler.handle(new Callback[]{nameCallback, passwordCallback});
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException(e.getMessage());
         }
 

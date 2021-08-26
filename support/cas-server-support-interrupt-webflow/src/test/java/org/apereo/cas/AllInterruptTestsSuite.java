@@ -1,14 +1,14 @@
 package org.apereo.cas;
 
+import org.apereo.cas.interrupt.CasInterruptConfigurationTests;
 import org.apereo.cas.interrupt.webflow.InterruptSingleSignOnParticipationStrategyTests;
 import org.apereo.cas.interrupt.webflow.InterruptWebflowConfigurerTests;
 import org.apereo.cas.interrupt.webflow.actions.FinalizeInterruptFlowActionTests;
 import org.apereo.cas.interrupt.webflow.actions.InquireInterruptActionTests;
 import org.apereo.cas.interrupt.webflow.actions.PrepareInterruptViewActionTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllInterruptTestsSuite}.
@@ -20,9 +20,10 @@ import org.junit.runner.RunWith;
     InterruptSingleSignOnParticipationStrategyTests.class,
     PrepareInterruptViewActionTests.class,
     InquireInterruptActionTests.class,
+    CasInterruptConfigurationTests.class,
     InterruptWebflowConfigurerTests.class,
     FinalizeInterruptFlowActionTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllInterruptTestsSuite {
 }

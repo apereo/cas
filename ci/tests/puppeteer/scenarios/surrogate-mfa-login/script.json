@@ -1,0 +1,21 @@
+{
+  "dependencies": "simple-mfa,surrogate-webflow",
+  "properties": [
+    "--cas.authn.surrogate.simple.surrogates.casuser=user3",
+    
+    "--cas.authn.mfa.triggers.principal.global-principal-attribute-name-triggers=employeeNumber",
+    "--cas.authn.mfa.triggers.principal.global-principal-attribute-value-regex=1234567",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+    "--logging.level.org.apereo=debug",
+
+    "--cas.authn.mfa.simple.mail.from=cas@example.com",
+    "--cas.authn.mfa.simple.mail.subject=CAS Token",
+    "--cas.authn.mfa.simple.mail.text=CAS token is %s",
+    "--cas.authn.mfa.simple.mail.attribute-name=email",
+
+    "--cas.authn.attribute-repository.json[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attribute-repository.json"
+  ],
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
+}

@@ -2,12 +2,15 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
+import org.apereo.cas.authentication.PrincipalElectionStrategyConflictResolver;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.services.persondir.support.merger.IAttributeMerger;
+import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.springframework.core.Ordered;
 
 import java.util.Collection;
@@ -32,12 +35,20 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
 
     private static final long serialVersionUID = 6704726217030836315L;
 
+    private IAttributeMerger attributeMerger = new ReplacingAttributeAdder();
+    
     private final PrincipalFactory principalFactory;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
+    private final PrincipalElectionStrategyConflictResolver principalElectionConflictResolver;
+
     public DefaultPrincipalElectionStrategy() {
-        this(PrincipalFactoryUtils.newPrincipalFactory());
+        this(PrincipalFactoryUtils.newPrincipalFactory(), PrincipalElectionStrategyConflictResolver.last());
+    }
+    
+    public DefaultPrincipalElectionStrategy(final PrincipalElectionStrategyConflictResolver principalElectionConflictResolver) {
+        this(PrincipalFactoryUtils.newPrincipalFactory(), principalElectionConflictResolver);
     }
 
     @Override
@@ -58,9 +69,9 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
             .collect(Collectors.toCollection(LinkedHashSet::new));
         val count = principalIds.size();
         if (count > 1) {
-            LOGGER.debug("Principal resolvers produced [{}] distinct principal [{}]; last resolved principal will be the principal", count, principalIds);
+            LOGGER.debug("Principal resolvers produced [{}] distinct principals [{}]", count, principalIds);
         }
-        val principalId = principals.get(principals.size() - 1).getId();
+        val principalId = this.principalElectionConflictResolver.resolve(principals, attributes);
         val finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);
         LOGGER.debug("Final principal constructed by the chain of resolvers is [{}]", finalPrincipal);
         return finalPrincipal;

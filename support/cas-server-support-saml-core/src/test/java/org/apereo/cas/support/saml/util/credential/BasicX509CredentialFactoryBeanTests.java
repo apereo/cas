@@ -56,7 +56,7 @@ public class BasicX509CredentialFactoryBeanTests {
     }
 
     @Test
-    public void verifyCredEntityWithBadCrl() throws Exception {
+    public void verifyCredEntityWithBadCrl() {
         val factory = new BasicX509CredentialFactoryBean();
         factory.setEntityID("example.entityid");
         factory.setKeyNames(List.of("cas"));

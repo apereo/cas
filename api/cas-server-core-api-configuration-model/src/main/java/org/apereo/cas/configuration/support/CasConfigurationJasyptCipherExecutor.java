@@ -8,10 +8,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.iv.RandomIvGenerator;
 import org.springframework.core.env.Environment;
 
 import java.security.Security;
-import java.util.Set;
 
 /**
  * This is {@link CasConfigurationJasyptCipherExecutor}.
@@ -26,25 +26,10 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     public static final String ENCRYPTED_VALUE_PREFIX = "{cas-cipher}";
 
     /**
-     * These algorithms don't work with Jasypt 1.9.2.
+     * Pattern for algorithms that require an initialization vector.
+     * Regex matches all PBEWITHHMACSHA###ANDAES algorithms that aren't BouncyCastle.
      */
-    private static final String[] ALGORITHM_BLACKLIST = new String[]{
-        "PBEWITHHMACSHA1ANDAES_128",
-        "PBEWITHHMACSHA1ANDAES_256",
-        "PBEWITHHMACSHA224ANDAES_128",
-        "PBEWITHHMACSHA224ANDAES_256",
-        "PBEWITHHMACSHA256ANDAES_128",
-        "PBEWITHHMACSHA256ANDAES_256",
-        "PBEWITHHMACSHA384ANDAES_128",
-        "PBEWITHHMACSHA384ANDAES_256",
-        "PBEWITHHMACSHA512ANDAES_128",
-        "PBEWITHHMACSHA512ANDAES_256"
-    };
-
-    /**
-     * List version of blacklisted algorithms (due to Jasypt 1.9.2 bug).
-     */
-    public static final Set<String> ALGORITHM_BLACKLIST_SET = Set.of(ALGORITHM_BLACKLIST);
+    public static final String ALGS_THAT_REQUIRE_IV_PATTERN = "PBEWITHHMACSHA\\d+ANDAES_.*(?<!-BC)$";
 
     /**
      * The Jasypt instance.
@@ -68,6 +53,11 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         setProviderName(pName);
         val iter = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ITERATIONS);
         setKeyObtentionIterations(iter);
+        val initializationVector = Boolean.parseBoolean(
+                getJasyptParamFromEnv(environment, JasyptEncryptionParameters.INITIALIZATION_VECTOR));
+        if (initializationVector || isVectorInitializationRequiredFor(alg)) {
+            configureInitializationVector();
+        }
     }
 
     /**
@@ -88,9 +78,6 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      */
     public void setAlgorithm(final String alg) {
         if (StringUtils.isNotBlank(alg)) {
-            if (ALGORITHM_BLACKLIST_SET.contains(alg)) {
-                throw new IllegalArgumentException(String.format("Configured Jasypt algorithm [%s] doesn't work for decryption due to Jasypt bug", alg));
-            }
             LOGGER.debug("Configured Jasypt algorithm [{}]", alg);
             jasyptInstance.setAlgorithm(alg);
         }
@@ -106,6 +93,23 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
             LOGGER.debug("Configured Jasypt algorithm [{}]", alg);
             jasyptInstance.setAlgorithm(alg);
         }
+    }
+
+    /**
+     * {@code PBEWithDigestAndAES} algorithms (from the JCE Provider of JAVA 8) require an initialization vector.
+     * Other algorithms may also use an initialization vector and it will increase the encrypted text's length.
+     */
+    public void configureInitializationVector() {
+        jasyptInstance.setIvGenerator(new RandomIvGenerator());
+    }
+
+    /**
+     * Return true if the algorithm requires initialization vector.
+     * @param algorithm the algorithm to check
+     * @return true if algorithm requires initialization vector
+     */
+    public boolean isVectorInitializationRequiredFor(final String algorithm) {
+        return StringUtils.isNotBlank(algorithm) && algorithm.matches(ALGS_THAT_REQUIRE_IV_PATTERN);
     }
 
     /**
@@ -229,7 +233,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      */
     private void initializeJasyptInstanceIfNecessary() {
         if (!this.jasyptInstance.isInitialized()) {
-            LOGGER.debug("Initializing Jasypt...");
+            LOGGER.trace("Initializing Jasypt...");
             this.jasyptInstance.initialize();
         }
     }
@@ -242,19 +246,23 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         /**
          * Jasypt algorithm name to use.
          */
-        ALGORITHM("cas.standalone.configurationSecurity.alg", "PBEWithMD5AndTripleDES"),
+        ALGORITHM("cas.standalone.configuration-security.alg", "PBEWithMD5AndTripleDES"),
         /**
-         * Jasypt provider name to use.
+         * Jasypt provider name to use. None for Java, {@code BC} for BouncyCastle.
          */
-        PROVIDER("cas.standalone.configurationSecurity.provider", null),
+        PROVIDER("cas.standalone.configuration-security.provider", null),
         /**
          * Jasypt number of iterations to use.
          */
-        ITERATIONS("cas.standalone.configurationSecurity.iterations", null),
+        ITERATIONS("cas.standalone.configuration-security.iterations", null),
         /**
-         * Jasypt password to use.
+         * Jasypt password to use for encryption and decryption.
          */
-        PASSWORD("cas.standalone.configurationSecurity.psw", null);
+        PASSWORD("cas.standalone.configuration-security.psw", null),
+        /**
+         * Use (or not) a Jasypt Initialization Vector.
+         */
+        INITIALIZATION_VECTOR("cas.standalone.configuration-security.initialization-vector", "false");
 
         /**
          * The Name.

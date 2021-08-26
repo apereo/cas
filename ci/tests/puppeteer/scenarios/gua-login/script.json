@@ -1,0 +1,7 @@
+{
+  "dependencies": "gua",
+  "properties": [
+    "--cas.audit.engine.enabled=false",
+    "--cas.authn.gua.simple.casuser=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/image.png"
+  ]
+}

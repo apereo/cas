@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Tag("Simple")
+@Tag("AuthenticationMetadata")
 public class CacheCredentialsMetaDataPopulatorTests {
 
     @Test
@@ -24,10 +24,10 @@ public class CacheCredentialsMetaDataPopulatorTests {
 
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val builder = DefaultAuthenticationBuilder.newInstance(CoreAuthenticationTestUtils.getAuthentication());
-        populator.populateAttributes(builder, DefaultAuthenticationTransaction.of(c));
+        populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(c));
         val authn = builder.build();
         assertTrue(authn.getAttributes().containsKey(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD));
-        assertTrue(authn.getAttributes().get(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD).get(0).toString().equals(c.getPassword()));
+        assertEquals(c.getPassword(), authn.getAttributes().get(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD).get(0).toString());
     }
 
 

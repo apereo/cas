@@ -4,14 +4,13 @@ import org.apereo.cas.authentication.principal.Principal;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
-
-import javax.annotation.Nonnull;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,13 +25,12 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Builder
+@SuperBuilder
 @Getter
 @Slf4j
 public class PrincipalAttributeRepositoryFetcher {
     private final IPersonAttributeDao attributeRepository;
 
-    @Nonnull
     private final String principalId;
 
     @Builder.Default
@@ -52,6 +50,7 @@ public class PrincipalAttributeRepositoryFetcher {
         var filter = IPersonAttributeDaoFilter.alwaysChoose();
         if (!activeAttributeRepositoryIdentifiers.isEmpty()) {
             val repoIdsArray = activeAttributeRepositoryIdentifiers.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
+            LOGGER.trace("Active attribute repository identifiers [{}]", activeAttributeRepositoryIdentifiers);
             filter = dao -> Arrays.stream(dao.getId())
                 .anyMatch(daoId -> daoId.equalsIgnoreCase(IPersonAttributeDao.WILDCARD)
                     || StringUtils.equalsAnyIgnoreCase(daoId, repoIdsArray)
@@ -60,13 +59,12 @@ public class PrincipalAttributeRepositoryFetcher {
 
         val query = new HashMap<String, Object>();
         query.put("username", principalId);
-
         if (currentPrincipal != null) {
             query.put("principal", currentPrincipal.getId());
             query.putAll(currentPrincipal.getAttributes());
         }
         query.putAll(queryAttributes);
-        
+
         LOGGER.trace("Fetching person attributes for query [{}]", query);
         val people = attributeRepository.getPeople(query, filter);
         if (people == null || people.isEmpty()) {

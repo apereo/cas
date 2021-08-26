@@ -1,0 +1,7 @@
+{
+  "dependencies": "passwordless-webflow",
+  "properties": [
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
+  ]
+}

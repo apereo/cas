@@ -24,7 +24,7 @@ import javax.net.ssl.SSLContext;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration(value = "mongoDbPasswordlessAuthenticationConfiguration")
+@Configuration(value = "mongoDbPasswordlessAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbPasswordlessAuthenticationConfiguration {
     @Autowired
@@ -47,8 +47,10 @@ public class MongoDbPasswordlessAuthenticationConfiguration {
 
     @Bean
     @RefreshScope
-    public PasswordlessUserAccountStore passwordlessUserAccountStore() {
+    @Autowired
+    public PasswordlessUserAccountStore passwordlessUserAccountStore(@Qualifier("mongoDbPasswordlessAuthenticationTemplate")
+                                                                     final MongoTemplate mongoDbPasswordlessAuthenticationTemplate) {
         val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
-        return new MongoDbPasswordlessUserAccountStore(mongoDbPasswordlessAuthenticationTemplate(), accounts.getMongo());
+        return new MongoDbPasswordlessUserAccountStore(mongoDbPasswordlessAuthenticationTemplate, accounts.getMongo());
     }
 }

@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -31,7 +32,6 @@ import org.apereo.cas.util.gen.RandomStringGenerator;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -48,6 +48,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 
+import javax.security.auth.login.FailedLoginException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,15 +79,18 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreConfiguration.class,
     TokenAuthenticationConfiguration.class
 })
-@Tag("Simple")
+@Tag("AuthenticationHandler")
 public class TokenAuthenticationHandlerTests {
     private static final RandomStringGenerator RANDOM_STRING_GENERATOR = new DefaultRandomStringGenerator();
+
     private static final String SIGNING_SECRET = RANDOM_STRING_GENERATOR.getNewString(256);
+
     private static final String ENCRYPTION_SECRET = RANDOM_STRING_GENERATOR.getNewString(48);
 
     @Autowired
@@ -94,9 +98,8 @@ public class TokenAuthenticationHandlerTests {
     private AuthenticationHandler tokenAuthenticationHandler;
 
     @Test
-    @SneakyThrows
-    public void verifyKeysAreSane() {
-        val g = new JwtGenerator<CommonProfile>();
+    public void verifyKeysAreSane() throws Exception {
+        val g = new JwtGenerator();
         g.setSignatureConfiguration(new SecretSignatureConfiguration(SIGNING_SECRET, JWSAlgorithm.HS256));
         g.setEncryptionConfiguration(new SecretEncryptionConfiguration(ENCRYPTION_SECRET, JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
 
@@ -109,12 +112,46 @@ public class TokenAuthenticationHandlerTests {
         assertEquals(result.getPrincipal().getId(), profile.getId());
     }
 
+    @Test
+    public void verifyNoService() {
+        val g = new JwtGenerator();
+
+        val profile = new CommonProfile();
+        profile.setId("casuser");
+        val token = g.generate(profile);
+        val c = new TokenCredential(token, RegisteredServiceTestUtils.getService("nosigningservice"));
+        assertThrows(FailedLoginException.class, () -> tokenAuthenticationHandler.authenticate(c));
+    }
+
+    @Test
+    public void verifyNoSigning() throws Exception {
+        val g = new JwtGenerator();
+
+        val profile = new CommonProfile();
+        profile.setId("casuser");
+        val token = g.generate(profile);
+        val c = new TokenCredential(token, RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL2));
+        assertThrows(FailedLoginException.class, () -> tokenAuthenticationHandler.authenticate(c));
+    }
+
+    @Test
+    public void verifyNoEnc() throws Exception {
+        val g = new JwtGenerator();
+        g.setSignatureConfiguration(new SecretSignatureConfiguration(SIGNING_SECRET, JWSAlgorithm.HS256));
+
+        val profile = new CommonProfile();
+        profile.setId("casuser");
+        val token = g.generate(profile);
+        val c = new TokenCredential(token, RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL3));
+        assertNotNull(tokenAuthenticationHandler.authenticate(c));
+    }
+
     @TestConfiguration("TokenAuthenticationTests")
     @Lazy(false)
     public static class TestTokenAuthenticationConfiguration {
         @Bean
         public List inMemoryRegisteredServices() {
-            val svc = RegisteredServiceTestUtils.getRegisteredService(".*");
+            var svc = RegisteredServiceTestUtils.getRegisteredService(RegisteredServiceTestUtils.CONST_TEST_URL);
             svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
 
             val p = new DefaultRegisteredServiceProperty();
@@ -127,6 +164,14 @@ public class TokenAuthenticationHandlerTests {
 
             val l = new ArrayList<RegisteredService>();
             l.add(svc);
+
+            svc = RegisteredServiceTestUtils.getRegisteredService(RegisteredServiceTestUtils.CONST_TEST_URL2);
+            l.add(svc);
+
+            svc = RegisteredServiceTestUtils.getRegisteredService(RegisteredServiceTestUtils.CONST_TEST_URL3);
+            svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_SIGNING.getPropertyName(), p);
+            l.add(svc);
+
             return l;
         }
     }

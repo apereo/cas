@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Simple")
+@Tag("AuthenticationMetadata")
 public class CredentialCustomFieldsAttributeMetaDataPopulatorTests {
     private final CredentialCustomFieldsAttributeMetaDataPopulator populator =
         new CredentialCustomFieldsAttributeMetaDataPopulator();
@@ -29,7 +29,7 @@ public class CredentialCustomFieldsAttributeMetaDataPopulatorTests {
         credentials.getCustomFields().put("field2", List.of("value2"));
 
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, DefaultAuthenticationTransaction.of(credentials));
+        this.populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
         assertTrue(populator.supports(credentials));
         
         val auth = builder.build();

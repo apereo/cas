@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.audit.AuditableExecution;
@@ -9,13 +11,14 @@ import org.apereo.cas.aup.GroovyAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-import org.apereo.cas.web.flow.AcceptableUsagePolicyRenderAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicySubmitAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyVerifyAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyVerifyServiceAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +47,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("casAcceptableUsagePolicyWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.acceptable-usage-policy", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasAcceptableUsagePolicyWebflowConfiguration {
 
     @Autowired
@@ -91,7 +94,11 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "acceptableUsagePolicyRenderAction")
     public Action acceptableUsagePolicyRenderAction() {
-        return new AcceptableUsagePolicyRenderAction(acceptableUsagePolicyRepository());
+        return new ConsumerExecutionAction(requestContext -> {
+            var repository = acceptableUsagePolicyRepository();
+            repository.fetchPolicy(requestContext)
+                .ifPresent(policy -> WebUtils.putAcceptableUsagePolicyTermsIntoFlowScope(requestContext, policy));
+        });
     }
 
     @Bean
@@ -130,14 +137,14 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
     @Bean
     public AuditTrailRecordResolutionPlanConfigurer casAcceptableUsagePolicyAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
-            plan.registerAuditResourceResolver("AUP_VERIFY_RESOURCE_RESOLVER",
+            plan.registerAuditResourceResolver(AuditResourceResolvers.AUP_VERIFY_RESOURCE_RESOLVER,
                 nullableReturnValueResourceResolver.getObject());
-            plan.registerAuditActionResolver("AUP_VERIFY_ACTION_RESOLVER",
+            plan.registerAuditActionResolver(AuditActionResolvers.AUP_VERIFY_ACTION_RESOLVER,
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_TRIGGERED, StringUtils.EMPTY));
 
-            plan.registerAuditResourceResolver("AUP_SUBMIT_RESOURCE_RESOLVER",
+            plan.registerAuditResourceResolver(AuditResourceResolvers.AUP_SUBMIT_RESOURCE_RESOLVER,
                 nullableReturnValueResourceResolver.getObject());
-            plan.registerAuditActionResolver("AUP_SUBMIT_ACTION_RESOLVER",
+            plan.registerAuditActionResolver(AuditActionResolvers.AUP_SUBMIT_ACTION_RESOLVER,
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_TRIGGERED, StringUtils.EMPTY));
         };
     }

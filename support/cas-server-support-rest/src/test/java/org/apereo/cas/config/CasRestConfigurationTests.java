@@ -3,7 +3,12 @@ package org.apereo.cas.config;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.rest.config.CasCoreRestConfiguration;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
+import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -24,11 +29,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasCoreLogoutConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreConfiguration.class,
+    CasWebflowContextConfiguration.class,
+    CasCoreWebflowConfiguration.class,
+    CasCoreMultifactorAuthenticationConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreTicketsConfiguration.class,
@@ -41,10 +51,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     CasThrottlingConfiguration.class,
     CasCoreAuditConfiguration.class,
+    CasCookieConfiguration.class,
+    CasCoreRestConfiguration.class,
     CasRestConfiguration.class
 })
 @EnableWebMvc
-@Tag("Simple")
+@Tag("CasConfiguration")
 public class CasRestConfigurationTests {
 
     @Autowired
@@ -54,6 +66,5 @@ public class CasRestConfigurationTests {
     @Test
     public void verifyOperation() {
         assertNotNull(ticketGrantingTicketResourceEntityResponseFactory);
-
     }
 }

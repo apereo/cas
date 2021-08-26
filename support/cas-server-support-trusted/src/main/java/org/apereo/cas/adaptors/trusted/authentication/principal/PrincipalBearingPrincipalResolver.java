@@ -2,15 +2,12 @@ package org.apereo.cas.adaptors.trusted.authentication.principal;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 
-import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Extracts the Principal out of PrincipalBearingCredential. It is very simple
@@ -21,16 +18,10 @@ import java.util.Set;
  * @since 3.0.0
  */
 @ToString(callSuper = true)
-@NoArgsConstructor
 public class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
-    public PrincipalBearingPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
-                                             final boolean returnNullIfNoAttributes, final String principalAttributeName,
-                                             final boolean useCurrentPrincipalId, final boolean resolveAttributes,
-                                             final Set<String> activeAttributeRepositoryIdentifiers) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
-            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
-            activeAttributeRepositoryIdentifiers);
+    public PrincipalBearingPrincipalResolver(final PrincipalResolutionContext context) {
+        super(context);
     }
 
     @Override

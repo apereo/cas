@@ -72,9 +72,11 @@ public class JdbcPasswordManagementConfiguration {
     
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "jdbcPasswordChangeService")
     public PasswordManagementService passwordChangeService() {
         val encoder = PasswordEncoderUtils.newPasswordEncoder(casProperties.getAuthn().getPm().getJdbc().getPasswordEncoder(), applicationContext);
-        return new JdbcPasswordManagementService(passwordManagementCipherExecutor.getObject(),
+        return new JdbcPasswordManagementService(
+            passwordManagementCipherExecutor.getObject(),
             casProperties.getServer().getPrefix(),
             casProperties.getAuthn().getPm(),
             jdbcPasswordManagementDataSource(),

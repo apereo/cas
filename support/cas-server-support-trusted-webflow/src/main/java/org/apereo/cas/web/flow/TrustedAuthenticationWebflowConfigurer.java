@@ -33,6 +33,7 @@ public class TrustedAuthenticationWebflowConfigurer extends AbstractCasWebflowCo
             val action = createEvaluateAction(ACTION_ID_REMOTE_USER_AUTHENTICATION_ACTION);
             val actionState = createActionState(flow, CasWebflowConstants.ACTION_ID_REMOTE_TRUSTED_AUTHENTICATION, action);
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET);
+            createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_GENERATE_SERVICE_TICKET, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
             val currentStartState = getStartState(flow).getId();
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_ERROR, currentStartState);
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE);

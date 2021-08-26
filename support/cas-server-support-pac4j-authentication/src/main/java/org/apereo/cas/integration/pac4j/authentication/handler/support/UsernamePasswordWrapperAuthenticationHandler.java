@@ -9,6 +9,7 @@ import org.apereo.cas.services.ServicesManager;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.http.credentials.authenticator.test.SimpleTestUsernamePasswordAuthenticator;
@@ -32,7 +33,7 @@ public class UsernamePasswordWrapperAuthenticationHandler extends AbstractWrappe
     /**
      * The underlying pac4j authenticator.
      */
-    protected Authenticator<UsernamePasswordCredentials> authenticator = new SimpleTestUsernamePasswordAuthenticator();
+    protected Authenticator authenticator = new SimpleTestUsernamePasswordAuthenticator();
 
     /**
      * PasswordEncoder to be used by subclasses to encode passwords for
@@ -45,8 +46,10 @@ public class UsernamePasswordWrapperAuthenticationHandler extends AbstractWrappe
      */
     private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
 
-    public UsernamePasswordWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
-        super(name, servicesManager, principalFactory, order);
+    public UsernamePasswordWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                                        final PrincipalFactory principalFactory, final Integer order,
+                                                        final SessionStore sessionStore) {
+        super(name, servicesManager, principalFactory, order, sessionStore);
     }
 
     @Override
@@ -63,7 +66,7 @@ public class UsernamePasswordWrapperAuthenticationHandler extends AbstractWrappe
     }
 
     @Override
-    protected Authenticator<UsernamePasswordCredentials> getAuthenticator(final Credential credential) {
+    protected Authenticator getAuthenticator(final Credential credential) {
         return this.authenticator;
     }
 

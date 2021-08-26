@@ -43,7 +43,10 @@ public class MongoDbMultifactorAuthenticationTrustStorageTests extends AbstractM
 
     @Test
     public void verifySetAnExpireByKey() {
-        getMfaTrustEngine().save(MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint"));
+        var record = MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
+        record = getMfaTrustEngine().save(record);
+        assertNotNull(getMfaTrustEngine().get(record.getId()));
+        
         val records = getMfaTrustEngine().get("casuser");
         assertEquals(1, records.size());
         getMfaTrustEngine().remove(records.stream().findFirst().get().getRecordKey());

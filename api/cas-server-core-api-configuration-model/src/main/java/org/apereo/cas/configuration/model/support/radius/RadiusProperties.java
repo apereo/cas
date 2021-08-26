@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.support.radius;
 
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,6 +23,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("RadiusProperties")
 public class RadiusProperties implements Serializable {
 
     private static final long serialVersionUID = 5244307919878753714L;
@@ -65,4 +68,10 @@ public class RadiusProperties implements Serializable {
      * The name of the authentication handler.
      */
     private String name;
+
+    /**
+     * Define the scope and state of this authentication handler
+     * and the lifecycle in which it can be invoked or activated.
+     */
+    private AuthenticationHandlerStates state = AuthenticationHandlerStates.ACTIVE;
 }

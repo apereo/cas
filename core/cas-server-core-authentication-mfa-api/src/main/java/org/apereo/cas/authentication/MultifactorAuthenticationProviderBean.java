@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorProviderProperties;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,17 +13,17 @@ import org.springframework.context.event.EventListener;
 import java.util.List;
 
 /**
- * Generic class that applies a list of {@link BaseMultifactorProviderProperties} to a provided
+ * Generic class that applies a list of {@link BaseMultifactorAuthenticationProviderProperties} to a provided
  * {@link MultifactorAuthenticationProviderFactoryBean} to create instances of {@link MultifactorAuthenticationProvider}.
  *
- * @param <T> - Type of {@link MultifactorAuthenticationProvider}
- * @param <P> - Type of {@link BaseMultifactorProviderProperties}
  * @author Travis Schmidt
+ * @param <T> - Type of {@link MultifactorAuthenticationProvider}
+ * @param <P> - Type of {@link BaseMultifactorAuthenticationProviderProperties}
  * @since 6.0
  */
 @RequiredArgsConstructor
 @Slf4j
-public class MultifactorAuthenticationProviderBean<T extends MultifactorAuthenticationProvider, P extends BaseMultifactorProviderProperties>
+public class MultifactorAuthenticationProviderBean<T extends MultifactorAuthenticationProvider, P extends BaseMultifactorAuthenticationProviderProperties>
     implements InitializingBean {
 
     private final MultifactorAuthenticationProviderFactoryBean<T, P> providerFactory;

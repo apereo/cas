@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Tag("Simple")
+@Tag("Tickets")
 public class TicketGrantingCookieCipherExecutorTests {
 
     @Test

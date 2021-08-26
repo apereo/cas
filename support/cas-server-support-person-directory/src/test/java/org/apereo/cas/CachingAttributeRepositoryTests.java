@@ -1,7 +1,5 @@
 package org.apereo.cas;
 
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
@@ -10,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,16 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = {
-    CasPersonDirectoryConfiguration.class,
-    RefreshAutoConfiguration.class
-},
+@SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.attributeRepository.stub.attributes.uid=uid",
-        "cas.authn.attributeRepository.stub.attributes.givenName=givenName",
-        "cas.authn.attributeRepository.stub.attributes.eppn=eppn"
+        "cas.authn.attribute-repository.stub.attributes.uid=uid",
+        "cas.authn.attribute-repository.stub.attributes.givenName=givenName",
+        "cas.authn.attribute-repository.stub.attributes.eppn=eppn"
     })
-@Tag("Simple")
+@Tag("Attributes")
 public class CachingAttributeRepositoryTests {
     @Autowired
     @Qualifier("cachingAttributeRepository")

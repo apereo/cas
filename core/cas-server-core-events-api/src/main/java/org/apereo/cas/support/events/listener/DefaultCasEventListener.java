@@ -7,11 +7,13 @@ import org.apereo.cas.support.events.authentication.CasAuthenticationTransaction
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationDetectedEvent;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
+import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
+import org.apereo.cas.util.serialization.MessageSanitizationUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.event.EventListener;
@@ -29,6 +31,7 @@ import java.time.Instant;
  */
 @RequiredArgsConstructor
 @Getter
+@Slf4j
 public class DefaultCasEventListener {
 
     private final CasEventRepository casEventRepository;
@@ -41,11 +44,15 @@ public class DefaultCasEventListener {
         dto.setCreationTime(dt.toString());
 
         val clientInfo = ClientInfoHolder.getClientInfo();
-        dto.putClientIpAddress(clientInfo.getClientIpAddress());
-        dto.putServerIpAddress(clientInfo.getServerIpAddress());
-        dto.putAgent(clientInfo.getUserAgent());
-        val location = HttpRequestUtils.getHttpServletRequestGeoLocation(clientInfo.getGeoLocation());
-        dto.putGeoLocation(location);
+        if (clientInfo != null) {
+            dto.putClientIpAddress(clientInfo.getClientIpAddress());
+            dto.putServerIpAddress(clientInfo.getServerIpAddress());
+            dto.putAgent(clientInfo.getUserAgent());
+            val location = HttpRequestUtils.getHttpServletRequestGeoLocation(clientInfo.getGeoLocation());
+            dto.putGeoLocation(location);
+        } else {
+            LOGGER.trace("No client information is available. The final event cannot track client location, user agent or IP addresses");
+        }
         return dto;
     }
 
@@ -60,7 +67,24 @@ public class DefaultCasEventListener {
         if (this.casEventRepository != null) {
             val dto = prepareCasEvent(event);
             dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
-            dto.putEventId(TicketIdSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
+            dto.putEventId(MessageSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
+            dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
+            this.casEventRepository.save(dto);
+        }
+    }
+
+    /**
+     * Handle TGT deleted event.
+     *
+     * @param event the event
+     */
+    @EventListener
+    @Async
+    public void handleCasTicketGrantingTicketDeletedEvent(final CasTicketGrantingTicketDestroyedEvent event) {
+        if (this.casEventRepository != null) {
+            val dto = prepareCasEvent(event);
+            dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
+            dto.putEventId(MessageSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
             dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
             this.casEventRepository.save(dto);
         }

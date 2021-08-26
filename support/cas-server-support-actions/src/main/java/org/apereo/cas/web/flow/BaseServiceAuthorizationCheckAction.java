@@ -5,6 +5,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -19,9 +20,10 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.1.0
  */
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseServiceAuthorizationCheckAction extends AbstractAction {
     private final ServicesManager servicesManager;
+
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     @Override

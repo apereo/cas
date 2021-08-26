@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.radius;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("RadiusClientProperties")
 public class RadiusClientProperties implements Serializable {
 
     private static final long serialVersionUID = -7961769318651312854L;
@@ -49,4 +51,25 @@ public class RadiusClientProperties implements Serializable {
      * The accounting port.
      */
     private int accountingPort = 1813;
+
+    /**
+     * Transport type to use by this client
+     * to connect to the server.
+     */
+    private RadiusClientTransportTypes transportType = RadiusClientTransportTypes.UDP;
+
+    /**
+     * Transport layer options.
+     */
+    public enum RadiusClientTransportTypes {
+        /**
+         * Default. UDP client transport type.
+         */
+        UDP,
+        /**
+         * RadSec is a protocol which allows RADIUS servers to
+         * transfer data over TCP and TLS for increased security.
+         */
+        RADSEC
+    }
 }

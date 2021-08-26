@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -26,12 +27,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML")
 @TestPropertySource(properties = {
-    "cas.authn.saml-idp.entityId=https://cas.example.org/idp",
-    "cas.authn.saml-idp.metadata.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
+    "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata5"
 })
 public class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "EduPersonTargetedIdAttributeReleasePolicyTests.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
     public void verifyEduPersonTargetedId() {
@@ -42,7 +45,8 @@ public class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPC
         val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser"),
             CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"), registeredService);
         assertTrue(attributes.containsKey(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID));
-        assertTrue(attributes.get(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID).equals(List.of("bhb1if0QzFdkKSS5xkcNCALXtGE=")));
+        assertEquals(List.of("bhb1if0QzFdkKSS5xkcNCALXtGE="),
+            attributes.get(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID));
     }
 
     @Test
@@ -74,7 +78,7 @@ public class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPC
         val attributes = chain.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser"),
             CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"), registeredService);
 
-        assertTrue(attributes.get(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID)
-            .equals(List.of("bhb1if0QzFdkKSS5xkcNCALXtGE=")));
+        assertEquals(List.of("bhb1if0QzFdkKSS5xkcNCALXtGE="),
+            attributes.get(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID));
     }
 }

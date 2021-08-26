@@ -7,17 +7,18 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.WatcherService;
 
-import lombok.SneakyThrows;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +35,6 @@ import java.util.Collection;
 @Configuration("jsonServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 1)
-@ConditionalOnProperty(prefix = "cas.service-registry.json", name = "location")
 public class JsonServiceRegistryConfiguration {
 
     @Autowired
@@ -56,8 +56,9 @@ public class JsonServiceRegistryConfiguration {
     private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Bean
-    @SneakyThrows
-    public ServiceRegistry jsonServiceRegistry() {
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "jsonServiceRegistry")
+    public ServiceRegistry jsonServiceRegistry() throws Exception {
         val registry = casProperties.getServiceRegistry();
         val json = new JsonServiceRegistry(registry.getJson().getLocation(),
             WatcherService.noOp(),
@@ -65,15 +66,18 @@ public class JsonServiceRegistryConfiguration {
             registeredServiceReplicationStrategy.getObject(),
             resourceNamingStrategy.getObject(),
             serviceRegistryListeners.getObject());
-        if (registry.isWatcherEnabled()) {
+        if (registry.getJson().isWatcherEnabled()) {
             json.enableDefaultWatcherService();
         }
         return json;
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "jsonServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer jsonServiceRegistryExecutionPlanConfigurer() {
-        return plan -> plan.registerServiceRegistry(jsonServiceRegistry());
+        val registry = casProperties.getServiceRegistry().getJson();
+        return plan -> FunctionUtils.doIfNotNull(registry.getLocation(),
+            Unchecked.consumer(input -> plan.registerServiceRegistry(jsonServiceRegistry())));
     }
 }

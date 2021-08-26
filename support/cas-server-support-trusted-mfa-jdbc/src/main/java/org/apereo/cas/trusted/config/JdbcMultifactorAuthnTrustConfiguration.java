@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link JdbcMultifactorAuthnTrustConfiguration}.
@@ -73,21 +73,22 @@ public class JdbcMultifactorAuthnTrustConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "jpaMfaTrustedAuthnPackagesToScan")
-    public List<String> jpaMfaTrustedAuthnPackagesToScan() {
+    public Set<String> jpaMfaTrustedAuthnPackagesToScan() {
         val jpa = casProperties.getAuthn().getMfa().getTrusted().getJpa();
         val type = new JpaMultifactorAuthenticationTrustRecordEntityFactory(jpa.getDialect()).getType();
-        return CollectionUtils.wrapList(type.getPackage().getName());
+        return CollectionUtils.wrapSet(type.getPackage().getName());
     }
 
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean mfaTrustedAuthnEntityManagerFactory() {
         val factory = jpaBeanFactory.getObject();
-        val ctx = new JpaConfigurationContext(
-            jpaMfaTrustedAuthnVendorAdapter(),
-            "jpaMfaTrustedAuthnContext",
-            jpaMfaTrustedAuthnPackagesToScan(),
-            dataSourceMfaTrustedAuthn());
+        val ctx = JpaConfigurationContext.builder()
+            .dataSource(dataSourceMfaTrustedAuthn())
+            .packagesToScan(jpaMfaTrustedAuthnPackagesToScan())
+            .persistenceUnitName("jpaMfaTrustedAuthnContext")
+            .jpaVendorAdapter(jpaMfaTrustedAuthnVendorAdapter())
+            .build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getTrusted().getJpa());
     }
 

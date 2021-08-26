@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -27,7 +28,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -45,6 +47,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     CasThemesConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
@@ -60,11 +63,15 @@ import static org.mockito.Mockito.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreUtilConfiguration.class,
-    MailSenderAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
+    ThymeleafAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
-    properties = "cas.theme.defaultThemeName=test")
-@Tag("Simple")
+    properties = {
+        "cas.view.template-prefixes[0]=file:///etc/cas/templates",
+        "cas.theme.default-theme-name=test"
+    })
+@Tag("Web")
 public class ServiceThemeResolverTests {
     private static final String MOZILLA = "Mozilla";
 
@@ -90,7 +97,7 @@ public class ServiceThemeResolverTests {
 
         val request = new MockHttpServletRequest();
         val ctx = mock(RequestContext.class);
-        val scope = new LocalAttributeMap<Object>();
+        val scope = new LocalAttributeMap<>();
         scope.put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService(r.getServiceId()));
         when(ctx.getFlowScope()).thenReturn(scope);
         RequestContextHolder.setRequestContext(ctx);

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationCredential;
 
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -22,11 +23,11 @@ import java.time.ZonedDateTime;
 public class AuthenticationDateAttributeMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
-        builder.mergeAttribute(AuthenticationManager.AUTHENTICATION_DATE_ATTRIBUTE, ZonedDateTime.now(ZoneOffset.UTC).toEpochSecond());
+        builder.addAttribute(AuthenticationManager.AUTHENTICATION_DATE_ATTRIBUTE, ZonedDateTime.now(ZoneOffset.UTC).toEpochSecond());
     }
 
     @Override
     public boolean supports(final Credential credential) {
-        return credential != null;
+        return credential != null && !(credential instanceof MultifactorAuthenticationCredential);
     }
 }

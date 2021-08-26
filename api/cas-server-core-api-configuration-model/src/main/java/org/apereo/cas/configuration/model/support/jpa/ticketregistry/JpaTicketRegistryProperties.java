@@ -2,10 +2,13 @@ package org.apereo.cas.configuration.model.support.jpa.ticketregistry;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import javax.persistence.LockModeType;
@@ -19,6 +22,8 @@ import javax.persistence.LockModeType;
 @RequiresModule(name = "cas-server-support-jpa-ticket-registry")
 @Getter
 @Setter
+@Accessors(chain = true)
+@JsonFilter("JpaTicketRegistryProperties")
 public class JpaTicketRegistryProperties extends AbstractJpaProperties {
 
     /**
@@ -38,6 +43,7 @@ public class JpaTicketRegistryProperties extends AbstractJpaProperties {
     /**
      * Indicates the lock duration when one is about to be acquired by the cleaner.
      */
+    @DurationCapable
     private String jpaLockingTimeout = DEFAULT_LOCK_TIMEOUT;
 
     /**

@@ -1,4 +1,14 @@
 description = "Apereo CAS Core Logging Configuration"
+
+apply plugin: "com.github.johnrengelman.shadow"
+
+project.tasks.assemble.dependsOn project.tasks.shadowJar
+
+shadowJar {
+    transform(com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer.class)
+    exclude('*')
+}
+
 dependencies {
     api project(":api:cas-server-core-api-ticket")
     

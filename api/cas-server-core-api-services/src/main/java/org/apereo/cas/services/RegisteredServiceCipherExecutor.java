@@ -15,6 +15,11 @@ public interface RegisteredServiceCipherExecutor {
     String CUSTOM_HEADER_REGISTERED_SERVICE_ID = RegisteredService.class.getName();
 
     /**
+     * Default bean name.
+     */
+    String DEFAULT_BEAN_NAME = "registeredServiceCipherExecutor";
+
+    /**
      * Encode string.
      *
      * @param data    the data

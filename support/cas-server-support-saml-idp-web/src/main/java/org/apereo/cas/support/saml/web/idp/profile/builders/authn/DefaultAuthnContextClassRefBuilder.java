@@ -3,11 +3,14 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -56,8 +59,9 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
             return defClass;
         }
 
-        val finalCtx = StringUtils.defaultIfBlank(getAuthenticationContextByAssertion(assertion,
-            requestedAuthnContext, authnContextClassRefs), defClass);
+        val contextInAssertion = getAuthenticationContextByAssertion(assertion,
+            requestedAuthnContext, authnContextClassRefs);
+        val finalCtx = StringUtils.defaultIfBlank(contextInAssertion, defClass);
         LOGGER.debug("Returning authN context [{}]", finalCtx);
         return finalCtx;
     }
@@ -78,6 +82,29 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
                                                          final List<AuthnContextClassRef> authnContextClassRefs) {
         LOGGER.debug("AuthN Context comparison is requested to use [{}]", requestedAuthnContext.getComparison());
         authnContextClassRefs.forEach(c -> LOGGER.debug("Requested AuthN Context [{}]", c.getURI()));
+        val casAssertion = Assertion.class.cast(assertion);
+
+        val authnContexts = casProperties.getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings();
+        val definedContexts = CollectionUtils.convertDirectedListToMap(authnContexts);
+        val mappedMethod = authnContextClassRefs.stream()
+            .filter(ref -> StringUtils.isNotBlank(ref.getURI()))
+            .filter(ref -> definedContexts.containsKey(ref.getURI()))
+            .map(ref -> Pair.of(ref, definedContexts.get(ref.getURI())))
+            .findFirst()
+            .orElse(null);
+
+        val attributes = casAssertion.getPrincipal().getAttributes();
+        attributes.putAll(casAssertion.getAttributes());
+        val contextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
+        if (attributes.containsKey(contextAttribute) && mappedMethod != null) {
+            val authnContext = attributes.get(contextAttribute);
+            val satisfiedContext = CollectionUtils.firstElement(authnContext)
+                .map(Object::toString)
+                .orElse(null);
+            if (StringUtils.equals(mappedMethod.getValue(), satisfiedContext)) {
+                return mappedMethod.getLeft().getURI();
+            }
+        }
         return null;
     }
 }

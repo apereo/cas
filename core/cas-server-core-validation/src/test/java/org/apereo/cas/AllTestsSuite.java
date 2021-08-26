@@ -8,9 +8,8 @@ import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecificationTest
 import org.apereo.cas.validation.ChainingCasProtocolValidationSpecificationTests;
 import org.apereo.cas.validation.ImmutableAssertionTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -26,6 +25,6 @@ import org.junit.runner.RunWith;
     Cas10ProtocolValidationSpecificationTests.class,
     Cas20WithoutProxyingValidationSpecificationTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

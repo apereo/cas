@@ -2,8 +2,8 @@ package org.apereo.cas.support.events.dao;
 
 import org.apereo.cas.influxdb.InfluxDbConnectionFactory;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
+import org.apereo.cas.util.LoggingUtils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +37,7 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
     }
 
     @Override
-    public void saveInternal(final CasEvent event) {
+    public CasEvent saveInternal(final CasEvent event) {
         val builder = Point.measurement(MEASUREMENT);
         ReflectionUtils.doWithFields(CasEvent.class, field -> {
             if (!Modifier.isStatic(field.getModifiers())) {
@@ -52,6 +52,7 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
 
         val point = builder.time(System.currentTimeMillis(), TimeUnit.MILLISECONDS).build();
         influxDbConnectionFactory.writeBatch(point);
+        return event;
     }
 
     @Override
@@ -102,21 +103,12 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
                         }
                     }
                 } catch (final Exception e) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.error(e.getMessage(), e);
-                    } else {
-                        LOGGER.error(e.getMessage());
-                    }
+                    LoggingUtils.error(LOGGER, e);
                 }
             }));
         return events;
     }
 
-
-    /**
-     * Stops the database client.
-     */
-    @SneakyThrows
     @Override
     public void destroy() {
         this.influxDbConnectionFactory.close();

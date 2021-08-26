@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -31,11 +33,51 @@ public class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseS
     private SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder;
 
     @Test
+    public void verifyNoEncryption() {
+        val service = getSamlRegisteredServiceForTestShib();
+        service.setEncryptAttributes(true);
+
+        val service2 = getSamlRegisteredServiceFor(UUID.randomUUID().toString());
+        service2.setMetadataLocation("classpath:/unknown.xml");
+        service2.setEncryptionDataAlgorithms(null);
+        service2.setEncryptionKeyAlgorithms(null);
+        service2.setEncryptAttributes(true);
+        service2.setEncryptionOptional(true);
+
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+            .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
+        val statement = samlProfileSamlAttributeStatementBuilder.build(getAuthnRequestFor(service), new MockHttpServletRequest(),
+            new MockHttpServletResponse(), getAssertion(), service2,
+            adaptor, SAMLConstants.SAML2_POST_BINDING_URI,
+            new MessageContext());
+
+        assertTrue(statement.getEncryptedAttributes().isEmpty());
+        assertFalse(statement.getAttributes().isEmpty());
+    }
+
+    @Test
+    public void verifyEncryptionDisabledIfAssertionEncrypted() {
+        val service = getSamlRegisteredServiceForTestShib();
+        service.setEncryptAttributes(true);
+        service.setEncryptAssertions(true);
+
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+            .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
+        val statement = samlProfileSamlAttributeStatementBuilder.build(getAuthnRequestFor(service), new MockHttpServletRequest(),
+            new MockHttpServletResponse(), getAssertion(), service, adaptor, SAMLConstants.SAML2_POST_BINDING_URI,
+            new MessageContext());
+
+        assertTrue(statement.getEncryptedAttributes().isEmpty());
+        assertFalse(statement.getAttributes().isEmpty());
+    }
+
+    @Test
     public void verifyEncryptionForAllUndefined() {
         val service = getSamlRegisteredServiceForTestShib();
         service.setEncryptAttributes(true);
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+            .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
         val statement = samlProfileSamlAttributeStatementBuilder.build(getAuthnRequestFor(service), new MockHttpServletRequest(),
             new MockHttpServletResponse(), getAssertion(), service, adaptor, SAMLConstants.SAML2_POST_BINDING_URI,
             new MessageContext());

@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
     properties = "cas.authn.policy.source-selection-enabled=true")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Simple")
+@Tag("Authentication")
 public class UsernamePasswordCredentialTests {
 
     @Autowired
@@ -45,7 +45,6 @@ public class UsernamePasswordCredentialTests {
         val input = new UsernamePasswordCredential("casuser", "Mellon", StringUtils.EMPTY, Map.of());
         assertTrue(input.isValid());
         assertEquals(UsernamePasswordCredential.class, input.getClass());
-        assertEquals(input, input.toCredential());
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

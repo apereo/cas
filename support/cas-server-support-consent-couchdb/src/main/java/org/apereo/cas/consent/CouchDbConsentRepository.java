@@ -5,13 +5,13 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.couchdb.consent.ConsentDecisionCouchDbRepository;
 import org.apereo.cas.couchdb.consent.CouchDbConsentDecision;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.ektorp.DbAccessException;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -43,7 +43,7 @@ public class CouchDbConsentRepository implements ConsentRepository {
 
     @Override
     public Collection<ConsentDecision> findConsentDecisions(final String principal) {
-        return couchDb.findByPrincipal(principal).stream().map(c-> (ConsentDecision) c).collect(Collectors.toList());
+        return couchDb.findByPrincipal(principal).stream().map(c -> (ConsentDecision) c).collect(Collectors.toList());
     }
 
     @Override
@@ -52,18 +52,21 @@ public class CouchDbConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public boolean storeConsentDecision(final ConsentDecision decision) {
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
         try {
             val consent = couchDb.findFirstConsentDecision(decision);
+            var updated = (CouchDbConsentDecision) null;
             if (consent == null) {
-                couchDb.add(new CouchDbConsentDecision(decision));
+                updated = new CouchDbConsentDecision(decision);
+                couchDb.add(updated);
             } else {
-                couchDb.update(consent.copyDetailsFrom(decision));
+                updated = consent.copyDetailsFrom(decision);
+                couchDb.update(updated);
             }
-            return true;
-        } catch (final DbAccessException e) {
-            LOGGER.warn("Failure storing consent decision", e);
-            return false;
+            return updated;
+        } catch (final Exception e) {
+            LoggingUtils.warn(LOGGER, "Failure storing consent decision", e);
+            return null;
         }
     }
 
@@ -71,14 +74,22 @@ public class CouchDbConsentRepository implements ConsentRepository {
     public boolean deleteConsentDecision(final long id, final String principal) {
         try {
             val consent = couchDb.findByPrincipalAndId(principal, id);
-            if (consent == null) {
-                LOGGER.debug("Decision to be deleted not found [{}] [{}]", principal, id);
-            } else {
+            if (consent != null) {
                 couchDb.remove(consent);
                 return true;
             }
-        } catch (final DbAccessException e) {
-            LOGGER.warn("Failure deleting consent decision", e);
+        } catch (final Exception e) {
+            LoggingUtils.warn(LOGGER, "Failure deleting consent decision", e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteConsentDecisions(final String principal) {
+        val consent = couchDb.findByPrincipal(principal);
+        if (consent != null) {
+            consent.forEach(couchDb::remove);
+            return true;
         }
         return false;
     }

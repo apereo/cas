@@ -1,0 +1,12 @@
+{
+  "dependencies": "generic,interrupt-webflow",
+  "properties": [
+    "--cas.audit.engine.enabled=false",
+
+    "--cas.interrupt.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/interrupt.json",
+    "--cas.interrupt.core.trigger-mode=AFTER_AUTHENTICATION",
+    
+    "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+    "--cas.authn.accept.enabled=false"
+  ]
+}

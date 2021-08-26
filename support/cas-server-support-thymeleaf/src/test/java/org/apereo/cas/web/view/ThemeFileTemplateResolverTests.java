@@ -12,15 +12,10 @@ import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfigurati
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.web.servlet.theme.FixedThemeResolver;
 import org.thymeleaf.IEngineConfiguration;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
@@ -38,41 +33,24 @@ import static org.mockito.Mockito.*;
     ThymeleafAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Simple")
+@Tag("Web")
 public class ThemeFileTemplateResolverTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyOperationByRequestAttribute() throws Exception {
-        val request = new MockHttpServletRequest();
-        val paramName = casProperties.getTheme().getParamName();
-        request.setAttribute(paramName, "test");
-        val mock = new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse());
-        ExternalContextHolder.setExternalContext(mock);
-        verifyThemeFile();
-    }
-
-    @Test
-    public void verifyOperationBySessionAttribute() throws Exception {
-        val request = new MockHttpServletRequest();
-        val paramName = casProperties.getTheme().getParamName();
-        request.getSession(true).setAttribute(paramName, "test");
-        val mock = new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse());
-        ExternalContextHolder.setExternalContext(mock);
-        verifyThemeFile();
-    }
-
-    private void verifyThemeFile() throws IOException {
+    public void verifyOperationByDefaultValue() throws Exception {
         val themeDir = new File(FileUtils.getTempDirectory(), "test");
         if (!themeDir.exists() && !themeDir.mkdir()) {
-            fail("Unable to create directory " + themeDir);
+            fail(() -> "Unable to create directory " + themeDir);
         }
         val path = new File(themeDir, "casLoginView.html");
         FileUtils.write(path, "<html><html>", StandardCharsets.UTF_8);
 
-        val resolver = new ThemeFileTemplateResolver(casProperties);
+        val themeResolver = new FixedThemeResolver();
+        themeResolver.setDefaultThemeName("test");
+        val resolver = new ThemeFileTemplateResolver(casProperties, themeResolver);
         resolver.setSuffix(".html");
         resolver.setCheckExistence(true);
         resolver.setPrefix(FileUtils.getTempDirectoryPath() + "/%s/");

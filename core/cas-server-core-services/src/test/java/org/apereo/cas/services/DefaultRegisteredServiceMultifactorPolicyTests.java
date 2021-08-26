@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -20,7 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DefaultRegisteredServiceMultifactorPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultRegisteredServiceMultifactorPolicy.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
     public void verifySerializeADefaultRegisteredServiceMultifactorPolicyToJson() throws IOException {
@@ -32,9 +36,7 @@ public class DefaultRegisteredServiceMultifactorPolicyTests {
         policyWritten.setMultifactorAuthenticationProviders(providers);
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
-
         val policyRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceMultifactorPolicy.class);
-
         assertEquals(policyWritten, policyRead);
     }
 }

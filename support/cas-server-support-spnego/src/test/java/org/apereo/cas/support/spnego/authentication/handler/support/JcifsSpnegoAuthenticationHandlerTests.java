@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  * @author Arnaud Lesueur
  * @since 4.2.0
  */
-@Tag("Simple")
+@Tag("Spnego")
 public class JcifsSpnegoAuthenticationHandlerTests {
 
     private static final String USERNAME = "Username";
@@ -37,6 +37,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         assertNotNull(authenticationHandler.authenticate(credentials));
         assertEquals("test", credentials.getPrincipal().getId());
         assertNotNull(credentials.getNextToken());
+        assertTrue(authenticationHandler.supports(credentials.getClass()));
     }
 
     @Test

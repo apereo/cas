@@ -1,20 +1,14 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
-import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.DefaultAdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
-import org.apereo.cas.authentication.adaptive.intel.DefaultIPAddressIntelligenceService;
-import org.apereo.cas.authentication.adaptive.intel.GroovyIPAddressIntelligenceService;
 import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceService;
-import org.apereo.cas.authentication.adaptive.intel.RestfulIPAddressIntelligenceService;
-import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -63,28 +57,11 @@ public class CasCoreAuthenticationPolicyConfiguration {
             ipAddressIntelligenceService(), casProperties.getAuthn().getAdaptive());
     }
 
-    @ConditionalOnMissingBean(name = "requiredHandlerAuthenticationPolicyFactory")
-    @Bean
-    public ContextualAuthenticationPolicyFactory requiredHandlerAuthenticationPolicyFactory() {
-        return new RequiredHandlerAuthenticationPolicyFactory();
-    }
-
     @ConditionalOnMissingBean(name = "ipAddressIntelligenceService")
     @Bean
     @RefreshScope
     public IPAddressIntelligenceService ipAddressIntelligenceService() {
         val adaptive = casProperties.getAuthn().getAdaptive();
-        val intel = adaptive.getIpIntel();
-
-        if (StringUtils.isNotBlank(intel.getRest().getUrl())) {
-            return new RestfulIPAddressIntelligenceService(adaptive);
-        }
-        if (intel.getGroovy().getLocation() != null) {
-            return new GroovyIPAddressIntelligenceService(adaptive);
-        }
-        if (StringUtils.isNotBlank(intel.getBlackDot().getEmailAddress())) {
-            return new RestfulIPAddressIntelligenceService(adaptive);
-        }
-        return new DefaultIPAddressIntelligenceService(adaptive);
+        return CoreAuthenticationUtils.newIpAddressIntelligenceService(adaptive);
     }
 }

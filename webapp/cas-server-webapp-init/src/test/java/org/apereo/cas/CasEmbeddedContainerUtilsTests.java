@@ -20,8 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Simple")
+@Tag("Utility")
 public class CasEmbeddedContainerUtilsTests {
+    @Test
+    public void verifyMainArgs() {
+        assertTrue(CasEmbeddedContainerUtils.getLoggingInitialization().isPresent());
+    }
 
     @Test
     public void verifyCasBanner() {
@@ -29,8 +33,17 @@ public class CasEmbeddedContainerUtilsTests {
         assertNotNull(banner);
         val out = new ByteArrayOutputStream();
         banner.printBanner(new MockEnvironment(), getClass(), new PrintStream(out));
-        val results = new String(out.toByteArray(), StandardCharsets.UTF_8);
+        val results = out.toString(StandardCharsets.UTF_8);
         assertNotNull(results);
+    }
+
+    @Test
+    public void verifyStartup() {
+        assertNotNull(CasEmbeddedContainerUtils.getApplicationStartup());
+        System.setProperty("CAS_APP_STARTUP", "buffering");
+        assertNotNull(CasEmbeddedContainerUtils.getApplicationStartup());
+        System.setProperty("CAS_APP_STARTUP", "jfr");
+        assertNotNull(CasEmbeddedContainerUtils.getApplicationStartup());
     }
 
     @Test
@@ -39,20 +52,20 @@ public class CasEmbeddedContainerUtilsTests {
         assertNotNull(banner);
         val out = new ByteArrayOutputStream();
         banner.printBanner(new MockEnvironment(), getClass(), new PrintStream(out));
-        val results = new String(out.toByteArray(), StandardCharsets.UTF_8);
+        val results = out.toString(StandardCharsets.UTF_8);
         assertNotNull(results);
         assertEquals("Custom", results);
     }
 
     public static class CustomBanner extends AbstractCasBanner {
         @Override
-        protected String getTitle() {
-            return "Custom";
+        public void printBanner(final Environment environment, final Class<?> sourceClass, final PrintStream out) {
+            out.print(getTitle());
         }
 
         @Override
-        public void printBanner(final Environment environment, final Class<?> sourceClass, final PrintStream out) {
-            out.print(getTitle());
+        protected String getTitle() {
+            return "Custom";
         }
     }
 }

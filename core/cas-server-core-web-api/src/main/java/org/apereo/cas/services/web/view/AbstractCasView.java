@@ -6,13 +6,14 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractCasView extends AbstractView {
 
     /**
@@ -161,8 +162,8 @@ public abstract class AbstractCasView extends AbstractView {
      * @param model the model
      * @return the validated service from
      */
-    protected Service getServiceFrom(final Map<String, Object> model) {
-        return (Service) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE);
+    protected WebApplicationService getServiceFrom(final Map<String, Object> model) {
+        return (WebApplicationService) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE);
     }
 
     /**
@@ -206,7 +207,6 @@ public abstract class AbstractCasView extends AbstractView {
                                                                          final RegisteredService registeredService) {
         val authn = getPrimaryAuthenticationFrom(model);
         val assertion = getAssertionFrom(model);
-
         return authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(authn, assertion, model, registeredService);
     }
 
@@ -227,7 +227,7 @@ public abstract class AbstractCasView extends AbstractView {
     /**
      * Prepare cas response attributes for view model.
      *
-     * @param model the model
+     * @param model                 the model
      */
     protected void prepareCasResponseAttributesForViewModel(final Map<String, Object> model) {
         val service = authenticationRequestServiceSelectionStrategies.resolveService(getServiceFrom(model));
@@ -241,7 +241,7 @@ public abstract class AbstractCasView extends AbstractView {
         attributes.putAll(protocolAttributes);
 
         LOGGER.debug("Final collection of attributes for the response are [{}].", attributes.keySet());
-        putCasResponseAttributesIntoModel(model, attributes, registeredService, this.attributesRenderer);
+        putCasResponseAttributesIntoModel(model, attributes, registeredService, attributesRenderer);
     }
 
     /**
@@ -258,10 +258,10 @@ public abstract class AbstractCasView extends AbstractView {
     /**
      * Put cas response attributes into model.
      *
-     * @param model              the model
-     * @param attributes         the attributes
-     * @param registeredService  the registered service
-     * @param attributesRenderer the attributes renderer
+     * @param model                 the model
+     * @param attributes            the attributes
+     * @param registeredService     the registered service
+     * @param attributesRenderer    the attributes renderer
      */
     protected void putCasResponseAttributesIntoModel(final Map<String, Object> model,
                                                      final Map<String, Object> attributes,
@@ -269,7 +269,8 @@ public abstract class AbstractCasView extends AbstractView {
                                                      final CasProtocolAttributesRenderer attributesRenderer) {
 
         LOGGER.trace("Beginning to encode attributes for the response");
-        val encodedAttributes = this.protocolAttributeEncoder.encodeAttributes(attributes, registeredService);
+        val webApplicationService = getServiceFrom(model);
+        val encodedAttributes = protocolAttributeEncoder.encodeAttributes(attributes, registeredService, webApplicationService);
 
         LOGGER.debug("Encoded attributes for the response are [{}]", encodedAttributes);
         putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES, encodedAttributes);

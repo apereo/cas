@@ -3,6 +3,7 @@ layout: default
 title: CAS - Password Policy Enforcement
 category: Authentication
 ---
+{% include variables.html %}
 
 # Password Policy Enforcement
 
@@ -27,8 +28,7 @@ fully explaining the nature of the problem.
 - `PASSWORD_EXPIRED`
 
 The translation of LDAP errors into CAS workflow is all
-handled by [ldaptive](http://www.ldaptive.org/docs/guide/authentication/accountstate). To see the relevant list of CAS properties,
-please [review this guide](../configuration/Configuration-Properties.html#ldap-authentication).
+handled by [ldaptive](http://www.ldaptive.org/docs/guide/authentication/accountstate). 
 
 ### Account Expiration Notification
 
@@ -38,5 +38,4 @@ determined through pre-configured LDAP attributes with default values in place.
 ## JDBC
 
 A certain number of database authentication schemes have limited support for detecting locked/disabled/etc accounts
-via column names that are defined in the CAS settings. To see the relevant list of CAS properties,
-please [review this guide](../configuration/Configuration-Properties.html#database-authentication).
+via column names that are defined in the CAS settings. 

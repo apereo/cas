@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * Statistics endpoint reports back on cas metrics and ticket stats.
  * @author Scott Battaglia
  * @since 3.3.5
  */
@@ -39,6 +41,7 @@ public class StatisticsEndpoint extends BaseCasActuatorEndpoint {
      * @return the availability
      */
     @ReadOperation
+    @Operation(summary = "Get a report of CAS statistics")
     public Map<String, Object> handle() {
         val model = new HashMap<String, Object>();
 

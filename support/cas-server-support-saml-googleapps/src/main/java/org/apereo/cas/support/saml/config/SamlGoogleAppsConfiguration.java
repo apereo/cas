@@ -11,6 +11,7 @@ import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServic
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.UrlValidator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -39,11 +40,15 @@ import org.springframework.context.annotation.Lazy;
 public class SamlGoogleAppsConfiguration implements InitializingBean {
 
     @Autowired
+    @Qualifier("urlValidator")
+    private ObjectProvider<UrlValidator> urlValidator;
+
+    @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Autowired
@@ -79,7 +84,8 @@ public class SamlGoogleAppsConfiguration implements InitializingBean {
             servicesManager.getObject(),
             googleSaml20ObjectBuilder(),
             casProperties.getSamlCore().getSkewAllowance(),
-            casProperties.getServer().getPrefix());
+            casProperties.getServer().getPrefix(),
+            urlValidator.getObject());
     }
 
     @Override

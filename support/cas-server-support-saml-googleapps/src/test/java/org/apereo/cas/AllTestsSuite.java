@@ -5,9 +5,8 @@ import org.apereo.cas.support.saml.authentication.GoogleSaml20ObjectBuilderTests
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceFactoryTests;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Test suite to run all SAML tests.
@@ -21,6 +20,6 @@ import org.junit.runner.RunWith;
     GoogleAccountsServiceFactoryTests.class,
     GoogleSaml20ObjectBuilderTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

@@ -5,13 +5,13 @@ import org.apereo.cas.couchdb.events.EventCouchDbRepository;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 
+import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.stream.Collectors;
 
 /**
@@ -27,12 +27,7 @@ public class CouchDbCasEventRepository extends AbstractCasEventRepository implem
     private final boolean asynchronous;
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor(
-        new ThreadFactory() {
-            @Override
-            public Thread newThread(final Runnable r) {
-                return new Thread(r, "CouchDbCasEventRepositoryThread");
-            }
-        });
+        r -> new Thread(r, "CouchDbCasEventRepositoryThread"));
 
     public CouchDbCasEventRepository(final CasEventRepositoryFilter eventRepositoryFilter,
                                      final EventCouchDbRepository couchDb, final boolean asynchronous) {
@@ -81,12 +76,14 @@ public class CouchDbCasEventRepository extends AbstractCasEventRepository implem
     }
 
     @Override
-    public void saveInternal(final CasEvent event) {
+    public CasEvent saveInternal(final CasEvent event) {
+        val cdbEvent = new CouchDbCasEvent(event);
         if (asynchronous) {
-            this.executorService.execute(() -> couchDb.add(new CouchDbCasEvent(event)));
+            this.executorService.execute(() -> couchDb.add(cdbEvent));
         } else {
-            couchDb.add(new CouchDbCasEvent(event));
+            couchDb.add(cdbEvent);
         }
+        return cdbEvent;
     }
 
     @Override

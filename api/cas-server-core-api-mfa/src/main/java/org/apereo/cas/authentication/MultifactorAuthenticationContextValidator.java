@@ -2,8 +2,6 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.services.RegisteredService;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.util.Optional;
 
 /**
@@ -22,9 +20,9 @@ public interface MultifactorAuthenticationContextValidator {
      * @param authentication   the authentication
      * @param requestedContext the requested context
      * @param service          the service
-     * @return the resulting pair indicates whether context is satisfied, and if so, by which provider.
+     * @return the result indicates whether context is satisfied, and if so, by which provider.
      */
-    Pair<Boolean, Optional<MultifactorAuthenticationProvider>> validate(Authentication authentication,
-                                                                        String requestedContext,
-                                                                        RegisteredService service);
+    MultifactorAuthenticationContextValidationResult validate(Authentication authentication,
+                                                              String requestedContext,
+                                                              Optional<RegisteredService> service);
 }

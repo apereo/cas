@@ -1,23 +1,12 @@
 ---
 layout: default
-title: CAS - CAS SAML Protocol
+title: CAS - CAS SAML v1.1 Protocol
 category: Protocols
 ---
 
-# SAML Protocol
+{% include variables.html %}
 
-CAS has support for versions 1.1 and 2 of the SAML protocol to a specific extent.
-This document deals with CAS-specific concerns.
-
-## SAML2
-
-CAS provides support for [SAML2 Authentication](../installation/Configuring-SAML2-Authentication.html).
-
-## Google Apps
-
-CAS provides support for [Google Apps Integration](../integration/Google-Apps-Integration.html).
-
-## SAML 1.1
+# SAML v1.1 Protocol
 
 CAS supports the [standardized SAML 1.1 protocol](http://en.wikipedia.org/wiki/SAML_1.1) primarily to:
 
@@ -28,23 +17,15 @@ A SAML 1.1 ticket validation response is obtained by validating a ticket via POS
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-saml</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml" %}
 
-### Administrative Endpoints
-
+## Actuator Endpoints
+           
 The following endpoints are provided by CAS:
- 
-| Endpoint          | Description
-|-------------------|---------------------------------------------------------------------------------------------------
-| `samlValidate`    | Obtain a SAML 1.1 validation payload by supplying a `username`, `password` and `service` as parameters.
 
-### Sample Request
+{% include actuators.html endpoints="samlValidate" %}
+
+## Sample Request
 
 ```xml
 POST /cas/samlValidate?ticket=
@@ -66,7 +47,7 @@ Content-Type: text/xml
 </SOAP-ENV:Envelope>
 ```
 
-### Sample Response
+## Sample Response
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -117,21 +98,18 @@ Content-Type: text/xml
 </SOAP-ENV:Envelope>
 ```
 
-
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-core).
+{% include casproperties.html properties="cas.saml-core" %}
 
 You may also need to declare the following repository in
 your CAS Overlay to be able to resolve dependencies:
 
-```xml
-<repositories>
-    ...
-    <repository>
-        <id>shibboleth-releases</id>
-        <url>https://build.shibboleth.net/nexus/content/repositories/releases</url>
-    </repository>
-    ...
-</repositories>
+```groovy
+repositories {
+    maven { 
+        mavenContent { releasesOnly() }
+        url "https://build.shibboleth.net/nexus/content/repositories/releases" 
+    }
+}
 ```

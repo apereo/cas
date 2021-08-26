@@ -4,6 +4,7 @@ import org.apereo.cas.ticket.TicketState;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,8 +28,8 @@ import java.util.concurrent.TimeUnit;
 @ToString(callSuper = true)
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = true)
 @Slf4j
 public abstract class BaseDateTimeRegisteredServiceSingleSignOnParticipationPolicy extends DefaultRegisteredServiceSingleSignOnParticipationPolicy {
@@ -41,14 +42,14 @@ public abstract class BaseDateTimeRegisteredServiceSingleSignOnParticipationPoli
     private int order;
 
     @Override
-    public boolean shouldParticipateInSso(final TicketState ticketState) {
+    public boolean shouldParticipateInSso(final RegisteredService registeredService, final TicketState ticketState) {
         LOGGER.trace("Calculating SSO participation criteria for [{}]", ticketState);
         if (timeValue <= 0) {
             return true;
         }
 
         val convertedNano = timeUnit.toNanos(timeValue);
-        val startingDate = determineInitialDateTime(ticketState);
+        val startingDate = determineInitialDateTime(registeredService, ticketState);
         val endingDate = startingDate.plusNanos(convertedNano);
         val currentTime = ZonedDateTime.now(ZoneOffset.UTC);
 
@@ -67,9 +68,10 @@ public abstract class BaseDateTimeRegisteredServiceSingleSignOnParticipationPoli
     /**
      * Determine initial date time zoned date time.
      *
-     * @param ticketState the ticket state
+     * @param registeredService the registered service
+     * @param ticketState       the ticket state
      * @return the zoned date time
      */
     @JsonIgnore
-    protected abstract ZonedDateTime determineInitialDateTime(TicketState ticketState);
+    protected abstract ZonedDateTime determineInitialDateTime(RegisteredService registeredService, TicketState ticketState);
 }

@@ -6,6 +6,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.keys.AesKey;
 import org.jose4j.keys.RsaKeyUtil;
 
@@ -36,20 +38,19 @@ import java.util.Map;
  */
 @Slf4j
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, R> {
-    private static final int MAP_SIZE = 8;
     private static final BigInteger RSA_PUBLIC_KEY_EXPONENT = BigInteger.valueOf(65537);
 
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
-    
+
     private Key signingKey;
 
-    private Map<String, Object> customHeaders = new LinkedHashMap<>(MAP_SIZE);
-    
+    private Map<String, Object> customHeaders = new LinkedHashMap<>();
+
     /**
      * Extract private key from resource private key.
      *
@@ -82,6 +83,11 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         return factory.getObject();
     }
 
+    @Override
+    public boolean isEnabled() {
+        return this.signingKey != null;
+    }
+
     /**
      * Sign the array by first turning it into a base64 encoded string.
      *
@@ -92,11 +98,18 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         if (this.signingKey == null) {
             return value;
         }
-        if ("RSA".equalsIgnoreCase(this.signingKey.getAlgorithm())) {
-            return EncodingUtils.signJwsRSASha512(this.signingKey, value, this.customHeaders);
-        }
-        return EncodingUtils.signJwsHMACSha512(this.signingKey, value, this.customHeaders);
+        return signWith(value, getSigningAlgorithmFor(this.signingKey));
+    }
 
+    /**
+     * Sign value with given parameters.
+     *
+     * @param value          the value
+     * @param algHeaderValue the alg header value
+     * @return the byte [ ]
+     */
+    protected byte[] signWith(final byte[] value, final String algHeaderValue) {
+        return EncodingUtils.signJws(this.signingKey, value, algHeaderValue, this.customHeaders);
     }
 
     /**
@@ -154,8 +167,15 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         }
     }
 
-    @Override
-    public boolean isEnabled() {
-        return this.signingKey != null;
+    /**
+     * Gets signing algorithm for.
+     *
+     * @param signingKey the signing key
+     * @return the signing algorithm for
+     */
+    protected String getSigningAlgorithmFor(final Key signingKey) {
+        return "RSA".equalsIgnoreCase(signingKey.getAlgorithm())
+            ? AlgorithmIdentifiers.RSA_USING_SHA512
+            : AlgorithmIdentifiers.HMAC_SHA512;
     }
 }

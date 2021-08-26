@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.4.4
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class ResponseTests {
 
     private static final String TICKET_PARAM = "ticket";
@@ -52,6 +52,15 @@ public class ResponseTests {
         attributes.put(TICKET_PARAM, TICKET_VALUE);
         val response = DefaultResponse.getRedirectResponse(url, attributes);
         assertEquals("http://localhost:8080/foo?ticket=foobar#hello", response.getUrl());
+    }
+
+    @Test
+    public void verifyConstructionWithFragmentAndNoQueryString2() {
+        val url = "http://localhost:8080/foo#hello?test=boo";
+        val attributes = new HashMap<String, String>();
+        attributes.put(TICKET_PARAM, TICKET_VALUE);
+        val response = DefaultResponse.getRedirectResponse(url, attributes);
+        assertEquals("http://localhost:8080/foo?ticket=foobar#hello?test=boo", response.getUrl());
     }
 
     @Test

@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 import java.security.NoSuchAlgorithmException;
@@ -21,10 +22,20 @@ import java.util.stream.IntStream;
 @Slf4j
 @UtilityClass
 public class RandomUtils {
+    /**
+     * System property to indicate the algorithm
+     * used for random number generation.
+     */
+    public static final String SYSTEM_PROPERTY_SECURE_RANDOM_ALG = "CAS_SECURE_RANDOM_ALG";
+
     private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
+
     private static final int SECURE_ID_CHARS_LENGTH = 40;
+
     private static final int SECURE_ID_BYTES_LENGTH = 20;
+
     private static final int SECURE_ID_SHIFT_LENGTH = 4;
+
     private static final String NATIVE_NON_BLOCKING_ALGORITHM = "NativePRNGNonBlocking";
 
     /**
@@ -34,7 +45,8 @@ public class RandomUtils {
      */
     public static SecureRandom getNativeInstance() {
         try {
-            return SecureRandom.getInstance(NATIVE_NON_BLOCKING_ALGORITHM);
+            val alg = StringUtils.defaultIfBlank(System.getProperty(SYSTEM_PROPERTY_SECURE_RANDOM_ALG), NATIVE_NON_BLOCKING_ALGORITHM);
+            return SecureRandom.getInstance(alg);
         } catch (final NoSuchAlgorithmException e) {
             LOGGER.trace(e.getMessage(), e);
             return new SecureRandom();
@@ -50,6 +62,13 @@ public class RandomUtils {
         return nextLong(0, Long.MAX_VALUE);
     }
 
+    /**
+     * Next long and provide long.
+     *
+     * @param startInclusive the start inclusive
+     * @param endExclusive   the end exclusive
+     * @return the long
+     */
     public static long nextLong(final long startInclusive, final long endExclusive) {
         Validate.isTrue(endExclusive >= startInclusive,
             "Start value must be smaller or equal to end value.");
@@ -62,6 +81,13 @@ public class RandomUtils {
         return (long) nextDouble(startInclusive, endExclusive);
     }
 
+    /**
+     * Next double and provide double.
+     *
+     * @param startInclusive the start inclusive
+     * @param endInclusive   the end inclusive
+     * @return the double
+     */
     public static double nextDouble(final double startInclusive, final double endInclusive) {
         Validate.isTrue(endInclusive >= startInclusive,
             "Start value must be smaller or equal to end value.");

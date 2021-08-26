@@ -11,6 +11,7 @@ import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestRemoteUserNo
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -25,7 +26,6 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +71,7 @@ public class TrustedAuthenticationConfiguration {
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Bean
@@ -88,17 +88,15 @@ public class TrustedAuthenticationConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "trustedPrincipalResolver")
     public PrincipalResolver trustedPrincipalResolver() {
-        val resolver = new ChainingPrincipalResolver(this.principalElectionStrategy.getObject());
+        val resolver = new ChainingPrincipalResolver(this.principalElectionStrategy.getObject(), casProperties);
         val personDirectory = casProperties.getPersonDirectory();
         val trusted = casProperties.getAuthn().getTrusted();
-        val principalAttribute = StringUtils.defaultIfBlank(trusted.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-        val bearingPrincipalResolver = new PrincipalBearingPrincipalResolver(attributeRepository.getObject(),
-            trustedPrincipalFactory(),
-            trusted.isReturnNull() || personDirectory.isReturnNull(),
-            principalAttribute,
-            trusted.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
-            trusted.isAttributeResolutionEnabled(),
-            org.springframework.util.StringUtils.commaDelimitedListToSet(trusted.getActiveAttributeRepositoryIds()));
+
+        val bearingPrincipalResolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(trustedPrincipalFactory(),
+            attributeRepository.getObject(),
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            PrincipalBearingPrincipalResolver.class,
+            trusted, personDirectory);
         resolver.setChain(CollectionUtils.wrapList(new EchoingPrincipalResolver(), bearingPrincipalResolver));
         return resolver;
     }

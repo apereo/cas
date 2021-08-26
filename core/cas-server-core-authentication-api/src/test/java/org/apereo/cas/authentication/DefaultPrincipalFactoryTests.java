@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class DefaultPrincipalFactoryTests {
     private static final String UID = "uid";
 
@@ -51,7 +51,7 @@ public class DefaultPrincipalFactoryTests {
     public void verifyAction() {
         val factory = PrincipalFactoryUtils.newPrincipalFactory();
         val p = factory.createPrincipal("casuser", CollectionUtils.wrap("name", "CAS"));
-        assertTrue(p.getId().equals("casuser"));
+        assertEquals(p.getId(), "casuser");
         assertEquals(1, p.getAttributes().size());
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.shell.commands.util;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
@@ -52,7 +54,8 @@ public class ValidateLdapConnectionCommand {
         @ShellOption(value = {"baseDn", "--baseDn"},
             help = "baseDn to use when testing the LDAP server, searching for accounts (i.e. OU=some,DC=org,DC=edu)") final String baseDn,
         @ShellOption(value = {"searchFilter", "--searchFilter"},
-            help = "Filter to use when searching for accounts (i.e. (&(objectClass=*) (sAMAccountName=user)))") final String searchFilter,
+            help = "Filter to use when searching for accounts (i.e. (&(objectClass=*) (sAMAccountName=user)))",
+            defaultValue = org.apache.commons.lang3.StringUtils.EMPTY) final String searchFilter,
         @ShellOption(value = {"userPassword", "--userPassword"},
             help = "Password for the user found in the search result, to attempt authentication",
             defaultValue = org.apache.commons.lang3.StringUtils.EMPTY) final String userPassword,
@@ -62,11 +65,12 @@ public class ValidateLdapConnectionCommand {
         try {
             return connect(url, bindDn, bindCredential, baseDn, searchFilter, userAttributes, userPassword);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
 
+    @SuppressWarnings("JdkObsolete")
     private static boolean connect(final String ldapUrl,
                                    final String bindDn,
                                    final String bindCredential,

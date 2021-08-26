@@ -1,8 +1,7 @@
 package org.apereo.cas.pm.jdbc;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllJdbcPasswordManagementTestsSuite}.
@@ -17,6 +16,6 @@ import org.junit.runner.RunWith;
     PostgresJdbcPasswordHistoryServiceTests.class,
     MySQLJdbcPasswordManagementServiceTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllJdbcPasswordManagementTestsSuite {
 }

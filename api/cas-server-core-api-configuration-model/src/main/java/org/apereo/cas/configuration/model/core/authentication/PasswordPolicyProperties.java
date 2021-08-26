@@ -1,15 +1,15 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.configuration.support.SpringResourceProperties;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 
 import javax.security.auth.login.LoginException;
-
 import java.io.Serializable;
 import java.util.Map;
 
@@ -23,17 +23,12 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("PasswordPolicyProperties")
 public class PasswordPolicyProperties implements Serializable {
     private static final long serialVersionUID = -3878237508646993100L;
 
     /**
      * Decide how authentication should handle password policy changes.
-     * Acceptable values are:
-     * <ul>
-     * <li>{@code DEFAULT}: Default password policy rules handling account states.</li>
-     * <li>{@code GROOVY}: Handle account changes and warnings via Groovy scripts</li>
-     * <li>{@code REJECT_RESULT_CODE}: Handle account state only if the authentication result code isn't blocked</li>
-     * </ul>
      */
     private PasswordPolicyHandlingOptions strategy = PasswordPolicyHandlingOptions.DEFAULT;
 
@@ -94,8 +89,12 @@ public class PasswordPolicyProperties implements Serializable {
     /**
      * Handle password policy via Groovy script.
      */
-    private Groovy groovy = new Groovy();
+    @NestedConfigurationProperty
+    private GroovyPasswordPolicyProperties groovy = new GroovyPasswordPolicyProperties();
 
+    /**
+     * The Password policy handling options.
+     */
     public enum PasswordPolicyHandlingOptions {
         /**
          * Default option to handle policy changes.
@@ -107,15 +106,9 @@ public class PasswordPolicyProperties implements Serializable {
         GROOVY,
         /**
          * Strategy to only activate password policy
-         * if the authentication response code is not blacklisted.
+         * if the authentication response code is not blocked.
          */
         REJECT_RESULT_CODE
     }
 
-    @RequiresModule(name = "cas-server-core-authentication", automated = true)
-    @Getter
-    @Setter
-    public static class Groovy extends SpringResourceProperties {
-        private static final long serialVersionUID = 8079027843747126083L;
-    }
 }

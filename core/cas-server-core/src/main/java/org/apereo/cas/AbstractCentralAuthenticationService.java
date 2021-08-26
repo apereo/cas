@@ -1,5 +1,8 @@
 package org.apereo.cas;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -7,7 +10,7 @@ import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
-import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceContext;
 import org.apereo.cas.services.ServicesManager;
@@ -19,14 +22,17 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -49,7 +55,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Setter
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractCentralAuthenticationService implements CentralAuthenticationService, Serializable, ApplicationEventPublisherAware {
 
     private static final long serialVersionUID = -7572316677901391166L;
@@ -67,11 +73,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * Implementation of Service Manager.
      */
     protected final ServicesManager servicesManager;
-
-    /**
-     * The logout manager.
-     **/
-    protected final LogoutManager logoutManager;
 
     /**
      * The ticket factory.
@@ -150,15 +151,20 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Transactional(transactionManager = "ticketTransactionManager")
     @Override
     public Collection<Ticket> getTickets(final Predicate<Ticket> predicate) {
-        try (val ticketsStream = this.ticketRegistry.getTicketsStream().filter(predicate)) {
+        try (val ticketsStream = this.ticketRegistry.stream().filter(predicate)) {
             return ticketsStream.collect(Collectors.toSet());
         }
     }
 
+
+    @Audit(
+        action = AuditableActions.TICKET_DESTROYED,
+        actionResolverName = AuditActionResolvers.DESTROY_TICKET_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.DESTROY_TICKET_RESOURCE_RESOLVER)
     @Transactional(transactionManager = "ticketTransactionManager")
     @Override
-    public void deleteTicket(final String ticketId) {
-        this.ticketRegistry.deleteTicket(ticketId);
+    public int deleteTicket(final String ticketId) {
+        return ticketRegistry.deleteTicket(ticketId);
     }
 
     /**
@@ -176,7 +182,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
                 return authentication;
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         throw new UnsatisfiedAuthenticationPolicyException(policy);
     }
@@ -247,8 +253,8 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @param service the service
      * @return the service
      */
-    protected Service resolveServiceFromAuthenticationRequest(final Service service) {
-        return authenticationRequestServiceSelectionStrategies.resolveService(service);
+    protected WebApplicationService resolveServiceFromAuthenticationRequest(final Service service) {
+        return authenticationRequestServiceSelectionStrategies.resolveService(service, WebApplicationService.class);
     }
 
     /**
@@ -259,10 +265,15 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @return true/false
      */
     protected boolean isTicketAuthenticityVerified(final String ticketId) {
-        if (this.cipherExecutor != null) {
-            LOGGER.trace("Attempting to decode service ticket [{}] to verify authenticity", ticketId);
-            return !StringUtils.isEmpty(this.cipherExecutor.decode(ticketId));
+        try {
+            if (this.cipherExecutor != null) {
+                LOGGER.trace("Attempting to decode service ticket [{}] to verify authenticity", ticketId);
+                return !StringUtils.isEmpty(this.cipherExecutor.decode(ticketId));
+            }
+            return !StringUtils.isEmpty(ticketId);
+        } catch (final Exception e) {
+            LoggingUtils.warn(LOGGER, e);
         }
-        return !StringUtils.isEmpty(ticketId);
+        return false;
     }
 }

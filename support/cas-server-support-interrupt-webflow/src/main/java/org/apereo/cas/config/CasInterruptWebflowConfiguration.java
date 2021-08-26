@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlan;
 import org.apereo.cas.interrupt.webflow.InterruptSingleSignOnParticipationStrategy;
@@ -7,6 +8,8 @@ import org.apereo.cas.interrupt.webflow.InterruptWebflowConfigurer;
 import org.apereo.cas.interrupt.webflow.actions.FinalizeInterruptFlowAction;
 import org.apereo.cas.interrupt.webflow.actions.InquireInterruptAction;
 import org.apereo.cas.interrupt.webflow.actions.PrepareInterruptViewAction;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -50,8 +53,21 @@ public class CasInterruptWebflowConfiguration {
     private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
+    
+    @Autowired
+    @Qualifier("servicesManager")
+    private ObjectProvider<ServicesManager> servicesManager;
+
+    @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
+
+    @Autowired
     private ConfigurableApplicationContext applicationContext;
 
+    
     @ConditionalOnMissingBean(name = "interruptWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
@@ -64,7 +80,7 @@ public class CasInterruptWebflowConfiguration {
     @Bean
     @RefreshScope
     public Action inquireInterruptAction() {
-        return new InquireInterruptAction(interruptInquirer.getObject().getInterruptInquirers());
+        return new InquireInterruptAction(interruptInquirer.getObject().getInterruptInquirers(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "prepareInterruptViewAction")
@@ -85,7 +101,9 @@ public class CasInterruptWebflowConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "interruptSingleSignOnParticipationStrategy")
     public SingleSignOnParticipationStrategy interruptSingleSignOnParticipationStrategy() {
-        return new InterruptSingleSignOnParticipationStrategy();
+        return new InterruptSingleSignOnParticipationStrategy(servicesManager.getObject(),
+            ticketRegistrySupport.getObject(),
+            authenticationServiceSelectionPlan.getObject());
     }
 
     @Bean

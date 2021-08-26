@@ -1,5 +1,6 @@
 package org.apereo.cas.jpa;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -7,11 +8,11 @@ import lombok.SneakyThrows;
 /**
  * This is {@link AbstractJpaEntityFactory}.
  *
- * @param <T> the type parameter
  * @author Misagh Moayyed
+ * @param <T> the type parameter
  * @since 6.2.0
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class AbstractJpaEntityFactory<T> {
     private final String dialect;

@@ -11,8 +11,8 @@ import lombok.ToString;
 
 /**
  * @author Scott Battaglia
- * @deprecated 6.2
  * @since 3.1
+ * @deprecated 6.2
  */
 @ToString
 @Setter
@@ -25,6 +25,7 @@ public class OpenIdCredential implements Credential {
     private static final long serialVersionUID = -6535869729412406133L;
 
     private String ticketGrantingTicketId;
+
     private String username;
 
     @Override

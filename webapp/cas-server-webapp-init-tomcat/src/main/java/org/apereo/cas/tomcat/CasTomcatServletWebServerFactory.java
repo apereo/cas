@@ -1,12 +1,16 @@
 package org.apereo.cas.tomcat;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheSslHostConfigProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatClusteringProperties;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.catalina.Context;
+import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.AprLifecycleListener;
 import org.apache.catalina.ha.session.BackupManager;
 import org.apache.catalina.ha.session.ClusterManagerBase;
@@ -29,6 +33,11 @@ import org.apache.catalina.tribes.transport.nio.NioReceiver;
 import org.apache.catalina.tribes.transport.nio.PooledParallelSender;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.coyote.http11.Http11AprProtocol;
+import org.apache.tomcat.util.descriptor.web.SecurityCollection;
+import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
+import org.apache.tomcat.util.net.SSLHostConfig;
+import org.apache.tomcat.util.net.SSLHostConfigCertificate;
+import org.jooq.lambda.Unchecked;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
@@ -48,7 +57,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
     private final CasConfigurationProperties casProperties;
 
     public CasTomcatServletWebServerFactory(final CasConfigurationProperties casProperties,
-                                            final ServerProperties serverProperties) {
+        final ServerProperties serverProperties) {
         super(serverProperties.getPort());
         if (StringUtils.isNotBlank(serverProperties.getServlet().getContextPath())) {
             setContextPath(serverProperties.getServlet().getContextPath());
@@ -59,20 +68,42 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         configureContextForSessionClustering();
     }
 
+    @Override
+    protected TomcatWebServer getTomcatWebServer(final Tomcat tomcat) {
+        configureSessionClustering(tomcat);
+        return super.getTomcatWebServer(tomcat);
+    }
+
+    @Override
+    protected void postProcessContext(final Context context) {
+        val http = casProperties.getServer().getTomcat().getHttp();
+        if (http.getRedirectPort() > 0) {
+            val securityConstraint = new SecurityConstraint();
+            securityConstraint.setUserConstraint("CONFIDENTIAL");
+            val collection = new SecurityCollection();
+            collection.addPattern("/*");
+            securityConstraint.addCollection(collection);
+            context.addConstraint(securityConstraint);
+        }
+    }
+
     private void configureConnectorForApr() {
         val apr = casProperties.getServer().getTomcat().getApr();
         if (apr.isEnabled()) {
-            LOGGER.trace("Attempting to initialize APR protocol via [{}] for port [{}]", Http11AprProtocol.class.getName(), getPort());
+            LOGGER.trace("Attempting to initialize APR protocol via [{}] for port [{}]",
+                Http11AprProtocol.class.getName(), getPort());
             val arpLifecycle = new AprLifecycleListener();
             setProtocol(Http11AprProtocol.class.getName());
             addContextLifecycleListeners(arpLifecycle);
-
-
             addConnectorCustomizers(c -> {
                 if (c.getPort() == getPort()) {
                     LOGGER.debug("Enabling APR on connector port [{}]", c.getPort());
                     c.setSecure(true);
                     c.setScheme("https");
+
+                    if (apr.getSslHostConfig().isEnabled()) {
+                        configureConnectorForSslHostConfig(c, apr.getSslHostConfig());
+                    }
 
                     val handler = (Http11AprProtocol) c.getProtocolHandler();
                     handler.setSSLEnabled(true);
@@ -94,38 +125,23 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
                     handler.setSSLDisableCompression(apr.isSslDisableCompression());
                     handler.setSSLHonorCipherOrder(apr.isSslHonorCipherOrder());
 
-                    try {
-                        if (apr.getSslCaCertificateFile() != null) {
-                            handler.setSSLCACertificateFile(apr.getSslCaCertificateFile().getCanonicalPath());
-                        }
-                        if (apr.getSslCertificateFile() != null) {
-                            handler.setSSLCertificateFile(apr.getSslCertificateFile().getCanonicalPath());
-                        }
-                        if (apr.getSslCertificateKeyFile() != null) {
-                            handler.setSSLCertificateKeyFile(apr.getSslCertificateKeyFile().getCanonicalPath());
-                        }
-                        if (apr.getSslCertificateChainFile() != null) {
-                            handler.setSSLCertificateChainFile(apr.getSslCertificateChainFile().getCanonicalPath());
-                        }
-                        if (apr.getSslCaRevocationFile() != null) {
-                            handler.setSSLCARevocationFile(apr.getSslCaRevocationFile().getCanonicalPath());
-                        }
-                    } catch (final Exception e) {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.error(e.getMessage(), e);
-                        } else {
-                            LOGGER.error(e.getMessage());
-                        }
-                    }
+                    FunctionUtils.doIfNotNull(apr.getSslCaCertificateFile(),
+                        Unchecked.consumer(f -> handler.setSSLCACertificateFile(apr.getSslCaCertificateFile().getCanonicalPath())));
+
+                    FunctionUtils.doIfNotNull(apr.getSslCertificateFile(),
+                        Unchecked.consumer(f -> handler.setSSLCertificateFile(apr.getSslCertificateFile().getCanonicalPath())));
+
+                    FunctionUtils.doIfNotNull(apr.getSslCertificateKeyFile(),
+                        Unchecked.consumer(f -> handler.setSSLCertificateKeyFile(apr.getSslCertificateKeyFile().getCanonicalPath())));
+
+                    FunctionUtils.doIfNotNull(apr.getSslCertificateChainFile(),
+                        Unchecked.consumer(f -> handler.setSSLCertificateChainFile(apr.getSslCertificateChainFile().getCanonicalPath())));
+
+                    FunctionUtils.doIfNotNull(apr.getSslCaRevocationFile(),
+                        Unchecked.consumer(f -> handler.setSSLCARevocationFile(apr.getSslCaRevocationFile().getCanonicalPath())));
                 }
             });
         }
-    }
-
-    @Override
-    protected TomcatWebServer getTomcatWebServer(final Tomcat tomcat) {
-        configureSessionClustering(tomcat);
-        return super.getTomcatWebServer(tomcat);
     }
 
     private void configureSessionClustering(final Tomcat tomcat) {
@@ -137,22 +153,6 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
 
         val cluster = new SimpleTcpCluster();
         val groupChannel = new GroupChannel();
-        if ("CLOUD".equalsIgnoreCase(clusteringProperties.getClusteringType())) {
-            val membershipService = new CloudMembershipService();
-            membershipService.setMembershipProviderClassName(clusteringProperties.getCloudMembershipProvider());
-            groupChannel.setMembershipService(membershipService);
-            cluster.setChannel(groupChannel);
-            tomcat.getEngine().setCluster(cluster);
-            LOGGER.trace("Tomcat session clustering/replication configured using cloud membership provider [{}]",
-                clusteringProperties.getCloudMembershipProvider());
-            return;
-        }
-
-        cluster.setChannelSendOptions(clusteringProperties.getChannelSendOptions());
-
-        val manager = getClusteringManagerInstance();
-        cluster.setManagerTemplate(manager);
-
         val receiver = new NioReceiver();
         receiver.setPort(clusteringProperties.getReceiverPort());
         receiver.setTimeout(clusteringProperties.getReceiverTimeout());
@@ -160,16 +160,6 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         receiver.setAddress(clusteringProperties.getReceiverAddress());
         receiver.setAutoBind(clusteringProperties.getReceiverAutoBind());
         groupChannel.setChannelReceiver(receiver);
-
-        val membershipService = new McastService();
-        membershipService.setPort(clusteringProperties.getMembershipPort());
-        membershipService.setAddress(clusteringProperties.getMembershipAddress());
-        membershipService.setFrequency(clusteringProperties.getMembershipFrequency());
-        membershipService.setDropTime(clusteringProperties.getMembershipDropTime());
-        membershipService.setRecoveryEnabled(clusteringProperties.isMembershipRecoveryEnabled());
-        membershipService.setRecoveryCounter(clusteringProperties.getMembershipRecoveryCounter());
-        membershipService.setLocalLoopbackDisabled(clusteringProperties.isMembershipLocalLoopbackDisabled());
-        groupChannel.setMembershipService(membershipService);
 
         val sender = new ReplicationTransmitter();
         sender.setTransport(new PooledParallelSender());
@@ -179,26 +169,49 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         groupChannel.addInterceptor(new TcpFailureDetector());
         groupChannel.addInterceptor(new MessageDispatchInterceptor());
 
-        val clusterMembers = clusteringProperties.getClusterMembers();
-        if (StringUtils.isNotBlank(clusterMembers)) {
-            val membership = new StaticMembershipInterceptor();
-            val memberSpecs = clusterMembers.split(",", -1);
-            for (val spec : memberSpecs) {
-                val memberDesc = new ClusterMemberDesc(spec);
-                val member = new StaticMember();
-                member.setHost(memberDesc.getAddress());
-                member.setPort(memberDesc.getPort());
-                member.setDomain("CAS");
-                member.setUniqueId(memberDesc.getUniqueId());
-                membership.addStaticMember(member);
-                groupChannel.addInterceptor(membership);
-                cluster.setChannel(groupChannel);
-            }
-        }
+        cluster.setChannelSendOptions(clusteringProperties.getChannelSendOptions());
+
+        val manager = getClusteringManagerInstance();
+        cluster.setManagerTemplate(manager);
+
         cluster.addValve(new ReplicationValve());
         cluster.addValve(new JvmRouteBinderValve());
         cluster.addClusterListener(new ClusterSessionListener());
 
+        if ("CLOUD".equalsIgnoreCase(clusteringProperties.getClusteringType())) {
+            val membershipService = new CloudMembershipService();
+            membershipService.setMembershipProviderClassName(clusteringProperties.getCloudMembershipProvider());
+            groupChannel.setMembershipService(membershipService);
+            LOGGER.trace("Tomcat session clustering/replication configured using cloud membership provider [{}]",
+                clusteringProperties.getCloudMembershipProvider());
+        } else {
+            val membershipService = new McastService();
+            membershipService.setPort(clusteringProperties.getMembershipPort());
+            membershipService.setAddress(clusteringProperties.getMembershipAddress());
+            membershipService.setFrequency(clusteringProperties.getMembershipFrequency());
+            membershipService.setDropTime(clusteringProperties.getMembershipDropTime());
+            membershipService.setRecoveryEnabled(clusteringProperties.isMembershipRecoveryEnabled());
+            membershipService.setRecoveryCounter(clusteringProperties.getMembershipRecoveryCounter());
+            membershipService.setLocalLoopbackDisabled(clusteringProperties.isMembershipLocalLoopbackDisabled());
+            groupChannel.setMembershipService(membershipService);
+
+            val clusterMembers = clusteringProperties.getClusterMembers();
+            if (StringUtils.isNotBlank(clusterMembers)) {
+                val membership = new StaticMembershipInterceptor();
+                val memberSpecs = clusterMembers.split(",", -1);
+                for (val spec : memberSpecs) {
+                    val memberDesc = new ClusterMemberDesc(spec);
+                    val member = new StaticMember();
+                    member.setHost(memberDesc.getAddress());
+                    member.setPort(memberDesc.getPort());
+                    member.setDomain("CAS");
+                    member.setUniqueId(memberDesc.getUniqueId());
+                    membership.addStaticMember(member);
+                    groupChannel.addInterceptor(membership);
+                }
+            }
+        }
+        cluster.setChannel(groupChannel);
         tomcat.getEngine().setCluster(cluster);
     }
 
@@ -230,13 +243,42 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         return backupManager;
     }
 
+    private static void configureConnectorForSslHostConfig(final Connector c,
+        final CasEmbeddedApacheSslHostConfigProperties properties) {
+
+        val hostConfig = new SSLHostConfig();
+        hostConfig.setCertificateVerification(properties.getCertificateVerification());
+        hostConfig.setCertificateVerificationDepth(properties.getCertificateVerificationDepth());
+        hostConfig.setHostName(properties.getHostName());
+        hostConfig.setProtocols(properties.getProtocols());
+        hostConfig.setSslProtocol(properties.getSslProtocol());
+        hostConfig.setCaCertificateFile(properties.getCaCertificateFile());
+        hostConfig.setInsecureRenegotiation(properties.isInsecureRenegotiation());
+        hostConfig.setRevocationEnabled(properties.isRevocationEnabled());
+
+        properties.getCertificates().forEach(cert -> {
+            val certificate = new SSLHostConfigCertificate(hostConfig,
+                SSLHostConfigCertificate.Type.valueOf(cert.getType().trim().toUpperCase()));
+            certificate.setCertificateChainFile(cert.getCertificateChainFile());
+            certificate.setCertificateFile(cert.getCertificateFile());
+            certificate.setCertificateKeyFile(cert.getCertificateKeyFile());
+            certificate.setCertificateKeyPassword(cert.getCertificateKeyPassword());
+            hostConfig.addCertificate(certificate);
+        });
+        c.addSslHostConfig(hostConfig);
+    }
+
     @Getter
     @ToString
     private static class ClusterMemberDesc {
         private static final int UNIQUE_ID_LIMIT = 255;
+
         private static final int UNIQUE_ID_ITERATIONS = 16;
+
         private final String address;
+
         private final int port;
+
         private String uniqueId;
 
         ClusterMemberDesc(final String spec) {

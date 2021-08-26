@@ -3,6 +3,8 @@ package org.apereo.cas.oidc.claims;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.services.ChainingAttributeReleasePolicy;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -12,9 +14,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link OidcCustomScopeAttributeReleasePolicyTests}.
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 
 @TestPropertySource(
-    properties = "cas.authn.oidc.claims=sub,name,given_name,family_name,middle_name,preferred_username,email,mail,groups")
+    properties = "cas.authn.oidc.discovery.claims=sub,name,given_name,family_name,middle_name,preferred_username,email,mail,groups")
 @Tag("OIDC")
 public class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     @Test
@@ -42,6 +42,20 @@ public class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTest
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
         assertTrue(policy.getAllowedAttributes().stream().allMatch(releaseAttrs::containsKey));
+        assertTrue(policy.getAllowedAttributes().containsAll(policy.determineRequestedAttributeDefinitions()));
         assertEquals(releaseAttrs.get("groups"), List.of("admin", "user"));
+    }
+
+    @Test
+    public void verifySerialization() {
+        val policy = new OidcCustomScopeAttributeReleasePolicy("groups", CollectionUtils.wrap("groups"));
+        val chain = new ChainingAttributeReleasePolicy();
+        chain.addPolicy(policy);
+        val service = getOidcRegisteredService();
+        service.setAttributeReleasePolicy(chain);
+        val serializer = new RegisteredServiceJsonSerializer();
+        var json = serializer.toString(service);
+        assertNotNull(json);
+        assertNotNull(serializer.from(json));
     }
 }

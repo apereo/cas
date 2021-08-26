@@ -1,14 +1,22 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
+import org.apereo.cas.util.CollectionUtils;
+
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.stream.Stream;
@@ -24,29 +32,71 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  */
 @Tag("X509")
 public class X509CommonNameEDIPIPrincipalResolverTests {
+    private static X509Certificate getCertificateFrom(final String certPath) throws Exception {
+        return (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
+            new FileInputStream(X509CommonNameEDIPIPrincipalResolverTests.class.getResource(certPath).getPath()));
+    }
+    
     /**
      * Gets the unit test parameters.
      *
      * @return Test parameter data.
      */
-    public static Stream<Arguments> getTestParameters() {
+    public static Stream<Arguments> getTestParameters() throws Exception {
         return Stream.of(
             /*
              * test with cert with EDIPI and no alternate
              */
             arguments(
-                "/edipi.cer",
+                getCertificateFrom("/edipi.cer"),
                 "1234567890",
-                null
+                null,
+                new EDIPIX509AttributeExtractor(),
+                true
             ),
 
             /*
              * test with alternate parameter and cert without EDIPI
              */
             arguments(
-                "/user-valid.crt",
+                getCertificateFrom("/user-valid.crt"),
                 "CN=Alice, OU=CAS, O=Jasig, L=Westminster, ST=Colorado, C=US",
-                "subjectDn"
+                "subjectDn",
+                new EDIPIX509AttributeExtractor(),
+                false
+            ),
+            
+            /*
+             * test with cert with EDIPI and no alternate, default attribute extractor
+             */
+            arguments(
+                getCertificateFrom("/edipi.cer"),
+                "1234567890",
+                null,
+                new DefaultX509AttributeExtractor(),
+                false
+            ),
+
+            /*
+             * Test with no subject dn name and alternate.
+             */
+            arguments(
+                new CasX509Certificate(true).setSubjectDn(StringUtils.EMPTY),
+                "CN=Jasig,DC=jasig,DC=org",
+                "issuerDn",
+                new EDIPIX509AttributeExtractor(),
+                false
+            ),
+
+            /*
+             * Test with no common name, and alternate.
+             */
+            arguments(
+                new CasX509Certificate(true).setSubjectDn("sample-subject-dn"),
+                "CN=Jasig,DC=jasig,DC=org",
+                "issuerDn",
+                new EDIPIX509AttributeExtractor(),
+                false
             )
         );
 
@@ -54,16 +104,35 @@ public class X509CommonNameEDIPIPrincipalResolverTests {
 
     @ParameterizedTest
     @MethodSource("getTestParameters")
-    public void verifyResolvePrincipalInternal(final String certPath,
+    public void verifyResolvePrincipalInternal(final X509Certificate certificate,
                                                final String expectedResult,
-                                               final String alternatePrincipalAttribute) throws FileNotFoundException, CertificateException {
-        val resolver = new X509CommonNameEDIPIPrincipalResolver();
-        resolver.setAlternatePrincipalAttribute(alternatePrincipalAttribute);
+                                               final String alternatePrincipalAttribute,
+                                               final X509AttributeExtractor x509AttributeExtractor,
+                                               final boolean edipiExpected) throws Exception {
 
-        val certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
-            new FileInputStream(getClass().getResource(certPath).getPath()));
+        val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
+            .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
+            .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
+            .returnNullIfNoAttributes(false)
+            .principalNameTransformer(formUserId -> formUserId)
+            .useCurrentPrincipalId(false)
+            .resolveAttributes(true)
+            .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
+            .build();
+
+        val resolver = new X509CommonNameEDIPIPrincipalResolver(context);
+        resolver.setAlternatePrincipalAttribute(alternatePrincipalAttribute);
+        resolver.setX509AttributeExtractor(x509AttributeExtractor);
 
         val userId = resolver.resolvePrincipalInternal(certificate);
         assertEquals(expectedResult, userId);
+
+        val attributes = resolver.extractPersonAttributes(certificate);
+        if (edipiExpected) {
+            assertEquals(attributes.get("x509EDIPI"), CollectionUtils.wrapList(expectedResult));
+        } else {
+            assertNull(attributes.get("x509EDIPI"));
+        }
     }
 }

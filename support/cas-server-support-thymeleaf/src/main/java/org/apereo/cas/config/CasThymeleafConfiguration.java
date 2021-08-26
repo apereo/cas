@@ -8,16 +8,18 @@ import org.apereo.cas.services.web.ThemeBasedViewResolver;
 import org.apereo.cas.services.web.ThemeViewResolver;
 import org.apereo.cas.services.web.ThemeViewResolverFactory;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.CasProtocolViewFactory;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.view.CasProtocolThymeleafViewFactory;
 import org.apereo.cas.web.view.ChainingTemplateViewResolver;
 import org.apereo.cas.web.view.RestfulUrlTemplateResolver;
 import org.apereo.cas.web.view.ThemeClassLoaderTemplateResolver;
 import org.apereo.cas.web.view.ThemeFileTemplateResolver;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,16 +39,19 @@ import org.springframework.util.MimeType;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.ViewResolver;
+import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.dialect.IPostProcessorDialect;
 import org.thymeleaf.postprocessor.IPostProcessor;
 import org.thymeleaf.postprocessor.PostProcessor;
 import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring5.view.AbstractThymeleafView;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
 import org.thymeleaf.templateresolver.AbstractTemplateResolver;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -62,6 +67,7 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnClass(value = SpringTemplateEngine.class)
 @ImportAutoConfiguration(ThymeleafAutoConfiguration.class)
+@Slf4j
 public class CasThymeleafConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -93,42 +99,51 @@ public class CasThymeleafConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "chainingTemplateViewResolver")
     public AbstractTemplateResolver chainingTemplateViewResolver() {
         val chain = new ChainingTemplateViewResolver();
+
+        val rest = casProperties.getView().getRest();
+        if (StringUtils.isNotBlank(rest.getUrl())) {
+            val url = new RestfulUrlTemplateResolver(casProperties, themeResolver.getObject());
+            configureTemplateViewResolver(url);
+            chain.addResolver(url);
+        }
+        
+        val templatePrefixes = casProperties.getView().getTemplatePrefixes();
+        templatePrefixes.forEach(prefix -> {
+            try {
+                val prefixPath = ResourceUtils.getFile(prefix).getCanonicalPath();
+                val viewPath = StringUtils.appendIfMissing(prefixPath, "/");
+
+                val theme = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)
+                    ? new ThemeClassLoaderTemplateResolver(themeResolver.getObject())
+                    : new ThemeFileTemplateResolver(casProperties, themeResolver.getObject());
+                configureTemplateViewResolver(theme);
+                theme.setPrefix(viewPath + "themes/%s/");
+                chain.addResolver(theme);
+
+                val template = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)
+                    ? new ClassLoaderTemplateResolver()
+                    : new FileTemplateResolver();
+                configureTemplateViewResolver(template);
+                template.setPrefix(viewPath);
+                chain.addResolver(template);
+            } catch (final Exception e) {
+                LoggingUtils.warn(LOGGER, String.format("Could not add template prefix '%s' to resolver", prefix), e);
+            }
+        });
+
+        val themeCp = new ThemeClassLoaderTemplateResolver(themeResolver.getObject());
+        configureTemplateViewResolver(themeCp);
+        themeCp.setPrefix("templates/%s/");
+        chain.addResolver(themeCp);
 
         val cpResolver = new ClassLoaderTemplateResolver();
         configureTemplateViewResolver(cpResolver);
         cpResolver.setPrefix("thymeleaf/templates/");
         chain.addResolver(cpResolver);
-
-        val themeCp = new ThemeClassLoaderTemplateResolver(casProperties);
-        configureTemplateViewResolver(themeCp);
-        themeCp.setPrefix("templates/%s/");
-        chain.addResolver(themeCp);
-
-        val templatePrefixes = casProperties.getView().getTemplatePrefixes();
-        templatePrefixes.forEach(Unchecked.consumer(prefix -> {
-            val prefixPath = ResourceUtils.getFile(prefix).getCanonicalPath();
-            val viewPath = StringUtils.appendIfMissing(prefixPath, "/");
-
-            val rest = casProperties.getView().getRest();
-            if (StringUtils.isNotBlank(rest.getUrl())) {
-                val url = new RestfulUrlTemplateResolver(casProperties);
-                configureTemplateViewResolver(url);
-                chain.addResolver(url);
-            }
-
-            val theme = new ThemeFileTemplateResolver(casProperties);
-            configureTemplateViewResolver(theme);
-            theme.setPrefix(viewPath + "themes/%s/");
-            chain.addResolver(theme);
-
-            val file = new FileTemplateResolver();
-            configureTemplateViewResolver(file);
-            file.setPrefix(viewPath);
-            chain.addResolver(file);
-        }));
-
+        
         chain.initialize();
         return chain;
     }
@@ -148,6 +163,12 @@ public class CasThymeleafConfiguration {
                 thymeleafViewResolver.addStaticVariable("cas", casProperties);
                 thymeleafViewResolver.addStaticVariable("casProperties", casProperties);
             }
+
+            @Override
+            public void configureThymeleafView(final AbstractThymeleafView thymeleafView) {
+                thymeleafView.addStaticVariable("cas", casProperties);
+                thymeleafView.addStaticVariable("casProperties", casProperties);
+            }
         };
     }
 
@@ -164,15 +185,19 @@ public class CasThymeleafConfiguration {
     @ConditionalOnMissingBean(name = "casThymeleafLoginFormDirector")
     @Bean
     @RefreshScope
-    public CasThymeleafLoginFormDirector casThymeleafLoginFormDirector() {
-        return new CasThymeleafLoginFormDirector();
+    @Autowired
+    public CasThymeleafLoginFormDirector casThymeleafLoginFormDirector(@Qualifier("casWebflowExecutionPlan")
+                                                                       final CasWebflowExecutionPlan webflowExecutionPlan) {
+        return new CasThymeleafLoginFormDirector(webflowExecutionPlan);
     }
 
     @ConditionalOnMissingBean(name = "themeViewResolverFactory")
     @Bean
     @RefreshScope
     public ThemeViewResolverFactory themeViewResolverFactory() {
-        val factory = new ThemeViewResolver.Factory(thymeleafViewResolver(), thymeleafProperties.getObject());
+        val factory = new ThemeViewResolver.Factory(thymeleafViewResolver(),
+            thymeleafProperties.getObject(), casProperties,
+            thymeleafViewResolverConfigurers.getObject());
         factory.setApplicationContext(applicationContext);
         return factory;
     }
@@ -195,7 +220,7 @@ public class CasThymeleafConfiguration {
         resolver.setApplicationContext(applicationContext);
         resolver.setExcludedViewNames(properties.getExcludedViewNames());
         resolver.setOrder(Ordered.LOWEST_PRECEDENCE - 5);
-        resolver.setCache(properties.isCache());
+        resolver.setCache(false);
         resolver.setViewNames(properties.getViewNames());
         resolver.setContentType(appendCharset(properties.getServlet().getContentType(), resolver.getCharacterEncoding()));
 
@@ -224,7 +249,6 @@ public class CasThymeleafConfiguration {
         thymeleafViewResolverConfigurers.getObject().stream()
             .sorted(OrderComparator.INSTANCE)
             .forEach(configurer -> configurer.configureThymeleafViewResolver(resolver));
-
         return resolver;
     }
 
@@ -237,5 +261,18 @@ public class CasThymeleafConfiguration {
         resolver.setOrder(0);
         resolver.setSuffix(".html");
         resolver.setTemplateMode(props.getMode());
+    }
+
+    @Bean
+    public SpringTemplateEngine templateEngine(final ThymeleafProperties properties,
+                                        final ObjectProvider<ITemplateResolver> templateResolvers,
+                                        final ObjectProvider<IDialect> dialects) {
+        val engine = new SpringTemplateEngine();
+        engine.setEnableSpringELCompiler(properties.isEnableSpringElCompiler());
+        engine.setRenderHiddenMarkersBeforeCheckboxes(properties.isRenderHiddenMarkersBeforeCheckboxes());
+        templateResolvers.orderedStream().forEach(engine::addTemplateResolver);
+        dialects.orderedStream().forEach(engine::addDialect);
+        
+        return engine;
     }
 }

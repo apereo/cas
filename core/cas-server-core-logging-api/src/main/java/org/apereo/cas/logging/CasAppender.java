@@ -2,6 +2,7 @@ package org.apereo.cas.logging;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.AppenderRef;
@@ -40,18 +41,34 @@ public class CasAppender extends AbstractAppender {
     }
 
     /**
+     * Instantiates a new CAS appender.
+     *
+     * @param name                the name
+     * @param config              the config
+     * @param appenderRef         the appender ref
+     * @param filter              a filter (e.g. ExceptionOnlyFilter)
+     */
+    public CasAppender(final String name, final Configuration config, final AppenderRef appenderRef, final Filter filter) {
+        super(name, filter, PatternLayout.createDefaultLayout(), false, Property.EMPTY_ARRAY);
+        this.config = config;
+        this.appenderRef = appenderRef;
+    }
+
+    /**
      * Create appender cas appender.
      *
-     * @param name        the name
-     * @param appenderRef the appender ref
-     * @param config      the config
+     * @param name                the name
+     * @param appenderRef         the appender ref
+     * @param filter              the optional Filter
+     * @param config              the config
      * @return the cas appender
      */
     @PluginFactory
     public static CasAppender build(@PluginAttribute("name") final String name,
                                     @PluginElement("AppenderRef") final AppenderRef appenderRef,
+                                    @PluginElement("Filter") final Filter filter,
                                     @PluginConfiguration final Configuration config) {
-        return new CasAppender(name, config, appenderRef);
+        return new CasAppender(name, config, appenderRef, filter);
     }
 
     @Override

@@ -4,6 +4,7 @@ import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.impl.history.BasePasswordHistoryService;
 import org.apereo.cas.pm.impl.history.PasswordHistoryEntity;
 
+import lombok.Getter;
 import lombok.ToString;
 import lombok.val;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ import java.util.Collection;
  */
 @Transactional(transactionManager = "transactionManagerPasswordHistory")
 @ToString
+@Getter
 public class JdbcPasswordHistoryService extends BasePasswordHistoryService {
     private static final String SELECT_QUERY = "SELECT p FROM JdbcPasswordHistoryEntity p ";
 
@@ -63,7 +65,7 @@ public class JdbcPasswordHistoryService extends BasePasswordHistoryService {
 
     @Override
     public void remove(final String username) {
-        this.entityManager.createQuery("DELETE FROM PasswordHistoryEntity p WHERE p.username = :username")
+        this.entityManager.createQuery("DELETE FROM JdbcPasswordHistoryEntity p WHERE p.username = :username")
             .setParameter("username", username)
             .executeUpdate();
     }

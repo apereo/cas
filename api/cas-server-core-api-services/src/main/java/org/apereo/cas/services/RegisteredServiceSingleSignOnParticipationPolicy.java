@@ -29,11 +29,12 @@ public interface RegisteredServiceSingleSignOnParticipationPolicy extends Serial
     /**
      * Should registered service participate in sso?
      *
-     * @param ticketState the ticket state
-     * @return true/false
+     * @param registeredService the registered service
+     * @param ticketState       the ticket state
+     * @return true /false
      */
     @JsonIgnore
-    boolean shouldParticipateInSso(TicketState ticketState);
+    boolean shouldParticipateInSso(RegisteredService registeredService, TicketState ticketState);
 
     @Override
     default int getOrder() {
@@ -47,7 +48,7 @@ public interface RegisteredServiceSingleSignOnParticipationPolicy extends Serial
      *
      * @return true/false
      */
-    default TriStateBoolean isCreateCookieOnRenewedAuthentication() {
+    default TriStateBoolean getCreateCookieOnRenewedAuthentication() {
         return TriStateBoolean.UNDEFINED;
     }
 }

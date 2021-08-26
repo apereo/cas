@@ -36,8 +36,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @UtilityClass
 public class CollectionUtils {
-    private static final int MAP_SIZE = 8;
-
     /**
      * Converts the provided object into a collection
      * and return the first element, or empty.
@@ -78,8 +76,9 @@ public class CollectionUtils {
      * @param obj the object to convert into a collection
      * @return The collection instance containing the object provided
      */
+    @SuppressWarnings("JdkObsolete")
     public static Set<Object> toCollection(final Object obj) {
-        val c = new LinkedHashSet<Object>(MAP_SIZE);
+        val c = new LinkedHashSet<>();
         if (obj == null) {
             LOGGER.trace("Converting null obj to empty collection");
         } else if (obj instanceof Collection) {
@@ -124,7 +123,7 @@ public class CollectionUtils {
     public static <K, V> Map<K, V> wrap(final Multimap<K, V> source) {
         if (source != null && !source.isEmpty()) {
             val inner = source.asMap();
-            val map = new HashMap<Object, Object>();
+            val map = new HashMap<>();
             inner.forEach((k, v) -> map.put(k, wrap(v)));
             return (Map) map;
         }
@@ -401,7 +400,7 @@ public class CollectionUtils {
      * @return the list
      */
     public static <T> List<T> wrap(final T source) {
-        val list = new ArrayList<T>(MAP_SIZE);
+        val list = new ArrayList<T>();
         if (source != null) {
             if (source instanceof Collection) {
                 val it = ((Collection) source).iterator();
@@ -430,7 +429,7 @@ public class CollectionUtils {
      * @return the list
      */
     public static <T> List<T> wrap(final List<T> source) {
-        val list = new ArrayList<T>(MAP_SIZE);
+        val list = new ArrayList<T>();
         if (source != null && !source.isEmpty()) {
             list.addAll(source);
         }
@@ -445,7 +444,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> Set<T> wrap(final Set<T> source) {
-        val list = new LinkedHashSet<T>(MAP_SIZE);
+        val list = new LinkedHashSet<T>();
         if (source != null && !source.isEmpty()) {
             list.addAll(source);
         }
@@ -460,7 +459,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> Set<T> wrapSet(final T source) {
-        val list = new LinkedHashSet<T>(MAP_SIZE);
+        val list = new LinkedHashSet<T>();
         if (source != null) {
             list.add(source);
         }
@@ -475,7 +474,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> Set<T> wrapSet(final T... source) {
-        val list = new LinkedHashSet<T>(MAP_SIZE);
+        val list = new LinkedHashSet<T>();
         addToCollection(list, source);
         return list;
     }
@@ -488,7 +487,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> HashSet<T> wrapHashSet(final T... source) {
-        val list = new HashSet<T>(MAP_SIZE);
+        val list = new HashSet<T>();
         addToCollection(list, source);
         return list;
     }
@@ -512,7 +511,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> List<T> wrapList(final T... source) {
-        val list = new ArrayList<T>(MAP_SIZE);
+        val list = new ArrayList<T>();
         addToCollection(list, source);
         return list;
     }
@@ -525,7 +524,7 @@ public class CollectionUtils {
      * @return the array list
      */
     public static <T> ArrayList<T> wrapArrayList(final T... source) {
-        val list = new ArrayList<T>(MAP_SIZE);
+        val list = new ArrayList<T>();
         addToCollection(list, source);
         return list;
     }
@@ -539,7 +538,7 @@ public class CollectionUtils {
      * @return the array list
      */
     public static <T> Map<String, T> wrapLinkedHashMap(final String key, final T source) {
-        val list = new LinkedHashMap<String, T>(MAP_SIZE);
+        val list = new LinkedHashMap<String, T>();
         list.put(key, source);
         return list;
     }
@@ -585,18 +584,31 @@ public class CollectionUtils {
      * @param inputList the input list
      * @return the map
      */
-    public static Map<String, String> convertDirectedListToMap(final List<String> inputList) {
+    public static Map<String, String> convertDirectedListToMap(final Collection<String> inputList) {
         val mappings = new TreeMap<String, String>();
         inputList
             .stream()
             .map(s -> {
                 val bits = Splitter.on("->").splitToList(s);
-                return Pair.of(bits.get(0), bits.get(1));
+                return Pair.of(bits.get(0), bits.size() > 1 ? bits.get(1) : StringUtils.EMPTY);
             })
             .forEach(p -> mappings.put(p.getKey(), p.getValue()));
         return mappings;
     }
 
+    /**
+     * Wrap collection.
+     *
+     * @param <T>    the type parameter
+     * @param source the source
+     * @return the collection
+     */
+    public static <T> Collection<T> wrapCollection(final T... source) {
+        val list = new LinkedHashSet<T>();
+        addToCollection(list, source);
+        return list;
+    }
+    
     private static <T> void addToCollection(final Collection<T> list, final T[] source) {
         if (source != null) {
             Arrays.stream(source).forEach(s -> {

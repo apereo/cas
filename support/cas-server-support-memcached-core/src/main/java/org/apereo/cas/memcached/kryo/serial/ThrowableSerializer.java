@@ -1,5 +1,7 @@
 package org.apereo.cas.memcached.kryo.serial;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
@@ -25,13 +27,13 @@ public class ThrowableSerializer extends Serializer<Throwable> {
     }
 
     @Override
-    public Throwable read(final Kryo kryo, final Input input, final Class<Throwable> type) {
+    public Throwable read(final Kryo kryo, final Input input, final Class<? extends Throwable> aClass) {
         try {
             val clazz = kryo.readObject(input, Class.class);
             val msg = kryo.readObject(input, String.class);
             return (Throwable) clazz.getDeclaredConstructor(String.class).newInstance(msg);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new Throwable();
     }

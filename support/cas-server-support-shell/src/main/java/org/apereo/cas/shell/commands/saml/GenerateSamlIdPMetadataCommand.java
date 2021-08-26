@@ -1,6 +1,7 @@
 package org.apereo.cas.shell.commands.saml;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
@@ -8,11 +9,14 @@ import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificate
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -33,7 +37,15 @@ import java.util.Optional;
 @Slf4j
 public class GenerateSamlIdPMetadataCommand {
     @Autowired
-    private ResourceLoader resourceLoader;
+    private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("shibboleth.VelocityEngine")
+    private VelocityEngine velocityEngineFactoryBean;
+
+    @Autowired
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+    private OpenSamlConfigBean openSamlConfigBean;
 
     /**
      * Generate saml2 idp metadata at the specified location.
@@ -44,6 +56,7 @@ public class GenerateSamlIdPMetadataCommand {
      * @param scope            the scope
      * @param force            force generation of metadata
      * @param subjectAltNames  additional subject alternative names for cert (besides entity id)
+     * @throws Exception the exception
      */
     @ShellMethod(key = "generate-idp-metadata", value = "Generate SAML2 IdP Metadata")
     public void generate(
@@ -63,9 +76,10 @@ public class GenerateSamlIdPMetadataCommand {
             help = "Force metadata generation (XML only, not certs), overwriting anything at the specified location") final boolean force,
         @ShellOption(value = {"subjectAltNames", "--subjectAltNames"},
             help = "Comma separated list of other subject alternative names for the certificate (besides entityId)",
-            defaultValue = StringUtils.EMPTY) final String subjectAltNames) {
+            defaultValue = StringUtils.EMPTY) final String subjectAltNames) throws Exception {
 
-        val locator = new FileSystemSamlIdPMetadataLocator(new File(metadataLocation));
+        val locator = new FileSystemSamlIdPMetadataLocator(new File(metadataLocation),
+            Caffeine.newBuilder().initialCapacity(1).maximumSize(1).build());
         val writer = new DefaultSamlIdPCertificateAndKeyWriter();
         writer.setHostname(entityId);
         if (StringUtils.isNotBlank(subjectAltNames)) {
@@ -81,16 +95,18 @@ public class GenerateSamlIdPMetadataCommand {
 
         if (generateMetadata) {
             val props = new CasConfigurationProperties();
-            props.getAuthn().getSamlIdp().setEntityId(entityId);
+            props.getAuthn().getSamlIdp().getCore().setEntityId(entityId);
             props.getServer().setScope(scope);
             props.getServer().setPrefix(serverPrefix);
-
+            
             val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
                 .samlIdPMetadataLocator(locator)
                 .samlIdPCertificateAndKeyWriter(writer)
-                .resourceLoader(resourceLoader)
+                .applicationContext(applicationContext)
                 .casProperties(props)
                 .metadataCipherExecutor(CipherExecutor.noOpOfStringToString())
+                .openSamlConfigBean(openSamlConfigBean)
+                .velocityEngine(velocityEngineFactoryBean)
                 .build();
 
             val generator = new FileSystemSamlIdPMetadataGenerator(context);

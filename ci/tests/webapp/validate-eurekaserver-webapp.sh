@@ -2,7 +2,11 @@
 
 webAppServerType="$1"
 
-mv webapp/cas-server-webapp-eureka-server/build/libs/cas-server-webapp-eureka-server-*.war \
+./gradlew :webapp:cas-server-webapp-eureka-server:build \
+  -DskipNestedConfigMetadataGen=true -x check -x javadoc \
+  --no-daemon --build-cache --configure-on-demand --parallel
+
+mv webapp/cas-server-webapp-eureka-server/build/libs/cas-server-webapp-eureka-server-*-SNAPSHOT.war \
   webapp/cas-server-webapp-eureka-server/build/libs/caseurekaserver.war
 
 dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"

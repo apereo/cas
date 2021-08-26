@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.actions.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -29,17 +30,28 @@ public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonI
      * Attribute to indicate the x509 certificate.
      */
     public static final String REQUEST_ATTRIBUTE_X509_CERTIFICATE = "javax.servlet.request.X509Certificate";
+    
+    private static final String REQUEST_ATTRIBUTE_X509_ERROR = "X509CertificateAuthenticationError";
 
-    public X509CertificateCredentialsNonInteractiveAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+    /**
+     * CAS configuration settings.
+     */
+    protected final CasConfigurationProperties casProperties;
+
+    public X509CertificateCredentialsNonInteractiveAction(final CasDelegatingWebflowEventResolver webflowEventResolver,
                                                           final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-                                                          final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
-        super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
+                                                          final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
+                                                          final CasConfigurationProperties casProperties) {
+        super(webflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
+        this.casProperties = casProperties;
     }
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        val certificates = (X509Certificate[]) request.getAttribute(REQUEST_ATTRIBUTE_X509_CERTIFICATE);
+        val certificates = context.getRequestScope().contains(REQUEST_ATTRIBUTE_X509_ERROR)
+            ? null
+            : (X509Certificate[]) request.getAttribute(REQUEST_ATTRIBUTE_X509_CERTIFICATE);
 
         if (certificates == null || certificates.length == 0) {
             LOGGER.debug("Certificates not found in request attribute: [{}]", REQUEST_ATTRIBUTE_X509_CERTIFICATE);
@@ -47,5 +59,11 @@ public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonI
         }
         LOGGER.debug("[{}] Certificate(s) found in request: [{}]", certificates.length, Arrays.toString(certificates));
         return new X509CertificateCredential(certificates);
+    }
+
+    @Override
+    protected void onError(final RequestContext requestContext) {
+        WebUtils.putCasLoginFormViewable(requestContext, casProperties.getAuthn().getX509().isMixedMode());
+        requestContext.getRequestScope().put(REQUEST_ATTRIBUTE_X509_ERROR, "true");
     }
 }

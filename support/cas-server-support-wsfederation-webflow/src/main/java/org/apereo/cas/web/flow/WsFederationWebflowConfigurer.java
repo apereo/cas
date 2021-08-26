@@ -19,6 +19,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     static final String STATE_ID_WS_FEDERATION_ACTION = "wsFederationAction";
+
     private static final String WS_FEDERATION_REDIRECT = "wsFederationRedirect";
 
     public WsFederationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
@@ -34,9 +35,11 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
         if (flow != null) {
             createStopWebflowViewState(flow);
 
-            val actionState = createActionState(flow, STATE_ID_WS_FEDERATION_ACTION, createEvaluateAction(STATE_ID_WS_FEDERATION_ACTION));
+            val actionState = createActionState(flow, STATE_ID_WS_FEDERATION_ACTION, STATE_ID_WS_FEDERATION_ACTION);
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET);
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_REDIRECT, WS_FEDERATION_REDIRECT);
+            createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_GENERATE_SERVICE_TICKET,
+                CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
 
             val currentStartState = getStartState(flow).getId();
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_PROCEED, currentStartState);
@@ -48,6 +51,6 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
     }
 
     private void createStopWebflowViewState(final Flow flow) {
-        createViewState(flow, CasWebflowConstants.STATE_ID_STOP_WEBFLOW, CasWebflowConstants.STATE_ID_WSFED_STOP_WEBFLOW);
+        createViewState(flow, CasWebflowConstants.STATE_ID_STOP_WEBFLOW, "wsfed/casWsFedStopWebflow");
     }
 }

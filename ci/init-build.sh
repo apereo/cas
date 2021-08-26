@@ -6,7 +6,6 @@ echo -e "Branch: ${GITHUB_REF}"
 echo -e "Head Branch: ${GITHUB_HEAD_REF}"
 echo -e "Base Branch: ${GITHUB_BASE_REF}"
 echo -e "SHA: ${GITHUB_SHA}"
-echo -e "SHA: ${GITHUB_SHA}"
 echo -e "Workflow: ${GITHUB_WORKFLOW}"
 echo -e "Run ID: ${GITHUB_RUN_ID}"
 echo -e "Run Number: ${GITHUB_RUN_NUMBER}"
@@ -19,8 +18,15 @@ echo -e "User: ${USER}"
 echo -e "User HOME directory: ${HOME}"
 echo -e "************************************"
 
+echo -e "Checking for sudo, not available on Windows bash"
+SUDO=
+type sudo &> /dev/null
+if [ $? -eq 0 ]; then
+  SUDO=sudo
+fi
+
 echo -e "Setting build environment...\n"
-sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
+$SUDO mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services /tmp /temp
 
 echo -e "Configuring Gradle wrapper...\n"
 mkdir -p ~/.gradle && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties

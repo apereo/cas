@@ -3,6 +3,8 @@ layout: default
 title: CAS - Consul Service Discovery
 category: High Availability
 ---
+{% include variables.html %}
+
 
 # Consul Server Discovery Service
 
@@ -51,24 +53,17 @@ Each individual CAS server is given the ability to auto-register itself with the
 
 Support is added by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-consul-client</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consul-client" %}
 
-To see the relevant list of CAS properties,
-please [review this guide](../configuration/Configuration-Properties.html#consul-service-discovery).
+{% include casproperties.html thirdParty="spring.cloud.consul,spring.cloud.config.discovery" %}
 
 ### Troubleshooting
 
 To enable additional logging, configure the log4j configuration file to add the following levels:
 
 ```xml
-<AsyncLogger name="org.springframework.cloud.consul" level="debug" additivity="false">
+<Logger name="org.springframework.cloud.consul" level="debug" additivity="false">
   <AppenderRef ref="casConsole"/>
   <AppenderRef ref="casFile"/>
-</AsyncLogger>
+</Logger>
 ```

@@ -1,13 +1,14 @@
 package org.apereo.cas.authentication.event;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.notifications.sms.MockSmsSender;
+import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationFailureEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationSuccessfulEvent;
-import org.apereo.cas.util.MockSmsSender;
-import org.apereo.cas.util.io.CommunicationsManager;
-import org.apereo.cas.util.io.SmsSender;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     SurrogateAuthenticationEventListenerTests.SurrogateAuthenticationEventListenerTestConfiguration.class,
     RefreshAutoConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreUtilConfiguration.class,
     MailSenderAutoConfiguration.class,
     MailSenderValidatorAutoConfiguration.class
@@ -64,10 +66,24 @@ public class SurrogateAuthenticationEventListenerTests {
         val listener = new SurrogateAuthenticationEventListener(communicationsManager, casProperties);
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
             Map.of("phone", List.of("1234567890"), "mail", List.of("cas@example.org")));
-
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() throws Throwable {
+            public void execute() {
+                listener.handleSurrogateAuthenticationFailureEvent(new CasSurrogateAuthenticationFailureEvent(this,
+                    principal, "surrogate"));
+                listener.handleSurrogateAuthenticationSuccessEvent(new CasSurrogateAuthenticationSuccessfulEvent(this,
+                    principal, "surrogate"));
+            }
+        });
+    }
+
+    @Test
+    public void verifyFailsOperation() {
+        val listener = new SurrogateAuthenticationEventListener(communicationsManager, casProperties);
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", Map.of());
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() {
                 listener.handleSurrogateAuthenticationFailureEvent(new CasSurrogateAuthenticationFailureEvent(this,
                     principal, "surrogate"));
                 listener.handleSurrogateAuthenticationSuccessEvent(new CasSurrogateAuthenticationSuccessfulEvent(this,

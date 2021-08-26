@@ -60,10 +60,9 @@ public class BaseMemcachedProperties implements Serializable {
     private long opTimeout = -1;
 
     /**
-     * Indicate the transcoder type. Accepted values are {@code KRYO, SERIAL, WHALIN, WHALINV1}.
-     * The default is {code KRYO}.
+     * Indicate the transcoder type.
      */
-    private String transcoder = "KRYO";
+    private TranscoderTypes transcoder = TranscoderTypes.KRYO;
 
     /**
      * For transcoders other than kryo, determines the compression threshold.
@@ -91,6 +90,11 @@ public class BaseMemcachedProperties implements Serializable {
      * Hash algorithm. Acceptable values are {@code NATIVE_HASH,CRC_HASH,FNV1_64_HASH,FNV1A_64_HASH,FNV1_32_HASH,FNV1A_32_HASH,KETAMA_HASH}.
      */
     private String hashAlgorithm = "FNV1_64_HASH";
+
+    /**
+     * Protocol. Acceptable values are {@code TEXT, BINARY}.
+     */
+    private String protocol = "TEXT";
 
     /**
      * Sets the cap on the number of objects that can be allocated by
@@ -133,4 +137,25 @@ public class BaseMemcachedProperties implements Serializable {
      * </p>
      */
     private boolean kryoRegistrationRequired = true;
+
+    public enum TranscoderTypes {
+        /**
+         * CAS transcoder implementation based on Kryo fast serialization framework
+         * suited for efficient serialization of tickets. Provides pooling mechanisms
+         * as well as control over object registration and sequences.
+         */
+        KRYO,
+        /**
+         * Kryp native transcoder that serializes and compresses objects.
+         */
+        SERIAL,
+        /**
+         * Transcoder that provides compatibility with Greg Whalin's memcached client.
+         */
+        WHALIN,
+        /**
+         * Handles old whalin encoding: data type is in the first byte of the value.
+         */
+        WHALINV1
+    }
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.subject;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
@@ -13,6 +14,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEnc
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.NameID;
@@ -24,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.Objects;
 
 /**
  * This is {@link SamlProfileSamlSubjectBuilder}.
@@ -74,9 +75,9 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
                                  final MessageContext messageContext) throws SamlException {
 
         val assertion = Assertion.class.cast(casAssertion);
-        val validFromDate = ZonedDateTime.ofInstant(assertion.getValidFromDate().toInstant(), ZoneOffset.UTC);
-        LOGGER.debug("Locating the assertion consumer service url for binding [{}]", binding);
-        val acs = SamlIdPUtils.determineEndpointForRequest(authnRequest, adaptor, binding);
+        val validFromDate = ZonedDateTime.now(ZoneOffset.UTC);
+        LOGGER.trace("Locating the assertion consumer service url for binding [{}]", binding);
+        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, messageContext), adaptor, binding);
         val location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
         if (StringUtils.isBlank(location)) {
             LOGGER.warn("Subject recipient is not defined from either authentication request or metadata for [{}]", adaptor.getEntityId());
@@ -91,7 +92,7 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
             ? null
             : validFromDate.plusSeconds(service.getSkewAllowance() > 0
                 ? service.getSkewAllowance()
-                : casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance());
+                : Beans.newDuration(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()).toSeconds());
 
         val subject = newSubject(subjectNameId, subjectConfNameId,
             service.isSkipGeneratingSubjectConfirmationRecipient() ? null : location,
@@ -99,7 +100,7 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
             service.isSkipGeneratingSubjectConfirmationInResponseTo() ? null : authnRequest.getID(),
             service.isSkipGeneratingSubjectConfirmationNotBefore() ? null : ZonedDateTime.now(ZoneOffset.UTC));
 
-        if (NameIDType.ENCRYPTED.equalsIgnoreCase(Objects.requireNonNull(subjectNameId).getFormat())) {
+        if (subjectNameId != null && NameIDType.ENCRYPTED.equalsIgnoreCase(subjectNameId.getFormat())) {
             subject.setNameID(null);
             subject.getSubjectConfirmations().forEach(c -> c.setNameID(null));
 

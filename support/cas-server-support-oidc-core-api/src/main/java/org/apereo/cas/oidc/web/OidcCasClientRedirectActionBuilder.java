@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
+import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.support.oauth.web.response.OAuth20DefaultCasClientRedirectActionBuilder;
 
 import lombok.RequiredArgsConstructor;
@@ -22,19 +22,18 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class OidcCasClientRedirectActionBuilder extends OAuth20DefaultCasClientRedirectActionBuilder {
-    private final OidcAuthorizationRequestSupport oidcAuthorizationRequestSupport;
+    private final OidcRequestSupport oidcRequestSupport;
 
     @Override
     public Optional<RedirectionAction> build(final CasClient casClient, final WebContext context) {
         var renew = casClient.getConfiguration().isRenew();
         var gateway = casClient.getConfiguration().isGateway();
 
-        val prompts = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(context);
+        val prompts = OidcRequestSupport.getOidcPromptFromAuthorizationRequest(context);
         if (prompts.contains(OidcConstants.PROMPT_NONE)) {
             renew = false;
             gateway = true;
-        } else if (prompts.contains(OidcConstants.PROMPT_LOGIN)
-            || oidcAuthorizationRequestSupport.isCasAuthenticationOldForMaxAgeAuthorizationRequest(context)) {
+        } else if (prompts.contains(OidcConstants.PROMPT_LOGIN) || oidcRequestSupport.isCasAuthenticationOldForMaxAgeAuthorizationRequest(context)) {
             renew = true;
         }
 

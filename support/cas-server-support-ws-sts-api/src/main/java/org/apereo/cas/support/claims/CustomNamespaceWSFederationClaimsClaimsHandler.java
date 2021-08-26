@@ -2,6 +2,7 @@ package org.apereo.cas.support.claims;
 
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import java.util.List;
  * @since 5.3.0
  */
 @Slf4j
+@Getter
 public class CustomNamespaceWSFederationClaimsClaimsHandler extends NonWSFederationClaimsClaimsHandler {
     private final List<String> supportedClaimTypes;
 
@@ -28,6 +30,29 @@ public class CustomNamespaceWSFederationClaimsClaimsHandler extends NonWSFederat
                                                           final List<String> namespaces) {
         super(handlerRealm, issuer);
         this.supportedClaimTypes = new CustomNamespaceWSFederationClaimsList(namespaces);
+    }
+
+    @RequiredArgsConstructor
+    private static class CustomNamespaceWSFederationClaimsList extends ArrayList<String> {
+        private static final long serialVersionUID = 8368878016992806802L;
+
+        private final List<String> namespaces;
+
+        @Override
+        public boolean contains(final Object o) {
+            var uri = StringUtils.EMPTY;
+            if (o instanceof URI) {
+                uri = ((URI) o).toASCIIString();
+            } else {
+                uri = o.toString();
+            }
+            return StringUtils.isNotBlank(uri) && namespaces.stream().anyMatch(uri::startsWith);
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return namespaces.isEmpty();
+        }
     }
 
     @SneakyThrows
@@ -42,27 +67,5 @@ public class CustomNamespaceWSFederationClaimsClaimsHandler extends NonWSFederat
             return claimName;
         }
         return requestClaim.getClaimType();
-    }
-
-    @Override
-    public List<String> getSupportedClaimTypes() {
-        return this.supportedClaimTypes;
-    }
-
-    @RequiredArgsConstructor
-    private static class CustomNamespaceWSFederationClaimsList extends ArrayList<String> {
-        private static final long serialVersionUID = 8368878016992806802L;
-        private final List<String> namespaces;
-
-        @Override
-        public boolean contains(final Object o) {
-            var uri = StringUtils.EMPTY;
-            if (o instanceof URI) {
-                uri = ((URI) o).toASCIIString();
-            } else {
-                uri = o.toString();
-            }
-            return StringUtils.isNotBlank(uri) && namespaces.stream().anyMatch(uri::startsWith);
-        }
     }
 }

@@ -1,0 +1,22 @@
+{
+  "dependencies": "oidc",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--logging.level.org.apereo.cas=debug",
+
+    "--cas.audit.engine.enabled=false",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.discovery.scopes=openid,profile,email,address,phone",
+    "--cas.authn.oidc.discovery.claims=sub,name,cn,given-name,given:name",
+    "--cas.authn.oidc.jwks.jwks-file=file:/tmp/keystore.jwks",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ]
+}
+
+
+

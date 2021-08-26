@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.web;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -22,6 +23,7 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("MessageBundleProperties")
 public class MessageBundleProperties implements Serializable {
 
     /**
@@ -45,17 +47,17 @@ public class MessageBundleProperties implements Serializable {
      * Flag that controls whether to fallback to the default system locale if no locale is specified explicitly.
      * Set whether to fall back to the system Locale if no files for a specific Locale have been found.
      * If this is turned off, the only fallback will be the default file (e.g. "messages.properties" for basename "messages").
-     * Falling back to the system Locale is the default behavior of java.util.ResourceBundle.
+     * Falling back to the system Locale is the default behavior of {@link java.util.ResourceBundle}.
      * However, this is often not desirable in an application server environment, where the system
-     * Locale is not relevant to the application at all: set this flag to "false" in such a scenario.
+     * Locale is not relevant to the application at all: set this flag to {@code false} in such a scenario.
      */
     private boolean fallbackSystemLocale;
 
     /**
      * Flag that controls whether to use code message.
      * Set whether to use the message code as default message instead of throwing a
-     * NoSuchMessageException. Useful for development and debugging.
-     * Note: In case of a MessageSourceResolvable with multiple codes (like a FieldError) and a
+     * {@code NoSuchMessageException}. Useful for development and debugging.
+     * Note: In case of a {@code MessageSourceResolvable} with multiple codes (like a FieldError) and a
      * MessageSource that has a parent MessageSource, do not activate "useCodeAsDefaultMessage" in
      * the parent: Else, you'll get the first code returned as message by the parent, without attempts to check further codes.
      */
@@ -70,7 +72,8 @@ public class MessageBundleProperties implements Serializable {
      * The associated resource bundles will be checked sequentially when resolving a message code.
      * Note that message definitions in a previous resource bundle will override ones in a later bundle, due to the sequential lookup.
      */
-    private List<String> baseNames = Stream.of("classpath:custom_messages", "classpath:messages").collect(Collectors.toList());
+    private List<String> baseNames = Stream.of("file:/etc/cas/config/custom_messages",
+        "classpath:custom_messages", "classpath:messages").collect(Collectors.toList());
 
     /**
      * A list of strings representing common names for this message bundle.

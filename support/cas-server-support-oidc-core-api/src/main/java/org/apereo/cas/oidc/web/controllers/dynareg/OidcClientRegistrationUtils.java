@@ -80,7 +80,7 @@ public class OidcClientRegistrationUtils {
             val res = ResourceUtils.getResourceFrom(keystore);
             val json = IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8);
             clientResponse.setJwks(new JsonWebKeySet(json).toJson());
-        } else {
+        } else if (StringUtils.isNotBlank(keystore)) {
             val jwks = new JsonWebKeySet(keystore);
             clientResponse.setJwks(jwks.toJson());
         }

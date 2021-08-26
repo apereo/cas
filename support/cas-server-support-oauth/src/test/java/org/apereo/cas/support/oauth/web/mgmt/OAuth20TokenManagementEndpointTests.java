@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuth")
 public class OAuth20TokenManagementEndpointTests extends AbstractOAuth20Tests {
     @Autowired
-    @Qualifier("oAuth20TokenManagementEndpoint")
+    @Qualifier("oauth20TokenManagementEndpoint")
     private OAuth20TokenManagementEndpoint tokenManagementEndpoint;
 
     @Test
@@ -40,6 +40,8 @@ public class OAuth20TokenManagementEndpointTests extends AbstractOAuth20Tests {
         val at = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
         val token = tokenManagementEndpoint.getToken(at);
         assertNotNull(token);
+        assertFalse(tokenManagementEndpoint.getTokens().isEmpty());
+        tokenManagementEndpoint.deleteToken(token.getId());
     }
 
     @Test
@@ -51,5 +53,10 @@ public class OAuth20TokenManagementEndpointTests extends AbstractOAuth20Tests {
         val at = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
         val token = tokenManagementEndpoint.getToken(at);
         assertNotNull(token);
+    }
+
+    @Test
+    public void verifyBadOperation() {
+        assertNull(tokenManagementEndpoint.getToken("unknown"));
     }
 }

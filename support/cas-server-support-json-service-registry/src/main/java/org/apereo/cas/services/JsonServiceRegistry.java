@@ -3,7 +3,6 @@ package org.apereo.cas.services;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
-import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.WatcherService;
@@ -40,7 +39,7 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
                                final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
         super(configDirectory,
-            CollectionUtils.wrapList(new CasAddonsRegisteredServicesJsonSerializer(), new RegisteredServiceJsonSerializer()),
+            CollectionUtils.wrapList(new RegisteredServiceJsonSerializer()),
             applicationContext, registeredServiceReplicationStrategy, resourceNamingStrategy,
             serviceRegistryListeners, serviceRegistryConfigWatcher);
     }
@@ -49,4 +48,6 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
     protected String[] getExtensions() {
         return new String[]{FILE_EXTENSION};
     }
+
+    
 }

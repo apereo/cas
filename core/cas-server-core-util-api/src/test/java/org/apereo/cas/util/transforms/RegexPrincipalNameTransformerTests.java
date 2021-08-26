@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class RegexPrincipalNameTransformerTests {
     @Test
     public void verifyOperation() {
@@ -21,5 +21,13 @@ public class RegexPrincipalNameTransformerTests {
         chain.addTransformer(new ConvertCasePrincipalNameTransformer(true));
         val result = chain.transform("cas@example.org");
         assertEquals("CAS", result);
+    }
+
+    @Test
+    public void verifyNoOperation() {
+        val chain = new ChainingPrincipalNameTransformer();
+        chain.addTransformer(new RegexPrincipalNameTransformer("(\\w+)@\\w+.org"));
+        val result = chain.transform(" cas  ");
+        assertEquals("cas", result);
     }
 }

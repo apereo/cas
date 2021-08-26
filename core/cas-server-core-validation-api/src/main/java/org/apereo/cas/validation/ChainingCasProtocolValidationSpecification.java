@@ -1,9 +1,14 @@
 package org.apereo.cas.validation;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.apereo.inspektr.audit.annotation.Audit;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -26,12 +31,23 @@ public class ChainingCasProtocolValidationSpecification implements CasProtocolVa
 
     private final boolean canBeSatisfiedByAnySpecification;
 
+    private boolean renew;
+
+    @Audit(
+        action = AuditableActions.PROTOCOL_SPECIFICATION_VALIDATE,
+        actionResolverName = AuditActionResolvers.VALIDATE_PROTOCOL_SPECIFICATION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.VALIDATE_PROTOCOL_SPECIFICATION_RESOURCE_RESOLVER)
     @Override
     public boolean isSatisfiedBy(final Assertion assertion, final HttpServletRequest request) {
         if (this.canBeSatisfiedByAnySpecification) {
-            return this.specifications.stream().anyMatch(s -> s.isSatisfiedBy(assertion, request));
+            return this.specifications
+                .stream()
+                .peek(s -> s.setRenew(this.renew))
+                .anyMatch(s -> s.isSatisfiedBy(assertion, request));
         }
-        return this.specifications.stream().allMatch(s -> s.isSatisfiedBy(assertion, request));
+        return this.specifications.stream()
+            .peek(s -> s.setRenew(this.renew))
+            .allMatch(s -> s.isSatisfiedBy(assertion, request));
     }
 
     /**
@@ -64,5 +80,6 @@ public class ChainingCasProtocolValidationSpecification implements CasProtocolVa
     @Override
     public void reset() {
         this.specifications.forEach(CasProtocolValidationSpecification::reset);
+        setRenew(false);
     }
 }

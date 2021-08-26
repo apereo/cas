@@ -8,8 +8,9 @@ import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecu
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.exception.CredentialsException;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -35,12 +36,11 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
             defaultPrincipalResolver);
     }
 
-    @Test
+    @RetryingTest(3)
     public void verifyAuthentication() {
         val refreshToken = getRefreshToken(serviceWithoutSecret);
         ticketRegistry.addTicket(refreshToken);
-
-
+        
         val credentials = new UsernamePasswordCredentials("clientWithoutSecret", refreshToken.getId());
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name());
@@ -48,7 +48,7 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
         request.addParameter(OAuth20Constants.CLIENT_ID, "clientWithoutSecret");
 
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx);
+        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNotNull(credentials.getUserProfile());
         assertEquals("clientWithoutSecret", credentials.getUserProfile().getId());
 
@@ -60,7 +60,7 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
         badRefreshTokenRequest.addParameter(OAuth20Constants.CLIENT_ID, "clientWithoutSecret");
 
         val badRefreshTokenCtx = new JEEContext(badRefreshTokenRequest, new MockHttpServletResponse());
-        assertThrows(CredentialsException.class, () -> authenticator.validate(badRefreshTokenCredentials, badRefreshTokenCtx));
+        assertThrows(CredentialsException.class, () -> authenticator.validate(badRefreshTokenCredentials, badRefreshTokenCtx, JEESessionStore.INSTANCE));
 
 
         val badClientIdCredentials = new UsernamePasswordCredentials("clientWithoutSecret2", refreshToken.getId());
@@ -70,12 +70,10 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
         badClientIdRequest.addParameter(OAuth20Constants.CLIENT_ID, "clientWithoutSecret2");
 
         val badClientIdCtx = new JEEContext(badClientIdRequest, new MockHttpServletResponse());
-        assertThrows(CredentialsException.class, () -> authenticator.validate(badClientIdCredentials, badClientIdCtx));
-
+        assertThrows(CredentialsException.class, () -> authenticator.validate(badClientIdCredentials, badClientIdCtx, JEESessionStore.INSTANCE));
 
         val unsupportedClientRefreshToken = getRefreshToken(service);
         ticketRegistry.addTicket(unsupportedClientRefreshToken);
-
 
         val unsupportedClientCredentials = new UsernamePasswordCredentials("client", refreshToken.getId());
         val unsupportedClientRequest = new MockHttpServletRequest();
@@ -84,10 +82,9 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
         unsupportedClientRequest.addParameter(OAuth20Constants.CLIENT_ID, "client");
 
         val unsupportedClientCtx = new JEEContext(unsupportedClientRequest, new MockHttpServletResponse());
-        authenticator.validate(unsupportedClientCredentials, unsupportedClientCtx);
+        authenticator.validate(unsupportedClientCredentials, unsupportedClientCtx, JEESessionStore.INSTANCE);
         assertNull(unsupportedClientCredentials.getUserProfile());
-
-
+        
         val unknownClientCredentials = new UsernamePasswordCredentials("unknownclient", refreshToken.getId());
         val unknownclientRequest = new MockHttpServletRequest();
         unknownclientRequest.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name());
@@ -95,7 +92,7 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
         unknownclientRequest.addParameter(OAuth20Constants.CLIENT_ID, "unknownclient");
 
         val unknownclientCtx = new JEEContext(unknownclientRequest, new MockHttpServletResponse());
-        authenticator.validate(unknownClientCredentials, unknownclientCtx);
+        authenticator.validate(unknownClientCredentials, unknownclientCtx, JEESessionStore.INSTANCE);
         assertNull(unknownClientCredentials.getUserProfile());
     }
 }

@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.pac4j.oidc;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("Pac4jOidcClientProperties")
 public class Pac4jOidcClientProperties implements Serializable {
 
     private static final long serialVersionUID = 3359382317533639638L;
@@ -40,6 +42,12 @@ public class Pac4jOidcClientProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private Pac4jKeyCloakOidcClientProperties keycloak = new Pac4jKeyCloakOidcClientProperties();
+
+    /**
+     * Settings specific to delegating authentication to apple signin.
+     */
+    @NestedConfigurationProperty
+    private Pac4jAppleOidcClientProperties apple = new Pac4jAppleOidcClientProperties();
 
     /**
      * Settings specific to delegating authentication to generic oidc.

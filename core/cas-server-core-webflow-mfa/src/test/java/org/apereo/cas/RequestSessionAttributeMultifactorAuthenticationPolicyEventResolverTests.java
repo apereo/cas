@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -11,6 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -28,7 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("Webflow")
+@Tag("WebflowEvents")
+@Import(RequestSessionAttributeMultifactorAuthenticationPolicyEventResolverTests.RequestSessionMultifactorTestConfiguration.class)
 public class RequestSessionAttributeMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("httpRequestAuthenticationPolicyWebflowEventResolver")
@@ -55,10 +60,18 @@ public class RequestSessionAttributeMultifactorAuthenticationPolicyEventResolver
         context.getRootFlow().getGlobalTransitionSet().add(transition);
 
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        request.getSession(true).setAttribute(casProperties.getAuthn().getMfa().getSessionAttribute(), TestMultifactorAuthenticationProvider.ID);
+        request.getSession(true).setAttribute(casProperties.getAuthn().getMfa().getTriggers().getHttp().getSessionAttribute(), TestMultifactorAuthenticationProvider.ID);
         results = requestSessionAttributeAuthenticationPolicyWebflowEventResolver.resolve(context);
         assertNotNull(results);
         assertEquals(1, results.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, results.iterator().next().getId());
+    }
+
+    @TestConfiguration("RequestSessionMultifactorTestConfiguration")
+    public static class RequestSessionMultifactorTestConfiguration {
+        @Bean
+        public MultifactorAuthenticationProvider dummyProvider() {
+            return new TestMultifactorAuthenticationProvider();
+        }
     }
 }

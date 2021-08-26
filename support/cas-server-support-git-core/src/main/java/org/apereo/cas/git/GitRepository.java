@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.MergeCommand;
 import org.eclipse.jgit.api.TransportConfigCallback;
@@ -59,7 +60,6 @@ public class GitRepository implements DisposableBean {
      *
      * @return the objects in repository
      */
-    @SneakyThrows
     public Collection<GitObject> getObjectsInRepository() {
         return getObjectsInRepository(TreeFilter.ALL);
     }
@@ -100,16 +100,17 @@ public class GitRepository implements DisposableBean {
      */
     @SneakyThrows
     public GitObject readObject(final TreeWalk treeWalk) {
-        val objectId = treeWalk.getObjectId(0);
-        val repository = this.gitInstance.getRepository();
-        val loader = repository.open(objectId);
-        val out = new ByteArrayOutputStream();
-        loader.copyTo(out);
-        return GitObject.builder()
-            .content(out.toString(StandardCharsets.UTF_8))
-            .treeWalk(treeWalk)
-            .objectId(objectId)
-            .build();
+        try (val out = new ByteArrayOutputStream()) {
+            val objectId = treeWalk.getObjectId(0);
+            val repository = this.gitInstance.getRepository();
+            val loader = repository.open(objectId);
+            loader.copyTo(out);
+            return GitObject.builder()
+                .content(out.toString(StandardCharsets.UTF_8))
+                .path(treeWalk.getPathString())
+                .objectId(objectId)
+                .build();
+        }
     }
 
     /**
@@ -120,11 +121,14 @@ public class GitRepository implements DisposableBean {
     @SneakyThrows
     public void commitAll(final String message) {
         this.gitInstance.add().addFilepattern(".").call();
+        val config = this.gitInstance.getRepository().getConfig();
+        val name = StringUtils.defaultIfBlank(config.getString("user", null, "name"), "CAS");
+        val email = StringUtils.defaultIfBlank(config.getString("user", null, "email"), "cas@apereo.org");
         this.gitInstance.commit()
             .setMessage(message)
             .setAll(true)
             .setSign(this.signCommits)
-            .setAuthor("CAS", "cas@apereo.org")
+            .setAuthor(name, email)
             .call();
     }
 
@@ -133,16 +137,15 @@ public class GitRepository implements DisposableBean {
      */
     @SneakyThrows
     public void push() {
-        if (!this.credentialsProvider.isEmpty()) {
+        val remotes = gitInstance.remoteList().call();
+        if (!remotes.isEmpty()) {
             val providers = this.credentialsProvider.toArray(CredentialsProvider[]::new);
-            this.gitInstance.push()
+            gitInstance.push()
                 .setTimeout((int) timeoutInSeconds)
                 .setTransportConfigCallback(this.transportConfigCallback)
                 .setPushAll()
                 .setCredentialsProvider(new ChainingCredentialsProvider(providers))
                 .call();
-        } else {
-            LOGGER.debug("No credentials are provided. Changes will not be pushed to repository");
         }
     }
 
@@ -155,7 +158,13 @@ public class GitRepository implements DisposableBean {
     public boolean pull() {
         val providers = this.credentialsProvider.toArray(CredentialsProvider[]::new);
         val remotes = this.gitInstance.getRepository().getRemoteNames();
-        return !remotes.isEmpty() && this.gitInstance.pull()
+
+        if (remotes.isEmpty()) {
+            LOGGER.debug("No remote repositories are specified to pull changes");
+            return false;
+        }
+
+        return this.gitInstance.pull()
             .setTimeout((int) timeoutInSeconds)
             .setFastForward(MergeCommand.FastForwardMode.FF_ONLY)
             .setRebase(false)
@@ -181,8 +190,8 @@ public class GitRepository implements DisposableBean {
     public static class GitObject {
         private final String content;
 
-        private final TreeWalk treeWalk;
-
         private final ObjectId objectId;
+
+        private final String path;
     }
 }

@@ -6,13 +6,20 @@ import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.JsonServiceRegistry;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.util.io.WatcherService;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.file.PathUtils;
+import org.apache.commons.io.file.StandardDeleteOption;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -36,17 +43,31 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @Tag("SAML")
-public class SamlRegisteredServiceTests {
+public class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "samlRegisteredService.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
+
     private static final String SAML_SERVICE = "SAMLService";
+
     private static final String METADATA_LOCATION = "classpath:/metadata/idp-metadata.xml";
+
+    private static final String JSON_SERVICE_REGISTRY_FOLDER = "json-service-registry";
 
     @BeforeAll
     public static void prepTests() throws Exception {
+        val jsonFolder = new File(FileUtils.getTempDirectory(), JSON_SERVICE_REGISTRY_FOLDER);
+        if (jsonFolder.isDirectory()) {
+            PathUtils.cleanDirectory(jsonFolder.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+            jsonFolder.delete();
+        }
+        if (!jsonFolder.mkdir()) {
+            throw new IOException("Unable to make json folder: " + jsonFolder.getName());
+        }
         FileUtils.cleanDirectory(RESOURCE.getFile());
     }
 
@@ -55,16 +76,16 @@ public class SamlRegisteredServiceTests {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
-        val service = new SamlRegisteredService();
-        service.setName(SAML_SERVICE);
-        service.setServiceId("http://mmoayyed.unicon.net");
-        service.setMetadataLocation(METADATA_LOCATION);
+        val registeredService = new SamlRegisteredService();
+        registeredService.setName(SAML_SERVICE);
+        registeredService.setServiceId("http://mmoayyed.unicon.net");
+        registeredService.setMetadataLocation(METADATA_LOCATION);
 
         val dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
             appCtx, new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());
-        dao.save(service);
+        dao.save(registeredService);
         dao.load();
     }
 
@@ -81,8 +102,9 @@ public class SamlRegisteredServiceTests {
         val chain = new ChainingAttributeReleasePolicy();
         chain.setPolicies(Arrays.asList(policy, new DenyAllAttributeReleasePolicy()));
         service.setAttributeReleasePolicy(chain);
-
-        val dao = new JsonServiceRegistry(new FileSystemResource(FileUtils.getTempDirectory()), WatcherService.noOp(),
+        
+        val dao = new JsonServiceRegistry(new FileSystemResource(FileUtils.getTempDirectoryPath()
+            + File.separator + "json-service-registry"), WatcherService.noOp(),
             appCtx, new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());
@@ -94,17 +116,25 @@ public class SamlRegisteredServiceTests {
     public void checkPattern() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
-        val service = new SamlRegisteredService();
-        service.setName(SAML_SERVICE);
-        service.setServiceId("^http://.+");
-        service.setMetadataLocation(METADATA_LOCATION);
-        val dao = new InMemoryServiceRegistry(appCtx, List.of(service), new ArrayList<>());
-        val impl = new DefaultServicesManager(dao, appCtx, new HashSet<>());
+        val registeredService = new SamlRegisteredService();
+        registeredService.setName(SAML_SERVICE);
+        registeredService.setServiceId("^http://.+");
+        registeredService.setMetadataLocation(METADATA_LOCATION);
+        val dao = new InMemoryServiceRegistry(appCtx, List.of(registeredService), new ArrayList<>());
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(dao)
+            .applicationContext(appCtx)
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().build())
+            .registeredServiceLocators(List.of(samlIdPServicesManagerRegisteredServiceLocator))
+            .build();
+        val impl = new DefaultServicesManager(context);
         impl.load();
 
-        val s = impl.findServiceBy(new WebApplicationServiceFactory()
-            .createService("http://mmoayyed.unicon.net:8081/sp/saml/SSO"));
-        assertNotNull(s);
+        val service = new WebApplicationServiceFactory().createService("http://mmoayyed.unicon.net:8081/sp/saml/SSO");
+        service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(registeredService.getServiceId()));
+        val foundService = impl.findServiceBy(service);
+        assertNotNull(foundService);
     }
 
     @Test

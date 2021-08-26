@@ -1,11 +1,11 @@
 package org.apereo.cas.adaptors.u2f;
 
+import org.apereo.cas.adaptors.u2f.storage.MariaDbU2FJpaDeviceRepositoryTests;
 import org.apereo.cas.adaptors.u2f.storage.MySQLU2FJpaDeviceRepositoryTests;
 import org.apereo.cas.adaptors.u2f.storage.U2FJpaDeviceRepositoryTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * The {@link org.apereo.cas.AllTestsSuite} is responsible for
@@ -16,9 +16,10 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     MySQLU2FJpaDeviceRepositoryTests.class,
+    MariaDbU2FJpaDeviceRepositoryTests.class,
     U2FJpaDeviceRepositoryTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }
 

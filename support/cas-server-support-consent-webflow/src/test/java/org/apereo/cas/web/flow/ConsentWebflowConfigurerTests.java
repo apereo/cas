@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasConsentWebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
-@Tag("Webflow")
+@Tag("WebflowConfig")
 public class ConsentWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

@@ -3,7 +3,6 @@ package org.apereo.cas.authentication;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author David Rodriguez
  * @since 5.0.0
  */
-@Tag("Simple")
+@Tag("Authentication")
 public class DefaultAuthenticationTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultAuthentication.json");
@@ -38,8 +37,7 @@ public class DefaultAuthenticationTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifySerializeADefaultAuthenticationToJson() {
+    public void verifySerializeADefaultAuthenticationToJson() throws Exception {
         val serviceWritten = CoreAuthenticationTestUtils.getAuthentication();
         mapper.writeValue(JSON_FILE, serviceWritten);
         val serviceRead = mapper.readValue(JSON_FILE, Authentication.class);

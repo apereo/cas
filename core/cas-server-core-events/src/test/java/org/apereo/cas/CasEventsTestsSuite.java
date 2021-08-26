@@ -4,9 +4,8 @@ import org.apereo.cas.support.events.CasEventsReportEndpointTests;
 import org.apereo.cas.support.events.DefaultCasEventListenerTests;
 import org.apereo.cas.support.events.LoggingCasEventListenerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link CasEventsTestsSuite}.
@@ -19,6 +18,6 @@ import org.junit.runner.RunWith;
     CasEventsReportEndpointTests.class,
     LoggingCasEventListenerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class CasEventsTestsSuite {
 }

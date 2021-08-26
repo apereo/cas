@@ -6,7 +6,6 @@ import org.apereo.cas.support.saml.util.DefaultSaml20AttributeBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.saml.saml2.core.Attribute;
@@ -28,9 +27,8 @@ public class SamlProfileSamlRegisteredServiceAttributeBuilder extends DefaultSam
     private final SamlIdPObjectEncrypter samlObjectEncrypter;
 
     @Override
-    @SneakyThrows
     public void build(final AttributeStatement attrStatement, final Attribute attribute) {
-        if (!service.isEncryptAttributes() || !shouldEncryptAttribute(attribute)) {
+        if (!service.isEncryptAttributes() || !shouldEncryptAttribute(attribute) || service.isEncryptAssertions()) {
             LOGGER.debug("Service [{}] is configured to not encrypt attributes for [{}]", service.getName(), attribute.getName());
             super.build(attrStatement, attribute);
             return;

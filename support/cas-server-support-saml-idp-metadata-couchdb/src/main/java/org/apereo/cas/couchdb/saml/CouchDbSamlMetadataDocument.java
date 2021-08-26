@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 /**
  * This is {@link CouchDbSamlMetadataDocument}.
@@ -16,7 +17,10 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@SuperBuilder
 public class CouchDbSamlMetadataDocument extends SamlMetadataDocument {
+    private static final long serialVersionUID = 6558457970842836213L;
+
     @JsonProperty("_id")
     private String cid;
 
@@ -36,7 +40,8 @@ public class CouchDbSamlMetadataDocument extends SamlMetadataDocument {
     }
 
     public CouchDbSamlMetadataDocument(final SamlMetadataDocument document) {
-        this(null, null, document.getId(), document.getName(), document.getValue(), document.getSignature());
+        this(null, null, document.getId(), document.getName(),
+            document.getValue(), document.getSignature());
     }
 
     /**

@@ -1,9 +1,11 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -30,10 +32,9 @@ public class AcceptableUsagePolicyVerifyServiceAction extends AbstractAction {
      * Verify whether the policy is accepted.
      *
      * @param context    the context
-     * @param credential the credential
      * @return success if policy is accepted. {@link CasWebflowConstants#TRANSITION_ID_AUP_MUST_ACCEPT} otherwise.
      */
-    private Event verify(final RequestContext context, final Credential credential) {
+    private Event verify(final RequestContext context) {
         val registeredService = WebUtils.getRegisteredService(context);
 
         if (registeredService != null) {
@@ -44,25 +45,24 @@ public class AcceptableUsagePolicyVerifyServiceAction extends AbstractAction {
                 .service(service)
                 .authentication(authentication)
                 .registeredService(registeredService)
-                .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                 .build();
             val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();
 
             val aupEnabled = registeredService.getAcceptableUsagePolicy() != null
                 && registeredService.getAcceptableUsagePolicy().isEnabled();
-            if (aupEnabled && !repository.verify(context, credential).isAccepted()) {
+            if (aupEnabled && !repository.verify(context).isAccepted()) {
                 return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT);
             }
         }
         return null;
     }
 
-    @Audit(action = "AUP_VERIFY",
-        actionResolverName = "AUP_VERIFY_ACTION_RESOLVER",
-        resourceResolverName = "AUP_VERIFY_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.AUP_VERIFY,
+        actionResolverName = AuditActionResolvers.AUP_VERIFY_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.AUP_VERIFY_RESOURCE_RESOLVER)
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        return verify(requestContext, WebUtils.getCredential(requestContext));
+        return verify(requestContext);
     }
 }

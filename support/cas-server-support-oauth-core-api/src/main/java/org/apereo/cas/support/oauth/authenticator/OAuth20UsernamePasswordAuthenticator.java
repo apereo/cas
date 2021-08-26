@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.exception.CredentialsException;
@@ -30,18 +32,24 @@ import java.util.Map;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class OAuth20UsernamePasswordAuthenticator implements Authenticator<UsernamePasswordCredentials> {
+public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
     private final AuthenticationSystemSupport authenticationSystemSupport;
+
     private final ServicesManager servicesManager;
+
     private final ServiceFactory webApplicationServiceFactory;
+
     private final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
 
+    private final SessionStore sessionStore;
+
     @Override
-    public void validate(final UsernamePasswordCredentials credentials, final WebContext context) throws CredentialsException {
-        val casCredential = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
+    public void validate(final Credentials credentials, final WebContext context, final SessionStore sessionStore) throws CredentialsException {
+        val upc = (UsernamePasswordCredentials) credentials;
+        val casCredential = new UsernamePasswordCredential(upc.getUsername(), upc.getPassword());
         try {
-            val clientIdAndSecret = OAuth20Utils.getClientIdAndClientSecret(context);
-            if (clientIdAndSecret == null || StringUtils.isBlank(clientIdAndSecret.getKey())) {
+            val clientIdAndSecret = OAuth20Utils.getClientIdAndClientSecret(context, this.sessionStore);
+            if (StringUtils.isBlank(clientIdAndSecret.getKey())) {
                 throw new CredentialsException("No client credentials could be identified in this request");
             }
 
@@ -60,7 +68,7 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator<Usern
                 ? this.webApplicationServiceFactory.createService(redirectUri)
                 : null;
 
-            val authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, casCredential);
+            val authenticationResult = authenticationSystemSupport.finalizeAuthenticationTransaction(service, casCredential);
             if (authenticationResult == null) {
                 throw new CredentialsException("Could not authenticate the provided credentials");
             }

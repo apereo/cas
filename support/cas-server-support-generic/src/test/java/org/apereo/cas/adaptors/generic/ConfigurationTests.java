@@ -13,6 +13,8 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -24,6 +26,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.junit.jupiter.api.Tag;
@@ -46,9 +49,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreLogoutConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreHttpConfiguration.class,
+    CasCoreMultifactorAuthenticationConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
@@ -73,7 +79,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.json.location=classpath:sample-users.json",
     "cas.authn.reject.users=one,two,three"
 })
-@Tag("Simple")
+@Tag("CasConfiguration")
 public class ConfigurationTests {
     @Autowired
     @Qualifier("fileAuthenticationHandler")

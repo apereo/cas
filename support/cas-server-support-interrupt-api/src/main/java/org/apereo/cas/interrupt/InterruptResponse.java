@@ -26,13 +26,11 @@ public class InterruptResponse implements Serializable {
      */
     public static final String DEFAULT_MESSAGE = "Authentication flow is interrupted";
 
-    private static final int MAP_SIZE = 8;
-
     private static final long serialVersionUID = 2558836528840508196L;
 
     private String message;
 
-    private Map<String, String> links = new LinkedHashMap<>(MAP_SIZE);
+    private Map<String, String> links = new LinkedHashMap<>();
 
     private boolean block;
 
@@ -44,7 +42,7 @@ public class InterruptResponse implements Serializable {
 
     private long autoRedirectAfterSeconds = -1;
 
-    private Map<String, List<String>> data = new LinkedHashMap<>(MAP_SIZE);
+    private Map<String, List<String>> data = new LinkedHashMap<>();
 
     public InterruptResponse(final boolean interrupt) {
         this.interrupt = interrupt;
@@ -87,4 +85,5 @@ public class InterruptResponse implements Serializable {
     public static InterruptResponse interrupt() {
         return new InterruptResponse(DEFAULT_MESSAGE);
     }
+    
 }

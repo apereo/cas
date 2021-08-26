@@ -4,6 +4,7 @@ ext {
 }
 description = "Apereo CAS Web Application"
 
+
 sourceSets {
     main {
         resources {
@@ -18,42 +19,11 @@ sourceSets {
         resources {
             srcDirs new File("//etc/cas/templates/"),
                     new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/"),
-                    new File("${project(":support").getProjectDir()}/cas-server-support-thymeleaf/src/main/resources/")
+                    new File("${project(":support").getProjectDir()}/cas-server-support-thymeleaf/src/main/resources/"),
+                    new File("${project(":support").getProjectDir()}/cas-server-support-themes-collection/src/main/resources/")
         }
     }
 }
 
 apply from: rootProject.file("gradle/springboot.gradle")
-
-dependencies {
-    implementation project(":core:cas-server-core")
-    implementation project(":core:cas-server-core-audit")
-    implementation project(":core:cas-server-core-authentication")
-    implementation project(":core:cas-server-core-configuration")
-    implementation project(":core:cas-server-core-cookie")
-    implementation project(":core:cas-server-core-logout")
-    implementation project(":core:cas-server-core-logging")
-    implementation project(":core:cas-server-core-services")
-    implementation project(":core:cas-server-core-tickets")
-    implementation project(":core:cas-server-core-util")
-    implementation project(":core:cas-server-core-validation")
-    implementation project(":core:cas-server-core-web")
-
-    implementation project(":support:cas-server-support-actions")
-    implementation project(":support:cas-server-support-jpa-util")
-    implementation project(":support:cas-server-support-person-directory")
-    implementation project(":support:cas-server-support-themes")
-    implementation project(":support:cas-server-support-validation")
-    implementation project(":support:cas-server-support-thymeleaf")
-    implementation project(":support:cas-server-support-pm-webflow")
-
-    implementation project(":webapp:cas-server-webapp-config")
-    implementation project(":webapp:cas-server-webapp-init")
-    implementation project(":webapp:cas-server-webapp-resources")
-
-    implementation libraries.springcloudconfigclient
-    if (!rootProject.publishReleases && !rootProject.publishSnapshots) {
-        runtimeClasspath libraries.springbootdevtools
-    }
-
-}
+apply from: rootProject.file("gradle/webapp-dependencies.gradle")

@@ -20,12 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.token.crypto.encryptionEnabled=false",
     "cas.authn.token.crypto.signingEnabled=false"
 })
-@Tag("Simple")
+@Tag("Tickets")
 public class JwtTokenTicketBuilderWithoutCryptoTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test
     public void verifyJwtForServiceTicketEncoding() throws Exception {
-        val jwt = tokenTicketBuilder.build("ST-123456", CoreAuthenticationTestUtils.getService());
+        val jwt = tokenTicketBuilder.build("ST-123456", CoreAuthenticationTestUtils.getWebApplicationService());
         assertNotNull(jwt);
         val claims = JWTParser.parse(jwt).getJWTClaimsSet();
         assertEquals("casuser", claims.getSubject());

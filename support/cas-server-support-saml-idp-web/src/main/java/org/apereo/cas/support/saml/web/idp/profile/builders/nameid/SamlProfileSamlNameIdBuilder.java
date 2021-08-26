@@ -8,6 +8,8 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.util.LoggingUtils;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +24,7 @@ import org.opensaml.saml.saml2.core.RequestAbstractType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -52,7 +55,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      */
     protected static List<String> getSupportedNameIdFormats(final SamlRegisteredService service,
                                                             final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
-        val supportedNameFormats = adaptor.getSupportedNameIdFormats();
+        val supportedNameFormats = new ArrayList<>(adaptor.getSupportedNameIdFormats());
         LOGGER.debug("Metadata for [{}] declares the following NameIDs [{}]", adaptor.getEntityId(), supportedNameFormats);
 
         if (supportedNameFormats.isEmpty()) {
@@ -169,17 +172,18 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                                     final SamlRegisteredService service,
                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
 
-        if (StringUtils.isNotBlank(service.getNameIdQualifier())) {
-            nameid.setNameQualifier(service.getNameIdQualifier());
-        } else {
-            val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
-            nameid.setNameQualifier(issuer);
-        }
-
-        if (StringUtils.isNotBlank(service.getServiceProviderNameIdQualifier())) {
-            nameid.setSPNameQualifier(service.getServiceProviderNameIdQualifier());
-        } else {
-            nameid.setSPNameQualifier(adaptor.getEntityId());
+        if (nameid != null) {
+            if (StringUtils.isNotBlank(service.getNameIdQualifier())) {
+                nameid.setNameQualifier(service.getNameIdQualifier());
+            } else {
+                val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
+                nameid.setNameQualifier(issuer);
+            }
+            if (StringUtils.isNotBlank(service.getServiceProviderNameIdQualifier())) {
+                nameid.setSPNameQualifier(service.getServiceProviderNameIdQualifier());
+            } else {
+                nameid.setSPNameQualifier(adaptor.getEntityId());
+            }
         }
         return nameid;
     }
@@ -265,11 +269,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
             LOGGER.debug("Final NameID encoded with format [{}] has value [{}]", nameId.getFormat(), nameId.getValue());
             return nameId;
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

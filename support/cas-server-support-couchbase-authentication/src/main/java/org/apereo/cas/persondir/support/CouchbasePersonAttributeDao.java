@@ -1,6 +1,6 @@
 package org.apereo.cas.persondir.support;
 
-import org.apereo.cas.configuration.model.core.authentication.CouchbasePrincipalAttributesProperties;
+import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbasePrincipalAttributesProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -50,21 +50,20 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
     public IPersonAttributes getPerson(final String uid, final IPersonAttributeDaoFilter filter) {
         val query = String.format("%s = '%s'", couchbaseProperties.getUsernameAttribute(), uid);
         val result = couchbase.select(query);
-        val attributes = new LinkedHashMap<String, Object>();
         if (result.rowsAsObject().isEmpty()) {
             LOGGER.debug("Couchbase query did not return any results/rows.");
-        } else {
-            val rows = result.rowsAsObject();
-            attributes.putAll(rows.stream()
-                .filter(row -> row.containsKey(couchbase.getBucket()))
-                .map(row -> {
-                    val document = row.getObject(couchbase.getBucket());
-                    val results = CouchbaseClientFactory.collectAttributesFromEntity(document, s -> true);
-                    return results.entrySet();
-                })
-                .flatMap(Collection::stream)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+            return null;
         }
+        val rows = result.rowsAsObject();
+        val attributes = new LinkedHashMap<String, Object>(rows.stream()
+            .filter(row -> row.containsKey(couchbase.getBucket()))
+            .map(row -> {
+                val document = row.getObject(couchbase.getBucket());
+                val results = CouchbaseClientFactory.collectAttributesFromEntity(document, s -> true);
+                return results.entrySet();
+            })
+            .flatMap(Collection::stream)
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
         return new CaseInsensitiveNamedPersonImpl(uid, stuffAttributesIntoList(attributes));
     }
 

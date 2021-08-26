@@ -4,6 +4,8 @@ title: CAS - Releasing Principal Id
 category: Attributes
 ---
 
+{% include variables.html %}
+
 # Principal-Id Attribute
 
 Registered CAS applications are given the ability to allow for configuration of a
@@ -19,7 +21,7 @@ into uppercase/lowercase. This is noted by the `canonicalizationMode` whose allo
 
 ## Default
 
-The default configuration which need not explicitly be defined, simply returns the resolved
+The default configuration which need not explicitly be defined, returns the resolved
 principal id as the username for this service.
 
 ```json
@@ -78,12 +80,12 @@ The application can then proceed to decrypt the username using its own private k
 The following sample code demonstrates how that might be done in Java:
 
 ```java
-final String casUsername = ...
-final PrivateKey privateKey = ...
-final Cipher cipher = Cipher.getInstance(privateKey.getAlgorithm());
-final byte[] cred64 = decodeBase64(encodedPsw);
+var casUsername = ...
+var privateKey = ...
+var cipher = Cipher.getInstance(privateKey.getAlgorithm());
+var cred64 = decodeBase64(encodedPsw);
 cipher.init(Cipher.DECRYPT_MODE, privateKey);
-final byte[] cipherData = cipher.doFinal(casUsername);
+var cipherData = cipher.doFinal(casUsername);
 return new String(cipherData);
 ```
 
@@ -241,7 +243,7 @@ Provides an opaque identifier for the username.
 ## Anonymous / Persistent
 
 Provides an opaque identifier for the username. The opaque identifier by default conforms to the requirements
-of the [eduPersonTargetedID](http://www.incommon.org/federation/attributesummary.html#eduPersonTargetedID) attribute.
+of the [eduPersonTargetedID](https://spaces.at.internet2.edu/display/federation/Persistent+Identifier+Support) attribute.
 The generated id may be based off of an existing principal attribute. If left unspecified or attribute not found, the authenticated principal id is used.
 
 ```json

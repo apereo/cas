@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Issuer;
@@ -33,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@TestPropertySource(properties = "cas.authn.saml-idp.metadata.location=file:src/test/resources/metadata")
+@TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata")
 public class SLOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
 
     @Autowired
@@ -62,11 +63,11 @@ public class SLOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
             .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
         logoutRequest = samlIdPObjectSigner.encode(logoutRequest, service,
-            adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI, logoutRequest);
+            adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI, logoutRequest, new MessageContext());
 
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, logoutRequest).toString();
         request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
         controller.handleSaml2ProfileSLOPostRequest(response, request);
-        assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
     }
 }

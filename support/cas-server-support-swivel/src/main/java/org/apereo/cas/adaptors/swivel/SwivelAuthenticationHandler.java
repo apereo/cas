@@ -2,9 +2,10 @@ package org.apereo.cas.adaptors.swivel;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -12,7 +13,6 @@ import com.swiveltechnologies.pinsafe.client.agent.AgentXmlRequest;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -26,16 +26,16 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
-public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler implements MultifactorAuthenticationHandler {
 
     private static final String SWIVEL_ERR_CODE_AUTHN_FAIL = "swivel.server.error";
     private static final Map<String, String> ERROR_MAP = createErrorCodeMap();
 
-    private final SwivelMultifactorProperties swivelProperties;
+    private final SwivelMultifactorAuthenticationProperties swivelProperties;
 
     public SwivelAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                        final PrincipalFactory principalFactory,
-                                       final SwivelMultifactorProperties swivelProperties) {
+                                       final SwivelMultifactorAuthenticationProperties swivelProperties) {
         super(name, servicesManager, principalFactory, swivelProperties.getOrder());
         this.swivelProperties = swivelProperties;
     }
@@ -65,17 +65,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         val swivelCredential = (SwivelTokenCredential) credential;
-        if (swivelCredential == null || StringUtils.isBlank(swivelCredential.getToken())) {
-            throw new IllegalArgumentException("No credential could be found or credential token is blank");
-        }
-        val context = RequestContextHolder.getRequestContext();
-        if (context == null) {
-            throw new IllegalArgumentException("No request context could be found to locate an authentication event");
-        }
         val authentication = WebUtils.getInProgressAuthentication();
-        if (authentication == null) {
-            throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
-        }
         val principal = authentication.getPrincipal();
         val uid = principal.getId();
         LOGGER.debug("Received principal id [{}]", uid);
@@ -84,14 +74,6 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
 
     private AuthenticationHandlerExecutionResult sendAuthenticationRequestToSwivel(final SwivelTokenCredential swivelCredential,
                                                                                    final String uid) throws FailedLoginException {
-        if (StringUtils.isBlank(swivelProperties.getSwivelUrl()) || StringUtils.isBlank(swivelProperties.getSharedSecret())) {
-            throw new FailedLoginException("Swivel url/shared secret is not specified and cannot be blank.");
-        }
-
-        if (StringUtils.isBlank(swivelCredential.getId()) || StringUtils.isBlank(swivelCredential.getToken())) {
-            throw new FailedLoginException("Swivel credentials are not specified can cannot be blank");
-        }
-
         /*
          * Create a new session with the Swivel server. We do not support
          * the user having a password on his/her Swivel account, just the
@@ -101,12 +83,8 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
         val req = new AgentXmlRequest(swivelProperties.getSwivelUrl(), swivelProperties.getSharedSecret());
         req.setIgnoreSSLErrors(swivelProperties.isIgnoreSslErrors());
 
-        try {
-            LOGGER.debug("Submitting Swivel request to [{}] for [{}]", swivelProperties.getSwivelUrl(), uid);
-            req.login(uid, StringUtils.EMPTY, swivelCredential.getToken());
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+        LOGGER.debug("Submitting Swivel request to [{}] for [{}]", swivelProperties.getSwivelUrl(), uid);
+        req.login(uid, StringUtils.EMPTY, swivelCredential.getToken());
 
         /*
          * Send the request. It will return either PASS (user authenticated)

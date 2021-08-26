@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 
 import com.google.common.collect.Maps;
@@ -40,12 +41,14 @@ public interface ProtocolAttributeEncoder {
      * and removed and it is assumed that all will be returned
      * back to the service.
      *
-     * @param attributes The attribute collection that is ready to be released
-     * @param service    the requesting service for which attributes are to be encoded
+     * @param attributes            The attribute collection that is ready to be released
+     * @param registeredService     the requesting service for which attributes are to be encoded
+     * @param webApplicationService the web application service
      * @return collection of attributes after encryption ready for release.
      * @since 4.1
      */
-    default Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final RegisteredService service) {
+    default Map<String, Object> encodeAttributes(final Map<String, Object> attributes,
+        final RegisteredService registeredService, final WebApplicationService webApplicationService) {
         val finalAttributes = Maps.<String, Object>newHashMapWithExpectedSize(attributes.size());
         attributes.forEach((k, v) -> {
             val attributeName = decodeAttribute(k);
@@ -87,5 +90,25 @@ public interface ProtocolAttributeEncoder {
             return new String(Hex.decodeHex(s.substring(1)), StandardCharsets.UTF_8);
         }
         return s;
+    }
+
+    /**
+     * Decode attributes map.
+     *
+     * @param attributes            the attributes
+     * @param registeredService     the registered service
+     * @param webApplicationService the web application service
+     * @return the map
+     */
+    static Map<String, Object> decodeAttributes(final Map<String, Object> attributes,
+                                                final RegisteredService registeredService,
+                                                final WebApplicationService webApplicationService) {
+        val finalAttributes = Maps.<String, Object>newHashMapWithExpectedSize(attributes.size());
+        attributes.forEach((k, v) -> {
+            val attributeName = ProtocolAttributeEncoder.decodeAttribute(k);
+            LOGGER.debug("Decoded SAML attribute [{}] to [{}] with value(s) [{}]", k, attributeName, v);
+            finalAttributes.put(attributeName, v);
+        });
+        return finalAttributes;
     }
 }

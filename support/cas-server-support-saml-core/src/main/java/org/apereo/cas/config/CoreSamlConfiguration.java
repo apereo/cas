@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import net.shibboleth.utilities.java.support.xml.BasicParserPool;
 import org.apache.commons.io.FileUtils;
@@ -13,6 +12,7 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.velocity.runtime.resource.loader.FileResourceLoader;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
+import org.apache.xml.security.Init;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallerFactory;
@@ -41,6 +41,14 @@ public class CoreSamlConfiguration {
 
     private static final int POOL_SIZE = 200;
 
+    /**
+     * Make that SAML2 responses is not built with linebreaks.
+     */
+    static {
+        System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
+        Init.init();
+    }
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -60,14 +68,13 @@ public class CoreSamlConfiguration {
         return new VelocityEngine(properties);
     }
 
-    @Bean(name = "shibboleth.OpenSAMLConfig")
-    public OpenSamlConfigBean openSamlConfigBean() {
+    @Bean(name = OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+    public OpenSamlConfigBean openSamlConfigBean() throws Exception {
         return new OpenSamlConfigBean(parserPool());
     }
 
-    @SneakyThrows
     @Bean(name = "shibboleth.ParserPool", initMethod = "initialize")
-    public BasicParserPool parserPool() {
+    public BasicParserPool parserPool() throws Exception {
         val pool = new BasicParserPool();
         pool.setMaxPoolSize(POOL_SIZE);
         pool.setCoalescing(true);
@@ -91,21 +98,21 @@ public class CoreSamlConfiguration {
         pool.setBuilderFeatures(features);
         return pool;
     }
-    
+
     @Bean(name = "shibboleth.BuilderFactory")
-    @DependsOn("shibboleth.OpenSAMLConfig")
+    @DependsOn(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     public XMLObjectBuilderFactory builderFactory() {
         return XMLObjectProviderRegistrySupport.getBuilderFactory();
     }
 
     @Bean(name = "shibboleth.MarshallerFactory")
-    @DependsOn("shibboleth.OpenSAMLConfig")
+    @DependsOn(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     public MarshallerFactory marshallerFactory() {
         return XMLObjectProviderRegistrySupport.getMarshallerFactory();
     }
 
     @Bean(name = "shibboleth.UnmarshallerFactory")
-    @DependsOn("shibboleth.OpenSAMLConfig")
+    @DependsOn(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     public UnmarshallerFactory unmarshallerFactory() {
         return XMLObjectProviderRegistrySupport.getUnmarshallerFactory();
     }

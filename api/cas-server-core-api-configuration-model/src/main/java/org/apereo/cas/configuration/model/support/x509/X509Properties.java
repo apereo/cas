@@ -1,8 +1,8 @@
 package org.apereo.cas.configuration.model.support.x509;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
-import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -37,7 +37,7 @@ public class X509Properties implements Serializable {
     /**
      * Default setting whether to allow unspecified number of intermediate certificates.
      */
-    private static final boolean DEFAULT_MAXPATHLENGTH_ALLOW_UNSPECIFIED = false;
+    private static final boolean DEFAULT_MAX_PATHLENGTH_ALLOW_UNSPECIFIED = false;
 
     /**
      * Default setting to check keyUsage extension.
@@ -51,7 +51,6 @@ public class X509Properties implements Serializable {
 
     /**
      * Default name of header containing certificate from the proxy.
-     * <p>
      * Format of header should be compatible with Tomcat SSLValve.
      */
     private static final String DEFAULT_CERT_HEADER_NAME = "ssl_client_cert";
@@ -86,34 +85,31 @@ public class X509Properties implements Serializable {
 
     /**
      * Indicates the type of principal resolution for X509.
-     * <ul>
-     * <li>{@code SERIAL_NO}: Resolve the principal by the serial number with a configurable radix,
-     * ranging from 2 to 36. If radix is 16, then the serial number could be filled with leading zeros to even the number of digits.</li>
-     * <li>{@code SERIAL_NO_DN}: Resolve the principal by serial number and issuer dn.</li>
-     * <li>{@code SUBJECT}: Resolve the principal by extracting one or more attribute values from the
-     * certificate subject DN and combining them with intervening delimiters.</li>
-     * <li>{@code SUBJECT_ALT_NAME}: Resolve the principal by the subject alternative name extension.</li>
-     * <li>{@code SUBJECT_DN}: The default type; Resolve the principal by the certificate’s subject dn.</li>
-     * </ul>
      */
-    private PrincipalTypes principalType;
+    @RequiredProperty
+    private PrincipalTypes principalType = PrincipalTypes.SUBJECT_DN;
 
     /**
      * Revocation certificate checking can be carried out in one of the following ways:
      * <ul>
      * <li>{@code NONE}: No revocation is performed.</li>
      * <li>{@code CRL}: The CRL URI(s) mentioned in the certificate cRLDistributionPoints extension field.
-     * Caches are available to prevent excessive IO against CRL endpoints; CRL data is fetched if does not exist in the cache or if it is expired.</li>
+     * Caches are available to prevent excessive IO against CRL endpoints. CRL data
+     * is fetched if does not exist in the cache or if it is expired.</li>
      * <li>{@code RESOURCE}: A CRL hosted at a fixed location. The CRL is fetched at periodic intervals and cached.</li>
      * </ul>
      */
     private String revocationChecker = "NONE";
 
     /**
+     * Options to describe how to fetch CRL resources.
+     * 
      * To fetch CRLs, the following options are available:
      * <ul>
-     * <li>{@code RESOURCE}: By default, all revocation checks use fixed resources to fetch the CRL resource from the specified location.</li>
-     * <li>{@code LDAP}: A CRL resource may be fetched from a pre-configured attribute, in the event that the CRL resource location is an LDAP URI.</li>
+     * <li>{@code RESOURCE}: By default, all revocation checks use fixed
+     * resources to fetch the CRL resource from the specified location.</li>
+     * <li>{@code LDAP}: A CRL resource may be fetched from a pre-configured
+     * attribute, in the event that the CRL resource location is an LDAP URI.</li>
      * </ul>
      */
     private String crlFetcher = "RESOURCE";
@@ -143,6 +139,14 @@ public class X509Properties implements Serializable {
      */
     private boolean cacheEternal;
 
+    /**
+     * Determine whether X509 authentication should allow
+     * other forms of authentication such as username/password.
+     * If this setting is turned off, typically the ability to view
+     * the login form as the primary form of authentication is turned off.
+     */
+    private boolean mixedMode = true;
+    
     /**
      * When CRLs are cached, indicate the time-to-live of cache items.
      */
@@ -209,7 +213,8 @@ public class X509Properties implements Serializable {
     /**
      * LDAP settings when fetching CRLs from LDAP.
      */
-    private Ldap ldap = new Ldap();
+    @NestedConfigurationProperty
+    private X509LdapProperties ldap = new X509LdapProperties();
 
     /**
      * The compiled pattern supplied by the deployer.
@@ -226,7 +231,7 @@ public class X509Properties implements Serializable {
      * Deployer supplied setting to allow unlimited pathLength in a SUPPLIED
      * certificate.
      */
-    private boolean maxPathLengthAllowUnspecified = DEFAULT_MAXPATHLENGTH_ALLOW_UNSPECIFIED;
+    private boolean maxPathLengthAllowUnspecified = DEFAULT_MAX_PATHLENGTH_ALLOW_UNSPECIFIED;
 
     /**
      * Deployer supplied setting to check the KeyUsage extension.
@@ -256,7 +261,6 @@ public class X509Properties implements Serializable {
 
     /**
      * Whether to extract certificate from request.
-     * <p>
      * The default implementation extracts certificate from header via Tomcat SSLValve parsing logic
      * and using the {@link #DEFAULT_CERT_HEADER_NAME} header.
      * Must be false by default because if someone enables it they need to make sure they are
@@ -309,33 +313,19 @@ public class X509Properties implements Serializable {
      * The webflow configuration.
      */
     @NestedConfigurationProperty
-    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties(100);
+    private X509WebflowAutoConfigurationProperties webflow = new X509WebflowAutoConfigurationProperties();
 
     /**
-     * The  Principal types.
+     * Principal transformation properties.
+     */
+    @NestedConfigurationProperty
+    private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
+
+    /**
+     * The principal resolution types.
      */
     public enum PrincipalTypes {
 
-        /**
-         * Create principal by subject.
-         */
-        SUBJECT,
-        /**
-         * Create principal by subject DN.
-         */
-        SUBJECT_DN,
-        /**
-         * Create principal by serial no.
-         */
-        SERIAL_NO,
-        /**
-         * Create principal by serial no and DN.
-         */
-        SERIAL_NO_DN,
-        /**
-         * Create principal by subject alternative name.
-         */
-        SUBJECT_ALT_NAME,
         /**
          * Create principal by common name and EDIPI.
          */
@@ -345,18 +335,32 @@ public class X509Properties implements Serializable {
          * The subject alternative name field contains a list of various types of names, one type is RFC822 e-mail
          * address. This will return the first e-mail address that is found (if there are more than one).
          */
-        RFC822_EMAIL
-    }
-
-    @Getter
-    @Setter
-    public static class Ldap extends AbstractLdapSearchProperties {
-
-        private static final long serialVersionUID = -1655068554291000206L;
-
+        RFC822_EMAIL,
         /**
-         * The LDAP attribute that holds the certificate revocation list.
+         * Create principal by serial no.
+         * Resolve the principal by the serial number with a configurable <strong>radix</strong>, ranging from 2 to 36.
+         * If {@code radix} is {@code 16}, then the serial number could be filled with leading zeros to even the number of digits.
          */
-        private String certificateAttribute = "certificateRevocationList";
+        SERIAL_NO,
+        /**
+         * Create principal by serial no and DN.
+         */
+        SERIAL_NO_DN,
+        /**
+         * Create principal by subject.
+         * Resolve the principal by extracting one or more attribute values from the
+         * certificate subject DN and combining them with intervening delimiters.
+         */
+        SUBJECT,
+        /**
+         * Create principal by subject alternative name.
+         * Resolve the principal by the subject alternative name extension. (type: otherName)
+         */
+        SUBJECT_ALT_NAME,
+        /**
+         * Create principal by subject DN.
+         */
+        SUBJECT_DN
+
     }
 }

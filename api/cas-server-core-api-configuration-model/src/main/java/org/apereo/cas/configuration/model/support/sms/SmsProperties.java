@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.sms;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -26,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 @Setter
 @RequiresModule(name = "cas-server-core-util", automated = true)
 @Accessors(chain = true)
+@JsonFilter("SmsProperties")
 public class SmsProperties implements Serializable {
 
     private static final long serialVersionUID = -3713886839517507306L;
@@ -49,6 +51,15 @@ public class SmsProperties implements Serializable {
      */
     @RequiredProperty
     private String attributeName = "phone";
+
+    /**
+     * Is text/from defined.
+     *
+     * @return true/false
+     */
+    public boolean isDefined() {
+        return StringUtils.isNotBlank(getText()) && StringUtils.isNotBlank(getFrom());
+    }
 
     /**
      * Format body.

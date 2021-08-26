@@ -9,7 +9,6 @@ import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -27,7 +26,6 @@ import java.util.ArrayList;
  */
 @Configuration("casCoreTicketsSerializationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@AutoConfigureAfter(CasCoreTicketsConfiguration.class)
 public class CasCoreTicketsSerializationConfiguration {
 
     @Autowired
@@ -37,7 +35,7 @@ public class CasCoreTicketsSerializationConfiguration {
     @ConditionalOnMissingBean(name = "ticketSerializationExecutionPlan")
     public TicketSerializationExecutionPlan ticketSerializationExecutionPlan() {
         val resolvers = applicationContext.getBeansOfType(TicketSerializationExecutionPlanConfigurer.class, false, true);
-        val providers = new ArrayList<TicketSerializationExecutionPlanConfigurer>(resolvers.values());
+        val providers = new ArrayList<>(resolvers.values());
         AnnotationAwareOrderComparator.sort(providers);
         val plan = new DefaultTicketSerializationExecutionPlan();
         providers.forEach(provider -> provider.configureTicketSerialization(plan));

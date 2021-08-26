@@ -19,19 +19,12 @@ import java.util.Map;
  * @since 3.0.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface TicketGrantingTicket extends Ticket {
+public interface TicketGrantingTicket extends AuthenticationAwareTicket {
 
     /**
      * The prefix to use when generating an id for a Ticket Granting Ticket.
      */
     String PREFIX = "TGT";
-
-    /**
-     * Method to retrieve the authentication.
-     *
-     * @return the authentication
-     */
-    Authentication getAuthentication();
 
     /**
      * Grant a ServiceTicket for a specific service.
@@ -83,13 +76,12 @@ public interface TicketGrantingTicket extends Ticket {
     TicketGrantingTicket getRoot();
 
     /**
-     * Gets all authentications ({@link #getAuthentication()} from this
+     * Gets all authentications ({@link AuthenticationAwareTicket#getAuthentication()} from this
      * instance and all dependent tickets that reference this one.
      *
      * @return Non -null list of authentication associated with this ticket in leaf-first order.
      */
     List<Authentication> getChainedAuthentications();
-
 
     /**
      * Gets the service that produced a proxy-granting ticket.

@@ -2,6 +2,7 @@ package org.apereo.cas.support.geo.maxmind;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.support.geo.AbstractGeoLocationService;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.AddressNotFoundException;
@@ -56,7 +57,7 @@ public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationServic
         } catch (final AddressNotFoundException e) {
             LOGGER.info(e.getMessage(), e);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -66,7 +67,7 @@ public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationServic
         try {
             return locate(InetAddress.getByName(address));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

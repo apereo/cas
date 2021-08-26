@@ -1,4 +1,4 @@
-description = "Apereo CAS SAML Identity Provider Discovery Support"
+description = "Apereo CAS SAML2 Identity Provider Discovery Support"
 dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-webflow")
@@ -19,6 +19,7 @@ dependencies {
 
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-pac4j-core")
+    implementation project(":support:cas-server-support-pac4j-api")
     implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-saml-mdui-core")
     implementation project(":support:cas-server-support-saml-idp-core")
@@ -37,6 +38,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-authentication-mfa")

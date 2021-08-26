@@ -16,6 +16,14 @@ import java.util.stream.Collectors;
 public interface AuthenticationTransaction extends Serializable {
 
     /**
+     * Collect previous authentications.
+     *
+     * @param authentications the authentications
+     * @return the authentication transaction
+     */
+    AuthenticationTransaction collect(Collection<Authentication> authentications);
+
+    /**
      * Gets service linked to this transaction.
      *
      * @return the service
@@ -28,6 +36,13 @@ public interface AuthenticationTransaction extends Serializable {
      * @return the credentials
      */
     Collection<Credential> getCredentials();
+
+    /**
+     * Gets authentications.
+     *
+     * @return the authentications
+     */
+    Collection<Authentication> getAuthentications();
 
     /**
      * Gets the first (primary) credential in the chain.

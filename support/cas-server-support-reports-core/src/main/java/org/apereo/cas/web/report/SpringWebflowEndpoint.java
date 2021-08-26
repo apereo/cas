@@ -4,6 +4,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -66,21 +68,30 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
      * @return JSON representing the current state of SWF.
      */
     @ReadOperation
+    @Operation(summary = "Get Spring webflow report using an optional flow id", parameters = {@Parameter(name = "flowId")})
     public Map<?, ?> getReport(@Nullable final String flowId) {
         val jsonMap = new LinkedHashMap<String, Object>();
         val map = this.applicationContext.getBeansOfType(FlowDefinitionRegistry.class, false, true);
 
-        map.forEach((k, v) -> Arrays.stream(v.getFlowDefinitionIds())
+        map.forEach((k, value) -> Arrays.stream(value.getFlowDefinitionIds())
             .filter(currentId -> StringUtils.isBlank(flowId) || flowId.equalsIgnoreCase(currentId))
             .forEach(id -> {
+                val flowDefinition = Flow.class.cast(value.getFlowDefinition(id));
+
                 val flowDetails = new LinkedHashMap<String, Object>();
-                val def = Flow.class.cast(v.getFlowDefinition(id));
-                flowDetails.put("startState", def.getStartState().getId());
+                flowDetails.put("startState", flowDefinition.getStartState().getId());
+
+                val startActions = StreamSupport.stream(flowDefinition.getStartActionList().spliterator(), false)
+                    .map(SpringWebflowEndpoint::convertActionToString)
+                    .collect(Collectors.toList());
+                if (!startActions.isEmpty()) {
+                    flowDetails.put("startActions", startActions);
+                }
 
                 val states = new LinkedHashMap<String, Map>();
-                Arrays.stream(def.getStateIds()).forEach(st -> {
+                Arrays.stream(flowDefinition.getStateIds()).forEach(st -> {
 
-                    val state = (State) def.getState(st);
+                    val state = (State) flowDefinition.getState(st);
                     val stateMap = new LinkedHashMap<String, Object>();
 
                     if (!state.getAttributes().asMap().isEmpty()) {
@@ -125,7 +136,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
                         }
 
                         acts = Arrays.stream(viewState.getVariables())
-                            .map(value -> value.getName() + " -> " + value.getValueFactory().toString())
+                            .map(variable -> variable.getName() + " -> " + variable.getValueFactory().toString())
                             .collect(Collectors.toList());
 
                         if (!acts.isEmpty()) {
@@ -177,31 +188,31 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
                     states.put(st, stateMap);
                 });
                 flowDetails.put("states", states);
-                flowDetails.put("possibleOutcomes", def.getPossibleOutcomes());
-                flowDetails.put("stateCount", def.getStateCount());
+                flowDetails.put("possibleOutcomes", flowDefinition.getPossibleOutcomes());
+                flowDetails.put("stateCount", flowDefinition.getStateCount());
 
-                var acts = StreamSupport.stream(def.getEndActionList().spliterator(), false)
+                var acts = StreamSupport.stream(flowDefinition.getEndActionList().spliterator(), false)
                     .map(SpringWebflowEndpoint::convertActionToString)
                     .collect(Collectors.toList());
                 if (!acts.isEmpty()) {
                     flowDetails.put("endActions", acts);
                 }
 
-                acts = StreamSupport.stream(def.getGlobalTransitionSet().spliterator(), false)
+                acts = StreamSupport.stream(flowDefinition.getGlobalTransitionSet().spliterator(), false)
                     .map(tr -> tr.getId() + " -> " + tr.getTargetStateId() + " @ " + tr.getExecutionCriteria().toString())
                     .collect(Collectors.toList());
                 if (!acts.isEmpty()) {
                     flowDetails.put("globalTransitions", acts);
                 }
 
-                acts = Arrays.stream(def.getExceptionHandlerSet().toArray())
+                acts = Arrays.stream(flowDefinition.getExceptionHandlerSet().toArray())
                     .map(Object::toString)
                     .collect(Collectors.toList());
                 if (!acts.isEmpty()) {
                     flowDetails.put("exceptionHandlers", acts);
                 }
 
-                val vars = Arrays.stream(def.getVariables())
+                val vars = Arrays.stream(flowDefinition.getVariables())
                     .map(FlowVariable::getName)
                     .collect(Collectors.joining(","));
 

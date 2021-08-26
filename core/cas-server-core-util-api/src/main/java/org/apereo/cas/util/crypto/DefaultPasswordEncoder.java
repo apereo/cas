@@ -1,5 +1,7 @@
 package org.apereo.cas.util.crypto;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -46,11 +48,7 @@ public class DefaultPasswordEncoder implements PasswordEncoder {
                 encodingCharToUse, encoded);
             return encoded;
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -59,7 +57,9 @@ public class DefaultPasswordEncoder implements PasswordEncoder {
     public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
         val encodedRawPassword = StringUtils.isNotBlank(rawPassword) ? encode(rawPassword.toString()) : null;
         val matched = StringUtils.equals(encodedRawPassword, encodedPassword);
-        LOGGER.debug("Provided password does{}match the encoded password", BooleanUtils.toString(matched, StringUtils.EMPTY, " not "));
+        val msg = String.format("Provided password does%smatch the encoded password",
+            BooleanUtils.toString(matched, StringUtils.EMPTY, " not "));
+        LOGGER.debug(msg);
         return matched;
     }
 }

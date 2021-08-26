@@ -1,7 +1,10 @@
 package org.apereo.cas.rest.factory;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -21,11 +24,12 @@ public class CompositeServiceTicketResourceEntityResponseFactory implements Serv
     private final Collection<ServiceTicketResourceEntityResponseFactory> chain;
 
     @Audit(
-        action = "REST_API_SERVICE_TICKET",
-        actionResolverName = "REST_API_SERVICE_TICKET_ACTION_RESOLVER",
-        resourceResolverName = "REST_API_SERVICE_TICKET_RESOURCE_RESOLVER")
+        action = AuditableActions.REST_API_SERVICE_TICKET,
+        actionResolverName = AuditActionResolvers.REST_API_SERVICE_TICKET_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.REST_API_SERVICE_TICKET_RESOURCE_RESOLVER)
     @Override
-    public ResponseEntity<String> build(final String ticketGrantingTicket, final Service service, final AuthenticationResult authenticationResult) {
+    public ResponseEntity<String> build(final String ticketGrantingTicket, final WebApplicationService service,
+                                        final AuthenticationResult authenticationResult) {
         val factory = chain.stream()
             .filter(f -> f.supports(service, authenticationResult))
             .findFirst()
@@ -35,7 +39,7 @@ public class CompositeServiceTicketResourceEntityResponseFactory implements Serv
     }
 
     @Override
-    public boolean supports(final Service service, final AuthenticationResult authenticationResult) {
+    public boolean supports(final WebApplicationService service, final AuthenticationResult authenticationResult) {
         return service != null && authenticationResult != null;
     }
 

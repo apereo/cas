@@ -1,13 +1,16 @@
 package org.apereo.cas.web.support.config;
 
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 
 import com.hazelcast.map.IMap;
 import org.junit.jupiter.api.Tag;
@@ -30,14 +33,17 @@ import static org.junit.jupiter.api.Assertions.*;
     HazelcastTicketRegistryConfiguration.class,
     HazelcastTicketRegistryTicketCatalogConfiguration.class,
     CasCoreHttpConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasHazelcastThrottlingConfiguration.class
 })
-@Tag("Simple")
+@Tag("Hazelcast")
 public class CasHazelcastThrottlingConfigurationTests {
 
     @Autowired

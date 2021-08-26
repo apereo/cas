@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -7,7 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.IOException;
+import java.net.URL;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,20 +17,25 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@Tag("Simple")
+@Tag("RegisteredService")
 public class RegexMatchingRegisteredServiceProxyPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "regexMatchingRegisteredServiceProxyPolicy.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeARegexMatchingRegisteredServiceProxyPolicyToJson() throws IOException {
+    public void verifySerializeARegexMatchingRegisteredServiceProxyPolicyToJson() throws Exception {
         val policyWritten = new RegexMatchingRegisteredServiceProxyPolicy("pattern");
-
         MAPPER.writeValue(JSON_FILE, policyWritten);
-
         val policyRead = MAPPER.readValue(JSON_FILE, RegexMatchingRegisteredServiceProxyPolicy.class);
-
         assertEquals(policyWritten, policyRead);
+    }
+
+    @Test
+    public void verifyBadPattern() throws Exception {
+        val policy = new RegexMatchingRegisteredServiceProxyPolicy("***");
+        assertFalse(policy.isAllowedProxyCallbackUrl(new URL("https://github.com/apereo/cas")));
     }
 }

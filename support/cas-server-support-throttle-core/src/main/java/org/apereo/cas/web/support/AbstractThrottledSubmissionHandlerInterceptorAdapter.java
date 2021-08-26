@@ -3,19 +3,19 @@ package org.apereo.cas.web.support;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.util.DateTimeUtils;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,9 +33,9 @@ import java.util.List;
 @Slf4j
 @ToString
 @Getter
-@RequiredArgsConstructor
-public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter
-    implements ThrottledSubmissionHandlerInterceptor, InitializingBean {
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
+    implements ThrottledSubmissionHandlerInterceptor, InitializingBean, AsyncHandlerInterceptor {
     /**
      * Throttled login attempt action code used to tag the attempt in audit records.
      */
@@ -57,10 +57,11 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     }
 
     @Override
-    public final boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
-                                   final Object o) throws Exception {
-        if (!HttpMethod.POST.name().equals(request.getMethod())) {
-            LOGGER.trace("Letting the request through given http method is [{}]", request.getMethod());
+    public final boolean preHandle(final HttpServletRequest request,
+                                   final HttpServletResponse response,
+                                   final Object handler) throws Exception {
+        if (isRequestIgnoredForThrottling(request, response)) {
+            LOGGER.trace("Letting the request through without throttling; No request filters support it");
             return true;
         }
 
@@ -76,25 +77,14 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
         return true;
     }
 
-    /**
-     * Is request throttled.
-     *
-     * @param request  the request
-     * @param response the response
-     * @return true if the request is throttled. False otherwise, letting it proceed.
-     */
-    protected boolean throttleRequest(final HttpServletRequest request, final HttpServletResponse response) {
-        return configurationContext.getThrottledRequestExecutor() != null
-            && configurationContext.getThrottledRequestExecutor().throttle(request, response);
-    }
-
     @Override
     public final void postHandle(final HttpServletRequest request, final HttpServletResponse response,
-                                 final Object o, final ModelAndView modelAndView) {
-        if (!HttpMethod.POST.name().equals(request.getMethod())) {
-            LOGGER.trace("Skipping authentication throttling for requests other than POST");
+                                 final Object handler, final ModelAndView modelAndView) {
+        if (isRequestIgnoredForThrottling(request, response)) {
+            LOGGER.trace("Skipping authentication throttling for requests; no filters support it.");
             return;
         }
+
         val recordEvent = shouldResponseBeRecordedAsFailure(response);
         if (recordEvent) {
             LOGGER.debug("Recording submission failure for [{}]", request.getRequestURI());
@@ -105,6 +95,31 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
         }
     }
 
+    @Override
+    public void afterCompletion(final HttpServletRequest request, final HttpServletResponse response,
+                                final Object handler, final Exception e) throws Exception {
+        if (!isRequestIgnoredForThrottling(request, response) && shouldResponseBeRecordedAsFailure(response)) {
+            recordSubmissionFailure(request);
+        }
+    }
+
+    @Override
+    public void decrement() {
+        LOGGER.debug("Throttling is not activated for this interceptor adapter");
+    }
+
+    /**
+     * Is request throttled.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return true if the request is throttled. False otherwise, letting it proceed.
+     */
+    protected boolean throttleRequest(final HttpServletRequest request, final HttpServletResponse response) {
+        val executor = configurationContext.getThrottledRequestExecutor();
+        return executor != null && executor.throttle(request, response);
+    }
+
     /**
      * Should response be recorded as failure boolean.
      *
@@ -113,7 +128,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      */
     protected boolean shouldResponseBeRecordedAsFailure(final HttpServletResponse response) {
         val status = response.getStatus();
-        return status != HttpStatus.SC_CREATED && status != HttpStatus.SC_OK && status != HttpStatus.SC_MOVED_TEMPORARILY;
+        return status != HttpStatus.CREATED.value()
+            && status != HttpStatus.OK.value() && status != HttpStatus.FOUND.value();
     }
 
     /**
@@ -124,11 +140,6 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     protected void recordThrottle(final HttpServletRequest request) {
     }
 
-    @Override
-    public void decrement() {
-        LOGGER.debug("Throttling is not activated for this interceptor adapter");
-    }
-
     /**
      * Calculate threshold rate and compare boolean.
      * Compute rate in submissions/sec between last two authn failures and compare with threshold.
@@ -136,6 +147,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * @param failures the failures
      * @return true/false
      */
+    @SuppressWarnings("JavaUtilDate")
     protected boolean calculateFailureThresholdRateAndCompare(final List<Date> failures) {
         if (failures.size() < 2) {
             return false;
@@ -193,5 +205,9 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             clientInfo.getServerIpAddress());
         LOGGER.debug("Recording throttled audit action [{}]", context);
         configurationContext.getAuditTrailExecutionPlan().record(context);
+    }
+
+    private boolean isRequestIgnoredForThrottling(final HttpServletRequest request, final HttpServletResponse response) {
+        return !configurationContext.getAuthenticationThrottlingExecutionPlan().getAuthenticationThrottleFilter().supports(request, response);
     }
 }

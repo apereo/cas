@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
 
+import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.springframework.core.Ordered;
 
 import java.io.Serializable;
@@ -40,4 +41,11 @@ public interface PrincipalElectionStrategy extends Serializable, Ordered {
     default int getOrder() {
         return Integer.MAX_VALUE;
     }
+
+    /**
+     * Gets attribute merger.
+     *
+     * @return the attribute merger
+     */
+    IAttributeMerger getAttributeMerger();
 }

@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.adaptors.rest.RestAuthenticationApi;
 import org.apereo.cas.adaptors.rest.RestAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -10,10 +9,9 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
@@ -40,11 +38,8 @@ import java.nio.charset.Charset;
 @Configuration("casRestAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasRestAuthenticationConfiguration {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .findAndRegisterModules()
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
-        .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
-        .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).singleValueAsArray(true).build().toObjectMapper();
 
     @Autowired
     @Qualifier("servicesManager")
@@ -62,7 +57,6 @@ public class CasRestAuthenticationConfiguration {
 
     @Bean
     @RefreshScope
-    @SneakyThrows
     public RestTemplate restAuthenticationTemplate() {
         val rest = casProperties.getAuthn().getRest();
         val template = new RestTemplate();
@@ -85,22 +79,13 @@ public class CasRestAuthenticationConfiguration {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
-    @ConditionalOnMissingBean(name = "restAuthenticationApi")
     @Bean
-    @RefreshScope
-    public RestAuthenticationApi restAuthenticationApi() {
-        val rest = casProperties.getAuthn().getRest();
-        return new RestAuthenticationApi(restAuthenticationTemplate(),
-            rest.getUri(),
-            rest.getCharset());
-    }
-
-    @Bean
+    @ConditionalOnMissingBean(name = "restAuthenticationHandler")
     public AuthenticationHandler restAuthenticationHandler() {
         val rest = casProperties.getAuthn().getRest();
-        val r = new RestAuthenticationHandler(rest.getName(), restAuthenticationApi(),
-            servicesManager.getObject(), restAuthenticationPrincipalFactory());
+        val r = new RestAuthenticationHandler(servicesManager.getObject(), restAuthenticationPrincipalFactory(), rest);
         r.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rest.getPasswordEncoder(), applicationContext));
+        r.setState(rest.getState());
         return r;
     }
 

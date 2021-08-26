@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.encryption.pbe.StandardPBEByteEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -12,8 +11,6 @@ import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
-
-import java.security.Security;
 
 /**
  * This is {@link JasyptDecryptPropertyCommand}.
@@ -35,6 +32,7 @@ public class JasyptDecryptPropertyCommand {
      * @param alg        the alg
      * @param provider   the provider
      * @param password   the password
+     * @param initVector whether to use initialization vector
      * @param iterations the iterations- defaults to {@value StandardPBEByteEncryptor#DEFAULT_KEY_OBTENTION_ITERATIONS}
      */
     @ShellMethod(key = "decrypt-value", value = "Decrypt a CAS property value/setting via Jasypt")
@@ -47,6 +45,8 @@ public class JasyptDecryptPropertyCommand {
             help = "Security provider to use to decrypt") final String provider,
         @ShellOption(value = { "password", "--password" },
             help = "Password (encryption key) to decrypt") final String password,
+        @ShellOption(value = { "initvector", "--initvector", "iv", "--iv" },
+                help = "Use initialization vector to encrypt", defaultValue = "false") final Boolean initVector,
         @ShellOption(value = { "iterations", "--iterations" },
             defaultValue = ShellOption.NULL,
             help = "Key obtention iterations to decrypt, default 1000") final String iterations) {
@@ -54,13 +54,13 @@ public class JasyptDecryptPropertyCommand {
         val cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
         cipher.setAlgorithm(alg);
         cipher.setPassword(password);
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastleProvider());
-        }
         cipher.setProviderName(provider);
         cipher.setKeyObtentionIterations(iterations);
+        if (initVector || cipher.isVectorInitializationRequiredFor(alg)) {
+            cipher.configureInitializationVector();
+        }
         val decrypted = cipher.decryptValue(value);
-        LOGGER.info("==== Decrypted Value ====\n{}", decrypted);
+        LOGGER.info("==== Decrypted Value ====\n[{}]", decrypted);
 
     }
 }

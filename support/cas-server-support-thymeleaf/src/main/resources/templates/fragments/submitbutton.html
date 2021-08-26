@@ -23,8 +23,8 @@
             <span class="mdc-button__label" th:text="#{${messageKey}}">Login</span>
         </button>
 
-        <span th:unless="${recaptchaSiteKey == null}" th:switch="${recaptchaVersion}">
-            <span th:case="'v2'" th:remove="tag">
+        <span th:unless="${recaptchaSiteKey == null}">
+             <span th:if="${#strings.equalsIgnoreCase(recaptchaVersion, 'GOOGLE_RECAPTCHA_V2')}">
                 <button th:unless="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}"
                         class="mdc-button mdc-button--raised"
                         name="submit"
@@ -43,7 +43,7 @@
                 </button>
             </span>
 
-            <span th:case="'v3'" th:remove="tag">
+            <span th:if="${#strings.equalsIgnoreCase(recaptchaVersion, 'GOOGLE_RECAPTCHA_V3')}">
                 <button class="mdc-button mdc-button--raised"
                         th:if="${recaptchaSiteKey != null}"
                         name="submit"
@@ -55,6 +55,18 @@
                     <span class="mdc-button__label" th:text="#{${messageKey}}" />
                 </button>
              </span>
+
+
+            <span th:if="${#strings.equalsIgnoreCase(recaptchaVersion, 'HCAPTCHA')}" th:remove="tag">
+                <button class="mdc-button mdc-button--raised"
+                        name="submit"
+                        accesskey="l"
+                        type="submit"
+                        value="Login3">
+                    <span class="mdc-button__label" th:text="#{${messageKey}}">Login</span>
+                </button>
+            </span>
+            
         </span>
 
     </div>

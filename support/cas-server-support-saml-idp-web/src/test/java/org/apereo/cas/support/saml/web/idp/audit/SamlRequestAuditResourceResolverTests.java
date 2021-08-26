@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.LogoutRequest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -20,7 +18,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
 @Tag("SAML")
 public class SamlRequestAuditResourceResolverTests {
     @Test
@@ -28,7 +25,7 @@ public class SamlRequestAuditResourceResolverTests {
         val r = new SamlRequestAuditResourceResolver();
         val result = r.resolveFrom(mock(JoinPoint.class), new Object());
         assertNotNull(result);
-        assertTrue(result.length == 0);
+        assertEquals(result.length, 0);
     }
 
 

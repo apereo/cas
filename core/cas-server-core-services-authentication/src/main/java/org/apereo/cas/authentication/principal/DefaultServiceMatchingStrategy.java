@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class DefaultServiceMatchingStrategy implements ServiceMatchingStrategy {
             LOGGER.trace("Decoded urls and comparing [{}] with [{}]", thisUrl, serviceUrl);
             return thisUrl.equalsIgnoreCase(serviceUrl);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

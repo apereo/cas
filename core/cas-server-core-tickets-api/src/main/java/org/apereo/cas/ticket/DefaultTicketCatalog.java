@@ -75,7 +75,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
 
     @Override
     public Collection<TicketDefinition> findAll() {
-        val list = new ArrayList<TicketDefinition>(ticketMetadataMap.values());
+        val list = new ArrayList<>(ticketMetadataMap.values());
         AnnotationAwareOrderComparator.sort(list);
         LOGGER.trace("Located all registered and known sorted ticket definitions [{}]", list);
         return list;

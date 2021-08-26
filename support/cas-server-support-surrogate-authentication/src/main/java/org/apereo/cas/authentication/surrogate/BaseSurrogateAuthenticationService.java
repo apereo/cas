@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
@@ -14,7 +15,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseSurrogateAuthenticationService implements SurrogateAuthenticationService {
     /**
      * The Services manager.
@@ -23,7 +24,7 @@ public abstract class BaseSurrogateAuthenticationService implements SurrogateAut
 
     @Override
     public final boolean canAuthenticateAs(final String surrogate, final Principal principal, final Optional<Service> service) {
-        return canAuthenticateAsInternal(surrogate, principal, service);
+        return surrogate.equalsIgnoreCase(principal.getId()) || canAuthenticateAsInternal(surrogate, principal, service);
     }
 
     /**

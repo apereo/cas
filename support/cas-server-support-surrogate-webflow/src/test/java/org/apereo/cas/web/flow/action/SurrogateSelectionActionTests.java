@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.action;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -28,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class SurrogateSelectionActionTests extends BaseSurrogateInitialAuthenticationActionTests {
 
     @Autowired
@@ -36,37 +37,37 @@ public class SurrogateSelectionActionTests extends BaseSurrogateInitialAuthentic
     private Action selectSurrogateAction;
 
     @Test
-    public void verifyNoCredentialFound() {
-        try {
-            val context = new MockRequestContext();
-            val request = new MockHttpServletRequest();
-            request.addParameter(SurrogateSelectionAction.PARAMETER_NAME_SURROGATE_TARGET, "cassurrogate");
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-            assertEquals("success", selectSurrogateAction.execute(context).getId());
-            val c = WebUtils.getCredential(context);
-            assertNull(c);
-        } catch (final Exception e) {
-            throw new AssertionError(e);
-        }
+    public void verifyFails() throws Exception {
+        val context = new MockRequestContext();
+        context.setExternalContext(mock(ServletExternalContext.class));
+        WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, selectSurrogateAction.execute(context).getId());
     }
 
     @Test
-    public void verifyCredentialFound() {
-        try {
-            val context = new MockRequestContext();
-            WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
-            val request = new MockHttpServletRequest();
+    public void verifyNoCredentialFound() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        request.addParameter(SurrogateSelectionAction.PARAMETER_NAME_SURROGATE_TARGET, "cassurrogate");
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, selectSurrogateAction.execute(context).getId());
+        val c = WebUtils.getCredential(context);
+        assertNull(c);
+    }
 
-            val builder = mock(AuthenticationResultBuilder.class);
-            when(builder.getInitialAuthentication()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getAuthentication("casuser")));
-            when(builder.collect(any(Authentication.class))).thenReturn(builder);
+    @Test
+    public void verifyCredentialFound() throws Exception {
+        val context = new MockRequestContext();
+        WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+        val request = new MockHttpServletRequest();
 
-            WebUtils.putAuthenticationResultBuilder(builder, context);
-            request.addParameter(SurrogateSelectionAction.PARAMETER_NAME_SURROGATE_TARGET, "cassurrogate");
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-            assertEquals("success", selectSurrogateAction.execute(context).getId());
-        } catch (final Exception e) {
-            throw new AssertionError(e);
-        }
+        val builder = mock(AuthenticationResultBuilder.class);
+        when(builder.getInitialAuthentication()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getAuthentication("casuser")));
+        when(builder.collect(any(Authentication.class))).thenReturn(builder);
+
+        WebUtils.putAuthenticationResultBuilder(builder, context);
+        request.addParameter(SurrogateSelectionAction.PARAMETER_NAME_SURROGATE_TARGET, "cassurrogate");
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, selectSurrogateAction.execute(context).getId());
     }
 }

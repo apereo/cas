@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -46,7 +47,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * This is {@link BaseCasCoreTests}.
@@ -56,7 +56,6 @@ import org.springframework.test.annotation.DirtiesContext;
  */
 @SpringBootTest(classes = BaseCasCoreTests.SharedTestConfiguration.class)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@DirtiesContext
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseCasCoreTests {
@@ -93,7 +92,6 @@ public abstract class BaseCasCoreTests {
         CasCookieConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
-        AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
         CasCoreServicesAuthenticationConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,
@@ -114,6 +112,7 @@ public abstract class BaseCasCoreTests {
         CasWebflowContextConfiguration.class,
         CasCoreWebflowConfiguration.class,
         CasCoreLogoutConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasMultifactorAuthenticationWebflowConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,

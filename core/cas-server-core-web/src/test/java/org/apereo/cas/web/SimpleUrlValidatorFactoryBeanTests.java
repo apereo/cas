@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author swoeste
  * @since 5.1.0
  */
-@Tag("Simple")
+@Tag("Web")
 public class SimpleUrlValidatorFactoryBeanTests {
 
     @Test

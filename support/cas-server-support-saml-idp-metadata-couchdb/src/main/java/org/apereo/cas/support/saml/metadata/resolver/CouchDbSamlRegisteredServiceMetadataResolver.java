@@ -7,11 +7,11 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.BaseSamlRegisteredServiceMetadataResolver;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import org.ektorp.DocumentNotFoundException;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 import java.util.Collection;
@@ -37,14 +37,7 @@ public class CouchDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
 
     @Override
     public Collection<MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        try {
-            return couchDb.getAll().stream().map(doc -> buildMetadataResolverFrom(service, doc)).filter(Objects::nonNull).collect(Collectors.toList());
-        } catch (final DocumentNotFoundException e) {
-            LOGGER.debug(e.getMessage());
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage());
-        }
-        return null;
+        return couchDb.getAll().stream().map(doc -> buildMetadataResolverFrom(service, doc)).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     @Override
@@ -53,7 +46,7 @@ public class CouchDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
             val metadataLocation = service.getMetadataLocation();
             return metadataLocation.trim().startsWith("couchdb://");
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

@@ -4,9 +4,13 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -15,7 +19,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -35,15 +38,21 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class RedirectToServiceActionTests {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("urlValidator")
+    private UrlValidator urlValidator;
 
     @Test
     public void verifyAction() throws Exception {
@@ -55,7 +64,8 @@ public class RedirectToServiceActionTests {
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
         val locator = mock(ResponseBuilderLocator.class);
-        when(locator.locate(any(WebApplicationService.class))).thenReturn(new WebApplicationServiceResponseBuilder(this.servicesManager));
+        when(locator.locate(any(WebApplicationService.class)))
+            .thenReturn(new WebApplicationServiceResponseBuilder(this.servicesManager, this.urlValidator));
 
         val redirectToServiceAction = new RedirectToServiceAction(locator);
         val event = redirectToServiceAction.execute(context);

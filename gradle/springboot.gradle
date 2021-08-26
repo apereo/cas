@@ -1,7 +1,7 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 
-if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootProject.publishSnapshots && !rootProject.skipBootifulArtifact)) {
-    logger.info "Applying Spring Boot plugin to bootify web application artifact for project $project.name..."
+if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProject.skipBootifulArtifact)) {
+    //logger.info "Applying Spring Boot plugin to bootify web application artifact for project $project.name..."
 
     apply plugin: "org.springframework.boot"
 
@@ -24,7 +24,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
         }
 
         bootWar {
-            mainClassName = project.ext.mainClassName
+            mainClass.set(project.ext.mainClassName)
             manifest {
                 attributes(
                         "Automatic-Module-Name": project.name,
@@ -37,20 +37,28 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
             }
             from "${buildDir}/resources/main", { into "WEB-INF/classes" }
             launchScript()
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         }
 
     } else {
         bootJar {
-            mainClassName = project.ext.mainClassName
+            mainClass.set(project.ext.mainClassName)
+            if (project.ext.has("archiveFileName")) {
+                archiveFileName = project.ext.archiveFileName
+            }
             from "${buildDir}/resources/main", { into "WEB-INF/classes" }
             launchScript()
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         }
 
         /*
-         * Gradle performs a sanity check before uploading, to make sure you don’t upload stale files (files produced by another build).
-         * This introduces a problem with Spring Boot applications; the main jar task is disabled by the Spring Boot application,
+         * Gradle performs a sanity check before uploading, to make sure
+         * you don’t upload stale files (files produced by another build).
+         * This introduces a problem with Spring Boot applications; the
+         * main jar task is disabled by the Spring Boot application,
          * and the component expects it to be present. Because the bootJar task uses the same file as the main jar
-         * task by default, releases of Gradle would either publish a stale bootJar artifact or fail if the bootJar task hasn’t been called previously.
+         * task by default, releases of Gradle would either publish a stale
+         * bootJar artifact or fail if the bootJar task hasn’t been called previously.
          *
          * A workaround is to tell Gradle what to upload. If you want to upload the bootJar, then you
          * need to configure the outgoing configurations to do this:
@@ -84,6 +92,8 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
         list.add("--add-opens")
         list.add("java.base/java.lang=ALL-UNNAMED")
         list.add("--add-opens")
+        list.add("java.base/sun.security.action=jdk.crypto.ec")
+        list.add("--add-opens")
         list.add("java.base/java.nio=ALL-UNNAMED")
         list.add("--add-opens")
         list.add("java.base/sun.nio.ch=ALL-UNNAMED")
@@ -92,14 +102,10 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
         list.add("--add-opens")
         list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
 
-        list.add("-XX:+UnlockExperimentalVMOptions")
-        list.add("-XX:+EnableJVMCI")
-        list.add("-XX:+UseJVMCICompiler")
-
         if (rootProject.enableRemoteDebugging) {
             def port = findAvailableTcpPort(5000..5010)
             if (port > 0) {
-                println "Listening on port ${port} for remote debugging requests"
+                ansi.green "Listening on port ${port} for remote debugging requests with suspend=${rootProject.remoteDebuggingSuspend}"
                 list.add("-Xrunjdwp:transport=dt_socket,address=${port},server=y,suspend=${rootProject.remoteDebuggingSuspend}")
             }
         }

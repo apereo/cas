@@ -1,21 +1,25 @@
 package org.apereo.cas.support.wsfederation;
 
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 
 import lombok.Setter;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.opensaml.security.credential.Credential;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.test.annotation.DirtiesContext;
+import org.opensaml.saml.saml1.core.Assertion;
+import org.opensaml.xmlsec.signature.Signature;
+import org.springframework.core.io.ClassPathResource;
 
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Test cases for {@link WsFederationHelper}.
@@ -24,28 +28,33 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2.0
  */
 @Setter
-@Tag("Simple")
+@Tag("WSFederation")
 public class WsFederationHelperTests extends AbstractWsFederationTests {
-    private static final String GOOD_TOKEN = "goodToken";
-
-    @Autowired
-    private HashMap<String, String> testTokens;
-
-    @Autowired
-    private ApplicationContext ctx;
 
     @Test
-    public void verifyParseTokenString() {
-        val wresult = testTokens.get(GOOD_TOKEN);
-        val result =
-            wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult), wsFederationConfigurations);
+    public void verifyEncryptedToken() throws Exception {
+        val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+        val wresult = IOUtils.toString(new ClassPathResource("encryptedToken.txt").getInputStream(), StandardCharsets.UTF_8);
+        val token = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
+        val result = wsFederationHelper.buildAndVerifyAssertion(token,
+            wsFederationConfigurations, service);
+        assertNotNull(result.getKey());
+    }
+
+    @Test
+    public void verifyParseTokenString() throws Exception {
+        val wresult = IOUtils.toString(new ClassPathResource("goodTokenResponse.txt").getInputStream(), StandardCharsets.UTF_8);
+        val token = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
+        val result = wsFederationHelper.buildAndVerifyAssertion(token, wsFederationConfigurations, RegisteredServiceTestUtils.getService());
         assertNotNull(result, "testParseTokenString() - Not null");
     }
 
     @Test
-    public void verifyCreateCredentialFromToken() {
-        val wresult = testTokens.get(GOOD_TOKEN);
-        val assertion = wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult), wsFederationConfigurations);
+    public void verifyCreateCredentialFromToken() throws Exception {
+        val wresult = IOUtils.toString(new ClassPathResource("goodTokenResponse.txt").getInputStream(), StandardCharsets.UTF_8);
+        val token = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
+        val assertion = wsFederationHelper.buildAndVerifyAssertion(token, wsFederationConfigurations,
+            RegisteredServiceTestUtils.getService());
         val expResult = new WsFederationCredential();
         expResult.setIssuedOn(ZonedDateTime.parse("2014-02-26T22:51:16.504Z"));
         expResult.setNotBefore(ZonedDateTime.parse("2014-02-26T22:51:16.474Z"));
@@ -71,33 +80,45 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
     }
 
     @Test
-    public void verifyValidateSignatureGoodToken() {
-        val wresult = testTokens.get(GOOD_TOKEN);
-        val assertion =
-            wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult), wsFederationConfigurations);
+    public void verifyValidateSignatureGoodToken() throws Exception {
+        val wresult = IOUtils.toString(new ClassPathResource("goodTokenResponse.txt").getInputStream(), StandardCharsets.UTF_8);
+        val token = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
+        val assertion = wsFederationHelper.buildAndVerifyAssertion(token,
+            wsFederationConfigurations, RegisteredServiceTestUtils.getService());
         val result = wsFederationHelper.validateSignature(assertion);
         assertTrue(result);
     }
 
     @Test
-    public void verifyValidateSignatureModifiedAttribute() {
-        val wresult = testTokens.get("badTokenModifiedAttribute");
-        val assertion =
-            wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult),
-                wsFederationConfigurations);
+    public void verifyValidateSignatureBadInput() {
+        assertFalse(wsFederationHelper.validateSignature(null));
+        assertFalse(wsFederationHelper.validateSignature(Pair.of(null, null)));
+        val config = wsFederationConfigurations.iterator().next();
+        val assertion = mock(Assertion.class);
+        assertFalse(wsFederationHelper.validateSignature(Pair.of(assertion, config)));
+        when(assertion.getSignature()).thenReturn(mock(Signature.class));
+        assertFalse(wsFederationHelper.validateSignature(Pair.of(assertion, config)));
+    }
+
+    @Test
+    public void verifyValidateSignatureModifiedAttribute() throws Exception {
+        val wresult = IOUtils.toString(new ClassPathResource("badTokenResponse.txt").getInputStream(), StandardCharsets.UTF_8);
+        val token = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
+        val assertion = wsFederationHelper.buildAndVerifyAssertion(token,
+            wsFederationConfigurations, RegisteredServiceTestUtils.getService());
         val result = wsFederationHelper.validateSignature(assertion);
         assertFalse(result);
     }
 
     @Test
-    @DirtiesContext
-    public void verifyValidateSignatureBadKey() {
+    public void verifyValidateSignatureBadKey() throws Exception {
         val cfg = new WsFederationConfiguration();
-        cfg.setSigningCertificateResources(ctx.getResource("classpath:bad-signing.crt"));
-        val signingWallet = new ArrayList<Credential>(cfg.getSigningWallet());
-        val wResult = testTokens.get(GOOD_TOKEN);
-        val requestSecurityTokenFromResult = wsFederationHelper.getRequestSecurityTokenFromResult(wResult);
-        val assertion = wsFederationHelper.buildAndVerifyAssertion(requestSecurityTokenFromResult, wsFederationConfigurations);
+        cfg.setSigningCertificateResources(new ClassPathResource("bad-signing.crt"));
+        val signingWallet = new ArrayList<>(cfg.getSigningWallet());
+        val wresult = IOUtils.toString(new ClassPathResource("goodTokenResponse.txt").getInputStream(), StandardCharsets.UTF_8);
+        val requestSecurityTokenFromResult = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
+        val assertion = wsFederationHelper.buildAndVerifyAssertion(requestSecurityTokenFromResult,
+            wsFederationConfigurations, RegisteredServiceTestUtils.getService());
         val wallet = assertion.getValue().getSigningWallet();
         wallet.clear();
         wallet.addAll(signingWallet);
@@ -106,11 +127,11 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
     }
 
     @Test
-    public void verifyValidateSignatureModifiedSignature() {
-        val wresult = testTokens.get("badTokenModifiedSignature");
-        val assertion =
-            wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult),
-                wsFederationConfigurations);
+    public void verifyValidateSignatureModifiedSignature() throws Exception {
+        val wresult = IOUtils.toString(new ClassPathResource("badTokenSignature.txt").getInputStream(), StandardCharsets.UTF_8);
+        val token = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
+        val assertion = wsFederationHelper.buildAndVerifyAssertion(token,
+            wsFederationConfigurations, RegisteredServiceTestUtils.getService());
         val result = wsFederationHelper.validateSignature(assertion);
         assertFalse(result);
     }

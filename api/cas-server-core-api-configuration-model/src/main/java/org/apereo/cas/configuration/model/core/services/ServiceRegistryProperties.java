@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.services;
 
+import org.apereo.cas.configuration.model.support.aws.AmazonS3ServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.cassandra.serviceregistry.CassandraServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.CouchbaseServiceRegistryProperties;
@@ -16,9 +17,9 @@ import org.apereo.cas.configuration.model.support.services.json.JsonServiceRegis
 import org.apereo.cas.configuration.model.support.services.stream.StreamingServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.yaml.YamlServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
-import org.apereo.cas.configuration.support.BaseRestEndpointProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -36,6 +37,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("ServiceRegistryProperties")
 public class ServiceRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = -368826011744304210L;
@@ -68,7 +70,7 @@ public class ServiceRegistryProperties implements Serializable {
      * Properties pertaining to REST service registry.
      */
     @NestedConfigurationProperty
-    private BaseRestEndpointProperties rest = new BaseRestEndpointProperties();
+    private RestfulServiceRegistryProperties rest = new RestfulServiceRegistryProperties();
 
     /**
      * Properties pertaining to redis service registry.
@@ -119,6 +121,12 @@ public class ServiceRegistryProperties implements Serializable {
     private DynamoDbServiceRegistryProperties dynamoDb = new DynamoDbServiceRegistryProperties();
 
     /**
+     * Properties pertaining to amazon s3 service registry.
+     */
+    @NestedConfigurationProperty
+    private AmazonS3ServiceRegistryProperties amazonS3 = new AmazonS3ServiceRegistryProperties();
+
+    /**
      * Properties pertaining to streaming service registry content over the wire.
      */
     @NestedConfigurationProperty
@@ -143,40 +151,14 @@ public class ServiceRegistryProperties implements Serializable {
     private SmsProperties sms = new SmsProperties();
 
     /**
-     * Flag that indicates whether to initialise active service registry implementation with a default set of service definition included
-     * with CAS in JSON format.
+     * Registry caching settings.
      */
-    private boolean initFromJson;
+    @NestedConfigurationProperty
+    private ServiceRegistryCacheProperties cache = new ServiceRegistryCacheProperties();
 
     /**
-     * Flag indicating whether a background watcher thread is enabled for the purposes of live reloading of service registry data changes
-     * from persistent data store.
+     * Registry core/common settings.
      */
-    private boolean watcherEnabled = true;
-
-    /**
-     * Determine how services are internally managed, queried, cached and reloaded by CAS.
-     * Accepted values are the following:
-     *
-     * <ul>
-     * <li>DEFAULT: Keep all services inside a concurrent map.</li>
-     * <li>DOMAIN: Group registered services by their domain having been explicitly defined.</li>
-     * </ul>
-     */
-    private ServiceManagementTypes managementType = ServiceManagementTypes.DEFAULT;
-
-    /**
-     * Types of service managers that one can control.
-     */
-    public enum ServiceManagementTypes {
-
-        /**
-         * Group service definitions by their domain.
-         */
-        DOMAIN,
-        /**
-         * Default option to keep definitions in a map as they arrive.
-         */
-        DEFAULT
-    }
+    @NestedConfigurationProperty
+    private ServiceRegistryCoreProperties core = new ServiceRegistryCoreProperties();
 }

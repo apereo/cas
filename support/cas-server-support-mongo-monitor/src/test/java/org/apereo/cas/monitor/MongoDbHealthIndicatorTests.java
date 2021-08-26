@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -66,6 +67,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
@@ -79,6 +81,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.monitor.mongo.database-name=monitor"
     })
 @EnabledIfPortOpen(port = 27017)
+@SuppressWarnings("JavaUtilDate")
 public class MongoDbHealthIndicatorTests {
     @Autowired
     @Qualifier("mongoHealthIndicator")
@@ -109,8 +112,8 @@ public class MongoDbHealthIndicatorTests {
                 assertTrue(map.containsKey("capacity"));
                 assertTrue(map.containsKey("evictions"));
                 assertTrue(map.containsKey("percentFree"));
+                assertTrue(map.containsKey("state"));
             }
         });
-        assertNotNull(mongoHealthIndicator.toString());
     }
 }

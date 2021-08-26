@@ -11,7 +11,7 @@ import java.util.Optional;
 /**
  * Resolves a {@link Principal} from a {@link Credential} using an arbitrary strategy.
  * Since a {@link Principal} requires an identifier at a minimum, the simplest strategy to produce a principal
- * is to simply copy {@link Credential#getId()} onto
+ * is to copy {@link Credential#getId()} onto
  * {@link Principal#getId()}. Resolvers commonly query one or more data sources
  * to obtain attributes such as affiliations, group membership, display name, and email. The data source(s) may also
  * provide an alternate identifier mapped by the credential identifier.
@@ -23,6 +23,16 @@ import java.util.Optional;
  * @since 4.0.0
  */
 public interface PrincipalResolver extends Ordered {
+
+    /**
+     * Attribute repository implementation bean name.
+     */
+    String BEAN_NAME_ATTRIBUTE_REPOSITORY = "attributeRepository";
+
+    /**
+     * Global principal attribute repository implementation bean name.
+     */
+    String BEAN_NAME_GLOBAL_PRINCIPAL_ATTRIBUTE_REPOSITORY = "globalPrincipalAttributeRepository";
 
     /**
      * Resolves a principal from the given credential using an arbitrary strategy.

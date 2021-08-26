@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -22,8 +21,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("MFA")
-@DirtiesContext
+@Tag("MFATrigger")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
@@ -31,7 +29,7 @@ public class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactor
     @Tag("DisableProviderRegistration")
     public void verifyNoProvider() {
         val props = new CasConfigurationProperties();
-        props.getAuthn().getMfa().setGlobalProviderId(TestMultifactorAuthenticationProvider.ID);
+        props.getAuthn().getMfa().getTriggers().getGlobal().setGlobalProviderId(TestMultifactorAuthenticationProvider.ID);
         val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
             (providers, service, principal) -> providers.iterator().next());
         assertThrows(AuthenticationException.class,
@@ -42,7 +40,7 @@ public class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactor
     @Order(1)
     public void verifyOperationByProvider() {
         val props = new CasConfigurationProperties();
-        props.getAuthn().getMfa().setGlobalProviderId(TestMultifactorAuthenticationProvider.ID);
+        props.getAuthn().getMfa().getTriggers().getGlobal().setGlobalProviderId(TestMultifactorAuthenticationProvider.ID);
         val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
             (providers, service, principal) -> providers.iterator().next());
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
@@ -53,7 +51,7 @@ public class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactor
     @Order(2)
     public void verifyOperationByManyProviders() {
         val props = new CasConfigurationProperties();
-        props.getAuthn().getMfa().setGlobalProviderId(TestMultifactorAuthenticationProvider.ID + ",mfa-invalid");
+        props.getAuthn().getMfa().getTriggers().getGlobal().setGlobalProviderId(TestMultifactorAuthenticationProvider.ID + ",mfa-invalid");
         val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
             (providers, service, principal) -> providers.iterator().next());
         assertThrows(AuthenticationException.class,
@@ -69,7 +67,7 @@ public class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactor
         otherProvider.setId("mfa-other");
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, otherProvider);
 
-        props.getAuthn().getMfa().setGlobalProviderId(TestMultifactorAuthenticationProvider.ID + ',' + otherProvider.getId());
+        props.getAuthn().getMfa().getTriggers().getGlobal().setGlobalProviderId(TestMultifactorAuthenticationProvider.ID + ',' + otherProvider.getId());
         val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
             (providers, service, principal) -> providers.iterator().next());
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
@@ -81,7 +79,7 @@ public class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactor
     @Order(4)
     public void verifyOperationByUnresolvedProvider() {
         val props = new CasConfigurationProperties();
-        props.getAuthn().getMfa().setGlobalProviderId("does-not-exist");
+        props.getAuthn().getMfa().getTriggers().getGlobal().setGlobalProviderId("does-not-exist");
         val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
             (providers, service, principal) -> providers.iterator().next());
         assertThrows(AuthenticationException.class,

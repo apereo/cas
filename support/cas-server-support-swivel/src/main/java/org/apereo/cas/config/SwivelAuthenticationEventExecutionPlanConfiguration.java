@@ -54,7 +54,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "swivelAuthenticationMetaDataPopulator")
     public AuthenticationMetaDataPopulator swivelAuthenticationMetaDataPopulator() {
-        val authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
+        val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(
             authenticationContextAttribute,
             swivelAuthenticationHandler(),

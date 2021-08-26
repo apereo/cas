@@ -2,6 +2,7 @@ package org.apereo.cas.support.rest.config;
 
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
@@ -41,7 +42,7 @@ public class RestServicesConfiguration {
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
-    private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
+    private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
 
     @Bean
     public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
@@ -51,7 +52,7 @@ public class RestServicesConfiguration {
 
     @Bean
     public RegisteredServiceResource registeredServiceResourceRestController() {
-        val rest = casProperties.getRest();
+        val rest = casProperties.getRest().getServices();
         if (StringUtils.isBlank(rest.getAttributeName()) || StringUtils.isBlank(rest.getAttributeValue())) {
             throw new BeanCreationException("No attribute name or value is defined to enforce authorization when adding services via CAS REST APIs. "
                 + "This is likely due to misconfiguration in CAS settings where the attribute name/value definition is absent");

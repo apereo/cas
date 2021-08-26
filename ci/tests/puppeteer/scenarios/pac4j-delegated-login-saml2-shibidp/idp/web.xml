@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
+ 
+    <display-name>Shibboleth Identity Provider</display-name>
+
+    <!-- Spring application context files. Files are loaded in the order they appear with subsequent files overwriting 
+        same named beans in previous files. -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath*:/META-INF/net.shibboleth.idp/preconfig.xml,classpath:/net/shibboleth/idp/conf/global-system.xml,classpath*:/META-INF/net.shibboleth.idp/postconfig.xml</param-value>
+    </context-param>
+    
+    <context-param>
+        <param-name>contextClass</param-name>
+        <param-value>net.shibboleth.ext.spring.context.DelimiterAwareApplicationContext</param-value>
+    </context-param>
+    
+    <context-param>
+        <param-name>contextInitializerClasses</param-name>
+        <param-value>net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer</param-value>
+    </context-param>
+
+    <!-- Spring listener used to load up the configuration -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    
+    <!-- Filters and filter mappings -->
+    
+    <!-- Try and force I18N, probably won't help much. -->
+    <filter>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <!-- Automates SameSite handling until Java API catches up. -->
+    <filter>
+        <filter-name>SameSiteCookieFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <init-param>
+            <param-name>targetBeanName</param-name>
+            <param-value>shibboleth.SameSiteCookieFilter</param-value>
+        </init-param>
+    </filter>
+    <!-- Lets us lump repeated Set-Cookie headers into one, something containers rarely support. -->
+    <filter>
+        <filter-name>CookieBufferingFilter</filter-name>
+        <filter-class>net.shibboleth.utilities.java.support.net.CookieBufferingFilter</filter-class>
+    </filter>
+    <!-- Allows control of response headers from within Spring beans. -->
+    <filter>
+        <filter-name>DynamicResponseHeaderFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <init-param>
+            <param-name>targetBeanName</param-name>
+            <param-value>shibboleth.ResponseHeaderFilter</param-value>
+        </init-param>
+    </filter>
+    <!-- Automates TLS-based propagation of HttpServletRequest/Response into beans. -->
+    <filter>
+        <filter-name>RequestResponseContextFilter</filter-name>
+        <filter-class>net.shibboleth.utilities.java.support.net.RequestResponseContextFilter</filter-class>
+    </filter>
+    <!-- Manages logging MDC. -->
+    <filter>
+        <filter-name>SLF4JMDCServletFilter</filter-name>
+        <filter-class>net.shibboleth.idp.log.SLF4JMDCServletFilter</filter-class>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>SameSiteCookieFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>CookieBufferingFilter</filter-name>
+        <url-pattern>/profile/admin/*</url-pattern>
+        <url-pattern>/profile/Logout</url-pattern>
+        <url-pattern>/profile/Shibboleth/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/Unsolicited/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/Redirect/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/POST/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/POST-SimpleSign/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/Artifact/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/Redirect/SLO</url-pattern>
+        <url-pattern>/profile/SAML2/POST/SLO</url-pattern>
+        <url-pattern>/profile/SAML2/POST-SimpleSign/SLO</url-pattern>
+        <url-pattern>/profile/SAML2/Artifact/SLO</url-pattern>
+        <url-pattern>/profile/cas/login</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>DynamicResponseHeaderFilter</filter-name>
+        <url-pattern>/profile/admin/*</url-pattern>
+        <url-pattern>/profile/Shibboleth/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/Unsolicited/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/Redirect/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/POST/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/POST-SimpleSign/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/Artifact/SSO</url-pattern>
+        <url-pattern>/profile/cas/login</url-pattern>
+        <url-pattern>/Authn/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>RequestResponseContextFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>SLF4JMDCServletFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Servlets and servlet mappings -->    
+    <servlet>
+        <servlet-name>idp</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath*:/META-INF/net/shibboleth/idp/mvc/preconfig.xml,classpath:/net/shibboleth/idp/conf/mvc-beans.xml,classpath:/net/shibboleth/idp/conf/webflow-config.xml,classpath*:/META-INF/net/shibboleth/idp/mvc/postconfig.xml</param-value>
+        </init-param>
+        <init-param>
+            <param-name>contextClass</param-name>
+            <param-value>net.shibboleth.ext.spring.context.DelimiterAwareApplicationContext</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>idp</servlet-name>
+        <url-pattern>/status</url-pattern>
+        <url-pattern>/profile/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- Servlet for receiving a callback from an external CAS Server and continues the IdP login flow -->
+    <servlet>
+        <servlet-name>ShibCas Auth Servlet</servlet-name>
+        <servlet-class>net.unicon.idp.externalauth.ShibcasAuthServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ShibCas Auth Servlet</servlet-name>
+        <url-pattern>/Authn/External/*</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Servlet protected by container used for RemoteUser authentication -->
+    <servlet>
+        <servlet-name>RemoteUserAuthHandler</servlet-name>
+        <servlet-class>net.shibboleth.idp.authn.impl.RemoteUserAuthServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RemoteUserAuthHandler</servlet-name>
+        <url-pattern>/Authn/RemoteUser</url-pattern>
+    </servlet-mapping>
+
+    <!-- Servlet protected by container used for X.509 authentication -->
+    <servlet>
+        <servlet-name>X509AuthHandler</servlet-name>
+        <servlet-class>net.shibboleth.idp.authn.impl.X509AuthServlet</servlet-class>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>X509AuthHandler</servlet-name>
+        <url-pattern>/Authn/X509</url-pattern>
+    </servlet-mapping>
+
+    <!-- Send request for the EntityID to the SAML metadata echoing JSP. -->
+    <servlet>
+        <servlet-name>shibboleth_jsp</servlet-name>
+        <jsp-file>/WEB-INF/jsp/metadata.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>shibboleth_jsp</servlet-name>
+        <url-pattern>/shibboleth</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Send servlet errors through the IdP's MVC error handling. -->
+    <error-page>
+        <exception-type>net.shibboleth.idp.authn.ExternalAuthenticationException</exception-type>
+        <location>/profile/RaiseError</location>
+    </error-page>
+
+    <session-config>
+        <session-timeout>15</session-timeout>
+        <cookie-config>
+            <http-only>true</http-only>
+            <secure>true</secure>
+        </cookie-config>
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
+
+    <!-- Allow intended methods by using an absent auth-constraint. -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Non-API Content</web-resource-name>
+            <url-pattern>/*</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>HEAD</http-method>
+            <http-method>OPTIONS</http-method>
+            <http-method>POST</http-method>
+        </web-resource-collection>
+        <!-- no auth-constraint tag here -->
+    </security-constraint>
+
+    <!-- Disallow other methods by using an empty auth-constraint. -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Non-API Content</web-resource-name>
+            <url-pattern>/*</url-pattern>
+            <http-method-omission>GET</http-method-omission>
+            <http-method-omission>HEAD</http-method-omission>
+            <http-method-omission>OPTIONS</http-method-omission>
+            <http-method-omission>POST</http-method-omission>
+        </web-resource-collection>
+        <auth-constraint/>
+    </security-constraint>
+
+    <!-- Allow any HTTP methods to the API flows. -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Administrative APIs</web-resource-name>
+            <url-pattern>/profile/admin/*</url-pattern>
+        </web-resource-collection>
+        <!-- no auth-constraint tag here -->
+    </security-constraint>
+
+    <!--
+    Uncomment to use container managed authentication. The new servlet spec (3.1)
+    supports "**" as a wildcard syntax to avoid role usage, which is normally desirable.
+    Older containers usually support "*" when proprietary options are used (e.g., Jetty
+    requires setting the Strict property on the SecurityManager.)
+    -->
+    <!--
+    <security-constraint>
+        <display-name>Web Login Service</display-name>
+        <web-resource-collection>
+            <web-resource-name>user authentication</web-resource-name>
+            <url-pattern>/Authn/RemoteUser</url-pattern>
+            <url-pattern>/profile/SAML2/SOAP/ECP</url-pattern>
+            <http-method>POST</http-method> 
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>**</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee> 
+        </user-data-constraint>
+    </security-constraint>
+    -->
+
+    <!-- Uncomment if you want BASIC auth managed by the container. -->
+    <!--
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>Web Login Service</realm-name>
+    </login-config>
+    -->
+     
+    <!--
+    Uncomment if you want form-based auth managed by the container.
+    NOTE that the default form-login UI in the IdP is not compatible
+    with this option, and you will need to supply your own JSP form
+    and error page. This is not a recommended approach and is severely
+    limited in functionality as compared to using the IdP's own UI.
+    -->
+    <!--
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <realm-name>Web Login Service</realm-name>
+        <form-login-config> 
+            <form-login-page>/login.jsp</form-login-page>
+            <form-error-page>/login-error.jsp</form-error-page>
+        </form-login-config>
+    </login-config>
+    -->
+</web-app>

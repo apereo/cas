@@ -1,16 +1,27 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.duosecurity.duoweb.DuoWeb;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.json.JSONObject;
+
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * An abstraction that encapsulates interaction with Duo 2fa authentication service via its public API.
@@ -20,70 +31,83 @@ import org.json.JSONObject;
  * @author Eric Pierce
  * @author Dmitriy Kopylenko
  * @since 4.2
+ * @deprecated since 6.4.0
  */
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
+@Deprecated(since = "6.4.0")
 public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthenticationService {
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private static final long serialVersionUID = -6690808348975271382L;
 
-    /**
-     * Creates the duo authentication service.
-     *
-     * @param duoProperties Duo authentication properties
-     * @param httpClient    http client used to run the requests
-     */
-    public BasicDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties, final HttpClient httpClient) {
-        super(duoProperties, httpClient);
+    public BasicDuoSecurityAuthenticationService(final DuoSecurityMultifactorAuthenticationProperties duoProperties,
+                                                 final HttpClient httpClient,
+                                                 final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver,
+                                                 final Cache<String, DuoSecurityUserAccount> userAccountCache) {
+        super(duoProperties, httpClient, multifactorAuthenticationPrincipalResolver, userAccountCache);
     }
 
-    @Override
-    public String signRequestToken(final String uid) {
-        return DuoWeb.signRequest(duoProperties.getDuoIntegrationKey(),
-            duoProperties.getDuoSecretKey(),
-            duoProperties.getDuoApplicationKey(), uid);
-    }
-
-    @Override
-    public Pair<Boolean, String> authenticate(final Credential creds) throws Exception {
-        if (creds instanceof DuoSecurityDirectCredential) {
-            return authenticateDuoCredentialDirect(creds);
+    private static String buildUrlHttpScheme(final String url) {
+        if (!RegexUtils.find("^http(s)*://", url)) {
+            return "https://" + url;
         }
+        return url;
+    }
+
+    @Override
+    public DuoSecurityAuthenticationResult authenticateInternal(final Credential creds) throws Exception {
         return authenticateDuoCredential(creds);
     }
 
-    private Pair<Boolean, String> authenticateDuoCredentialDirect(final Credential crds) {
+    @Override
+    public boolean ping() {
         try {
-            val credential = DuoSecurityDirectCredential.class.cast(crds);
-            val p = credential.getAuthentication().getPrincipal();
-            val request = buildHttpPostAuthRequest();
-            signHttpAuthRequest(request, p.getId());
-            val result = (JSONObject) request.executeRequest();
-            LOGGER.debug("Duo authentication response: [{}]", result);
-            if ("allow".equalsIgnoreCase(result.getString("result"))) {
-                return Pair.of(Boolean.TRUE, crds.getId());
+            val duoApiHost = SpringExpressionLanguageValueResolver.getInstance().resolve(getProperties().getDuoApiHost());
+            val url = buildUrlHttpScheme(duoApiHost.concat("/rest/v1/ping"));
+            LOGGER.trace("Pinging Duo Security @ [{}]", url);
+
+            val msg = httpClient.sendMessageToEndPoint(new URL(url));
+            if (msg != null) {
+                val response = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8.name());
+                LOGGER.debug("Received Duo ping response [{}]", response);
+
+                val result = MAPPER.readTree(response);
+                if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
+                    && result.get(RESULT_KEY_RESPONSE).asText().equalsIgnoreCase("pong")
+                    && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
+                    return true;
+                }
+                LOGGER.warn("Could not reach/ping Duo. Response returned is [{}]", result);
             }
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LOGGER.warn("Pinging Duo has failed with error: [{}]", e.getMessage(), e);
         }
-        return Pair.of(Boolean.FALSE, crds.getId());
+        return false;
     }
 
-    private Pair<Boolean, String> authenticateDuoCredential(final Credential creds) throws Exception {
+    @Override
+    public Optional<String> signRequestToken(final String uid) {
+        val resolver = SpringExpressionLanguageValueResolver.getInstance();
+        return Optional.of(DuoWeb.signRequest(
+            resolver.resolve(properties.getDuoIntegrationKey()),
+            resolver.resolve(properties.getDuoSecretKey()),
+            resolver.resolve(properties.getDuoApplicationKey()), uid));
+    }
+
+    private DuoSecurityAuthenticationResult authenticateDuoCredential(final Credential creds) throws Exception {
         val signedRequestToken = DuoSecurityCredential.class.cast(creds).getSignedDuoResponse();
         if (StringUtils.isBlank(signedRequestToken)) {
             throw new IllegalArgumentException("No signed request token was passed to verify");
         }
-
-        LOGGER.debug("Calling DuoWeb.verifyResponse with signed request token '[{}]'", signedRequestToken);
-        val result = DuoWeb.verifyResponse(duoProperties.getDuoIntegrationKey(),
-            duoProperties.getDuoSecretKey(),
-            duoProperties.getDuoApplicationKey(), signedRequestToken);
-        return Pair.of(Boolean.TRUE, result);
+        LOGGER.trace("Verifying duo response with signed request token '[{}]'", signedRequestToken);
+        val resolver = SpringExpressionLanguageValueResolver.getInstance();
+        val authUserId = DuoWeb.verifyResponse(
+            resolver.resolve(properties.getDuoIntegrationKey()),
+            resolver.resolve(properties.getDuoSecretKey()),
+            resolver.resolve(properties.getDuoApplicationKey()), signedRequestToken);
+        return DuoSecurityAuthenticationResult.builder().success(true).username(authUserId).build();
     }
 
 }

@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link JpaYubiKeyConfiguration}.
@@ -72,8 +72,8 @@ public class JpaYubiKeyConfiguration {
     }
 
     @Bean
-    public List<String> jpaYubiKeyPackagesToScan() {
-        return CollectionUtils.wrapList(JpaYubiKeyAccount.class.getPackage().getName());
+    public Set<String> jpaYubiKeyPackagesToScan() {
+        return CollectionUtils.wrapSet(JpaYubiKeyAccount.class.getPackage().getName());
     }
 
     @Autowired
@@ -88,11 +88,12 @@ public class JpaYubiKeyConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean yubiKeyEntityManagerFactory() {
         val factory = jpaBeanFactory.getObject();
-        val ctx = new JpaConfigurationContext(
-            jpaYubiKeyVendorAdapter(),
-            "jpaYubiKeyRegistryContext",
-            jpaYubiKeyPackagesToScan(),
-            dataSourceYubiKey());
+        val ctx = JpaConfigurationContext.builder()
+            .dataSource(dataSourceYubiKey())
+            .packagesToScan(jpaYubiKeyPackagesToScan())
+            .persistenceUnitName("jpaYubiKeyRegistryContext")
+            .jpaVendorAdapter(jpaYubiKeyVendorAdapter())
+            .build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getYubikey().getJpa());
     }
 

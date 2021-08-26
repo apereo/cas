@@ -30,7 +30,7 @@ public class ImmutableNativeJavaSetSerializer extends Serializer<Set<Object>> {
     }
 
     @Override
-    public Set<Object> read(final Kryo kryo, final Input input, final Class<Set<Object>> aClass) {
+    public Set<Object> read(final Kryo kryo, final Input input, final Class<? extends Set<Object>> aClass) {
         val size = input.readInt(true);
         val list = new Object[size];
         for (var i = 0; i < size; ++i) {

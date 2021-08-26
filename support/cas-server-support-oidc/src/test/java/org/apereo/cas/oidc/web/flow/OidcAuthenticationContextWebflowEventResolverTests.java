@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -17,6 +18,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -35,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("OIDC")
+@Import(OidcAuthenticationContextWebflowEventResolverTests.OidcAuthenticationContextTestConfiguration.class)
 public class OidcAuthenticationContextWebflowEventResolverTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcAuthenticationContextWebflowEventResolver")
@@ -43,7 +48,9 @@ public class OidcAuthenticationContextWebflowEventResolverTests extends Abstract
     private MockRequestContext context;
 
     @BeforeEach
-    public void init() {
+    @Override
+    public void initialize() {
+        super.initialize();
         this.context = new MockRequestContext();
 
         val request = new MockHttpServletRequest();
@@ -71,5 +78,13 @@ public class OidcAuthenticationContextWebflowEventResolverTests extends Abstract
         val event = resolver.resolve(context);
         assertEquals(1, event.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());
+    }
+
+    @TestConfiguration("OidcAuthenticationContextTestConfiguration")
+    public static class OidcAuthenticationContextTestConfiguration {
+        @Bean
+        public MultifactorAuthenticationProvider dummyProvider() {
+            return new TestMultifactorAuthenticationProvider();
+        }
     }
 }

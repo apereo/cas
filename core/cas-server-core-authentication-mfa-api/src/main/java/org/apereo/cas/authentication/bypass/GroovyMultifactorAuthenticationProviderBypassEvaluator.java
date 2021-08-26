@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
 import lombok.extern.slf4j.Slf4j;
@@ -36,18 +37,14 @@ public class GroovyMultifactorAuthenticationProviderBypassEvaluator extends Base
                                                                           final MultifactorAuthenticationProvider provider,
                                                                           final HttpServletRequest request) {
         try {
-            val principal = authentication.getPrincipal();
+            val principal = resolvePrincipal(authentication.getPrincipal());
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
                     + "service [{}] and provider [{}] via Groovy script [{}]",
                 principal.getId(), registeredService, provider, watchableScript.getResource());
             val args = new Object[]{authentication, principal, registeredService, provider, LOGGER, request};
             return watchableScript.execute(args, Boolean.class);
         } catch (final Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.error(e.getMessage(), e);
-            } else {
-                LOGGER.error(e.getMessage());
-            }
+            LoggingUtils.error(LOGGER, e);
             return true;
         }
     }

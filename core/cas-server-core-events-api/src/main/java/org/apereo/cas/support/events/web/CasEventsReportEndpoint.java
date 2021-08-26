@@ -5,6 +5,7 @@ import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 
@@ -32,6 +33,7 @@ public class CasEventsReportEndpoint extends BaseCasActuatorEndpoint {
      * @return the collection
      */
     @ReadOperation
+    @Operation(summary = "Provide a report of CAS events in the event repository")
     public Collection<? extends CasEvent> events() {
         return this.eventRepository.load();
     }

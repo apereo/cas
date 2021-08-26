@@ -10,6 +10,12 @@ import org.springframework.core.Ordered;
  */
 @FunctionalInterface
 public interface ConsentableAttributeBuilder extends Ordered {
+    /**
+     * Build.
+     *
+     * @param attribute the attribute
+     * @return the cas consentable attribute
+     */
     CasConsentableAttribute build(CasConsentableAttribute attribute);
 
     @Override

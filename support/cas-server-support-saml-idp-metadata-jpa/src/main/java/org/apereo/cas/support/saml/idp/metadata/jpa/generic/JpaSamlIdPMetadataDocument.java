@@ -25,6 +25,8 @@ import javax.persistence.Table;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Getter
 public class JpaSamlIdPMetadataDocument extends SamlIdPMetadataDocument {
+    private static final long serialVersionUID = -7865710977205378149L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")

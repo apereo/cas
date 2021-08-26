@@ -4,6 +4,8 @@ title: CAS - High Availability Performance Testing
 category: High Availability
 ---
 
+{% include variables.html %}
+
 # High Availability Performance Testing
 
 Load testing is an important part of ensuring that the CAS server deployment is ready for prime time production use. This page outlines a number of strategies and tools you may use to run performance tests on your deployment and observe results.

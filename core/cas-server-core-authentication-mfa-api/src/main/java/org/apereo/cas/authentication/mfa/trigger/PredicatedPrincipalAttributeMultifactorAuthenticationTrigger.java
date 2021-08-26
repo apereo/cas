@@ -48,7 +48,8 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationTrigger implem
                                                                    final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest,
                                                                    final Service service) {
-        val predicateResource = casProperties.getAuthn().getMfa().getGlobalPrincipalAttributePredicate();
+        val predicateResource = casProperties.getAuthn().getMfa().getTriggers()
+            .getPrincipal().getGlobalPrincipalAttributePredicate().getLocation();
 
         if (!ResourceUtils.doesResourceExist(predicateResource)) {
             LOGGER.trace("No predicate is defined to decide which multifactor authentication provider should be chosen");

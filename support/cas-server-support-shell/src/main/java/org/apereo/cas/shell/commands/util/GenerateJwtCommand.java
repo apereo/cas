@@ -49,17 +49,6 @@ public class GenerateJwtCommand {
     /**
      * Generate.
      *
-     * @param subject the subject
-     */
-    public static void generate(final String subject) {
-        generate(DEFAULT_SIGNING_SECRET_SIZE, DEFAULT_ENCRYPTION_SECRET_SIZE,
-            DEFAULT_SIGNING_ALGORITHM, DEFAULT_ENCRYPTION_ALGORITHM,
-            DEFAULT_ENCRYPTION_METHOD, subject);
-    }
-
-    /**
-     * Generate.
-     *
      * @param signingSecretSize    the signing secret size
      * @param encryptionSecretSize the encryption secret size
      * @param signingAlgorithm     the signing algorithm
@@ -87,7 +76,7 @@ public class GenerateJwtCommand {
         @ShellOption(value = {"subject", "--subject"},
             help = "Subject to use for the JWT") final String subject) {
 
-        val g = new JwtGenerator<CommonProfile>();
+        val g = new JwtGenerator();
 
         configureJwtSigning(signingSecretSize, signingAlgorithm, g);
         configureJwtEncryption(encryptionSecretSize, encryptionAlgorithm, encryptionMethod, g);
@@ -107,7 +96,7 @@ public class GenerateJwtCommand {
     }
 
     private static void configureJwtEncryption(final int encryptionSecretSize, final String encryptionAlgorithm,
-                                               final String encryptionMethod, final JwtGenerator<CommonProfile> g) {
+                                               final String encryptionMethod, final JwtGenerator g) {
         if (encryptionSecretSize <= 0 || StringUtils.isBlank(encryptionMethod) || StringUtils.isBlank(encryptionAlgorithm)) {
             LOGGER.info("No encryption algorithm or size specified, so the generated JWT will not be encrypted");
             return;
@@ -156,14 +145,14 @@ public class GenerateJwtCommand {
 
     }
 
-    private static void configureJwtSigning(final int signingSecretSize, final String signingAlgorithm, final JwtGenerator<CommonProfile> g) {
+    private static void configureJwtSigning(final int signingSecretSize, final String signingAlgorithm, final JwtGenerator g) {
         if (signingSecretSize <= 0 || StringUtils.isBlank(signingAlgorithm)) {
             LOGGER.info("No signing algorithm or size specified, so the generated JWT will not be encrypted");
             return;
         }
 
         val signingSecret = RandomUtils.randomAlphanumeric(signingSecretSize);
-        LOGGER.info("==== Signing Secret ====\n{}\n", signingSecret);
+        LOGGER.info("==== Signing Secret ====\n[{}]\n", signingSecret);
 
         val acceptedSigningAlgs = Arrays.stream(JWSAlgorithm.class.getDeclaredFields())
             .filter(f -> f.getType().equals(JWSAlgorithm.class))

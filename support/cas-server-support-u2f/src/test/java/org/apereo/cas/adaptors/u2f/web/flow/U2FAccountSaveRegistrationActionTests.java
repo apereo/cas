@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseU2FWebflowActionTests.U2FTestConfiguration.class,
     BaseU2FWebflowActionTests.SharedTestConfiguration.class
 })
-@Tag("Webflow")
+@Tag("WebflowMfaActions")
 public class U2FAccountSaveRegistrationActionTests extends BaseU2FWebflowActionTests {
 
     @Test
@@ -42,6 +42,7 @@ public class U2FAccountSaveRegistrationActionTests extends BaseU2FWebflowActionT
         val response = new MockHttpServletResponse();
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(id), context);
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, u2fMultifactorAuthenticationProvider);
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 

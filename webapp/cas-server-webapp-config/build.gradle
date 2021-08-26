@@ -1,7 +1,8 @@
 description = "Apereo CAS Web Application Configuration"
 dependencies {
     api project(":api:cas-server-core-api-webflow")
-
+    api project(":api:cas-server-core-api-audit")
+    
     implementation libraries.pac4jcore
     implementation libraries.springsecurityweb
     implementation libraries.springsecurityconfig
@@ -14,7 +15,7 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-api")
 
-    compileOnly project(":support:cas-server-support-jpa-util")
+    compileOnlyApi project(":support:cas-server-support-jpa-util")
     
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-pac4j-core")
@@ -29,6 +30,7 @@ dependencies {
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-audit-api")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-logging")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-logout")

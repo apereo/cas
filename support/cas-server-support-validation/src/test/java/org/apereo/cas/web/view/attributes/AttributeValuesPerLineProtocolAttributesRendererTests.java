@@ -16,12 +16,20 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("Simple")
+@Tag("Attributes")
 public class AttributeValuesPerLineProtocolAttributesRendererTests {
     @Test
     public void verifyAction() {
         val r = new AttributeValuesPerLineProtocolAttributesRenderer();
         val results = CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap();
         assertFalse(r.render((Map) results).isEmpty());
+    }
+
+    @Test
+    public void verifyActionWithSpaces() {
+        val r = new AttributeValuesPerLineProtocolAttributesRenderer();
+        val results = Map.of("attribute name", "attribute-value");
+        val rendered = r.render((Map) results);
+        assertFalse(rendered.isEmpty());
     }
 }

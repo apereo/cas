@@ -4,25 +4,24 @@ title: CAS - JMeter Performance Testing
 category: High Availability
 ---
 
+{% include variables.html %}
+
 # JMeter Performance Testing
 
 Apache JMeter is a great performance testing tool that is used heavily within the Java community.
 
 ## Install JMeter
 
-* Linux and Mac:
-  * Download the JMeter binary.
-    * [http://jmeter.apache.org/download_jmeter.cgi](http://jmeter.apache.org/download_jmeter.cgi)
-  * Unzip apache-jmeter-*.tgz to your preferred location
-  * Run `bin/jmeter.sh`
-    * Note: Mac users can also use the popular HomeBrew package manager to install JMeter.
-* Windows:
-  * Here is a tutorial for windows setup. 
-    * [http://toolsqa.com/jmeter/download-and-installation-jmeter/](http://toolsqa.com/jmeter/download-and-installation-jmeter/)
-
+* Download the JMeter binary.
+  * [http://jmeter.apache.org/download_jmeter.cgi](http://jmeter.apache.org/download_jmeter.cgi)
+* Unzip apache-jmeter-*.tgz to your preferred location
+* Run `bin/jmeter.sh|bat`
+  * Note: Mac users can also use the popular HomeBrew package manager to install JMeter.
+  
 ## Sample Test Scripts
 
-Below you will find three generic runnable login scripts for the three most popular CAS implementation flavors. Please feel free to edit and use for your needs.
+Below you will find three generic runnable login scripts for the three 
+most popular CAS implementation flavors. Please feel free to edit and use for your needs.
 
 Although the scripts support different login methodologies, they do share some common traits.
 

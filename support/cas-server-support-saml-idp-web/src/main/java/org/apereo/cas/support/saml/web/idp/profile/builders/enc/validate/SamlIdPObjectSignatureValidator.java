@@ -26,12 +26,12 @@ public class SamlIdPObjectSignatureValidator extends SamlObjectSignatureValidato
 
     public SamlIdPObjectSignatureValidator(final List overrideSignatureReferenceDigestMethods,
                                            final List overrideSignatureAlgorithms,
-                                           final List overrideBlackListedSignatureAlgorithms,
-                                           final List overrideWhiteListedAlgorithms,
+                                           final List overrideBlockedSignatureAlgorithms,
+                                           final List overrideAllowedAlgorithms,
                                            final MetadataResolver casSamlIdPMetadataResolver,
                                            final CasConfigurationProperties casProperties) {
         super(overrideSignatureReferenceDigestMethods, overrideSignatureAlgorithms,
-            overrideBlackListedSignatureAlgorithms, overrideWhiteListedAlgorithms, casProperties);
+            overrideBlockedSignatureAlgorithms, overrideAllowedAlgorithms, casProperties);
         this.casSamlIdPMetadataResolver = casSamlIdPMetadataResolver;
     }
 
@@ -40,7 +40,7 @@ public class SamlIdPObjectSignatureValidator extends SamlObjectSignatureValidato
                                                                final RequestAbstractType profileRequest) throws Exception {
 
         val idp = casProperties.getAuthn().getSamlIdp();
-        return SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, idp.getMetadata().isRequireValidMetadata());
+        return SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, idp.getMetadata().getCore().isRequireValidMetadata());
     }
 
     @Override

@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "casAcceptableUsagePolicyCoucbDbConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.acceptable-usage-policy", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasAcceptableUsagePolicyCouchDbConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -52,9 +52,7 @@ public class CasAcceptableUsagePolicyCouchDbConfiguration {
     @RefreshScope
     public ProfileCouchDbRepository aupCouchDbRepository(@Qualifier("aupCouchDbFactory") final CouchDbConnectorFactory aupCouchDbFactory) {
         val couchDb = casProperties.getAcceptableUsagePolicy().getCouchDb();
-        val repository = new ProfileCouchDbRepository(aupCouchDbFactory.getCouchDbConnector(), couchDb.isCreateIfNotExists());
-        repository.initStandardDesignDocument();
-        return repository;
+        return new ProfileCouchDbRepository(aupCouchDbFactory.getCouchDbConnector(), couchDb.isCreateIfNotExists());
     }
 
     @ConditionalOnMissingBean(name = "couchDbAcceptableUsagePolicyRepository")

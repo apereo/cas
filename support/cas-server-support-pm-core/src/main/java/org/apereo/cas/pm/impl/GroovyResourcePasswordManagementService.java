@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.pm.PasswordManagementPropertie
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
+import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
@@ -43,22 +44,27 @@ public class GroovyResourcePasswordManagementService extends BasePasswordManagem
     }
 
     @Override
-    public String findEmail(final String username) {
-        return watchableScript.execute("findEmail", String.class, new Object[]{username, LOGGER});
+    public String findEmail(final PasswordManagementQuery query) {
+        return watchableScript.execute("findEmail", String.class, new Object[]{query, LOGGER});
     }
 
     @Override
-    public String findPhone(final String username) {
-        return watchableScript.execute("findPhone", String.class, new Object[]{username, LOGGER});
+    public String findPhone(final PasswordManagementQuery query) {
+        return watchableScript.execute("findPhone", String.class, new Object[]{query, LOGGER});
     }
 
     @Override
-    public String findUsername(final String email) {
-        return watchableScript.execute("findUsername", String.class, new Object[]{email, LOGGER});
+    public String findUsername(final PasswordManagementQuery query) {
+        return watchableScript.execute("findUsername", String.class, new Object[]{query, LOGGER});
     }
 
     @Override
-    public Map<String, String> getSecurityQuestions(final String username) {
-        return watchableScript.execute("getSecurityQuestions", Map.class, new Object[]{username, LOGGER});
+    public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) {
+        return watchableScript.execute("getSecurityQuestions", Map.class, new Object[]{query, LOGGER});
+    }
+
+    @Override
+    public void updateSecurityQuestions(final PasswordManagementQuery query) {
+        watchableScript.execute("updateSecurityQuestions", Map.class, new Object[]{query, LOGGER});
     }
 }

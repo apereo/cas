@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.metadata.resolver.RestSamlRegisteredServiceMetadataResolver;
+import org.apereo.cas.support.saml.metadata.resolver.RestfulSamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
 
@@ -30,7 +30,7 @@ public class SamlIdPRestfulMetadataConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Bean
@@ -38,10 +38,11 @@ public class SamlIdPRestfulMetadataConfiguration {
     @RefreshScope
     public SamlRegisteredServiceMetadataResolver restSamlRegisteredServiceMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new RestSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getObject());
+        return new RestfulSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getObject());
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "restSamlRegisteredServiceMetadataResolutionPlanConfigurer")
     public SamlRegisteredServiceMetadataResolutionPlanConfigurer restSamlRegisteredServiceMetadataResolutionPlanConfigurer() {
         return plan -> plan.registerMetadataResolver(restSamlRegisteredServiceMetadataResolver());

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Tag("Simple")
+@Tag("CAS")
 public class ImmutableAssertionTests {
 
     @Test
@@ -68,7 +68,7 @@ public class ImmutableAssertionTests {
         val list = new ArrayList<Authentication>();
         list.add(CoreAuthenticationTestUtils.getAuthentication());
         val assertion = new ImmutableAssertion(CoreAuthenticationTestUtils.getAuthentication(), list, true, RegisteredServiceTestUtils.getService());
-        assertFalse("test".equals(assertion));
+        assertNotEquals(assertion, "test");
     }
 
     @Test
@@ -83,7 +83,7 @@ public class ImmutableAssertionTests {
         val assertion1 = new ImmutableAssertion(auth, list1, true, RegisteredServiceTestUtils.getService());
         val assertion2 = new ImmutableAssertion(auth, list2, true, RegisteredServiceTestUtils.getService());
 
-        assertTrue(assertion1.equals(assertion2));
+        assertEquals(assertion2, assertion1);
     }
 
     @Test

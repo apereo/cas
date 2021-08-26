@@ -1,5 +1,7 @@
 package org.apereo.cas.otp.web.flow;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepositoryTests;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockServletContext;
@@ -20,7 +22,12 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * This is {@link OneTimeTokenAuthenticationWebflowEventResolverTests}.
@@ -28,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Webflow")
+@Tag("WebflowEvents")
 @SpringBootTest(classes = BaseOneTimeTokenRepositoryTests.SharedTestConfiguration.class)
 public class OneTimeTokenAuthenticationWebflowEventResolverTests {
     @Autowired
@@ -44,7 +51,13 @@ public class OneTimeTokenAuthenticationWebflowEventResolverTests {
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
-        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
+        val authn = RegisteredServiceTestUtils.getAuthentication("casuser");
+        val builder = mock(AuthenticationResultBuilder.class);
+        when(builder.getInitialAuthentication()).thenReturn(Optional.of(authn));
+        when(builder.collect(any(Authentication.class))).thenReturn(builder);
+
+        WebUtils.putAuthenticationResultBuilder(builder, context);
+        WebUtils.putAuthentication(authn, context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, resolver.resolveSingle(context).getId());
     }
 }

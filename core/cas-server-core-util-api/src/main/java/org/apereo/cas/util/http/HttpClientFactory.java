@@ -15,13 +15,38 @@ import javax.net.ssl.SSLContext;
  * @since 6.1.0
  */
 public interface HttpClientFactory extends FactoryBean, DisposableBean {
+    /**
+     * Gets proxy.
+     *
+     * @return the proxy
+     */
     HttpHost getProxy();
 
+    /**
+     * Gets ssl socket factory.
+     *
+     * @return the ssl socket factory
+     */
     LayeredConnectionSocketFactory getSslSocketFactory();
 
+    /**
+     * Gets hostname verifier.
+     *
+     * @return the hostname verifier
+     */
     HostnameVerifier getHostnameVerifier();
 
+    /**
+     * Gets connection timeout.
+     *
+     * @return the connection timeout
+     */
     long getConnectionTimeout();
 
+    /**
+     * Gets ssl context.
+     *
+     * @return the ssl context
+     */
     SSLContext getSslContext();
 }

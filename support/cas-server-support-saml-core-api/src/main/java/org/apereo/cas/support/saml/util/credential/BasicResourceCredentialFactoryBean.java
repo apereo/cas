@@ -101,6 +101,11 @@ public class BasicResourceCredentialFactoryBean implements FactoryBean<BasicCred
         return credential;
     }
 
+    /**
+     * Gets public key.
+     *
+     * @return the public key
+     */
     protected PublicKey getPublicKey() {
         if (null == getPublicKeyInfo()) {
             return null;
@@ -110,6 +115,24 @@ public class BasicResourceCredentialFactoryBean implements FactoryBean<BasicCred
         } catch (final Exception e) {
             throw new FatalBeanException("Could not decode public key", e);
         }
+    }
+
+    /**
+     * Form of encoding for SecretKey info.
+     */
+    enum SecretKeyEncoding {
+        /**
+         * Raw binary encoding.
+         */
+        BINARY,
+        /**
+         * Hexidecimal encoding.
+         */
+        HEX,
+        /**
+         * Base64 encoding.
+         */
+        BASE64
     }
 
     private PrivateKey getPrivateKey() {
@@ -130,10 +153,8 @@ public class BasicResourceCredentialFactoryBean implements FactoryBean<BasicCred
             case HEX:
                 return Hex.decode(data);
             case BASE64:
-                return Base64.decodeBase64(data);
             default:
-                throw new IllegalArgumentException("Unsupported encoding");
-
+                return Base64.decodeBase64(data);
         }
     }
 
@@ -146,23 +167,5 @@ public class BasicResourceCredentialFactoryBean implements FactoryBean<BasicCred
         } catch (final Exception e) {
             throw new BeanCreationException("Could not decode secret key", e);
         }
-    }
-
-    /**
-     * Form of encoding for SecretKey info.
-     */
-    enum SecretKeyEncoding {
-        /**
-         * Raw binary encoding.
-         */
-        BINARY,
-        /**
-         * Hexidecimal encoding.
-         */
-        HEX,
-        /**
-         * Base64 encoding.
-         */
-        BASE64
     }
 }

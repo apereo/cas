@@ -37,12 +37,15 @@ import static org.mockito.Mockito.*;
     "cas.sso.required-service-pattern=^https://www.google.com.*",
     "cas.tgc.crypto.enabled=false"
 })
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTests {
 
     private Action verifyRequiredServiceAction;
+
     private MockRequestContext requestContext;
+
     private MockHttpServletRequest httpRequest;
+
     private TicketRegistrySupport ticketRegistrySupport;
 
     @BeforeEach

@@ -7,7 +7,6 @@ import lombok.val;
 
 import javax.security.auth.x500.X500Principal;
 import java.math.BigInteger;
-import java.security.Principal;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509CRL;
@@ -30,7 +29,7 @@ public class MockX509CRL extends X509CRL {
     /**
      * Issuer name
      */
-    private final X500Principal issuer;
+    private final X500Principal issuerDN;
 
     /**
      * Instant CRL was issued.
@@ -60,11 +59,6 @@ public class MockX509CRL extends X509CRL {
     @Override
     public byte[] getEncoded() {
         return null;
-    }
-
-    @Override
-    public Principal getIssuerDN() {
-        return this.issuer;
     }
 
     @Override
@@ -106,12 +100,7 @@ public class MockX509CRL extends X509CRL {
     public byte[] getTBSCertList() {
         return null;
     }
-
-    @Override
-    public Date getThisUpdate() {
-        return this.thisUpdate;
-    }
-
+    
     @Override
     public int getVersion() {
         return 0;
@@ -119,7 +108,6 @@ public class MockX509CRL extends X509CRL {
 
     @Override
     public void verify(final PublicKey key) {
-
     }
 
     @Override

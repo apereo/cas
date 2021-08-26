@@ -1,19 +1,16 @@
 package org.apereo.cas.configuration.model.support.email;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.ResourceUtils;
 
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link EmailProperties}.
@@ -23,9 +20,9 @@ import java.nio.charset.StandardCharsets;
  */
 @Getter
 @Setter
-@Slf4j
 @RequiresModule(name = "cas-server-core-util", automated = true)
 @Accessors(chain = true)
+@JsonFilter("EmailProperties")
 public class EmailProperties implements Serializable {
     private static final long serialVersionUID = 7367120636536230761L;
 
@@ -41,6 +38,12 @@ public class EmailProperties implements Serializable {
      * Email message body.
      * Could be plain text or a reference
      * to an external file that would serve as a template.
+     *
+     * If specified as a path to an external file with an extension {@code .gtemplate},
+     * then the email message body would be processed using the Groovy template engine.
+     * The template engine uses JSP style &lt;% %&gt; script and &lt;%= %&gt; expression syntax or
+     * GString style expressions. The variable {@code out} is bound to
+     * the writer that the template is being written to.
      */
     private String text;
 
@@ -54,6 +57,7 @@ public class EmailProperties implements Serializable {
      * Email subject line.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String subject;
 
     /**
@@ -92,23 +96,11 @@ public class EmailProperties implements Serializable {
     }
 
     /**
-     * Format body.
+     * Is text/from/subject defined.
      *
-     * @param arguments the arguments
-     * @return the string
+     * @return true/false
      */
-    public String getFormattedBody(final Object... arguments) {
-        if (StringUtils.isBlank(this.text)) {
-            LOGGER.warn("No email body is defined");
-            return StringUtils.EMPTY;
-        }
-        try {
-            val templateFile = ResourceUtils.getFile(this.text);
-            val contents = FileUtils.readFileToString(templateFile, StandardCharsets.UTF_8);
-            return String.format(contents, arguments);
-        } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
-            return String.format(this.text, arguments);
-        }
+    public boolean isDefined() {
+        return !isUndefined();
     }
 }

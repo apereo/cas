@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{cas.mfa.googleauth.pagetitle}">Google Authentication Registration Review View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body id="cas">
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" id="login" class="mdc-card p-4 m-auto w-lg-66">
+        <h4 th:text="#{screen.authentication.gauth.register}">Your account is not registered.</h4>
+
+        <!-- Confirmation Dialog -->
+        <div class="mdc-dialog" id="confirm-reg-dialog" role="alertdialog"
+             aria-modal="true" aria-labelledby="notif-dialog-title" aria-describedby="notif-dialog-content">
+            <form method="post" id="fm1" class="fm-v clearfix" th:action="@{/login}">
+                <div class="mdc-dialog__container">
+                    <div class="mdc-dialog__surface">
+                        <h1 class="mdc-dialog__title mt-lg-2" id="notif-dialog-title"
+                            th:utext="#{screen.authentication.gauth.confirm.title}">
+                            Confirm Account Registration
+                        </h1>
+                        <div class="mdc-dialog__content" id="notif-dialog-content">
+                            <div class="mdc-typography--body1">
+                                <div class="banner banner-danger banner-dismissible"
+                                     style="display: none" id="errorPanel">
+                                    <p th:utext="#{screen.authentication.gauth.invalidtoken}">
+                                </div>
+
+                                <p th:utext="#{screen.authentication.gauth.confirm.desc}">Description</p>
+
+                                <input type="hidden" name="_eventId_submit" value="Confirm"/>
+                                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                                <input type="hidden" name="geolocation"/>
+
+                                <section class="cas-field my-3 mdc-input-group">
+                                    <div class="mdc-input-group-field mdc-input-group-field-append">
+                                        <div class="d-flex caps-check">
+
+                                            <label for="token"
+                                                   class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
+                                                <input class="mdc-text-field__input pwd"
+                                                       type="password"
+                                                       name="token"
+                                                       id="token"
+                                                       size="25"
+                                                       required
+                                                       autocomplete="off" />
+                                                <span class="mdc-notched-outline">
+                                                    <span class="mdc-notched-outline__leading"></span>
+                                                    <span class="mdc-notched-outline__notch">
+                                                      <span class="mdc-floating-label" th:utext="#{cas.mfa.googleauth.label.token}">Token</span>
+                                                    </span>
+                                                    <span class="mdc-notched-outline__trailing"></span>
+                                                </span>
+
+                                            </label>
+                                            
+                                            <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button" type="button">
+                                                <i class="mdi mdi-eye reveal-password-icon"></i>
+                                                <span class="sr-only">Toggle Token</span>
+                                            </button>
+                                        </div>
+
+
+                                        <br>
+                                        <div class="d-flex">
+                                            <label for="accountName"
+                                                   class="mdc-text-field mdc-text-field--outlined">
+
+                                                <input class="mdc-text-field__input"
+                                                       type="text"
+                                                       name="accountName"
+                                                       id="accountName"
+                                                       size="50"
+                                                       autocomplete="off" />
+
+                                                <span class="mdc-notched-outline">
+                                                    <span class="mdc-notched-outline__leading"></span>
+                                                    <span class="mdc-notched-outline__notch">
+                                                      <span class="mdc-floating-label" th:utext="#{screen.authentication.gauth.name}">Token</span>
+                                                    </span>
+                                                    <span class="mdc-notched-outline__trailing"></span>
+                                                </span>
+
+                                            </label>
+                                            <script>document.getElementById("accountName").value = randomWord();</script>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                        <footer class="mdc-dialog__actions">
+                            <button class="mdc-button mdc-button--raised mr-2" name="registerButton" id="registerButton">
+                                <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register</span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-button--outlined"
+                                    data-mdc-dialog-action="accept" data-mdc-dialog-button-default>
+                                <span class="mdc-button__label">Cancel</span>
+                            </button>
+                        </footer>
+                    </div>
+                </div>
+                <div class="mdc-dialog__scrim"></div>
+            </form>
+
+            <script type="text/javascript">
+                var btn = document.getElementById('registerButton');
+                btn.addEventListener('click', function (event) {
+                    var endpoint = $('#fm1').attr('action');
+                    event.preventDefault();
+                    $('#errorPanel').hide();
+
+                    var formData = $("#fm1").serializeArray();
+                    formData.push({
+                        name: "validate",
+                        value: true
+                    });
+                    $.post(endpoint, formData)
+                        .done(function (data, status, jqxhr) {
+                            $('#errorPanel').hide();
+                            $("#fm1").submit();
+                        })
+                        .fail(function (data, status, jqxhr) {
+                            $('#errorPanel').show("fast", "swing");
+                        });
+                }, false);
+            </script>
+        </div>
+        <!-- Confirmation Dialog -->
+
+
+        <!-- Account Information -->
+        <table>
+            <tr>
+                <td>
+                    <img th:src="@{'data:image/jpeg;base64,' + ${QRcode}}" />
+                </td>
+
+                <td>
+                    <div class="my-2" id="seckeypanel">
+                        <p th:utext="#{screen.authentication.gauth.key(${key.getSecretKey()})}">Secret key to register is...</p>
+                    </div>
+                    <hr>
+                    <p>Scratch codes:</p>
+                    <div class="d-flex align-items-start mb-4">
+                        <div class="mdc-chip-set" role="grid" id="scratchcodes">
+                            <div th:each="code : ${key.getScratchCodes()}" class="mdc-chip" role="row">
+                                <div class="mdc-chip__ripple"></div>
+                                <span role="gridcell">
+                                  <span class="mdc-chip__text" th:text="${code}">Chip One</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <div class="d-flex flex-column align-items-center">
+            <div class="d-flex justify-content-center">
+                <button class="mdc-button mdc-button--raised mr-2" name="confirm" id="confirm" accesskey="f" value="Confirm">
+                    <span class="mdc-button__label" th:text="#{screen.welcome.button.confirm}">Confirm</span>
+                </button>
+                <button class="mdc-button mdc-button--raised mr-2" name="print" accesskey="p" type="button"
+                        onclick="window.print();">
+                    <span class="mdc-button__label" th:text="#{screen.welcome.button.print}">Print</span>
+                </button>
+                <button class="mdc-button mdc-button--outlined" name="back" accesskey="c" type="button" value="Cancel"
+                        onclick="location.href = location.href;"
+                        th:value="#{screen.pm.button.cancel}">
+                    <span class="mdc-button__label" th:text="#{screen.pm.button.cancel}">Cancel</span>
+                </button>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            (function (material) {
+                document.addEventListener('DOMContentLoaded', function () {
+                    var element = document.getElementById('confirm-reg-dialog');
+                    var dialog = material.dialog.MDCDialog.attachTo(element);
+                    var btn = document.getElementById('confirm');
+                    btn.addEventListener('click', function (event) {
+                        dialog.open();
+                        event.preventDefault();
+                    }, false);
+                });
+            })(mdc);
+        </script>
+    </div>
+</main>
+</body>
+
+</html>

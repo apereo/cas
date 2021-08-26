@@ -29,12 +29,10 @@ public class JasyptListProvidersCommand {
      * @param includeBC whether to include the BouncyCastle provider
      */
     @ShellMethod(key = "jasypt-list-providers", value = "List encryption providers with PBE Ciphers you can use with Jasypt")
-    public void listProviders(@ShellOption(value = { "includeBC", "--includeBC" },
-        help = "Include Bouncy Castle provider") final boolean includeBC) {
+    public void listProviders(@ShellOption(value = {"includeBC", "--includeBC"},
+        help = "Include Bouncy Castle provider", defaultValue = "false") final Boolean includeBC) {
         if (includeBC) {
-            if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-                Security.addProvider(new BouncyCastleProvider());
-            }
+            Security.addProvider(new BouncyCastleProvider());
         } else {
             Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
         }
@@ -42,11 +40,10 @@ public class JasyptListProvidersCommand {
         val providers = Security.getProviders();
         for (val provider : providers) {
             val services = provider.getServices();
-            val algorithms =
-                services.stream()
-                    .filter(service -> "Cipher".equals(service.getType()) && service.getAlgorithm().contains("PBE"))
-                    .map(Provider.Service::getAlgorithm)
-                    .collect(Collectors.toList());
+            val algorithms = services.stream()
+                .filter(service -> "Cipher".equals(service.getType()) && service.getAlgorithm().contains("PBE"))
+                .map(Provider.Service::getAlgorithm)
+                .collect(Collectors.toList());
             if (!algorithms.isEmpty()) {
                 LOGGER.info("Provider: Name: [{}] Class: [{}]", provider.getName(), provider.getClass().getName());
                 for (val algorithm : algorithms) {

@@ -15,8 +15,8 @@ import org.springframework.context.annotation.Configuration;
  * This is {@link OpenIdServiceFactoryConfiguration}.
  *
  * @author Misagh Moayyed
- * @deprecated 6.2
  * @since 5.1.0
+ * @deprecated 6.2
  */
 @Configuration("openIdServiceFactoryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)

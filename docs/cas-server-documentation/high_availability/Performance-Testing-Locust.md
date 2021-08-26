@@ -4,6 +4,8 @@ title: CAS - High Availability Performance Testing
 category: High Availability
 ---
 
+{% include variables.html %}
+
 # Locust Performance Testing
 
 [Locust](http://locust.io/) is an easy-to-use, distributed, user load testing tool. It is intended for load-testing web sites (or other systems) and figuring out how many concurrent users a system can handle. [See this guide](http://docs.locust.io/en/latest/what-is-locust.html) for more info.

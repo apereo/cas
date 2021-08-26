@@ -62,9 +62,8 @@ import org.apereo.cas.config.CasSamlSPZimbraConfigurationTests;
 import org.apereo.cas.config.CasSamlSPZoomConfigurationTests;
 import org.apereo.cas.util.SamlSPUtilsTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllSamlSPTestsSuite}.
@@ -135,6 +134,6 @@ import org.junit.runner.RunWith;
     CasSamlSPCaliforniaCommunityCollegesConfigurationTests.class,
     SamlSPUtilsTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllSamlSPTestsSuite {
 }

@@ -4,19 +4,25 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
+
 
 /**
  * This is {@link OAuth20HandlerInterceptorAdapter}.
@@ -25,25 +31,28 @@ import java.util.regex.Pattern;
  * @since 5.1.0
  */
 @RequiredArgsConstructor
-public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter {
+public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor {
     /**
      * Access token interceptor.
      */
-    protected final HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor;
+    protected final HandlerInterceptor requiresAuthenticationAccessTokenInterceptor;
 
     /**
      * Authorization interceptor.
      */
-    protected final HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor;
+    protected final HandlerInterceptor requiresAuthenticationAuthorizeInterceptor;
 
     private final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
 
     private final ServicesManager servicesManager;
 
-    private final SessionStore<JEEContext> sessionStore;
+    private final SessionStore sessionStore;
+
+    private final Set<OAuth20AuthorizationRequestValidator> oauthAuthorizationRequestValidators;
 
     @Override
-    public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
+    public boolean preHandle(final HttpServletRequest request,
+                             final HttpServletResponse response,
                              final Object handler) throws Exception {
         if (requestRequiresAuthentication(request, response)) {
             return requiresAuthenticationAccessTokenInterceptor.preHandle(request, response, handler);
@@ -57,24 +66,21 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
     }
 
     /**
-    * Is the client requesting is a OAuth "public" client?
-    * An OAuth "public" client is one that does not define a secret like a mobile application.
-    *
-    * @param request the request
-    * @param response the response
-    * @return true/false
-    */
+     * Is the client requesting is a OAuth "public" client?
+     * An OAuth "public" client is one that does not define a secret like a mobile application.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return true/false
+     */
     protected boolean clientNeedAuthentication(final HttpServletRequest request, final HttpServletResponse response) {
-        val clientId = OAuth20Utils.getClientIdAndClientSecret(new JEEContext(request, response, sessionStore)).getLeft();
+        val clientId = OAuth20Utils.getClientIdAndClientSecret(new JEEContext(request, response), this.sessionStore).getLeft();
         if (clientId.isEmpty()) {
             return true;
         }
 
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
-        if (registeredService == null) {
-            return true;
-        }
-        return OAuth20Utils.doesServiceNeedAuthentication(registeredService);
+        return registeredService == null || OAuth20Utils.doesServiceNeedAuthentication(registeredService);
     }
 
     /**
@@ -86,7 +92,16 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      */
     protected boolean isRevokeTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val requestPath = request.getRequestURI();
-        return doesUriMatchPattern(requestPath, OAuth20Constants.REVOCATION_URL);
+        return doesUriMatchPattern(requestPath, getRevocationUrls());
+    }
+
+    /**
+     * Gets revocation url.
+     *
+     * @return the revocation url
+     */
+    protected List<String> getRevocationUrls() {
+        return CollectionUtils.wrapList(OAuth20Constants.REVOCATION_URL);
     }
 
     /**
@@ -98,8 +113,16 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      */
     protected boolean isAccessTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val requestPath = request.getRequestURI();
-        val pattern = String.format("(%s|%s)", OAuth20Constants.ACCESS_TOKEN_URL, OAuth20Constants.TOKEN_URL);
-        return doesUriMatchPattern(requestPath, pattern);
+        return doesUriMatchPattern(requestPath, getAccessTokenUrls());
+    }
+
+    /**
+     * Get access token urls.
+     *
+     * @return the string [ ]
+     */
+    protected List<String> getAccessTokenUrls() {
+        return CollectionUtils.wrapList(OAuth20Constants.ACCESS_TOKEN_URL, OAuth20Constants.TOKEN_URL);
     }
 
     /**
@@ -109,10 +132,10 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      * @param response the response
      * @return true/false
      */
-    protected boolean isDeviceTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
+    protected boolean isDeviceTokenRequest(final HttpServletRequest request,
+                                           final HttpServletResponse response) {
         val requestPath = request.getRequestURI();
-        val pattern = String.format("(%s)", OAuth20Constants.DEVICE_AUTHZ_URL);
-        return doesUriMatchPattern(requestPath, pattern);
+        return doesUriMatchPattern(requestPath, CollectionUtils.wrapList(OAuth20Constants.DEVICE_AUTHZ_URL));
     }
 
     /**
@@ -122,7 +145,8 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      * @param response the response
      * @return true/false
      */
-    protected boolean requestRequiresAuthentication(final HttpServletRequest request, final HttpServletResponse response) {
+    protected boolean requestRequiresAuthentication(final HttpServletRequest request,
+                                                    final HttpServletResponse response) {
         val revokeTokenRequest = isRevokeTokenRequest(request, response);
 
         if (revokeTokenRequest) {
@@ -130,27 +154,19 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
         }
 
         val accessTokenRequest = isAccessTokenRequest(request, response);
+        val extractor = extractAccessTokenGrantRequest(request);
         if (!accessTokenRequest) {
-            val extractor = extractAccessTokenGrantRequest(request);
             if (extractor.isPresent()) {
                 val ext = extractor.get();
                 return ext.requestMustBeAuthenticated();
             }
         } else {
-            val extractor = extractAccessTokenGrantRequest(request);
             if (extractor.isPresent()) {
                 val ext = extractor.get();
                 return ext.getResponseType() != OAuth20ResponseTypes.DEVICE_CODE;
             }
         }
         return false;
-    }
-
-    private Optional<AccessTokenGrantRequestExtractor> extractAccessTokenGrantRequest(final HttpServletRequest request) {
-        return this.accessTokenGrantRequestExtractors
-            .stream()
-            .filter(ext -> ext.supports(request))
-            .findFirst();
     }
 
     /**
@@ -160,20 +176,54 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      * @param response the response
      * @return true/false
      */
-    protected boolean isAuthorizationRequest(final HttpServletRequest request, final HttpServletResponse response) {
+    protected boolean isAuthorizationRequest(final HttpServletRequest request,
+                                             final HttpServletResponse response) {
         val requestPath = request.getRequestURI();
-        return doesUriMatchPattern(requestPath, OAuth20Constants.AUTHORIZE_URL);
+        return doesUriMatchPattern(requestPath, getAuthorizeUrls()) && isValidAuthorizeRequest(new JEEContext(request, response));
+    }
+
+    /**
+     * Gets authorize url.
+     *
+     * @return the authorize url
+     */
+    protected List<String> getAuthorizeUrls() {
+        return CollectionUtils.wrapList(OAuth20Constants.AUTHORIZE_URL);
     }
 
     /**
      * Does uri match pattern.
      *
      * @param requestPath the request path
-     * @param patternUrl  the pattern
-     * @return true/false
+     * @param patternUrls the pattern urls
+     * @return true /false
      */
-    protected boolean doesUriMatchPattern(final String requestPath, final String patternUrl) {
-        val pattern = Pattern.compile('/' + patternUrl + "(/)*$");
-        return pattern.matcher(requestPath).find();
+    protected boolean doesUriMatchPattern(final String requestPath, final List<String> patternUrls) {
+        return patternUrls.stream().anyMatch(patternUrl -> {
+            val pattern = Pattern.compile('/' + patternUrl + "(/)*$");
+            return pattern.matcher(requestPath).find();
+        });
+    }
+
+    /**
+     * Is the Authorize Request valid?
+     *
+     * @param context the context
+     * @return whether the authorize request is valid
+     */
+    protected boolean isValidAuthorizeRequest(final JEEContext context) {
+        val validator = oauthAuthorizationRequestValidators
+            .stream()
+            .filter(b -> b.supports(context))
+            .findFirst()
+            .orElse(null);
+        return validator != null && validator.validate(context);
+    }
+
+    private Optional<AccessTokenGrantRequestExtractor> extractAccessTokenGrantRequest(final HttpServletRequest request) {
+        return this.accessTokenGrantRequestExtractors
+            .stream()
+            .filter(ext -> ext.supports(request))
+            .findFirst();
     }
 }

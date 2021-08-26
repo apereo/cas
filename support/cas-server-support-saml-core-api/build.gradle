@@ -4,7 +4,6 @@ dependencies {
     api libraries.dropwizard
     api libraries.bouncycastle
     api libraries.jdom
-    api libraries.xmlapis
     api libraries.apachevelocity
 
     implementation libraries.shibutiljavasupport
@@ -15,7 +14,7 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-services-authentication")
 
-    compileOnly project(":core:cas-server-core-rest")
+    compileOnlyApi  project(":core:cas-server-core-rest")
     
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-person-directory")

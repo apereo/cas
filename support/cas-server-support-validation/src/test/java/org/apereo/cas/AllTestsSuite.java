@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.web.LegacyValidateControllerTests;
 import org.apereo.cas.web.ProxyControllerTests;
 import org.apereo.cas.web.view.Cas10ResponseViewTests;
 import org.apereo.cas.web.view.Cas20ResponseViewTests;
@@ -9,9 +10,8 @@ import org.apereo.cas.web.view.attributes.AttributeValuesPerLineProtocolAttribut
 import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRendererTests;
 import org.apereo.cas.web.view.attributes.InlinedCas30ProtocolAttributesRendererTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * The {@link AllTestsSuite} is responsible for
@@ -25,12 +25,13 @@ import org.junit.runner.RunWith;
     Cas20ResponseViewTests.class,
     Cas30ResponseViewTests.class,
     ProxyControllerTests.class,
+    LegacyValidateControllerTests.class,
     Cas30JsonResponseViewTests.class,
     DefaultCas30ProtocolAttributesRendererTests.class,
     InlinedCas30ProtocolAttributesRendererTests.class,
     AttributeValuesPerLineProtocolAttributesRendererTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }
 

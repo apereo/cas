@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.support.saml.InMemoryResourceMetadataResolverTests;
 import org.apereo.cas.support.saml.authentication.Saml20ObjectBuilderTests;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulatorTests;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationRequestTests;
@@ -11,9 +12,8 @@ import org.apereo.cas.support.saml.web.support.WebUtilTests;
 import org.apereo.cas.support.saml.web.view.Saml10FailureResponseViewTests;
 import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseViewTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Test suite to run all SAML tests.
@@ -27,12 +27,13 @@ import org.junit.runner.RunWith;
     SamlAuthenticationRequestTests.class,
     SamlCompliantUniqueTicketIdGeneratorTests.class,
     WebUtilTests.class,
+    InMemoryResourceMetadataResolverTests.class,
     SamlValidateEndpointTests.class,
     SamlServiceFactoryTests.class,
     Saml10FailureResponseViewTests.class,
     Saml10SuccessResponseViewTests.class,
     Saml20ObjectBuilderTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

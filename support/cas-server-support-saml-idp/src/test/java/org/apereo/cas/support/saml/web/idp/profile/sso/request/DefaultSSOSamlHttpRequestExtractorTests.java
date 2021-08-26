@@ -8,11 +8,15 @@ import org.apereo.cas.util.EncodingUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.Response;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultSSOSamlHttpRequestExtractorTests}.
@@ -36,8 +40,8 @@ public class DefaultSSOSamlHttpRequestExtractorTests extends BaseSamlIdPConfigur
         val request = getMockHttpServletRequest(decoded);
         val decoder = new UrlDecodingHTTPRedirectDeflateDecoder(false);
         val result = ext.extract(request, decoder, AuthnRequest.class);
-        assertNotNull(result.getKey());
-        assertNotNull(result.getValue());
+        assertNotNull(result.get().getKey());
+        assertNotNull(result.get().getValue());
     }
 
 
@@ -47,8 +51,27 @@ public class DefaultSSOSamlHttpRequestExtractorTests extends BaseSamlIdPConfigur
         val request = getMockHttpServletRequest(SAML_REQUEST);
         val decoder = new UrlDecodingHTTPRedirectDeflateDecoder(true);
         val result = ext.extract(request, decoder, AuthnRequest.class);
-        assertNotNull(result.getKey());
-        assertNotNull(result.getValue());
+        assertNotNull(result.get().getKey());
+        assertNotNull(result.get().getValue());
+    }
+
+    @Test
+    public void verifyActionWrongClassDecoding() {
+        val ext = new DefaultSSOSamlHttpRequestExtractor(this.openSamlConfigBean.getParserPool());
+        val request = getMockHttpServletRequest(SAML_REQUEST);
+        val decoder = new UrlDecodingHTTPRedirectDeflateDecoder(true);
+        val result = ext.extract(request, decoder, Response.class);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void verifyActionNoContext() {
+        val ext = new DefaultSSOSamlHttpRequestExtractor(this.openSamlConfigBean.getParserPool());
+        val request = getMockHttpServletRequest(SAML_REQUEST);
+        val decoder = mock(BaseHttpServletRequestXMLMessageDecoder.class);
+        when(decoder.getMessageContext()).thenReturn(new MessageContext());
+        val result = ext.extract(request, decoder, AuthnRequest.class);
+        assertTrue(result.isEmpty());
     }
 
     private static MockHttpServletRequest getMockHttpServletRequest(final String decoded) {

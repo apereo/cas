@@ -1,6 +1,7 @@
 package org.apereo.cas.cassandra;
 
 import org.apereo.cas.configuration.model.support.cassandra.authentication.BaseCassandraProperties;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.google.common.base.Splitter;
@@ -26,8 +27,11 @@ import java.net.InetSocketAddress;
 public class DefaultCassandraSessionFactory implements CassandraSessionFactory, AutoCloseable, DisposableBean {
 
     private final CqlSession session;
+
     private final CassandraTemplate cassandraTemplate;
+
     private final CqlTemplate cqlTemplate;
+
     private final SSLContext sslContext;
 
     public DefaultCassandraSessionFactory(final BaseCassandraProperties cassandra,
@@ -44,7 +48,7 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
             LOGGER.trace("Closing Cassandra session");
             session.close();
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -54,9 +58,10 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
     }
 
     private CqlSession initializeCassandraSession(final BaseCassandraProperties cassandra) {
-        val builder = CqlSession.builder()
-            .withKeyspace(cassandra.getKeyspace())
-            .withAuthCredentials(cassandra.getUsername(), cassandra.getPassword());
+        val builder = CqlSession.builder().withKeyspace(cassandra.getKeyspace());
+        if (StringUtils.isNotBlank(cassandra.getUsername()) && StringUtils.isNotBlank(cassandra.getPassword())) {
+            builder.withAuthCredentials(cassandra.getUsername(), cassandra.getPassword());
+        }
         if (StringUtils.isNotBlank(cassandra.getLocalDc())) {
             builder.withLocalDatacenter(cassandra.getLocalDc());
         }
@@ -70,7 +75,6 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
                 return new InetSocketAddress(host, port);
             })
             .forEach(builder::addContactPoint);
-
         return builder.build();
     }
 }

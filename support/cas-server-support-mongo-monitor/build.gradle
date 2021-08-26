@@ -7,8 +7,9 @@ dependencies {
 
     implementation libraries.mongo
 
-    testImplementation project(":core:cas-server-core")
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-services")

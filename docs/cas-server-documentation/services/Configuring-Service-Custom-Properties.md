@@ -4,6 +4,8 @@ title: CAS - Configuring Service Custom Properties
 category: Services
 ---
 
+{% include variables.html %}
+
 # Configure Service Custom Properties
 
 CAS has ability to add arbitrary attributes to a registered service.
@@ -29,3 +31,10 @@ A sample JSON file follows:
   }
 }
 ```
+
+Registered service property values can use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
+
+## Supported Properties
+
+{% include registeredserviceproperties.html %}
+

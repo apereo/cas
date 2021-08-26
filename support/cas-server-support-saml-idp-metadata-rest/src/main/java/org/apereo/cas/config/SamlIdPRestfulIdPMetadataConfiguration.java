@@ -7,22 +7,21 @@ import org.apereo.cas.support.saml.idp.metadata.RestfulSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
-import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import lombok.SneakyThrows;
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ResourceLoader;
 
 /**
  * This is {@link SamlIdPRestfulIdPMetadataConfiguration}.
@@ -37,18 +36,19 @@ import org.springframework.core.io.ResourceLoader;
 public class SamlIdPRestfulIdPMetadataConfiguration {
 
     @Autowired
-    private ResourceLoader resourceLoader;
+    @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
+    private ObjectProvider<SamlIdPMetadataGeneratorConfigurationContext> samlIdPMetadataGeneratorConfigurationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("samlSelfSignedCertificateWriter")
-    private ObjectProvider<SamlIdPCertificateAndKeyWriter> samlSelfSignedCertificateWriter;
+    @Qualifier("samlIdPMetadataCache")
+    private ObjectProvider<Cache<String, SamlIdPMetadataDocument>> samlIdPMetadataCache;
 
     @Bean
-    @ConditionalOnMissingBean(name = "restfulSamlIdPMetadataCipherExecutor")
-    public CipherExecutor restfulSamlIdPMetadataCipherExecutor() {
+    @RefreshScope
+    public CipherExecutor samlIdPMetadataGeneratorCipherExecutor() {
         val idp = casProperties.getAuthn().getSamlIdp();
         val crypto = idp.getMetadata().getRest().getCrypto();
 
@@ -63,24 +63,18 @@ public class SamlIdPRestfulIdPMetadataConfiguration {
     }
 
     @Bean
-    @SneakyThrows
+    @RefreshScope
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
-        val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
-            .samlIdPMetadataLocator(samlIdPMetadataLocator())
-            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
-            .resourceLoader(resourceLoader)
-            .casProperties(casProperties)
-            .metadataCipherExecutor(restfulSamlIdPMetadataCipherExecutor())
-            .build();
-        return new RestfulSamlIdPMetadataGenerator(context);
+        return new RestfulSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext.getObject());
     }
 
     @Bean
-    @SneakyThrows
+    @RefreshScope
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new RestfulSamlIdPMetadataLocator(
-            restfulSamlIdPMetadataCipherExecutor(),
+            samlIdPMetadataGeneratorCipherExecutor(),
+            samlIdPMetadataCache.getObject(),
             idp.getMetadata().getRest());
     }
 }

@@ -8,13 +8,13 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.session.JEESessionStore;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -32,10 +32,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OAuth20ResourceOwnerCredentialsResponseBuilderTests extends AbstractOAuth20Tests {
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response, new JEESessionStore());
+        val context = new JEEContext(request, response);
 
         val holder = AccessTokenRequestDataHolder.builder()
             .clientId(CLIENT_ID)
@@ -48,27 +48,27 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilderTests extends Abstrac
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
             .build();
         assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.build(context, CLIENT_ID, holder));
-        oauthResourceOwnerCredentialsResponseBuilder.buildResponseModelAndView(context, servicesManager,
-            CLIENT_ID, "https://example.org", Map.of());
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, CLIENT_ID);
+        assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.build(context, registeredService, "https://example.org", Map.of()));
     }
 
     @Test
-    public void verifyModelAndViewPost() {
+    public void verifyModelAndViewPost() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response, new JEESessionStore());
+        val context = new JEEContext(request, response);
 
         request.addParameter(OAuth20Constants.RESPONSE_MODE, OAuth20ResponseModeTypes.FORM_POST.getType());
-        assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.buildResponseModelAndView(context, servicesManager,
-            CLIENT_ID, "https://example.org", Map.of("key", "value")));
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, CLIENT_ID);
+        assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.build(context, registeredService, "https://example.org", Map.of("key", "value")));
     }
 
     @Test
-    public void verifyModelAndView() {
+    public void verifyModelAndView() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response, new JEESessionStore());
-        assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.buildResponseModelAndView(context, servicesManager,
-            CLIENT_ID, "https://example.org", Map.of("key", "value")));
+        val context = new JEEContext(request, response);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, CLIENT_ID);
+        assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.build(context, registeredService, "https://example.org", Map.of("key", "value")));
     }
 }

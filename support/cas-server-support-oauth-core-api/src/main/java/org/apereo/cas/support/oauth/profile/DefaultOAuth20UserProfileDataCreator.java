@@ -1,6 +1,9 @@
 package org.apereo.cas.support.oauth.profile;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -41,9 +44,9 @@ public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileD
     private final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter;
 
     @Override
-    @Audit(action = "OAUTH2_USER_PROFILE",
-        actionResolverName = "OAUTH2_USER_PROFILE_ACTION_RESOLVER",
-        resourceResolverName = "OAUTH2_USER_PROFILE_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.OAUTH2_USER_PROFILE,
+        actionResolverName = AuditActionResolvers.OAUTH2_USER_PROFILE_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.OAUTH2_USER_PROFILE_RESOURCE_RESOLVER)
     public Map<String, Object> createFrom(final OAuth20AccessToken accessToken, final JEEContext context) {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, accessToken.getClientId());
 
@@ -74,7 +77,6 @@ public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileD
         val principal = this.scopeToAttributesFilter.filter(accessToken.getService(), currentPrincipal,
             registeredService, context, accessToken);
         LOGGER.debug("Created CAS principal [{}] based on requested/authorized scopes", principal);
-
         return principal;
     }
 

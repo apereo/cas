@@ -4,6 +4,8 @@ title: CAS - ClearPass
 category: Authentication
 ---
 
+{% include variables.html %}
+
 # ClearPass: Credential Caching and Replay
 
 To enable single sign-on into some legacy applications it may be necessary to provide them with the actual password.
@@ -34,7 +36,7 @@ returning attributes to CAS, such as SAML1 will **not** support the additional r
 Also note that CAS by default attempts to encrypt the cached credential in memory via its own pre-generated keys
 for signing and encryption. When the attribute is to be released to the application, CAS will internally decode
 the credential first and then will attempt to encrypt it again this time using the service's public key credentials.
-This behavior can be controlled via [settings](../configuration/Configuration-Properties.html#clearpass).
+
 
 <div class="alert alert-info"><strong>ClearPass via Proxying!</strong><p>CAS no longer supports retrieving
 the credential via the proxying mechanism. Applications that intend to obtain the credential
@@ -44,7 +46,8 @@ need to be updated to account for the following approach described here.</p></di
 ## Cache Credential
 
 Enable the caching and capturing of the credential in CAS properties.
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#clearpass).
+
+{% include casproperties.html properties="cas.clearpass." %}
 
 ## Create Keys
 
@@ -89,14 +92,14 @@ it via its own private key. Since the attribute is base64 encoded by default, it
 decryption can occur. Here's a sample code snippet:
 
 ```java
-final Map<?, ?> attributes = ...
-final String encodedPsw = (String) attributes.get("credential");
+var attributes = ...
+varencodedPsw = (String) attributes.get("credential");
 
 /* Use the private.key file generated above. */
-final PrivateKey privateKey = ...
-final Cipher cipher = Cipher.getInstance(privateKey.getAlgorithm());
-final byte[] cred64 = decodeBase64(encodedPsw);
+var privateKey = ...
+var cipher = Cipher.getInstance(privateKey.getAlgorithm());
+var cred64 = decodeBase64(encodedPsw);
 cipher.init(Cipher.DECRYPT_MODE, privateKey);
-final byte[] cipherData = cipher.doFinal(cred64);
+var cipherData = cipher.doFinal(cred64);
 return new String(cipherData);
 ```

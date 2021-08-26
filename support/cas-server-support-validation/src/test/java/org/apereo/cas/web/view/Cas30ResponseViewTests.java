@@ -17,9 +17,9 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
-import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
+import org.apereo.cas.web.MockRequestedAuthenticationContextValidator;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.ServiceValidationViewFactory;
 import org.apereo.cas.web.config.CasValidationConfiguration;
@@ -29,7 +29,6 @@ import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.jupiter.api.Tag;
@@ -45,7 +44,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.support.RequestContext;
@@ -53,10 +51,8 @@ import org.springframework.web.servlet.support.RequestContext;
 import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -66,10 +62,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@DirtiesContext
 @Slf4j
 @SpringBootTest(properties = {
-    "cas.clearpass.cacheCredential=true",
+    "cas.clearpass.cache-credential=true",
     "cas.clearpass.crypto.enabled=false"
 },
     classes = {
@@ -79,7 +74,7 @@ import static org.junit.jupiter.api.Assertions.*;
         CasThymeleafConfiguration.class,
         CasValidationConfiguration.class
     })
-@Tag("Simple")
+@Tag("CAS")
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
     @Autowired
@@ -111,33 +106,8 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         return new String(cipherData, StandardCharsets.UTF_8);
     }
 
-    @Override
-    public AbstractServiceValidateController getServiceValidateControllerInstance() {
-        val context = ServiceValidateConfigurationContext.builder()
-            .validationSpecifications(CollectionUtils.wrapSet(getValidationSpecification()))
-            .authenticationSystemSupport(getAuthenticationSystemSupport())
-            .servicesManager(getServicesManager())
-            .centralAuthenticationService(getCentralAuthenticationService().getObject())
-            .argumentExtractor(getArgumentExtractor())
-            .proxyHandler(getProxyHandler())
-            .requestedContextValidator((assertion, request) -> Pair.of(Boolean.TRUE, Optional.empty()))
-            .authnContextAttribute("authenticationContext")
-            .validationAuthorizers(new DefaultServiceTicketValidationAuthorizersExecutionPlan())
-            .renewEnabled(true)
-            .validationViewFactory(serviceValidationViewFactory)
-            .build();
-        return new ServiceValidateController(context);
-    }
-
-    protected Map<?, ?> renderView() throws Exception {
-        val modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl(DEFAULT_SERVICE);
-        LOGGER.debug("Retrieved model and view [{}]", modelAndView.getModel());
-
-        val req = new MockHttpServletRequest(new MockServletContext());
-        req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
-
-        val encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpOfStringToString());
-        val viewDelegated = new View() {
+    protected static View getDelegatedView() {
+        return new View() {
             @Override
             public String getContentType() {
                 return MediaType.TEXT_HTML_VALUE;
@@ -149,22 +119,24 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
                 map.forEach(request::setAttribute);
             }
         };
-
-        val view = getCasViewToRender(encoder, viewDelegated);
-        val resp = new MockHttpServletResponse();
-        view.render(modelAndView.getModel(), req, resp);
-        return getRenderedViewModelMap(req);
     }
 
-    protected Map getRenderedViewModelMap(final MockHttpServletRequest req) {
-        return (Map) req.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES);
-    }
-
-    protected AbstractCasView getCasViewToRender(final ProtocolAttributeEncoder encoder, final View viewDelegated) {
-        return new Cas30ResponseView(true, encoder, servicesManager,
-            viewDelegated, new DefaultAuthenticationAttributeReleasePolicy("attribute"),
-            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
-            new DefaultCas30ProtocolAttributesRenderer());
+    @Override
+    public AbstractServiceValidateController getServiceValidateControllerInstance() {
+        val context = ServiceValidateConfigurationContext.builder()
+            .validationSpecifications(CollectionUtils.wrapSet(getValidationSpecification()))
+            .authenticationSystemSupport(getAuthenticationSystemSupport())
+            .servicesManager(getServicesManager())
+            .centralAuthenticationService(getCentralAuthenticationService())
+            .argumentExtractor(getArgumentExtractor())
+            .proxyHandler(getProxyHandler())
+            .requestedContextValidator(new MockRequestedAuthenticationContextValidator())
+            .authnContextAttribute("authenticationContext")
+            .validationAuthorizers(getServiceValidationAuthorizers())
+            .renewEnabled(true)
+            .validationViewFactory(serviceValidationViewFactory)
+            .build();
+        return new ServiceValidateController(context);
     }
 
     @Test
@@ -203,6 +175,31 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         assertTrue(attributes.containsKey("binaryAttribute"));
         val binaryAttr = attributes.get("binaryAttribute");
         assertEquals("binaryAttributeValue", EncodingUtils.decodeBase64ToString(binaryAttr.toString()));
+    }
+
+    protected Map<?, ?> renderView() throws Exception {
+        val modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl(DEFAULT_SERVICE);
+        LOGGER.debug("Retrieved model and view [{}]", modelAndView.getModel());
+
+        val req = new MockHttpServletRequest(new MockServletContext());
+        req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
+
+        val encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpOfStringToString());
+        val view = getCasViewToRender(encoder, getDelegatedView());
+        val resp = new MockHttpServletResponse();
+        view.render(modelAndView.getModel(), req, resp);
+        return getRenderedViewModelMap(req);
+    }
+
+    protected Map getRenderedViewModelMap(final MockHttpServletRequest req) {
+        return (Map) req.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES);
+    }
+
+    protected AbstractCasView getCasViewToRender(final ProtocolAttributeEncoder encoder, final View viewDelegated) {
+        return new Cas30ResponseView(true, encoder, servicesManager,
+            viewDelegated, new DefaultAuthenticationAttributeReleasePolicy("attribute"),
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
+            new DefaultCas30ProtocolAttributesRenderer());
     }
 
     @TestConfiguration("AttributeRepositoryTestConfiguration")

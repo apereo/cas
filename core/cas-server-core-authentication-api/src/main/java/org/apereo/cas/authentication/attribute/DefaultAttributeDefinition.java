@@ -3,12 +3,9 @@ package org.apereo.cas.authentication.attribute;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
-import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -23,15 +20,15 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.jooq.lambda.Unchecked;
 
-import javax.persistence.Transient;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -53,14 +50,6 @@ import java.util.stream.Collectors;
 public class DefaultAttributeDefinition implements AttributeDefinition {
     private static final long serialVersionUID = 6898745248727445565L;
 
-    private static final int MAP_SIZE = 20;
-
-    @JsonIgnore
-    @Transient
-    @org.springframework.data.annotation.Transient
-    @Builder.Default
-    private transient Map<String, ExecutableCompiledGroovyScript> attributeScriptCache = new LinkedHashMap<>(0);
-
     private String key;
 
     private String name;
@@ -75,6 +64,8 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
 
     private String script;
 
+    private String canonicalizationMode;
+    
     @Override
     public int compareTo(final AttributeDefinition o) {
         return new CompareToBuilder()
@@ -86,10 +77,11 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     @Override
     public List<Object> resolveAttributeValues(final List<Object> attributeValues,
                                                final String scope,
-                                               final RegisteredService registeredService) {
+                                               final RegisteredService registeredService,
+                                               final Map<String, List<Object>> attributes) {
         List<Object> currentValues = new ArrayList<>(attributeValues);
         if (StringUtils.isNotBlank(getScript())) {
-            currentValues = getScriptedAttributeValue(key, currentValues);
+            currentValues = getScriptedAttributeValue(key, currentValues, registeredService, attributes);
         }
         if (isScoped()) {
             currentValues = formatValuesWithScope(scope, currentValues);
@@ -99,6 +91,13 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
         }
         if (isEncrypted()) {
             currentValues = encryptValues(currentValues, registeredService);
+        }
+        if (StringUtils.isNotBlank(this.canonicalizationMode)) {
+            val mode = CaseCanonicalizationMode.valueOf(this.canonicalizationMode.toUpperCase());
+            currentValues = currentValues
+                .stream()
+                .map(value -> mode.canonicalize(value.toString()))
+                .collect(Collectors.toList());
         }
         LOGGER.trace("Resolved values [{}] for attribute definition [{}]", currentValues, this);
         return currentValues;
@@ -133,7 +132,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
             }))
             .collect(Collectors.toCollection(ArrayList::new));
     }
-    
+
     private List<Object> formatValuesWithPattern(final List<Object> currentValues) {
         return currentValues
             .stream()
@@ -143,37 +142,66 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
 
     @JsonIgnore
     private List<Object> getScriptedAttributeValue(final String attributeKey,
-                                                   final List<Object> currentValues) {
-        if (this.attributeScriptCache == null) {
-            this.attributeScriptCache = new LinkedHashMap<>(MAP_SIZE);
-        }
+                                                   final List<Object> currentValues,
+                                                   final RegisteredService registeredService,
+                                                   final Map<String, List<Object>> attributes) {
         LOGGER.trace("Locating attribute value via script for definition [{}]", this);
-        if (!attributeScriptCache.containsKey(attributeKey)) {
-            val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(getScript());
-            val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(getScript());
-            if (matcherInline.find()) {
-                attributeScriptCache.put(attributeKey, new GroovyShellScript(matcherInline.group(1)));
-            } else if (matcherFile.find()) {
-                try {
-                    val scriptPath = SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group());
-                    val resource = ResourceUtils.getRawResourceFrom(scriptPath);
-                    attributeScriptCache.put(attributeKey, new WatchableGroovyScriptResource(resource));
-                } catch (final Exception e) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.error(e.getMessage(), e);
-                    } else {
-                        LOGGER.error(e.getMessage());
-                    }
-                }
+        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(getScript());
+
+        if (matcherInline.find()) {
+            return fetchAttributeValueAsInlineGroovyScript(attributeKey, currentValues,
+                matcherInline.group(1), registeredService, attributes);
+        }
+
+        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(getScript());
+        if (matcherFile.find()) {
+            return fetchAttributeValueFromExternalGroovyScript(attributeKey, currentValues,
+                matcherFile.group(), registeredService, attributes);
+        }
+
+        return new ArrayList<>(0);
+    }
+
+    private static List<Object> fetchAttributeValueFromExternalGroovyScript(final String attributeName,
+                                                                            final List<Object> currentValues,
+                                                                            final String file,
+                                                                            final RegisteredService registeredService,
+                                                                            final Map<String, List<Object>> attributes) {
+        val result = ApplicationContextProvider.getScriptResourceCacheManager();
+        if (result.isPresent()) {
+            val cacheMgr = result.get();
+            val script = cacheMgr.resolveScriptableResource(file, attributeName, file);
+            if (script != null) {
+                return fetchAttributeValueFromScript(script, attributeName, currentValues, registeredService, attributes);
             }
         }
-        if (!attributeScriptCache.containsKey(attributeKey)) {
-            LOGGER.error("Unable to locate scripted attribute definition for attribute [{}]", attributeKey);
-            return new ArrayList<>(0);
+        LOGGER.warn("No groovy script cache manager is available to execute attribute mappings");
+        return new ArrayList<>(0);
+    }
+
+    private static List<Object> fetchAttributeValueAsInlineGroovyScript(final String attributeName,
+                                                                        final List<Object> currentValues,
+                                                                        final String inlineGroovy,
+                                                                        final RegisteredService registeredService,
+                                                                        final Map<String, List<Object>> attributes) {
+        val result = ApplicationContextProvider.getScriptResourceCacheManager();
+        if (result.isPresent()) {
+            val cacheMgr = result.get();
+            val script = cacheMgr.resolveScriptableResource(inlineGroovy, attributeName, inlineGroovy);
+            return fetchAttributeValueFromScript(script, attributeName, currentValues, registeredService, attributes);
         }
-        val scriptToExec = attributeScriptCache.get(attributeKey);
-        val args = CollectionUtils.<String, Object>wrap("attributeName", attributeKey,
-            "attributeValues", currentValues, "logger", LOGGER);
+        LOGGER.warn("No groovy script cache manager is available to execute attribute mappings");
+        return new ArrayList<>(0);
+    }
+
+    private static List<Object> fetchAttributeValueFromScript(final ExecutableCompiledGroovyScript scriptToExec,
+                                                              final String attributeKey,
+                                                              final List<Object> currentValues,
+                                                              final RegisteredService registeredService,
+                                                              final Map<String, List<Object>> attributes) {
+        val args = CollectionUtils.<String, Object>wrap("attributeName", Objects.requireNonNull(attributeKey),
+            "attributeValues", currentValues, "logger", LOGGER,
+            "registeredService", registeredService, "attributes", attributes);
         scriptToExec.setBinding(args);
         return scriptToExec.execute(args.values().toArray(), List.class);
     }

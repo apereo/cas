@@ -13,12 +13,21 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Tag("Simple")
+@Tag("Tickets")
 public class HostNameBasedUniqueTicketIdGeneratorTests {
 
     @Test
     public void verifyUniqueGenerationOfTicketIds() {
         val generator = new HostNameBasedUniqueTicketIdGenerator(10, StringUtils.EMPTY);
+        val id1 = generator.getNewTicketId("TEST");
+        val id2 = generator.getNewTicketId("TEST");
+        assertNotSame(id1, id2);
+
+    }
+
+    @Test
+    public void verifyUniqueGenerationOfTicketIdsWithPrefix() {
+        val generator = new HostNameBasedUniqueTicketIdGenerator(10, "prefix");
         val id1 = generator.getNewTicketId("TEST");
         val id2 = generator.getNewTicketId("TEST");
         assertNotSame(id1, id2);

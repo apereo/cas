@@ -3,6 +3,8 @@ layout: default
 title: CAS - JWT Service Tickets
 category: Ticketing
 ---
+{% include variables.html %}
+
 
 # JWT Service Tickets
 
@@ -44,27 +46,19 @@ are only left in charge of validating the JWT itself. Do not confuse this with O
 cannot be refreshed and must be obtained again once you deem it expired. If you need more, consider using the OpenID Connect protocol instead. 
 Note that the responsibility of validating the JWT is pushed onto <b>the client</b> and NOT the CAS server itself.</p></div>
 
-## Administrative Endpoints
+## Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `jwtTicketSigningPublicKey`  | Exposes the signing public key, accepting an optional `service` parameter.
+
+{% include actuators.html endpoints="jwtTicketSigningPublicKey" %}
 
 ## Configuration
 
 JWT support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-token-tickets</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-token-tickets" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jwt-tickets).
+{% include casproperties.html properties="cas.authn.token" includeRsaKeys="true" %}
 
 ### Register Clients
 
@@ -88,8 +82,10 @@ Signal the relevant application in CAS service registry to produce JWTs for serv
 
 ### Configure Keys Per Service
 
-By default, the signing and encryption keys used to encode the JWT are global to the CAS server and can be defined via CAS settings. It is also possible
-to override the global keys on a per-service basis, allowing each application to use its own set of signing and encryption keys. To do so, configure
+By default, the signing and encryption keys used to encode the JWT are global 
+to the CAS server and can be defined via CAS settings. It is also possible
+to override the global keys on a per-service basis, allowing each application to 
+use its own set of signing and encryption keys. To do so, configure
 the service definition in the registry to match the following:
 
 ```json
@@ -128,6 +124,8 @@ The following cipher strategy types are available:
 | `SIGN_AND_ENCRYPT`  | Sign values, and then encrypt.
 
 
+{% include registeredserviceproperties.html groups="JWT_SERVICE_TICKETS" %}
+
 ## JWT Validation - AES
 
 The following *example* code snippet demonstrates how one might go about validating and parsing the CAS-produced JWT
@@ -145,23 +143,23 @@ import java.security.Key;
 
 ...
 
-final String signingKey = "...";
-final String encryptionKey = "...";
+var signingKey = "...";
+var encryptionKey = "...";
 
-final Key key = new AesKey(signingKey.getBytes(StandardCharsets.UTF_8));
+var key = new AesKey(signingKey.getBytes(StandardCharsets.UTF_8));
 
-final JsonWebSignature jws = new JsonWebSignature();
+var jws = new JsonWebSignature();
 jws.setCompactSerialization(secureJwt);
 jws.setKey(key);
 if (!jws.verifySignature()) {
     throw new Exception("JWT verification failed");
 }
 
-final byte[] decodedBytes = Base64.decodeBase64(jws.getEncodedPayload().getBytes(StandardCharsets.UTF_8));
-final String decodedPayload = new String(decodedBytes, StandardCharsets.UTF_8);
+var decodedBytes = Base64.decodeBase64(jws.getEncodedPayload().getBytes(StandardCharsets.UTF_8));
+var decodedPayload = new String(decodedBytes, StandardCharsets.UTF_8);
 
-final JsonWebEncryption jwe = new JsonWebEncryption();
-final JsonWebKey jsonWebKey = JsonWebKey.Factory
+var jwe = new JsonWebEncryption();
+var jsonWebKey = JsonWebKey.Factory
     .newJwk("\n" + "{\"kty\":\"oct\",\n" + " \"k\":\"" + encryptionKey + "\"\n" + "}");
 
 jwe.setCompactSerialization(decodedPayload);

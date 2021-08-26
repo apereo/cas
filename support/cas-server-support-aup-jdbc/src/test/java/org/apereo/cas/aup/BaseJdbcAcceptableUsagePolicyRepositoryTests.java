@@ -10,6 +10,8 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -24,12 +26,12 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.Getter;
 import lombok.val;
-import org.junit.jupiter.api.Tag;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,6 +39,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -71,30 +74,38 @@ import java.util.Map;
     CasCoreHttpConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreWebflowConfiguration.class,
+    CasCoreMultifactorAuthenticationConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreLogoutConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
-@Tag("JDBC")
 public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
     @Autowired
     @Qualifier("acceptableUsagePolicyDataSource")
-    protected ObjectProvider<DataSource> acceptableUsagePolicyDataSource;
+    protected DataSource acceptableUsagePolicyDataSource;
 
     @Autowired
     @Qualifier("acceptableUsagePolicyRepository")
-    protected ObjectProvider<AcceptableUsagePolicyRepository> acceptableUsagePolicyRepository;
+    @Getter
+    protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    protected ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
+    protected TicketRegistrySupport ticketRegistrySupport;
 
+    @Autowired
+    @Qualifier("jdbcAcceptableUsagePolicyTransactionTemplate")
+    protected TransactionTemplate jdbcAcceptableUsagePolicyTransactionTemplate;
+    
     protected String determinePrincipalId(final String actualPrincipalId, final Map<String, List<Object>> profileAttributes) {
         val aupProperties = casProperties.getAcceptableUsagePolicy();
         val jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(
-            ticketRegistrySupport.getObject(),
-            aupProperties, acceptableUsagePolicyDataSource.getObject());
+            ticketRegistrySupport,
+            aupProperties, acceptableUsagePolicyDataSource,
+            jdbcAcceptableUsagePolicyTransactionTemplate);
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -103,15 +114,9 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseA
         val principal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), profileAttributes);
         val auth = CoreAuthenticationTestUtils.getAuthentication(principal);
         WebUtils.putAuthentication(auth, context);
-
-        return jdbcAupRepository.determinePrincipalId(context, c);
+        return jdbcAupRepository.determinePrincipalId(principal);
     }
-
-    @Override
-    public AcceptableUsagePolicyRepository getAcceptableUsagePolicyRepository() {
-        return acceptableUsagePolicyRepository.getObject();
-    }
-
+    
     @Override
     public boolean hasLiveUpdates() {
         return false;

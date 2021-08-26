@@ -1,0 +1,13 @@
+{
+  "dependencies": "generic",
+  "properties": [
+    "--cas.authn.policy.source-selection-enabled=true",
+    
+    "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+    "--cas.authn.json.name=JSON",
+    
+    "--cas.authn.accept.enabled=true",
+    "--cas.authn.accept.name=EXAMPLE",
+    "--cas.authn.accept.users=example::example"
+  ]
+}

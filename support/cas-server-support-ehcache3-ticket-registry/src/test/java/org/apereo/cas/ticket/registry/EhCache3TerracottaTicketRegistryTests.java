@@ -4,6 +4,7 @@ import org.apereo.cas.config.Ehcache3TicketRegistryConfiguration;
 import org.apereo.cas.config.Ehcache3TicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,17 +21,12 @@ import org.springframework.boot.test.context.SpringBootTest;
     Ehcache3TicketRegistryTicketCatalogConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
 }, properties =
-    "cas.ticket.registry.ehcache3.terracottaClusterUri=terracotta://localhost:9410/cas-application")
+    "cas.ticket.registry.ehcache3.terracotta-cluster-uri=terracotta://localhost:9410/cas-application")
 @EnabledIfPortOpen(port = 9410)
 @Tag("Ehcache")
+@Getter
 public class EhCache3TerracottaTicketRegistryTests extends BaseTicketRegistryTests {
-
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
-
-    @Override
-    public TicketRegistry getNewTicketRegistry() {
-        return ticketRegistry;
-    }
+    private TicketRegistry newTicketRegistry;
 }

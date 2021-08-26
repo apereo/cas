@@ -1,24 +1,21 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.AmazonCloudDirectoryAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.CloudDirectoryAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
+import org.apereo.cas.aws.AmazonClientConfigurationBuilder;
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
-import org.apereo.cas.clouddirectory.CloudDirectoryRepository;
-import org.apereo.cas.clouddirectory.DefaultCloudDirectoryRepository;
+import org.apereo.cas.clouddirectory.AmazonCloudDirectoryRepository;
+import org.apereo.cas.clouddirectory.DefaultAmazonCloudDirectoryRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.services.clouddirectory.AmazonCloudDirectory;
-import com.amazonaws.services.clouddirectory.AmazonCloudDirectoryClientBuilder;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,7 +25,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import software.amazon.awssdk.services.clouddirectory.CloudDirectoryClient;
 
 /**
  * This is {@link CloudDirectoryAuthenticationConfiguration}.
@@ -63,10 +60,8 @@ public class CloudDirectoryAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler cloudDirectoryAuthenticationHandler() {
-
         val cloud = casProperties.getAuthn().getCloudDirectory();
-
-        val handler = new CloudDirectoryAuthenticationHandler(cloud.getName(), servicesManager.getObject(),
+        val handler = new AmazonCloudDirectoryAuthenticationHandler(cloud.getName(), servicesManager.getObject(),
             cloudDirectoryPrincipalFactory(), cloudDirectoryRepository(), cloud);
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(cloud.getPrincipalTransformation()));
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(cloud.getPasswordEncoder(), applicationContext));
@@ -76,32 +71,27 @@ public class CloudDirectoryAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "cloudDirectoryRepository")
     @Bean
     @RefreshScope
-    public CloudDirectoryRepository cloudDirectoryRepository() {
+    public AmazonCloudDirectoryRepository cloudDirectoryRepository() {
         val cloud = casProperties.getAuthn().getCloudDirectory();
-        return new DefaultCloudDirectoryRepository(amazonCloudDirectory(), cloud);
+        return new DefaultAmazonCloudDirectoryRepository(amazonCloudDirectory(), cloud);
     }
 
     @ConditionalOnMissingBean(name = "amazonCloudDirectory")
     @Bean
     @RefreshScope
-    public AmazonCloudDirectory amazonCloudDirectory() {
+    public CloudDirectoryClient amazonCloudDirectory() {
         val cloud = casProperties.getAuthn().getCloudDirectory();
-        val builder = AmazonCloudDirectoryClientBuilder
-            .standard()
-            .withCredentials(ChainingAWSCredentialsProvider.getInstance(cloud.getCredentialAccessKey(),
-                cloud.getCredentialSecretKey(), cloud.getCredentialsPropertiesFile(),
-                cloud.getProfilePath(), cloud.getProfileName()));
-        val endpoint = new AwsClientBuilder.EndpointConfiguration(
-            cloud.getEndpoint(), cloud.getRegion());
-        builder.withEndpointConfiguration(endpoint);
-        if (StringUtils.isBlank(cloud.getEndpoint())) {
-            builder.withRegion(cloud.getRegion());
-        }
+        val builder = CloudDirectoryClient.builder();
+        AmazonClientConfigurationBuilder.prepareClientBuilder(builder,
+            ChainingAWSCredentialsProvider.getInstance(cloud.getCredentialAccessKey(),
+                cloud.getCredentialSecretKey(), cloud.getProfilePath(), cloud.getProfileName()),
+            cloud);
         return builder.build();
     }
 
     @ConditionalOnMissingBean(name = "cloudDirectoryAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer cloudDirectoryAuthenticationEventExecutionPlanConfigurer() {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(cloudDirectoryAuthenticationHandler(),
             defaultPrincipalResolver.getObject());

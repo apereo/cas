@@ -33,8 +33,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
-import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link GoogleAuthenticatorJpaConfiguration}.
@@ -70,8 +69,8 @@ public class GoogleAuthenticatorJpaConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "jpaPackagesToScanGoogleAuthenticator")
-    public List<String> jpaPackagesToScanGoogleAuthenticator() {
-        return CollectionUtils.wrapList(
+    public Set<String> jpaPackagesToScanGoogleAuthenticator() {
+        return CollectionUtils.wrapSet(
             GoogleAuthenticatorAccount.class.getPackage().getName(),
             JpaGoogleAuthenticatorToken.class.getPackage().getName());
     }
@@ -80,11 +79,13 @@ public class GoogleAuthenticatorJpaConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean googleAuthenticatorEntityManagerFactory() {
         val factory = jpaBeanFactory.getObject();
-        val ctx = new JpaConfigurationContext(
-            jpaGoogleAuthenticatorVendorAdapter(),
-            "jpaGoogleAuthenticatorContext",
-            jpaPackagesToScanGoogleAuthenticator(),
-            dataSourceGoogleAuthenticator());
+
+        val ctx = JpaConfigurationContext.builder()
+            .jpaVendorAdapter(jpaGoogleAuthenticatorVendorAdapter())
+            .persistenceUnitName("jpaGoogleAuthenticatorContext")
+            .dataSource(dataSourceGoogleAuthenticator())
+            .packagesToScan(jpaPackagesToScanGoogleAuthenticator())
+            .build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getGauth().getJpa());
     }
 
@@ -102,7 +103,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(@Qualifier("googleAuthenticatorInstance")
-                                                                               final IGoogleAuthenticator googleAuthenticatorInstance,
+                                                                                   final IGoogleAuthenticator googleAuthenticatorInstance,
                                                                                @Qualifier("googleAuthenticatorAccountCipherExecutor")
                                                                                final CipherExecutor googleAuthenticatorAccountCipherExecutor) {
         return new JpaGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorAccountCipherExecutor, googleAuthenticatorInstance);
@@ -111,7 +112,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     @Bean
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
         return new GoogleAuthenticatorJpaTokenRepository(
-            casProperties.getAuthn().getMfa().getGauth().getTimeStepSize()
+            casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize()
         );
     }
 

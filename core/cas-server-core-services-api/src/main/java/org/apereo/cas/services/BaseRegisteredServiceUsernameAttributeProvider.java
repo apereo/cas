@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -28,8 +29,8 @@ import java.util.Optional;
 @Getter
 @Setter
 @EqualsAndHashCode
-@AllArgsConstructor
-@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseRegisteredServiceUsernameAttributeProvider implements RegisteredServiceUsernameAttributeProvider {
 
     private static final long serialVersionUID = -8381275200333399951L;
@@ -67,7 +68,7 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
      */
     protected String encryptResolvedUsername(final Principal principal, final Service service, final RegisteredService registeredService, final String username) {
         val applicationContext = ApplicationContextProvider.getApplicationContext();
-        val cipher = applicationContext.getBean("registeredServiceCipherExecutor", RegisteredServiceCipherExecutor.class);
+        val cipher = applicationContext.getBean(RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME, RegisteredServiceCipherExecutor.class);
         return cipher.encode(username, Optional.of(registeredService));
     }
 

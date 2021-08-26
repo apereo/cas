@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -15,7 +16,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class RootCasException extends RuntimeException {
 
@@ -25,30 +26,32 @@ public abstract class RootCasException extends RuntimeException {
 
     private final List<Object> args = new ArrayList<>(0);
     
-    public RootCasException(final String code, final String msg) {
+    protected RootCasException(final String code, final String msg) {
         super(msg);
         this.code = code;
     }
 
-    public RootCasException(final String code, final String msg, final List<Object> args) {
+    protected RootCasException(final String code, final String msg, final List<Object> args) {
         this(code, msg);
         this.args.addAll(args);
     }
 
-    public RootCasException(final String code, final Throwable throwable) {
+    protected RootCasException(final String code, final Throwable throwable) {
         super(throwable);
         this.code = code;
     }
 
-    public RootCasException(final String code, final Throwable throwable, final List<Object> args) {
+    protected RootCasException(final String code, final Throwable throwable, final List<Object> args) {
         this(code, throwable);
         this.args.addAll(args);
     }
 
+
     /**
-     * @return Returns the code. If there is a chained exception it recursively
+     * If there is a chained exception it recursively
      * calls {@code getCode()} on the cause of the chained exception rather than the returning
      * the code itself.
+     * @return Returns the code.
      */
     public String getCode() {
         val cause = this.getCause();

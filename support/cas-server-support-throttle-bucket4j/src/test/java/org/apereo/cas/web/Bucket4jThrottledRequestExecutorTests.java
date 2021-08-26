@@ -25,10 +25,10 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasBucket4jThrottlingConfiguration.class
 })
-@Tag("Simple")
+@Tag("AuthenticationThrottling")
 public class Bucket4jThrottledRequestExecutorTests {
     @Autowired
-    @Qualifier("throttledRequestExecutor")
+    @Qualifier(ThrottledRequestExecutor.DEFAULT_BEAN_NAME)
     private ThrottledRequestExecutor throttledRequestExecutor;
 
     @Test
@@ -37,6 +37,6 @@ public class Bucket4jThrottledRequestExecutorTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         assertFalse(this.throttledRequestExecutor.throttle(request, response));
-        assertTrue(response.containsHeader("X-Rate-Limit-Remaining"));
+        assertTrue(response.containsHeader(Bucket4jThrottledRequestExecutor.HEADER_NAME_X_RATE_LIMIT_REMAINING));
     }
 }

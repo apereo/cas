@@ -1,14 +1,19 @@
 package org.apereo.cas.authentication.mfa.trigger;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
+import org.apereo.cas.authentication.MultifactorAuthenticationRequiredException;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RegexUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -35,8 +40,12 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
+
     private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
+
     private final ApplicationContext applicationContext;
+
+    private final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -62,18 +71,33 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
             return Optional.empty();
         }
 
-        val principal = authentication.getPrincipal();
-        val providers = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderForService(registeredService);
+        val principal = multifactorAuthenticationProviderResolver.resolvePrincipal(authentication.getPrincipal());
+        val providers = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderForService(registeredService, applicationContext);
+        if (providers.size() > 1) {
+            val resolvedProvider = multifactorAuthenticationProviderSelector.resolve(providers, registeredService, principal);
+            providers.clear();
+            providers.add(resolvedProvider);
+        }
+        LOGGER.debug("Resolved multifactor providers are [{}]", providers);
         val result = multifactorAuthenticationProviderResolver.resolveEventViaPrincipalAttribute(principal,
             org.springframework.util.StringUtils.commaDelimitedListToSet(policy.getPrincipalAttributeNameTrigger()),
-            registeredService, Optional.empty(), providers, Pattern.compile(policy.getPrincipalAttributeValueToMatch()).asPredicate());
+            registeredService, Optional.empty(), providers,
+            (attributeValue, mfaProvider) ->
+                attributeValue != null && RegexUtils.matches(Pattern.compile(policy.getPrincipalAttributeValueToMatch()), attributeValue));
 
         if (result != null && !result.isEmpty()) {
-            val id = CollectionUtils.firstElement(result);
-            if (id.isEmpty()) {
-                return Optional.empty();
-            }
-            return MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(id.get().toString(), this.applicationContext);
+            return CollectionUtils.firstElement(result)
+                .map(value -> MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(value.toString(), this.applicationContext))
+                .orElse(unmatchedMultifactorAuthenticationTrigger(principal, registeredService));
+        }
+
+        return unmatchedMultifactorAuthenticationTrigger(principal, registeredService);
+    }
+
+    private Optional<MultifactorAuthenticationProvider> unmatchedMultifactorAuthenticationTrigger(final Principal principal,
+                                                                                                  final RegisteredService registeredService) {
+        if (casProperties.getAuthn().getMfa().getTriggers().getPrincipal().isDenyIfUnmatched()) {
+            throw new AuthenticationException(new MultifactorAuthenticationRequiredException(registeredService, principal));
         }
         return Optional.empty();
     }

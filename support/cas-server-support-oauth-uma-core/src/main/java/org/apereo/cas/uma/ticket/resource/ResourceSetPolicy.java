@@ -1,5 +1,7 @@
 package org.apereo.cas.uma.ticket.resource;
 
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
@@ -7,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import lombok.experimental.Accessors;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -29,9 +32,10 @@ import java.util.HashSet;
 @Table(name = "UMA_ResourceSetPolicy")
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
+@Accessors(chain = true)
 public class ResourceSetPolicy implements Serializable {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
     
     private static final long serialVersionUID = 1664113523427391736L;
 

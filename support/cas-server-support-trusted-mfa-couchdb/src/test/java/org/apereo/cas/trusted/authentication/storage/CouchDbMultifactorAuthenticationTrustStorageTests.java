@@ -79,4 +79,25 @@ public class CouchDbMultifactorAuthenticationTrustStorageTests extends AbstractM
         getMfaTrustEngine().remove(now);
         assertTrue(getMfaTrustEngine().getAll().isEmpty());
     }
+
+    @Test
+    public void verifyMerging() {
+        val record = getMultifactorAuthenticationTrustRecord();
+        record.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS));
+        record.setExpirationDate(DateTimeUtils.dateOf(record.getRecordDate().plusDays(2)));
+        getMfaTrustEngine().save(record);
+
+        var newRecord = getMfaTrustEngine().get(record.getId());
+        assertNotNull(newRecord);
+        assertEquals(newRecord.getRecordKey(), record.getRecordKey());
+        newRecord.setName("NewDeviceName");
+        getMfaTrustEngine().save(newRecord);
+
+        newRecord = getMfaTrustEngine().get(newRecord.getId());
+        assertEquals("NewDeviceName", newRecord.getName());
+
+        getMfaTrustEngine().remove(newRecord.getRecordKey());
+        newRecord = getMfaTrustEngine().get(newRecord.getId());
+        assertNull(newRecord);
+    }
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.consent;
 
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +24,9 @@ import java.util.Set;
 public class JsonConsentRepository extends BaseConsentRepository {
     private static final long serialVersionUID = -402728417464783825L;
 
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
+
     private final transient Resource jsonResource;
 
     public JsonConsentRepository(final Resource jsonResource) {
@@ -32,7 +35,7 @@ public class JsonConsentRepository extends BaseConsentRepository {
     }
 
     @Override
-    public boolean storeConsentDecision(final ConsentDecision decision) {
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
         val result = super.storeConsentDecision(decision);
         writeAccountToJsonResource();
         return result;
@@ -45,11 +48,18 @@ public class JsonConsentRepository extends BaseConsentRepository {
         return result;
     }
 
+    @Override
+    public boolean deleteConsentDecisions(final String principal) {
+        val result = super.deleteConsentDecisions(principal);
+        writeAccountToJsonResource();
+        return result;
+    }
+
     @SneakyThrows
     private Set<ConsentDecision> readDecisionsFromJsonResource() {
         if (ResourceUtils.doesResourceExist(jsonResource)) {
             try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
-                final TypeReference<Set<ConsentDecision>> personList = new TypeReference<>() {
+                val personList = new TypeReference<Set<ConsentDecision>>() {
                 };
                 return MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
             }

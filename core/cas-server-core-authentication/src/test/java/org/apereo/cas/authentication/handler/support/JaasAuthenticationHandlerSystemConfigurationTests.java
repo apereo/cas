@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.handler.support.jaas.JaasAuthenticationHand
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Tag("Simple")
+@Tag("AuthenticationHandler")
 public class JaasAuthenticationHandlerSystemConfigurationTests {
 
     private static final String USERNAME = "test";
@@ -35,7 +36,7 @@ public class JaasAuthenticationHandlerSystemConfigurationTests {
     @SneakyThrows
     public void initialize() {
         val resource = new ClassPathResource("jaas-system.conf");
-        val fileName = new File(System.getProperty("java.io.tmpdir"), "jaas-system.conf");
+        val fileName = new File(FileUtils.getTempDirectoryPath(), "jaas-system.conf");
         try (val writer = Files.newBufferedWriter(fileName.toPath(), StandardCharsets.UTF_8)) {
             IOUtils.copy(resource.getInputStream(), writer, Charset.defaultCharset());
             writer.flush();
@@ -43,6 +44,8 @@ public class JaasAuthenticationHandlerSystemConfigurationTests {
         if (fileName.exists()) {
             System.setProperty("java.security.auth.login.config", '=' + fileName.getCanonicalPath());
             handler = new JaasAuthenticationHandler(StringUtils.EMPTY, null, null, null);
+            handler.setKerberosKdcSystemProperty("P1");
+            handler.setKerberosRealmSystemProperty("P2");
         }
     }
 
@@ -54,15 +57,13 @@ public class JaasAuthenticationHandlerSystemConfigurationTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyWithAlternativeRealmAndValidCredentials() {
+    public void verifyWithAlternativeRealmAndValidCredentials() throws Exception {
         handler.setRealm("TEST");
         assertNotNull(handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, USERNAME)));
     }
 
     @Test
-    @SneakyThrows
-    public void verifyWithValidCredentials() {
+    public void verifyWithValidCredentials() throws Exception {
         assertNotNull(handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 

@@ -5,9 +5,8 @@ import org.apereo.cas.trusted.authentication.storage.MySQLJpaMultifactorAuthenti
 import org.apereo.cas.trusted.authentication.storage.OracleJpaMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.storage.PostgresJpaMultifactorAuthenticationTrustStorageTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * The {@link org.apereo.cas.AllTestsSuite} is responsible for
@@ -22,7 +21,7 @@ import org.junit.runner.RunWith;
     PostgresJpaMultifactorAuthenticationTrustStorageTests.class,
     MySQLJpaMultifactorAuthenticationTrustStorageTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }
 

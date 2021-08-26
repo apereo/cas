@@ -1,21 +1,15 @@
 package org.apereo.cas.configuration.metadata;
 
-import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
-import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
-import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
-import org.apereo.cas.util.model.Capacity;
 import org.apereo.cas.util.model.TriStateBoolean;
 
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.services.persondir.support.QueryType;
-import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.core.io.Resource;
 
@@ -43,16 +37,9 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
                 + Long.class.getSimpleName() + '|'
                 + Float.class.getSimpleName() + '|'
                 + Boolean.class.getSimpleName() + '|'
-                + PrincipalTransformationProperties.CaseConversion.class.getSimpleName() + '|'
-                + QueryType.class.getSimpleName() + '|'
-                + AbstractLdapProperties.LdapType.class.getSimpleName() + '|'
-                + CaseCanonicalizationMode.class.getSimpleName() + '|'
                 + TriStateBoolean.class.getSimpleName() + '|'
-                + Capacity.class.getSimpleName() + '|'
-                + PasswordPolicyProperties.PasswordPolicyHandlingOptions.class.getSimpleName() + '|'
-                + LdapSearchEntryHandlersProperties.SearchEntryHandlerTypes.class.getSimpleName() + '|'
-                + Map.class.getSimpleName() + '|'
                 + Resource.class.getSimpleName() + '|'
+                + Map.class.getSimpleName() + '|'
                 + List.class.getSimpleName() + '|'
                 + Set.class.getSimpleName());
     }
@@ -67,6 +54,9 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
 
     private final String sourcePath;
 
+    @Getter
+    private ConfigurationMetadataProperty result;
+
     private static boolean shouldTypeBeExcluded(final ClassOrInterfaceType type) {
         return EXCLUDED_TYPES.matcher(type.getNameAsString()).matches();
     }
@@ -76,17 +66,18 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
         if (field.getVariables().isEmpty()) {
             throw new IllegalArgumentException("Field " + field + " has no variable definitions");
         }
-        val var = field.getVariable(0);
+        val variable = field.getVariable(0);
         if (field.getModifiers().contains(Modifier.staticModifier())) {
-            LOGGER.debug("Field [{}] is static and will be ignored for metadata generation", var.getNameAsString());
+            LOGGER.debug("Field [{}] is static and will be ignored for metadata generation", variable.getNameAsString());
             return;
         }
         if (field.getJavadoc().isEmpty()) {
             LOGGER.error("Field [{}] has no Javadoc defined", field);
         }
+
         val creator = new ConfigurationMetadataPropertyCreator(indexNameWithBrackets, properties, groups, parentClass);
-        val prop = creator.createConfigurationProperty(field, property.getName());
-        processNestedClassOrInterfaceTypeIfNeeded(field, prop);
+        result = creator.createConfigurationProperty(field, property.getName());
+        processNestedClassOrInterfaceTypeIfNeeded(field, result);
     }
 
     private void processNestedClassOrInterfaceTypeIfNeeded(final FieldDeclaration n, final ConfigurationMetadataProperty prop) {

@@ -1,0 +1,16 @@
+description = "Apereo CAS Support with Kafka"
+dependencies {
+    implementation libraries.springkafka
+
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-web-api")
+
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+}

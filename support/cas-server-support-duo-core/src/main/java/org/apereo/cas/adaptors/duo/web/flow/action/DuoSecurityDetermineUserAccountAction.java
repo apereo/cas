@@ -8,7 +8,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -21,14 +20,10 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAuthenticationAction<DuoSecurityMultifactorAuthenticationProvider> {
 
-    public DuoSecurityDetermineUserAccountAction(final ApplicationContext applicationContext) {
-        super(applicationContext);
-    }
-
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
-        val principal = authentication.getPrincipal();
+        val principal = resolvePrincipal(authentication.getPrincipal());
 
         val duoAuthenticationService = provider.getDuoAuthenticationService();
         val account = duoAuthenticationService.getUserAccount(principal.getId());

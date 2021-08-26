@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Webflow")
+@Tag("Spnego")
 public class SpnegoNegotiateCredentialsActionTests extends AbstractSpnegoTests {
     @Test
     public void verifyOperation() throws Exception {
@@ -32,6 +32,29 @@ public class SpnegoNegotiateCredentialsActionTests extends AbstractSpnegoTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         negociateSpnegoAction.execute(context);
         assertNotNull(response.getHeader(SpnegoConstants.HEADER_AUTHENTICATE));
-        assertTrue(response.getStatus() == HttpServletResponse.SC_UNAUTHORIZED);
+        assertEquals(HttpServletResponse.SC_UNAUTHORIZED, response.getStatus());
+    }
+
+    @Test
+    public void verifyEmptyAgent() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, negociateSpnegoAction.execute(context).getId());
+
+        request.addHeader("User-Agent", "UnknownBrowser");
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, negociateSpnegoAction.execute(context).getId());
+    }
+
+    @Test
+    public void verifyBadAuthzHeader() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        request.addHeader("User-Agent", "MSIE");
+        request.addHeader(SpnegoConstants.HEADER_AUTHORIZATION, SpnegoConstants.NEGOTIATE + " XYZ");
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, negociateSpnegoAction.execute(context).getId());
     }
 }

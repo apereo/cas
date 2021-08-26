@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -69,11 +70,12 @@ import static org.mockito.Mockito.*;
     CasCoreHttpConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 },
-    properties = "cas.ticket.registry.hazelcast.cluster.instanceName=testlocalmonitor")
+    properties = "cas.ticket.registry.hazelcast.cluster.instance-name=testlocalmonitor")
 @Tag("Hazelcast")
 public class HazelcastHealthIndicatorTests {
     @Autowired

@@ -1,0 +1,75 @@
+name: OIDC Conformance Tests
+
+env:
+  JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server -XX:+UseG1GC"
+  GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server -XX:+UseG1GC"
+  TERM: xterm-256color
+  GRADLE_BUILDCACHE_USER: ${{ secrets.GRADLE_BUILDCACHE_USER }}
+  GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  JDK_CURRENT: 11.0.12
+
+##########################################################################
+
+on:
+  push:
+    branches:
+      - master
+      - '!**.**.**'
+  pull_request:
+    types: [ labeled ]
+    branches:
+      - master
+      - '!**.**.**'
+
+##########################################################################
+
+jobs:
+  cancel-previous-runs:
+    if: ${{ (github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - uses: styfle/cancel-workflow-action@0.8.0
+        with:
+          access_token: ${{ github.token }}
+
+  ##########################################################################
+
+  initialize:
+    runs-on: ubuntu-latest
+    needs: [cancel-previous-runs]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'zulu'
+      - name: Initialize
+        run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+
+  ##########################################################################
+
+  conformance-tests:
+    needs: [initialize]
+    continue-on-error: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'zulu'
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+        shell: bash
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Run Tests
+        run: chmod +x ./ci/tests/oidc-conformance/run.sh && ./ci/tests/oidc-conformance/run.sh

@@ -1,12 +1,14 @@
 package org.apereo.cas.oidc.slo;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.logout.DefaultSingleLogoutRequest;
+import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.issuer.OidcDefaultIssuerService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DigestUtils;
 
@@ -35,23 +37,23 @@ public class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
 
     @Test
     public void verifyBackChannelLogout() throws ParseException {
-
         val service = getOidcRegisteredService(true, false);
 
-        val context = OAuth20ConfigurationContext.builder()
-                .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService)
-                .casProperties(casProperties)
-                .build();
+        val context = OidcConfigurationContext.builder()
+            .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService)
+            .casProperties(casProperties)
+            .issuerService(new OidcDefaultIssuerService(casProperties.getAuthn().getOidc()))
+            .build();
         val principal = RegisteredServiceTestUtils.getPrincipal(PRINCIPAL_ID);
         var authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn(TGT_ID);
         when(tgt.getAuthentication()).thenReturn(authentication);
-        val logoutRequest = DefaultSingleLogoutRequest.builder()
-                .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
-                .registeredService(service)
-                .ticketGrantingTicket(tgt)
-                .build();
+        val logoutRequest = DefaultSingleLogoutRequestContext.builder()
+            .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
+            .registeredService(service)
+            .executionRequest(SingleLogoutExecutionRequest.builder().ticketGrantingTicket(tgt).build())
+            .build();
 
         val creator = new OidcSingleLogoutMessageCreator(context);
         val message = creator.create(logoutRequest);
@@ -68,16 +70,15 @@ public class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
         assertNotNull(claims.getClaim("jti"));
         val events = (Map<String, Object>) claims.getClaim("events");
         assertNotNull(events.get("http://schemas.openid.net/event/backchannel-logout"));
-        assertEquals(DigestUtils.sha(TGT_ID), claims.getClaim(OidcConstants.CLAIM_SESSIOND_ID));
+        assertEquals(DigestUtils.sha(TGT_ID), claims.getClaim(OidcConstants.CLAIM_SESSION_ID));
     }
 
     @Test
     public void verifyFrontChannelLogout() {
-
-        val context = OAuth20ConfigurationContext.builder().build();
-        val logoutRequest = DefaultSingleLogoutRequest.builder()
-                .logoutType(RegisteredServiceLogoutType.FRONT_CHANNEL)
-                .build();
+        val context = OidcConfigurationContext.builder().build();
+        val logoutRequest = DefaultSingleLogoutRequestContext.builder()
+            .logoutType(RegisteredServiceLogoutType.FRONT_CHANNEL)
+            .build();
 
         val creator = new OidcSingleLogoutMessageCreator(context);
         val message = creator.create(logoutRequest);

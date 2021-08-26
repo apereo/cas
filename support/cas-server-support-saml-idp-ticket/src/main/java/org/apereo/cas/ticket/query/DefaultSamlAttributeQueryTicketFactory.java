@@ -6,7 +6,6 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.RequiredArgsConstructor;
@@ -57,7 +56,7 @@ public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQuer
     }
 
     @Override
-    public TicketFactory get(final Class<? extends Ticket> clazz) {
-        return this;
+    public Class<? extends Ticket> getTicketType() {
+        return SamlAttributeQueryTicket.class;
     }
 }

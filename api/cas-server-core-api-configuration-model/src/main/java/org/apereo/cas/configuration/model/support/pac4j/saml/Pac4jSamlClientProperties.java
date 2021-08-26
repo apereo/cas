@@ -2,10 +2,13 @@ package org.apereo.cas.configuration.model.support.pac4j.saml;
 
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.model.TriStateBoolean;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -24,7 +27,8 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
+@JsonFilter("Pac4jSamlClientProperties")
+public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties implements CasFeatureModule {
 
     private static final long serialVersionUID = -862819796533384951L;
 
@@ -64,22 +68,26 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * will accept assertions based on a previous authentication for one hour.
      * You can adjust this behavior by modifying this setting. The unit of time here is seconds.
      */
-    private int maximumAuthenticationLifetime = 3600;
+    @DurationCapable
+    private String maximumAuthenticationLifetime = "PT3600S";
 
     /**
      * Maximum skew in seconds between SP and IDP clocks.
      * This skew is added onto the {@code NotOnOrAfter} field in seconds
      * for the SAML response validation.
      */
-    private int acceptedSkew = 300;
+    @DurationCapable
+    private String acceptedSkew = "PT300S";
 
     /**
      * Describes the map of attributes that are to be fetched from the credential (map keys)
      * and then transformed/renamed using map values before they are put into a profile.
      * An example might be to fetch {@code givenName} from credential and rename it to {@code urn:oid:2.5.4.42} or vice versa.
      * Note that this setting only applies to attribute names, and not friendly-names.
+     * List arbitrary mappings of claims. Uses a "directed list" where the allowed
+     * syntax would be {@code givenName->urn:oid:2.5.4.42}.
      */
-    private List<ServiceProviderMappedAttribute> mappedAttributes = new ArrayList<>(0);
+    private List<String> mappedAttributes = new ArrayList<>(0);
 
     /**
      * The entity id of the SP/CAS that is used in the SP metadata generation process.
@@ -124,6 +132,20 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
     private boolean forceKeystoreGeneration;
 
     /**
+     * Define the validity period for the certificate
+     * in number of days. The end-date of the certificate
+     * is controlled by this setting, when defined as a value
+     * greater than zero.
+     */
+    private int certificateExpirationDays = 365 * 20;
+
+    /**
+     * Certificate signature algorithm to use
+     * when generating the certificate.
+     */
+    private String certificateSignatureAlg = "SHA1WithRSA";
+
+    /**
      * The key alias used in the keystore.
      */
     private String keystoreAlias;
@@ -150,6 +172,11 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * Whether metadata should be marked to request sign assertions.
      */
     private boolean wantsAssertionsSigned;
+
+    /**
+     * Whether a response has to be mandatory signed.
+     */
+    private boolean wantsResponsesSigned;
 
     /**
      * Whether the signature validation should be disabled.
@@ -207,9 +234,9 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
     private List<ServiceProviderRequestedAttribute> requestedAttributes = new ArrayList<>(0);
 
     /**
-     * Collection of signing signature blacklisted algorithms, if any, to override the global defaults.
+     * Collection of signing signature blocked algorithms, if any, to override the global defaults.
      */
-    private List<String> blackListedSignatureSigningAlgorithms = new ArrayList<>(0);
+    private List<String> blockedSignatureSigningAlgorithms = new ArrayList<>(0);
 
     /**
      * Collection of signing signature algorithms, if any, to override the global defaults.
@@ -268,23 +295,5 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
          * be marked so in the metadata.
          */
         private boolean required;
-    }
-
-    @RequiresModule(name = "cas-server-support-pac4j-webflow")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class ServiceProviderMappedAttribute implements Serializable {
-        private static final long serialVersionUID = -762819796533384951L;
-
-        /**
-         * Attribute name.
-         */
-        private String name;
-
-        /**
-         * The name that should be used to rename {@link #name}.
-         */
-        private String mappedTo;
     }
 }

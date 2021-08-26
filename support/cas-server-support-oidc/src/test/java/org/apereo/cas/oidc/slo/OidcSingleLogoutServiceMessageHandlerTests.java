@@ -1,30 +1,22 @@
 package org.apereo.cas.oidc.slo;
 
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
-import org.apereo.cas.logout.slo.SingleLogoutRequest;
-import org.apereo.cas.logout.slo.SingleLogoutUrl;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
+import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.util.DigestUtils;
-import org.apereo.cas.util.HttpUtils;
-import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.web.UrlValidator;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link OidcSingleLogoutServiceMessageHandlerTests}.
@@ -35,45 +27,46 @@ import static org.mockito.Mockito.*;
 @Tag("OIDC")
 public class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTests {
 
-    private static final String LOGOUT_URL = "http://logout";
+    private static final String LOGOUT_URL_OK = "https://mocky.io/post";
+
+    private static final String LOGOUT_URL_BAD = "https://unknown-1234-unknown.xyz";
+
+    @Autowired
+    @Qualifier("oidcSingleLogoutServiceMessageHandler")
+    private SingleLogoutServiceMessageHandler oidcSingleLogoutServiceMessageHandler;
 
     @Test
     public void verifyCreateLogoutRequestsFrontChannel() {
-
-        verifyCreateLogoutRequests(RegisteredServiceLogoutType.FRONT_CHANNEL,
-                LOGOUT_URL + "?iss=https%3A%2F%2Fsso.example.org%2Fcas%2Foidc&sid=" + DigestUtils.sha(TGT_ID));
+        verifyCreateLogoutRequests(RegisteredServiceLogoutType.FRONT_CHANNEL, LOGOUT_URL_OK);
     }
 
     @Test
     public void verifyCreateLogoutRequestsBackChannel() {
-
-        HttpUtils.setHttpClient(mock(org.apache.http.client.HttpClient.class));
-
-        verifyCreateLogoutRequests(RegisteredServiceLogoutType.BACK_CHANNEL, LOGOUT_URL);
+        verifyCreateLogoutRequests(RegisteredServiceLogoutType.BACK_CHANNEL, LOGOUT_URL_OK);
     }
 
-    private void verifyCreateLogoutRequests(final RegisteredServiceLogoutType type, final String url) {
-        val context = OAuth20ConfigurationContext.builder()
-                .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService)
-                .casProperties(casProperties)
-                .build();
-        val creator = new OidcSingleLogoutMessageCreator(context);
-        val handler = new OidcSingleLogoutServiceMessageHandler(mock(HttpClient.class),
-                creator, servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(mock(UrlValidator.class)),
-                true, mock(AuthenticationServiceSelectionPlan.class), casProperties.getAuthn().getOidc().getIssuer());
+    @Test
+    public void verifyUnknownRequestsBackChannel() {
+        verifyCreateLogoutRequests(RegisteredServiceLogoutType.BACK_CHANNEL, LOGOUT_URL_BAD);
+    }
 
-        val singleLogoutUrl = new SingleLogoutUrl(LOGOUT_URL, type);
-        val tgt = mock(TicketGrantingTicket.class);
-        when(tgt.getId()).thenReturn(TGT_ID);
-        val principal = RegisteredServiceTestUtils.getPrincipal("jleleu");
-        var authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
-        when(tgt.getAuthentication()).thenReturn(authentication);
+    @BeforeEach
+    public void setup() {
+        this.servicesManager.deleteAll();
+    }
 
-        val requests = handler.createLogoutRequests(TGT_ID, new SimpleWebApplicationServiceImpl(), getOidcRegisteredService(),
-                Collections.singleton(singleLogoutUrl), tgt);
+    private void verifyCreateLogoutRequests(final RegisteredServiceLogoutType type, final String logoutUrl) {
+        val registeredService = getOidcRegisteredService("clientid", logoutUrl + ".*");
+        registeredService.setLogoutType(type);
+        registeredService.setLogoutUrl(logoutUrl);
+        val service = RegisteredServiceTestUtils.getService(logoutUrl + "?client_id=" + registeredService.getClientId());
+        servicesManager.save(registeredService);
 
+        val executionRequest = SingleLogoutExecutionRequest.builder()
+            .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+            .build();
+        assertTrue(oidcSingleLogoutServiceMessageHandler.supports(executionRequest, service));
+        val requests = oidcSingleLogoutServiceMessageHandler.handle(service, UUID.randomUUID().toString(), executionRequest);
         assertEquals(1, requests.size());
-        val request = ((List<SingleLogoutRequest>) requests).get(0);
-        assertEquals(url, request.getLogoutUrl().toString());
     }
 }

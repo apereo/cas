@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.jdbc.authn;
 
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
@@ -28,7 +29,7 @@ public abstract class BaseJdbcAuthenticationProperties extends AbstractJpaProper
      * and as such lend themselves to be tried and tested during the authentication handler selection phase.
      * The credential criteria may be one of the following options:<ul>
      * <li>1) A regular expression pattern that is tested against the credential identifier.</li>
-     * <li>2) A fully qualified class name of your own design that implements {@code Predicate<Credential>}.</li>
+     * <li>2) A fully qualified class name of your own design that implements {@code Predicate}.</li>
      * <li>3) Path to an external Groovy script that implements the same interface.</li>
      * </ul>
      */
@@ -55,4 +56,10 @@ public abstract class BaseJdbcAuthenticationProperties extends AbstractJpaProper
      * Order of the authentication handler in the chain.
      */
     private int order = Integer.MAX_VALUE;
+
+    /**
+     * Define the scope and state of this authentication handler
+     * and the lifecycle in which it can be invoked or activated.
+     */
+    private AuthenticationHandlerStates state = AuthenticationHandlerStates.ACTIVE;
 }

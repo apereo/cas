@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.swivel.web.flow.rest;
 
-import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorAuthenticationProperties;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -25,7 +25,7 @@ import java.net.URL;
 @RestController
 @RequiredArgsConstructor
 public class SwivelTuringImageGeneratorController {
-    private final SwivelMultifactorProperties swivel;
+    private final SwivelMultifactorAuthenticationProperties swivel;
 
     /**
      * Generate.
@@ -47,9 +47,6 @@ public class SwivelTuringImageGeneratorController {
     @SneakyThrows
     private void generateImage(final OutputStream stream, final String principal) {
         val params = String.format("?username=%s&random=%s", principal, RandomUtils.nextLong(1, Long.MAX_VALUE));
-        if (StringUtils.isBlank(swivel.getSwivelTuringImageUrl())) {
-            throw new IllegalArgumentException("Swivel turing image url cannot be blank and must be specified");
-        }
         val url = new URL(swivel.getSwivelTuringImageUrl().concat(params));
         val image = ImageIO.read(url);
         ImageIO.write(image, "png", stream);

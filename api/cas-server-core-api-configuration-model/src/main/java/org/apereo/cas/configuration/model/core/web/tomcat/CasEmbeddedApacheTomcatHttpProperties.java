@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -27,12 +28,21 @@ public class CasEmbeddedApacheTomcatHttpProperties implements Serializable {
     /**
      * Enable a separate port for the embedded container for HTTP access.
      */
+    @RequiredProperty
     private boolean enabled;
 
     /**
      * The HTTP port to use.
      */
     private int port = 8080;
+
+    /**
+     * If this Connector is supporting non-SSL requests,
+     * this will automatically redirect
+     * the request to the port number specified here.
+     * Matching security constraints that require SSL transport will be auto-defined.
+     */
+    private int redirectPort;
 
     /**
      * HTTP protocol to use.

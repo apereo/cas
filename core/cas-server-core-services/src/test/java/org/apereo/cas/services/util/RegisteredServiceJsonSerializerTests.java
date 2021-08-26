@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +31,15 @@ public class RegisteredServiceJsonSerializerTests {
     public void verifyPrinter() {
         val zer = new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
         assertFalse(zer.supports(new File("bad-file")));
+        assertFalse(zer.getContentTypes().isEmpty());
+    }
+
+    @Test
+    public void verifyWriter() {
+        val zer = new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
+        val writer = new StringWriter();
+        zer.to(writer, new RegexRegisteredService());
+        assertNotNull(zer.from(writer));
     }
 
     @Test
@@ -69,5 +79,25 @@ public class RegisteredServiceJsonSerializerTests {
         val results = zer.toString(s);
         val read = zer.from(results);
         assertEquals(s, read);
+    }
+
+    @Test
+    public void verifyEmptyStringAsNull() {
+        val zer = new RegisteredServiceJsonSerializer();
+        val json = "    {\n"
+            + "        \"@class\" : \"org.apereo.cas.services.RegexRegisteredService\",\n"
+            + "            \"serviceId\" : \"^https://xyz.*\",\n"
+            + "            \"name\" : \"XYZ\",\n"
+            + "            \"id\" : \"20161214\"\n"
+            + "  \"authenticationPolicy\" : {\n"
+            + "    \"@class\" : \"org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy\",\n"
+            + "    \"criteria\":\"\""
+            + "  }"
+            + "    }";
+
+        val s = zer.from(json);
+        assertNotNull(s);
+        assertNotNull(s.getAuthenticationPolicy());
+        assertNull(s.getAuthenticationPolicy().getCriteria());
     }
 }

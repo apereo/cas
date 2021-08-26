@@ -11,6 +11,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.authentication.TokenAuthenticationHandler;
 
 import lombok.val;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -50,8 +51,11 @@ public class TokenAuthenticationConfiguration {
     @Bean
     public AuthenticationHandler tokenAuthenticationHandler() {
         val token = casProperties.getAuthn().getToken();
-        return new TokenAuthenticationHandler(token.getName(), servicesManager.getObject(), tokenPrincipalFactory(),
-            PrincipalNameTransformerUtils.newPrincipalNameTransformer(token.getPrincipalTransformation()));
+        val principalNameTransformer = PrincipalNameTransformerUtils.newPrincipalNameTransformer(token.getPrincipalTransformation());
+        val handler = new TokenAuthenticationHandler(token.getName(), servicesManager.getObject(),
+            tokenPrincipalFactory(), principalNameTransformer, JEESessionStore.INSTANCE);
+        handler.setState(token.getState());
+        return handler;
     }
 
     @ConditionalOnMissingBean(name = "tokenAuthenticationEventExecutionPlanConfigurer")

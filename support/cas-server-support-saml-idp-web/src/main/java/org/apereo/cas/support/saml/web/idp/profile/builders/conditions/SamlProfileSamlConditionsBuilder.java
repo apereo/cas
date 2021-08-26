@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.conditions;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -63,12 +64,11 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
                                          final MessageContext messageContext) throws SamlException {
 
         val currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
-
         var skewAllowance = service.getSkewAllowance() > 0
             ? service.getSkewAllowance()
-            : casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance();
+            : Beans.newDuration(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()).toSeconds();
         if (skewAllowance <= 0) {
-            skewAllowance = casProperties.getSamlCore().getSkewAllowance();
+            skewAllowance = Beans.newDuration(casProperties.getSamlCore().getSkewAllowance()).toSeconds();
         }
 
         val audienceUrls = new ArrayList<String>(2);

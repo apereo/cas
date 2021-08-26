@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode(of = {"pattern", "order"})
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
 
     private static final long serialVersionUID = 403015306984610128L;
@@ -64,8 +64,8 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      * <ul>
      * <li>The filtering operation is non-recursive. </li>
      * <li>Multi-valued attributes such as those of type {@link Collection} and
-     * {@link Map} are expected to allow casting to {@code Map&lt;String, String&gt;}
-     * or {@code Collection&lt;String&gt;}.
+     * {@link Map} are expected to allow casting to {@code Map<String, String>}
+     * or {@code Collection<String>}.
      * Values that are of type array are expected to allow casting to {@code String[]}.
      * </li>
      * <li>Multi-valued attributes are always put back into the final released collection of

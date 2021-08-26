@@ -28,7 +28,7 @@ public class PrincipalMultifactorAuthenticationProviderBypassEvaluator extends B
 
     public PrincipalMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
                                                                      final String providerId) {
-        this(bypassProperties.getPrincipalAttributeName(), bypassProperties.getAuthenticationAttributeValue(), providerId);
+        this(bypassProperties.getPrincipalAttributeName(), bypassProperties.getPrincipalAttributeValue(), providerId);
     }
 
     public PrincipalMultifactorAuthenticationProviderBypassEvaluator(final String attributeName,
@@ -44,7 +44,7 @@ public class PrincipalMultifactorAuthenticationProviderBypassEvaluator extends B
                                                                           final RegisteredService registeredService,
                                                                           final MultifactorAuthenticationProvider provider,
                                                                           final HttpServletRequest request) {
-        val principal = authentication.getPrincipal();
+        val principal = resolvePrincipal(authentication.getPrincipal());
         LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], service [{}] and provider [{}]",
             principal.getId(), registeredService, provider);
         val bypass = locateMatchingAttributeValue(this.attributeName, this.attributeValue, principal.getAttributes(), true);

@@ -6,6 +6,7 @@ import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDe
 import org.opensaml.saml.common.SignableSAMLObject;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 /**
  * This is {@link SSOSamlHttpRequestExtractor}.
@@ -23,7 +24,7 @@ public interface SSOSamlHttpRequestExtractor {
      * @param clazz   the clazz
      * @return the pair
      */
-    Pair<? extends SignableSAMLObject, MessageContext> extract(HttpServletRequest request,
-                                                               BaseHttpServletRequestXMLMessageDecoder decoder,
-                                                               Class<? extends SignableSAMLObject> clazz);
+    Optional<Pair<? extends SignableSAMLObject, MessageContext>> extract(HttpServletRequest request,
+                                                                         BaseHttpServletRequestXMLMessageDecoder decoder,
+                                                                         Class<? extends SignableSAMLObject> clazz);
 }

@@ -8,12 +8,10 @@ import org.apereo.cas.util.HttpUtils;
 import lombok.val;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.soap.common.SOAPObjectBuilder;
@@ -27,6 +25,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,7 +36,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("ecpProfileHandlerController")
@@ -47,13 +45,13 @@ public class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigur
 
     @BeforeEach
     public void beforeEach() {
-        this.samlRegisteredService = getSamlRegisteredServiceFor(false, false,
+        servicesManager.deleteAll();
+        samlRegisteredService = getSamlRegisteredServiceFor(false, false,
             false, "https://cassp.example.org");
         servicesManager.save(samlRegisteredService);
     }
 
     @Test
-    @Order(1)
     public void verifyOK() {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
@@ -62,7 +60,7 @@ public class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigur
 
         val headers = HttpUtils.createBasicAuthHeaders("casuser", "casuser");
         headers.forEach(request::addHeader);
-        val envelope = getEnvelope();
+        val envelope = getEnvelope(samlRegisteredService.getServiceId());
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, envelope).toString();
         request.setContent(xml.getBytes(StandardCharsets.UTF_8));
 
@@ -71,7 +69,6 @@ public class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    @Order(2)
     public void verifyBadAuthn() {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
@@ -80,7 +77,7 @@ public class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigur
 
         val headers = HttpUtils.createBasicAuthHeaders("xyz", "123");
         headers.forEach(request::addHeader);
-        val envelope = getEnvelope();
+        val envelope = getEnvelope(samlRegisteredService.getServiceId());
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, envelope).toString();
         request.setContent(xml.getBytes(StandardCharsets.UTF_8));
 
@@ -89,13 +86,12 @@ public class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    @Order(3)
     public void verifyNoCredentials() {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
         request.setContentType(MediaType.TEXT_XML_VALUE);
-        val envelope = getEnvelope();
+        val envelope = getEnvelope(samlRegisteredService.getServiceId());
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, envelope).toString();
         request.setContent(xml.getBytes(StandardCharsets.UTF_8));
 
@@ -103,7 +99,26 @@ public class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigur
         assertEquals(HttpStatus.SC_UNAUTHORIZED, response.getStatus());
     }
 
-    private Envelope getEnvelope() {
+    @Test
+    public void verifyFailures() {
+        val response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        val headers = HttpUtils.createBasicAuthHeaders("casuser", "casuser");
+        headers.forEach(request::addHeader);
+        request.setMethod("POST");
+        request.setContentType(MediaType.TEXT_XML_VALUE);
+        controller.handleEcpRequest(response, request);
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
+
+        val envelope = getEnvelope(UUID.randomUUID().toString());
+        val xml = SamlUtils.transformSamlObject(openSamlConfigBean, envelope).toString();
+        request.setContent(xml.getBytes(StandardCharsets.UTF_8));
+        controller.handleEcpRequest(response, request);
+        assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, response.getStatus());
+    }
+
+
+    private Envelope getEnvelope(final String entityId) {
         var builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Envelope.DEFAULT_ELEMENT_NAME);
         var envelope = (Envelope) builder.buildObject();
@@ -116,19 +131,20 @@ public class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigur
         builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Body.DEFAULT_ELEMENT_NAME);
         val body = (Body) builder.buildObject();
-        body.getUnknownXMLObjects().add(getAuthnRequest());
+        body.getUnknownXMLObjects().add(getAuthnRequest(entityId));
         envelope.setBody(body);
         return envelope;
     }
 
-    private AuthnRequest getAuthnRequest() {
+    private AuthnRequest getAuthnRequest(final String entityId) {
         var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
         var authnRequest = (AuthnRequest) builder.buildObject();
+        authnRequest.setProtocolBinding(SAMLConstants.SAML2_PAOS_BINDING_URI);
         builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
         val issuer = (Issuer) builder.buildObject();
-        issuer.setValue(samlRegisteredService.getServiceId());
+        issuer.setValue(entityId);
         authnRequest.setIssuer(issuer);
         return authnRequest;
     }

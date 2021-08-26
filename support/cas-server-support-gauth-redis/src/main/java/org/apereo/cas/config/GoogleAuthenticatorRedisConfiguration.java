@@ -13,6 +13,7 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +34,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableScheduling
+@ConditionalOnProperty(prefix = "cas.authn.mfa.gauth.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class GoogleAuthenticatorRedisConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -75,6 +77,6 @@ public class GoogleAuthenticatorRedisConfiguration {
     @Bean
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
         return new GoogleAuthenticatorRedisTokenRepository(redisGoogleAuthenticatorTemplate(),
-            casProperties.getAuthn().getMfa().getGauth().getTimeStepSize());
+            casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize());
     }
 }

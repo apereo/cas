@@ -1,6 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.util.MockWebServer;
 
 import lombok.val;
@@ -13,11 +13,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,17 +27,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = {
-    CasPersonDirectoryConfiguration.class,
-    RefreshAutoConfiguration.class
-}, properties = {
-    "cas.authn.attributeRepository.rest[0].method=GET",
-    "cas.authn.attributeRepository.rest[0].url=http://localhost:8085"
-})
+@SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class,
+    properties = {
+        "cas.authn.attribute-repository.rest[0].method=GET",
+        "cas.authn.attribute-repository.rest[0].username-attribute=cn",
+        "cas.authn.attribute-repository.rest[0].url=http://localhost:8085",
+        "cas.authn.attribute-repository.rest[0].basic-auth-password=psw",
+        "cas.authn.attribute-repository.rest[0].basic-auth-username=username"
+    })
 @Tag("RestfulApi")
 public class RestfulPersonAttributeDaoTests {
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     protected IPersonAttributeDao attributeRepository;
 
     private MockWebServer webServer;
@@ -61,7 +62,7 @@ public class RestfulPersonAttributeDaoTests {
     }
 
     @Test
-    public void verifyRestAttributeRepository() {
+    public void verifyGetPerson() {
         assertNotNull(attributeRepository);
         val person = attributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
         assertNotNull(person);
@@ -71,4 +72,18 @@ public class RestfulPersonAttributeDaoTests {
         assertEquals(29, person.getAttributeValue("age"));
         assertEquals(3, person.getAttributeValues("messages").size());
     }
+
+    @Test
+    public void verifyGetPeople() {
+        val person = attributeRepository.getPeople(Map.of("cn", "casuser"), IPersonAttributeDaoFilter.alwaysChoose())
+            .iterator().next();
+        assertNotNull(person);
+        assertNotNull(person.getAttributes());
+        assertFalse(person.getAttributes().isEmpty());
+        assertEquals("casuser", person.getAttributeValue("name"));
+        assertEquals(29, person.getAttributeValue("age"));
+        assertEquals(3, person.getAttributeValues("messages").size());
+    }
+
+
 }

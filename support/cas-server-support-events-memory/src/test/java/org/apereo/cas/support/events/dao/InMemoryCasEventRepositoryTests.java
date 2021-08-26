@@ -22,7 +22,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasEventsInMemoryRepositoryConfiguration.class
 })
 @Getter
-@Tag("Simple")
+@Tag("Events")
 public class InMemoryCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
     @Autowired
     @Qualifier("casEventRepository")

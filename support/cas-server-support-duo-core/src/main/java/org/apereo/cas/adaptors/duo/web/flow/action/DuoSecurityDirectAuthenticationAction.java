@@ -6,7 +6,6 @@ import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -18,13 +17,10 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class DuoSecurityDirectAuthenticationAction extends AbstractMultifactorAuthenticationAction<DuoSecurityMultifactorAuthenticationProvider> {
 
-    public DuoSecurityDirectAuthenticationAction(final ApplicationContext applicationContext) {
-        super(applicationContext);
-    }
-
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val c = new DuoSecurityDirectCredential(WebUtils.getAuthentication(requestContext), provider.createUniqueId());
+        val authentication = WebUtils.getAuthentication(requestContext);
+        val c = new DuoSecurityDirectCredential(resolvePrincipal(authentication.getPrincipal()), provider.getId());
         WebUtils.putCredential(requestContext, c);
         return success();
     }

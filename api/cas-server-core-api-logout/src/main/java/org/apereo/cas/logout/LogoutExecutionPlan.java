@@ -33,11 +33,23 @@ public interface LogoutExecutionPlan {
     }
 
     /**
+     * Register logout redirection strategy.
+     *
+     * @param strategy the strategy
+     */
+    default void registerLogoutRedirectionStrategy(final LogoutRedirectionStrategy strategy) {
+    }
+
+    /**
      * Gets logout handlers.
      *
      * @return the logout handlers
      */
-    default Collection<LogoutPostProcessor> getLogoutPostProcessor() {
+    default Collection<LogoutPostProcessor> getLogoutPostProcessors() {
+        return new ArrayList<>(0);
+    }
+
+    default Collection<LogoutRedirectionStrategy> getLogoutRedirectionStrategies() {
         return new ArrayList<>(0);
     }
 

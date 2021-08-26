@@ -16,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -66,7 +67,7 @@ public class OidcWebFingerDiscoveryService {
      * @param rel      the rel
      * @return the response entity
      */
-    public ResponseEntity handleWebFingerDiscoveryRequest(final String resource, final String rel) {
+    public ResponseEntity<Map> handleWebFingerDiscoveryRequest(final String resource, final String rel) {
         if (StringUtils.isNotBlank(rel) && !OidcConstants.WEBFINGER_REL.equalsIgnoreCase(rel)) {
             LOGGER.warn("Handling discovery request for a non-standard OIDC relation [{}]", rel);
         }
@@ -79,11 +80,6 @@ public class OidcWebFingerDiscoveryService {
                 return buildNotFoundResponseEntity("Unable to normalize provided resource");
             }
             val issuerUri = normalize(issuer);
-            if (issuerUri == null) {
-                LOGGER.error("Unable to parse and normalize issuer: [{}]", issuer);
-                return buildNotFoundResponseEntity("Unable to normalize issuer");
-            }
-
             if (!"acct".equals(resourceUri.getScheme())) {
                 LOGGER.error("Unable to accept resource scheme: [{}]", resourceUri.toUriString());
                 return buildNotFoundResponseEntity("Unable to recognize/accept resource scheme " + resourceUri.getScheme());

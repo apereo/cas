@@ -23,9 +23,11 @@ import java.security.PublicKey;
 @NoArgsConstructor(force = true)
 public class RsaKeyPairCipherExecutor extends BaseStringCipherExecutor {
     private final PrivateKey privateKeySigning;
+
     private final PublicKey publicKeySigning;
 
     private final PrivateKey privateKeyEncryption;
+
     private final PublicKey publicKeyEncryption;
 
     public RsaKeyPairCipherExecutor(final KeyPair signing, final KeyPair encryption) {
@@ -37,7 +39,7 @@ public class RsaKeyPairCipherExecutor extends BaseStringCipherExecutor {
     }
 
     public RsaKeyPairCipherExecutor(final String privateKeySigning, final String publicKeySigning,
-                                    final String privateKeyEncryption, final String publicKeyEncryption) {
+        final String privateKeyEncryption, final String publicKeyEncryption) {
         this.privateKeySigning = extractPrivateKeyFromResource(privateKeySigning);
         this.publicKeySigning = extractPublicKeyFromResource(publicKeySigning);
 
@@ -68,13 +70,13 @@ public class RsaKeyPairCipherExecutor extends BaseStringCipherExecutor {
     }
 
     private void configureEncryptionParametersForDecoding() {
-        setSecretKeyEncryptionKey(privateKeyEncryption);
+        setEncryptionKey(privateKeyEncryption);
         setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
         setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
     }
 
     private void configureEncryptionParametersForEncoding() {
-        setSecretKeyEncryptionKey(publicKeyEncryption);
+        setEncryptionKey(publicKeyEncryption);
         setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
         setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
     }

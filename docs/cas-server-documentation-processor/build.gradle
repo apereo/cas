@@ -1,0 +1,32 @@
+description = "Apereo CAS Documentation Generator"
+project.ext["mainClassName"] = "org.apereo.cas.documentation.CasDocumentationApplication"
+project.ext["forceBootifulArtifact"] = true
+project.ext["archiveFileName"] = "casdocsgen.jar"
+
+apply from: rootProject.file("gradle/springboot.gradle")
+
+javadoc {
+    enabled(false)
+}
+
+test {
+    enabled(false)
+}
+
+if (tasks.findByName("install") != null) {
+    tasks.getByName("install").enabled(false)
+}
+
+dependencies {
+    libraries.each {
+        implementation it.value
+    }
+
+    rootProject.subprojects.each {
+        if (it.publishable) {
+            implementation it
+        } else {
+            logger.debug("Skipping project for documentation processing: ${it.name}")
+        }
+    }
+}

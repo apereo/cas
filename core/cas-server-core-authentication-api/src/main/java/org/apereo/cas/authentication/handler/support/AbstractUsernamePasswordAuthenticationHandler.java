@@ -45,11 +45,11 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
     private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
 
-    private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
+    private PrincipalNameTransformer principalNameTransformer = String::trim;
 
     private PasswordPolicyContext passwordPolicyConfiguration;
 
-    public AbstractUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    protected AbstractUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                                          final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }
@@ -131,12 +131,12 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
             LOGGER.debug("Credential is not one of username/password and is not accepted by handler [{}]", getName());
             return false;
         }
-        if (this.credentialSelectionPredicate == null) {
+        if (getCredentialSelectionPredicate() == null) {
             LOGGER.debug("No credential selection criteria is defined for handler [{}]. Credential is accepted for further processing", getName());
             return true;
         }
         LOGGER.debug("Examining credential [{}] eligibility for authentication handler [{}]", credential, getName());
-        val result = this.credentialSelectionPredicate.test(credential);
+        val result = getCredentialSelectionPredicate().test(credential);
         LOGGER.debug("Credential [{}] eligibility is [{}] for authentication handler [{}]", credential, getName(), BooleanUtils.toStringTrueFalse(result));
         return result;
     }

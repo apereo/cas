@@ -1,36 +1,10 @@
 package org.apereo.cas.support.oauth.web.flow;
 
-import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasOAuth20WebflowConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasThymeleafConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.web.config.CasThemesConfiguration;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.web.config.CasCookieConfiguration;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfo;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -40,11 +14,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.io.Serializable;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,37 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreWebflowConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasCoreConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasWebflowContextConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
-    CasRegisteredServicesTestConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCookieConfiguration.class,
-    CasThemesConfiguration.class,
-    CasThymeleafConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreAuthenticationHandlersConfiguration.class,
-    CasCoreAuthenticationMetadataConfiguration.class,
-    CasCoreAuthenticationPolicyConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
-    CasOAuth20WebflowConfiguration.class
-})
+@SpringBootTest(classes = BaseOAuth20WebflowTests.SharedTestConfiguration.class,
+    properties = "spring.main.allow-bean-definition-overriding=true")
 @Tag("OAuth")
 public class OAuth20RegisteredServiceUIActionTests {
     @Autowired
@@ -98,9 +43,13 @@ public class OAuth20RegisteredServiceUIActionTests {
     @Test
     public void verifyOAuthActionWithoutMDUI() throws Exception {
         val ctx = new MockRequestContext();
-        WebUtils.putServiceIntoFlowScope(ctx, RegisteredServiceTestUtils.getService());
+        val service = RegisteredServiceTestUtils.getService();
+        WebUtils.putServiceIntoFlowScope(ctx, service);
+        val svc = RegisteredServiceTestUtils.getRegisteredService(service.getId());
+        servicesManager.save(svc);
+
         val event = oauth20RegisteredServiceUIAction.execute(ctx);
-        assertEquals("success", event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         val mdui = WebUtils.getServiceUserInterfaceMetadata(ctx, Serializable.class);
         assertNull(mdui);
     }
@@ -119,10 +68,12 @@ public class OAuth20RegisteredServiceUIActionTests {
         servicesManager.save(svc);
 
         val ctx = new MockRequestContext();
-        WebUtils.putServiceIntoFlowScope(ctx, RegisteredServiceTestUtils.getService(
-            "https://www.example.org?client_id=id&client_secret=secret&redirect_uri=https://oauth.example.org"));
+        val service = RegisteredServiceTestUtils.getService("https://www.example.org?client_id=id&client_secret=secret&redirect_uri=https://oauth.example.org");
+        service.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of("id"));
+        
+        WebUtils.putServiceIntoFlowScope(ctx, service);
         val event = oauth20RegisteredServiceUIAction.execute(ctx);
-        assertEquals("success", event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         val mdui = WebUtils.getServiceUserInterfaceMetadata(ctx, DefaultRegisteredServiceUserInterfaceInfo.class);
         assertNotNull(mdui);
 
@@ -131,6 +82,5 @@ public class OAuth20RegisteredServiceUIActionTests {
         assertEquals(mdui.getDescription(), svc.getDescription());
         assertEquals(mdui.getPrivacyStatementURL(), svc.getPrivacyUrl());
         assertEquals(mdui.getLogoUrl(), svc.getLogo());
-
     }
 }

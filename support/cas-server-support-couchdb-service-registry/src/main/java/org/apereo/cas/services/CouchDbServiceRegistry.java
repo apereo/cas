@@ -6,8 +6,6 @@ import org.apereo.cas.util.RandomUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.ektorp.DbAccessException;
-import org.ektorp.DocumentNotFoundException;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Collection;
@@ -26,8 +24,8 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
     private final RegisteredServiceCouchDbRepository dbClient;
 
     public CouchDbServiceRegistry(final ConfigurableApplicationContext applicationContext,
-                                  final RegisteredServiceCouchDbRepository dbClient,
-                                  final Collection<ServiceRegistryListener> serviceRegistryListeners) {
+        final RegisteredServiceCouchDbRepository dbClient,
+        final Collection<ServiceRegistryListener> serviceRegistryListeners) {
         super(applicationContext, serviceRegistryListeners);
         this.dbClient = dbClient;
     }
@@ -38,21 +36,16 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
         if (registeredService.getId() < 0) {
             registeredService.setId(RandomUtils.nextLong());
         }
-        try {
-            val svc = dbClient.get(registeredService.getId());
-            invokeServiceRegistryListenerPreSave(registeredService);
-            if (svc != null) {
-                val doc = new RegisteredServiceDocument(registeredService);
-                doc.setRevision(svc.getRevision());
-                dbClient.update(doc);
-                LOGGER.debug("Service [{}] with id [{}] updated", registeredService.getName(), registeredService.getId());
-            } else {
-                dbClient.add(new RegisteredServiceDocument(registeredService));
-                LOGGER.debug("New service [{}] with id [{}] created", registeredService.getName(), registeredService.getId());
-            }
-        } catch (final DbAccessException e) {
-            LOGGER.debug("Failed to update service [{}] with id [{}]: [{}]", registeredService.getName(), registeredService.getId(), e.getMessage());
-            return null;
+        val svc = dbClient.get(registeredService.getId());
+        invokeServiceRegistryListenerPreSave(registeredService);
+        if (svc != null) {
+            val doc = new RegisteredServiceDocument(registeredService);
+            doc.setRevision(svc.getRevision());
+            dbClient.update(doc);
+            LOGGER.debug("Service [{}] with id [{}] updated", registeredService.getName(), registeredService.getId());
+        } else {
+            dbClient.add(new RegisteredServiceDocument(registeredService));
+            LOGGER.debug("New service [{}] with id [{}] created", registeredService.getName(), registeredService.getId());
         }
         return registeredService;
     }
@@ -60,15 +53,14 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
     @Override
     public boolean delete(final RegisteredService service) {
         LOGGER.debug("Deleting service [{}]", service.getName());
+        dbClient.deleteRecord(new RegisteredServiceDocument(service));
+        LOGGER.debug("Successfully deleted service [{}] with id [{}].", service.getName(), service.getId());
+        return true;
+    }
 
-        try {
-            dbClient.deleteRecord(new RegisteredServiceDocument(service));
-            LOGGER.debug("Successfully deleted service [{}] with id [{}].", service.getName(), service.getId());
-            return true;
-        } catch (final DbAccessException exception) {
-            LOGGER.debug("Could not delete service [{}] with id [{}]: [{}]", service.getName(), service.getId(), exception.getMessage());
-            return false;
-        }
+    @Override
+    public void deleteAll() {
+        dbClient.deleteRecords();
     }
 
     @Override
@@ -83,13 +75,9 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        try {
-            val doc = dbClient.get(id);
-            if (doc != null) {
-                return doc.getService();
-            }
-        } catch (final DocumentNotFoundException e) {
-            LOGGER.info(e.getMessage());
+        val doc = dbClient.get(id);
+        if (doc != null) {
+            return doc.getService();
         }
         return null;
     }

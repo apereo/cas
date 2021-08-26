@@ -58,10 +58,13 @@ public class GitRepositoryTests {
             }
         });
         try {
+            builder.commitAll("Test");
             builder.push();
             fail("Pushing changes should fail");
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }
     }
+
+    
 }
