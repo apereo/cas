@@ -66,13 +66,6 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
     private RecursiveSearchEntryHandlersProperties recursive = new RecursiveSearchEntryHandlersProperties();
 
     /**
-     * Merges the values of one or more attributes in all entries into a single attribute. The merged attribute may or may not already
-     * exist on the entry. If it does exist it's existing values will remain intact.
-     */
-    @NestedConfigurationProperty
-    private MergeAllEntriesAttributesSearchEntryHandlersProperties mergeAllAttribute = new MergeAllEntriesAttributesSearchEntryHandlersProperties();
-
-    /**
      * The enum Search entry handler types.
      */
     public enum SearchEntryHandlerTypes {
@@ -127,6 +120,8 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
         RECURSIVE_ENTRY,
         /**
          * Merge entries handler.
+         * Merges the values of one or more attributes in all entries into a single attribute. The merged attribute may or may not already
+         * exist on the entry. If it does exist it's existing values will remain intact.
          */
         MERGE_ENTRIES
     }
