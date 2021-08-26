@@ -7,8 +7,6 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-notifications")
 
-    implementation libraries.smsmode
-
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-logout-api")
