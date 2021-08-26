@@ -95,7 +95,6 @@ import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.control.util.PagedResultsClient;
 import org.ldaptive.extended.ExtendedOperation;
 import org.ldaptive.extended.PasswordModifyRequest;
-import org.ldaptive.handler.*;
 import org.ldaptive.pool.BindConnectionPassivator;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.referral.FollowSearchReferralHandler;
@@ -1015,9 +1014,8 @@ public class LdapUtils {
                             recursive.getMergeAttributes().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
                     break;
                 case MERGE_ENTRIES:
-                    searchResultHandlers.add(new MergeResultHandler());
-                    break;
                 default:
+                    searchResultHandlers.add(new MergeResultHandler());
                     break;
             }
         });

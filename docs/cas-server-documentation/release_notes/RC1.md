@@ -81,9 +81,12 @@ to assist with the discovery and selection of identity providers in more dynamic
 ## Other Stuff
 
 - SAML2 Unsolicited endpoint is now able to preserve custom query parameters.
+- LDAP search entry handlers are now able to merges the values of one or more attributes in all entries into a single attribute.
 
 ## Library Upgrades
 
 - Pac4j
 - Spring Boot Admin
 - Nimbus JWT
+- AWS SDK
+- Mockito
