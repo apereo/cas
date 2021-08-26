@@ -28,12 +28,10 @@ public class InweboCheckAuthenticationAction extends AbstractAction {
 
     private final CasWebflowEventResolver casWebflowEventResolver;
 
-
     @Override
     public Event doExecute(final RequestContext requestContext) {
         val authentication = WebUtils.getInProgressAuthentication();
         val login = authentication.getPrincipal().getId();
-        LOGGER.trace("Login: [{}]", login);
         val otp = requestContext.getRequestParameters().get(WebflowConstants.OTP);
         val flowScope = requestContext.getFlowScope();
         val sessionId = (String) flowScope.get(WebflowConstants.INWEBO_SESSION_ID);
@@ -43,7 +41,8 @@ public class InweboCheckAuthenticationAction extends AbstractAction {
             LOGGER.debug("Received OTP: [{}] for login: [{}]", otp, login);
             WebUtils.putCredential(requestContext, credential);
             return this.casWebflowEventResolver.resolveSingle(requestContext);
-        } else if (StringUtils.isNotBlank(sessionId)) {
+        }
+        if (StringUtils.isNotBlank(sessionId)) {
             val response = service.checkPushResult(login, sessionId);
             val result = response.getResult();
             if (response.isOk()) {
@@ -54,14 +53,14 @@ public class InweboCheckAuthenticationAction extends AbstractAction {
                 LOGGER.debug("User: [{}] validated push for sessionId: [{}] and device: [{}]", login, sessionId, deviceName);
                 WebUtils.putCredential(requestContext, credential);
                 return this.casWebflowEventResolver.resolveSingle(requestContext);
-            } else if (result == InweboResult.WAITING) {
+            }
+            if (result == InweboResult.WAITING) {
                 LOGGER.trace("Waiting for user to validate on mobile/desktop");
                 return getEventFactorySupport().event(this, WebflowConstants.PENDING);
-            } else {
-                LOGGER.debug("Validation fails: [{}]", result);
-                if (result == InweboResult.REFUSED || result == InweboResult.TIMEOUT) {
-                    WebUtils.addErrorMessageToContext(requestContext, "cas.inwebo.error.userrefusedortoolate");
-                }
+            }
+            LOGGER.debug("Validation fails: [{}]", result);
+            if (result == InweboResult.REFUSED || result == InweboResult.TIMEOUT) {
+                WebUtils.addErrorMessageToContext(requestContext, "cas.inwebo.error.userrefusedortoolate");
             }
         }
         return error();

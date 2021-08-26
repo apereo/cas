@@ -15,10 +15,14 @@ env:
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
+      - '!**.**.**'
   pull_request:
     types: [ labeled ]
-    branches: [ master ]
+    branches:
+      - master
+      - '!**.**.**'
 
 ##########################################################################
 

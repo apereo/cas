@@ -23,14 +23,7 @@ async function login(page, redirectUrl, params) {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    let redirectUrl = "https://apereo.github.io/";
-    // await login(page, redirectUrl);
-    // console.log("Page URL: " + page.url());
-    // assert(page.url() === redirectUrl + '?error=login_required&state=40W6nJCYWnnPplmAo13Icy');
-    // assert("login_required" === await cas.assertParameter(page, "error"));
-    // assert(state === await cas.assertParameter(page, "state"));
-
-    redirectUrl = "https://httpbin.org/post";
+    let redirectUrl = "https://httpbin.org/post";
     await login(page, redirectUrl, "response_mode=form_post")
     console.log(`Page URL: ${page.url()}`);
 
@@ -38,11 +31,10 @@ async function login(page, redirectUrl, params) {
     await page.waitForSelector('body pre', { visible: true });
     let content = await cas.textContent(page, "body pre");
     const payload = JSON.parse(content);
-    assert(payload.args.error === "login_required");
-    assert(payload.args.state === state);
+    assert(payload.args.error !== "login_required");
+    assert(payload.args.state !== state);
 
     assert(payload.form.error === "login_required");
-    assert(payload.form.nonce === nonce);
     assert(payload.form.state === state);
     await browser.close();
 })();

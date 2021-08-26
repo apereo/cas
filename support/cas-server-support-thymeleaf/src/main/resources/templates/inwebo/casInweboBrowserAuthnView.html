@@ -27,15 +27,15 @@
         </div>
         <script th:inline="javascript">
             /*<![CDATA[*/
-                var casLogin = /*[[${login}]]*/ '';
-                var siteAlias = /*[[${siteAlias}]]*/ '';
-                var siteDescription = /*[[${siteDescription}]]*/ '';
+                let casLogin = /*[[${login}]]*/ '';
+                let siteAlias = /*[[${siteAlias}]]*/ '';
+                let siteDescription = /*[[${siteDescription}]]*/ '';
 
                 window.onload =  function() {
                     neon = new Neon.Neon(siteAlias, siteDescription);
                     neon.initOnline()
                     .then(logins => {
-                        if (logins.length == 0 || !logins.includes(casLogin)) {
+                        if (logins.length === 0 || !logins.includes(casLogin)) {
                             $('#enrollForm').submit();
                         }
                         $('#otpForm').css('display', 'block');
@@ -46,7 +46,7 @@
                 };
 
                 function getOtp() {
-                    var pin = document.getElementById('pin').value;
+                    let pin = document.getElementById('pin').value;
                     if (pin !== '') {
                         neon.getOnlineOtpWithPin(casLogin, pin)
                         .then(otp => {

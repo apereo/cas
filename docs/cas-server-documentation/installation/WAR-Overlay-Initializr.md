@@ -67,7 +67,7 @@ The project selection is indicated using a `type` parameter. The following types
 | `cas-bootadmin-server-overlay`          | Generates a WAR Overlay for the [Spring Boot Admin Server](../monitoring/Configuring-Monitoring-Administration.html).
 | `cas-config-server-overlay`             | Generates a WAR Overlay for the [Spring Cloud Configuration Server](../configuration/Configuration-Server-Management.html).
 | `cas-discovery-server-overlay`          | Generates a WAR Overlay for the [Service Discovery Server](../installation/Service-Discovery-Guide-Eureka.html).
-| `cas-management-overlay`                 | Generates a WAR Overlay for the [CAS Management Web Application](../services/Installing-ServicesMgmt-Webapp.html).
+| `cas-management-overlay`                | Generates a WAR Overlay for the [CAS Management Web Application](../services/Installing-ServicesMgmt-Webapp.html).
 
 ## Project Versions
 
@@ -110,9 +110,47 @@ Apereo CAS support subscribers. To get started with this instance, a simple way 
 
 ```bash
 function getcas(){
-    curl https://casinit.herokuapp.com/starter.tgz \
-      -d type=cas-overlay -d baseDir=overlay -d dependencies="$1" | tar -xzvf -
-    ls
+  url="https://casinit.herokuapp.com/starter.tgz"
+  projectType="cas-overlay"
+  dependencies=""
+  directory="overlay"
+  for arg in $@; do
+    case "$arg" in
+    --url|-u)
+      url=$2
+      shift 1
+      ;;
+    --type|-t)
+      projectType=$2
+      shift 1
+      ;;
+    --directory|--dir|-d)
+      directory=$2
+      shift 1
+      ;;
+    --casVersion|--cas)
+      casVersion="-d casVersion=$2"
+      shift 1
+      ;;
+    --bootVersion|--springBootVersion|--boot)
+      bootVersion="-d bootVersion=$2"
+      shift 1
+      ;;
+    --modules|--dependencies|--extensions|-m)
+      dependencies="-d dependencies=$2"
+      shift 1
+      ;;
+    *)
+      shift
+      ;;
+    esac
+  done
+  rm -Rf ./${directory}
+  echo -e "Generating project ${projectType} with dependencies ${dependencies}..."
+  cmd="curl ${url} -d type=${projectType} -d baseDir=${directory} ${dependencies} ${casVersion} ${bootVersion} | tar -xzvf -"
+  echo -e "${cmd}"
+  eval "${cmd}"
+  ls
 }
 ```
 
@@ -123,7 +161,7 @@ If you prefer, you could invoke the <code>/starter.zip</code> endpoint to get ba
 This allows you to generate a CAS overlay project in the `overlay` directory using:
 
 ```bash
-getcas duo,oidc
+getcas --modules duo,oidc
 ```
 
 …which generates a CAS overlay project prepared with multifactor authentication

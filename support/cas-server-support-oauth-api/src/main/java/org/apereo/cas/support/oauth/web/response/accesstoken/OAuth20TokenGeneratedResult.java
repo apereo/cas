@@ -23,8 +23,6 @@ import java.util.Optional;
 @SuperBuilder
 @ToString(doNotUseGetters = true, exclude = "registeredService")
 public class OAuth20TokenGeneratedResult {
-    private static final int MAP_SIZE = 8;
-
     private final OAuth20AccessToken accessToken;
 
     private final OAuth20RefreshToken refreshToken;
@@ -40,7 +38,7 @@ public class OAuth20TokenGeneratedResult {
     private final String userCode;
 
     @Builder.Default
-    private final Map<String, Object> details = new LinkedHashMap<>(MAP_SIZE);
+    private final Map<String, Object> details = new LinkedHashMap<>();
 
     public Optional<OAuth20AccessToken> getAccessToken() {
         return Optional.ofNullable(accessToken);

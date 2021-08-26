@@ -59,3 +59,18 @@ def removeAll(Object[] args) {
 The `request` parameter encapsulates a `PasswordChangeRequest` object, carrying `username` and `password` fields.
 
 {% include casproperties.html properties="cas.authn.pm.history.groovy" %}
+  
+## Custom
+
+If you wish to create your own password hisory service, you will need to
+design a component and register it with CAS as such:
+
+```java
+@Bean
+public PasswordHistoryService passwordHistoryService() {
+    return new CustomPasswordHistoryService();
+}
+```
+
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about
+how to register configurations into the CAS runtime.

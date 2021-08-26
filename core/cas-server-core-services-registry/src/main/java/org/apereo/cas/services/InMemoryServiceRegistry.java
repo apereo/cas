@@ -37,10 +37,7 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
-        if (registeredServices.contains(registeredService)) {
-            return this.registeredServices.remove(registeredService);
-        }
-        return true;
+        return !registeredServices.contains(registeredService) || this.registeredServices.remove(registeredService);
     }
 
     @Override

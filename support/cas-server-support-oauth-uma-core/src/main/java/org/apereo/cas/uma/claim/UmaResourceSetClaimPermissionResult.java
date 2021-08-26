@@ -17,10 +17,9 @@ import java.util.Map;
  */
 @Data
 public class UmaResourceSetClaimPermissionResult implements Serializable {
-    private static final int MAP_SIZE = 8;
     private static final long serialVersionUID = -4793142197818018354L;
 
-    private Map<Long, Details> details = new LinkedHashMap<>(MAP_SIZE);
+    private Map<Long, Details> details = new LinkedHashMap<>();
 
     @JsonIgnore
     public boolean isSatisfied() {
@@ -34,9 +33,9 @@ public class UmaResourceSetClaimPermissionResult implements Serializable {
     public static class Details implements Serializable {
         private static final long serialVersionUID = -4294568893393275983L;
 
-        private Collection<String> unmatchedScopes = new ArrayList<>(MAP_SIZE);
+        private Collection<String> unmatchedScopes = new ArrayList<>();
 
-        private Map<String, Object> unmatchedClaims = new LinkedHashMap<>(MAP_SIZE);
+        private Map<String, Object> unmatchedClaims = new LinkedHashMap<>();
 
         @JsonIgnore
         public boolean isSatisfied() {

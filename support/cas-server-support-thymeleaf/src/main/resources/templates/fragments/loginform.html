@@ -111,7 +111,7 @@
                                     <span class="mdc-notched-outline">
                                             <span class="mdc-notched-outline__leading"></span>
                                             <span class="mdc-notched-outline__notch">
-                                              <span class="mdc-floating-label" th:utext="#{screen.welcome.label.password}">Username</span>
+                                              <span class="mdc-floating-label" th:utext="#{screen.welcome.label.password}">Password</span>
                                             </span>
                                             <span class="mdc-notched-outline__trailing"></span>
                                         </span>
@@ -277,6 +277,21 @@
                     <div th:replace="fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')"/>
                 </span>
             </form>
+
+            <div id="selectIdentityProvider" th:if="${#bools.isTrue(delegatedAuthenticationDynamicProviderSelection) and loginFormViewable and loginFormEnabled}">
+                <p>
+                <form method="post" id="providerDiscoveryForm">
+                    <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                    <input type="hidden" name="_eventId" value="discovery"/>
+                    <span class="fa fa-unlock"></span>
+                    <button th:id="selectProviderButton"
+                            class="mdc-button mdc-button--raised"
+                            onclick="$('#providerDiscoveryForm').submit();"
+                            th:value="#{screen.pac4j.button.selectprovider}">
+                        <span class="mdc-button__label" th:text="#{screen.pac4j.button.selectprovider}">Select</span>
+                    </button>
+                </form>
+            </div>
 
             <div id="x509Login" th:if="${x509ClientAuthLoginEndpointUrl}">
                 <span th:if="${loginFormViewable and loginFormEnabled}">

@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.services;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -68,7 +69,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
      */
     protected static Optional<AuthnRequest> getSamlAuthnRequest(final ApplicationContext applicationContext) {
         val openSamlConfigBean = applicationContext.getBean(OpenSamlConfigBean.DEFAULT_BEAN_NAME, OpenSamlConfigBean.class);
-        val sessionStore = applicationContext.getBean("samlIdPDistributedSessionStore", SessionStore.class);
+        val sessionStore = applicationContext.getBean(DistributedJEESessionStore.DEFAULT_BEAN_NAME, SessionStore.class);
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
         val context = new JEEContext(request, response);

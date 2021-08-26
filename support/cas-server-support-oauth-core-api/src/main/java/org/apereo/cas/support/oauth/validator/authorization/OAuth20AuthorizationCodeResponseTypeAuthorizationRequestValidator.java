@@ -13,7 +13,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.springframework.core.Ordered;
 
 /**
@@ -35,7 +35,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator e
     }
 
     @Override
-    public boolean validate(final JEEContext context) {
+    public boolean validate(final WebContext context) {
         val clientIdResult = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID);
         return clientIdResult.map(clientId -> {
             if (!OAuth20Utils.isAuthorizedResponseTypeForService(context, getRegisteredServiceByClientId(clientId))) {
@@ -50,7 +50,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator e
     }
 
     @Override
-    public boolean supports(final JEEContext context) {
+    public boolean supports(final WebContext context) {
         if (preValidate(context)) {
             val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE);
             return OAuth20Utils.isResponseType(responseType.map(String::valueOf).orElse(StringUtils.EMPTY), getResponseType());

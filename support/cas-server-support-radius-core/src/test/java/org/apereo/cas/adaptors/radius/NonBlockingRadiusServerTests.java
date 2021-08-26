@@ -15,7 +15,7 @@ import org.junit.jupiter.api.condition.OS;
  * @since 5.2.0
  */
 @Tag("Radius")
-@EnabledOnOs({OS.LINUX, OS.MAC})
+@EnabledOnOs(OS.LINUX)
 public class NonBlockingRadiusServerTests extends AbstractRadiusServerTests {
     @Override
     public RadiusServer getRadiusServer() {

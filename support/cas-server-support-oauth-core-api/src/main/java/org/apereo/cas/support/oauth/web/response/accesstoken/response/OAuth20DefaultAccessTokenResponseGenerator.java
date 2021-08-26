@@ -15,11 +15,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -54,26 +53,24 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         resourceResolverName = AuditResourceResolvers.OAUTH2_ACCESS_TOKEN_RESPONSE_RESOURCE_RESOLVER)
     @Override
     @SneakyThrows
-    public ModelAndView generate(final HttpServletRequest request, final HttpServletResponse response,
+    public ModelAndView generate(final WebContext webContext,
                                  final OAuth20AccessTokenResponseResult result) {
         if (shouldGenerateDeviceFlowResponse(result)) {
-            return generateResponseForDeviceToken(request, response, result);
+            return generateResponseForDeviceToken(webContext, result);
         }
 
-        return generateResponseForAccessToken(request, response, result);
+        return generateResponseForAccessToken(webContext, result);
     }
 
     /**
      * Generate response for device token model and view.
      *
-     * @param request  the request
-     * @param response the response
-     * @param result   the result
+     * @param webContext the web context
+     * @param result     the result
      * @return the model and view
      */
     @SneakyThrows
-    protected ModelAndView generateResponseForDeviceToken(final HttpServletRequest request,
-                                                          final HttpServletResponse response,
+    protected ModelAndView generateResponseForDeviceToken(final WebContext webContext,
                                                           final OAuth20AccessTokenResponseResult result) {
         val model = getDeviceTokenResponseModel(result);
         return new ModelAndView(new MappingJackson2JsonView(MAPPER), model);
@@ -103,28 +100,24 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
     /**
      * Generate response for access token model and view.
      *
-     * @param request  the request
-     * @param response the response
-     * @param result   the result
+     * @param webContext the web context
+     * @param result     the result
      * @return the model and view
      */
-    protected ModelAndView generateResponseForAccessToken(final HttpServletRequest request,
-                                                          final HttpServletResponse response,
+    protected ModelAndView generateResponseForAccessToken(final WebContext webContext,
                                                           final OAuth20AccessTokenResponseResult result) {
-        val model = getAccessTokenResponseModel(request, response, result);
+        val model = getAccessTokenResponseModel(webContext, result);
         return new ModelAndView(new MappingJackson2JsonView(MAPPER), model);
     }
 
     /**
      * Generate internal.
      *
-     * @param request  the request
-     * @param response the response
-     * @param result   the result
+     * @param webContext the web context
+     * @param result     the result
      * @return the access token response model
      */
-    protected Map<String, Object> getAccessTokenResponseModel(final HttpServletRequest request,
-                                                              final HttpServletResponse response,
+    protected Map<String, Object> getAccessTokenResponseModel(final WebContext webContext,
                                                               final OAuth20AccessTokenResponseResult result) {
         val model = new LinkedHashMap<String, Object>();
         val generatedToken = result.getGeneratedToken();

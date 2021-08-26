@@ -84,19 +84,26 @@ public class WSFederationClaimsReleasePolicyTests {
     public void verifyAttributeRelease() {
         val service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
         val policy = new WSFederationClaimsReleasePolicy(
-            CollectionUtils.wrap(WSFederationClaims.COMMON_NAME.name(), "cn", WSFederationClaims.EMAIL_ADDRESS.name(), "email"));
+            CollectionUtils.wrap(WSFederationClaims.COMMON_NAME.name(), "cn",
+                WSFederationClaims.EMAIL_ADDRESS.name(), "email",
+                WSFederationClaims.GROUP.name(), "unkown",
+                WSFederationClaims.EMAIL_ADDRESS_2005.name(), "unknown"));
+        assertFalse(policy.getAllowedAttributes().isEmpty());
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
-            CollectionUtils.wrap("cn", "casuser", "email", "cas@example.org"));
+            CollectionUtils.wrap("cn", "casuser", "email", "cas@example.org",
+                WSFederationClaims.EMAIL_ADDRESS_2005.getUri(), "cas2005@example.org"));
         val results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), service);
-        assertSame(2, results.size());
+        assertSame(3, results.size());
         assertTrue(results.containsKey(WSFederationClaims.COMMON_NAME.getUri()));
         assertTrue(results.containsKey(WSFederationClaims.EMAIL_ADDRESS.getUri()));
+        assertTrue(results.containsKey(WSFederationClaims.EMAIL_ADDRESS_2005.getUri()));
+        
         val commonNameValue = results.get(WSFederationClaims.COMMON_NAME.getUri());
         assertEquals(CollectionUtils.wrapArrayList("casuser"), commonNameValue);
         val emailAddressValue = results.get(WSFederationClaims.EMAIL_ADDRESS.getUri());
         assertEquals(CollectionUtils.wrapArrayList("cas@example.org"), emailAddressValue);
     }
-
+    
     @Test
     public void verifySerializePolicyToJson() throws IOException {
         val policyWritten = new WSFederationClaimsReleasePolicy(

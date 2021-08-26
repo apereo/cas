@@ -33,7 +33,7 @@ public class CasEmbeddedContainerUtilsTests {
         assertNotNull(banner);
         val out = new ByteArrayOutputStream();
         banner.printBanner(new MockEnvironment(), getClass(), new PrintStream(out));
-        val results = new String(out.toByteArray(), StandardCharsets.UTF_8);
+        val results = out.toString(StandardCharsets.UTF_8);
         assertNotNull(results);
     }
 
@@ -52,7 +52,7 @@ public class CasEmbeddedContainerUtilsTests {
         assertNotNull(banner);
         val out = new ByteArrayOutputStream();
         banner.printBanner(new MockEnvironment(), getClass(), new PrintStream(out));
-        val results = new String(out.toByteArray(), StandardCharsets.UTF_8);
+        val results = out.toString(StandardCharsets.UTF_8);
         assertNotNull(results);
         assertEquals("Custom", results);
     }

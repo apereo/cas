@@ -41,8 +41,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Getter
 public class JwtBuilder {
-    private static final int MAP_SIZE = 8;
-
     private final CipherExecutor<Serializable, String> defaultTokenCipherExecutor;
 
     private final ServicesManager servicesManager;
@@ -196,7 +194,7 @@ public class JwtBuilder {
         private final String issuer;
 
         @Builder.Default
-        private final Map<String, List<Object>> attributes = new LinkedHashMap<>(MAP_SIZE);
+        private final Map<String, List<Object>> attributes = new LinkedHashMap<>();
 
         @Builder.Default
         private Optional<RegisteredService> registeredService = Optional.empty();

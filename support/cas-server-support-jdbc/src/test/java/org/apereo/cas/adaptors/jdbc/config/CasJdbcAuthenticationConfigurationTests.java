@@ -25,7 +25,6 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.DigestUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -65,17 +64,29 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     CasJdbcAuthenticationConfiguration.class
 }, properties = {
+    "cas.authn.jdbc.encode[0].sql=SELECT * FROM users WHERE uid=?",
+
     "cas.authn.jdbc.query[0].password-encoder.type=DEFAULT",
     "cas.authn.jdbc.query[0].password-encoder.encoding-algorithm=SHA-256",
-
+    "cas.authn.jdbc.query[0].sql=SELECT * FROM users WHERE uid=?",
+    "cas.authn.jdbc.query[0].field-password=psw",
+    "cas.authn.jdbc.query[0].credential-criteria=.*",
     "cas.authn.jdbc.query[0].user=sa",
     "cas.authn.jdbc.query[0].password=",
     "cas.authn.jdbc.query[0].driver-class=org.hsqldb.jdbcDriver",
     "cas.authn.jdbc.query[0].url=jdbc:hsqldb:mem:cas-hsql-authn-db",
     "cas.authn.jdbc.query[0].dialect=org.hibernate.dialect.HSQLDialect",
-    
-    "cas.authn.jdbc.query[0].sql=SELECT * FROM users WHERE uid=?",
-    "cas.authn.jdbc.query[0].field-password=psw"
+
+    "cas.authn.jdbc.search[0].order=1000",
+    "cas.authn.jdbc.query[0].field-user=uid",
+    "cas.authn.jdbc.query[0].field-password=psw",
+    "cas.authn.jdbc.query[0].table-users=custom_users_table",
+
+    "cas.authn.jdbc.bind[0].name=BindHandler",
+    "cas.authn.jdbc.bind[0].order=1000",
+    "cas.authn.jdbc.bind[0].driver-class=org.hsqldb.jdbcDriver",
+    "cas.authn.jdbc.bind[0].url=jdbc:hsqldb:mem:cas-hsql-authn-db",
+    "cas.authn.jdbc.bind[0].dialect=org.hibernate.dialect.HSQLDialect"
 })
 @Tag("JDBCAuthentication")
 public class CasJdbcAuthenticationConfigurationTests {
@@ -87,8 +98,7 @@ public class CasJdbcAuthenticationConfigurationTests {
     private AuthenticationManager authenticationManager;
 
     @BeforeEach
-    @SneakyThrows
-    public void initialize() {
+    public void initialize() throws Exception {
         val props = casProperties.getAuthn().getJdbc().getQuery().get(0);
         val dataSource = JpaBeans.newDataSource(props.getDriverClass(), props.getUser(),
             props.getPassword(), props.getUrl());

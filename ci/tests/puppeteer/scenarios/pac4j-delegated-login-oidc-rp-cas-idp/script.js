@@ -19,6 +19,8 @@ const cas = require('../../cas.js');
     await cas.click(page, "li #CasClient")
     await page.waitForNavigation();
 
+    await page.waitForTimeout(3000)
+    await cas.screenshot(page);
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(1000)
 
@@ -34,9 +36,7 @@ const cas = require('../../cas.js');
     await cas.click(page, "#allow")
     await page.waitForNavigation();
     await page.waitForTimeout(2000)
-
-    let header = await cas.textContent(page, "h1.green-text");
-    assert(header === "Success!")
+    await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     console.log(page.url());
     assert(page.url().startsWith("https://oidcdebugger.com/debug"))

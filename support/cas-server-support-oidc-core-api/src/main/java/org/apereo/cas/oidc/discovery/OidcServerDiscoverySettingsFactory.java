@@ -62,7 +62,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discovery.setRequestObjectSigningAlgValuesSupported(discoveryConfig.getRequestObjectSigningAlgValuesSupported());
         discovery.setRequestObjectEncryptionAlgValuesSupported(discoveryConfig.getRequestObjectEncryptionAlgValuesSupported());
         discovery.setRequestObjectEncryptionEncodingValuesSupported(discoveryConfig.getRequestObjectEncryptionEncodingValuesSupported());
-
+        discovery.setAuthorizationResponseIssuerParameterSupported(discoveryConfig.isAuthorizationResponseIssuerParameterSupported());
         discovery.setAcrValuesSupported(discoveryConfig.getAcrValuesSupported());
         if (discoveryConfig.getAcrValuesSupported().isEmpty()) {
             val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext).values()

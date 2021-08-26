@@ -55,13 +55,10 @@ The following events are tracked and recorded in the audit log:
 | `AUTHENTICATION_EVENT`                | `TRIGGERED`
 | `AUP_VERIFY`                          | `TRIGGERED`
 | `AUP_SUBMIT`                          | `TRIGGERED`
-| `EVALUATE_RISKY_AUTHENTICATION`       | N/A
-| `MITIGATE_RISKY_AUTHENTICATION`       | N/A
-| `MULTIFACTOR_AUTHENTICATION_BYPASS`   | N/A
 | `SAVE_SERVICE`                        | `SUCCESS`, `FAILURE`
 | `SAVE_CONSENT`                        | `SUCCESS`, `FAILURE`
-| `REQUEST_CHANGE_PASSWORD`             | N/A
 | `CHANGE_PASSWORD`                     | `SUCCESS`, `FAILURE`
+| `PROTOCOL_SPECIFICATION_VALIDATE`     | `SUCCESS`, `FAILURE`
 | `DELETE_SERVICE`                      | `SUCCESS`, `FAILURE`
 | `SAML2_RESPONSE`                      | `CREATED`, `FAILED`
 | `SAML2_REQUEST`                       | `CREATED`, `FAILED`
@@ -75,3 +72,7 @@ The following events are tracked and recorded in the audit log:
 | `DELEGATED_CLIENT`                    | `SUCCESS`, `FAILURE`
 | `SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION`          | `TRIGGERED`
 | `SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION`             | `TRIGGERED`
+| `EVALUATE_RISKY_AUTHENTICATION`       | N/A
+| `MITIGATE_RISKY_AUTHENTICATION`       | N/A
+| `MULTIFACTOR_AUTHENTICATION_BYPASS`   | N/A
+| `REQUEST_CHANGE_PASSWORD`             | N/A

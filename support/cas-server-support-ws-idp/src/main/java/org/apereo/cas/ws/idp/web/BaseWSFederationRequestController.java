@@ -103,7 +103,7 @@ public abstract class BaseWSFederationRequestController {
                         LOGGER.warn("Security token ticket [{}] is not found or has expired", sts);
                         return null;
                     }
-                    if (stt.getSecurityToken().isExpired()) {
+                    if (stt.getSecurityToken() == null || stt.getSecurityToken().isExpired()) {
                         LOGGER.warn("Security token linked to ticket [{}] has expired", sts);
                         return null;
                     }

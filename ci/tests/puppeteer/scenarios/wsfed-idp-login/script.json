@@ -1,0 +1,43 @@
+{
+  "dependencies": "ws-idp",
+  "properties": [
+    "--cas.authn.attribute-repository.stub.attributes.cn=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.givenName=casuser",
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@example.org",
+
+    "--cas.authn.wsfed-idp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS",
+    "--cas.authn.wsfed-idp.idp.realm-name=CAS",
+
+    "--cas.authn.wsfed-idp.sts.subject-name-id-format=unspecified",
+    "--cas.authn.wsfed-idp.sts.encrypt-tokens=true",
+    "--cas.authn.wsfed-idp.sts.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
+    "--cas.authn.wsfed-idp.sts.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ",
+    "--cas.authn.wsfed-idp.sts.realm.issuer=CAS",
+    "--cas.authn.wsfed-idp.sts.signing-keystore-file=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ststrust.jks",
+    "--cas.authn.wsfed-idp.sts.signing-keystore-password=storepass",
+    "--cas.authn.wsfed-idp.sts.encryption-keystore-file=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/stsencrypt.jks",
+    "--cas.authn.wsfed-idp.sts.encryption-keystore-password=storepass",
+    "--cas.authn.wsfed-idp.sts.realm.keystore-file=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/stsrealm.jks",
+    "--cas.authn.wsfed-idp.sts.realm.keystore-password=storepass",
+    "--cas.authn.wsfed-idp.sts.realm.keystore-alias=realma",
+    "--cas.authn.wsfed-idp.sts.realm.key-password=realma",
+    
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    "--cas.audit.engine.enabled=false",
+    "--cas.authn.accept.name=STATIC",
+
+    "--logging.level.org.apereo.cas=info",
+    "--logging.level.org.apache.cxf=info",
+
+    "--cas.http-client.host-name-verifier=none",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}
+
+
+
+

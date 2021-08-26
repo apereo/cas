@@ -23,13 +23,16 @@
                 <a href="fragments/loginform.html">Login Form goes here</a>
             </div>
         </section>
-        <section id="loginProviders" class="login-section login-providers"
-                 th:if="${delegatedAuthenticationProviderConfigurations} OR ${wsfedUrls}">
-            <div th:replace="fragments/loginProviders :: loginProviders">
-                <a href="fragments/loginProviders.html">loginProviders</a>
-            </div>
-        </section>
 
+        <span th:if="${#bools.isFalse(delegatedAuthenticationDynamicProviderSelection)}">
+            <section id="loginProviders" class="login-section login-providers"
+                     th:if="${delegatedAuthenticationProviderConfigurations} OR ${wsfedUrls}">
+                <div th:replace="fragments/loginProviders :: loginProviders">
+                    <a href="fragments/loginProviders.html">loginProviders</a>
+                </div>
+            </section>
+         </span>
+        
         <section id="acceptto" class="login-section login-qr d-xs-none d-md-block" th:if="${accepttoApplicationId}">
             <div th:replace="fragments/accepttoQRCode :: accepttoQRCode">
                 <a href="fragments/accepttoQRCode.html">accepttoQRCode</a>

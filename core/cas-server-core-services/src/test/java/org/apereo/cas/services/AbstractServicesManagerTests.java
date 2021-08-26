@@ -72,7 +72,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         assertNotNull(servicesManager.findServiceByName(TEST));
         assertNotNull(servicesManager.findServiceByName(TEST, RegexRegisteredService.class));
         assertTrue(servicesManager.count() > 0);
-        assertTrue(!servicesManager.getAllServicesOfType(RegexRegisteredService.class).isEmpty());
+        assertFalse(servicesManager.getAllServicesOfType(RegexRegisteredService.class).isEmpty());
 
         val mockSvc = mock(RegisteredService.class);
         assertTrue(servicesManager.getAllServicesOfType(mockSvc.getClass()).isEmpty());

@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Tickets")
+@Tag("Audits")
 public class TicketValidationResourceResolverTests {
     private TicketValidationResourceResolver resolver;
 

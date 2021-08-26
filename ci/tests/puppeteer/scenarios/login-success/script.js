@@ -10,8 +10,6 @@ const cas = require('../../cas.js');
 
     await cas.assertTicketGrantingCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service");
-
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
-    
     await browser.close();
 })();

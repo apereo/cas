@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -17,9 +16,8 @@ const cas = require('../../cas.js');
     await cas.loginWith(page, "casuser", "Mellon");
     await cas.click(page, "#allow");
     await page.waitForNavigation();
-    await page.waitForSelector('h1.green-text', { visible: true });
-    let header = await cas.textContent(page, "h1.green-text");
-    assert(header === "Success!")
+
+    await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     await browser.close();
 })();

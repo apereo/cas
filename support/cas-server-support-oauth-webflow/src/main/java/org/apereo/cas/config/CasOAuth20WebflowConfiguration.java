@@ -67,8 +67,7 @@ public class CasOAuth20WebflowConfiguration {
     @Autowired
     @Qualifier("oauthDistributedSessionStore")
     private ObjectProvider<SessionStore> oauthDistributedSessionStore;
-
-
+    
     @ConditionalOnMissingBean(name = "oauth20LogoutWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
