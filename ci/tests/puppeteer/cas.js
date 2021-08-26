@@ -383,9 +383,13 @@ exports.fetchDuoSecurityBypassCode = async (user = "casuser") => {
 exports.screenshot = async (page) => {
     let index = Math.floor(Math.random() * 10000);
     let filePath = path.join(__dirname, `/screenshot${index}.png`)
-    await page.screenshot({path: filePath, fullPage: true});
-    console.log(colors.green(`Screenshot saved at ${filePath}`));
-    await this.uploadImage(filePath);
+    try {
+        await page.screenshot({path: filePath, fullPage: true});
+        console.log(colors.green(`Screenshot saved at ${filePath}`));
+        await this.uploadImage(filePath);
+    } catch (e)  {
+        console.log(colors.red(`Unable to capture screenshot ${filePath}: ${e}`));
+    }
 }
 
 exports.assertTextContent = async (page, selector, value) => {
