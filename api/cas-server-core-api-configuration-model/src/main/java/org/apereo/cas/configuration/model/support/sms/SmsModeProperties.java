@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.sms;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -15,15 +16,16 @@ import java.util.Map;
  * This is {@link SmsModeProperties}.
  *
  * @author Jérôme Rautureau
- * @since 6.4.0
+ * @since 6.5.0
  */
 @RequiresModule(name = "cas-server-support-sms-smsmode")
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("SmsModeProperties")
 public class SmsModeProperties implements Serializable {
 
-  private static final long serialVersionUID = -4185702036613030013L;
+    private static final long serialVersionUID = -4185702036613030013L;
 
     /**
      * Secure token used to establish a handshake with the service.
@@ -32,20 +34,20 @@ public class SmsModeProperties implements Serializable {
     private String accessToken;
 
     /**
-     * query attribute name for the message
+     * Query attribute name for the message.
      */
-    private String messageAttributeName = "message";
+    private String messageAttribute = "message";
 
     /**
-     * query attribute name for the to
+     * Query attribute name for the to field.
      */
-    private String toAttributeName = "numero";
+    private String toAttribute = "numero";
 
     /**
      * URL to contact and send messages (GET only).
      */
     @RequiredProperty
-    private String sendMessageUrl = "https://api.smsmode.com/http/1.6/sendSMS.do";
+    private String url = "https://api.smsmode.com/http/1.6/sendSMS.do";
 
     /**
      * Headers, defined as a Map, to include in the request when making the HTTP call.
