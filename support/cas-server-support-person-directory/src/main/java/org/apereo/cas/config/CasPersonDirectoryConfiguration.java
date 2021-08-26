@@ -188,6 +188,11 @@ public class CasPersonDirectoryConfiguration {
                 .collect(Collectors.joining(","));
             LOGGER.debug("Configured attribute repository sources to merge together: [{}]", names);
         }
+
+        val recoverExceptions = properties.getCore().isRecoverExceptions();
+        aggregate.setRecoverExceptions(recoverExceptions);
+        LOGGER.debug("Configured recoverExceptions: [{}]", recoverExceptions);
+
         return aggregate;
     }
 
