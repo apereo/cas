@@ -29,6 +29,25 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CookieRetrievingCookieGeneratorTests {
 
     @Test
+    public void verifyCookiePathNotModified() {
+        val request = new MockHttpServletRequest();
+        var response = new MockHttpServletResponse();
+        var context = getCookieGenerationContext();
+        context.setPath("/custom/path/");
+
+        var gen1 = new CookieRetrievingCookieGenerator(context);
+        gen1.addCookie(request, response, "some-value");
+        var cookie1 = (MockCookie) response.getCookie(context.getName());
+        assertEquals("/custom/path/", cookie1.getPath());
+
+        context.setPath(StringUtils.EMPTY);
+        gen1 = new CookieRetrievingCookieGenerator(context);
+        gen1.addCookie(request, response, "some-value");
+        cookie1 = (MockCookie) response.getCookie(context.getName());
+        assertEquals("/", cookie1.getPath());
+    }
+
+    @Test
     public void verifyCookieValueMissing() {
         val context = getCookieGenerationContext();
         context.setName(StringUtils.EMPTY);
