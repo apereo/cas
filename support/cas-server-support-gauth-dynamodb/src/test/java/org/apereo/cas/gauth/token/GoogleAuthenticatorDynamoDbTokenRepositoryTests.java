@@ -24,6 +24,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -32,6 +33,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.Getter;
 import lombok.val;
+import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -45,6 +47,8 @@ import software.amazon.awssdk.core.SdkSystemSetting;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -119,5 +123,20 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryTests extends BaseOneTime
         oneTimeTokenAuthenticatorTokenRepository.clean();
         t1 = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, t1.getToken());
         assertNull(t1);
+    }
+
+    @Test
+    public void verifyLargeDataSet() {
+        val tokens = Stream.generate(() -> new GoogleAuthenticatorToken(Integer.valueOf(RandomUtils.randomNumeric(6)), CASUSER)).limit(1000);
+        var stopwatch = new StopWatch();
+        stopwatch.start();
+        tokens.forEach(token -> {
+            oneTimeTokenAuthenticatorTokenRepository.store(token);
+            assertNotNull(oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, token.getToken()));
+            oneTimeTokenAuthenticatorTokenRepository.remove(token.getToken());
+        });
+        stopwatch.stop();
+        var time = stopwatch.getTime(TimeUnit.SECONDS);
+        assertTrue(time <= 15);
     }
 }
