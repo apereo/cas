@@ -81,7 +81,7 @@ public class DelegatedAuthenticationAccessStrategyHelper {
                                                   final HttpServletRequest request) {
         if (service == null || StringUtils.isBlank(service.getId())) {
             LOGGER.debug("Can not evaluate delegated authentication policy without a service");
-            return true;
+            return false;
         }
 
         if (StringUtils.isBlank(clientName)) {
