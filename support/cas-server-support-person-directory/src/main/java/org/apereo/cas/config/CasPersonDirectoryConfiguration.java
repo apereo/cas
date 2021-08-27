@@ -191,7 +191,7 @@ public class CasPersonDirectoryConfiguration {
 
         val recoverExceptions = properties.getCore().isRecoverExceptions();
         aggregate.setRecoverExceptions(recoverExceptions);
-        LOGGER.debug("Configured recoverExceptions: [{}]", recoverExceptions);
+        LOGGER.trace("Configured attribute repository to recover from exceptions: [{}]", recoverExceptions);
 
         return aggregate;
     }
