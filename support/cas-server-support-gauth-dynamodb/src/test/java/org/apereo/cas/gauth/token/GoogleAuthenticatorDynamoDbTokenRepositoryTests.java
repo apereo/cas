@@ -31,8 +31,10 @@ import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfigu
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.Getter;
+import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -40,6 +42,11 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import software.amazon.awssdk.core.SdkSystemSetting;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link GoogleAuthenticatorDynamoDbTokenRepositoryTests}.
@@ -100,5 +107,17 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryTests extends BaseOneTime
     @BeforeEach
     public void initialize() {
         oneTimeTokenAuthenticatorTokenRepository.removeAll();
+    }
+
+    @Test
+    public void verifyExpiredTokens() {
+        val token = new GoogleAuthenticatorToken(1111, CASUSER);
+        token.setIssuedDateTime(LocalDateTime.now(ZoneOffset.UTC).plusHours(1));
+        oneTimeTokenAuthenticatorTokenRepository.store(token);
+        var t1 = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, token.getToken());
+        assertEquals(token, t1);
+        oneTimeTokenAuthenticatorTokenRepository.clean();
+        t1 = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, t1.getToken());
+        assertNull(t1);
     }
 }

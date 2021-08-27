@@ -45,14 +45,14 @@ public class GoogleAuthenticatorDynamoDbConfiguration {
     }
 
     @Bean
-    public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() throws Exception {
+    public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
         return new GoogleAuthenticatorDynamoDbTokenRepository(googleAuthenticatorDynamoDbTokenRepositoryFacilitator(),
             casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "googleAuthenticatorDynamoDbTokenRepositoryFacilitator")
-    public GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator googleAuthenticatorDynamoDbTokenRepositoryFacilitator() throws Exception {
+    public GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator googleAuthenticatorDynamoDbTokenRepositoryFacilitator() {
         val dynamoDbProperties = casProperties.getAuthn().getMfa().getGauth().getDynamoDb();
         val facilitator = new GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator(dynamoDbProperties, amazonDynamoDbGoogleAuthenticatorClient());
         if (!dynamoDbProperties.isPreventTableCreationOnStartup()) {
