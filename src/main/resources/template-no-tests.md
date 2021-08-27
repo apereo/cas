@@ -9,16 +9,18 @@ presents any other type of change that generally can be accepted without proper 
 please comment and explain on the pull request.
 
 Please re-open the pull request when you're ready and have included tests to verify 
-functionality. If you'd like to keep the patch around and open while you make progress, 
-please mark the patch as WIP by including the word "WIP" in the pull request title, or create the initial pull request in "Draft" status.
+functionality. If you feel like you are not immediately available or have no time to work out test cases and steps to
+reproduce and verify the changes, that's not an issue. Please revisit the pull request as soon as it's convenient for you
+to resume work as your schedule allows. If you'd like to keep the patch around and open while you make progress, 
+please mark the patch as WIP by including the word "WIP" in the pull request title, 
+or create the initial pull request in "Draft" status.
 
 Furthermore,
 
 - To learn about CAS test process and how you may design and development unit/integration tests, please [see this link](https://apereo.github.io/cas/development/developer/Test-Process.html). If you are unclear on how to write basic unit tests, please [see this link](https://junit.org/).
-- See [Contributor Guidelines](https://apereo.github.io/cas/developer/Contributor-Guidelines.html) to learn more about how to contribute to the project.
-- For additional details on how to design and run tests, please see [this document](https://apereo.github.io/cas/development/developer/Test-Process.html).
+- See [Contributor Guidelines](https://apereo.github.io/cas/developer/Contributor-Guidelines.html) to learn more about how to contribute to the project and review the criteria that allows for the project to accept contributions.
 - If you are seeking assistance and have a question about your CAS deployment, please visit [this page](https://apereo.github.io/cas/Support.html) to learn more about support options.
-- If your changeset introduces a new CAS feature or improvement, please consider starting 
+- If your change-set introduces a new CAS feature or improvement, please consider starting 
   discussion with the project to see if your patch can be accepted and maintained by project owners and maintainers. Unless your change is
   extremely trivial and has been through proper review and is sponsored by a project maintainer, please do not spend time 
   modifying code and configuration in a proposed pull request. 
