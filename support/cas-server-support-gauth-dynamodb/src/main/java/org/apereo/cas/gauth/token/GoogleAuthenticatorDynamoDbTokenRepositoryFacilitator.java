@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.model.support.mfa.gauth.DynamoDbGoogleAuthen
 import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
 import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -36,7 +35,6 @@ import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +57,8 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
 
     private final DynamoDbClient amazonDynamoDBClient;
 
-    private static Map<String, AttributeValue> buildTableAttributeValuesMap(final OneTimeToken record) throws Exception {
+    @SneakyThrows
+    private static Map<String, AttributeValue> buildTableAttributeValuesMap(final OneTimeToken record) {
         val values = new HashMap<String, AttributeValue>();
         values.put(ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getId())).build());
         values.put(ColumnNames.USERID.getColumnName(), AttributeValue.builder().s(record.getUserId().toLowerCase()).build());
@@ -145,7 +144,6 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
      *
      * @param token the token
      */
-    @SneakyThrows
     public void store(final OneTimeToken token) {
         val values = buildTableAttributeValuesMap(token);
         val putItemRequest = PutItemRequest.builder().tableName(dynamoDbProperties.getTokenTableName()).item(values).build();
@@ -308,28 +306,22 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
         private final String columnName;
     }
 
-    @SneakyThrows
     private Set<GoogleAuthenticatorToken> getRecordsByKeys(final List<DynamoDbQueryBuilder> queries) {
-        try {
-            val scanRequest = ScanRequest.builder()
-                .tableName(dynamoDbProperties.getTokenTableName())
-                .scanFilter(queries.stream()
-                    .map(query -> {
-                        val cond = Condition.builder().comparisonOperator(query.getOperator())
-                            .attributeValueList(query.getAttributeValue()).build();
-                        return Pair.of(query.getKey(), cond);
-                    })
-                    .collect(Collectors.toMap(Pair::getKey, Pair::getValue)))
-                .build();
-            LOGGER.debug("Submitting request [{}] to get record with keys [{}]", scanRequest, queries);
-            val items = amazonDynamoDBClient.scan(scanRequest).items();
-            return items
-                .stream()
-                .map(GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator::extractAttributeValuesFrom)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return new HashSet<>(0);
+        val scanRequest = ScanRequest.builder()
+            .tableName(dynamoDbProperties.getTokenTableName())
+            .scanFilter(queries.stream()
+                .map(query -> {
+                    val cond = Condition.builder().comparisonOperator(query.getOperator())
+                        .attributeValueList(query.getAttributeValue()).build();
+                    return Pair.of(query.getKey(), cond);
+                })
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue)))
+            .build();
+        LOGGER.debug("Submitting request [{}] to get record with keys [{}]", scanRequest, queries);
+        val items = amazonDynamoDBClient.scan(scanRequest).items();
+        return items
+            .stream()
+            .map(GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator::extractAttributeValuesFrom)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }
