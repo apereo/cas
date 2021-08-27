@@ -330,7 +330,7 @@ public class DynamoDbCasEventsFacilitator {
          */
         PROPERTIES("properties"),
         /**
-         * properties column.
+         * creation time column.
          */
         CREATION_TIME("creationTime");
 
