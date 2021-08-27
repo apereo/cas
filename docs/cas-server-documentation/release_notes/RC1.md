@@ -78,11 +78,22 @@ to assist with the discovery and selection of identity providers in more dynamic
 
 ![image](https://user-images.githubusercontent.com/1205228/130757773-72fe26b0-54e9-4c4c-8ab6-8be5b19b2816.png)
 
+### SmsMode SMS Messaging
+
+[SMSMode](../notifications/SMS-Messaging-Configuration-SmsMode.html) can now be 
+used as an SMS provider to handle text-message notifications.
+
+### Google Authenticator via DynamoDb
+
+Google Authenticator registration records and tokens may now be 
+kept inside a [DynamoDb instance](../mfa/GoogleAuthenticator-Authentication-Registration-DynamoDb.html).
+
 ## Other Stuff
 
 - SAML2 Unsolicited endpoint is now able to preserve custom query parameters.
 - LDAP search entry handlers are now able to merges the values of one or more attributes in all entries into a single attribute.
 - SAML2 authentication requests that do not specify a protocol binding are pre-processed to locate the proper binding correctly.
+- Attribute resolution via Person Directory can optionally be taught to *not* recover from exceptions and block.
 
 ## Library Upgrades
 

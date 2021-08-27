@@ -233,6 +233,7 @@ layout: null
             *   [JSON](/cas/{{ version }}/mfa/GoogleAuthenticator-Authentication-Registration-JSON.html)
             *   [LDAP](/cas/{{ version }}/mfa/GoogleAuthenticator-Authentication-Registration-LDAP.html)
             *   [MongoDb](/cas/{{ version }}/mfa/GoogleAuthenticator-Authentication-Registration-MongoDb.html)
+            *   [DynamoDb](/cas/{{ version }}/mfa/GoogleAuthenticator-Authentication-Registration-DynamoDb.html)
             *   [Redis](/cas/{{ version }}/mfa/GoogleAuthenticator-Authentication-Registration-Redis.html)
             *   [REST](/cas/{{ version }}/mfa/GoogleAuthenticator-Authentication-Registration-Rest.html)
         *   [Authy](/cas/{{ version }}/mfa/AuthyAuthenticator-Authentication.html)

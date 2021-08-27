@@ -69,6 +69,7 @@ records can be controlled via CAS settings.
 | JPA              | [See this guide](GoogleAuthenticator-Authentication-Registration-JPA.html).
 | CouchDb          | [See this guide](GoogleAuthenticator-Authentication-Registration-CouchDb.html).
 | MongoDb          | [See this guide](GoogleAuthenticator-Authentication-Registration-MongoDb.html).
+| DynamoDb         | [See this guide](GoogleAuthenticator-Authentication-Registration-DynamoDb.html).
 | Redis            | [See this guide](GoogleAuthenticator-Authentication-Registration-Redis.html).
 | LDAP             | [See this guide](GoogleAuthenticator-Authentication-Registration-LDAP.html).
 | REST             | [See this guide](GoogleAuthenticator-Authentication-Registration-Rest.html).
