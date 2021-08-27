@@ -90,10 +90,10 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
 
         val request = CreateTableRequest.builder()
             .attributeDefinitions(AttributeDefinition.builder()
-                .attributeName(ColumnNames.TOKEN.getColumnName())
+                .attributeName(ColumnNames.ID.getColumnName())
                 .attributeType(ScalarAttributeType.N).build())
             .keySchema(KeySchemaElement.builder()
-                .attributeName(ColumnNames.TOKEN.getColumnName())
+                .attributeName(ColumnNames.ID.getColumnName())
                 .keyType(KeyType.HASH).build())
             .provisionedThroughput(throughput)
             .billingMode(BillingMode.fromValue(dynamoDbProperties.getBillingMode().name()))
@@ -195,14 +195,24 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
      * @param otp the otp
      */
     public void remove(final Integer otp) {
-        val del = DeleteItemRequest.builder()
-            .tableName(dynamoDbProperties.getTokenTableName())
-            .key(CollectionUtils.wrap(ColumnNames.TOKEN.getColumnName(),
-                AttributeValue.builder().n(String.valueOf(otp)).build()))
-            .build();
-        LOGGER.debug("Submitting delete request [{}] for token [{}]", del, otp);
-        val res = amazonDynamoDBClient.deleteItem(del);
-        LOGGER.debug("Delete request came back with result [{}]", res);
+        val query = List.of(
+            DynamoDbQueryBuilder.builder()
+                .key(ColumnNames.TOKEN.getColumnName())
+                .attributeValue(List.of(AttributeValue.builder().n(String.valueOf(otp)).build()))
+                .operator(ComparisonOperator.EQ)
+                .build());
+        val records = getRecordsByKeys(query);
+
+        records.forEach(record -> {
+            val del = DeleteItemRequest.builder()
+                .tableName(dynamoDbProperties.getTokenTableName())
+                .key(CollectionUtils.wrap(ColumnNames.ID.getColumnName(),
+                    AttributeValue.builder().n(String.valueOf(record.getId())).build()))
+                .build();
+            LOGGER.debug("Submitting delete request [{}] for [{}]", del, record.getId());
+            val res = amazonDynamoDBClient.deleteItem(del);
+            LOGGER.debug("Delete request came back with result [{}]", res);
+        });
     }
 
     /**
@@ -215,17 +225,17 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.USERID.getColumnName())
                 .attributeValue(List.of(AttributeValue.builder().s(String.valueOf(uid)).build()))
-                .operator(ComparisonOperator.GE)
+                .operator(ComparisonOperator.EQ)
                 .build());
         val records = getRecordsByKeys(query);
 
         records.forEach(record -> {
             val del = DeleteItemRequest.builder()
                 .tableName(dynamoDbProperties.getTokenTableName())
-                .key(CollectionUtils.wrap(ColumnNames.TOKEN.getColumnName(),
-                    AttributeValue.builder().n(String.valueOf(record.getToken())).build()))
+                .key(CollectionUtils.wrap(ColumnNames.ID.getColumnName(),
+                    AttributeValue.builder().n(String.valueOf(record.getId())).build()))
                 .build();
-            LOGGER.debug("Submitting delete request [{}] since [{}]", del, record.getId());
+            LOGGER.debug("Submitting delete request [{}] for [{}]", del, record.getId());
             val res = amazonDynamoDBClient.deleteItem(del);
             LOGGER.debug("Delete request came back with result [{}]", res);
         });
@@ -238,14 +248,29 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
      * @param otp the otp
      */
     public void remove(final String uid, final Integer otp) {
-        val del = DeleteItemRequest.builder()
-            .tableName(dynamoDbProperties.getTokenTableName())
-            .key(CollectionUtils.wrap(ColumnNames.USERID.getColumnName(), AttributeValue.builder().s(uid.toLowerCase()).build()))
-            .key(CollectionUtils.wrap(ColumnNames.TOKEN.getColumnName(), AttributeValue.builder().n(String.valueOf(otp)).build()))
-            .build();
-        LOGGER.debug("Submitting delete request [{}] for user [{}] and token [{}]", del, uid, otp);
-        val res = amazonDynamoDBClient.deleteItem(del);
-        LOGGER.debug("Delete request came back with result [{}]", res);
+        val query = List.of(
+            DynamoDbQueryBuilder.builder()
+                .key(ColumnNames.USERID.getColumnName())
+                .attributeValue(List.of(AttributeValue.builder().s(String.valueOf(uid)).build()))
+                .operator(ComparisonOperator.EQ)
+                .build(),
+            DynamoDbQueryBuilder.builder()
+                .key(ColumnNames.TOKEN.getColumnName())
+                .attributeValue(List.of(AttributeValue.builder().n(String.valueOf(otp)).build()))
+                .operator(ComparisonOperator.EQ)
+                .build());
+        val records = getRecordsByKeys(query);
+
+        records.forEach(record -> {
+            val del = DeleteItemRequest.builder()
+                .tableName(dynamoDbProperties.getTokenTableName())
+                .key(CollectionUtils.wrap(ColumnNames.ID.getColumnName(),
+                    AttributeValue.builder().n(String.valueOf(record.getId())).build()))
+                .build();
+            LOGGER.debug("Submitting delete request [{}] for [{}]", del, record.getId());
+            val res = amazonDynamoDBClient.deleteItem(del);
+            LOGGER.debug("Delete request came back with result [{}]", res);
+        });
     }
 
     /**
@@ -267,8 +292,8 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
         records.forEach(record -> {
             val del = DeleteItemRequest.builder()
                 .tableName(dynamoDbProperties.getTokenTableName())
-                .key(CollectionUtils.wrap(ColumnNames.TOKEN.getColumnName(),
-                    AttributeValue.builder().n(String.valueOf(record.getToken())).build()))
+                .key(CollectionUtils.wrap(ColumnNames.ID.getColumnName(),
+                    AttributeValue.builder().n(String.valueOf(record.getId())).build()))
                 .build();
             LOGGER.debug("Submitting delete request [{}] since [{}]", del, epoch);
             val res = amazonDynamoDBClient.deleteItem(del);

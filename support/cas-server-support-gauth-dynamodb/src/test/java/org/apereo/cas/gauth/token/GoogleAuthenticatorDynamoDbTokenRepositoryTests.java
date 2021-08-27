@@ -127,7 +127,7 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryTests extends BaseOneTime
 
     @Test
     public void verifyLargeDataSet() {
-        val tokens = Stream.generate(() -> new GoogleAuthenticatorToken(Integer.valueOf(RandomUtils.randomNumeric(6)), CASUSER)).limit(1000);
+        val tokens = Stream.generate(() -> new GoogleAuthenticatorToken(Integer.valueOf(RandomUtils.randomNumeric(6)), CASUSER)).limit(500);
         var stopwatch = new StopWatch();
         stopwatch.start();
         tokens.forEach(token -> {
@@ -137,6 +137,6 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryTests extends BaseOneTime
         });
         stopwatch.stop();
         var time = stopwatch.getTime(TimeUnit.SECONDS);
-        assertTrue(time <= 15);
+        assertTrue(time <= 10);
     }
 }
