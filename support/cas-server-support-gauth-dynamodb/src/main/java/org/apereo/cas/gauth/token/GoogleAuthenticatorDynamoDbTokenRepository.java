@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 
 /**
  * This is {@link GoogleAuthenticatorDynamoDbTokenRepository}.
@@ -63,7 +63,7 @@ public class GoogleAuthenticatorDynamoDbTokenRepository extends BaseOneTimeToken
 
     @Override
     protected void cleanInternal() {
-        val time = LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(this.expireTokensInSeconds);
+        val time = LocalDateTime.now(ZoneOffset.UTC).minusSeconds(this.expireTokensInSeconds);
         facilitator.removeFrom(time);
     }
 }
