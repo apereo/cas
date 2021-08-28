@@ -523,6 +523,11 @@ public interface CasWebflowConstants {
     String STATE_ID_VIEW_SERVICE_ERROR = "viewServiceErrorView";
 
     /**
+     * The state 'viewWebflowConfigurationErrorView'.
+     */
+    String STATE_ID_VIEW_WEBFLOW_CONFIG_ERROR = "viewWebflowConfigurationErrorView";
+
+    /**
      * The state id 'warn'.
      */
     String STATE_ID_WARN = "warn";
@@ -846,6 +851,11 @@ public interface CasWebflowConstants {
      * The view id 'casServiceErrorView'.
      */
     String VIEW_ID_SERVICE_ERROR = "error/casServiceErrorView";
+
+    /**
+     * The view id 'casWebflowConfigErrorView'.
+     */
+    String VIEW_ID_WEBFLOW_CONFIG_ERROR = "error/casWebflowConfigErrorView";
 
     /**
      * View name used for form-login into admin/actuator endpoints.
