@@ -9,7 +9,7 @@ category: Authentication
 
 Stores authentication events into a Redis database.
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-redis" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-events-redis" %}
 
-{% include casproperties.html properties="cas.events.redis" %}
+{% include_cached casproperties.html properties="cas.events.redis" %}
 

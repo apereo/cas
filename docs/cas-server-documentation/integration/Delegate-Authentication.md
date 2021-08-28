@@ -19,9 +19,9 @@ the [Pac4j library](https://github.com/pac4j/pac4j) and delegate the authenticat
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-pac4j-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-pac4j-webflow" %}
 
-{% include casproperties.html properties="cas.authn.pac4j.core" %}
+{% include_cached casproperties.html properties="cas.authn.pac4j.core" %}
 
 <div class="alert alert-info"><strong>Note</strong><p>The client issuing the authentication request 
 can be of any type (SAML, OAuth2, OpenID Connect, etc) and is allowed to submit the 
@@ -66,7 +66,7 @@ Identity providers for delegated authentication can be registered with CAS using
 Identity providers for delegated authentication can be provided to CAS 
 using an external REST endpoint. 
 
-{% include casproperties.html properties="cas.authn.pac4j.rest" %}
+{% include_cached casproperties.html properties="cas.authn.pac4j.rest" %}
 
 This allows the CAS server to reach to 
 a remote REST endpoint whose responsibility is to produce the following payload in the response body:
@@ -131,7 +131,7 @@ and all other relevant details for the given authentication request are tracked 
 *session attributes* inside a dedicated session store capable of replication, which is specially
 more relevant for clustred deployments.
 
-{% include casproperties.html properties="cas.session-replication" %}
+{% include_cached casproperties.html properties="cas.session-replication" %}
 
 ## Troubleshooting
 

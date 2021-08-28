@@ -15,7 +15,7 @@ external/guest accounts with their equivalent found in the authentication source
 
 ## Groovy Provisioner
    
-{% include casproperties.html properties="cas.authn.pac4j.provisioning.groovy" %}
+{% include_cached casproperties.html properties="cas.authn.pac4j.provisioning.groovy" %}
 
 Provisioning tasks can be carried out using an external Groovy script with the following structure:
 
@@ -40,7 +40,7 @@ It is not expected for the script to return a value. The following parameters ar
 
 ## REST Provisioner
 
-{% include casproperties.html properties="cas.authn.pac4j.provisioning.rest" %}
+{% include_cached casproperties.html properties="cas.authn.pac4j.provisioning.rest" %}
 
 Provisioning tasks can be carried out using an external REST endpoint expected to receive the following:
      

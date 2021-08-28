@@ -23,7 +23,7 @@ the userinfo/profile endpoints in exchange for an access token as indicated by t
 
 ## Configuration
 
-{% include casproperties.html properties="cas.authn.oidc.core" %}
+{% include_cached casproperties.html properties="cas.authn.oidc.core" %}
 
 ## Scope-based Claims
 

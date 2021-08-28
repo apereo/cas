@@ -10,5 +10,5 @@ category: Attributes
 
 The following configuration describes how to fetch and retrieve attributes from Couchbase attribute repositories.
 
-{% include casproperties.html properties="cas.authn.attribute-repository.couchbase" %}
+{% include_cached casproperties.html properties="cas.authn.attribute-repository.couchbase" %}
 

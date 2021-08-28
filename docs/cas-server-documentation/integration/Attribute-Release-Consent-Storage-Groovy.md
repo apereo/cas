@@ -45,5 +45,5 @@ def deletePrincipal(Object[] args) {
 
 ## Configuration
 
-{% include casproperties.html properties="cas.consent.groovy" %}
+{% include_cached casproperties.html properties="cas.consent.groovy" %}
 

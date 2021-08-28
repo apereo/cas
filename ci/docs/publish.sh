@@ -21,9 +21,9 @@ function validateProjectDocumentation() {
   echo "Running html-proof image: ${HTML_PROOFER_IMAGE} on ${DOCS_FOLDER} with output ${DOCS_OUTPUT} using ${HTML_PROOFER_SCRIPT}"
   docker run --name="html-proofer" --rm \
     --workdir /root \
-    -v ${DOCS_FOLDER}:/root/docs \
+    -v "${DOCS_FOLDER}":/root/docs \
     -v ${DOCS_OUTPUT}:/root/out \
-    -v ${HTML_PROOFER_SCRIPT}:/root/html-proofer-docs.rb \
+    -v "${HTML_PROOFER_SCRIPT}":/root/html-proofer-docs.rb \
     --entrypoint /usr/local/bin/ruby \
     ${HTML_PROOFER_IMAGE} \
     /root/html-proofer-docs.rb
@@ -46,7 +46,8 @@ branchVersion="master"
 generateData=true
 proofRead=true
 publishDocs=true
-preBuild=true
+buildDocs=true
+serve=false
 
 while (("$#")); do
   case "$1" in
@@ -67,7 +68,11 @@ while (("$#")); do
     shift 2
     ;;
   --build)
-    preBuild=$2
+    buildDocs=$2
+    shift 2
+    ;;
+  --serve)
+    serve=$2
     shift 2
     ;;
   *)
@@ -87,21 +92,21 @@ fi
 
 echo "-------------------------------------------------------"
 printgreen "Branch: \t${branchVersion}"
-printgreen "Build: \t\t${preBuild}"
+printgreen "Build: \t\t${buildDocs}"
+printgreen "Serve: \t\t${serve}"
 printgreen "Generate Data: \t${generateData}"
 printgreen "Validate: \t${proofRead}"
 printgreen "Publish: \t${publishDocs}"
-printgreen "Ruby Version: \t`ruby -v`"
+printgreen "Ruby Version: \t$(ruby -v)"
 echo "-------------------------------------------------------"
 
-
 rm -Rf "$PWD/gh-pages"
-[[ -d $PWD/docs-latest ]] && rm -Rf $PWD/docs-latest
-[[ -d $PWD/docs-includes ]] && rm -Rf $PWD/docs-includes
+[[ -d $PWD/docs-latest ]] && rm -Rf "$PWD"/docs-latest
+[[ -d $PWD/docs-includes ]] && rm -Rf "$PWD"/docs-includes
 
 printgreen "Copying project documentation over to $PWD/docs-latest...\n"
 chmod -R 777 docs/cas-server-documentation
-cp -R docs/cas-server-documentation/ $PWD/docs-latest
+cp -R docs/cas-server-documentation/ "$PWD"/docs-latest
 mv "$PWD/docs-latest/_includes" "$PWD/docs-includes"
 
 printgreen "Cloning ${REPOSITORY_NAME}'s [gh-pages] branch...\n"
@@ -123,8 +128,8 @@ mv "$PWD/docs-latest/Gemfile" "$PWD/gh-pages"
 mv "$PWD/docs-latest/_config.yml" "$PWD/gh-pages"
 rm -f "$PWD/gh-pages/Gemfile.lock"
 
-cp -Rf $PWD/docs-latest/* "$PWD/gh-pages/$branchVersion"
-cp -Rf $PWD/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
+cp -Rf "$PWD"/docs-latest/* "$PWD/gh-pages/$branchVersion"
+cp -Rf "$PWD"/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
 rm -Rf "$PWD/gh-pages/_data/$branchVersion" >/dev/null
 rm -Rf "$PWD/docs-latest"
 rm -Rf "$PWD/docs-includes"
@@ -201,13 +206,18 @@ fi
 pushd .
 cd "$PWD/gh-pages"
 
-if [[ $preBuild == "true" ]]; then
+if [[ ${buildDocs} == "true" ]]; then
   printgreen "Installing documentation dependencies...\n"
   bundle install
   printgreen "\nBuilding documentation site for $branchVersion with data at $PWD/gh-pages/_data"
   echo -n "Starting at " && date
   jekyll --version
-  bundle exec jekyll build --profile
+
+  if [[ ${serve} == "true" ]]; then
+    bundle exec jekyll serve --profile
+  else
+    bundle exec jekyll build --profile
+  fi
   echo -n "Ended at " && date
   retVal=$?
   if [[ ${retVal} -eq 1 ]]; then

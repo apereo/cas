@@ -12,13 +12,13 @@ Verify and authenticate credentials using [Couchbase](http://www.couchbase.com/)
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-couchbase-authentication" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-couchbase-authentication" %}
 
-{% include casproperties.html properties="cas.authn.couchbase" %}
+{% include_cached casproperties.html properties="cas.authn.couchbase" %}
 
 ## Couchbase Principal Attributes
 
 The above dependency may also be used, in the event that principal attributes 
 need to be fetched from a Couchbase database without necessarily authenticating credentials against Couchbase. 
 
-{% include casproperties.html properties="cas.authn.attribute-repository.couchbase" %}
+{% include_cached casproperties.html properties="cas.authn.attribute-repository.couchbase" %}

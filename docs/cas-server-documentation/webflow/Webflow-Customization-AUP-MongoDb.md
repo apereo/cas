@@ -12,6 +12,6 @@ CAS can be configured to use a MongoDb instance as the storage mechanism. Upon a
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-mongo" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-aup-mongo" %}
 
-{% include casproperties.html properties="cas.acceptable-usage-policy.mongo" %}
+{% include_cached casproperties.html properties="cas.acceptable-usage-policy.mongo" %}

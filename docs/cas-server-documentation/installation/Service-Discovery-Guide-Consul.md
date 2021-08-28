@@ -53,9 +53,9 @@ Each individual CAS server is given the ability to auto-register itself with the
 
 Support is added by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consul-client" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-consul-client" %}
 
-{% include casproperties.html thirdParty="spring.cloud.consul,spring.cloud.config.discovery" %}
+{% include_cached casproperties.html thirdParty="spring.cloud.consul,spring.cloud.config.discovery" %}
 
 ### Troubleshooting
 

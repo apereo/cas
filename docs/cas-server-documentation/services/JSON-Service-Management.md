@@ -13,7 +13,7 @@ JSON files are expected to be found inside a configured directory location and t
 
 Support is enabled by adding the following module into the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-json-service-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-json-service-registry" %}
 
 A sample JSON file follows:
 
@@ -27,7 +27,7 @@ A sample JSON file follows:
 }
 ```
 
-{% include casproperties.html properties="cas.service-registry.json" %}
+{% include_cached casproperties.html properties="cas.service-registry.json" %}
 
 <div class="alert alert-warning"><strong>Clustering Services</strong><p>
 You MUST consider that if your CAS server deployment is clustered, each CAS node in the cluster must have

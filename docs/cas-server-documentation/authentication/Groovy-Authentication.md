@@ -13,9 +13,9 @@ handling password policy and all other related matters are the sole responsibili
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-generic" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-generic" %}
 
-{% include casproperties.html properties="cas.authn.groovy"  %}
+{% include_cached casproperties.html properties="cas.authn.groovy"  %}
 
 The Groovy script may be designed as:
 

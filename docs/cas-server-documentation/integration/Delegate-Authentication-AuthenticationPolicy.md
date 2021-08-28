@@ -39,7 +39,7 @@ The following fields are supported for the authentication policy:
 
 ## Configuration
 
-{% include casproperties.html properties="cas.authn.pac4j.core" %}
+{% include_cached casproperties.html properties="cas.authn.pac4j.core" %}
 
 ## Auto Redirection
 
@@ -80,7 +80,7 @@ removing selection menu and the ability to choose other alternative authenticati
 A chosen identity provider from the selection menu can be optionally tracked and stored using a dedicated cookie,
 which will then be used on subsequent attempts to auto-redirect to the identity provider, skipping the selection menu.
 
-{% include casproperties.html properties="cas.authn.pac4j.cookie" %}
+{% include_cached casproperties.html properties="cas.authn.pac4j.cookie" %}
 
 ### Identity Provider Groovy Selection
 

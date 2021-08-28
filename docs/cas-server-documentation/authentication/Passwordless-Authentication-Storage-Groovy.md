@@ -37,4 +37,4 @@ def run(Object[] args) {
 }
 ```
 
-{% include casproperties.html properties="cas.authn.passwordless.accounts.groovy" %}
+{% include_cached casproperties.html properties="cas.authn.passwordless.accounts.groovy" %}

@@ -10,9 +10,9 @@ category: Protocols
 
 Support is enabled by including the following in your overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest-services" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-rest-services" %}
 
-{% include casproperties.html properties="cas.rest.services" %}
+{% include_cached casproperties.html properties="cas.rest.services" %}
 
 Invoke CAS to register applications into its own service registry. The REST call must 
 be authenticated using basic authentication where credentials are authenticated and 

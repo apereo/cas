@@ -43,7 +43,7 @@ The following multifactor providers are supported by CAS.
   
 ## Core Configuration
 
-{% include casproperties.html properties="cas.authn.mfa.core" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.core" %}
 
 ## Triggers
 

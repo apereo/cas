@@ -20,11 +20,11 @@ audit data is targeted at deployers for end-user functionality and reporting.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-core-events" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-core-events" %}
 
 To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
 
-{% include casproperties.html properties="cas.events.core." %}
+{% include_cached casproperties.html properties="cas.events.core." %}
 
 ## Recorded Data
 
@@ -54,7 +54,7 @@ record the event. To learn more, please [review this guide](GeoTracking-Authenti
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="events" %}
+{% include_cached actuators.html endpoints="events" %}
   
 ## Storage
 

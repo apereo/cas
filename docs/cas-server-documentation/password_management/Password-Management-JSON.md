@@ -27,4 +27,4 @@ The outline of the JSON file may match the following:
 }
 ```
 
-{% include casproperties.html properties="cas.authn.pm.json" %}
+{% include_cached casproperties.html properties="cas.authn.pm.json" %}

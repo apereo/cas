@@ -15,7 +15,7 @@ that is backed by a caching engine to gain slightly better performance when it c
 This component does not preserve ticket state across restarts and is not a suitable solution
 for clustered CAS environments that are deployed in active/active mode.
 
-{% include casproperties.html properties="cas.ticket.registry.in-memory" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.in-memory" %}
 
 ### Eviction Policy
 

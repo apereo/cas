@@ -49,4 +49,4 @@ Valid values for `options` include:
 
 ## Configuration
 
-{% include casproperties.html properties="cas.consent.json" %}
+{% include_cached casproperties.html properties="cas.consent.json" %}

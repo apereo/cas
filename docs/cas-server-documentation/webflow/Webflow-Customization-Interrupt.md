@@ -31,9 +31,9 @@ forward later on without having to interrupt the authentication flow again.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-interrupt-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-interrupt-webflow" %}
 
-{% include casproperties.html properties="cas.interrupt.core" %}
+{% include_cached casproperties.html properties="cas.interrupt.core" %}
 
 ## Interrupt Payload
 
@@ -117,4 +117,4 @@ Interrupt notifications may be disabled on a per-service basis. A sample JSON fi
 }
 ```
 
-{% include registeredserviceproperties.html groups="INTERRUPTS" %}
+{% include_cached registeredserviceproperties.html groups="INTERRUPTS" %}

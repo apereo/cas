@@ -14,9 +14,9 @@ application context and are present in the overlay.
 
 Support is enabled by including the following dependency in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-swagger" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-swagger" %}
 
-{% include casproperties.html thirdPartyStartsWith="springdoc." %}
+{% include_cached casproperties.html thirdPartyStartsWith="springdoc." %}
 
 ## Endpoints
 

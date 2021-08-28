@@ -15,7 +15,7 @@ single pre-defined bucket that is taught to CAS via settings.
 
 Support is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-metadata-aws-s3" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-metadata-aws-s3" %}
 
 SAML service definitions must then be designed as follows to allow CAS to fetch metadata documents from Amazon S3 buckets:
 
@@ -41,7 +41,7 @@ The metadata location in the registration record above needs to be specified as 
 SAML metadata for registered service provider must be fetched from Amazon S3 defined in CAS configuration. 
 </p></div>
 
-{% include casproperties.html properties="cas.authn.saml-idp.metadata.amazon-s3" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.amazon-s3" %}
 
 ## Identity Provider Metadata
 

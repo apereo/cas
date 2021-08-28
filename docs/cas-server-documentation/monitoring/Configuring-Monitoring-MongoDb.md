@@ -10,6 +10,6 @@ category: Monitoring & Statistics
 
 Monitor the status and availability of a MongoDb database.
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-mongo-monitor" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-mongo-monitor" %}
 
-{% include casproperties.html properties="cas.monitor.mongo" %}
+{% include_cached casproperties.html properties="cas.monitor.mongo" %}

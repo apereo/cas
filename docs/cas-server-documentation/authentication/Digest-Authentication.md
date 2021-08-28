@@ -16,14 +16,14 @@ hashing with usage of nonce values to prevent replay attacks. It uses the HTTP p
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-digest-authentication" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-digest-authentication" %}
 
 For additional information on how digest authentication works,
 please [review this guide](https://en.wikipedia.org/wiki/Digest_access_authentication).
 
 ## Configuration
 
-{% include casproperties.html properties="cas.authn.digest" %}
+{% include_cached casproperties.html properties="cas.authn.digest" %}
 
 ## Credential Management
 

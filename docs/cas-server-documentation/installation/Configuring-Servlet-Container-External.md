@@ -11,7 +11,7 @@ A CAS deployment may be deployed to any number of external servlet containers. T
 the servlet specification `v4.0.0` at a minimum. In these scenarios, the following vanilla CAS web application
 may be used, in the [WAR Overlay](WAR-Overlay-Installation.html) :
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-webapp" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-webapp" %}
 
 While there is no official project support, the following containers should be compatible with a CAS deployment:
 
@@ -44,7 +44,7 @@ Note for JBoss, Wildfly and EAP, you may need to add a `jboss-deloyment-structur
 
 Support for external containers is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-webapp" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-webapp" %}
 
 ## Async Support
 

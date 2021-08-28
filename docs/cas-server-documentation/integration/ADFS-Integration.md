@@ -21,7 +21,7 @@ as one integration option.</p></div>
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-wsfederation-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-wsfederation-webflow" %}
 
 You may also need to declare the following repository in your
 CAS Overlay to be able to resolve dependencies:
@@ -45,7 +45,7 @@ versions can be detected via the <code>java -version</code> command.</p></div>
 Adjust and provide settings for the ADFS instance, and make sure you have obtained the ADFS 
 signing certificate and made it available to CAS at a location that can be resolved at runtime.
 
-{% include casproperties.html properties="cas.authn.wsfed" %}
+{% include_cached casproperties.html properties="cas.authn.wsfed" %}
 
 ## Encrypted Assertions
 
@@ -106,7 +106,7 @@ An optional step, the `casLogoutView.html` can be modified to place a link to AD
 
 Alternatively, you may instruct CAS to redirect to the above endpoint after logout operations have executed.
 
-{% include casproperties.html properties="cas.logout." %}
+{% include_cached casproperties.html properties="cas.logout." %}
 
 ## Per-Service Relying Party Id
 
@@ -129,7 +129,7 @@ registry to match the following:
 }
 ```
 
-{% include registeredserviceproperties.html groups="DELEGATED_AUTHN_WSFED" %}
+{% include_cached registeredserviceproperties.html groups="DELEGATED_AUTHN_WSFED" %}
 
 ## Troubleshooting
 

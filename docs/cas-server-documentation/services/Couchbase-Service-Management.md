@@ -10,14 +10,14 @@ category: Services
 
 Couchbase integration is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-couchbase-service-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-couchbase-service-registry" %}
 
 [Couchbase](http://www.couchbase.com) is a highly available, open source NoSQL database server based on
 [Erlang/OTP](http://www.erlang.org) and its mnesia database. The intention of this registry is to leverage the capability of Couchbase server to provide high availability to CAS.
 
 ## Configuration
 
-{% include casproperties.html properties="cas.service-registry.couchbase" %}
+{% include_cached casproperties.html properties="cas.service-registry.couchbase" %}
 
 The Couchbase integration currently assumes that the service registries are stored
 in their own buckets. Optionally set passwords for the buckets, optionally setup

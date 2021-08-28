@@ -10,7 +10,7 @@ category: Ticketing
 
 Ehcache 3.x integration is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ehcache3-ticket-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-ehcache3-ticket-registry" %}
 
 This registry stores tickets using the [Ehcache 3.x](http://ehcache.org/) caching library 
 and [an optional Terracotta cluster](https://www.ehcache.org/documentation/3.3/clustered-cache.html).
@@ -19,7 +19,7 @@ and [an optional Terracotta cluster](https://www.ehcache.org/documentation/3.3/c
 
 The following endpoints are provided:
 
-{% include actuators.html endpoints="caches" %}
+{% include_cached actuators.html endpoints="caches" %}
 
 ## In-memory store with disk persistence
 
@@ -47,7 +47,7 @@ Terracotta [helm chart](https://github.com/helm/charts/tree/master/stable/terrac
 
 #### Configuration
 
-{% include casproperties.html properties="cas.ticket.registry.ehcache3" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.ehcache3" %}
 
 ### Eviction Policy
 
@@ -67,7 +67,7 @@ the Ehcache v3 ticket registry functionality in CAS to handle this integration.<
 
 Ehcache integration is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ehcache-ticket-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-ehcache-ticket-registry" %}
 
 This registry stores tickets using [Ehcache](http://ehcache.org/) version 2.x library.
 
@@ -85,7 +85,7 @@ replication with Ehcache, [see this resource](https://www.ehcache.org/documentat
 
 #### Configuration
 
-{% include casproperties.html properties="cas.ticket.registry.ehcache" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.ehcache" %}
 
 The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config follows. 
 Note that `${ehcache.otherServer}` would be replaced by a system property: `-Dehcache.otherserver=cas2`.

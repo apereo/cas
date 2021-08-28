@@ -20,13 +20,13 @@ Consent attribute records stored in the configured repository are signed and enc
 
 Support is enabled by including the following module in the WAR Overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-consent-webflow" %}
 
 ## Actuator Endpoints
       
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="attributeConsent" %}
+{% include_cached actuators.html endpoints="attributeConsent" %}
 
 ## Attribute Selection
 

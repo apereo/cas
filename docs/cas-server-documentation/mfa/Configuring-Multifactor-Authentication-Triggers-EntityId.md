@@ -21,7 +21,7 @@ from a Shibboleth identity provider, please [see this guide](../integration/Shib
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-shibboleth" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-shibboleth" %}
 
 The `entityId` parameter may be passed as such:
 

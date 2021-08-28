@@ -20,9 +20,9 @@ the likes of [LastPass Authenticator](https://lastpass.com/auth), etc.
 
 Support is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-gauth" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-gauth" %}
 
-{% include casproperties.html properties="cas.authn.mfa.gauth.core" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.gauth.core" %}
 
 ## Repository Cleaner
 
@@ -31,13 +31,13 @@ repository periodically and remove expired device registration records
 based on configured parameters. In the default setting, devices
 expire after a fixed period since a user registered their device.
 
-{% include casproperties.html properties="cas.authn.mfa.gauth.cleaner" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.gauth.cleaner" %}
 
 ## Actuator Endpoints
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="gauthCredentialRepository" %}
+{% include_cached actuators.html endpoints="gauthCredentialRepository" %}
 
 ## Token Repository
 
