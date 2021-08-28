@@ -12,14 +12,14 @@ Stores registered service data in a [DynamoDb](https://aws.amazon.com/dynamodb/)
 
 Support is enabled by adding the following module into the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-dynamodb-service-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-dynamodb-service-registry" %}
 
 ## Configuration
 
 You will need to provide CAS with your [AWS credentials](https://aws.amazon.com/console/). Also, to gain a better understanding
 of DynamoDb's core components and concepts, please [start with this guide](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html) first. 
 
-{% include casproperties.html properties="cas.service-registry.dynamo-db" %}
+{% include_cached casproperties.html properties="cas.service-registry.dynamo-db" %}
 
 ## Troubleshooting
 

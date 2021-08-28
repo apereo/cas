@@ -15,7 +15,7 @@ to do with the native CAS REST API, whose configuration and caveats are
 
 REST authentication is enabled by including the following dependencies in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest-authentication" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-rest-authentication" %}
 
 This allows the CAS server to reach to a remote REST endpoint via a `POST` for verification of credentials.
 Credentials are passed via an `Authorization` header whose value is `Basic XYZ` where XYZ is a
@@ -59,5 +59,5 @@ the user will be able to directly change the password.
 
 ## Configuration
 
-{% include casproperties.html properties="cas.authn.rest" %}
+{% include_cached casproperties.html properties="cas.authn.rest" %}
 

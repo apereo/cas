@@ -51,8 +51,8 @@ In the event that the code is not found in the activated resource bundle, the co
 
 ### Localization
 
-{% include casproperties.html properties="cas.locale." %}
+{% include_cached casproperties.html properties="cas.locale." %}
 
 ### Message Bundles
 
-{% include casproperties.html properties="cas.message-bundle." %}
+{% include_cached casproperties.html properties="cas.message-bundle." %}

@@ -11,7 +11,7 @@ category: Webflow Management
 Alternatively, CAS can be configured to use a Groovy script to verify status
 of policies and store results. The script should match the following:
 
-{% include casproperties.html properties="cas.acceptable-usage-policy.groovy" %}
+{% include_cached casproperties.html properties="cas.acceptable-usage-policy.groovy" %}
 
 ```groovy
 import org.apereo.cas.authentication.principal.*

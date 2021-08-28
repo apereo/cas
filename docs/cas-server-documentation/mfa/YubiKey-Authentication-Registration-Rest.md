@@ -10,7 +10,7 @@ category: Multifactor Authentication
 
 Registration records may be tracked using an external REST API.
 
-{% include casproperties.html properties="cas.authn.mfa.yubikey.rest" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.yubikey.rest" %}
 
 The following endpoints are expected to be available and implemented by the REST API:
 

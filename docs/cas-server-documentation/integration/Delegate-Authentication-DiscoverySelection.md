@@ -16,7 +16,7 @@ If you are interested in supporting discovery of SAML2 identity providers using 
 you may want to take a look at <a href="Delegate-Authentication-SAML.html">this guide</a>.
 </p></div>
 
-{% include casproperties.html properties="cas.authn.pac4j.core.discovery-selection" %}
+{% include_cached casproperties.html properties="cas.authn.pac4j.core.discovery-selection" %}
 
 ## Menu Selection
      

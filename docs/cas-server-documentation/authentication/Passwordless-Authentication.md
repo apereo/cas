@@ -38,9 +38,9 @@ verify their identities without passwords and login using FIDO2-enabled devices.
 
 Support is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-webflow" %}
 
-{% include casproperties.html properties="cas.authn.passwordless.core." %}
+{% include_cached casproperties.html properties="cas.authn.passwordless.core." %}
 
 ## Account Stores
 
@@ -80,7 +80,7 @@ Please [see this guide](Passwordless-Authentication-Storage-Custom.html).
 
 The following strategies define how issued tokens may be managed by CAS. 
 
-{% include casproperties.html properties="cas.authn.passwordless.accounts" %}
+{% include_cached casproperties.html properties="cas.authn.passwordless.accounts" %}
 
 ### Memory
 
@@ -105,7 +105,7 @@ Please [see this guide](Passwordless-Authentication-Tokens-Custom.html).
 
 ### Messaging & Notifications
                                      
-{% include casproperties.html properties="cas.authn.passwordless.tokens.mail,cas.authn.passwordless.tokens.sms" %}
+{% include_cached casproperties.html properties="cas.authn.passwordless.tokens.mail,cas.authn.passwordless.tokens.sms" %}
 
 Users may be notified of tokens via text messages, mail, etc.
 To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html)

@@ -9,7 +9,7 @@ category: Logs & Audits
 
 File-based audit logs appear in a `cas_audit.log` file defined in the [Logging](../logging/Logging.html) configuration.
 
-{% include casproperties.html properties="cas.audit.slf4j" %}
+{% include_cached casproperties.html properties="cas.audit.slf4j" %}
 
 ## Sample Log Output
 

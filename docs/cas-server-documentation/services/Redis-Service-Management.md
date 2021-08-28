@@ -16,9 +16,9 @@ The Redis service registry supports Redis Sentinel, which provides high availabi
 
 Support is enabled by including the following dependency in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-redis-service-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-redis-service-registry" %}
 
-{% include casproperties.html properties="cas.service-registry.redis" %}
+{% include_cached casproperties.html properties="cas.service-registry.redis" %}
 
 ## Auto Initialization
 

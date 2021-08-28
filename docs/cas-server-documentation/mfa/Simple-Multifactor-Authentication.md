@@ -18,9 +18,9 @@ and are assigned a configurable expiration policy controlled via CAS settings.
 
 Support is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-simple-mfa" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-simple-mfa" %}
 
-{% include casproperties.html properties="cas.authn.mfa.simple" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.simple" %}
 
 ## Registration
 
