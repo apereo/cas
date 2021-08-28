@@ -12,7 +12,7 @@ const cas = require('../../cas.js');
     console.log(`Duo Security authentication should now be complete`);
     console.log("Checking for page URL...")
     console.log(await page.url())
-    await this.screenshot(page);
+    await cas.screenshot(page);
     await cas.assertTextContent(page, "#content h1", "Authentication Interrupt")
     await cas.assertTextContentStartsWith(page, "#content p", "The authentication flow has been interrupted");
     await cas.assertNoTicketGrantingCookie(page);
