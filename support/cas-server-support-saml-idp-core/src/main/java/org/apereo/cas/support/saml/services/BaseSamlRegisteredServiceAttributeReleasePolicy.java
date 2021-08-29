@@ -11,6 +11,7 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
@@ -49,8 +50,8 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
             return entityId;
         }
         val entityIdAttribute = service.getAttributes().get(SamlProtocolConstants.PARAMETER_ENTITY_ID);
-        if (entityIdAttribute != null && entityIdAttribute.size() > 0) {
-            return (String) entityIdAttribute.get(0);
+        if (entityIdAttribute != null && !entityIdAttribute.isEmpty()) {
+            return CollectionUtils.firstElement(entityIdAttribute).map(Object::toString).orElseThrow();
         }
         val svcParam = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
         if (StringUtils.isNotBlank(svcParam)) {

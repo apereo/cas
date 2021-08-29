@@ -79,6 +79,7 @@ public class CoreAuthenticationTestUtils {
     public static Service getService(final String id) {
         val svc = mock(Service.class);
         lenient().when(svc.getId()).thenReturn(id);
+        lenient().when(svc.getAttributes()).thenReturn(new HashMap<>());
         return svc;
     }
 
