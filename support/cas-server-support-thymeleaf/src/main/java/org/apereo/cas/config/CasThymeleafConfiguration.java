@@ -19,6 +19,7 @@ import org.apereo.cas.web.view.ThemeFileTemplateResolver;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,6 +97,11 @@ public class CasThymeleafConfiguration {
         parameters.put("charset", charset);
         parameters.putAll(type.getParameters());
         return new MimeType(type, parameters).toString();
+    }
+
+    @Bean
+    public LayoutDialect layoutDialect() {
+        return new LayoutDialect();
     }
 
     @Bean
