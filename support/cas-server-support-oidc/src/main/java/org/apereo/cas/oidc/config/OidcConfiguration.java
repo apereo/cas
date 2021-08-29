@@ -15,6 +15,7 @@ import org.apereo.cas.oidc.authn.OidcCasCallbackUrlResolver;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcClientSecretJwtAuthenticator;
 import org.apereo.cas.oidc.authn.OidcPrivateKeyJwtAuthenticator;
+import org.apereo.cas.oidc.claims.OidcIdTokenClaimCollector;
 import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.claims.mapping.OidcDefaultAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
@@ -494,6 +495,13 @@ public class OidcConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcIdTokenClaimCollector")
+    public OidcIdTokenClaimCollector oidcIdTokenClaimCollector() {
+        return OidcIdTokenClaimCollector.defaultCollector();
+    }
+
+    @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "oidcIssuerService")
     public OidcIssuerService oidcIssuerService() {
         return new OidcDefaultIssuerService(casProperties.getAuthn().getOidc());
@@ -504,6 +512,7 @@ public class OidcConfiguration {
     @SneakyThrows
     public OidcConfigurationContext oidcConfigurationContext() {
         return (OidcConfigurationContext) OidcConfigurationContext.builder()
+            .idTokenClaimCollector(oidcIdTokenClaimCollector())
             .oidcRequestSupport(oidcRequestSupport())
             .issuerService(oidcIssuerService())
             .attributeToScopeClaimMapper(oidcAttributeToScopeClaimMapper())
