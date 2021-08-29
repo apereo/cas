@@ -14,20 +14,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.BillingMode;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
-import software.amazon.awssdk.services.dynamodb.model.Condition;
-import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
-import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
@@ -35,7 +28,6 @@ import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -83,36 +75,14 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
      */
     @SneakyThrows
     public void createTable(final boolean deleteTables) {
-        val throughput = ProvisionedThroughput.builder()
-            .readCapacityUnits(dynamoDbProperties.getReadCapacity())
-            .writeCapacityUnits(dynamoDbProperties.getWriteCapacity())
-            .build();
-
-        val request = CreateTableRequest.builder()
-            .attributeDefinitions(AttributeDefinition.builder()
+        DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
+            dynamoDbProperties.getTokenTableName(), deleteTables,
+            List.of(AttributeDefinition.builder()
                 .attributeName(ColumnNames.ID.getColumnName())
-                .attributeType(ScalarAttributeType.N).build())
-            .keySchema(KeySchemaElement.builder()
+                .attributeType(ScalarAttributeType.N).build()),
+            List.of(KeySchemaElement.builder()
                 .attributeName(ColumnNames.ID.getColumnName())
-                .keyType(KeyType.HASH).build())
-            .provisionedThroughput(throughput)
-            .billingMode(BillingMode.fromValue(dynamoDbProperties.getBillingMode().name()))
-            .tableName(dynamoDbProperties.getTokenTableName())
-            .build();
-
-        if (deleteTables) {
-            val delete = DeleteTableRequest.builder().tableName(dynamoDbProperties.getTokenTableName()).build();
-            LOGGER.debug("Sending delete request [{}] to remove table if necessary", delete);
-            DynamoDbTableUtils.deleteTableIfExists(amazonDynamoDBClient, delete);
-        }
-        LOGGER.debug("Sending create request [{}] to create table", request);
-        DynamoDbTableUtils.createTableIfNotExists(amazonDynamoDBClient, request);
-        LOGGER.debug("Waiting until table [{}] becomes active...", request.tableName());
-        DynamoDbTableUtils.waitUntilActive(amazonDynamoDBClient, request.tableName());
-        val describeTableRequest = DescribeTableRequest.builder().tableName(request.tableName()).build();
-        LOGGER.debug("Sending request [{}] to obtain table description...", describeTableRequest);
-        val tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).table();
-        LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
+                .keyType(KeyType.HASH).build()));
     }
 
     /**
@@ -332,21 +302,8 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
     }
 
     private Set<GoogleAuthenticatorToken> getRecordsByKeys(final List<DynamoDbQueryBuilder> queries) {
-        val scanRequest = ScanRequest.builder()
-            .tableName(dynamoDbProperties.getTokenTableName())
-            .scanFilter(queries.stream()
-                .map(query -> {
-                    val cond = Condition.builder().comparisonOperator(query.getOperator())
-                        .attributeValueList(query.getAttributeValue()).build();
-                    return Pair.of(query.getKey(), cond);
-                })
-                .collect(Collectors.toMap(Pair::getKey, Pair::getValue)))
-            .build();
-        LOGGER.debug("Submitting request [{}] to get record with keys [{}]", scanRequest, queries);
-        val items = amazonDynamoDBClient.scan(scanRequest).items();
-        return items
-            .stream()
-            .map(GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator::extractAttributeValuesFrom)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+        return DynamoDbTableUtils.getRecordsByKeys(amazonDynamoDBClient, dynamoDbProperties.getTokenTableName(),
+                queries, GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator::extractAttributeValuesFrom)
+            .collect(Collectors.toSet());
     }
 }

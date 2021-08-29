@@ -7,35 +7,25 @@ import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
 import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeAction;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValueUpdate;
-import software.amazon.awssdk.services.dynamodb.model.BillingMode;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
-import software.amazon.awssdk.services.dynamodb.model.Condition;
-import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
-import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
-import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -63,6 +53,44 @@ public class DynamoDbYubiKeyFacilitator {
         }
     }
 
+    private static AttributeValue toAttributeValue(final YubiKeyAccount account) {
+        val devices = account.getDevices().stream()
+            .map(device -> AttributeValue.builder()
+                .m(Map.of(
+                    "id", AttributeValue.builder().n(String.valueOf(device.getId())).build(),
+                    "name", AttributeValue.builder().s(device.getName()).build(),
+                    "publicId", AttributeValue.builder().s(device.getPublicId()).build(),
+                    "registrationDate", AttributeValue.builder().s(device.getRegistrationDate().toString()).build()
+                ))
+                .build())
+            .collect(Collectors.toList());
+        return AttributeValue.builder().l(devices).build();
+    }
+
+    private static YubiKeyRegisteredDevice toYubiKeyRegisteredDevice(final Map<String, AttributeValue> map) {
+        return YubiKeyRegisteredDevice.builder()
+            .id(Long.parseLong(map.get("id").n()))
+            .name(map.get("name").s())
+            .publicId(map.get("publicId").s())
+            .registrationDate(DateTimeUtils.zonedDateTimeOf(map.get("registrationDate").s()))
+            .build();
+    }
+
+    /**
+     * Build table attribute values map.
+     *
+     * @param record the record
+     * @return the map
+     */
+    private static Map<String, AttributeValue> buildTableAttributeValuesMap(final YubiKeyAccount record) {
+        val values = new HashMap<String, AttributeValue>();
+        values.put(ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getId())).build());
+        values.put(ColumnNames.USERNAME.getColumnName(), AttributeValue.builder().s(String.valueOf(record.getUsername())).build());
+        values.put(ColumnNames.DEVICE_IDENTIFIERS.getColumnName(), toAttributeValue(record));
+        LOGGER.debug("Created attribute values [{}] based on [{}]", values, record);
+        return values;
+    }
+
     /**
      * Create tables.
      *
@@ -70,39 +98,16 @@ public class DynamoDbYubiKeyFacilitator {
      */
     @SneakyThrows
     public void createTable(final boolean deleteTables) {
-        LOGGER.debug("Attempting to create DynamoDb table");
-        val throughput = ProvisionedThroughput.builder()
-            .readCapacityUnits(dynamoDbProperties.getReadCapacity())
-            .writeCapacityUnits(dynamoDbProperties.getWriteCapacity())
-            .build();
-
-        val request = CreateTableRequest.builder()
-            .attributeDefinitions(AttributeDefinition.builder()
+        DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
+            dynamoDbProperties.getTableName(), deleteTables,
+            List.of(AttributeDefinition.builder()
                 .attributeName(ColumnNames.USERNAME.getColumnName())
                 .attributeType(ScalarAttributeType.S)
-                .build())
-            .keySchema(KeySchemaElement.builder()
+                .build()),
+            List.of(KeySchemaElement.builder()
                 .attributeName(ColumnNames.USERNAME.getColumnName())
                 .keyType(KeyType.HASH)
-                .build())
-            .provisionedThroughput(throughput)
-            .billingMode(BillingMode.fromValue(dynamoDbProperties.getBillingMode().name()))
-            .tableName(dynamoDbProperties.getTableName())
-            .build();
-
-        if (deleteTables) {
-            val delete = DeleteTableRequest.builder().tableName(request.tableName()).build();
-            LOGGER.debug("Sending delete request [{}] to remove table if necessary", delete);
-            DynamoDbTableUtils.deleteTableIfExists(amazonDynamoDBClient, delete);
-        }
-        LOGGER.debug("Sending create request [{}] to create table", request);
-        DynamoDbTableUtils.createTableIfNotExists(amazonDynamoDBClient, request);
-        LOGGER.debug("Waiting until table [{}] becomes active...", request.tableName());
-        DynamoDbTableUtils.waitUntilActive(amazonDynamoDBClient, request.tableName());
-        val describeTableRequest = DescribeTableRequest.builder().tableName(request.tableName()).build();
-        LOGGER.debug("Sending request [{}] to obtain table description...", describeTableRequest);
-        val tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).table();
-        LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
+                .build()));
     }
 
     /**
@@ -199,63 +204,19 @@ public class DynamoDbYubiKeyFacilitator {
         return true;
     }
 
+    @Getter
+    @RequiredArgsConstructor
+    private enum ColumnNames {
+        ID("id"), USERNAME("username"), DEVICE_IDENTIFIERS("deviceIdentifiers");
 
-    private static AttributeValue toAttributeValue(final YubiKeyAccount account) {
-        val devices = account.getDevices().stream()
-            .map(device -> AttributeValue.builder()
-                .m(Map.of(
-                    "id", AttributeValue.builder().n(String.valueOf(device.getId())).build(),
-                    "name", AttributeValue.builder().s(device.getName()).build(),
-                    "publicId", AttributeValue.builder().s(device.getPublicId()).build(),
-                    "registrationDate", AttributeValue.builder().s(device.getRegistrationDate().toString()).build()
-                ))
-                .build())
-            .collect(Collectors.toList());
-        return AttributeValue.builder().l(devices).build();
-    }
-
-    private static YubiKeyRegisteredDevice toYubiKeyRegisteredDevice(final Map<String, AttributeValue> map) {
-        return YubiKeyRegisteredDevice.builder()
-            .id(Long.parseLong(map.get("id").n()))
-            .name(map.get("name").s())
-            .publicId(map.get("publicId").s())
-            .registrationDate(DateTimeUtils.zonedDateTimeOf(map.get("registrationDate").s()))
-            .build();
-    }
-
-    /**
-     * Build table attribute values map.
-     *
-     * @param record the record
-     * @return the map
-     */
-    private static Map<String, AttributeValue> buildTableAttributeValuesMap(final YubiKeyAccount record) {
-        val values = new HashMap<String, AttributeValue>();
-        values.put(ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getId())).build());
-        values.put(ColumnNames.USERNAME.getColumnName(), AttributeValue.builder().s(String.valueOf(record.getUsername())).build());
-        values.put(ColumnNames.DEVICE_IDENTIFIERS.getColumnName(), toAttributeValue(record));
-        LOGGER.debug("Created attribute values [{}] based on [{}]", values, record);
-        return values;
+        private final String columnName;
     }
 
     @SneakyThrows
     private List<YubiKeyAccount> getRecordsByKeys(final DynamoDbQueryBuilder... queries) {
-        try {
-            var scanRequest = ScanRequest.builder()
-                .tableName(dynamoDbProperties.getTableName())
-                .scanFilter(Arrays.stream(queries)
-                    .map(query -> {
-                        val cond = Condition.builder().comparisonOperator(query.getOperator()).attributeValueList(query.getAttributeValue()).build();
-                        return Pair.of(query.getKey(), cond);
-                    })
-                    .collect(Collectors.toMap(Pair::getKey, Pair::getValue)))
-                .build();
-
-            LOGGER.debug("Submitting request [{}] to get record with keys [{}]", scanRequest, queries);
-            val items = amazonDynamoDBClient.scan(scanRequest).items();
-            return items
-                .stream()
-                .map(item -> {
+        return DynamoDbTableUtils.getRecordsByKeys(amazonDynamoDBClient, dynamoDbProperties.getTableName(),
+                Arrays.stream(queries).collect(Collectors.toList()),
+                item -> {
                     val id = Long.parseLong(item.get(ColumnNames.ID.getColumnName()).n());
                     val username = item.get(ColumnNames.USERNAME.getColumnName()).s();
                     val details = item.get(ColumnNames.DEVICE_IDENTIFIERS.getColumnName()).l();
@@ -266,20 +227,7 @@ public class DynamoDbYubiKeyFacilitator {
                         .devices(records)
                         .build();
                 })
-                .collect(Collectors.toCollection(ArrayList::new));
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return new ArrayList<>(0);
-    }
-
-
-    @Getter
-    @RequiredArgsConstructor
-    private enum ColumnNames {
-        ID("id"), USERNAME("username"), DEVICE_IDENTIFIERS("deviceIdentifiers");
-
-        private final String columnName;
+            .collect(Collectors.toList());
     }
 
 }

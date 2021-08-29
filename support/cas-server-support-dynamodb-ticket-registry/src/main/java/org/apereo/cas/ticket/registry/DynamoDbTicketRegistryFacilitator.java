@@ -17,15 +17,10 @@ import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.BillingMode;
-import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
-import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
@@ -34,6 +29,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -53,6 +49,17 @@ public class DynamoDbTicketRegistryFacilitator {
     private final DynamoDbTicketRegistryProperties dynamoDbProperties;
 
     private final DynamoDbClient amazonDynamoDBClient;
+
+    private static Ticket deserializeTicket(final Map<String, AttributeValue> returnItem) {
+        val bb = returnItem.get(ColumnNames.ENCODED.getColumnName()).b();
+        LOGGER.debug("Located binary encoding of ticket item [{}]. Transforming item into ticket object", returnItem);
+        try (val is = bb.asInputStream()) {
+            return SerializationUtils.deserialize(is);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return null;
+    }
 
     /**
      * Delete.
@@ -164,32 +171,11 @@ public class DynamoDbTicketRegistryFacilitator {
      */
     public void createTicketTables(final boolean deleteTables) {
         val metadata = this.ticketCatalog.findAll();
-        val throughput = ProvisionedThroughput.builder()
-            .readCapacityUnits(dynamoDbProperties.getReadCapacity())
-            .writeCapacityUnits(dynamoDbProperties.getWriteCapacity())
-            .build();
-
         metadata.forEach(Unchecked.consumer(r -> {
-            val request = CreateTableRequest.builder()
-                .attributeDefinitions(AttributeDefinition.builder().attributeName(ColumnNames.ID.getColumnName()).attributeType(ScalarAttributeType.S).build())
-                .keySchema(KeySchemaElement.builder().attributeName(ColumnNames.ID.getColumnName()).keyType(KeyType.HASH).build())
-                .provisionedThroughput(throughput)
-                .billingMode(BillingMode.fromValue(dynamoDbProperties.getBillingMode().name()))
-                .tableName(r.getProperties().getStorageName())
-                .build();
-            if (deleteTables) {
-                val delete = DeleteTableRequest.builder().tableName(r.getProperties().getStorageName()).build();
-                LOGGER.debug("Sending delete request [{}] to remove table if necessary", delete);
-                DynamoDbTableUtils.deleteTableIfExists(amazonDynamoDBClient, delete);
-            }
-            LOGGER.debug("Sending create request [{}] to create table", request);
-            DynamoDbTableUtils.createTableIfNotExists(amazonDynamoDBClient, request);
-            LOGGER.debug("Waiting until table [{}] becomes active...", request.tableName());
-            DynamoDbTableUtils.waitUntilActive(amazonDynamoDBClient, request.tableName());
-            val describeTableRequest = DescribeTableRequest.builder().tableName(request.tableName()).build();
-            LOGGER.debug("Sending request [{}] to obtain table description...", describeTableRequest);
-            val tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).table();
-            LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
+            DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
+                r.getProperties().getStorageName(), deleteTables,
+                List.of(AttributeDefinition.builder().attributeName(ColumnNames.ID.getColumnName()).attributeType(ScalarAttributeType.S).build()),
+                List.of(KeySchemaElement.builder().attributeName(ColumnNames.ID.getColumnName()).keyType(KeyType.HASH).build()));
         }));
     }
 
@@ -218,17 +204,6 @@ public class DynamoDbTicketRegistryFacilitator {
             AttributeValue.builder().b(SdkBytes.fromByteBuffer(ByteBuffer.wrap(SerializationUtils.serialize(encTicket)))).build());
         LOGGER.debug("Created attribute values [{}] based on provided ticket [{}]", values, encTicket.getId());
         return values;
-    }
-
-    private static Ticket deserializeTicket(final Map<String, AttributeValue> returnItem) {
-        val bb = returnItem.get(ColumnNames.ENCODED.getColumnName()).b();
-        LOGGER.debug("Located binary encoding of ticket item [{}]. Transforming item into ticket object", returnItem);
-        try (val is = bb.asInputStream()) {
-            return SerializationUtils.deserialize(is);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return null;
     }
 
     /**

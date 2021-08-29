@@ -55,7 +55,8 @@ public class GoogleAuthenticatorDynamoDbConfiguration {
     @RefreshScope
     public GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator googleAuthenticatorDynamoDbTokenRepositoryFacilitator() {
         val dynamoDbProperties = casProperties.getAuthn().getMfa().getGauth().getDynamoDb();
-        val facilitator = new GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator(dynamoDbProperties, amazonDynamoDbGoogleAuthenticatorClient());
+        val facilitator = new GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator(
+            dynamoDbProperties, amazonDynamoDbGoogleAuthenticatorClient());
         if (!dynamoDbProperties.isPreventTableCreationOnStartup()) {
             facilitator.createTable(dynamoDbProperties.isDropTablesOnStartup());
         }
