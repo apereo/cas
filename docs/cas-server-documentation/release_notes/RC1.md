@@ -101,6 +101,11 @@ kept inside a [DynamoDb instance](../mfa/GoogleAuthenticator-Authentication-Regi
 - Spring Boot Admin
 - Nimbus JWT
 - AWS SDK
+- Jackson
+- Apache Shiro
+- Okta SDK
+- Duo Security
+- Thymeleaf Dialect
 - Mockito
 - Twilio
 - Hibernate
