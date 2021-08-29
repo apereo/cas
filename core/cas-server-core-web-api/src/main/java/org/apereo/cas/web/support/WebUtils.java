@@ -91,10 +91,6 @@ public class WebUtils {
 
     private static final String PARAMETER_UNAUTHORIZED_REDIRECT_URL = "unauthorizedRedirectUrl";
 
-    private static final String PARAMETER_REGISTERED_SERVICE = "registeredService";
-
-    private static final String PARAMETER_SERVICE = "service";
-
     private static final String PARAMETER_SERVICE_TICKET_ID = "serviceTicketId";
 
     private static final String PARAMETER_LOGOUT_REQUESTS = "logoutRequests";
@@ -195,7 +191,8 @@ public class WebUtils {
      * @return the service
      */
     public static WebApplicationService getService(final RequestContext context) {
-        return Optional.ofNullable(context).map(requestContext -> (WebApplicationService) requestContext.getFlowScope().get(PARAMETER_SERVICE)).orElse(null);
+        return Optional.ofNullable(context).map(requestContext
+            -> (WebApplicationService) requestContext.getFlowScope().get(CasWebflowConstants.ATTRIBUTE_SERVICE)).orElse(null);
     }
 
     /**
@@ -206,7 +203,8 @@ public class WebUtils {
      */
     public static RegisteredService getRegisteredService(final RequestContext context) {
         return Optional.ofNullable(context)
-            .map(requestContext -> (RegisteredService) requestContext.getFlowScope().get(PARAMETER_REGISTERED_SERVICE)).orElse(null);
+            .map(requestContext -> (RegisteredService)
+                requestContext.getFlowScope().get(CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE)).orElse(null);
     }
 
     /**
@@ -217,7 +215,7 @@ public class WebUtils {
      */
     public static RegisteredService getRegisteredService(final HttpServletRequest request) {
         return Optional.ofNullable(request)
-            .map(requestContext -> (RegisteredService) request.getAttribute(PARAMETER_REGISTERED_SERVICE)).orElse(null);
+            .map(requestContext -> (RegisteredService) request.getAttribute(CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE)).orElse(null);
     }
 
     /**
@@ -381,7 +379,7 @@ public class WebUtils {
      * @param service the service
      */
     public static void putServiceIntoFlowScope(final RequestContext context, final Service service) {
-        context.getFlowScope().put(PARAMETER_SERVICE, service);
+        context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
     }
 
     /**
@@ -391,7 +389,7 @@ public class WebUtils {
      * @param service the service
      */
     public static void putServiceIntoFlashScope(final RequestContext context, final Service service) {
-        context.getFlashScope().put(PARAMETER_SERVICE, service);
+        context.getFlashScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
     }
 
     /**
@@ -422,7 +420,7 @@ public class WebUtils {
      * @param registeredService the registered service
      */
     public static void putRegisteredService(final HttpServletRequest request, final RegisteredService registeredService) {
-        request.setAttribute(PARAMETER_REGISTERED_SERVICE, registeredService);
+        request.setAttribute(CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE, registeredService);
     }
 
     /**
@@ -432,7 +430,7 @@ public class WebUtils {
      * @param registeredService the service
      */
     public static void putRegisteredService(final RequestContext context, final RegisteredService registeredService) {
-        context.getFlowScope().put(PARAMETER_REGISTERED_SERVICE, registeredService);
+        context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE, registeredService);
     }
 
     /**

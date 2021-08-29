@@ -5,10 +5,16 @@ const cas = require('../../cas.js');
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await page.goto("https://localhost:8443/cas/login?authn_method=mfa-duo");
+    const service = "https://apereo.github.io";
+    await page.goto(`https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page, "casuser", "Mellon");
+    await cas.assertVisibility(page, '#twitter-link')
+    await cas.assertVisibility(page, '#youtube-link')
     await cas.loginDuoSecurityBypassCode(page, "websdk");
     console.log(await page.url())
+    await cas.assertTicketParameter(page);
+
+    await page.goto(`https://localhost:8443/cas/login`);
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.assertTicketGrantingCookie(page);
 

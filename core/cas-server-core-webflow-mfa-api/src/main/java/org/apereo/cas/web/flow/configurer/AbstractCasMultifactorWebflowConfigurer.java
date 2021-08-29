@@ -7,6 +7,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.binding.mapping.impl.DefaultMapping;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.util.StringUtils;
@@ -24,6 +25,8 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The {@link AbstractCasMultifactorWebflowConfigurer} is responsible for
@@ -110,10 +113,18 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
             registerMultifactorProviderFailureAction(flow, mfaFlow);
 
             val subflowState = createSubflowState(flow, subflowId, subflowId);
-
-            val inputMapper = createMapperToSubflowState(new ArrayList<>(0));
+            val subflowMappings = Stream.of(CasWebflowConstants.ATTRIBUTE_SERVICE, CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE)
+                .map(attr -> new DefaultMapping(createExpression("flowScope." + attr), createExpression(attr)))
+                .collect(Collectors.toList());
+            val inputMapper = createMapperToSubflowState(subflowMappings);
             val subflowMapper = createSubflowAttributeMapper(inputMapper, null);
             subflowState.setAttributeMapper(subflowMapper);
+
+            val flowMappings = Stream.of(CasWebflowConstants.ATTRIBUTE_SERVICE, CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE)
+                .map(attr -> new DefaultMapping(createExpression(attr), createExpression("flowScope." + attr)))
+                .collect(Collectors.toList());
+            val flowInputMapper = createMapperToSubflowState(flowMappings);
+            mfaFlow.setInputMapper(flowInputMapper);
 
             val states = getCandidateStatesForMultifactorAuthentication();
             registerMultifactorAuthenticationSubflowWithStates(flow, subflowState, states);

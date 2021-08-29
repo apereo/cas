@@ -18,6 +18,15 @@ public interface CasWebflowConstants {
      */
     String ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION = "rootCauseException";
 
+    /**
+     * Attribute to track registered service in the flow.
+     */
+    String ATTRIBUTE_REGISTERED_SERVICE = "registeredService";
+    /**
+     * Attribute to track service in the flow.
+     */
+    String ATTRIBUTE_SERVICE = "service";
+
     /*
      ****************************************
      * Transitions.
