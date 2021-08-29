@@ -9,4 +9,4 @@ category: Authentication
 
 Global authentication policy that is applied when CAS attempts to vend and validate tickets.
 
-{% include casproperties.html properties="cas.authn.policy.required-handler-authentication-policy-enabled" %}
+{% include_cached casproperties.html properties="cas.authn.policy.required-handler-authentication-policy-enabled" %}

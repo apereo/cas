@@ -25,7 +25,7 @@ a successful change. This behavior can be altered via CAS settings.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-pm-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-pm-webflow" %}
 
 <div class="alert alert-info"><strong>YAGNI</strong><p>You do not need to explicitly include this module
 in your configuration and overlays. This is just to teach you that it exists.</p></div>
@@ -35,11 +35,11 @@ in your configuration and overlays. This is just to teach you that it exists.</p
 To learn more about available notification options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) 
 or [this guide](../notifications/Sending-Email-Configuration.html). 
 
-{% include casproperties.html properties="cas.authn.pm.core,cas.authn.pm.webflow" %}
+{% include_cached casproperties.html properties="cas.authn.pm.core,cas.authn.pm.webflow" %}
 
 ### Password Reset
 
-{% include casproperties.html properties="cas.authn.pm.reset" %}
+{% include_cached casproperties.html properties="cas.authn.pm.reset" %}
 
 ### reCAPTCHA Integration
 
@@ -48,7 +48,7 @@ with [Google reCAPTCHA](https://developers.google.com/recaptcha). This requires
 the presence of reCAPTCHA settings for the basic integration and instructing 
 the password management flow to turn on and verify requests via reCAPTCHA. 
 
-{% include casproperties.html properties="cas.authn.pm.google-recaptcha" %}
+{% include_cached casproperties.html properties="cas.authn.pm.google-recaptcha" %}
  
 ## Forgot Username
                                                                       

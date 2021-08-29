@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Radius")
-@EnabledOnOs({OS.LINUX, OS.MAC})
+@EnabledOnOs(OS.LINUX)
 public class BlockingRadiusServerTests extends AbstractRadiusServerTests {
 
     public static final String USERNAME = UUID.randomUUID().toString();

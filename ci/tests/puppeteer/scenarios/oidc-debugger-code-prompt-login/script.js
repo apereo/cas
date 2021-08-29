@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -13,7 +12,7 @@ const cas = require('../../cas.js');
         "response_type=code&" +
         "response_mode=form_post&" +
         "nonce=vn4qulthnx";
-    console.log("First attempt: navigating to " + url);
+    console.log(`First attempt: navigating to ${url}`);
     await page.goto(url);
 
     await cas.loginWith(page, "casuser", "Mellon");
@@ -22,21 +21,17 @@ const cas = require('../../cas.js');
     await cas.click(page, "#allow");
     await page.waitForNavigation();
     await page.waitForTimeout(3000)
+    await cas.assertTextContent(page, "h1.green-text", "Success!");
 
-    let header = await cas.textContent(page, "h1.green-text");
-    assert(header === "Success!")
-
-    url = url + "&prompt=login";
-    console.log("Second attempt: navigating to " + url);
+    url = `${url}&prompt=login`;
+    console.log(`Second attempt: navigating to ${url}`);
     await page.goto(url);
     await cas.assertVisibility(page, "#username");
     await cas.assertVisibility(page, "#password");
     
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(2000)
-
-    header = await cas.textContent(page, "h1.green-text");
-    assert(header === "Success!")
+    await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     await browser.close();
 })();

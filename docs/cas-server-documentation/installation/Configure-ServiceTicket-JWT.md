@@ -50,15 +50,15 @@ Note that the responsibility of validating the JWT is pushed onto <b>the client<
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="jwtTicketSigningPublicKey" %}
+{% include_cached actuators.html endpoints="jwtTicketSigningPublicKey" %}
 
 ## Configuration
 
 JWT support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-token-tickets" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-token-tickets" %}
 
-{% include casproperties.html properties="cas.authn.token" includeRsaKeys="true" %}
+{% include_cached casproperties.html properties="cas.authn.token" includeRsaKeys="true" %}
 
 ### Register Clients
 
@@ -124,7 +124,7 @@ The following cipher strategy types are available:
 | `SIGN_AND_ENCRYPT`  | Sign values, and then encrypt.
 
 
-{% include registeredserviceproperties.html groups="JWT_SERVICE_TICKETS" %}
+{% include_cached registeredserviceproperties.html groups="JWT_SERVICE_TICKETS" %}
 
 ## JWT Validation - AES
 

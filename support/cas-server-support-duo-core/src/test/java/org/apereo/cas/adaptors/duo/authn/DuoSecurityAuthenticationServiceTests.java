@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DuoSecurityAuthenticationServiceTests}.
@@ -65,20 +66,24 @@ public class DuoSecurityAuthenticationServiceTests {
             new ByteArrayResource(results.getBytes(StandardCharsets.UTF_8), "Output"),
             HttpStatus.OK)) {
             webServer.start();
+            val duoProperties = casProperties.getAuthn().getMfa().getDuo().get(0);
+            duoProperties.setDuoApiHost("http://localhost:6556");
             val service = new BasicDuoSecurityAuthenticationService(
-                casProperties.getAuthn().getMfa().getDuo().get(0),
+                duoProperties,
                 httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()),
                 Caffeine.newBuilder().build());
             assertTrue(service.ping());
-            assertNotNull(service.getApiHost());
+            assertNotNull(service.getProperties().getDuoApiHost());
         }
     }
 
     @Test
     public void verifyPingFails() throws Exception {
+        val duoProperties = casProperties.getAuthn().getMfa().getDuo().get(0);
+        duoProperties.setDuoApiHost("http://localhost:6556");
         val results = MAPPER.writeValueAsString(Map.of("response", "pong", "stat", "FAIL"));
         val service = new BasicDuoSecurityAuthenticationService(
-            casProperties.getAuthn().getMfa().getDuo().get(0),
+            duoProperties,
             httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()),
             Caffeine.newBuilder().build());
         try (val webServer = new MockWebServer(6556,
@@ -104,5 +109,14 @@ public class DuoSecurityAuthenticationServiceTests {
             webServer.start();
             assertFalse(service.ping());
         }
+    }
+
+    @Test
+    public void verifyOperation() {
+        val service = mock(DuoSecurityAuthenticationService.class);
+        when(service.getDuoClient()).thenCallRealMethod();
+        when(service.signRequestToken(anyString())).thenCallRealMethod();
+        assertTrue(service.getDuoClient().isEmpty());
+        assertTrue(service.signRequestToken("anything").isEmpty());
     }
 }

@@ -11,4 +11,4 @@ category: Multifactor Authentication
 Registration records may be specified statically via CAS settings in form of a map that links registered usernames 
 with the public id of the YubiKey device. 
 
-{% include casproperties.html properties="cas.authn.mfa.yubikey.allowed-devices" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.yubikey.allowed-devices" %}

@@ -30,4 +30,4 @@ Adjust your expiration policy so that remember-me authentication requests are
 handled via a long-term timeout expiration policy, and other requests
 are handled via the CAS default SSO session expiration policy.
 
-{% include casproperties.html properties="cas.tgc,cas.ticket.tgt.remember-me" %}
+{% include_cached casproperties.html properties="cas.tgc,cas.ticket.tgt.remember-me" %}

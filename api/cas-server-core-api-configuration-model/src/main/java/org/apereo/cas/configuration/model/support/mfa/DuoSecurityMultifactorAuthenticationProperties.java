@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -34,12 +35,14 @@ public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifac
      * Duo integration key.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String duoIntegrationKey;
 
     /**
      * Duo secret key.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String duoSecretKey;
 
     /**
@@ -47,20 +50,25 @@ public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifac
      * that you generate and keep secret from Duo.
      * This is a required setting for the WebSDK integration types.
      * Leaving this setting as blank will activate the Universal Prompt option.
-     * 
+     * <p>
      * You can generate a random string in Python with:
      * &lt;pre&gt;
      * import os, hashlib
      * print hashlib.sha1(os.urandom(32)).hexdigest()
      * &lt;/pre&gt;
+     *
+     * @deprecated since 6.4.0
      */
     @RequiredProperty
+    @Deprecated(since = "6.4.0")
+    @ExpressionLanguageCapable
     private String duoApplicationKey;
 
     /**
      * Duo API host and url.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String duoApiHost;
 
     /**
@@ -86,6 +94,18 @@ public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifac
      * and the API call will never be made.
      */
     private boolean accountStatusEnabled = true;
+
+    /**
+     * Duo admin integration key.
+     */
+    @ExpressionLanguageCapable
+    private String duoAdminIntegrationKey;
+
+    /**
+     * Duo admin secret key.
+     */
+    @ExpressionLanguageCapable
+    private String duoAdminSecretKey;
 
     public DuoSecurityMultifactorAuthenticationProperties() {
         setId(DEFAULT_IDENTIFIER);

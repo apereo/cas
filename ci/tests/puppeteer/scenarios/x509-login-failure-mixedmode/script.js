@@ -13,8 +13,8 @@ const request = require('request');
     let config = JSON.parse(fs.readFileSync(args[0]));
     assert(config != null)
 
-    console.log("Certificate file: " + config.trustStoreCertificateFile);
-    console.log("Private key file: " + config.trustStorePrivateKeyFile);
+    console.log(`Certificate file: ${config.trustStoreCertificateFile}`);
+    console.log(`Private key file: ${config.trustStorePrivateKeyFile}`);
 
     const cert = fs.readFileSync(config.trustStoreCertificateFile);
     const key = fs.readFileSync(config.trustStorePrivateKeyFile);
@@ -47,9 +47,6 @@ const request = require('request');
 
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(3000)
-
-    const p = await cas.innerText(page, '#loginErrorsPanel p');
-    assert(p.startsWith("Authentication attempt has failed"));
-    
+    await cas.assertInnerTextStartsWith(page, "#loginErrorsPanel p", "Authentication attempt has failed")
     await browser.close();
 })();

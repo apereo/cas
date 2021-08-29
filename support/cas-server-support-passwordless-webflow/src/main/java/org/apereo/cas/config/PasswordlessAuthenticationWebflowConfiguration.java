@@ -13,11 +13,13 @@ import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.web.flow.AcceptPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
 import org.apereo.cas.web.flow.DetermineDelegatedAuthenticationAction;
 import org.apereo.cas.web.flow.DetermineMultifactorPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.DisplayBeforePasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.PasswordlessAuthenticationWebflowConfigurer;
+import org.apereo.cas.web.flow.PasswordlessCasWebflowLoginContextProvider;
 import org.apereo.cas.web.flow.PrepareForPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.VerifyPasswordlessAccountAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -170,10 +172,20 @@ public class PasswordlessAuthenticationWebflowConfiguration {
         return new PasswordlessAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }
-    
+
     @ConditionalOnMissingBean(name = "passwordlessCasWebflowExecutionPlanConfigurer")
     @Bean
     public CasWebflowExecutionPlanConfigurer passwordlessCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(passwordlessAuthenticationWebflowConfigurer());
+        return plan -> {
+            plan.registerWebflowConfigurer(passwordlessAuthenticationWebflowConfigurer());
+            plan.registerWebflowLoginContextProvider(passwordlessCasWebflowLoginContextProvider());
+        };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "passwordlessCasWebflowLoginContextProvider")
+    @RefreshScope
+    public CasWebflowLoginContextProvider passwordlessCasWebflowLoginContextProvider() {
+        return new PasswordlessCasWebflowLoginContextProvider();
     }
 }

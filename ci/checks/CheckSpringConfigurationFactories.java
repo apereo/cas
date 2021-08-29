@@ -61,8 +61,8 @@ public class CheckSpringConfigurationFactories {
                                                                 final File springFactoriesFile) {
         var classes = configurations.split(",");
         for (var it : Arrays.asList(classes)) {
-            var sourcePath = "/src/main/java/".replace("/", String.valueOf(File.separator));
-            var clazz = projectPath + sourcePath + it.replace(".", String.valueOf(File.separator)) + ".java";
+            var sourcePath = "/src/main/java/".replace("/", String.valueOf(File.separator)).trim();
+            var clazz = projectPath + sourcePath + it.trim().replace(".", String.valueOf(File.separator)) + ".java";
             var configurationFile = new File(clazz);
             if (!configurationFile.exists()) {
                 print("Spring configuration class %s does not exist in %s", clazz, springFactoriesFile);

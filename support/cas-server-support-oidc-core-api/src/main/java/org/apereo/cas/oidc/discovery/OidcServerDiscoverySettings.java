@@ -89,6 +89,9 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("request_parameter_supported")
     private boolean requestParameterSupported = true;
 
+    @JsonProperty("authorization_response_iss_parameter_supported")
+    private boolean authorizationResponseIssuerParameterSupported = true;
+
     @JsonProperty("backchannel_logout_supported")
     private boolean backchannelLogoutSupported;
 

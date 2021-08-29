@@ -34,7 +34,7 @@ There is no need for special ceremony to create separate issues. The pull reques
 | Version         | Reference
 |------------|-----------------------------------
 | ![](https://img.shields.io/badge/Development-WIP-blue.svg?style=flat) | [Link](https://apereo.github.io/cas/development)
-| ![](https://img.shields.io/badge/6.3.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/6.3.x)
+| ![](https://img.shields.io/badge/6.4.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/6.4.x)
 
 Additional resources are available as follows:
 

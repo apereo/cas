@@ -26,7 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hjson.JsonValue;
 import org.jooq.lambda.Unchecked;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -252,7 +251,8 @@ public class OAuth20Utils {
      * @return the model and view
      */
     public static ModelAndView produceErrorView(final Exception e, final HttpStatus status) {
-        val mv = new ModelAndView(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, CollectionUtils.wrap("rootCauseException", e));
+        val mv = new ModelAndView(CasWebflowConstants.VIEW_ID_SERVICE_ERROR,
+            CollectionUtils.wrap(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, e));
         mv.setStatus(status);
         return mv;
     }
@@ -296,7 +296,7 @@ public class OAuth20Utils {
      * @param context the context
      * @return the response type
      */
-    public static OAuth20ResponseTypes getResponseType(final JEEContext context) {
+    public static OAuth20ResponseTypes getResponseType(final WebContext context) {
         val responseType = getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         val type = Arrays.stream(OAuth20ResponseTypes.values())

@@ -60,10 +60,8 @@ public class RestPasswordManagementService extends BasePasswordManagementService
 
         val entity = new HttpEntity<>(headers);
         val result = restTemplate.exchange(rest.getEndpointUrlChange(), HttpMethod.POST, entity, Boolean.class);
-        if (result.getStatusCodeValue() == HttpStatus.OK.value() && result.hasBody()) {
-            return Objects.requireNonNull(result.getBody()).booleanValue();
-        }
-        return false;
+        return result.getStatusCodeValue() == HttpStatus.OK.value() && result.hasBody()
+            && Objects.requireNonNull(result.getBody()).booleanValue();
     }
 
     @Override

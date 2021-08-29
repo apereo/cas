@@ -61,7 +61,7 @@ public class WSFederationAuthenticationServiceSelectionStrategy extends BaseAuth
         val replyParamRes = getReplyAsParameter(service);
         if (replyParamRes.isPresent()) {
             val serviceReply = replyParamRes.get().getValue();
-            LOGGER.debug("Located service id [{}] from service authentication request at [{}]", serviceReply, service.getId());
+            LOGGER.trace("Located service id [{}] from service authentication request at [{}]", serviceReply, service.getId());
             return createService(serviceReply, service);
         }
         LOGGER.trace("Resolved final service as [{}]", service);
@@ -74,7 +74,7 @@ public class WSFederationAuthenticationServiceSelectionStrategy extends BaseAuth
             LOGGER.trace("Provided service is undefined");
             return false;
         }
-        LOGGER.debug("Evaluating service requested identified as [{}]", service.getId());
+        LOGGER.trace("Evaluating service requested identified as [{}]", service.getId());
         val realmAsParameter = getRealmAsParameter(service);
         if (realmAsParameter.isEmpty()) {
             LOGGER.trace("Parameter [{}] is undefined in the request", WSFederationConstants.WTREALM);

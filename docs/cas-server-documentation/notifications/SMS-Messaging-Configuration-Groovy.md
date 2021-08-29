@@ -24,5 +24,5 @@ def run(Object[] args) {
 }
 ```
 
-{% include casproperties.html properties="cas.sms-provider.groovy" %}
+{% include_cached casproperties.html properties="cas.sms-provider.groovy" %}
 

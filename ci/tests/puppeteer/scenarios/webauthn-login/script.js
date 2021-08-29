@@ -9,10 +9,8 @@ const cas = require('../../cas.js');
     await cas.loginWith(page, "casuser", "Mellon");
 
     await page.waitForTimeout(1000)
+    await cas.assertTextContent(page, "#status", "Login with FIDO2-enabled Device");
     
-    let header = await cas.textContent(page, '#status');
-    assert(header === "Login with FIDO2-enabled Device")
-
     let errorPanel = await page.$('#errorPanel');
     assert(await errorPanel == null);
 
@@ -25,7 +23,7 @@ const cas = require('../../cas.js');
     for (let i = 0; i < endpoints.length; i++) {
         let url = baseUrl + endpoints[i];
         const response = await page.goto(url);
-        console.log(response.status() + " " + response.statusText())
+        console.log(`${response.status()} ${response.statusText()}`)
         assert(response.ok())
     }
 

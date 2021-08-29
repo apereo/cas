@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes =
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
-@Tag("Webflow")
+@Tag("Delegation")
 public class DelegatedClientIdentityProviderConfigurationProducerTests {
     @Autowired
     @Qualifier("delegatedClientIdentityProviderConfigurationProducer")

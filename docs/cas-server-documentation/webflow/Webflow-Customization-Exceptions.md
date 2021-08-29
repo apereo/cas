@@ -19,7 +19,7 @@ settings and then define the relevant error in `messages.properties`:
 authenticationFailure.MyAuthenticationException=Authentication has failed, but it did it my way!
 ```
 
-{% include casproperties.html properties="cas.authn.errors" %}
+{% include_cached casproperties.html properties="cas.authn.errors" %}
 
 ## Groovy Error Handling
 

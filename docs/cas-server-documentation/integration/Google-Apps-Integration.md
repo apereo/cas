@@ -22,7 +22,7 @@ the SAML2 identity provider functionality in CAS to handle this integration as y
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-googleapps" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-saml-googleapps" %}
 
 ## Generate Public/Private Keys
 
@@ -44,7 +44,7 @@ openssl req -new -x509 -key private.key -out x509.pem -days 365
 
 The `x509.pem` file should be uploaded into Google Apps under Security/SSO.
 
-{% include casproperties.html properties="cas.google-apps.key" %}
+{% include_cached casproperties.html properties="cas.google-apps.key" %}
 
 ## Register Google Apps
 

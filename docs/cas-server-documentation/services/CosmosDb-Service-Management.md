@@ -12,11 +12,11 @@ Stores registered service data in an [Azure CosmosDb](https://docs.microsoft.com
 
 Support is enabled by adding the following module into the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-cosmosdb-service-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-cosmosdb-service-registry" %}
 
 ## Configuration
 
-{% include casproperties.html properties="cas.service-registry.cosmos-db" %}
+{% include_cached casproperties.html properties="cas.service-registry.cosmos-db" %}
 
 ## Troubleshooting
 

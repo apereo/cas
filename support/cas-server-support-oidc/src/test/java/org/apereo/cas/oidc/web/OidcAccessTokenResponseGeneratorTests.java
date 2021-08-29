@@ -55,7 +55,7 @@ public class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
         profile.setId("casuser");
         
         manager.save(true, profile, false);
-        val mv = oidcAccessTokenResponseGenerator.generate(request, response, result);
+        val mv = oidcAccessTokenResponseGenerator.generate(context, result);
         assertNotNull(mv);
         val modelMap = mv.getModelMap();
         assertTrue(modelMap.containsKey(OAuth20Constants.ACCESS_TOKEN));
@@ -94,7 +94,7 @@ public class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
         profile.setId("casuser");
 
         manager.save(true, profile, false);
-        val mv = oidcAccessTokenResponseGenerator.generate(request, response, result);
+        val mv = oidcAccessTokenResponseGenerator.generate(context, result);
         assertNotNull(mv);
         val modelMap = mv.getModelMap();
         

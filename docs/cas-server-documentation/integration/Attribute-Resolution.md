@@ -26,7 +26,7 @@ as long as the SSO session exists.</p></div>
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="resolveAttributes" casModule="cas-server-support-reports" %}
+{% include_cached actuators.html endpoints="resolveAttributes" casModule="cas-server-support-reports" %}
 
 ## Person Directory
 
@@ -78,7 +78,7 @@ from attribute sources unless noted otherwise by the specific authentication sch
 If multiple attribute repository sources are defined, they are added into a list
 and their results are cached and merged.
 
-{% include casproperties.html properties="cas.authn.attribute-repository.core" %}
+{% include_cached casproperties.html properties="cas.authn.attribute-repository.core" %}
 
 <div class="alert alert-info"><strong>Remember This</strong><p>Note that in certain cases,
 CAS authentication is able to retrieve and resolve attributes from the authentication 

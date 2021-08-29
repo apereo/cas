@@ -20,17 +20,17 @@ To configure YubiKey accounts and obtain API keys, [refer to the documentation](
 [YubiKey](https://www.yubico.com/products/yubikey-hardware) authentication 
 components are enabled by including the following dependencies in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey" %}
 
 ## Actuator Endpoints
              
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="yubikeyAccountRepository" %}
+{% include_cached actuators.html endpoints="yubikeyAccountRepository" %}
 
 ## Configuration
 
-{% include casproperties.html properties="cas.authn.mfa.yubikey" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.yubikey" %}
 
 By default, all YubiKey accounts for users are allowed to authenticate. Devices that 
 need to be authorized for authentication need to have followed an out-of-band 

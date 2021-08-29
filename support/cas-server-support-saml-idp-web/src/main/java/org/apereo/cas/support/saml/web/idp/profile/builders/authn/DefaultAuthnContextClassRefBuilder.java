@@ -94,6 +94,7 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
             .orElse(null);
 
         val attributes = casAssertion.getPrincipal().getAttributes();
+        attributes.putAll(casAssertion.getAttributes());
         val contextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
         if (attributes.containsKey(contextAttribute) && mappedMethod != null) {
             val authnContext = attributes.get(contextAttribute);

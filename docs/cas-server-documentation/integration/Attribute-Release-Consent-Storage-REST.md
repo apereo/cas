@@ -10,7 +10,7 @@ category: Attributes
 
 Support is enabled by including the following module in the WAR Overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-rest" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-consent-rest" %}
 
 Endpoints must be designed to accept/process `application/json`.
 
@@ -27,5 +27,5 @@ The consent decision object in transit will and must match the JSON structure ab
 
 ## Configuration
 
-{% include casproperties.html properties="cas.consent.rest" %}
+{% include_cached casproperties.html properties="cas.consent.rest" %}
 

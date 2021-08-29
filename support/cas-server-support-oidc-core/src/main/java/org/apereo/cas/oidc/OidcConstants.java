@@ -35,6 +35,13 @@ public interface OidcConstants {
      * The Authorization Server SHOULD prompt the End-User consent.
      */
     String PROMPT_CONSENT = "consent";
+
+    /**
+     * Hint to the Authorization Server about the login identifier
+     * the End-User might use to log in (if necessary).
+     */
+    String LOGIN_HINT = "login_hint";
+
     /**
      * The sub claim.
      */
@@ -59,6 +66,10 @@ public interface OidcConstants {
      * The id token.
      */
     String ID_TOKEN = "id_token";
+    /**
+     * The issuer parameter.
+     */
+    String ISS = "iss";
     /**
      * The max age.
      */

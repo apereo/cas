@@ -14,6 +14,6 @@ depends on the [JDBC auditing functionality](../audits/Audits-Database.html).
 
 Enable the following module in your configuration overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-jdbc" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-jdbc" %}
 
-{% include casproperties.html properties="cas.authn.throttle.jdbc" %}
+{% include_cached casproperties.html properties="cas.authn.throttle.jdbc" %}
