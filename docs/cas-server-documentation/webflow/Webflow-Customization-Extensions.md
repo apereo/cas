@@ -83,6 +83,9 @@ public class SomethingWebflowConfigurer extends AbstractCasWebflowConfigurer {
 }
 ```
 
+The parent class, `AbstractCasWebflowConfigurer`, providers a lot of helper methods and utilities 
+in a *DSL-like* fashion to hide the complexity of Spring Webflow APIs to make customization easier.
+
 #### Register
 
 You will then need to register your newly-designed component into the CAS application runtime:
