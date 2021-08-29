@@ -231,11 +231,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             })
             .collect(Collectors.toCollection(ArrayList::new));
 
-        if (collectionValues.size() == 1) {
-            claims.setClaim(attribute, collectionValues.get(0));
-        } else if (collectionValues.size() > 1) {
-            claims.setClaim(attribute, collectionValues);
-        }
+        getConfigurationContext().getIdTokenClaimCollector().collect(claims, attribute, collectionValues);
     }
 
     /**
