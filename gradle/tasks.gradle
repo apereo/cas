@@ -80,7 +80,7 @@ tasks.withType(Javadoc) {
 
 task pathingJar(type: Jar, description: "Produces a 'pathing' JAR whose manifest class-path contains project runtime dependencies") {
     dependsOn configurations.runtimeClasspath
-    appendix = "pathing"
+    archiveAppendix.set("pathing")
 
     doFirst {
         manifest {
@@ -94,13 +94,13 @@ task pathingJar(type: Jar, description: "Produces a 'pathing' JAR whose manifest
 }
 
 task testJar(type: Jar, dependsOn: testClasses, description: "archive the testClasses") {
-    archiveBaseName = "${project.archivesBaseName}-tests"
-    archiveClassifier = "tests"
+    archiveBaseName.set("${project.archivesBaseName}-tests")
+    archiveClassifier.set("tests")
     from sourceSets.test.output
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    archiveClassifier = "sources"
+    archiveClassifier.set("sources")
     from sourceSets.main.allSource
 }
 
@@ -110,7 +110,7 @@ task resourcesJar(type: Jar) {
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    archiveClassifier = "javadoc"
+    archiveClassifier.set("javadoc")
     from javadoc.destinationDir
 }
 

@@ -37,7 +37,7 @@ Upon logout, it may also be desirable to redirect back to a service. This is con
 link via the `service` parameter. The specified `service` must be registered in the service registry of CAS and enabled and
 CAS must be allowed to follow service redirects.
 
-{% include casproperties.html properties="cas.logout" %}
+{% include_cached casproperties.html properties="cas.logout" %}
 
 
 ## Single Logout (SLO)
@@ -59,7 +59,7 @@ contacted, and this may disrupt user experience negatively if those applications
 As an example, if user has logged into a portal application and an email application, logging out of one through SLO will
 also destroy the user session in the other which could mean data loss if the application is not carefully managing its session and user activity.
 
-{% include casproperties.html properties="cas.slo" %}
+{% include_cached casproperties.html properties="cas.slo" %}
 
 ### Back Channel
 

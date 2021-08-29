@@ -117,6 +117,12 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
          * This recursively searches based on a supplied
          * attribute and merges those results into the original entry.
          */
-        RECURSIVE_ENTRY
+        RECURSIVE_ENTRY,
+        /**
+         * Merge entries handler.
+         * Merges the values of one or more attributes in all entries into a single attribute. The merged attribute may or may not already
+         * exist on the entry. If it does exist it's existing values will remain intact.
+         */
+        MERGE_ENTRIES
     }
 }

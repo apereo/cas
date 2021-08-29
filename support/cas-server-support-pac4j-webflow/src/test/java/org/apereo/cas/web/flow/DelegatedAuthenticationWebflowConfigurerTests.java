@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
 @Tag("WebflowConfig")
+@TestPropertySource(properties = "cas.authn.pac4j.core.discovery-selection.selection-type=DYNAMIC")
 public class DelegatedAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {
@@ -41,7 +43,7 @@ public class DelegatedAuthenticationWebflowConfigurerTests extends BaseWebflowCo
         val request = new MockHttpServletRequest();
         request.addParameter("error_description", "fail");
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        context.getFlowScope().put("rootCauseException", new RuntimeException());
+        context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, new RuntimeException());
         stopState.enter(context);
         assertTrue(context.getFlowScope().contains("code"));
         assertTrue(context.getFlowScope().contains("description"));

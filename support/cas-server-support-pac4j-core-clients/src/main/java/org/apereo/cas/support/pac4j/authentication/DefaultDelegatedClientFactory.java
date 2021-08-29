@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.authentication;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
@@ -86,6 +87,8 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
 
     private final Set<IndirectClient> clients = new LinkedHashSet<>();
 
+    private final CasSSLContext casSSLContext;
+    
     @SneakyThrows
     private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc,
                                                                                  final Class<T> clazz) {
@@ -458,7 +461,9 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 cfg.setAuthnRequestSigned(saml.isSignAuthnRequest());
                 cfg.setSpLogoutRequestSigned(saml.isSignServiceProviderLogoutRequest());
                 cfg.setAcceptedSkew(Beans.newDuration(saml.getAcceptedSkew()).toSeconds());
-
+                cfg.setSslSocketFactory(casSSLContext.getSslContext().getSocketFactory());
+                cfg.setHostnameVerifier(casSSLContext.getHostnameVerifier());
+                
                 if (StringUtils.isNotBlank(saml.getPrincipalIdAttribute())) {
                     cfg.setAttributeAsId(saml.getPrincipalIdAttribute());
                 }

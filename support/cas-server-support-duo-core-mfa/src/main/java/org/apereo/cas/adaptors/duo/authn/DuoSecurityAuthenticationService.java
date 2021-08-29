@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -70,11 +71,11 @@ public interface DuoSecurityAuthenticationService extends Serializable {
     boolean ping();
 
     /**
-     * Gets api host.
+     * Gets duo properties.
      *
-     * @return the api host
+     * @return the properties.
      */
-    String getApiHost();
+    DuoSecurityMultifactorAuthenticationProperties getProperties();
 
     /**
      * Sign request token.
@@ -97,4 +98,11 @@ public interface DuoSecurityAuthenticationService extends Serializable {
     default Optional<Object> getDuoClient() {
         return Optional.empty();
     }
+
+    /**
+     * Gets admin api service.
+     *
+     * @return the admin api service
+     */
+    Optional<DuoSecurityAdminApiService> getAdminApiService();
 }

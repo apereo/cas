@@ -10,7 +10,7 @@ category: Ticketing
 
 Memcached integration is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" 
+{% include_cached casmodule.html group="org.apereo.cas" 
 module="cas-server-support-memcached-ticket-registry,cas-server-support-memcached-core" %}
 
 This registry stores tickets in one or more [memcached](http://memcached.org/) instances. 
@@ -34,7 +34,7 @@ single-threaded memcached client that should be the default choice for the major
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-spy" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-spy" %}
 
 ## AWS ElastiCache
 
@@ -56,7 +56,7 @@ This metadata is updated whenever nodes are added or removed from the cluster.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-aws-elasticache" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-aws-elasticache" %}
 
 ## Configuration Considerations
 
@@ -104,7 +104,7 @@ compact data, which benefits both storage requirements and throughput.
 
 ## Configuration
 
-{% include casproperties.html properties="cas.ticket.registry.memcached" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.memcached" %}
 
 ## High Availability Considerations
 

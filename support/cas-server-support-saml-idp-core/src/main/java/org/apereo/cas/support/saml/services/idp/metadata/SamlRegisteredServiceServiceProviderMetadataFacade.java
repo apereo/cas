@@ -98,7 +98,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
             criterions.add(new EntityIdCriterion(entityID), true);
             LOGGER.debug("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
             val chainingMetadataResolver = resolver.resolve(registeredService, criterions);
-            LOGGER.info("Resolved metadata chain from [{}] using [{}]. Filtering the chain by entity ID [{}]",
+            LOGGER.debug("Resolved metadata chain from [{}] using [{}]. Filtering the chain by entity ID [{}]",
                 registeredService.getMetadataLocation(), chainingMetadataResolver.getId(), entityID);
             
             val entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
@@ -225,6 +225,18 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         val acsList = getAssertionConsumerServices().stream()
                 .filter(acs -> acs.getBinding().equalsIgnoreCase(binding)).collect(Collectors.toList());
         return SAML2MetadataSupport.getDefaultIndexedEndpoint(acsList);
+    }
+
+    /**
+     * Get locations of all assertion consumer services.
+     *
+     * @return the assertion consumer service
+     */
+    public List<String> getAssertionConsumerServiceLocations() {
+        return getAssertionConsumerServices()
+            .stream()
+            .map(acs -> StringUtils.defaultIfBlank(acs.getResponseLocation(), acs.getLocation()))
+            .collect(Collectors.toList());
     }
 
     /**

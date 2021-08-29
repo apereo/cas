@@ -18,9 +18,9 @@ second that would continually increase in the capacity bucket.
 
 Enable the following module in your configuration overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-bucket4j" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-bucket4j" %}
 
-{% include casproperties.html properties="cas.authn.throttle.bucket4j" %}
+{% include_cached casproperties.html properties="cas.authn.throttle.bucket4j" %}
 
 ## Failure Throttling
 
@@ -50,17 +50,17 @@ the failure threshold rate.
 
 Enable the following module in your configuration overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-throttle" %}
 
 ## Configuration
 
-{% include casproperties.html properties="cas.authn.throttle.core,cas.authn.throttle.schedule,cas.authn.throttle.failure" %}
+{% include_cached casproperties.html properties="cas.authn.throttle.core,cas.authn.throttle.schedule,cas.authn.throttle.failure" %}
 
 ### Actuator Endpoints
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="throttles" %}
+{% include_cached actuators.html endpoints="throttles" %}
 
 ### Throttling Strategies
       

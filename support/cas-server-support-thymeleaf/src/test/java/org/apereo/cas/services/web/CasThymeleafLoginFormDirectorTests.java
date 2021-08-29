@@ -1,7 +1,7 @@
 package org.apereo.cas.services.web;
 
-import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -15,7 +15,8 @@ import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 import org.thymeleaf.context.WebEngineContext;
 
-import java.util.UUID;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -37,15 +38,20 @@ public class CasThymeleafLoginFormDirectorTests {
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
-        val director = new CasThymeleafLoginFormDirector();
+        val plan = mock(CasWebflowExecutionPlan.class);
+        when(plan.getWebflowLoginContextProviders()).thenReturn(List.of());
+
+        val director = new CasThymeleafLoginFormDirector(plan);
         assertTrue(director.isLoginFormViewable(mock(WebEngineContext.class)));
         assertTrue(director.isLoginFormUsernameInputVisible(mock(WebEngineContext.class)));
         assertFalse(director.isLoginFormUsernameInputDisabled(mock(WebEngineContext.class)));
 
-        val id = UUID.randomUUID().toString();
-        val account = new BasicIdentifiableCredential();
-        account.setId(id);
-        WebUtils.putPasswordlessAuthenticationAccount(context, account);
-        assertNotNull(director.getLoginFormUsername(mock(WebEngineContext.class)));
+        assertTrue(director.getLoginFormUsername(mock(WebEngineContext.class)).isEmpty());
+
+        val provider = mock(CasWebflowLoginContextProvider.class);
+        when(provider.getOrder()).thenCallRealMethod();
+        when(provider.getCandidateUsername(any())).thenReturn(Optional.of("cas"));
+        when(plan.getWebflowLoginContextProviders()).thenReturn(List.of(provider));
+        assertFalse(director.getLoginFormUsername(mock(WebEngineContext.class)).isEmpty());
     }
 }

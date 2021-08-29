@@ -6,7 +6,9 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityDirectCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProviderFactory;
+import org.apereo.cas.adaptors.duo.config.cond.ConditionalOnDuoSecurityAdminApiConfigured;
 import org.apereo.cas.adaptors.duo.config.cond.ConditionalOnDuoSecurityConfigured;
+import org.apereo.cas.adaptors.duo.web.DuoSecurityAdminApiEndpoint;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityPingEndpoint;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityUserAccountStatusEndpoint;
 import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityMultifactorWebflowConfigurer;
@@ -32,8 +34,6 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -137,18 +137,8 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     public Collection<DuoSecurityAuthenticationHandler> duoAuthenticationHandlers() {
-        val duos = casProperties.getAuthn().getMfa().getDuo()
-            .stream()
-            .filter(d -> StringUtils.isNotBlank(d.getDuoApiHost())
-                && StringUtils.isNotBlank(d.getDuoIntegrationKey())
-                && StringUtils.isNotBlank(d.getDuoSecretKey()))
-            .collect(Collectors.toList());
-        if (duos.isEmpty()) {
-            throw new BeanCreationException("No configuration/settings could be found for Duo Security.");
-        }
-
         val resolvers = ApplicationContextProvider.getMultifactorAuthenticationPrincipalResolvers();
-        return duos
+        return casProperties.getAuthn().getMfa().getDuo()
             .stream()
             .map(props -> new DuoSecurityAuthenticationHandler(props.getName(), servicesManager.getObject(),
                 duoPrincipalFactory(), duoProviderBean().getProvider(props.getId()), props.getOrder(), resolvers))
@@ -203,6 +193,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnAvailableEndpoint
     public DuoSecurityUserAccountStatusEndpoint duoAccountStatusEndpoint() {
         return new DuoSecurityUserAccountStatusEndpoint(casProperties, applicationContext);
+    }
+
+    @Bean
+    @ConditionalOnAvailableEndpoint
+    @ConditionalOnDuoSecurityAdminApiConfigured
+    public DuoSecurityAdminApiEndpoint duoAdminApiEndpoint() {
+        return new DuoSecurityAdminApiEndpoint(casProperties, applicationContext);
     }
 
     private AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator(

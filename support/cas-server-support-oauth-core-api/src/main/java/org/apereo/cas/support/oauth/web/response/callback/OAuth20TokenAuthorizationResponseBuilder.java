@@ -13,14 +13,13 @@ import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.token.JwtBuilder;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
@@ -34,17 +33,25 @@ import java.util.List;
  * @since 5.2.0
  */
 @Slf4j
-@RequiredArgsConstructor
 @Getter
-public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20AuthorizationResponseBuilder {
+public class OAuth20TokenAuthorizationResponseBuilder extends BaseOAuth20AuthorizationResponseBuilder {
     private final OAuth20TokenGenerator accessTokenGenerator;
-    private final ServicesManager servicesManager;
+
     private final JwtBuilder accessTokenJwtBuilder;
-    private final CasConfigurationProperties casProperties;
+
+    public OAuth20TokenAuthorizationResponseBuilder(final ServicesManager servicesManager,
+                                                    final CasConfigurationProperties casProperties,
+                                                    final OAuth20TokenGenerator accessTokenGenerator,
+                                                    final JwtBuilder accessTokenJwtBuilder,
+                                                    final OAuth20AuthorizationModelAndViewBuilder authorizationModelAndViewBuilder) {
+        super(servicesManager, casProperties, authorizationModelAndViewBuilder);
+        this.accessTokenGenerator = accessTokenGenerator;
+        this.accessTokenJwtBuilder = accessTokenJwtBuilder;
+    }
 
     @Override
     @SneakyThrows
-    public ModelAndView build(final JEEContext context,
+    public ModelAndView build(final WebContext context,
                               final String clientId,
                               final AccessTokenRequestDataHolder holder) {
 
@@ -59,6 +66,12 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
         return buildCallbackUrlResponseType(holder, redirectUri, accessToken, new ArrayList<>(0), refreshToken, context);
     }
 
+    @Override
+    public boolean supports(final WebContext context) {
+        val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        return StringUtils.equalsIgnoreCase(responseType, OAuth20ResponseTypes.TOKEN.getType());
+    }
 
     /**
      * Build callback url response type string.
@@ -77,7 +90,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
                                                         final OAuth20AccessToken accessToken,
                                                         final List<NameValuePair> params,
                                                         final OAuth20RefreshToken refreshToken,
-                                                        final JEEContext context) throws Exception {
+                                                        final WebContext context) throws Exception {
         val attributes = holder.getAuthentication().getAttributes();
         val state = attributes.get(OAuth20Constants.STATE).get(0).toString();
         val nonce = attributes.get(OAuth20Constants.NONCE).get(0).toString();
@@ -135,13 +148,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
         val url = builder.toString();
 
         LOGGER.debug("Redirecting to URL [{}]", url);
-        return buildResponseModelAndView(context, servicesManager, accessToken.getClientId(), url, new LinkedHashMap<>());
-    }
-
-    @Override
-    public boolean supports(final JEEContext context) {
-        val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        return StringUtils.equalsIgnoreCase(responseType, OAuth20ResponseTypes.TOKEN.getType());
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, accessToken.getClientId());
+        return build(context, registeredService, url, new LinkedHashMap<>());
     }
 }

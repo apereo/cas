@@ -63,7 +63,7 @@ selection. A sample chain of attribute consent polices follows:
 The default consent activation strategy can be replaced with an external Groovy script to determine whether the request 
 qualifies for consent. Path to the script is defined via CAS configuration properties.
 
-{% include casproperties.html properties="cas.consent.activation-strategy-groovy-script" %}
+{% include_cached casproperties.html properties="cas.consent.activation-strategy-groovy-script" %}
 
 The script itself may be designed as such:
 

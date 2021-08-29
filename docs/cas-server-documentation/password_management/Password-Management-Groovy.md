@@ -51,4 +51,4 @@ def updateSecurityQuestions(Object[] args) {
 }
 ```
 
-{% include casproperties.html properties="cas.authn.pm.groovy" %}
+{% include_cached casproperties.html properties="cas.authn.pm.groovy" %}

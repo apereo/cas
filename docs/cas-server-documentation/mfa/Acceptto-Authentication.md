@@ -15,7 +15,7 @@ Start by visiting the [Acceptto documentation](https://www.acceptto.com/acceptto
 
 Support is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-acceptto-mfa" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-acceptto-mfa" %}
 
 The integration adds support for both multifactor authentication and QR passwordless authentication.
 
@@ -29,5 +29,5 @@ history of user behavior data to detect anomalies.
 
 ## Configuration
 
-{% include casproperties.html properties="cas.authn.mfa.acceptto,cas.session-replication" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.acceptto,cas.session-replication" %}
 

@@ -33,7 +33,7 @@ those that contain personally identifiable data for the authenticated principal.
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="releaseAttributes" casModule="cas-server-support-reports" %}
+{% include_cached actuators.html endpoints="releaseAttributes" casModule="cas-server-support-reports" %}
 
 ## Authentication Attributes
 
@@ -46,7 +46,7 @@ authentication handlers, date/time of the authentication, etc.
 Releasing authentication attributes to service providers and applications can be
 controlled to some extent.
 
-{% include casproperties.html properties="cas.authn.authentication-attribute-release" %}
+{% include_cached casproperties.html properties="cas.authn.authentication-attribute-release" %}
 
 Protocol/authentication attributes may also be released conditionally on a per-service basis.
 
@@ -68,7 +68,7 @@ release policy of the service, such that for instance, you can devise rules to a
 and `cn` to every application, and additionally allow other specific principal attributes for 
 only some applications per their attribute release policy.
 
-{% include casproperties.html properties="cas.authn.attribute-repository.core.default-attributes-to-release" %}
+{% include_cached casproperties.html properties="cas.authn.attribute-repository.core.default-attributes-to-release" %}
 
 ### Return All
 
@@ -368,7 +368,7 @@ takes advantage of scripting functionality built into the Java platform via addi
 natively supported by CAS, the following module is required in the overlay to include support for additional languages
 such as Python, etc.
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-script-engines" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-script-engines" %}
 
 The service definition then may be designed as:
 

@@ -10,12 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link BaseIdTokenGeneratorService}.
@@ -32,12 +29,10 @@ public abstract class BaseIdTokenGeneratorService<T extends OAuth20Configuration
     /**
      * Gets authenticated profile.
      *
-     * @param request  the request
-     * @param response the response
+     * @param context the context
      * @return the authenticated profile
      */
-    protected UserProfile getAuthenticatedProfile(final HttpServletRequest request, final HttpServletResponse response) {
-        val context = new JEEContext(request, response);
+    protected UserProfile getAuthenticatedProfile(final WebContext context) {
         val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
         val profile = manager.getProfile();
 

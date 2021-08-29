@@ -1,6 +1,5 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
-const fs = require('fs');
 const path = require('path');
 const cas = require('../../cas.js');
 
@@ -11,7 +10,7 @@ async function unsolicited(page, target) {
     url += `?providerId=${entityId}`;
     url += `&target=${target}`;
 
-    console.log("Navigating to " + url);
+    console.log(`Navigating to ${url}`);
     await page.goto(url);
     await page.waitForNavigation();
 
@@ -23,15 +22,7 @@ async function unsolicited(page, target) {
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await browser.newPage();
-    await page.goto("https://samltest.id/upload.php");
-
-    const fileElement = await page.$("input[type=file]");
-    let metadata = path.join(__dirname, '/saml-md/idp-metadata.xml');
-    console.log("Metadata file: " + metadata);
-
-    await fileElement.uploadFile(metadata);
-    await cas.click(page, "input[name='submit']")
-    await page.waitForNavigation();
+    await cas.uploadSamlMetadata(page, path.join(__dirname, '/saml-md/idp-metadata.xml'));
 
     await page.goto("https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "Mellon");
@@ -41,8 +32,6 @@ async function unsolicited(page, target) {
 
     await unsolicited(page, "https://github.com/apereo/cas");
     await page.waitForTimeout(1000)
-
-    let metadataDir = path.join(__dirname, '/saml-md');
-    fs.rmdir(metadataDir, { recursive: true }, () => {});
+    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();

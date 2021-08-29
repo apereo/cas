@@ -32,7 +32,7 @@ be be combined with an LDAP-based principal resolver to accommodate this case.
 CAS uses the Person Directory library to provide a flexible principal resolution services against a number of data
 sources. The key to configuring `PersonDirectoryPrincipalResolver` is the definition of an `IPersonAttributeDao` object.
 
-{% include casproperties.html properties="cas.person-directory" %}
+{% include_cached casproperties.html properties="cas.person-directory" %}
 
 ## `PrincipalResolver` vs. `AuthenticationHandler`
 

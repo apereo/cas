@@ -14,7 +14,7 @@ const cas = require('../../cas.js');
             assert(data.includes("aws_secret_access_key"));
             assert(data.includes("aws_session_token"));
         },
-        function (error) {
+        function () {
             throw 'Unable to fetch credentials';
         });
 })();

@@ -7,7 +7,7 @@
     "--cas.authn.mfa.duo[0].duo-api-host=api.duosecurity.com",
 
     "--cas.authn.mfa.triggers.global.global-provider-id=mfa-duo",
-    
+    "--cas.audit.engine.enabled=false",
     "--cas.service-registry.core.init-from-json=true"
   ]
 }

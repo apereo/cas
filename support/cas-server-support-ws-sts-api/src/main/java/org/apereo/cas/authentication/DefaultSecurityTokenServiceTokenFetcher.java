@@ -52,8 +52,8 @@ public class DefaultSecurityTokenServiceTokenFetcher implements SecurityTokenSer
     }
 
     private SecurityToken invokeSecurityTokenServiceForToken(final WSFederationRegisteredService rp,
-        final SecurityTokenServiceClient sts,
-        final String principalId) {
+                                                             final SecurityTokenServiceClient sts,
+                                                             final String principalId) {
 
         try {
             val properties = sts.getProperties();

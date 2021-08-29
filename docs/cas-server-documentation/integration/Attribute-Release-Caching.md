@@ -17,7 +17,7 @@ Note: Remember that while the below policies are typically applied at release ti
 CAS automatically does create attribute release caching policies at a more global with configurable timeouts
 and durations. 
 
-{% include casproperties.html properties="cas.authn.attribute-repository.core" %}
+{% include_cached casproperties.html properties="cas.authn.attribute-repository.core" %}
 
 The following settings are shared by all principal attribute repositories:
 

@@ -22,16 +22,16 @@ re-partitioned among the remaining live cluster members.
 
 Support is enabled by the following module:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-ticket-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-ticket-registry" %}
 
 ## Configuration
 
 This module has a configuration strategy which by default auto-configures a hazelcast 
-instance used by the ticket registry implementation to build and retrieve Hazelcast's 
+instance used by the ticket registry implementation to build and retrieve Hazelcast 
 maps for its distributed tickets storage. Some aspects of hazelcast configuration in 
 this auto-configuration mode are controlled by CAS properties.
 
-{% include {{ version }}/hazelcast-configuration.md configKey="cas.ticket.registry.hazelcast" %}
+{% include_cached {{ version }}/hazelcast-configuration.md configKey="cas.ticket.registry.hazelcast" %}
 
 <div class="alert alert-warning"><strong>Session Monitoring</strong><p>Be aware that under 
 very heavy load and given a very large collection of tickets 
@@ -58,9 +58,9 @@ config in the CAS settings, which should be done automatically by CAS at runtime
 
 Support is enabled by the following module:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-discovery-aws" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-discovery-aws" %}
 
-{% include casproperties.html properties="cas.ticket.registry.hazelcast.cluster.discovery.aws" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.hazelcast.cluster.discovery.aws" %}
 
 ## Apache jclouds Auto Discovery
 
@@ -73,9 +73,9 @@ to create applications that are portable across clouds while giving you full
 control to use cloud-specific features. To see the full list of supported 
 cloud environments, [please see this link](https://jclouds.apache.org/reference/providers/#compute).
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-discovery-jclouds" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-discovery-jclouds" %}
 
-{% include casproperties.html properties="cas.ticket.registry.hazelcast.cluster.discovery.jclouds" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.hazelcast.cluster.discovery.jclouds" %}
 
 ## Microsoft Azure Auto Discovery
 
@@ -88,9 +88,9 @@ you deploy in your resource group, you need to ensure that each VM is tagged wit
 value of `clusterId` defined in the CAS Hazelcast configuration. The only requirement 
 is that every VM can access each other either by private or public IP address.
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-discovery-azure" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-discovery-azure" %}
 
-{% include casproperties.html properties="cas.ticket.registry.hazelcast.cluster.discovery.azure" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.hazelcast.cluster.discovery.azure" %}
 
 ## Kubernetes Auto Discovery
 
@@ -104,9 +104,9 @@ This module supports two different options of resolving against the discovery re
 
 See [this link](https://github.com/hazelcast/hazelcast-kubernetes) for more info.
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-discovery-kubernetes" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-discovery-kubernetes" %}
 
-{% include casproperties.html properties="cas.ticket.registry.hazelcast.cluster.discovery.kubernetes" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.hazelcast.cluster.discovery.kubernetes" %}
 
 ## Docker Swarm Auto Discovery
 
@@ -114,9 +114,9 @@ This hazelcast discovery plugin provides a Docker Swarm mode based discovery str
 
 See [this link](https://github.com/bitsofinfo/hazelcast-docker-swarm-discovery-spi/) for more info.
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-discovery-swarm" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-discovery-swarm" %}
 
-{% include casproperties.html properties="cas.ticket.registry.hazelcast.cluster.discovery.docker-swarm" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.hazelcast.cluster.discovery.docker-swarm" %}
 
 ## Multicast Auto Discovery
 
@@ -135,7 +135,7 @@ each member will wait 60 seconds before moving on. Be careful when providing a h
 value. Also, be careful not to set the value too low, or the members might give 
 up too early and create their own cluster.
 
-{% include casproperties.html properties="cas.ticket.registry.hazelcast.cluster.discovery.multicast." %}
+{% include_cached casproperties.html properties="cas.ticket.registry.hazelcast.cluster.discovery.multicast." %}
 
 ## WAN Replication
 
@@ -156,7 +156,7 @@ See [this page](https://hazelcast.com/products/wan-replication/) for more inform
 
 Defining WAN replication endpoints in CAS is done using static endpoints and discovery.
 
-{% include casproperties.html properties="cas.ticket.registry.hazelcast.cluster.wan-replication" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.hazelcast.cluster.wan-replication" %}
 
 ## Logging
 

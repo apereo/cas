@@ -22,7 +22,7 @@ submitting the rest of their login credentials to a site posing to be legitimate
 
 Support is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-gua" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-gua" %}
 
 ### Resource
 

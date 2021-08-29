@@ -29,7 +29,17 @@ dependencyResolutionManagement {
             }
         }
         maven {
+            url "https://jitpack.io"
+            content {
+                includeGroupByRegex "com.github.mmoayyed.*"
+            }
+        }
+        maven {
             url "https://oss.sonatype.org/content/repositories/snapshots"
+            mavenContent { snapshotsOnly() }
+        }
+        maven {
+            url "https://repository.apache.org/content/repositories/snapshots"
             mavenContent { snapshotsOnly() }
         }
         maven {
@@ -212,6 +222,7 @@ include "support:cas-server-support-gauth"
 include "support:cas-server-support-gauth-core"
 include "support:cas-server-support-gauth-core-mfa"
 include "support:cas-server-support-gauth-couchdb"
+include "support:cas-server-support-gauth-dynamodb"
 include "support:cas-server-support-gauth-jpa"
 include "support:cas-server-support-gauth-ldap"
 include "support:cas-server-support-gauth-mongo"
@@ -371,6 +382,7 @@ include "support:cas-server-support-simple-mfa"
 include "support:cas-server-support-sleuth"
 include "support:cas-server-support-sms-aws-sns"
 include "support:cas-server-support-sms-clickatell"
+include "support:cas-server-support-sms-smsmode"
 include "support:cas-server-support-sms-nexmo"
 include "support:cas-server-support-sms-textmagic"
 include "support:cas-server-support-sms-twilio"
@@ -465,8 +477,8 @@ include "webapp:cas-server-webapp-init-bootadmin-server"
 include "webapp:cas-server-webapp-init-config-server"
 include "webapp:cas-server-webapp-init-eureka-server"
 include "webapp:cas-server-webapp-init-tomcat"
+include "webapp:cas-server-webapp-starter-tomcat"
 
 include "webapp:cas-server-webapp-jetty"
 include "webapp:cas-server-webapp-tomcat"
 include "webapp:cas-server-webapp-undertow"
-

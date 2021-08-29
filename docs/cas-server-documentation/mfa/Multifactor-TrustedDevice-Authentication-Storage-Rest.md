@@ -14,9 +14,9 @@ which CAS shall contact to verify user decisions and remember those for later.
 
 Support is provided via the following module:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-rest" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-rest" %}
 
-{% include casproperties.html properties="cas.authn.mfa.trusted.rest" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.trusted.rest" %}
 
 ## Retrieve Trusted Records
 

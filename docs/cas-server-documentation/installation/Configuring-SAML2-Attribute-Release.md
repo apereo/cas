@@ -115,7 +115,7 @@ may contain any of the following name formats:
 You may also have the option to define attributes and their relevant name format globally
 via CAS properties. 
 
-{% include casproperties.html properties="cas.authn.saml-idp.core" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.core" %}
 
 ## Attribute Friendly Names
 

@@ -45,6 +45,12 @@ public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorAut
     private MongoDbGoogleAuthenticatorMultifactorProperties mongo = new MongoDbGoogleAuthenticatorMultifactorProperties();
 
     /**
+     * Store google authenticator devices inside a DynamoDb instance.
+     */
+    @NestedConfigurationProperty
+    private DynamoDbGoogleAuthenticatorMultifactorProperties dynamoDb = new DynamoDbGoogleAuthenticatorMultifactorProperties();
+
+    /**
      * Store google authenticator devices inside a LDAP directories.
      */
     @NestedConfigurationProperty

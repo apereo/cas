@@ -5,29 +5,28 @@ const fs = require('fs');
 const request = require('request');
 
 (async () => {
-    const browserldap = await puppeteer.launch(cas.browserOptions());
-    const pageldap = await cas.newPage(browserldap);
-    await pageldap.goto("https://localhost:8443/cas/login");
-    await cas.loginWith(pageldap, "aburr", "P@ssw0rd");
-    await cas.assertTicketGrantingCookie(pageldap);
-    const headerldap = await cas.innerText(pageldap, '#content div h2');
-    assert(headerldap === "Log In Successful")
-    const attributesldap = await cas.innerText(pageldap, '#attribute-tab-0 table#attributesTable tbody');
+    let browser = await puppeteer.launch(cas.browserOptions());
+    let page = await cas.newPage(browser);
+    await page.goto("https://localhost:8443/cas/login");
+    await cas.loginWith(page, "aburr", "P@ssw0rd");
+    await cas.assertTicketGrantingCookie(page);
+    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    const attributesldap = await cas.innerText(page, '#attribute-tab-0 table#attributesTable tbody');
     assert(attributesldap.includes("aburr"))
     assert(attributesldap.includes("someattribute"))
     assert(attributesldap.includes("ldap-dn"))
-    await browserldap.close();
+    await browser.close();
 
-    const browser = await puppeteer.launch(cas.browserOptions());
-    const page = await cas.newPage(browser);
+    browser = await puppeteer.launch(cas.browserOptions());
+    page = await cas.newPage(browser);
 
     await page.setRequestInterception(true);
     let args = process.argv.slice(2);
     let config = JSON.parse(fs.readFileSync(args[0]));
     assert(config != null)
 
-    console.log("Certificate file: " + config.trustStoreCertificateFile);
-    console.log("Private key file: " + config.trustStorePrivateKeyFile);
+    console.log(`Certificate file: ${config.trustStoreCertificateFile}`);
+    console.log(`Private key file: ${config.trustStorePrivateKeyFile}`);
 
     const cert = fs.readFileSync(config.trustStoreCertificateFile);
     const key = fs.readFileSync(config.trustStorePrivateKeyFile);
@@ -61,16 +60,12 @@ const request = require('request');
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(5000)
 
-    const header = await cas.innerText(page, "#content div h2");
-    assert(header === "Log In Successful")
+    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerTextContains(page, "#content div p", "1234567890@college.edu");
 
-    const body = await cas.innerText(page, '#content div p');
-    assert(body.includes("1234567890@college.edu"))
-
-    const attributes = await cas.innerText(page, '#attribute-tab-0 table#attributesTable tbody');
-    assert(attributes.includes("casuserx509"))
-    assert(attributes.includes("someattribute"))
-    assert(attributes.includes("user-account-control"))
+    await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "casuserx509");
+    await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "someattribute");
+    await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "user-account-control");
 
     await browser.close();
 })();

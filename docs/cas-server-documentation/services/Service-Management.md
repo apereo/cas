@@ -18,7 +18,7 @@ service registry that stores one or more registered services containing metadata
 * [Proxy control](Configuring-Service-Proxy-Policy.html) - Further restrict authorized services by granting/denying proxy authentication capability.
 * [Theme control](../ux/User-Interface-Customization.html) - Define alternate CAS themes to be used for particular services.
     
-{% include casproperties.html properties="cas.service-registry.core" %}
+{% include_cached casproperties.html properties="cas.service-registry.core" %}
 
 ## Caching Services
 
@@ -29,7 +29,7 @@ For example, misconfiguration can lead to scenarios where the cache might be run
 few minutes/seconds late. With an empty cache, authentication requests from applications might not be immediately authorized
 util the scheduled loader has had a chance to re-populate and reconstruct the cache.
 
-{% include casproperties.html properties="cas.service-registry.cache" %}
+{% include_cached casproperties.html properties="cas.service-registry.cache" %}
 
 ## Scheduler Loader
 
@@ -37,13 +37,13 @@ CAS can be configured to load service definitions from connected sources and ser
 are loaded as background-running job, and the operation forces CAS to flush and invalidate cached version of service definitions
 and start anew.
 
-{% include casproperties.html properties="cas.service-registry.schedule" %}
+{% include_cached casproperties.html properties="cas.service-registry.schedule" %}
 
 ## Actuator Endpoints
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="registeredServices" casModule="cas-server-support-reports" %}
+{% include_cached actuators.html endpoints="registeredServices" casModule="cas-server-support-reports" %}
 
 ## Service Management Web Application
 

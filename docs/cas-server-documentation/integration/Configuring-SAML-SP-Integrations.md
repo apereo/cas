@@ -21,7 +21,7 @@ to ensure all such [attributes are properly resolved](Attribute-Resolution.html)
 
 Support is enabled by including the following module in the WAR Overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-sp-integrations" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-saml-sp-integrations" %}
 
 The following SAML SP integrations, as samples, are provided by CAS:
 
@@ -243,7 +243,7 @@ The SAML2 service provider supports the following settings:
 The only required setting that would activate the automatic configuration for a
 service provider is the presence and definition of metadata. All other settings are optional.
      
-{% include casproperties.html properties="cas.saml-sp" %}
+{% include_cached casproperties.html properties="cas.saml-sp" %}
 
 **Note**: For InCommon and other metadata aggregates, multiple entity ids can be specified to
 filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates). EntityIds

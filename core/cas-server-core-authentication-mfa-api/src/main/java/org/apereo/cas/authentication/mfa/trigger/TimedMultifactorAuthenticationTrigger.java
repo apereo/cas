@@ -86,10 +86,7 @@ public class TimedMultifactorAuthenticationTrigger implements MultifactorAuthent
 
         val timed = timedMultifactor.stream()
             .filter(t -> {
-                var providerEvent = false;
-                if (!t.getOnDays().isEmpty()) {
-                    providerEvent = t.getOnDays().stream().anyMatch(dayNamesForToday::contains);
-                }
+                var providerEvent = !t.getOnDays().isEmpty() && t.getOnDays().stream().anyMatch(dayNamesForToday::contains);
                 if (t.getOnOrAfterHour() >= 0) {
                     providerEvent = now.getHour() >= t.getOnOrAfterHour();
                 }

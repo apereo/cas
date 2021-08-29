@@ -20,9 +20,9 @@ protocol to provide a One Time Code for authentication. Each image is unique for
 
 Support is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-swivel" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-swivel" %}
 
-{% include casproperties.html properties="cas.authn.mfa.swivel" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.swivel" %}
 
 ## Logging
 

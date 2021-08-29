@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.web.idp.delegation.SamlIdPDelegatedClientAuthenticationRequestCustomizer;
@@ -28,7 +29,7 @@ import org.springframework.context.annotation.Configuration;
 public class SamlIdPDelegatedAuthenticationConfiguration {
 
     @Autowired
-    @Qualifier("samlIdPDistributedSessionStore")
+    @Qualifier(DistributedJEESessionStore.DEFAULT_BEAN_NAME)
     private ObjectProvider<SessionStore> sessionStore;
 
     @Autowired

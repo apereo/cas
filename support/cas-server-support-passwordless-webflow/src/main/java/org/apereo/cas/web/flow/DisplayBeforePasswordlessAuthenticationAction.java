@@ -70,7 +70,9 @@ public class DisplayBeforePasswordlessAuthenticationAction extends AbstractActio
             communicationsManager.email(mail, user.getEmail(), body);
         }
         if (communicationsManager.isSmsSenderDefined() && StringUtils.isNotBlank(user.getPhone())) {
-            communicationsManager.sms(passwordlessProperties.getTokens().getSms().getFrom(), user.getPhone(), token);
+            val smsProperties = passwordlessProperties.getTokens().getSms();
+            communicationsManager.sms(smsProperties.getFrom(),
+                user.getPhone(), smsProperties.getFormattedText(token));
         }
         passwordlessTokenRepository.deleteTokens(user.getUsername());
         passwordlessTokenRepository.saveToken(user.getUsername(), token);

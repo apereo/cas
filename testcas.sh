@@ -31,7 +31,7 @@ printHelp() {
     echo -e "\nPlease see the test script for details."
 }
 
-task="cleanTest "
+task=""
 parallel="--parallel "
 dryRun=""
 info=""

@@ -15,7 +15,7 @@ that apply to a particular group of functionality in CAS, such as LDAP authentic
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-core-configuration-metadata-repository" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-core-configuration-metadata-repository" %}
 
 Configuration metadata may also be accessed and queried using the
 CAS actuator endpoints. [See this guide](../monitoring/Monitoring-Statistics.html) to learn more.
@@ -24,7 +24,7 @@ CAS actuator endpoints. [See this guide](../monitoring/Monitoring-Statistics.htm
       
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="configurationMetadata,casModules" %}
+{% include_cached actuators.html endpoints="configurationMetadata,casModules" %}
 
 ## Metadata via Commandline
 

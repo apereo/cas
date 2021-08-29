@@ -167,7 +167,7 @@ jobs:
           - config-server
           - discovery-server
           - bootadmin-server
-    name: external - ${{ matrix.category }}
+    name: external tomcat - ${{ matrix.category }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

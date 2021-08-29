@@ -139,6 +139,12 @@ public interface AuditActionResolvers {
      * Action resolver id {@code VALIDATE_SERVICE_TICKET_RESOLVER}.
      */
     String VALIDATE_SERVICE_TICKET_RESOLVER = "VALIDATE_SERVICE_TICKET_RESOLVER";
+
+    /**
+     * Action resolver id {@code VALIDATE_PROTOCOL_SPECIFICATION_RESOLVER}.
+     */
+    String VALIDATE_PROTOCOL_SPECIFICATION_RESOLVER = "VALIDATE_PROTOCOL_SPECIFICATION_RESOLVER";
+
     /**
      * Action resolver id {@code SERVICE_ACCESS_ENFORCEMENT_ACTION_RESOLVER}.
      */

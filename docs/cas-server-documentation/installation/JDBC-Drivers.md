@@ -10,14 +10,14 @@ category: Configuration
 While in most cases this is unnecessary and handled by CAS automatically,
 you may need to also include the following module to account for various database drivers:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-jdbc-drivers" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-jdbc-drivers" %}
 
 ## Database Support
 
 Automatic support for drivers includes the following databases.
 All other drivers need to be manually added to the build configuration.
 
-{% include {{ version }}/hibernate-configuration.md %}
+{% include_cached {{ version }}/hibernate-configuration.md %}
 
 ### H2
     

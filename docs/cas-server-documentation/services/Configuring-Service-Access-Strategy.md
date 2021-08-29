@@ -364,7 +364,7 @@ The configuration of this component qualifies to use the [Spring Expression Lang
 
 The grouper access strategy is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-grouper-core" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-grouper-core" %}
 
 This access strategy attempts to locate [Grouper](https://incommon.org/software/grouper/) 
 groups for the CAS principal. The groups returned by Grouper

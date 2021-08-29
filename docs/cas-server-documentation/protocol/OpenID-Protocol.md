@@ -33,9 +33,9 @@ as the OpenId Connect protocol whose details are <a href="OIDC-Protocol.html">do
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-openid-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-openid-webflow" %}
 
-{% include casproperties.html properties="cas.authn.openid." %}
+{% include_cached casproperties.html properties="cas.authn.openid." %}
 
 ## Register Clients
 

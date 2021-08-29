@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -93,7 +94,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             if (event == null) {
                 FunctionUtils.doIf(LOGGER.isDebugEnabled(),
                     e -> LOGGER.debug(exception.getMessage(), exception),
-                    e -> LOGGER.warn(exception.getMessage()))
+                    e -> LoggingUtils.warn(LOGGER, exception.getMessage(), exception))
                     .accept(exception);
                 event = newEvent(CasWebflowConstants.TRANSITION_ID_ERROR, exception);
             }

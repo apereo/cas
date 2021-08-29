@@ -15,4 +15,4 @@ as CAS needs to query the ticket registry and all tickets present to
 determine whether the current user has established an authentication 
 session anywhere. This will surely add a performance burden to the deployment. Use with care.</p></div>
 
-{% include casproperties.html properties="cas.authn.policy.unique-principal" %}
+{% include_cached casproperties.html properties="cas.authn.policy.unique-principal" %}

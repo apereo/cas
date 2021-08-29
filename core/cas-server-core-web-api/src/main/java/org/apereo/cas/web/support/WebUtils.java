@@ -277,8 +277,8 @@ public class WebUtils {
      */
     public static void putTicketGrantingTicketIntoMap(final MutableAttributeMap<Object> map, final String ticketValue) {
         FunctionUtils.doIf(StringUtils.isNotBlank(ticketValue),
-            value -> map.put(PARAMETER_TICKET_GRANTING_TICKET_ID, value),
-            value -> map.remove(PARAMETER_TICKET_GRANTING_TICKET_ID))
+                value -> map.put(PARAMETER_TICKET_GRANTING_TICKET_ID, value),
+                value -> map.remove(PARAMETER_TICKET_GRANTING_TICKET_ID))
             .accept(ticketValue);
     }
 
@@ -1007,7 +1007,7 @@ public class WebUtils {
      * @return the model and view
      */
     public static ModelAndView produceErrorView(final String view, final Exception e) {
-        val mv = new ModelAndView(view, CollectionUtils.wrap("rootCauseException", e));
+        val mv = new ModelAndView(view, CollectionUtils.wrap(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, e));
         mv.setStatus(HttpStatus.BAD_REQUEST);
         return mv;
     }
@@ -1415,6 +1415,27 @@ public class WebUtils {
     }
 
     /**
+     * Put delegated authentication dynamic provider selection.
+     *
+     * @param context the context
+     * @param result  the result
+     */
+    public static void putDelegatedAuthenticationDynamicProviderSelection(final RequestContext context,
+                                                                          final Boolean result) {
+        context.getFlowScope().put("delegatedAuthenticationDynamicProviderSelection", result);
+    }
+
+    /**
+     * Put delegated authentication dynamic provider selection.
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    public static Boolean isDelegatedAuthenticationDynamicProviderSelection(final RequestContext context) {
+        return context.getFlowScope().get("delegatedAuthenticationDynamicProviderSelection", Boolean.class, Boolean.FALSE);
+    }
+
+    /**
      * Gets delegated authentication provider configurations.
      *
      * @param context the context
@@ -1785,7 +1806,7 @@ public class WebUtils {
      * Put the logout POST url in the flow scope.
      *
      * @param requestContext the flow context
-     * @param postUrl the POST url
+     * @param postUrl        the POST url
      */
     public static void putLogoutPostUrl(final RequestContext requestContext, final String postUrl) {
         requestContext.getFlowScope().put("logoutPostUrl", postUrl);
@@ -1795,7 +1816,7 @@ public class WebUtils {
      * Put the logout POST data in the flow scope.
      *
      * @param requestContext the flow context
-     * @param postData the POST data
+     * @param postData       the POST data
      */
     public static void putLogoutPostData(final RequestContext requestContext, final Map<String, Object> postData) {
         requestContext.getFlowScope().put("logoutPostData", postData);

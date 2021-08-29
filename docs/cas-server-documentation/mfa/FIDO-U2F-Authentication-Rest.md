@@ -21,4 +21,4 @@ The following parameters are passed:
 | `DELETE` | N/A | Delete all device records | `200`.
 | `DELETE` | `/${id}`  as a path variable | Delete all device records matching that identifier. | `200`.
 
-{% include casproperties.html properties="cas.authn.mfa.u2f.rest" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.u2f.rest" %}

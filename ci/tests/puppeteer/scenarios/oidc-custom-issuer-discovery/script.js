@@ -3,7 +3,7 @@ const cas = require('../../cas.js');
 
 (async () => {
     const issuer = "https://localhost:8443/cas/oidc/custom/issuer/fawnoos";
-    await cas.doGet(issuer + '/.well-known/openid-configuration',
+    await cas.doGet(`${issuer}/.well-known/openid-configuration`,
         function (res) {
             let result = res.data;
             assert(result.jwks_uri.startsWith(issuer));

@@ -10,9 +10,12 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.History;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.HashMap;
 
 /**
  * The {@link DelegatedAuthenticationWebflowConfigurer} is responsible for
@@ -40,6 +43,13 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
             createClientActionState(flow);
             createStopWebflowViewState(flow);
             createDelegatedClientLogoutAction();
+
+            val selectionType = casProperties.getAuthn().getPac4j().getCore().getDiscoverySelection().getSelectionType();
+            if (selectionType.isDynamic()) {
+                createDynamicDiscoveryViewState(flow);
+                createDynamicDiscoveryActionState(flow);
+                createRedirectToProviderViewState(flow);
+            }
         }
     }
 
@@ -64,7 +74,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
     protected void createClientActionState(final Flow flow) {
         val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION,
             createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION));
-        
+
         val transitionSet = actionState.getTransitionSet();
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
 
@@ -103,5 +113,32 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
         createTransitionForState(stopWebflowState, CasWebflowConstants.TRANSITION_ID_RETRY, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY);
         val retryState = createEndState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY);
         retryState.setFinalResponseAction(createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY));
+    }
+
+    private void createDynamicDiscoveryViewState(final Flow flow) {
+        val attributes = new HashMap<String, Object>();
+        attributes.put("bind", Boolean.FALSE);
+        attributes.put("validate", Boolean.FALSE);
+        attributes.put("history", History.INVALIDATE);
+
+        val discoveryViewState = createViewState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHN_DYNAMIC_DISCOVERY_VIEW, "delegated-authn/casDynamicDiscoveryView");
+        createTransitionForState(discoveryViewState, CasWebflowConstants.TRANSITION_ID_EXECUTE, CasWebflowConstants.STATE_ID_DELEGATED_AUTHN_DYNAMIC_DISCOVERY_EXECUTION);
+        createTransitionForState(discoveryViewState, CasWebflowConstants.TRANSITION_ID_BACK, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+
+        val casLoginViewState = getState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
+        createTransitionForState(casLoginViewState, CasWebflowConstants.TRANSITION_ID_DISCOVERY, CasWebflowConstants.STATE_ID_DELEGATED_AUTHN_DYNAMIC_DISCOVERY_VIEW, attributes);
+    }
+
+    private void createDynamicDiscoveryActionState(final Flow flow) {
+        var discoveryActionState = createActionState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHN_DYNAMIC_DISCOVERY_EXECUTION,
+            CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_DYNAMIC_DISCOVERY_EXECUTION);
+        createTransitionForState(discoveryActionState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_DELEGATED_AUTHN_DYNAMIC_DISCOVERY_VIEW);
+        createTransitionForState(discoveryActionState, CasWebflowConstants.STATE_ID_REDIRECT, CasWebflowConstants.STATE_ID_REDIRECT_TO_DELEGATED_AUTHN_PROVIDER_VIEW);
+    }
+
+    private void createRedirectToProviderViewState(final Flow flow) {
+        var factory = createExternalRedirectViewFactory("requestScope."
+            + DelegatedClientAuthenticationDynamicDiscoveryExecutionAction.REQUEST_SCOPE_ATTR_PROVIDER_REDIRECT_URL);
+        createViewState(flow, CasWebflowConstants.STATE_ID_REDIRECT_TO_DELEGATED_AUTHN_PROVIDER_VIEW, factory);
     }
 }

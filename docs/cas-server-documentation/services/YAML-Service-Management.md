@@ -14,9 +14,9 @@ the directory structure to find relevant files.
 
 Support is enabled by adding the following module into the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yaml-service-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-yaml-service-registry" %}
 
-{% include casproperties.html properties="cas.service-registry.yaml" %}
+{% include_cached casproperties.html properties="cas.service-registry.yaml" %}
 
 
 A sample YAML file follows:

@@ -28,7 +28,7 @@ cas.something.sensitive={cas-cipher}FKSAJDFGYOS8F7GLHAKERGFHLSAJ
 You also need to instruct CAS to use the proper algorithm, decryption key and other relevant parameters
 when attempting to decrypt settings. 
    
-{% include casproperties.html properties="cas.standalone.configuration-security" %}
+{% include_cached casproperties.html properties="cas.standalone.configuration-security" %}
 
 The above settings may be passed to CAS as either command-line or system properties.
 
@@ -43,7 +43,7 @@ Both endpoints accept a `POST` payload; you can use `/encrypt` to secure and
 encrypt settings and place them inside your CAS configuration.
 CAS will auto-decrypt at the appropriate moment.
 
-{% include casproperties.html
+{% include_cached casproperties.html
 thirdPartyStartsWith="encrypt.key-store"
 thirdPartyExactMatch="spring.cloud.config.server.encrypt"
 %}
@@ -96,9 +96,9 @@ To learn more about Vault and its installation process, please visit the project
 
 Once vault is accessible and configured inside CAS, support is provided via the following dependency:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-vault" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-vault" %}
 
-{% include casproperties.html
+{% include_cached casproperties.html
 thirdPartyStartsWith="spring.cloud.vault"
 %}
 

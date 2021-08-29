@@ -42,6 +42,8 @@ ext {
 
     publishFlag = publishSnapshots || publishReleases
 
+    publishMinimalArtifacts = providers.systemProperty("publishMinimalArtifacts").forUseAtConfigurationTime().present
+
     skipBootifulArtifact = providers.systemProperty("skipBootifulArtifact").forUseAtConfigurationTime().present
     skipErrorProneCompiler = providers.systemProperty("skipErrorProneCompiler").forUseAtConfigurationTime().present
 
@@ -309,10 +311,12 @@ subprojects {
                         logger.info "Project ${project.name} should be published as a JAR"
                         mavenJava(MavenPublication) {
                             from components.java
-                            artifact tasks['sourcesJar']
-                            artifact tasks['resourcesJar']
-                            artifact tasks['javadocJar']
-                            artifact tasks['testJar']
+                            if (!rootProject.publishMinimalArtifacts) {
+                                artifact tasks['sourcesJar']
+                                artifact tasks['resourcesJar']
+                                artifact tasks['javadocJar']
+                                artifact tasks['testJar']
+                            }
 
                             pom {
                                 createPom(it, project)
@@ -363,7 +367,7 @@ subprojects {
 
     artifacts {
         tests testJar
-        if (rootProject.publishFlag) {
+        if (rootProject.publishFlag && !rootProject.publishMinimalArtifacts) {
             archives sourcesJar
             archives javadocJar
             archives resourcesJar
@@ -433,7 +437,7 @@ subprojects {
         project.buildDate != null || !project.buildJarFile.exists()
     }
 
-    if (projectShouldBePublished(project)) {
+    if (projectRequiresLombok(project)) {
         apply plugin: "io.franzbecker.gradle-lombok"
         lombok {
             version = "$lombokVersion"
@@ -563,7 +567,7 @@ task gradleHome(description: "Display GRADLE_HOME environment variable") {
     }
 }
 
-if (rootProject.publishFlag) {
+if (rootProject.publishFlag && !rootProject.publishMinimalArtifacts) {
     artifacts {
         archives aggregateJavadocsIntoJar
         archives rootSourcesJar
@@ -640,7 +644,15 @@ task verifyRequiredJavaVersion {
 boolean projectShouldBePublished(Project project) {
     def publishable = !["api", "core", "docs", "support", "webapp"].contains(project.name)
             && !project.getPath().contains("cas-server-documentation")
+    if ("${releaseRepositoryUrl}".contains("github.com") && project.getPath().contains("cas-server-support-shell")) {
+        // shell is too big for github
+        publishable = false
+    }
     project.ext.publishable = publishable
 }
 
+boolean projectRequiresLombok(Project project) {
+    return !["api", "core", "docs", "support", "webapp"].contains(project.name)
+            && !project.getPath().contains("cas-server-documentation")
+}
 
