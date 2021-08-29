@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -28,6 +29,7 @@ public class Pac4jDelegatedAuthenticationDiscoverySelectionProperties implements
     /**
      * Indicate how the selection and presentation of identity providers would be controlled.
      */
+    @RequiredProperty
     private Pac4jDelegatedAuthenticationSelectionTypes selectionType = Pac4jDelegatedAuthenticationSelectionTypes.MENU;
 
     /**
