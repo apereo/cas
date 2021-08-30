@@ -23,15 +23,13 @@ Support is enabled by adding the following module into the overlay:
 To enable additional logging, configure the log4j configuration file to add the following levels:
 
 ```xml
-...
-<Logger name="com.microsoft.azure" level="debug" additivity="false">
+<Logger name="com.azure.cosmos" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
 </Logger>
-...
 ```
-
 
 ## Auto Initialization
 
-Upon startup and configuration permitting, the registry is able to auto initialize itself from default JSON service definitions available to CAS. See [this guide](AutoInitialization-Service-Management.html) for more info.
+Upon startup and configuration permitting, the registry is able to auto initialize 
+itself from default JSON service definitions available to CAS. See [this guide](AutoInitialization-Service-Management.html) for more info.
