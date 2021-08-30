@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -8,6 +7,8 @@ const cas = require('../../cas.js');
 
     console.log("Create SSO session with external CAS server...")
     await page.goto("https://casserver.herokuapp.com/cas/login");
+    await page.waitForTimeout(3000)
+    await cas.screenshot(page);
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(1000)
 

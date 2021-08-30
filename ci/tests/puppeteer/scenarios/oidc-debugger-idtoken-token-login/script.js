@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -13,16 +12,9 @@ const cas = require('../../cas.js');
         "response_mode=form_post&" +
         "nonce=vn4qulthnx";
     await page.goto(url);
-
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.waitForTimeout(3000)
-
     await cas.click(page, "#allow");
     await page.waitForNavigation();
-
-    await page.waitForSelector('h1.green-text', { visible: true });
-    let header = await cas.textContent(page, "h1.green-text");
-    assert(header === "Success!")
-
+    await cas.assertTextContent(page, "h1.green-text", "Success!");
     await browser.close();
 })();

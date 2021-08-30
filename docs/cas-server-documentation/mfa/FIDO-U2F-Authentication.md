@@ -20,9 +20,9 @@ Opera seem to exist, you should always verify that U2F support is available for 
 
 Support is enabled by including the following module in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-u2f" %}
 
-{% include casproperties.html properties="cas.authn.mfa.u2f.core" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.u2f.core" %}
 
 
 ## Registration
@@ -36,7 +36,7 @@ expire after a fixed period since a user registered the U2F token
 MFA for a setup where tokens are centrally distributed and revoked, 
 you may want to extend the interval.
 
-{% include casproperties.html properties="cas.authn.mfa.u2f.cleaner" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.u2f.cleaner" %}
 
 <div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a 
 clustered CAS deployment, it is best to keep the cleaner running on one designated 
@@ -47,7 +47,7 @@ cleaner running on all nodes may likely lead to severe performance and locking i
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="u2fDevices" %}
+{% include_cached actuators.html endpoints="u2fDevices" %}
 
 ### Default
 

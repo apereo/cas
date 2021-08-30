@@ -15,10 +15,10 @@ provider can provide more general authentication solutions.
 
 Support is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-inwebo-mfa" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-inwebo-mfa" %}
 
 The integration adds support for both push mobile/desktop and browser authentications.
 
 ## Configuration
 
-{% include casproperties.html properties="cas.authn.mfa.inwebo" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.inwebo" %}

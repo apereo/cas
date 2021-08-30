@@ -70,10 +70,7 @@ public interface RegisteredServiceProperty extends Serializable {
     @JsonIgnore
     default boolean getBooleanValue() {
         val value = getValue();
-        if (StringUtils.isNotBlank(value)) {
-            return BooleanUtils.toBoolean(value);
-        }
-        return false;
+        return StringUtils.isNotBlank(value) && BooleanUtils.toBoolean(value);
     }
 
     /**

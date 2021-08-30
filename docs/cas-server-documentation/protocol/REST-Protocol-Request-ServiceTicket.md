@@ -43,6 +43,6 @@ may be issued as JWTs instead. See [this guide](../installation/Configure-Servic
 
 Support is enabled by including the following in your overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest-tokens" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-rest-tokens" %}
 
-{% include casproperties.html properties="cas.authn.token" %}
+{% include_cached casproperties.html properties="cas.authn.token" %}

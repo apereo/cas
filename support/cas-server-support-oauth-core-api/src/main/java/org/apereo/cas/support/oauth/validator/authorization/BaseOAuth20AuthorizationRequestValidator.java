@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 
 /**
  * This is {@link BaseOAuth20AuthorizationRequestValidator}.
@@ -52,22 +52,15 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
      * @param context the context
      * @return true/false
      */
-    protected boolean preValidate(final JEEContext context) {
-        val request = context.getNativeRequest();
-
-        val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+    protected boolean preValidate(final WebContext context) {
+        val clientId = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
         if (StringUtils.isBlank(clientId)) {
             LOGGER.warn("Missing required parameter [{}]", OAuth20Constants.CLIENT_ID);
-
-            setErrorDetails(context,
-                OAuth20Constants.INVALID_REQUEST,
-                String.format("Missing required parameter: [%s]", OAuth20Constants.CLIENT_ID),
-                false);
-
+            setErrorDetails(context, OAuth20Constants.INVALID_REQUEST, String.format("Missing required parameter: [%s]", OAuth20Constants.CLIENT_ID), false);
             return false;
         }
 
-        val redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
+        val redirectUri = OAuth20Utils.getRequestParameter(context, OAuth20Constants.REDIRECT_URI).orElse(StringUtils.EMPTY);
         if (StringUtils.isBlank(redirectUri)) {
             LOGGER.warn("Missing required parameter [{}]", OAuth20Constants.REDIRECT_URI);
             setErrorDetails(context, OAuth20Constants.INVALID_REQUEST,
@@ -95,7 +88,7 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
             return false;
         }
 
-        val responseType = request.getParameter(OAuth20Constants.RESPONSE_TYPE);
+        val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).orElse(StringUtils.EMPTY);
         if (StringUtils.isBlank(responseType)) {
             setErrorDetails(context, OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE,
                 String.format("Missing required parameter: [%s]", OAuth20Constants.RESPONSE_TYPE), true);
@@ -105,11 +98,8 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
         if (!OAuth20Utils.checkResponseTypes(responseType, OAuth20ResponseTypes.values())) {
             LOGGER.warn("Response type [{}] is not found in the list of supported values [{}].",
                 responseType, OAuth20ResponseTypes.values());
-
-            setErrorDetails(context,
-                OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE,
-                String.format("Unsupported response_type: [%s]", responseType),
-                true);
+            setErrorDetails(context, OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE,
+                String.format("Unsupported response_type: [%s]", responseType), true);
 
             return false;
         }
@@ -125,7 +115,7 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
      * @param errorDescription  the OAuth error description
      * @param errorWithCallBack does the error will redirect the end-user to the client
      */
-    protected void setErrorDetails(final JEEContext context, final String error,
+    protected void setErrorDetails(final WebContext context, final String error,
                                    final String errorDescription, final boolean errorWithCallBack) {
         context.setRequestAttribute(OAuth20Constants.ERROR, error);
         context.setRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION, errorDescription);
@@ -141,4 +131,5 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
     protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
         return OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
     }
+
 }

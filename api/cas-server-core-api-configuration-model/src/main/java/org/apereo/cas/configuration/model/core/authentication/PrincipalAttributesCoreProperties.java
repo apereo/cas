@@ -47,6 +47,12 @@ public class PrincipalAttributesCoreProperties implements Serializable {
     private int maximumCacheSize = 10000;
 
     /**
+     * Recover from LDAP exceptions and continue with partial results. Otherwise,
+     * die and do not allow to log in.
+     */
+    private boolean recoverExceptions = true;
+
+    /**
      * Merging strategies can be used to resolve conflicts when the same attribute are found from multiple sources.
      */
     private MergingStrategyTypes merger = MergingStrategyTypes.REPLACE;

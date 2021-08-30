@@ -17,7 +17,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
@@ -39,9 +39,7 @@ import java.util.Map;
  */
 @Slf4j
 public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileScopeToAttributesFilter {
-    private static final int MAP_SIZE = 8;
-
-    private final Map<String, BaseOidcScopeAttributeReleasePolicy> attributeReleasePolicies = new LinkedHashMap<>(MAP_SIZE);
+    private final Map<String, BaseOidcScopeAttributeReleasePolicy> attributeReleasePolicies = new LinkedHashMap<>();
 
     private final PrincipalFactory principalFactory;
 
@@ -62,7 +60,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     public Principal filter(final Service service,
                             final Principal profile,
                             final RegisteredService registeredService,
-                            final JEEContext context,
+                            final WebContext context,
                             final OAuth20AccessToken accessToken) {
         val principal = super.filter(service, profile, registeredService, context, accessToken);
         if (registeredService instanceof OidcRegisteredService) {

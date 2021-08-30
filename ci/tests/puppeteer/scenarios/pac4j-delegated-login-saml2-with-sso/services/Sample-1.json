@@ -1,0 +1,15 @@
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "^(https|imaps)://.*",
+  "name": "Sample",
+  "id": 1,
+  "description": "This service definition authorizes all application urls that support HTTPS and IMAPS protocols.",
+  "evaluationOrder": 10000,
+  "authenticationPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
+    "requiredAuthenticationHandlers": ["java.util.TreeSet", ["DelegatedClientAuthenticationHandler"]],
+    "criteria": {
+      "@class": "org.apereo.cas.services.AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria"
+    }
+  }
+}

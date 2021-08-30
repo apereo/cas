@@ -43,6 +43,10 @@ public interface AuditableActions {
      * Auditable action {@code SERVICE_TICKET_VALIDATE}.
      */
     String SERVICE_TICKET_VALIDATE = "SERVICE_TICKET_VALIDATE";
+    /**
+     * Auditable action {@code PROTOCOL_SPECIFICATION_VALIDATE}.
+     */
+    String PROTOCOL_SPECIFICATION_VALIDATE = "PROTOCOL_SPECIFICATION_VALIDATE";
 
     /**
      * Auditable action {@code REST_API_SERVICE_TICKET}.

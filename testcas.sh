@@ -31,7 +31,7 @@ printHelp() {
     echo -e "\nPlease see the test script for details."
 }
 
-task="cleanTest "
+task=""
 parallel="--parallel "
 dryRun=""
 info=""
@@ -79,7 +79,7 @@ while (( "$#" )); do
         shift
         ;;
     --no-watch)
-        flags+=" --no-watch-fs"
+        flags+=" --no-watch-fs "
         shift
         ;;
     --test)
@@ -87,15 +87,15 @@ while (( "$#" )); do
         shift 2
         ;;
     --no-retry)
-        flags+=" -DskipTestRetry=true"
+        flags+=" -DskipTestRetry=true "
         shift
         ;;
     --ignore-failures)
-        flags+=" -DignoreTestFailures=true"
+        flags+=" -DignoreTestFailures=true "
         shift
         ;;
     --no-build-cache)
-        flags+=" --no-build-cache"
+        flags+=" --no-build-cache "
         shift
         ;;
     --category)
@@ -230,6 +230,9 @@ while (( "$#" )); do
                 ;;
             jmx|jmx)
                 task+="testJMX "
+                ;;
+            restfulapiauthentication|restfulauthn|restauthn)
+                task+="testRestfulApiAuthentication "
                 ;;
             rest|restful|restapi|restfulapi)
                 task+="testRestfulApi "

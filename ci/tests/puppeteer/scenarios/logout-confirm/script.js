@@ -16,9 +16,7 @@ const cas = require('../../cas.js');
 
     await page.goto("https://localhost:8443/cas/logout");
 
-    const header = await cas.innerText(page, '#content h2');
-    assert(header === "Do you, casuser, want to log out completely?")
-
+    await cas.assertInnerText(page, "#content h2", "Do you, casuser, want to log out completely?")
     await cas.assertVisibility(page, '#logoutButton')
     await cas.assertVisibility(page, '#divServices')
     await cas.assertVisibility(page, '#servicesTable')

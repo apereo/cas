@@ -82,7 +82,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreConfiguration.class
 },
     properties = "cas.authn.rest.uri=http://localhost:8081/authn")
-@Tag("RestfulApi")
+@Tag("RestfulApiAuthentication")
 public class RestAuthenticationHandlerTests {
     @Autowired
     @Qualifier("restAuthenticationHandler")

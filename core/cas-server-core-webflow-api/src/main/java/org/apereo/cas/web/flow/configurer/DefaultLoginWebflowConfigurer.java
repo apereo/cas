@@ -15,13 +15,17 @@ import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.History;
+import org.springframework.webflow.engine.NoMatchingTransitionException;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.BinderConfiguration;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -40,6 +44,7 @@ import javax.security.auth.login.FailedLoginException;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     /**
@@ -51,9 +56,9 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      * @param casProperties          the cas properties
      */
     public DefaultLoginWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-        final FlowDefinitionRegistry flowDefinitionRegistry,
-        final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties) {
+                                         final FlowDefinitionRegistry flowDefinitionRegistry,
+                                         final ConfigurableApplicationContext applicationContext,
+                                         final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
     }
 
@@ -370,6 +375,8 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
     protected void createDefaultEndStates(final Flow flow) {
         createRedirectUnauthorizedServiceUrlEndState(flow);
         createServiceErrorEndState(flow);
+        createWebflowConfigurationErrorEndState(flow);
+        createServiceErrorEndState(flow);
         createRedirectEndState(flow);
         createPostEndState(flow);
         createInjectHeadersActionState(flow);
@@ -439,6 +446,21 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
     }
 
     /**
+     * Create webflow configuration error end state.
+     *
+     * @param flow the flow
+     */
+    protected void createWebflowConfigurationErrorEndState(final Flow flow) {
+        val state = createEndState(flow, CasWebflowConstants.STATE_ID_VIEW_WEBFLOW_CONFIG_ERROR, CasWebflowConstants.VIEW_ID_WEBFLOW_CONFIG_ERROR);
+        state.getEntryActionList().add(new ConsumerExecutionAction(context -> {
+            if (context.getFlashScope().contains(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION)) {
+                val rootException = (Exception) context.getFlashScope().get(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION);
+                LoggingUtils.error(LOGGER, rootException);
+            }
+        }));
+    }
+
+    /**
      * Create generic login success end state.
      *
      * @param flow the flow
@@ -472,6 +494,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
         h.add(UnauthorizedServiceException.class, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
         h.add(UnauthorizedServiceForPrincipalException.class, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
         h.add(PrincipalException.class, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
+        h.add(NoMatchingTransitionException.class, CasWebflowConstants.STATE_ID_VIEW_WEBFLOW_CONFIG_ERROR);
         flow.getExceptionHandlerSet().add(h);
     }
 

@@ -96,8 +96,7 @@ public class ConfigurationMetadataPropertyCreator {
         }
         prop.setName(indexedName);
         prop.setId(indexedName);
-
-
+        
         var elementType = fieldDecl.getElementType();
         val elementTypeStr = elementType.asString();
         if (PRIMITIVES.containsKey(elementTypeStr)) {

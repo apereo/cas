@@ -37,7 +37,7 @@ understand, it will send the `415 Unsupported Media Type`.
 Ticket-granting tickets created by the REST protocol may be issued as 
 JWTs instead. Support is enabled by including the following in your overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest-tokens" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-rest-tokens" %}
 
 To request a ticket-granting ticket as JWT next, ensure the `POST` request matches the following:
 
@@ -51,7 +51,7 @@ The `token` parameter may either be passed as a request parameter or a request
 header. The body of the response will include the ticket-granting ticket as 
 a JWT. Note that JWTs created are typically signed and encrypted by default with pre-generated keys. 
 
-{% include casproperties.html properties="cas.authn.token" %}
+{% include_cached casproperties.html properties="cas.authn.token" %}
 
 ## X509 Authentication
 
@@ -76,9 +76,9 @@ during TLS handshake, and have CAS server retrieve the certificate from the cont
 
 Support is enabled by including the following in your overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest-x509" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-rest-x509" %}
 
-{% include casproperties.html properties="cas.rest.x509" %}
+{% include_cached casproperties.html properties="cas.rest.x509" %}
 
 ### Body Parameter
 

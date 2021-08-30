@@ -10,7 +10,7 @@ category: Ticketing
 
 Couchbase integration is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-couchbase-ticket-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-couchbase-ticket-registry" %}
 
 [Couchbase](http://www.couchbase.com) is a highly available, open source NoSQL database server based on
 [Erlang/OTP](http://www.erlang.org) and its mnesia database. The intention of this
@@ -18,7 +18,7 @@ registry is to leverage the capability of Couchbase server to provide high avail
 
 ## Configuration
 
-{% include casproperties.html properties="cas.ticket.registry.couchbase" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.couchbase" %}
 
 The Couchbase integration currently assumes that the ticket registries are stored
 in their own buckets. You may optionally set passwords for the buckets and optionally configure

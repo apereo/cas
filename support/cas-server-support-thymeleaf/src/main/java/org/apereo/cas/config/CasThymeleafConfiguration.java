@@ -10,6 +10,7 @@ import org.apereo.cas.services.web.ThemeViewResolverFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.CasProtocolViewFactory;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.view.CasProtocolThymeleafViewFactory;
 import org.apereo.cas.web.view.ChainingTemplateViewResolver;
 import org.apereo.cas.web.view.RestfulUrlTemplateResolver;
@@ -18,6 +19,7 @@ import org.apereo.cas.web.view.ThemeFileTemplateResolver;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +97,11 @@ public class CasThymeleafConfiguration {
         parameters.put("charset", charset);
         parameters.putAll(type.getParameters());
         return new MimeType(type, parameters).toString();
+    }
+
+    @Bean
+    public LayoutDialect layoutDialect() {
+        return new LayoutDialect();
     }
 
     @Bean
@@ -184,8 +191,10 @@ public class CasThymeleafConfiguration {
     @ConditionalOnMissingBean(name = "casThymeleafLoginFormDirector")
     @Bean
     @RefreshScope
-    public CasThymeleafLoginFormDirector casThymeleafLoginFormDirector() {
-        return new CasThymeleafLoginFormDirector();
+    @Autowired
+    public CasThymeleafLoginFormDirector casThymeleafLoginFormDirector(@Qualifier("casWebflowExecutionPlan")
+                                                                       final CasWebflowExecutionPlan webflowExecutionPlan) {
+        return new CasThymeleafLoginFormDirector(webflowExecutionPlan);
     }
 
     @ConditionalOnMissingBean(name = "themeViewResolverFactory")

@@ -10,6 +10,6 @@ category: Multifactor Authentication
 
 Registration records and tokens may be kept inside a Redis instance via the following module:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-gauth-redis" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-gauth-redis" %}
 
-{% include casproperties.html properties="cas.authn.mfa.gauth.redis" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.gauth.redis" %}

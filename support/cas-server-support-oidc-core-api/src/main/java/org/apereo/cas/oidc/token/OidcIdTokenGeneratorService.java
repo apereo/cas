@@ -23,14 +23,13 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.util.Assert;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
@@ -51,9 +50,14 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         super(configurationContext);
     }
 
+    private static void setClaim(final JwtClaims claims, final String claimName, final Object claimValue) {
+        if (claimValue != null && StringUtils.isNotBlank(claimValue.toString())) {
+            claims.setClaim(claimName, claimValue);
+        }
+    }
+
     @Override
-    public String generate(final HttpServletRequest request,
-                           final HttpServletResponse response,
+    public String generate(final WebContext context,
                            final OAuth20AccessToken accessToken,
                            final long timeoutInSeconds,
                            final OAuth20ResponseTypes responseType,
@@ -61,11 +65,10 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                            final OAuthRegisteredService registeredService) {
         Assert.isAssignable(OidcRegisteredService.class, registeredService.getClass(), "Registered service instance is not an OIDC service");
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
-        val context = new JEEContext(request, response);
         LOGGER.trace("Attempting to produce claims for the id token [{}]", accessToken);
-        val authenticatedProfile = getAuthenticatedProfile(request, response);
+        val authenticatedProfile = getAuthenticatedProfile(context);
         LOGGER.debug("Current user profile to use for ID token is [{}]", authenticatedProfile);
-        val claims = buildJwtClaims(request, accessToken, timeoutInSeconds,
+        val claims = buildJwtClaims(accessToken, timeoutInSeconds,
             oidcRegisteredService, authenticatedProfile, context, responseType, grantType);
 
         return encodeAndFinalizeToken(claims, oidcRegisteredService, accessToken);
@@ -78,7 +81,6 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
      * except for response_type=id_token, where they are returned in the id_token
      * (as there is no access token issued that could be used to access the userinfo endpoint).
      *
-     * @param request          the request
      * @param accessToken      the access token
      * @param timeoutInSeconds the timeoutInSeconds
      * @param service          the service
@@ -88,12 +90,11 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
      * @param grantType        the grant type
      * @return the jwt claims
      */
-    protected JwtClaims buildJwtClaims(final HttpServletRequest request,
-                                       final OAuth20AccessToken accessToken,
+    protected JwtClaims buildJwtClaims(final OAuth20AccessToken accessToken,
                                        final long timeoutInSeconds,
                                        final OidcRegisteredService service,
                                        final UserProfile profile,
-                                       final JEEContext context,
+                                       final WebContext context,
                                        final OAuth20ResponseTypes responseType,
                                        final OAuth20GrantTypes grantType) {
         val authentication = accessToken.getAuthentication();
@@ -146,10 +147,10 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         claims.setClaim(OidcConstants.CLAIM_AUTH_TIME, tgt.getAuthentication().getAuthenticationDate().toEpochSecond());
 
         if (attributes.containsKey(OAuth20Constants.STATE)) {
-            claims.setClaim(OAuth20Constants.STATE, attributes.get(OAuth20Constants.STATE).get(0));
+            setClaim(claims, OAuth20Constants.STATE, attributes.get(OAuth20Constants.STATE).get(0));
         }
         if (attributes.containsKey(OAuth20Constants.NONCE)) {
-            claims.setClaim(OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).get(0));
+            setClaim(claims, OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).get(0));
         }
         generateAccessTokenHash(accessToken, service, claims);
 

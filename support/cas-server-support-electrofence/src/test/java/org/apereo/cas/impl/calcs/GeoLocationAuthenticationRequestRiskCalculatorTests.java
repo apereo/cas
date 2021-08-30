@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.calcs;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.impl.mock.MockTicketGrantingTicketCreatedEventProducer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.google-maps.ip-stack-api-access-key=6bde37c76ad15c8a5c828fafad8b0bc4"})
 @Tag("Authentication")
 public class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
-
+    
     @Test
     public void verifyTestWhenNoAuthnEventsFoundForUser() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication("geoperson");
@@ -50,6 +52,9 @@ public class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAut
 
     @Test
     public void verifyTestWhenAuthnEventsFoundForUser() {
+        HttpsURLConnection.setDefaultHostnameVerifier(CasSSLContext.disabled().getHostnameVerifier());
+        HttpsURLConnection.setDefaultSSLSocketFactory(CasSSLContext.disabled().getSslContext().getSocketFactory());
+
         val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val request = new MockHttpServletRequest();

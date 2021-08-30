@@ -20,7 +20,7 @@ to an mfa provider where successful matching of rules allows for the multifactor
 
 ## Configuration
 
-{% include casproperties.html properties="cas.authn.adaptive.policy" %}
+{% include_cached casproperties.html properties="cas.authn.adaptive.policy" %}
 
 To enable adaptive authentication, you will need to allow CAS to geo-locate authentication requests.
 To learn more, please [see this guide](../authentication/GeoTracking-Authentication-Requests.html)
@@ -47,7 +47,7 @@ header `clientIpAddress` under a `GET` request. The expected result status codes
 | `200`, `202`          | IP address is allowed and the request may proceed.
 | All Others            | Response body is expected to contain a score between `1` and `0`, (`1=Banned` and `0=Allowed`), indicating IP address suspiciousness.
 
-{% include casproperties.html properties="cas.authn.adaptive.ip-intel.rest" %}
+{% include_cached casproperties.html properties="cas.authn.adaptive.ip-intel.rest" %}
 
 
 ### Groovy
@@ -73,7 +73,7 @@ def run(Object[] args) {
 }
 ```
 
-{% include casproperties.html properties="cas.authn.adaptive.ip-intel.groovy" %}
+{% include_cached casproperties.html properties="cas.authn.adaptive.ip-intel.groovy" %}
 
 ### BlackDot IP Intel
 
@@ -87,7 +87,7 @@ Note that a valid email that is checked frequently must be used in the contact
 field or else the service might be disabled without notice. Furthermore, **DO NOT** exceed more 
 than 500 queries per day & 15 queries per minute. See [FAQ](https://getipintel.net/#FAQ) for further information.
 
-{% include casproperties.html properties="cas.authn.adaptive.ip-intel.black-dot" %}
+{% include_cached casproperties.html properties="cas.authn.adaptive.ip-intel.black-dot" %}
 
 # Risk-based Authentication
 

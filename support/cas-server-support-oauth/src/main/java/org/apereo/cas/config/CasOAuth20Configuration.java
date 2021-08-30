@@ -20,13 +20,13 @@ import org.apereo.cas.support.oauth.OAuth20ClientIdAwareProfileManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20AccessTokenAuthenticator;
+import org.apereo.cas.support.oauth.authenticator.OAuth20AuthenticationClientProvider;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.authenticator.OAuth20ClientIdClientSecretAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20DefaultCasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.authenticator.OAuth20ProofKeyCodeExchangeAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20RefreshTokenAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20UsernamePasswordAuthenticator;
-import org.apereo.cas.support.oauth.authenticator.OAuthAuthenticationClientProvider;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
@@ -69,7 +69,9 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Acc
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20DefaultAccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20RegisteredServiceJwtAccessTokenCipherExecutor;
+import org.apereo.cas.support.oauth.web.response.callback.DefaultOAuth20AuthorizationModelAndViewBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationModelAndViewBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentialsResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20InvalidAuthorizationResponseBuilder;
@@ -340,7 +342,7 @@ public class CasOAuth20Configuration {
 
         val clientList = new ArrayList<Client>();
 
-        val beans = applicationContext.getBeansOfType(OAuthAuthenticationClientProvider.class, false, true);
+        val beans = applicationContext.getBeansOfType(OAuth20AuthenticationClientProvider.class, false, true);
         val providers = new ArrayList<>(beans.values());
         AnnotationAwareOrderComparator.sort(providers);
 
@@ -578,6 +580,12 @@ public class CasOAuth20Configuration {
             profileScopeToAttributesFilter());
     }
 
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "oauthAuthorizationModelAndViewBuilder")
+    public OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder() {
+        return new DefaultOAuth20AuthorizationModelAndViewBuilder();
+    }
 
     @ConditionalOnMissingBean(name = "oauthAuthorizationResponseBuilders")
     @Bean
@@ -719,32 +727,32 @@ public class CasOAuth20Configuration {
     @Bean
     @RefreshScope
     public OAuth20AuthorizationResponseBuilder oauthResourceOwnerCredentialsResponseBuilder() {
-        return new OAuth20ResourceOwnerCredentialsResponseBuilder(accessTokenResponseGenerator(), oauthTokenGenerator(),
-            casProperties);
+        return new OAuth20ResourceOwnerCredentialsResponseBuilder(servicesManager.getObject(), casProperties,
+            accessTokenResponseGenerator(), oauthTokenGenerator(), oauthAuthorizationModelAndViewBuilder());
     }
 
     @ConditionalOnMissingBean(name = "oauthClientCredentialsResponseBuilder")
     @Bean
     @RefreshScope
     public OAuth20AuthorizationResponseBuilder oauthClientCredentialsResponseBuilder() {
-        return new OAuth20ClientCredentialsResponseBuilder(accessTokenResponseGenerator(),
-            oauthTokenGenerator(), casProperties);
+        return new OAuth20ClientCredentialsResponseBuilder(servicesManager.getObject(),
+            accessTokenResponseGenerator(), oauthTokenGenerator(), casProperties, oauthAuthorizationModelAndViewBuilder());
     }
 
     @ConditionalOnMissingBean(name = "oauthTokenResponseBuilder")
     @Bean
     @RefreshScope
     public OAuth20AuthorizationResponseBuilder oauthTokenResponseBuilder() {
-        return new OAuth20TokenAuthorizationResponseBuilder(oauthTokenGenerator(),
-            servicesManager.getObject(), accessTokenJwtBuilder(), casProperties);
+        return new OAuth20TokenAuthorizationResponseBuilder(servicesManager.getObject(), casProperties,
+            oauthTokenGenerator(), accessTokenJwtBuilder(), oauthAuthorizationModelAndViewBuilder());
     }
 
     @ConditionalOnMissingBean(name = "oauthAuthorizationCodeResponseBuilder")
     @Bean
     @RefreshScope
     public OAuth20AuthorizationResponseBuilder oauthAuthorizationCodeResponseBuilder() {
-        return new OAuth20AuthorizationCodeAuthorizationResponseBuilder(ticketRegistry.getObject(),
-            defaultOAuthCodeFactory(), servicesManager.getObject());
+        return new OAuth20AuthorizationCodeAuthorizationResponseBuilder(servicesManager.getObject(), casProperties,
+            ticketRegistry.getObject(), defaultOAuthCodeFactory(), oauthAuthorizationModelAndViewBuilder());
     }
 
     @ConditionalOnMissingBean(name = "oauthInvalidAuthorizationBuilder")

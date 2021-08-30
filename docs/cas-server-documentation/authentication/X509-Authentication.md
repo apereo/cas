@@ -84,14 +84,14 @@ individuals, instead of trusting the institutional root CA.
 
 X.509 support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-x509-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-x509-webflow" %}
 
 The X.509 handler technically performs additional checks _after_ the real SSL client authentication process performed
 by the Web server terminating the SSL connection. Since an SSL peer may be configured to accept a wide range of
 certificates, the CAS X.509 handler provides a number of properties that place additional restrictions on
 acceptable client certificates.
 
-{% include casproperties.html properties="cas.authn.x509." excludes=".ldap,.webflow" %}
+{% include_cached casproperties.html properties="cas.authn.x509." excludes=".ldap,.webflow" %}
 
 ### X509 Certificate Extraction
 
@@ -102,7 +102,7 @@ If this is set to true, it is important that the proxy cannot
 be bypassed by users and that the proxy ensures the header
 never originates from the browser.
 
-{% include casproperties.html properties="cas.authn.x509.extract-cert,cas.authn.x509.ssl-header-name" %}
+{% include_cached casproperties.html properties="cas.authn.x509.extract-cert,cas.authn.x509.ssl-header-name" %}
 
 The specific parsing logic for the certificate is compatible
 with the Apache Tomcat `SSLValve` which can work with headers set by
@@ -110,43 +110,43 @@ Apache HTTPD, Nginx, Haproxy, BigIP F5, etc.
 
 ### X509 Principal Resolution
 
-{% include casproperties.html properties="cas.authn.x509.principal,cas.authn.x509.principal-type" %}
+{% include_cached casproperties.html properties="cas.authn.x509.principal,cas.authn.x509.principal-type" %}
 
 ### `SUBJECT_DN` Principal Resolution
 
-{% include casproperties.html properties="cas.authn.x509.subject-dn" %}
+{% include_cached casproperties.html properties="cas.authn.x509.subject-dn" %}
 
 ### `CN_EDIPI` Principal Resolution
 
-{% include casproperties.html properties="cas.authn.x509.cn-edipi" %}
+{% include_cached casproperties.html properties="cas.authn.x509.cn-edipi" %}
 
 ### `RFC822_EMAIL` Principal Resolution
 
-{% include casproperties.html properties="cas.authn.x509.rfc822-email" %}
+{% include_cached casproperties.html properties="cas.authn.x509.rfc822-email" %}
 
 ### `SERIAL_NO` Principal Resolution
 
-{% include casproperties.html properties="cas.authn.x509.serial-no" %}
+{% include_cached casproperties.html properties="cas.authn.x509.serial-no" %}
 
 ### `SERIAL_NO_DN` Principal Resolution
 
-{% include casproperties.html properties="cas.authn.x509.serial-no-dn" %}
+{% include_cached casproperties.html properties="cas.authn.x509.serial-no-dn" %}
 
 ### `SUBJECT_ALT_NAME` Principal Resolution
 
-{% include casproperties.html properties="cas.authn.x509.subject-alt-name" %}
+{% include_cached casproperties.html properties="cas.authn.x509.subject-alt-name" %}
 
 ### X509 CRL Fetching / Revocation
 
-{% include casproperties.html properties="cas.authn.x509.crl-,cas.authn.x509.revocation-checker,cas.authn.x509.cache-" %}
+{% include_cached casproperties.html properties="cas.authn.x509.crl-,cas.authn.x509.revocation-checker,cas.authn.x509.cache-" %}
 
 ### X509 LDAP Integration
 
-{% include casproperties.html properties="cas.authn.x509.ldap" %}
+{% include_cached casproperties.html properties="cas.authn.x509.ldap" %}
 
 You may also fetch additional LDAP attributes using the principal extracted from the X509 certificate:
 
-{% include casproperties.html properties="cas.authn.attribute-repository.ldap" %}
+{% include_cached casproperties.html properties="cas.authn.attribute-repository.ldap" %}
 
 ## Web Server Configuration
 
@@ -168,7 +168,7 @@ container that ships with CAS and can be potentially simplify the configuration 
 quite a bit, depending on use case and behavior. The configuration of certificate and trust stores 
 as well as behavior and enforcement of client authentication can also be managed directly by CAS.
 
-{% include casproperties.html thirdPartyStartsWith="server.ssl" %}
+{% include_cached casproperties.html thirdPartyStartsWith="server.ssl" %}
 
 #### Optional (Mixed) Authentication
 
@@ -181,7 +181,7 @@ This behavior is achieved by exposing a dedicated port for the embedded Apache T
 may forcefully require X.509 authentication for login and access. Doing so should automatically allow for an extra
 login option in the user interface to trigger the browser for X.509.
 
-{% include casproperties.html properties="cas.authn.x509.webflow" %}
+{% include_cached casproperties.html properties="cas.authn.x509.webflow" %}
 
 ### External Apache Tomcat
 

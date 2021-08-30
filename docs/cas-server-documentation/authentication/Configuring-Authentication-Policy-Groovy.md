@@ -7,7 +7,7 @@ category: Authentication
 
 # Groovy - Authentication Policy
 
-{% include casproperties.html properties="cas.authn.policy.groovy" %}
+{% include_cached casproperties.html properties="cas.authn.policy.groovy" %}
 
 The script may be designed as:
 

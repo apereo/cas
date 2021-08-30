@@ -6,10 +6,15 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.pac4j.client.ChainingDelegatedClientIdentityProviderRedirectionStrategy;
+import org.apereo.cas.pac4j.client.DefaultDelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
+import org.apereo.cas.pac4j.client.DelegatedClientIdentityProviderRedirectionStrategy;
+import org.apereo.cas.pac4j.client.GroovyDelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.DefaultDelegatedAuthenticationNavigationController;
 import org.apereo.cas.web.DefaultDelegatedClientAuthenticationWebflowManager;
@@ -273,13 +278,28 @@ public class DelegatedAuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "delegatedClientIdentityProviderConfigurationProducer")
     public DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProviderConfigurationProducer() {
         val helper = getDelegatedAuthenticationAccessStrategyHelper();
-        return new DefaultDelegatedClientIdentityProviderConfigurationProducer(servicesManager.getObject(),
+        return new DefaultDelegatedClientIdentityProviderConfigurationProducer(
             authenticationRequestServiceSelectionStrategies.getObject(),
             builtClients.getObject(),
             helper,
             casProperties,
-            delegatedAuthenticationCookieGenerator(),
-            delegatedClientAuthenticationRequestCustomizers());
+            delegatedClientAuthenticationRequestCustomizers(),
+            delegatedClientIdentityProviderRedirectionStrategy());
+    }
+
+    @ConditionalOnMissingBean(name = "delegatedClientIdentityProviderRedirectionStrategy")
+    @Bean
+    @RefreshScope
+    public DelegatedClientIdentityProviderRedirectionStrategy delegatedClientIdentityProviderRedirectionStrategy() {
+        val chain = new ChainingDelegatedClientIdentityProviderRedirectionStrategy();
+        val strategy = casProperties.getAuthn().getPac4j().getCore().getGroovyRedirectionStrategy();
+        if (strategy.getLocation() != null) {
+            chain.addStrategy(new GroovyDelegatedClientIdentityProviderRedirectionStrategy(servicesManager.getObject(),
+                new WatchableGroovyScriptResource(strategy.getLocation())));
+        }
+        chain.addStrategy(new DefaultDelegatedClientIdentityProviderRedirectionStrategy(servicesManager.getObject(),
+            delegatedAuthenticationCookieGenerator(), casProperties));
+        return chain;
     }
 
     @ConditionalOnMissingBean(name = "delegatedAuthenticationCookieGenerator")

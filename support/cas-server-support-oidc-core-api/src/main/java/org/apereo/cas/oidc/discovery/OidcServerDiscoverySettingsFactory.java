@@ -1,13 +1,17 @@
 package org.apereo.cas.oidc.discovery;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcServerDiscoverySettingsFactory}.
@@ -20,6 +24,8 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
     private final CasConfigurationProperties casProperties;
 
     private final OidcIssuerService issuerService;
+
+    private final ConfigurableApplicationContext applicationContext;
 
     @Override
     public OidcServerDiscoverySettings getObject() {
@@ -36,7 +42,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discovery.setIntrospectionSupportedAuthenticationMethods(discoveryConfig.getIntrospectionSupportedAuthenticationMethods());
         discovery.setGrantTypesSupported(discoveryConfig.getGrantTypesSupported());
         discovery.setTokenEndpointAuthMethodsSupported(discoveryConfig.getTokenEndpointAuthMethodsSupported());
-        discovery.setClaimsParameterSupported(true);
+        discovery.setClaimsParameterSupported(discoveryConfig.isClaimsParameterSupported());
 
         discovery.setIdTokenSigningAlgValuesSupported(discoveryConfig.getIdTokenSigningAlgValuesSupported());
         discovery.setIdTokenEncryptionAlgValuesSupported(discoveryConfig.getIdTokenEncryptionAlgValuesSupported());
@@ -51,10 +57,20 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
 
         discovery.setCodeChallengeMethodsSupported(discoveryConfig.getCodeChallengeMethodsSupported());
 
+        discovery.setRequestParameterSupported(discoveryConfig.isRequestParameterSupported());
+        discovery.setRequestUriParameterSupported(discoveryConfig.isRequestUriParameterSupported());
         discovery.setRequestObjectSigningAlgValuesSupported(discoveryConfig.getRequestObjectSigningAlgValuesSupported());
-        discovery.setRequestObjectSigningAlgValuesSupported(discoveryConfig.getRequestObjectEncryptionAlgValuesSupported());
+        discovery.setRequestObjectEncryptionAlgValuesSupported(discoveryConfig.getRequestObjectEncryptionAlgValuesSupported());
         discovery.setRequestObjectEncryptionEncodingValuesSupported(discoveryConfig.getRequestObjectEncryptionEncodingValuesSupported());
-
+        discovery.setAuthorizationResponseIssuerParameterSupported(discoveryConfig.isAuthorizationResponseIssuerParameterSupported());
+        discovery.setAcrValuesSupported(discoveryConfig.getAcrValuesSupported());
+        if (discoveryConfig.getAcrValuesSupported().isEmpty()) {
+            val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext).values()
+                .stream()
+                .map(MultifactorAuthenticationProvider::getId)
+                .collect(Collectors.toList());
+            discovery.setAcrValuesSupported(providers);
+        }
         return discovery;
     }
 

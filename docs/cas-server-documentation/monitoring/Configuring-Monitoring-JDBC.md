@@ -10,7 +10,7 @@ category: Monitoring & Statistics
 
 Monitor the status and availability of a relational SQL database.
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-jdbc-monitor" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-jdbc-monitor" %}
 
-{% include casproperties.html properties="cas.monitor.jdbc" %}
+{% include_cached casproperties.html properties="cas.monitor.jdbc" %}
 

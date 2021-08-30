@@ -79,13 +79,13 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
 
     private String generateCryptSalt() {
         val cryptSalt = new StringBuilder();
-        if ("1".equals(this.encodingAlgorithm) || "MD5".equals(this.encodingAlgorithm.toUpperCase())) {
+        if ("1".equals(this.encodingAlgorithm) || "MD5".equalsIgnoreCase(this.encodingAlgorithm)) {
             cryptSalt.append("$1$");
             LOGGER.debug("Encoding with MD5 algorithm");
-        } else if ("5".equals(this.encodingAlgorithm) || "SHA-256".equals(this.encodingAlgorithm.toUpperCase())) {
+        } else if ("5".equals(this.encodingAlgorithm) || "SHA-256".equalsIgnoreCase(this.encodingAlgorithm)) {
             cryptSalt.append("$5$rounds=").append(this.strength).append('$');
             LOGGER.debug("Encoding with SHA-256 algorithm and [{}] rounds", this.strength);
-        } else if ("6".equals(this.encodingAlgorithm) || "SHA-512".equals(this.encodingAlgorithm.toUpperCase())) {
+        } else if ("6".equals(this.encodingAlgorithm) || "SHA-512".equalsIgnoreCase(this.encodingAlgorithm)) {
             cryptSalt.append("$6$rounds=").append(this.strength).append('$');
             LOGGER.debug("Encoding with SHA-512 algorithm and [{}] rounds", this.strength);
         } else {

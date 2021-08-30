@@ -37,8 +37,6 @@ public class UsernamePasswordCredential extends AbstractCredential {
      **/
     public static final String AUTHENTICATION_ATTRIBUTE_PASSWORD = "credential";
 
-    private static final int MAP_SIZE = 8;
-
     private static final long serialVersionUID = -700605081472810939L;
 
     private @Size(min = 1, message = "username.required") String username;
@@ -48,7 +46,7 @@ public class UsernamePasswordCredential extends AbstractCredential {
 
     private String source;
 
-    private Map<String, Object> customFields = new LinkedHashMap<>(MAP_SIZE);
+    private Map<String, Object> customFields = new LinkedHashMap<>();
 
     public UsernamePasswordCredential(final String username, final String password) {
         this.username = username;

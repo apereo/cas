@@ -18,7 +18,7 @@ Refer to the [Logback documentation](https://logback.qos.ch/documentation.html) 
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-logback" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-logback" %}
 
 You must also make sure the following modules and dependencies are excluded from the WAR overlay:
 
@@ -63,4 +63,4 @@ Sanitizing log data to remove sensitive ticket ids such as ticket-granting ticke
 may be worked out in future releases, you should be extra careful to cleanse log data prior to sharing it with external systems such as Splunk or Syslog, etc. 
 </p></div>
 
-{% include casproperties.html properties="cas.logging" thirdPartyStartsWith="logging." %}
+{% include_cached casproperties.html properties="cas.logging" thirdPartyStartsWith="logging." %}
