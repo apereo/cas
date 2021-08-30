@@ -94,6 +94,10 @@ Azure SDK for CosmosDb is now upgraded to v4, and integration tests for CosmosDb
 are now updated to take advantage of the latest CosmosDb emulator versions to exercise the test suite
 for the [CosmosDb service registry](../services/CosmosDb-Service-Management.html) implementation.
 
+### Hazelcast Discovery via Apache Zookeeper
+
+Apache Zookeeper can now be used to handle [auto discovery of Hazelcast members](../ticketing/Hazelcast-Ticket-Registry.html) in a cluster.
+
 ## Other Stuff
 
 - SAML2 Unsolicited endpoint is now able to preserve custom query parameters.
