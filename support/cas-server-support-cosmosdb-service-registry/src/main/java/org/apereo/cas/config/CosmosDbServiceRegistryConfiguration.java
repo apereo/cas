@@ -67,5 +67,4 @@ public class CosmosDbServiceRegistryConfiguration {
         @Qualifier("cosmosDbServiceRegistry") final ServiceRegistry cosmosDbServiceRegistry) {
         return plan -> plan.registerServiceRegistry(cosmosDbServiceRegistry);
     }
-
 }

@@ -24,12 +24,24 @@ import java.io.Serializable;
 public class HazelcastZooKeeperDiscoveryProperties implements Serializable {
     private static final long serialVersionUID = 235372431457637272L;
 
+    /**
+     * Zookeeper url address
+     * typically in the format of {@code ip-address:port}.
+     */
     @RequiredProperty
     private String url;
 
+    /**
+     * Name of this Hazelcast cluster. You can have multiple
+     * distinct clusters to use the same ZooKeeper installation
+     */
     @RequiredProperty
     private String group;
 
+    /**
+     * Path in zookeeper to be used for auto-discovery of members
+     * where members are tracked.
+     */
     @RequiredProperty
-    private String path;
+    private String path = "/discovery/hazelcast";
 }
