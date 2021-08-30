@@ -33,6 +33,10 @@ import static org.mockito.Mockito.when;
 @Tag("Delegation")
 public class DelegatedAuthenticationAccessStrategyHelperTests {
 
+    /**
+     * Without service (parameter=null) delegated authentication policy cannot be evaluated and so delegated auth.
+     * should not be authorized for the given client-name.
+     */
     @Test
     public void isDelegatedClientAuthorizedForServiceIsNull() {
         val serviceManager = mock(ServicesManager.class);
@@ -43,15 +47,15 @@ public class DelegatedAuthenticationAccessStrategyHelperTests {
 
         val httpServletRequest = mock(HttpServletRequest.class);
 
-        /*
-        Without service delegated authentication policy cannot be evaluated and so Delegated Auth. should not be
-        authorized for the given client-name
-         */
         assertFalse(
                 delegatedAuthenticationAccessStrategyHelper.isDelegatedClientAuthorizedFor(
                         "myClientName", null, httpServletRequest));
     }
 
+    /**
+     * Without service-id delegated authentication policy cannot be evaluated and so delegated auth. should not be
+     * authorized for the given client-name.
+     */
     @Test
     public void isDelegatedClientAuthorizedForServiceIdIsEmpty() {
         val serviceManager = mock(ServicesManager.class);
@@ -64,10 +68,6 @@ public class DelegatedAuthenticationAccessStrategyHelperTests {
         val service = mock(Service.class);
         when(service.getId()).thenReturn(StringUtils.EMPTY);
 
-        /*
-        Without service delegated authentication policy cannot be evaluated and so Delegated Auth. should not be
-        authorized for the given client-name
-         */
         assertFalse(
                 delegatedAuthenticationAccessStrategyHelper.isDelegatedClientAuthorizedFor(
                         "myClientName", service, httpServletRequest));
