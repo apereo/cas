@@ -271,6 +271,7 @@ while (( "$#" )); do
                 task+="testSpnego"
                 ;;
             cosmosdb|cosmos)
+                hasDocker && ./ci/tests/cosmosdb/run-cosmosdb-serve.sh
                 task+="testCosmosDb "
                 ;;
             simple|unit)
