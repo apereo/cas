@@ -88,6 +88,12 @@ used as an SMS provider to handle text-message notifications.
 Google Authenticator registration records and tokens may now be 
 kept inside a [DynamoDb instance](../mfa/GoogleAuthenticator-Authentication-Registration-DynamoDb.html).
 
+### Azure CosmosDb Service Registry
+
+Azure SDK for CosmosDb is now upgraded to v4, and integration tests for CosmosDb 
+are now updated to take advantage of the latest CosmosDb emulator versions to exercise the test suite
+for the [CosmosDb service registry](../services/CosmosDb-Service-Management.html) implementation.
+
 ## Other Stuff
 
 - SAML2 Unsolicited endpoint is now able to preserve custom query parameters.
