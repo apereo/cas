@@ -48,7 +48,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
         return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getGauth().getCouchDb(), objectMapperFactory.getObject());
     }
 
-    @ConditionalOnMissingBean(name = "couchDbGoogleAuthenticatotAccountRegistry")
+    @ConditionalOnMissingBean(name = "couchDbGoogleAuthenticatorAccountRegistry")
     @Bean
     @RefreshScope
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(

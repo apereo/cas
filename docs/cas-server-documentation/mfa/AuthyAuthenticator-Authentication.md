@@ -15,11 +15,11 @@ Start by visiting the [Authy documentation](https://www.authy.com/developers/).
 
 Support is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-authy" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-authy" %}
 
 ## Configuration
 
-{% include casproperties.html properties="cas.authn.mfa.authy" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.authy" %}
 
 ## Registration
 

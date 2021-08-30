@@ -10,7 +10,7 @@ category: Configuration
 
 Certain aspects of the CAS server deployment may be advertised via a discovery endpoint to indicate to client applications and consumers the set of features and capabilities that are turned on. The [discovery profile endpoint](../monitoring/Monitoring-Statistics.html) is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-discovery-profile" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-discovery-profile" %}
 
 The metadata reported in the discovery profile generally includes two categories of items:
 
@@ -31,4 +31,4 @@ Note that this capability and endpoint is turned off by default and its access i
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="discoveryProfile" %}
+{% include_cached actuators.html endpoints="discoveryProfile" %}

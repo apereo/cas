@@ -10,5 +10,5 @@ category: Attributes
      
 The following configuration describes how to fetch and retrieve attributes from Redis attribute repositories.
 
-{% include casproperties.html properties="cas.authn.attribute-repository.redis" %}
+{% include_cached casproperties.html properties="cas.authn.attribute-repository.redis" %}
 

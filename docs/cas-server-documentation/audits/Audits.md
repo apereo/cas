@@ -18,13 +18,13 @@ Note that the audit record management functionality of CAS supports handling mul
 record destinations at the same time. In other words, you may choose to route audit records 
 to both a database and a REST endpoint as well as any number of logger-based destinations all at the same time.
 
-{% include casproperties.html properties="cas.audit.engine." %}
+{% include_cached casproperties.html properties="cas.audit.engine." %}
 
 ## Actuator Endpoints
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="auditLog,auditevents" casModule="cas-server-support-reports" %}
+{% include_cached actuators.html endpoints="auditLog,auditevents" casModule="cas-server-support-reports" %}
      
 ## Storage
 

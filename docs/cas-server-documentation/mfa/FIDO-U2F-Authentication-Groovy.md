@@ -10,7 +10,7 @@ category: Multifactor Authentication
 
 Device registrations may be managed via an external Groovy script. The script may be designed as follows:
 
-{% include casproperties.html properties="cas.authn.mfa.u2f.groovy" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.u2f.groovy" %}
 
 ```groovy
 import java.util.*

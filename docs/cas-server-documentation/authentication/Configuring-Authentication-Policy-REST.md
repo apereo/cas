@@ -11,7 +11,7 @@ Contact a REST endpoint via `POST` to detect authentication policy.
 The message body contains the CAS authenticated principal that can be used
 to examine account status and policy.
 
-{% include casproperties.html properties="cas.authn.policy.rest" %}
+{% include_cached casproperties.html properties="cas.authn.policy.rest" %}
 
 Response codes from the REST endpoint are translated as such:
 

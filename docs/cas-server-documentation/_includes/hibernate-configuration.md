@@ -15,7 +15,7 @@ connections and queries.
                 {% assign configBlock = cfg[1] %}
                 {% for config in configBlock %}
                     {% if config.name contains prop %}  
-                        {% include casproperty.html 
+                        {% include_cached casproperty.html 
                             name=config.name 
                             defaultValue=config.defaultValue 
                             description=config.description 

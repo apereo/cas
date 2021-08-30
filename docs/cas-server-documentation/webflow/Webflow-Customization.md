@@ -38,7 +38,7 @@ and the module automatically takes care of all required changes. While this is t
 you may want to manually handle all such changes. For doing so, you will need to disable the CAS auto-configuration
 of the webflow.
 
-{% include casproperties.html properties="cas.webflow.auto-configuration." %}
+{% include_cached casproperties.html properties="cas.webflow.auto-configuration." %}
 
 <div class="alert alert-warning"><strong>Note</strong><p>Only attempt to 
 modify the Spring webflow configuration files by hand when/if absolutely necessary and the
@@ -56,7 +56,7 @@ If you want to learn how to modify and extend the CAS authentication flows, [ple
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="springWebflow" casModule="cas-server-support-reports" %}
+{% include_cached actuators.html endpoints="springWebflow" casModule="cas-server-support-reports" %}
 
 ## Webflow Decorations
 
@@ -74,7 +74,7 @@ sake of establishing an SSO session without logging in to any CAS-reliant servic
 As such, CAS optionally allows adopters to not bother to prompt for credentials when no target application is presented
 and instead presents a message when users visit CAS directly without specifying a service.
 
-{% include casproperties.html properties="cas.sso." %}
+{% include_cached casproperties.html properties="cas.sso." %}
 
 ## Acceptable Usage Policy
 
@@ -93,7 +93,7 @@ any CAS view or webflow component using the variable `casProperties` to gain acc
 a specific setting. Remember that this syntax only allowed access to settings 
 that are *owned* by CAS, noted by its very own prefix.
 
-{% include casproperties.html properties="cas.custom.properties" %}
+{% include_cached casproperties.html properties="cas.custom.properties" %}
 
 ## Troubleshooting
 

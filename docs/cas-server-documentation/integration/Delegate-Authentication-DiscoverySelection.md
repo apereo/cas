@@ -16,7 +16,7 @@ If you are interested in supporting discovery of SAML2 identity providers using 
 you may want to take a look at <a href="Delegate-Authentication-SAML.html">this guide</a>.
 </p></div>
 
-{% include casproperties.html properties="cas.authn.pac4j.core.discovery-selection" %}
+{% include_cached casproperties.html properties="cas.authn.pac4j.core.discovery-selection" %}
 
 ## Menu Selection
      
@@ -31,7 +31,7 @@ based on the user identifiers such as username, email address, etc. For example,
 their identifier, i.e. `casuser@example.org`, the discovery strategy can try to select the correct identity provider
 based on the email domain.
 
-### Discovery Selection JSON
+### JSON Rules
 
 By default, the selection rules and conditions can be specified in a JSON file with the following structure:
 
@@ -54,7 +54,7 @@ The following parameters are available to the JSON resource:
 | `clientName`          | The client name that should be used for this match, found and defined in CAS configuration.
 | `order`               | The selection sorting order, used to properly sequence and prioritize entries in case there is overlap.
 
-## Discovery Selection Custom
+## Custom
 
 If you wish to create your own strategy to dynamically locate identity providers for 
 delegated authentication discovery, you will need to design a component and register it with CAS as such:

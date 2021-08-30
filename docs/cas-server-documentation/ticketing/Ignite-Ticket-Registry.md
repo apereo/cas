@@ -10,7 +10,7 @@ category: Ticketing
 
 Ignite integration is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ignite-ticket-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-ignite-ticket-registry" %}
 
 This registry stores tickets in an [Ignite](http://ignite.apache.org/) instance.
 
@@ -29,7 +29,7 @@ composed of two or more nodes. To learn more about TLS replication with Ignite,
 
 ## Configuration
 
-{% include casproperties.html properties="cas.ticket.registry.ignite" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.ignite" %}
 
 ## Troubleshooting
 

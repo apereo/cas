@@ -12,6 +12,6 @@ collection is expected to carry objects of type `PasswordlessUserAccount` in JSO
 
 Support is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-mongo" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-mongo" %}
 
-{% include casproperties.html properties="cas.authn.passwordless.accounts.mongo" %}
+{% include_cached casproperties.html properties="cas.authn.passwordless.accounts.mongo" %}

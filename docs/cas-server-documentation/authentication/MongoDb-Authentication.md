@@ -11,9 +11,9 @@ category: Authentication
 Verify and authenticate credentials against a [MongoDb](https://www.mongodb.org/) instance.
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-mongo" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-mongo" %}
 
-{% include casproperties.html properties="cas.authn.mongo" %}
+{% include_cached casproperties.html properties="cas.authn.mongo" %}
 
 Accounts are expected to be found as such in collections:
 

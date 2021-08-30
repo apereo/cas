@@ -15,7 +15,7 @@ exposed over the endpoint `/actuator`.
 
 The following endpoints are provided:
 
-{% include actuators.html endpoints="info,startup,threaddump,health,metrics,httptrace,mappings,scheduledtasks,heapdump,prometheus,quartz" %}
+{% include_cached actuators.html endpoints="info,startup,threaddump,health,metrics,httptrace,mappings,scheduledtasks,heapdump,prometheus,quartz" %}
 
 ## Metrics
 
@@ -27,7 +27,7 @@ See [this guide](Configuring-Metrics.html) for more info.
 
 Support for distributed tracing of requests is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-sleuth" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-sleuth" %}
 
 ![image](https://cloud.githubusercontent.com/assets/1205228/24955152/8798ad9c-1f97-11e7-8b9d-fccc3c306c42.png)
 
@@ -37,7 +37,7 @@ interactions with external systems should be instrumented automatically.
 Trace data is captured automatically and passed along to [Zipkin](https://github.com/openzipkin/zipkin), which helps 
 gather timing data needed to troubleshoot latency problems.
 
-{% include casproperties.html thirdParty="spring.sleuth,spring.zipkin" %}
+{% include_cached casproperties.html thirdParty="spring.sleuth,spring.zipkin" %}
 
 ### Troubleshooting
 

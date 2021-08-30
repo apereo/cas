@@ -31,11 +31,11 @@ and determine if CAS itself maintains an active SSO session. See <a href="../mon
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="ssoSessions,sso" casModule="cas-server-support-reports" %}
+{% include_cached actuators.html endpoints="ssoSessions,sso" casModule="cas-server-support-reports" %}
 
 ## Configuration
 
-{% include casproperties.html properties="cas.tgc,cas.ticket.tgt.core" %}
+{% include_cached casproperties.html properties="cas.tgc,cas.ticket.tgt.core" %}
 
 The cookie has the following properties:
 
@@ -55,7 +55,7 @@ WARN [...] - <Generated signing key XYZ of size ... . The generated key MUST be 
 You should then grab each generated key for encryption and signing, and put them inside your CAS properties for each setting.
 If you wish you manually generate keys, you may [use the following tool](https://github.com/mitreid-connect/json-web-key-generator).
 
-{% include casproperties.html properties="cas.sso" %}
+{% include_cached casproperties.html properties="cas.sso" %}
 
 ## Authentication Protocol vs. SSO
 
@@ -104,7 +104,7 @@ please [review this guide](../services/Configuring-Service-SSO-Policy.html).
 A warning cookie set by CAS upon the establishment of the SSO session at the request of the user on the CAS login page.
 The cookie is used later to warn and prompt the user before a service ticket is generated and access to the service application is granted.
 
-{% include casproperties.html properties="cas.warning-cookie" %}
+{% include_cached casproperties.html properties="cas.warning-cookie" %}
 
 ## Public Workstations
 
@@ -128,7 +128,7 @@ In the event that no `service` is submitted to CAS, you may specify a default
 service url to which CAS will redirect. Note that this default service, much like
 all other services, MUST be authorized and registered with CAS.
 
-{% include casproperties.html properties="cas.view.default-redirect-url" %}
+{% include_cached casproperties.html properties="cas.view.default-redirect-url" %}
 
 ## Required Service
 

@@ -27,7 +27,7 @@ turn up <code>DEBUG</code> or <code>INFO</code> if you need to research a partic
 
 The following endpoints are provided:
 
-{% include actuators.html endpoints="loggingConfig,loggers,logfile" %}
+{% include_cached actuators.html endpoints="loggingConfig,loggers,logfile" %}
 
 ## CAS Custom Log4j2 plugins
 
@@ -64,7 +64,7 @@ It is often helpful to externalize the `log4j2.xml` file to a system path to pre
 The location of `log4j2.xml` file by default is on the runtime classpath and can be controlled
 via the CAS properties. 
 
-{% include casproperties.html properties="cas.logging" thirdPartyStartsWith="logging." %}
+{% include_cached casproperties.html properties="cas.logging" thirdPartyStartsWith="logging." %}
 
 To disable log sanitization, start the container with the system property `CAS_TICKET_ID_SANITIZE_SKIP=true`.
 
@@ -73,7 +73,7 @@ To disable log sanitization, start the container with the system property `CAS_T
 While log levels can directly be massaged via the native `log4j2.xml` syntax, they may also be modified
 using the usual CAS properties. 
 
-{% include casproperties.html thirdPartyExactMatch="logging.level" %}
+{% include_cached casproperties.html thirdPartyExactMatch="logging.level" %}
 
 ### Refresh Interval
 

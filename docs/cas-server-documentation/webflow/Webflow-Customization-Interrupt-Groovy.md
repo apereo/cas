@@ -33,7 +33,7 @@ def run(final Object... args) {
 }
 ```
 
-{% include casproperties.html properties="cas.interrupt.groovy" %}
+{% include_cached casproperties.html properties="cas.interrupt.groovy" %}
 
 The following parameters are passed to the script:
 

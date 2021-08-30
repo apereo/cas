@@ -10,7 +10,7 @@ category: Protocols
 The JWKS endpoint and functionality returns a JWKS containing public keys that enable 
 clients to validate a JSON Web Token (JWT) issued by CAS as an OpenID Connect Provider.
 
-{% include casproperties.html properties="cas.authn.oidc.jwks" %}
+{% include_cached casproperties.html properties="cas.authn.oidc.jwks" %}
 
 ## Keystores
 

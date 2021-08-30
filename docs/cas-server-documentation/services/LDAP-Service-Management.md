@@ -15,7 +15,7 @@ entries are assigned the `objectclass` that is `casRegisteredService` attribute 
 
 Support is enabled by adding the following module into the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ldap-service-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-ldap-service-registry" %}
 
 ## Configuration
 
@@ -31,7 +31,7 @@ Service definitions are by default stored inside the `serviceDefinitionAttribute
 JSON objects. The format and syntax of the JSON is identical to that of
 [JSON Service Registry](JSON-Service-Management.html). That's all, as far as the schema goes.
 
-{% include casproperties.html properties="cas.service-registry.ldap" %}
+{% include_cached casproperties.html properties="cas.service-registry.ldap" %}
 
 ## Auto Initialization
 

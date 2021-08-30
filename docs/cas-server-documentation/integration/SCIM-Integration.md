@@ -30,15 +30,15 @@ via SCIM to a provisioning/identity/entity engine which would then dynamically s
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-scim" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-scim" %}
 
-{% include casproperties.html properties="cas.scim" %}
+{% include_cached casproperties.html properties="cas.scim" %}
 
 ## Per Application
 
 SCIM relevant settings can be specified per application in form of service properties. 
 
-{% include registeredserviceproperties.html groups="SCIM" %}
+{% include_cached registeredserviceproperties.html groups="SCIM" %}
  
 A sample JSON file follows:
 
