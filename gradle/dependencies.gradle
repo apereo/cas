@@ -1322,13 +1322,30 @@ ext.libraries = [
                 }
         ],
         cosmosdb                : [
-                dependencies.create("com.microsoft.azure:azure-documentdb:$cosmosdbVersion") {
+                dependencies.create("com.azure:azure-cosmos:$cosmosdbVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.json", module: "json")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson.datatype", module: "jackson-datatype-jsr310")
                 },
-                dependencies.create("com.microsoft.azure:spring-data-documentdb:$springDataCosmosDbVersion") {
+                dependencies.create("com.azure:azure-spring-data-cosmos:$springDataCosmosDbVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.json", module: "json")
+                    exclude(group: "com.azure", module: "azure-cosmos")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-tx")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.springframework.data", module: "spring-data-commons")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "javax.annotation", module: "javax.annotation-api")
+                    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-parameter-names")
+                    exclude(group: "com.fasterxml.jackson.datatype", module: "jackson-datatype-jsr310")
+                    exclude(group: "com.fasterxml.jackson.datatype", module: "jackson-datatype-jdk8")
                 }
         ],
         jdom                    : dependencies.create("org.jdom:jdom2:$jdomVersion") {
