@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
+const colors = require("colors");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -12,4 +13,5 @@ const cas = require('../../cas.js');
     await cas.assertPageTitle(page, "CAS - Central Authentication Service");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await browser.close();
+    console.log(colors.green(`Login test complete.`));
 })();
