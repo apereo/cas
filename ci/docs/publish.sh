@@ -43,8 +43,12 @@ REPOSITORY_NAME="apereo/cas"
 REPOSITORY_ADDR="https://${GH_PAGES_TOKEN}@github.com/${REPOSITORY_NAME}"
 
 branchVersion="master"
+propFilter=".+"
 generateData=true
 proofRead=true
+actuators=true
+thirdParty=true
+serviceProps=true
 publishDocs=true
 buildDocs=true
 serve=false
@@ -75,6 +79,22 @@ while (("$#")); do
     serve=$2
     shift 2
     ;;
+  --filter)
+    propFilter=$2
+    shift 2
+    ;;
+  --actuators)
+    actuators=$2
+    shift 2
+    ;;
+  --thirdParty|--thirdparty)
+    thirdParty=$2
+    shift 2
+    ;;
+  --serviceProperties)
+    serviceProps=$2
+    shift 2
+    ;;
   *)
     shift
     ;;
@@ -97,6 +117,9 @@ printgreen "Serve: \t\t${serve}"
 printgreen "Generate Data: \t${generateData}"
 printgreen "Validate: \t${proofRead}"
 printgreen "Publish: \t${publishDocs}"
+printgreen "Filter: \t${propFilter}"
+printgreen "Actuators: \t${actuators}"
+printgreen "Third Party: \t${thirdParty}"
 printgreen "Ruby Version: \t$(ruby -v)"
 echo "-------------------------------------------------------"
 
@@ -147,8 +170,8 @@ if [[ $generateData == "true" ]]; then
   fi
   chmod +x ${docgen}
   dataDir=$(echo "$branchVersion" | sed 's/\.//g')
-  printgreen "Generating documentation data at $PWD/gh-pages/_data/$dataDir...\n"
-  ${docgen} "$PWD/gh-pages/_data" "$dataDir" "$PWD"
+  printgreen "Generating documentation data at $PWD/gh-pages/_data/$dataDir with filter $propFilter...\n"
+  ${docgen} -d "$PWD/gh-pages/_data" -v "$dataDir" -r "$PWD" -f "$propFilter" -a "$actuators" -tp "$thirdParty" -sp "$serviceProps"
   printgreen "Generated documentation data at $PWD/gh-pages/_data/$dataDir...\n"
 else
   printgreen "Skipping documentation data generation...\n"
@@ -157,7 +180,7 @@ fi
 
 if [[ $proofRead == "true" ]]; then
   printgreen "Looking for badly named include fragments..."
-  ls $PWD/gh-pages/_includes/$branchVersion/*.md | grep -v '\-configuration.md$'
+  ls "$PWD"/gh-pages/_includes/$branchVersion/*.md | grep -v '\-configuration.md$'
   docsVal=$?
   if [ $docsVal == 0 ]; then
     printred "Found include fragments whose name does not end in '-configuration.md'"
@@ -214,7 +237,7 @@ if [[ ${buildDocs} == "true" ]]; then
   jekyll --version
 
   if [[ ${serve} == "true" ]]; then
-    bundle exec jekyll serve --profile
+    bundle exec jekyll serve --profile --incremental
   else
     bundle exec jekyll build --profile
   fi

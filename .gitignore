@@ -47,6 +47,8 @@ apache-jmeter-*
 
 *.asc
 /.nb-gradle/
+docs-latest/
+docs-includes/
 **/.sts4-cache/**
 **/work/**
 **/conformance-suite/**
