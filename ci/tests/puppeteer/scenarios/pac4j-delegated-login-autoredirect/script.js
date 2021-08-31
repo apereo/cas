@@ -10,12 +10,12 @@ const assert = require("assert");
     console.log("Checking for page URL...")
     let url = await page.url();
     console.log(url)
-    assert(url.startsWith("https://casserver.herokuapp.com/cas/login"))
+    assert(url.startsWith("https://localhost:8444/cas/login"))
 
     await page.goto("https://localhost:8443/cas/login?service=https://github.com/apereo/cas");
     console.log("Checking for page URL...")
     url = await page.url();
     console.log(url)
-    assert(url.startsWith("https://casserver.herokuapp.com/cas/login"))
+    assert(url.startsWith("https://localhost:8444/cas/login"))
     await browser.close();
 })();
