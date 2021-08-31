@@ -41,10 +41,10 @@ async function cleanUp(exec) {
         await cas.loginWith(page, "casuser", "Mellon");
         await cas.assertTicketGrantingCookie(page);
         page.goto("https://localhost:9876/sp")
-        await page.waitForTimeout(2000)
+        await page.waitForTimeout(3000)
         await page.waitForSelector('#idpForm', {visible: true});
         await cas.submitForm(page, "#idpForm");
-        await page.waitForTimeout(2000)
+        await page.waitForTimeout(3000)
         console.log(`Page URL: ${page.url()}`);
         await page.waitForSelector('body pre', { visible: true });
         content = await cas.textContent(page, "body pre");
