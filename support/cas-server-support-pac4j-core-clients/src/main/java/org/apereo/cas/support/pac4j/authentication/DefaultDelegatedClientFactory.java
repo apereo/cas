@@ -412,6 +412,9 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 val cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol()));
                 val prefix = PATTERN_LOGIN_URL.matcher(cas.getLoginUrl()).replaceFirst("/");
                 cfg.setPrefixUrl(StringUtils.appendIfMissing(prefix, "/"));
+                cfg.setHostnameVerifier(casSSLContext.getHostnameVerifier());
+                cfg.setSslSocketFactory(casSSLContext.getSslContext().getSocketFactory());
+                
                 val client = new CasClient(cfg);
 
                 if (StringUtils.isBlank(cas.getClientName())) {

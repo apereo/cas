@@ -10,10 +10,12 @@
 
     "--logging.level.org.apereo.cas=info",
     "--cas.audit.engine.enabled=false",
+
+    "--cas.http-client.host-name-verifier=none",
     
     "--cas.authn.pac4j.core.groovy-redirection-strategy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/Redirect.groovy",
 
-    "--cas.authn.pac4j.cas[0].login-url=https://casserver.herokuapp.com/cas/login",
+    "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
     "--cas.authn.pac4j.cas[0].protocol=CAS30",
     "--cas.authn.pac4j.cas[0].client-name=CasClient"
   ,
