@@ -32,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("CosmosDb")
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreServicesConfiguration.class,
