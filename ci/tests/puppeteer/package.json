@@ -8,6 +8,7 @@
     "puppeteer": "^5.5.0",
     "puppeteer-screen-recorder": "^1.1.11",
     "request": "^2.88.2",
-    "wait-on": "^6.0.0"
+    "wait-on": "^6.0.0",
+    "puppeteer-loadtest": "^2.2.0"
   }
 }

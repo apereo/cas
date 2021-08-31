@@ -102,6 +102,7 @@ public abstract class AbstractJpaProperties implements Serializable {
 
     /**
      * The SQL query to be executed to test the validity of connections.
+     * This is for "legacy" databases that do not support the JDBC4 {@code Connection.isValid()} API.
      */
     private String healthQuery = StringUtils.EMPTY;
 

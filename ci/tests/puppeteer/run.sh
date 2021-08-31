@@ -157,7 +157,7 @@ until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/l
 done
 printgreen "\n\nReady!"
   
-clear
+#clear
 scriptPath="${scenario}/script.js"
 echo -e "*************************************"
 echo -e "Running ${scriptPath}\n"
