@@ -26,7 +26,9 @@ const path = require("path");
     });
 
     await page.goto('https://localhost:8443/cas/idp/profile/SAML2/POST/SLO');
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(3000);
+    console.log("Checking for page URL...")
+    console.log(await page.url())
     assert(page.url() === 'https://samltest.id/Shibboleth.sso/SLO/POST');
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
