@@ -7,6 +7,7 @@ CYAN="\e[36m"
 ENDCOLOR="\e[0m"
 
 clear
+find ./ci/tests -type f -name "*.sh" -exec chmod +x {} \;
 
 hasDocker() {
   type docker &> /dev/null
