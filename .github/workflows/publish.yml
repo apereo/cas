@@ -129,4 +129,4 @@ jobs:
       - name: Install Ruby gems
         run: gem install bundler
       - name: Publish Documentation
-        run: ./ci/docs/publish.sh 6.4.x
+        run: ./ci/docs/publish.sh --branch 6.4.x
