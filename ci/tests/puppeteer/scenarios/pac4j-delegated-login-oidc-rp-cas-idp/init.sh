@@ -1,9 +1,3 @@
-#!/bin/bash
-echo -e "Removing previous SAML metadata directory, if any, for ${SCENARIO}"
-rm -Rf "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md"
-echo -e "Creating SAML metadata directory for ${SCENARIO}"
-mkdir "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md"
-
 echo -e "Mapping CAS keystore to ${CAS_KEYSTORE}"
 docker run -d \
   --mount type=bind,source="${CAS_KEYSTORE}",target=/etc/cas/thekeystore \

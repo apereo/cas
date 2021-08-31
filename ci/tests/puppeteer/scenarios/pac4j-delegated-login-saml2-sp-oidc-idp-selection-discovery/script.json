@@ -2,6 +2,7 @@
   "dependencies": "saml-idp,pac4j-webflow",
   "properties": [
     "--cas.audit.engine.enabled=false",
+    "--cas.http-client.host-name-verifier=none",
 
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
     "--cas.authn.attribute-repository.stub.attributes.name=CAS",
@@ -28,7 +29,7 @@
     "--cas.authn.pac4j.oidc[0].generic.discovery-uri=https://dev-968370-admin.oktapreview.com/oauth2/default/.well-known/openid-configuration",
     "--cas.authn.pac4j.oidc[0].generic.client-name=OktaOidcClient",
 
-    "--cas.authn.pac4j.cas[0].login-url=https://casserver.herokuapp.com/cas/login",
+    "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
     "--cas.authn.pac4j.cas[0].protocol=CAS30",
     "--cas.authn.pac4j.cas[0].client-name=CasClient"
   ],
