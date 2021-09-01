@@ -13,7 +13,8 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -51,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ResourceLock("cosmosdb-service")
 @Getter
 @EnabledIfPortOpen(port = 8081)
-@EnabledIfSystemProperty(named = "cosmosDbEnabled", matches = "true")
+@EnabledOnOs(value = OS.WINDOWS)
 public class CosmosDbServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("cosmosDbServiceRegistry")
