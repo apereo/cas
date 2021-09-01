@@ -280,7 +280,7 @@ while (( "$#" )); do
                 task+="testSpnego"
                 ;;
             cosmosdb|cosmos)
-                isDockerOnWindows && ./ci/tests/cosmosdb/run-cosmosdb-server.sh
+                isDockerOnLinux && ./ci/tests/cosmosdb/run-cosmosdb-server.sh
                 task+="testCosmosDb "
                 ;;
             simple|unit)
