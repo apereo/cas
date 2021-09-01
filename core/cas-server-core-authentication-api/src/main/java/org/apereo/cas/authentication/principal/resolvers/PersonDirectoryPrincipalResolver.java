@@ -229,7 +229,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                 + " for the credential, that is [{}], for principal resolution", id);
         }
         LOGGER.debug("Extracted principal id [{}]", id);
-        return id;
+        return id.trim();
     }
 
     @SuperBuilder
