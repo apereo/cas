@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.service-registry.cosmosDb.uri=https://localhost:8081",
     "cas.service-registry.cosmosDb.key=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
     "cas.service-registry.cosmosDb.database=RegisteredServicesDb",
-    "cas.service-registry.cosmosDb.max-retry-attempts-on-throttled-requests=1",
+    "cas.service-registry.cosmosDb.max-retry-attempts-on-throttled-requests=5",
     "cas.service-registry.cosmosDb.indexing-mode=CONSISTENT",
     "cas.service-registry.cosmosDb.drop-container=true"
 })
@@ -57,7 +57,7 @@ public class CosmosDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @BeforeEach
     public void deleteAll() {
-        newServiceRegistry.load().forEach(service -> newServiceRegistry.delete(service));
+        newServiceRegistry.deleteAll();
         assertTrue(newServiceRegistry.load().isEmpty());
     }
 }

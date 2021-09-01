@@ -18,5 +18,7 @@ public class CosmosDbDocument implements Serializable {
 
     private String id;
 
+    private String serviceId;
+
     private String body;
 }
