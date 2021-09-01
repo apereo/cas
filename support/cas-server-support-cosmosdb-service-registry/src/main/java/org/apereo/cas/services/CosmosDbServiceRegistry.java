@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.cosmosdb.CosmosDbDocument;
 import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import com.azure.cosmos.CosmosContainer;
@@ -33,8 +34,6 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
      */
     public static final String PARTITION_KEY = "id";
 
-    private final CosmosDbObjectFactory cosmosDbFactory;
-
     private final StringSerializer<RegisteredService> serializer;
 
     private final CosmosContainer container;
@@ -44,9 +43,8 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
                                    final ConfigurableApplicationContext applicationContext,
                                    final Collection<ServiceRegistryListener> serviceRegistryListeners) {
         super(applicationContext, serviceRegistryListeners);
-        this.cosmosDbFactory = factory;
         this.serializer = new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
-        cosmosDbFactory.createContainer(containerName, PARTITION_KEY);
+        factory.createContainer(containerName, PARTITION_KEY);
         this.container = factory.getContainer(containerName);
     }
 
@@ -65,13 +63,14 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
     @Override
     public boolean delete(final RegisteredService registeredService) {
         val doc = createCosmosDbDocument(registeredService);
-        LOGGER.debug("Loading registered services [{}] from container [{}]", doc.getId(), container.getId());
+        LOGGER.debug("Deleting registered service [{}] from container [{}]", doc.getId(), container.getId());
         val response = container.deleteItem(doc, new CosmosItemRequestOptions());
         return !HttpStatus.valueOf(response.getStatusCode()).isError();
     }
 
     @Override
     public void deleteAll() {
+        LOGGER.debug("Deleting registered services from container [{}]", container.getId());
         val queryOptions = new CosmosQueryRequestOptions();
         val items = container.queryItems("SELECT * FROM " + container.getId(), queryOptions, CosmosDbDocument.class);
         items.iterableByPage()
@@ -83,7 +82,7 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
     public Collection<RegisteredService> load() {
         val services = new ArrayList<RegisteredService>();
         val queryOptions = new CosmosQueryRequestOptions();
-        LOGGER.debug("Loading registered services from container [{}]", container.getId());
+        LOGGER.trace("Loading registered services from container [{}]", container.getId());
         val items = container.queryItems("SELECT * FROM " + container.getId(), queryOptions, CosmosDbDocument.class);
         items.iterableByPage()
             .forEach(response -> services.addAll(response.getResults()
@@ -95,6 +94,24 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
+    public RegisteredService findServiceBy(final String id) {
+        val services = new ArrayList<RegisteredService>();
+        val queryOptions = new CosmosQueryRequestOptions();
+        LOGGER.trace("Loading registered service by [{}] from container [{}]", id, container.getId());
+        val query = String.format("SELECT * FROM %s r WHERE r.serviceId LIKE '%s'", container.getId(), '%' + id + '%');
+        val items = container.queryItems(query, queryOptions, CosmosDbDocument.class);
+        items.iterableByPage()
+            .forEach(response -> services.addAll(response.getResults()
+                .stream()
+                .map(this::getRegisteredServiceFromDocumentBody)
+                .sorted()
+                .filter(r -> r.matches(id))
+                .peek(this::invokeServiceRegistryListenerPostLoad)
+                .collect(Collectors.toList())));
+        return services.isEmpty() ? null : services.get(0);
+    }
+
+    @Override
     public RegisteredService findServiceById(final long id) {
         try {
             val key = String.valueOf(id);
@@ -102,7 +119,12 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
             val doc = container.readItem(key, new PartitionKey(key), CosmosDbDocument.class).getItem();
             return getRegisteredServiceFromDocumentBody(doc);
         } catch (final CosmosException e) {
-            LOGGER.debug(e.getMessage(), e);
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND.value()) {
+                LOGGER.debug("Unable to locate registered service with id [{}]", id);
+                LOGGER.trace(e.getMessage(), e);
+            } else {
+                LoggingUtils.warn(LOGGER, e);
+            }
         }
         return null;
     }
@@ -113,13 +135,13 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
 
     private void insert(final RegisteredService registeredService) {
         val doc = createCosmosDbDocument(registeredService);
-        LOGGER.debug("Creating registered service [{}] in container [{}]", doc.getId(), container.getId());
+        LOGGER.trace("Creating registered service with id [{}] in container [{}]", doc.getId(), container.getId());
         container.createItem(doc);
     }
 
     private void update(final RegisteredService registeredService) {
         val doc = createCosmosDbDocument(registeredService);
-        LOGGER.debug("Upserting registered service [{}] in container [{}]", doc.getId(), container.getId());
+        LOGGER.trace("Upserting registered service with id [{}] in container [{}]", doc.getId(), container.getId());
         container.upsertItem(doc);
     }
 
@@ -128,6 +150,7 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
         val document = new CosmosDbDocument();
         document.setBody(body);
         document.setId(String.valueOf(registeredService.getId()));
+        document.setServiceId(registeredService.getServiceId());
         return document;
     }
 }
