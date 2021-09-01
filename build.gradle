@@ -64,6 +64,7 @@ ext {
         '**/support/openid/**',
         '**/**ConfigurationMetadata**',
         '**/**NtlmAuthenticationHandler**',
+        '**/**CosmosDbServiceRegistry**',
         '**/**NimbusOAuthJacksonModule**',
         '**/**Application**',
         '**/**Application$**',
