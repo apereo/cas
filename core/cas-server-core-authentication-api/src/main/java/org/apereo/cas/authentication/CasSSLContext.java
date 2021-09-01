@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.ssl.SSLContexts;
@@ -10,11 +11,14 @@ import org.jooq.lambda.Unchecked;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.ManagerFactoryParameters;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.TrustManagerFactorySpi;
 import javax.net.ssl.X509TrustManager;
 import java.security.KeyStore;
+import java.security.Provider;
 import java.security.cert.X509Certificate;
 
 /**
@@ -37,12 +41,17 @@ public interface CasSSLContext {
             }
 
             @Override
-            public TrustManager[] getTrustManagers() {
+            public TrustManagerFactory getTrustManagerFactory() {
                 return Unchecked.supplier(() -> {
                     val factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
                     factory.init((KeyStore) null);
-                    return factory.getTrustManagers();
+                    return factory;
                 }).get();
+            }
+
+            @Override
+            public TrustManager[] getTrustManagers() {
+                return getTrustManagerFactory().getTrustManagers();
             }
 
             @Override
@@ -98,6 +107,13 @@ public interface CasSSLContext {
      */
     HostnameVerifier getHostnameVerifier();
 
+    /**
+     * Gets trust manager factory.
+     *
+     * @return the trust manager factory
+     */
+    TrustManagerFactory getTrustManagerFactory();
+
     class DisabledCasSslContext implements CasSSLContext {
         private static X509TrustManager getDisabledTrustedManager() {
             return new X509TrustManager() {
@@ -122,6 +138,30 @@ public interface CasSSLContext {
             val sc = SSLContext.getInstance("SSL");
             sc.init(getKeyManagers(), getTrustManagers(), null);
             return sc;
+        }
+
+        @Override
+        public TrustManagerFactory getTrustManagerFactory() {
+            val provider = new Provider(StringUtils.EMPTY, "0.0", StringUtils.EMPTY) {
+                private static final long serialVersionUID = -2680540247105807895L;
+            };
+
+            val spi = new TrustManagerFactorySpi() {
+                @Override
+                protected void engineInit(final KeyStore keyStore) {
+                }
+
+                @Override
+                protected void engineInit(final ManagerFactoryParameters managerFactoryParameters) {
+                }
+
+                @Override
+                protected TrustManager[] engineGetTrustManagers() {
+                    return getTrustManagers();
+                }
+            };
+            return new TrustManagerFactory(spi, provider, StringUtils.EMPTY) {
+            };
         }
 
         @Override

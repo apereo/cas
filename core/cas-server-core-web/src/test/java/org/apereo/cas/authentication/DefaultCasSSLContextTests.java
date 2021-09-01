@@ -38,12 +38,12 @@ public class DefaultCasSSLContextTests {
     @SpringBootConfiguration
     @Import(CasCoreHttpConfiguration.class)
     public static class SharedTestConfiguration {
-        static String contactUrl(final String addr, final CasSSLContext disabled) throws Exception {
+        static String contactUrl(final String addr, final CasSSLContext context) throws Exception {
             val url = new URL(addr);
             val connection = (HttpsURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setHostnameVerifier(NoopHostnameVerifier.INSTANCE);
-            connection.setSSLSocketFactory(disabled.getSslContext().getSocketFactory());
+            connection.setSSLSocketFactory(context.getSslContext().getSocketFactory());
             try (val is = connection.getInputStream()) {
                 return IOUtils.toString(is, StandardCharsets.UTF_8);
             }
@@ -60,6 +60,7 @@ public class DefaultCasSSLContextTests {
 
         @Test
         public void verifyOperation() throws Exception {
+            assertNotNull(casSslContext.getTrustManagerFactory());
             assertThrows(Exception.class,
                 () -> SharedTestConfiguration.contactUrl("https://self-signed.badssl.com", casSslContext));
         }
@@ -76,6 +77,7 @@ public class DefaultCasSSLContextTests {
 
         @Test
         public void verifyOperation() throws Exception {
+            assertNotNull(casSslContext.getTrustManagerFactory());
             assertNotNull(SharedTestConfiguration.contactUrl("https://self-signed.badssl.com", casSslContext));
         }
     }

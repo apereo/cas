@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
@@ -19,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,11 +51,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @EnabledIfPortOpen(port = 8081)
 public class CosmosDbServiceRegistryTests extends AbstractServiceRegistryTests {
-    static {
-        HttpsURLConnection.setDefaultHostnameVerifier(CasSSLContext.disabled().getHostnameVerifier());
-        HttpsURLConnection.setDefaultSSLSocketFactory(CasSSLContext.disabled().getSslContext().getSocketFactory());
-    }
-
     @Autowired
     @Qualifier("cosmosDbServiceRegistry")
     private ServiceRegistry newServiceRegistry;

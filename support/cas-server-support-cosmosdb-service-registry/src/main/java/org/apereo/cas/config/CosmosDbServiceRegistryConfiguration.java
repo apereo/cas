@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
 import org.apereo.cas.services.CosmosDbServiceRegistry;
@@ -33,6 +34,10 @@ public class CosmosDbServiceRegistryConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("casSslContext")
+    private ObjectProvider<CasSSLContext> casSslContext;
+
+    @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
@@ -42,7 +47,7 @@ public class CosmosDbServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "cosmosDbObjectFactory")
     @Bean
     public CosmosDbObjectFactory cosmosDbObjectFactory() {
-        return new CosmosDbObjectFactory(casProperties.getServiceRegistry().getCosmosDb());
+        return new CosmosDbObjectFactory(casProperties.getServiceRegistry().getCosmosDb(), casSslContext.getObject());
     }
 
     @Bean
