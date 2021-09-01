@@ -64,7 +64,9 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
-        val response = container.deleteItem(createCosmosDbDocument(registeredService), new CosmosItemRequestOptions());
+        val doc = createCosmosDbDocument(registeredService);
+        LOGGER.debug("Loading registered services [{}] from container [{}]", doc.getId(), container.getId());
+        val response = container.deleteItem(doc, new CosmosItemRequestOptions());
         return !HttpStatus.valueOf(response.getStatusCode()).isError();
     }
 
@@ -81,6 +83,7 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
     public Collection<RegisteredService> load() {
         val services = new ArrayList<RegisteredService>();
         val queryOptions = new CosmosQueryRequestOptions();
+        LOGGER.debug("Loading registered services from container [{}]", container.getId());
         val items = container.queryItems("SELECT * FROM " + container.getId(), queryOptions, CosmosDbDocument.class);
         items.iterableByPage()
             .forEach(response -> services.addAll(response.getResults()
@@ -95,6 +98,7 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
     public RegisteredService findServiceById(final long id) {
         try {
             val key = String.valueOf(id);
+            LOGGER.debug("Reading registered services with id [{}] from [{}]", key, container.getId());
             val doc = container.readItem(key, new PartitionKey(key), CosmosDbDocument.class).getItem();
             return getRegisteredServiceFromDocumentBody(doc);
         } catch (final CosmosException e) {
@@ -109,11 +113,13 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
 
     private void insert(final RegisteredService registeredService) {
         val doc = createCosmosDbDocument(registeredService);
+        LOGGER.debug("Creating registered service [{}] in container [{}]", doc.getId(), container.getId());
         container.createItem(doc);
     }
 
     private void update(final RegisteredService registeredService) {
         val doc = createCosmosDbDocument(registeredService);
+        LOGGER.debug("Upserting registered service [{}] in container [{}]", doc.getId(), container.getId());
         container.upsertItem(doc);
     }
 

@@ -45,8 +45,9 @@ public class CosmosDbObjectFactory {
             .setMaxRetryAttemptsOnThrottledRequests(properties.getMaxRetryAttemptsOnThrottledRequests())
             .setMaxRetryWaitTime(Beans.newDuration(properties.getMaxRetryWaitTime()));
 
+        val uri = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUri());
         val builder = new CosmosClientBuilder()
-            .endpoint(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUri()))
+            .endpoint(uri)
             .key(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getKey()))
             .preferredRegions(this.properties.getPreferredRegions())
             .consistencyLevel(ConsistencyLevel.valueOf(properties.getConsistencyLevel()))
@@ -56,7 +57,7 @@ public class CosmosDbObjectFactory {
             .throttlingRetryOptions(throttlingRetryOptions)
             .endpointDiscoveryEnabled(properties.isEndpointDiscoveryEnabled())
             .directMode();
-
+        LOGGER.debug("Building CosmosDb client for [{}]", uri);
         val sslContext = SslContextBuilder
             .forClient()
             .sslProvider(SslProvider.JDK)
@@ -78,8 +79,10 @@ public class CosmosDbObjectFactory {
      * @return the container
      */
     public CosmosContainer getContainer(final String name) {
+        LOGGER.debug("Fetching CosmosDb database [{}]", properties.getDatabase());
         val databaseResponse = client.createDatabaseIfNotExists(properties.getDatabase());
         val database = client.getDatabase(databaseResponse.getProperties().getId());
+        LOGGER.debug("Fetching CosmosDb container [{}]", name);
         return database.getContainer(name);
     }
 
@@ -93,6 +96,7 @@ public class CosmosDbObjectFactory {
         val container = database.getContainer(name);
         if (container != null) {
             try {
+                LOGGER.debug("Deleting CosmosDb container [{}]", name);
                 container.delete();
             } catch (final CosmosException e) {
                 if (e.getStatusCode() != HttpStatus.SC_NOT_FOUND) {
@@ -119,10 +123,11 @@ public class CosmosDbObjectFactory {
      */
     public void createContainer(final String name, final String partitionKey) {
         val database = client.getDatabase(properties.getDatabase());
+        LOGGER.debug("Creating CosmosDb container [{}]", name);
         val containerProperties = new CosmosContainerProperties(name, '/' + partitionKey);
         containerProperties.setIndexingPolicy(new IndexingPolicy()
             .setIndexingMode(IndexingMode.valueOf(properties.getIndexingMode())));
         val response = database.createContainerIfNotExists(containerProperties);
-        LOGGER.debug(response.getProperties().getId());
+        LOGGER.debug("Created CosmosDb container [{}]", response.getProperties().getId());
     }
 }
