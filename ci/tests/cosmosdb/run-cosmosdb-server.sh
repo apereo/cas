@@ -11,7 +11,7 @@ docker run --rm -p 8081:8081 -p 10251:10251 -p 10252:10252 -p 10253:10253 -p 102
   -d mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
 
 echo "Waiting for CosmosDb to come online..."
-sleep 15
+sleep 30
 docker ps | grep "cosmosdb"
 echo "Fetching CosmosDb certificate..."
 rm -Rf ./emulatorcert.crt
