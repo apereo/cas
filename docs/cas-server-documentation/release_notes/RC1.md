@@ -78,7 +78,7 @@ to assist with the discovery and selection of identity providers in more dynamic
 
 ![image](https://user-images.githubusercontent.com/1205228/130757773-72fe26b0-54e9-4c4c-8ab6-8be5b19b2816.png)
 
-### SmsMode SMS Messaging
+### SmsMode Integration
 
 [SMSMode](../notifications/SMS-Messaging-Configuration-SmsMode.html) can now be 
 used as an SMS provider to handle text-message notifications.
