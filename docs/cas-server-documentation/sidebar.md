@@ -81,7 +81,7 @@ layout: null
         *   [JWT](#jwtauthn)
             *   [Overview](/cas/{{ version }}/authentication/JWT-Authentication.html)
             *   [JWT Service Tickets](/cas/{{ version }}/installation/Configure-ServiceTicket-JWT.html)
-        *   [Rest](/cas/{{ version }}/authentication/Rest-Authentication.html)
+        *   [REST](/cas/{{ version }}/authentication/Rest-Authentication.html)
         *   [AWS Cloud Directory](/cas/{{ version }}/authentication/AWS-CloudDirectory-Authentication.html)
         *   [AWS Cognito](/cas/{{ version }}/authentication/AWS-Cognito-Authentication.html)
         *   [Couchbase](/cas/{{ version }}/authentication/Couchbase-Authentication.html)
