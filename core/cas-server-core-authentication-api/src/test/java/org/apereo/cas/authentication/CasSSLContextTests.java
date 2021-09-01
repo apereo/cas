@@ -38,6 +38,7 @@ public class CasSSLContextTests {
         assertNotNull(system.getKeyManagers());
         assertNotNull(system.getTrustManagers());
         assertNotNull(system.getHostnameVerifier());
+        assertNotNull(system.getTrustManagerFactory());
         assertThrows(Exception.class, () -> contactUrl("https://expired.badssl.com/", system));
         assertThrows(Exception.class, () -> contactUrl("https://self-signed.badssl.com/", system));
     }
@@ -49,6 +50,7 @@ public class CasSSLContextTests {
         assertNotNull(disabled.getKeyManagers());
         assertNotNull(disabled.getTrustManagers());
         assertNotNull(disabled.getHostnameVerifier());
+        assertNotNull(disabled.getTrustManagerFactory());
         assertNotNull(contactUrl("https://expired.badssl.com/", disabled));
         assertNotNull(contactUrl("https://self-signed.badssl.com/", disabled));
         assertNotNull(contactUrl("https://untrusted-root.badssl.com/", disabled));

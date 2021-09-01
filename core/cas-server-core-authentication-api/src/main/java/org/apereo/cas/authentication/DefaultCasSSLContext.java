@@ -43,6 +43,8 @@ public class DefaultCasSSLContext implements CasSSLContext {
 
     private final HostnameVerifier hostnameVerifier;
 
+    private final KeyStore casTrustStore;
+
     public DefaultCasSSLContext(final Resource trustStoreFile,
                                 final String trustStorePassword,
                                 final String trustStoreType,
@@ -51,9 +53,10 @@ public class DefaultCasSSLContext implements CasSSLContext {
         val disabled = httpClientProperties.getHostNameVerifier().equalsIgnoreCase("none");
         if (disabled) {
             this.trustManagers = CasSSLContext.disabled().getTrustManagers();
+            this.casTrustStore = null;
             this.keyManagers = CasSSLContext.disabled().getKeyManagers();
         } else {
-            val casTrustStore = KeyStore.getInstance(trustStoreType);
+            casTrustStore = KeyStore.getInstance(trustStoreType);
             val trustStorePasswordCharArray = trustStorePassword.toCharArray();
             try (val casStream = trustStoreFile.getInputStream()) {
                 casTrustStore.load(casStream, trustStorePasswordCharArray);
@@ -76,13 +79,21 @@ public class DefaultCasSSLContext implements CasSSLContext {
         this.hostnameVerifier = hostnameVerifier;
     }
 
+    @Override
+    @SneakyThrows
+    public TrustManagerFactory getTrustManagerFactory() {
+        val factory = TrustManagerFactory.getInstance(ALG_NAME_PKIX);
+        factory.init(this.casTrustStore);
+        return factory;
+    }
+
     @SneakyThrows
     private static X509KeyManager getKeyManager(final String algorithm, final KeyStore keystore, final char[] password) {
         val factory = KeyManagerFactory.getInstance(algorithm);
         factory.init(keystore, password);
         return (X509KeyManager) factory.getKeyManagers()[0];
     }
-
+    
     @SneakyThrows
     private static Collection<X509TrustManager> getTrustManager(final String algorithm, final KeyStore keystore) {
         val factory = TrustManagerFactory.getInstance(algorithm);
