@@ -18,7 +18,7 @@
             state identifier is <code th:text="${flowExecutionException.stateId}">unknown</code>.
         </p>
         <p>The error message is:</p>
-        <code th:text="${rootCauseException.message}">unknown</code>
+        <code id="exceptionMessage" th:text="${rootCauseException.message}">unknown</code>
         
         <p>Please examine the CAS server logs to find the root cause and additional details.</p>
     </div>
