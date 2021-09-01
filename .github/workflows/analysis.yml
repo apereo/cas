@@ -155,6 +155,7 @@ jobs:
           - CheckEnforceLombokAnnotations
           - CheckRequiredModuleAnnotationReferences
           - CheckMixingSpringBeanWithDependencyInjection
+          - CheckMissingPuppeteerConfig
     name: ${{ matrix.check }}
     steps:
       - uses: actions/checkout@v2
