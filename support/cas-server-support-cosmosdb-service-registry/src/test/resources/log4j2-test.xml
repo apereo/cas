@@ -7,7 +7,7 @@
     </Appenders>
     <Loggers>
         <Logger name="org.apereo" level="error" />
-        <Logger name="com.azure.cosmos" level="info" />
+        <Logger name="com.azure.cosmos" level="debug" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>
