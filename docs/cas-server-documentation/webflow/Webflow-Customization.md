@@ -21,7 +21,7 @@ flow may contain among many other settings the following major elements:
 
 Spring Web Flow presents CAS with a pluggable architecture where custom actions, views and decisions may be injected into the
 flow to account for additional use cases and processes. Note that <strong>to customize the 
-webflow, one must possess a reasonable level of understanding of the webflow's internals 
+webflow, one must possess a reasonable level of understanding of the webflow internals 
 and injection policies</strong>. The intention of this document is NOT to describe 
 Spring Web Flow, but merely to demonstrate how the framework is used by CAS to 
 carry out various aspects of the protocol and business logic execution.
