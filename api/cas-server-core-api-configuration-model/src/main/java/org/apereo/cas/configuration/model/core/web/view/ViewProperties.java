@@ -54,6 +54,7 @@ public class ViewProperties implements Serializable {
 
     /**
      * Comma separated paths to where CAS templates may be found.
+     * Example might be {@code classpath:templates,file:/templates}.
      */
     private List<String> templatePrefixes = new ArrayList<>(1);
 

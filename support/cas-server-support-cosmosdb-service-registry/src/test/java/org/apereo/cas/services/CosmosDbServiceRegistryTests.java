@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.service-registry.cosmosDb.database=RegisteredServicesDb",
     "cas.service-registry.cosmosDb.max-retry-attempts-on-throttled-requests=5",
     "cas.service-registry.cosmosDb.indexing-mode=CONSISTENT",
-    "cas.service-registry.cosmosDb.drop-container=true"
+    "cas.service-registry.cosmosDb.create-container=true"
 })
 @ResourceLock("cosmosdb-service")
 @Getter

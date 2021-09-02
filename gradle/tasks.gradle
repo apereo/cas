@@ -149,4 +149,3 @@ task outputDependenciesWithoutLicense(description: "Output dependencies without 
         }
     }
 }
-

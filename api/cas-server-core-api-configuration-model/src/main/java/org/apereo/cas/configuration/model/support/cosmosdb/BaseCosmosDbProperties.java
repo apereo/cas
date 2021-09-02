@@ -91,9 +91,9 @@ public abstract class BaseCosmosDbProperties implements Serializable {
     private boolean allowTelemetry;
 
     /**
-     * Whether collections should be dropped on startup and re-created.
+     * Whether collections should be created on startup.
      */
-    private boolean dropContainer;
+    private boolean createContainer;
 
     /**
      * Sets the preferred regions for geo-replicated database accounts. For example, "East US" as the preferred region.
