@@ -1,6 +1,42 @@
 {
   "properties": [
     {
+      "name": "cas.consent.enabled",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.consent.core.enabled",
+        "reason": "Setting is now moved into a core sub namespace",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.consent.reminder-time-unit",
+      "type": "java.time.temporal.ChronoUnit",
+      "deprecation": {
+        "replacement": "cas.consent.core.reminder-time-unit",
+        "reason": "Setting is now moved into a core sub namespace",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.consent.active",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.consent.core.active",
+        "reason": "Setting is now moved into a core sub namespace",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.consent.crypto",
+      "type": "org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties",
+      "deprecation": {
+        "replacement": "cas.consent.core.crypto",
+        "reason": "Setting is now moved into a core sub namespace",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.throttle.username-parameter",
       "type": "java.lang.String",
       "deprecation": {
