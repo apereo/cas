@@ -22,6 +22,10 @@ Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-webflow" %}
 
+## Configuration
+
+{% include casproperties.html properties="cas.consent.enabled,cas.consent.active,cas.consent.reminder,cas.consent.reminder-time-unit" %}
+
 ## Actuator Endpoints
       
 The following endpoints are provided by CAS:
