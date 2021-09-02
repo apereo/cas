@@ -141,8 +141,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      * @return the http status
      * @throws Exception the exception
      */
-    @Operation(summary = "Import a device registration as a JSON document",
-        parameters = {@Parameter(name = "request", required = true)})
+    @Operation(summary = "Import a device registration as a JSON document")
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus importAccount(final HttpServletRequest request) throws Exception {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
