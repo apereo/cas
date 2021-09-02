@@ -1,31 +1,21 @@
 package org.apereo.cas.util;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.SneakyThrows;
-import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.lambda.Unchecked;
 import org.springframework.boot.SpringBootVersion;
 import org.springframework.boot.info.GitProperties;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.SpringVersion;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link SystemUtils}.
@@ -91,37 +81,5 @@ public class SystemUtils {
         info.put("OS Temp Directory", FileUtils.getTempDirectoryPath());
 
         return info;
-    }
-
-    /**
-     * Report modules.
-     *
-     * @param applicationContext the application context
-     * @return the list
-     */
-    @SneakyThrows
-    public List<CasRuntimeModule> getRuntimeModules(final ConfigurableApplicationContext applicationContext) {
-        return Arrays.stream(applicationContext.getResources("classpath*:/git.properties"))
-            .map(Unchecked.function(PropertiesLoaderUtils::loadProperties))
-            .filter(props -> props.containsKey("project.name"))
-            .map(props-> CasRuntimeModule.builder()
-                .name(props.get("project.name").toString())
-                .version(props.get("project.version").toString())
-                .description(props.get("project.description").toString())
-                .build())
-            .sorted(Comparator.comparing(CasRuntimeModule::getName))
-            .collect(Collectors.toList());
-    }
-
-    @SuperBuilder
-    @EqualsAndHashCode(of = {"name", "version"})
-    @ToString
-    @Getter
-    public static class CasRuntimeModule {
-        private final String name;
-
-        private final String version;
-
-        private final String description;
     }
 }

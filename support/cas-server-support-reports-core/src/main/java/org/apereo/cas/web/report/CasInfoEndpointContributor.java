@@ -1,11 +1,11 @@
 package org.apereo.cas.web.report;
 
 import org.apereo.cas.util.SystemUtils;
+import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.actuate.info.InfoContributor;
-import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * This is {@link CasInfoEndpointContributor}.
@@ -15,11 +15,11 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 @RequiredArgsConstructor
 public class CasInfoEndpointContributor implements InfoContributor {
-    private final ConfigurableApplicationContext applicationContext;
+    private final CasRuntimeModuleLoader loader;
 
     @Override
     public void contribute(final Info.Builder builder) {
         builder.withDetail("systemInfo", SystemUtils.getSystemInfo());
-        builder.withDetail("casModules", SystemUtils.getRuntimeModules(applicationContext));
+        builder.withDetail("casModules", loader.load());
     }
 }

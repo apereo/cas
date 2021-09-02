@@ -3,7 +3,6 @@ package org.apereo.cas.util;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,9 +20,5 @@ public class SystemUtilsTests {
         val info = SystemUtils.getSystemInfo();
         assertNotNull(info);
         assertFalse(info.isEmpty());
-
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        assertDoesNotThrow(() -> SystemUtils.getRuntimeModules(applicationContext));
     }
 }
