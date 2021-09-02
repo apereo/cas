@@ -28,7 +28,7 @@ public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
                                     final ConfigurableApplicationContext applicationContext,
                                     final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
-        setOrder(casProperties.getConsent().getWebflow().getOrder());
+        setOrder(casProperties.getConsent().getCore().getWebflow().getOrder());
     }
 
     @Override
