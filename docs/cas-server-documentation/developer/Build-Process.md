@@ -134,7 +134,6 @@ Additionally, you may need to customize the VM settings to ensure the developmen
 -Dsun.io.useCanonCaches=false
 -Djsse.enableSNIExtension=true
 -ea
--Xverify:none
 ```
 
 If you're using OpenJDK 11 or later, you may find the above VM options do not work. The key point for making IntelliJ IDEA 
