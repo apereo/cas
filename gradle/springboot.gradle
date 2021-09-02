@@ -84,7 +84,6 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         
         def list = []
         list.add("-XX:TieredStopAtLevel=1")
-        list.add("-Xverify:none")
         list.add("--add-modules")
         list.add("java.se")
         list.add("--add-exports")

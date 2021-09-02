@@ -98,6 +98,12 @@ for the [CosmosDb service registry](../services/CosmosDb-Service-Management.html
 
 Apache Zookeeper can now be used to handle [auto discovery of Hazelcast members](../ticketing/Hazelcast-Ticket-Registry.html) in a cluster.
 
+### JDK 17 Compatibility
+
+CAS is able to build and run successfully against the latest versions of JDK 17. The JDK 
+baseline requirement continues to be set at JDK 11, and this release is keeping up with 
+JDK releases to ensure CAS can correctly switch the baseline requirement when deemed necessary.
+
 ## Other Stuff
 
 - SAML2 Unsolicited endpoint is now able to preserve custom query parameters.
