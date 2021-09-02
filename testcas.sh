@@ -282,8 +282,6 @@ while (( "$#" )); do
             cosmosdb|cosmos)
                 isDockerOnLinux && ./ci/tests/cosmosdb/run-cosmosdb-server.sh
                 task+="testCosmosDb "
-                printf "${RED}CosmosDb tests do not support parallel test executions.${ENDCOLOR}"
-                parallel="--no-parallel "
                 ;;
             simple|unit)
                 task+="testSimple "
