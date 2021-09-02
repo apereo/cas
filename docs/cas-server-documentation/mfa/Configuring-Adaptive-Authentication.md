@@ -45,7 +45,7 @@ header `clientIpAddress` under a `GET` request. The expected result status codes
 |-----------------------|------------------------------------------------------------------------------------------------------------
 | `401`, `403`          | IP address is banned and the request will be rejected.
 | `200`, `202`          | IP address is allowed and the request may proceed.
-| All Others            | Response body is expected to contain a score between `1` and `0`, (`1=Banned` and `0=Allowed`), indicating IP address suspiciousness.
+| All Others            | Response body is expected to contain a score between `1` and `0`, (`1=Banned` and `0=Allowed`), indicating a suspicious IP address.
 
 {% include_cached casproperties.html properties="cas.authn.adaptive.ip-intel.rest" %}
 

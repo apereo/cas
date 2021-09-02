@@ -47,4 +47,4 @@ AWS credentials are fetched from the following sources automatically, where rele
 
 `createIfNeeded`, `createLogGroupIfNeeded`, and `createLogStreamIfNeeded` are optional; `createIfNeeded` will default to
  `true` while `createLogGroupIfNeeded` and `createLogStreamIfNeeded` default to `false`. Any `true` value will take
- precendence (i.e., set all to `false` to not create anything).
+ precedence (i.e., set all to `false` to not create anything).
