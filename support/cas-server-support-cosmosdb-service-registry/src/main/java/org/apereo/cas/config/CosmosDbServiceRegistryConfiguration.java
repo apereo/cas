@@ -56,12 +56,11 @@ public class CosmosDbServiceRegistryConfiguration {
         val cosmosDb = casProperties.getServiceRegistry().getCosmosDb();
         val factory = cosmosDbObjectFactory();
         factory.createDatabaseIfNecessary();
-        if (cosmosDb.isDropContainer()) {
-            factory.deleteContainer(cosmosDb.getContainer());
+        if (cosmosDb.isCreateContainer()) {
             factory.createContainer(cosmosDb.getContainer(), CosmosDbServiceRegistry.PARTITION_KEY);
         }
-        return new CosmosDbServiceRegistry(factory, cosmosDb.getContainer(),
-            applicationContext, serviceRegistryListeners.getObject());
+        val container = factory.getContainer(cosmosDb.getContainer());
+        return new CosmosDbServiceRegistry(container, applicationContext, serviceRegistryListeners.getObject());
     }
 
     @Bean

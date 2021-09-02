@@ -58,19 +58,19 @@ ext {
     ci = System.getenv("CI") || providers.systemProperty("CI").forUseAtConfigurationTime().present
 
     excludedFilesFromTestCoverage = [
-        '**/docs/**',
-        '**/soap/generated/**',
-        '**/com/duosecurity/**',
-        '**/support/openid/**',
-        '**/**ConfigurationMetadata**',
-        '**/**NtlmAuthenticationHandler**',
-        '**/**CosmosDbServiceRegistry**',
-        '**/**NimbusOAuthJacksonModule**',
-        '**/**Application**',
-        '**/**Application$**',
-        '**/**Exception$**',
-        '**/**Properties**',
-        '**/**Properties$**'
+            '**/docs/**',
+            '**/soap/generated/**',
+            '**/com/duosecurity/**',
+            '**/support/openid/**',
+            '**/**ConfigurationMetadata**',
+            '**/**NtlmAuthenticationHandler**',
+            '**/**CosmosDbServiceRegistry**',
+            '**/**NimbusOAuthJacksonModule**',
+            '**/**Application**',
+            '**/**Application$**',
+            '**/**Exception$**',
+            '**/**Properties**',
+            '**/**Properties$**'
     ]
 }
 
@@ -155,7 +155,7 @@ allprojects {
     apply plugin: "java-library"
     apply plugin: "jacoco"
 
-    if (gradle.startParameter.taskNames.any {task -> task.equalsIgnoreCase("install") }) {
+    if (gradle.startParameter.taskNames.any { task -> task.equalsIgnoreCase("install") }) {
         apply plugin: "maven"
     }
 
@@ -214,23 +214,16 @@ allprojects {
         failOnError = providers.systemProperty("ignoreJavadocFailures").forUseAtConfigurationTime().present
         excludes = ['**/generated/**', '**/com/duosecurity/**']
     }
-    
+
 }
 
 subprojects {
     /**
-    task dependencyCheckAnalyze(type: org.owasp.dependencycheck.gradle.tasks.Analyze) {
-         Disable analyze in cas-server-core-api and cas-server-core because
-         support and webapp sub-projects will include their dependencies transitively.
-        enabled = !"${project.name}".contains("cas-server-core")
-    }
-    task allDependenciesInsight(type: DependencyInsightReportTask,
-            description: "Produce insight information for all dependencies") {
-    }
-    task allDependencies(type: DependencyReportTask,
-            description: "Display a graph of all project dependencies") {
-    }
-    **/
+     task dependencyCheckAnalyze(type: org.owasp.dependencycheck.gradle.tasks.Analyze) {Disable analyze in cas-server-core-api and cas-server-core because
+     support and webapp sub-projects will include their dependencies transitively.
+     enabled = !"${project.name}".contains("cas-server-core")}task allDependenciesInsight(type: DependencyInsightReportTask,
+     description: "Produce insight information for all dependencies") {}task allDependencies(type: DependencyReportTask,
+     description: "Display a graph of all project dependencies") {}**/
 
     if (projectShouldBePublished(project)) {
         apply plugin: "maven-publish"
@@ -249,7 +242,7 @@ subprojects {
         provided
     }
 
-    if (gradle.startParameter.taskNames.any {task -> task.startsWith("jacoco") }) {
+    if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
         jacocoTestReport {
             reports {
                 xml.required.set(true)
@@ -281,7 +274,7 @@ subprojects {
             }
         }
     }
-    
+
     apply from: rootProject.file("gradle/overrides.gradle")
 
     /**
@@ -379,7 +372,7 @@ subprojects {
         main {
             compileClasspath += configurations.provided
             runtimeClasspath += configurations.provided
-            
+
             java {
                 srcDirs = ["${projectDir}/src/main/java"]
             }
@@ -463,8 +456,8 @@ subprojects {
         apply plugin: "checkstyle"
         checkstyle {
             configProperties = [
-                "checkstyle.suppressions.file" : new File(rootDir, "style/checkstyle-suppressions.xml"),
-                "checkstyle.importcontrol.file": new File(rootDir, "style/import-control.xml")
+                    "checkstyle.suppressions.file" : new File(rootDir, "style/checkstyle-suppressions.xml"),
+                    "checkstyle.importcontrol.file": new File(rootDir, "style/import-control.xml")
             ]
             configFile = new File(rootDir, "style/checkstyle-rules.xml")
             ignoreFailures false
@@ -477,7 +470,7 @@ subprojects {
         apply from: rootProject.file("gradle/spotbugs.gradle")
     }
 
-    if (gradle.startParameter.taskNames.any {task -> task.equalsIgnoreCase("checkLicense") }) {
+    if (gradle.startParameter.taskNames.any { task -> task.equalsIgnoreCase("checkLicense") }) {
         apply plugin: "com.github.jk1.dependency-license-report"
         licenseReport {
             outputDir = "$projectDir/build/licenses"
@@ -489,9 +482,9 @@ subprojects {
         }
         checkLicense.finalizedBy outputDependenciesWithoutLicense
     }
-    
+
     dependencies {
-        
+
         implementation libraries.aspectj
         implementation libraries.validationapi
 
@@ -519,7 +512,7 @@ subprojects {
         api libraries.javax
 
         annotationProcessor libraries.springindexer
-        
+
         if (!providers.systemProperty("skipSpotbugs").forUseAtConfigurationTime().present && projectShouldBePublished(project)) {
             spotbugsPlugins libraries.findbugscontrib
             spotbugsPlugins libraries.findbugssec
@@ -535,7 +528,7 @@ subprojects {
         if (!ci) {
             testRuntimeOnly "org.junit.platform:junit-platform-suite-engine:$junitPlatformVersion"
         }
-        compileOnlyApi  libraries.spotbugsannotations
+        compileOnlyApi libraries.spotbugsannotations
     }
 }
 
@@ -574,7 +567,7 @@ if (rootProject.publishFlag && !rootProject.publishMinimalArtifacts) {
     }
 }
 
-if (gradle.startParameter.taskNames.any {task -> task.startsWith("jacoco") }) {
+if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
     task jacocoMerge(type: JacocoMerge) {
         subprojects.each { subproject ->
             executionData subproject.tasks.withType(Test)
@@ -655,4 +648,3 @@ boolean projectRequiresLombok(Project project) {
     return !["api", "core", "docs", "support", "webapp"].contains(project.name)
             && !project.getPath().contains("cas-server-documentation")
 }
-

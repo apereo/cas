@@ -46,7 +46,7 @@ import static java.util.stream.Collectors.*;
 public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     private final PrincipalResolutionContext context;
-    
+
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> currentPrincipal,
                              final Optional<AuthenticationHandler> handler) {
@@ -229,7 +229,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                 + " for the credential, that is [{}], for principal resolution", id);
         }
         LOGGER.debug("Extracted principal id [{}]", id);
-        return id.trim();
+        return StringUtils.isNotBlank(id) ? id.trim() : null;
     }
 
     @SuperBuilder

@@ -3,14 +3,12 @@ package org.apereo.cas.cosmosdb;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.cosmosdb.BaseCosmosDbProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.CosmosContainer;
-import com.azure.cosmos.CosmosException;
 import com.azure.cosmos.ThrottlingRetryOptions;
 import com.azure.cosmos.implementation.Configs;
 import com.azure.cosmos.models.CosmosContainerProperties;
@@ -22,7 +20,6 @@ import io.netty.handler.ssl.SslProvider;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.http.HttpStatus;
 import org.springframework.data.util.ReflectionUtils;
 
 /**
@@ -84,26 +81,6 @@ public class CosmosDbObjectFactory {
         val database = client.getDatabase(databaseResponse.getProperties().getId());
         LOGGER.debug("Fetching CosmosDb container [{}]", name);
         return database.getContainer(name);
-    }
-
-    /**
-     * Drop container.
-     *
-     * @param name the name
-     */
-    public void deleteContainer(final String name) {
-        val database = client.getDatabase(properties.getDatabase());
-        val container = database.getContainer(name);
-        if (container != null) {
-            try {
-                LOGGER.debug("Deleting CosmosDb container [{}]", name);
-                container.delete();
-            } catch (final CosmosException e) {
-                if (e.getStatusCode() != HttpStatus.SC_NOT_FOUND) {
-                    LoggingUtils.warn(LOGGER, e);
-                }
-            }
-        }
     }
 
     /**

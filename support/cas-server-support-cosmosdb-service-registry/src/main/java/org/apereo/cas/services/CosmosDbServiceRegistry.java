@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.cosmosdb.CosmosDbDocument;
-import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
@@ -38,14 +37,12 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
 
     private final CosmosContainer container;
 
-    public CosmosDbServiceRegistry(final CosmosDbObjectFactory factory,
-                                   final String containerName,
+    public CosmosDbServiceRegistry(final CosmosContainer container,
                                    final ConfigurableApplicationContext applicationContext,
                                    final Collection<ServiceRegistryListener> serviceRegistryListeners) {
         super(applicationContext, serviceRegistryListeners);
         this.serializer = new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
-        factory.createContainer(containerName, PARTITION_KEY);
-        this.container = factory.getContainer(containerName);
+        this.container = container;
     }
 
     @Override
