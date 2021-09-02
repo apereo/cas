@@ -57,9 +57,6 @@ selection. A sample chain of attribute consent polices follows:
   }
 }
 ```          
-## Configuration
-
-{% include casproperties.html properties="cas.consent" %}
 
 ## Activation via Groovy
 
