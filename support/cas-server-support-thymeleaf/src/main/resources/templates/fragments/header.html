@@ -188,7 +188,7 @@
                 attachDrawerToggle: function (drawer) {
                     let appBar = document.getElementById('app-bar');
                     if (appBar != null) {
-                        var topAppBar = material.topAppBar.MDCTopAppBar.attachTo(appBar);
+                        let topAppBar = material.topAppBar.MDCTopAppBar.attachTo(appBar);
                         topAppBar.setScrollTarget(document.getElementById('main-content'));
                         topAppBar.listen('MDCTopAppBar:nav', function () {
                             drawer.open = !drawer.open;

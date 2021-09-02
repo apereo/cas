@@ -41,6 +41,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -474,7 +476,10 @@ public class CasDocumentationApplication {
                 map.put("deprecated", true);
             }
             map.put("summary", StringUtils.appendIfMissing(operation.summary(), "."));
-            if (operation.parameters().length == 0 && method.getParameterCount() > 0) {
+            var paramCount = Arrays.stream(method.getParameterTypes())
+                .filter(type -> !type.equals(HttpServletRequest.class) && !type.equals(HttpServletResponse.class)).count();
+
+            if (operation.parameters().length == 0 && paramCount > 0) {
                 throw new RuntimeException("Unable to locate @Parameter annotation for " + method.toGenericString()
                     + " in declaring class " + clazz.getName());
             }
