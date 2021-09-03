@@ -2,6 +2,7 @@
   "dependencies": "core,jpa-ticket-registry",
   "properties": [
     "--cas.jdbc.show-sql=true",
+    "--cas.audit.engine.enabled=false",
     "--cas.ticket.registry.jpa.driver-class=org.postgresql.Driver",
     "--cas.ticket.registry.jpa.ddl-auto=update",
     "--cas.ticket.registry.jpa.dialect=org.hibernate.dialect.PostgreSQL10Dialect",
@@ -10,5 +11,8 @@
     "--cas.ticket.registry.jpa.url=jdbc:postgresql://localhost:5432/tickets",
     "--logging.level.org.apereo.cas.ticket.registry=debug"
     ],
-  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "loadScript": "./ci/tests/puppeteer/scenarios/db-postgres-load/test.js",
+  "samplesRequested": 5,
+  "concurrencyRequested": 5
 }

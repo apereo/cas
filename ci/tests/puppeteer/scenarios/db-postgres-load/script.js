@@ -1,16 +1,23 @@
+const assert = require('assert');
+const fs = require('fs');
+const {JSONPath} = require('jsonpath-plus');
+
 const startPuppeteerLoadTest = require('puppeteer-loadtest');
+let args = process.argv.slice(2);
+const config = JSON.parse(fs.readFileSync(args[0]));
+assert(config != null)
 
-const file = "./ci/tests/puppeteer/scenarios/db-postgres-load/test.js";
-const samplesRequested = 20;
-const concurrencyRequested = 5;
-
+const paramOptions = {
+    file: config.loadScript,
+    samplesRequested: config.samplesRequested,
+    concurrencyRequested: config.concurrencyRequested
+}
 const loattest = async () => {
-    const results = await startPuppeteerLoadTest({
-        file,
-        samplesRequested,
-        concurrencyRequested,
-    });
-    console.log(JSON.stringify(results, null, 2));
+    return await startPuppeteerLoadTest(paramOptions);
 }
 
-loattest();
+loattest().then(results => {
+    console.log(JSON.stringify(results, null, 2))
+    const samples = JSONPath({path: '$..sample', json: results })
+    assert(samples.length == parseInt(config.samplesRequested))
+});
