@@ -154,7 +154,6 @@ public class OidcEndpointsConfiguration {
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
-
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
@@ -388,11 +387,10 @@ public class OidcEndpointsConfiguration {
     @RefreshScope
     public HandlerInterceptor oidcLocaleChangeInterceptor() {
         val interceptor = new OidcLocaleChangeInterceptor(
-            casProperties.getLocale(), argumentExtractor.getObject());
+            casProperties.getLocale(), argumentExtractor.getObject(), servicesManager.getObject());
         interceptor.setParamName(OidcConstants.UI_LOCALES);
         return interceptor;
     }
-
 
     @ConditionalOnMissingBean(name = "oidcCasWebflowExecutionPlanConfigurer")
     @Bean

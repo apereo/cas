@@ -104,6 +104,11 @@ CAS is able to build and run successfully against the latest versions of JDK 17.
 baseline requirement continues to be set at JDK 11, and this release is keeping up with 
 JDK releases to ensure CAS can correctly switch the baseline requirement when deemed necessary.
 
+### Localization Per Service
+
+Language bundle and localization rules can now be applied 
+conditionally [on a per-application basis](../ux/User-Interface-Customization-Localization.html).
+
 ## Other Stuff
 
 - SAML2 Unsolicited endpoint is now able to preserve custom query parameters.

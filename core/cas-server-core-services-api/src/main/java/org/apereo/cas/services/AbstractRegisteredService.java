@@ -49,6 +49,8 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     private String theme;
 
+    private String locale;
+    
     private String informationUrl;
 
     private String privacyUrl;
