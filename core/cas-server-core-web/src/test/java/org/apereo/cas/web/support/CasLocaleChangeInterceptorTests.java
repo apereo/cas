@@ -1,23 +1,22 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.LocaleProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.DispatcherServlet;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,7 +29,6 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("Web")
-@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasLocaleChangeInterceptorTests {
     private ServicesManager servicesManager;
 
@@ -40,6 +38,20 @@ public class CasLocaleChangeInterceptorTests {
     public void setup() {
         this.argumentExtractor = mock(ArgumentExtractor.class);
         this.servicesManager = mock(ServicesManager.class);
+    }
+
+    @Test
+    public void verifyDefaultRequestForUrl() throws Exception {
+        val request = new MockHttpServletRequest();
+        request.setPreferredLocales(List.of(Locale.FRENCH));
+        request.setRequestURI("/login");
+        val response = new MockHttpServletResponse();
+        val resolver = new SessionLocaleResolver();
+        request.setAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, resolver);
+        val interceptor = getInterceptor(false);
+        interceptor.setSupportedFlows(List.of(CasWebflowConfigurer.FLOW_ID_LOGIN));
+        interceptor.preHandle(request, response, new Object());
+        assertEquals(Locale.FRENCH, resolver.resolveLocale(request));
     }
 
     @Test
@@ -91,7 +103,7 @@ public class CasLocaleChangeInterceptorTests {
         assertEquals(Locale.FRENCH, resolver.resolveLocale(request));
     }
 
-    private HandlerInterceptor getInterceptor(final boolean force) {
+    private CasLocaleChangeInterceptor getInterceptor(final boolean force) {
         val props = new LocaleProperties().setDefaultValue("fr").setForceDefaultLocale(force);
         return new CasLocaleChangeInterceptor(props, argumentExtractor, servicesManager);
     }
