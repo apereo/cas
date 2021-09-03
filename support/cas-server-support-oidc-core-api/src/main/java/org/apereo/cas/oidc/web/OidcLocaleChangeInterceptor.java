@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.configuration.model.core.web.LocaleProperties;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
 
@@ -18,12 +19,10 @@ import java.util.Locale;
  * @since 6.4.0
  */
 public class OidcLocaleChangeInterceptor extends CasLocaleChangeInterceptor {
-    private final ArgumentExtractor argumentExtractor;
-
     public OidcLocaleChangeInterceptor(final LocaleProperties localeProperties,
-                                       final ArgumentExtractor argumentExtractor) {
-        super(localeProperties);
-        this.argumentExtractor = argumentExtractor;
+                                       final ArgumentExtractor argumentExtractor,
+                                       final ServicesManager servicesManager) {
+        super(localeProperties, argumentExtractor, servicesManager);
     }
 
     @Override

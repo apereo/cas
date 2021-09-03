@@ -96,6 +96,14 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     String getTheme();
 
     /**
+     * Returns a locale name to be activated when this service is used.
+     *
+     * @return the locale name associated with this service.
+     */
+    @ExpressionLanguageCapable
+    String getLocale();
+
+    /**
      * Returns the description of the service.
      *
      * @return the description of the service.
