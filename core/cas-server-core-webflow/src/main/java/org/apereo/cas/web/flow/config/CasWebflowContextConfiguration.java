@@ -183,6 +183,7 @@ public class CasWebflowContextConfiguration {
     public LocaleChangeInterceptor localeChangeInterceptor() {
         val interceptor = new CasLocaleChangeInterceptor(casProperties.getLocale(), argumentExtractor.getObject(), servicesManager.getObject());
         interceptor.setParamName(casProperties.getLocale().getParamName());
+        interceptor.setSupportedFlows(List.of(CasWebflowConfigurer.FLOW_ID_LOGOUT, CasWebflowConfigurer.FLOW_ID_LOGIN));
         return interceptor;
     }
 

@@ -5,6 +5,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
@@ -13,6 +14,8 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -38,6 +41,9 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
      */
     protected final ServicesManager servicesManager;
 
+    @Setter
+    private List<String> supportedFlows = new ArrayList<>();
+
     /**
      * Configure locale.
      *
@@ -58,19 +64,18 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
                              final Object handler) throws ServletException {
+        val requestUrl = request.getRequestURL().toString();
         if (localeProperties.isForceDefaultLocale()) {
             val locale = new Locale(localeProperties.getDefaultValue());
             configureLocale(request, response, locale);
             return true;
         }
-        var handledLocale = false;
         val service = this.argumentExtractor.extractService(request);
         if (service != null) {
             val registeredService = servicesManager.findServiceBy(service);
             if (registeredService != null && StringUtils.isNotBlank(registeredService.getLocale())) {
                 val locale = new Locale(SpringExpressionLanguageValueResolver.getInstance().resolve(registeredService.getLocale()));
                 configureLocale(request, response, locale);
-                handledLocale = true;
             }
         }
 
@@ -78,12 +83,18 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
         if (newLocale != null) {
             val locale = new Locale(newLocale);
             configureLocale(request, response, locale);
-            handledLocale = true;
         }
 
-        if (!handledLocale && request.getLocale() != null) {
-            configureLocale(request, response, request.getLocale());
+        if (request.getLocale() != null && isLocaleConfigured(request)) {
+            val match = supportedFlows.stream().anyMatch(flowId -> requestUrl.contains('/' + flowId));
+            if (match) {
+                configureLocale(request, response, request.getLocale());
+            }
         }
         return true;
+    }
+
+    private static boolean isLocaleConfigured(final HttpServletRequest request) {
+        return request.getAttribute(Locale.class.getName()) == null;
     }
 }
