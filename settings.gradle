@@ -131,6 +131,7 @@ include "docs:cas-server-documentation-processor"
 include "docs:cas-server-documentation"
 
 include "support:cas-server-support-acceptto-mfa"
+include "support:cas-server-support-account-mgmt"
 include "support:cas-server-support-acme"
 include "support:cas-server-support-actions"
 include "support:cas-server-support-audit-couchbase"

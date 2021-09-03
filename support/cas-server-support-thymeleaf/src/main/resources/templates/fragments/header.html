@@ -41,6 +41,14 @@
                     <span class="sr-only">notifications</span>
                     <i id="notifications-count" class="notifications-count count">2</i>
                 </button>
+
+                <button id="cas-user-account"
+                        th:if="${ticketGrantingTicketId != null}"
+                        class="mdc-icon-button mdc-top-app-bar__action-item"
+                        aria-label="User Account">
+                    <span class="mdi mdi-account-group"></span>
+                    <span class="sr-only">user account</span>
+                </button>
             </section>
         </nav>
 
