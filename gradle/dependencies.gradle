@@ -3696,8 +3696,6 @@ ext.libraries = [
                 }
         ],
         webjars                 : [
-                dependencies.create("org.webjars:headjs:$headjsVersion") {
-                },
                 dependencies.create("org.webjars:jquery:$jqueryVersion") {
                 },
                 dependencies.create("org.webjars.bowergithub.dropbox:zxcvbn:$zxcvbnVersion") {

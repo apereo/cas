@@ -262,6 +262,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_ENROLL = "enroll";
 
     /**
+     * Signup transition id.
+     */
+    String TRANSITION_ID_SIGNUP = "signup";
+
+    /**
      * Renew transition id.
      */
     String TRANSITION_ID_RENEW = "renew";
@@ -425,6 +430,15 @@ public interface CasWebflowConstants {
      * The state 'duoUniversalPromptPrepareValidate'.
      */
     String STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN = "duoUniversalPromptPrepareValidate";
+
+    /**
+     * The state 'viewAccountSignUp'.
+     */
+    String STATE_ID_VIEW_ACCOUNT_SIGNUP = "viewAccountSignUp";
+    /**
+     * The state 'submitAccountRegistration'.
+     */
+    String STATE_ID_SUBMIT_ACCOUNT_REGISTRATION = "submitAccountRegistration";
 
     /**
      * The state 'viewLoginForm'.

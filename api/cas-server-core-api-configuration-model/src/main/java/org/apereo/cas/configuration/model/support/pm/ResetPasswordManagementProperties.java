@@ -71,6 +71,7 @@ public class ResetPasswordManagementProperties implements Serializable {
     public ResetPasswordManagementProperties() {
         mail.setAttributeName("mail");
         mail.setText("Reset your password via this link: %s");
+        sms.setText("Reset your password via this link: %s");
         mail.setSubject("Password Reset");
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
