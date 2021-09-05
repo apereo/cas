@@ -102,7 +102,7 @@ public class CasWebflowContextConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
-    
+
     @Autowired
     @Qualifier("themeChangeInterceptor")
     private ObjectProvider<ThemeChangeInterceptor> themeChangeInterceptor;
@@ -183,7 +183,9 @@ public class CasWebflowContextConfiguration {
     public LocaleChangeInterceptor localeChangeInterceptor() {
         val interceptor = new CasLocaleChangeInterceptor(casProperties.getLocale(), argumentExtractor.getObject(), servicesManager.getObject());
         interceptor.setParamName(casProperties.getLocale().getParamName());
-        interceptor.setSupportedFlows(List.of(CasWebflowConfigurer.FLOW_ID_LOGOUT, CasWebflowConfigurer.FLOW_ID_LOGIN));
+        interceptor.setSupportedFlows(List.of(
+            CasWebflowConfigurer.FLOW_ID_LOGOUT,
+            CasWebflowConfigurer.FLOW_ID_LOGIN));
         return interceptor;
     }
 

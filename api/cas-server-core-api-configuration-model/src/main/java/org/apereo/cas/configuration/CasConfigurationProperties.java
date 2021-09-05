@@ -23,6 +23,7 @@ import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.configuration.model.core.web.flow.WebflowProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpRequestProperties;
 import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
+import org.apereo.cas.configuration.model.support.account.AccountManagementRegistrationProperties;
 import org.apereo.cas.configuration.model.support.acme.AcmeProperties;
 import org.apereo.cas.configuration.model.support.analytics.GoogleAnalyticsProperties;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
@@ -358,6 +359,12 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SessionReplicationProperties sessionReplication = new SessionReplicationProperties();
+
+    /**
+     * Account registration settings.
+     */
+    @NestedConfigurationProperty
+    private AccountManagementRegistrationProperties accountRegistration = new AccountManagementRegistrationProperties();
 
     /**
      * Hold configuration settings in a parent

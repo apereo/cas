@@ -29,7 +29,7 @@
                               th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}">CAS</span>
                         <img id="cas-logo" class="cas-logo"
                              th:title="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}"
-                             th:src="@{${#strings.defaultString(#themes.code('cas.logo.file'), '/images/cas-logo.png')}}" />
+                             th:src="@{${#strings.defaultString(#themes.code('cas.logo.file'), '/images/cas-logo.png')}}"/>
                     </span>
             </section>
             <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
@@ -42,13 +42,14 @@
                     <i id="notifications-count" class="notifications-count count">2</i>
                 </button>
 
-                <button id="cas-user-account"
-                        th:if="${ticketGrantingTicketId != null}"
-                        class="mdc-icon-button mdc-top-app-bar__action-item"
-                        aria-label="User Account">
-                    <span class="mdi mdi-account-group"></span>
-                    <span class="sr-only">user account</span>
-                </button>
+<!--                <a id="cas-user-account"-->
+<!--                   th:href="@{/account}"-->
+<!--                   th:if="${ticketGrantingTicketId != null}"-->
+<!--                   class="mdc-icon-button mdc-top-app-bar__action-item"-->
+<!--                   aria-label="User Account">-->
+<!--                    <span class="mdi mdi-account-group"></span>-->
+<!--                    <span class="sr-only">user account</span>-->
+<!--                </a>-->
             </section>
         </nav>
 
@@ -108,7 +109,7 @@
             id="cas-notification-dialog" role="alertdialog"
             aria-modal="true" aria-labelledby="notif-dialog-title"
             aria-describedby="notif-dialog-content">
-        
+
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface">
                 <h1 class="mdc-dialog__title mt-lg-2" id="notif-dialog-title">

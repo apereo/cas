@@ -1,0 +1,27 @@
+package org.apereo.cas;
+
+import org.apereo.cas.acct.AccountRegistrationRequestTests;
+import org.apereo.cas.acct.DefaultAccountRegistrationPropertyLoaderTests;
+import org.apereo.cas.acct.webflow.AccountManagementWebflowConfigurerTests;
+import org.apereo.cas.acct.webflow.LoadAccountRegistrationPropertiesActionTests;
+import org.apereo.cas.acct.webflow.SubmitAccountRegistrationActionTests;
+
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
+
+/**
+ * This is {@link AllTestsSuite}.
+ *
+ * @author Misagh Moayyed
+ * @since 4.2.0
+ */
+@SelectClasses({
+    AccountRegistrationRequestTests.class,
+    LoadAccountRegistrationPropertiesActionTests.class,
+    DefaultAccountRegistrationPropertyLoaderTests.class,
+    SubmitAccountRegistrationActionTests.class,
+    AccountManagementWebflowConfigurerTests.class
+})
+@Suite
+public class AllTestsSuite {
+}
