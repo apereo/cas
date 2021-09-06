@@ -32,5 +32,6 @@ public class AccountManagementWebflowConfigurerTests extends BaseWebflowConfigur
         assertNotNull(flow);
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_VIEW_ACCOUNT_SIGNUP));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_SUBMIT_ACCOUNT_REGISTRATION));
+        assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_SENT_ACCOUNT_SIGNUP_INFO));
     }
 }

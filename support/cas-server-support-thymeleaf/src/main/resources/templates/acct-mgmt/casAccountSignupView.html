@@ -15,11 +15,16 @@
                 document.forms[0].elements[0].focus();
             }
         </script>
-        
-        <h2 th:utext="#{cas.screen.acct.title}">Delegated Authentication Dynamic Discovery</h2>
-        <p class="intro" th:utext="#{cas.screen.acct.intro}">Please provide your user ID:</p>
+
+        <h2 th:utext="#{cas.screen.acct.title}" />
+        <p class="intro" th:utext="#{cas.screen.acct.intro}" />
 
         <form method="post" id="fm1">
+            <div class="banner banner-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+                <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
+                   th:utext="${message.text}">Message Text</p>
+            </div>
+            
             <section th:each="entry : ${registrationProperties}" class="cas-field my-3">
                 <div class="d-flex">
                     <label class="mdc-text-field mdc-text-field--outlined">
@@ -28,6 +33,7 @@
                                th:name="${entry.name}"
                                size="25"
                                type="text"
+                               th:attr="required=${entry.required ? 'true' : 'false'}"
                                autocapitalize="none"
                                spellcheck="false"
                                th:autocomplete="${entry.name}"/>

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.binding.message.MessageContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -22,11 +23,15 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
+import org.springframework.webflow.test.MockParameterMap;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link SubmitAccountRegistrationActionTests}.
@@ -78,11 +83,16 @@ public class SubmitAccountRegistrationActionTests extends BaseWebflowConfigurerT
 
     @Test
     public void verifyFailingOperation() throws Exception {
-        val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
-        request.addParameter("username", "casuser");
         val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        
+        val context = mock(RequestContext.class);
+        when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
+        when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
+        when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
+        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
+        when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
+
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
         val results = submitAccountRegistrationAction.execute(context);
