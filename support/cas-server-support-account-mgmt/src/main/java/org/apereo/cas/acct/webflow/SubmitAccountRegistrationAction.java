@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
+import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -75,9 +76,25 @@ public class SubmitAccountRegistrationAction extends AbstractAction {
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
+        addErrorMessageToMessageContext(requestContext, "cas.screen.acct.error.fail");
         return error();
     }
 
+    /**
+     * Add message descriptor to message context.
+     *
+     * @param context the context
+     * @param code    the code
+     */
+    protected void addErrorMessageToMessageContext(final RequestContext context,
+                                                   final String code) {
+        val messages = context.getMessageContext();
+        messages.addMessage(new MessageBuilder()
+            .error()
+            .source(this)
+            .code(code)
+            .build());
+    }
 
     /**
      * Send account registration activation sms.

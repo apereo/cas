@@ -1839,4 +1839,24 @@ public class WebUtils {
     public static Map<String, Object> getLogoutPostData(final RequestContext requestContext) {
         return (Map<String, Object>) requestContext.getFlowScope().get("logoutPostData", Map.class);
     }
+
+    /**
+     * Put account management sign up enabled.
+     *
+     * @param requestContext the request context
+     * @param value          the value
+     */
+    public static void putAccountManagementSignUpEnabled(final RequestContext requestContext, final boolean value) {
+        requestContext.getFlowScope().put("accountManagementSignUpEnabled", value);
+    }
+
+    /**
+     * Is account management sign up enabled.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static boolean isAccountManagementSignUpEnabled(final RequestContext requestContext) {
+        return requestContext.getFlowScope().getBoolean("accountManagementSignUpEnabled");
+    }
 }

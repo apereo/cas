@@ -435,6 +435,12 @@ public interface CasWebflowConstants {
      * The state 'viewAccountSignUp'.
      */
     String STATE_ID_VIEW_ACCOUNT_SIGNUP = "viewAccountSignUp";
+
+    /**
+     * The state 'accountSignUpInfoSent'.
+     */
+    String STATE_ID_SENT_ACCOUNT_SIGNUP_INFO = "accountSignUpInfoSent";
+
     /**
      * The state 'submitAccountRegistration'.
      */
