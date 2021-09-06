@@ -15,7 +15,7 @@
                     field.foundation.adapter.registerInputInteractionHandler('keypress', cas.checkCaps);
                 }
             }
-            let selector = document.querySelector('.mdc-select.authn-source');
+            let selector = document.querySelector('.mdc-select');
             if (selector != null) {
                 const select = new material.select.MDCSelect(selector);
                 select.listen('MDCSelect:change', function () {

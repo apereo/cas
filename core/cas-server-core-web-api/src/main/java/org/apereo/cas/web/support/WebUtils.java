@@ -1846,17 +1846,28 @@ public class WebUtils {
      * @param requestContext the request context
      * @param value          the value
      */
-    public static void putAccountManagementSignUpEnabled(final RequestContext requestContext, final boolean value) {
-        requestContext.getFlowScope().put("accountManagementSignUpEnabled", value);
+    public static void putAccountManagementRegistrationEnabled(final RequestContext requestContext, final boolean value) {
+        requestContext.getFlowScope().put("accountManagementRegistrationEnabled", value);
     }
 
     /**
-     * Is account management sign up enabled.
+     * Is account management registration captcha enabled.
      *
      * @param requestContext the request context
      * @return the boolean
      */
-    public static boolean isAccountManagementSignUpEnabled(final RequestContext requestContext) {
-        return requestContext.getFlowScope().getBoolean("accountManagementSignUpEnabled");
+    public static boolean isAccountManagementRegistrationCaptchaEnabled(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("accountManagementRegistrationCaptchaEnabled", Boolean.class);
+    }
+
+    /**
+     * Put account management sign up captcha enabled.
+     *
+     * @param requestContext the request context
+     * @param properties     the properties
+     */
+    public static void putAccountManagementRegistrationCaptchaEnabled(final RequestContext requestContext,
+                                                                      final GoogleRecaptchaProperties properties) {
+        requestContext.getFlowScope().put("accountManagementRegistrationCaptchaEnabled", properties.isEnabled());
     }
 }

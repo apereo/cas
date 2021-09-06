@@ -29,7 +29,7 @@ public class AccountManagementWebflowConfigurer extends AbstractCasWebflowConfig
     @Override
     protected void doInitialize() {
         val flow = getLoginFlow();
-        val startAction = new ConsumerExecutionAction(context -> WebUtils.putAccountManagementSignUpEnabled(context, true));
+        val startAction = new ConsumerExecutionAction(context -> WebUtils.putAccountManagementRegistrationEnabled(context, true));
         flow.getStartActionList().add(startAction);
 
         val signUpView = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_ACCOUNT_SIGNUP, "acct-mgmt/casAccountSignupView");
@@ -39,7 +39,8 @@ public class AccountManagementWebflowConfigurer extends AbstractCasWebflowConfig
         val viewLoginForm = getState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
         createTransitionForState(viewLoginForm, CasWebflowConstants.TRANSITION_ID_SIGNUP, signUpView.getId());
 
-        val submitAccountRegistration = createActionState(flow, CasWebflowConstants.STATE_ID_SUBMIT_ACCOUNT_REGISTRATION, "submitAccountRegistrationAction");
+        val submitAccountRegistration = createActionState(flow, CasWebflowConstants.STATE_ID_SUBMIT_ACCOUNT_REGISTRATION,
+            CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_SUBMIT);
         createTransitionForState(submitAccountRegistration, CasWebflowConstants.TRANSITION_ID_ERROR, signUpView.getId());
         createTransitionForState(submitAccountRegistration, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SENT_ACCOUNT_SIGNUP_INFO);
 
