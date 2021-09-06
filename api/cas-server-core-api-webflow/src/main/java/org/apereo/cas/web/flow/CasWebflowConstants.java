@@ -1233,9 +1233,21 @@ public interface CasWebflowConstants {
     String ACTION_ID_MFA_SET_TRUST_ACTION = "mfaSetTrustAction";
 
     /**
-     * Action id 'duoUniversalPromptPrepareLoginAction .
+     * Action id 'mfaPrepareTrustDeviceViewAction .
      */
     String ACTION_ID_MFA_PREPARE_TRUST_DEVICE_VIEW_ACTION = "mfaPrepareTrustDeviceViewAction";
 
+    /**
+     * Action id 'accountMgmtRegistrationInitializeCaptchaAction .
+     */
+    String ACTION_ID_ACCOUNT_REGISTRATION_INIT_CAPTCHA = "accountMgmtRegistrationInitializeCaptchaAction";
 
+    /**
+     * Action id 'accountMgmtRegistrationValidateCaptchaAction .
+     */
+    String ACTION_ID_ACCOUNT_REGISTRATION_VALIDATE_CAPTCHA = "accountMgmtRegistrationValidateCaptchaAction";
+    /**
+     * Action id 'submitAccountRegistrationAction .
+     */
+    String ACTION_ID_ACCOUNT_REGISTRATION_SUBMIT = "submitAccountRegistrationAction";
 }

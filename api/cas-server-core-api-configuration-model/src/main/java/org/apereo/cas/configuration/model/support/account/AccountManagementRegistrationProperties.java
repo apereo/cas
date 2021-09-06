@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.account;
 
+import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
+import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -37,6 +39,18 @@ public class AccountManagementRegistrationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SmsProperties sms = new SmsProperties();
+
+    /**
+     * The webflow configuration.
+     */
+    @NestedConfigurationProperty
+    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties().setOrder(100);
+
+    /**
+     * Google reCAPTCHA settings.
+     */
+    @NestedConfigurationProperty
+    private GoogleRecaptchaProperties googleRecaptcha = new GoogleRecaptchaProperties();
 
     /**
      * Core settings.
