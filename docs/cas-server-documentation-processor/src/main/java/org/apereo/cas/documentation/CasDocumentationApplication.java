@@ -144,7 +144,7 @@ public class CasDocumentationApplication {
 
         var thirdparty = cmd.getOptionValue("thirdparty", "true");
         if (StringUtils.equalsIgnoreCase("true", thirdparty)) {
-            exportThirdPartyConfiguration(dataPath);
+            exportThirdPartyConfiguration(dataPath, propertyFilter);
         }
 
         var registeredServicesProps = cmd.getOptionValue("serviceproperties", "true");
@@ -598,10 +598,11 @@ public class CasDocumentationApplication {
         CasConfigurationMetadataCatalog.export(servicePropsFile, properties);
     }
 
-    private static void exportThirdPartyConfiguration(final File dataPath) {
+    private static void exportThirdPartyConfiguration(final File dataPath, final String propertyFilter) {
         var results = CasConfigurationMetadataCatalog.query(
             ConfigurationMetadataCatalogQuery.builder()
                 .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.THIRD_PARTY)
+                .queryFilter(property -> RegexUtils.find(propertyFilter, property.getName()))
                 .build());
         var destination = new File(dataPath, "third-party");
         if (destination.exists()) {

@@ -126,6 +126,7 @@ conditionally [on a per-application basis](../ux/User-Interface-Customization-Lo
 - Apache Shiro
 - Okta SDK
 - Duo Security
+- Groovy
 - Thymeleaf Dialect
 - Mockito
 - Twilio

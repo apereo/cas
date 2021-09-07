@@ -1,5 +1,8 @@
 package org.apereo.cas.acct;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -10,10 +13,16 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
+@NoArgsConstructor
 public class AccountRegistrationRequest implements Serializable {
     private static final long serialVersionUID = -7833843820128948428L;
 
+    @Getter
     private final Map<String, Object> properties = new LinkedHashMap<>();
+
+    public AccountRegistrationRequest(final Map<String, Object> properties) {
+        this.properties.putAll(properties);
+    }
 
     /**
      * Gets username.

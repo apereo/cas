@@ -2,14 +2,13 @@ package org.apereo.cas.acct.webflow;
 
 import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.acct.AccountRegistrationService;
+import org.apereo.cas.acct.AccountRegistrationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
-import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
-import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -29,7 +28,6 @@ import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link SubmitAccountRegistrationAction}.
@@ -40,8 +38,6 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 @Slf4j
 public class SubmitAccountRegistrationAction extends AbstractAction {
-    private static final String REQUEST_PARAMETER_NAME_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN = "acctregtoken";
-
     private final AccountRegistrationService accountRegistrationService;
 
     private final CasConfigurationProperties casProperties;
@@ -149,16 +145,12 @@ public class SubmitAccountRegistrationAction extends AbstractAction {
     protected String createAccountRegistrationActivationUrl(final AccountRegistrationRequest registrationRequest) throws Exception {
         val token = accountRegistrationService.createToken(registrationRequest);
         val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
-        val pm = casProperties.getAuthn().getPm();
-        val expirationSeconds = TimeUnit.MINUTES.toSeconds(pm.getReset().getExpirationMinutes());
         val properties = CollectionUtils.<String, Serializable>wrap(
-            REQUEST_PARAMETER_NAME_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, token,
-            AccountRegistrationRequest.class.getName(), registrationRequest,
-            ExpirationPolicy.class.getName(), HardTimeoutExpirationPolicy.builder().timeToKillInSeconds(expirationSeconds).build());
+            AccountRegistrationUtils.PROPERTY_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, token);
         val ticket = transientFactory.create(UUID.randomUUID().toString(), properties);
         ticketRegistry.addTicket(ticket);
         return new URIBuilder(casProperties.getServer().getLoginUrl())
-            .addParameter(REQUEST_PARAMETER_NAME_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, ticket.getId())
+            .addParameter(AccountRegistrationUtils.REQUEST_PARAMETER_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, ticket.getId())
             .build()
             .toURL()
             .toExternalForm();

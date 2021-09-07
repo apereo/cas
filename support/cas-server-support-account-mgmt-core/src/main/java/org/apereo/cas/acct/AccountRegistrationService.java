@@ -28,4 +28,13 @@ public interface AccountRegistrationService {
      * @return the string
      */
     String createToken(AccountRegistrationRequest registrationRequest);
+
+    /**
+     * Validate token.
+     *
+     * @param token the token
+     * @return the account registration request
+     * @throws Exception the exception
+     */
+    AccountRegistrationRequest validateToken(String token) throws Exception;
 }

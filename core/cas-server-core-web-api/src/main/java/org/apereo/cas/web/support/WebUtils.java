@@ -1870,4 +1870,14 @@ public class WebUtils {
                                                                       final GoogleRecaptchaProperties properties) {
         requestContext.getFlowScope().put("accountManagementRegistrationCaptchaEnabled", properties.isEnabled());
     }
+
+    /**
+     * Put account management registration request.
+     *
+     * @param requestContext the request context
+     * @param request        the request
+     */
+    public static void putAccountManagementRegistrationRequest(final RequestContext requestContext, final Serializable request) {
+        requestContext.getFlowScope().put("accountManagementRegistrationRequest", request);
+    }
 }
