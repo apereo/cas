@@ -859,6 +859,10 @@ public interface CasWebflowConstants {
      * State id 'compositeMfaProviderSelectedAction'.
      */
     String STATE_ID_MFA_PROVIDER_SELECTED = "compositeMfaProviderSelectedAction";
+    /**
+     * State id 'validateAccountRegistrationToken'.
+     */
+    String STATE_ID_VALIDATE_ACCOUNT_REGISTRATION_TOKEN = "validateAccountRegistrationToken";
 
     /*
      ****************************************
@@ -1246,6 +1250,11 @@ public interface CasWebflowConstants {
      * Action id 'accountMgmtRegistrationValidateCaptchaAction .
      */
     String ACTION_ID_ACCOUNT_REGISTRATION_VALIDATE_CAPTCHA = "accountMgmtRegistrationValidateCaptchaAction";
+    /**
+     * Action id 'validateAccountRegistrationTokenAction .
+     */
+    String ACTION_ID_VALIDATE_ACCOUNT_REGISTRATION_TOKEN = "validateAccountRegistrationTokenAction";
+
     /**
      * Action id 'submitAccountRegistrationAction .
      */

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.acct.AccountRegistrationPropertyLoader;
 import org.apereo.cas.acct.AccountRegistrationService;
 import org.apereo.cas.acct.AccountRegistrationTokenCipherExecutor;
@@ -10,6 +11,7 @@ import org.apereo.cas.acct.webflow.AccountManagementRegistrationCaptchaWebflowCo
 import org.apereo.cas.acct.webflow.AccountManagementWebflowConfigurer;
 import org.apereo.cas.acct.webflow.LoadAccountRegistrationPropertiesAction;
 import org.apereo.cas.acct.webflow.SubmitAccountRegistrationAction;
+import org.apereo.cas.acct.webflow.ValidateAccountRegistrationTokenAction;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.ticket.TicketFactory;
@@ -61,6 +63,10 @@ public class CasAccountManagementWebflowConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("flowBuilderServices")
@@ -139,6 +145,13 @@ public class CasAccountManagementWebflowConfiguration {
         return new DefaultAccountRegistrationPropertyLoader(resource);
     }
 
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_VALIDATE_ACCOUNT_REGISTRATION_TOKEN)
+    public Action validateAccountRegistrationTokenAction() {
+        return new ValidateAccountRegistrationTokenAction(centralAuthenticationService.getObject(), accountMgmtRegistrationService());
+    }
+    
     @ConditionalOnProperty(prefix = "cas.account-registration.google-recaptcha", name = "enabled", havingValue = "true")
     @Configuration(value = "casAccountManagementRegistrationCaptchaConfiguration", proxyBeanMethods = false)
     @DependsOn("accountMgmtWebflowConfigurer")

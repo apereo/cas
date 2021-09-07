@@ -54,3 +54,4 @@ value `file://${#systemProperties['tier']}/file.json` translates to `file://prod
 value `file://${#environmentVariables['tier']}/file.json` translates to `file://qa/file.json`
 - Using `${#randomString6}` translates to a 6-character random word, such as `qemguz`.
 - Using `${#randomNumber8}` translates to a 8-digit random number, such as `75915283`.
+- Using `${T(java.util.Locale).GERMAN.getLanguage()}` translates into `de`.
