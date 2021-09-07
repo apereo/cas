@@ -153,6 +153,7 @@ public class SubmitAccountRegistrationAction extends AbstractAction {
         val expirationSeconds = TimeUnit.MINUTES.toSeconds(pm.getReset().getExpirationMinutes());
         val properties = CollectionUtils.<String, Serializable>wrap(
             REQUEST_PARAMETER_NAME_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, token,
+            AccountRegistrationRequest.class.getName(), registrationRequest,
             ExpirationPolicy.class.getName(), HardTimeoutExpirationPolicy.builder().timeToKillInSeconds(expirationSeconds).build());
         val ticket = transientFactory.create(UUID.randomUUID().toString(), properties);
         ticketRegistry.addTicket(ticket);
