@@ -15,6 +15,13 @@ public interface AccountRegistrationService {
     AccountRegistrationPropertyLoader getAccountRegistrationPropertyLoader();
 
     /**
+     * Gets account registration username builder.
+     *
+     * @return the account registration username builder
+     */
+    AccountRegistrationUsernameBuilder getAccountRegistrationUsernameBuilder();
+
+    /**
      * Create token.
      *
      * @param registrationRequest the registration request

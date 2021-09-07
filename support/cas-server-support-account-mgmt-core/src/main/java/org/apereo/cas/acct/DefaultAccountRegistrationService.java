@@ -29,6 +29,8 @@ public class DefaultAccountRegistrationService implements AccountRegistrationSer
 
     private final CipherExecutor<Serializable, String> cipherExecutor;
 
+    private final AccountRegistrationUsernameBuilder accountRegistrationUsernameBuilder;
+
     @Override
     public String createToken(final AccountRegistrationRequest registrationRequest) {
         val token = UUID.randomUUID().toString();
@@ -49,8 +51,10 @@ public class DefaultAccountRegistrationService implements AccountRegistrationSer
                 claims.setStringClaim("client", holder.getClientIpAddress());
             }
         }
-        claims.setSubject(registrationRequest.getUsername());
-        LOGGER.debug("Creating account registration token for [{}]", registrationRequest.getUsername());
+
+        val username = accountRegistrationUsernameBuilder.build(registrationRequest);
+        claims.setSubject(username);
+        LOGGER.debug("Creating account registration token for [{}]", username);
         val json = claims.toJson();
 
         LOGGER.debug("Encoding the generated JSON token...");

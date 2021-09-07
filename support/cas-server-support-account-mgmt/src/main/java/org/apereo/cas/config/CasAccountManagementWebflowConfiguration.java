@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.acct.AccountRegistrationPropertyLoader;
 import org.apereo.cas.acct.AccountRegistrationService;
 import org.apereo.cas.acct.AccountRegistrationTokenCipherExecutor;
+import org.apereo.cas.acct.AccountRegistrationUsernameBuilder;
 import org.apereo.cas.acct.DefaultAccountRegistrationPropertyLoader;
 import org.apereo.cas.acct.DefaultAccountRegistrationService;
 import org.apereo.cas.acct.webflow.AccountManagementRegistrationCaptchaWebflowConfigurer;
@@ -117,10 +118,17 @@ public class CasAccountManagementWebflowConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "accountRegistrationUsernameBuilder")
+    public AccountRegistrationUsernameBuilder accountRegistrationUsernameBuilder() {
+        return AccountRegistrationUsernameBuilder.asDefault();
+    }
+
+    @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "accountMgmtRegistrationService")
     public AccountRegistrationService accountMgmtRegistrationService() {
         return new DefaultAccountRegistrationService(accountMgmtRegistrationPropertyLoader(),
-            casProperties, accountMgmtCipherExecutor());
+            casProperties, accountMgmtCipherExecutor(), accountRegistrationUsernameBuilder());
     }
 
     @Bean
