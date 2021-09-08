@@ -10,10 +10,12 @@ import org.apereo.cas.configuration.model.support.pac4j.cas.Pac4jCasClientProper
 import org.apereo.cas.configuration.model.support.pac4j.oauth.Pac4jOAuth20ClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.cas.client.CasClient;
@@ -21,16 +23,19 @@ import org.pac4j.cas.config.CasProtocol;
 import org.pac4j.oauth.client.GitHubClient;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.store.HttpSessionStoreFactory;
+import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.io.File;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultDelegatedClientFactoryTests}.
@@ -44,7 +49,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class
 })
 public class DefaultDelegatedClientFactoryTests {
-    @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
@@ -83,8 +87,11 @@ public class DefaultDelegatedClientFactoryTests {
         props.setSecret("TestSecret");
     }
 
-    private DefaultDelegatedClientFactory getDefaultDelegatedClientFactory(final CasConfigurationProperties casSettings) {
-        return new DefaultDelegatedClientFactory(casSettings, List.of(), casSslContext, applicationContext);
+    @BeforeEach
+    public void setup() {
+        this.applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
     }
 
     @Test
@@ -187,6 +194,22 @@ public class DefaultDelegatedClientFactoryTests {
     }
 
     @Test
+    public void verifySamlClientCustomMessageStoreFactory() throws Exception {
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            mock(SAMLMessageStoreFactory.class), DelegatedClientFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY);
+
+        val props = new Pac4jDelegatedAuthenticationProperties();
+        val saml = getPac4jSamlClientProperties("bad.type.name.ignored.for.bean");
+        props.getSaml().add(saml);
+
+        val casSettings = new CasConfigurationProperties();
+        casSettings.getAuthn().setPac4j(props);
+        val factory = getDefaultDelegatedClientFactory(casSettings);
+        val clients = factory.build();
+        assertEquals(1, clients.size());
+    }
+
+    @Test
     public void verifyFactoryForOAuthClients() {
         val props = new Pac4jDelegatedAuthenticationProperties();
         val oauth = new Pac4jOAuth20ClientProperties();
@@ -274,5 +297,9 @@ public class DefaultDelegatedClientFactoryTests {
         val factory = getDefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(4, clients.size());
+    }
+
+    private DefaultDelegatedClientFactory getDefaultDelegatedClientFactory(final CasConfigurationProperties casSettings) {
+        return new DefaultDelegatedClientFactory(casSettings, List.of(), casSslContext, applicationContext);
     }
 }

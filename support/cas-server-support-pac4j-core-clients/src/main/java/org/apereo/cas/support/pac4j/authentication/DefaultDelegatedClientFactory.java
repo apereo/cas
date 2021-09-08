@@ -12,6 +12,7 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -81,7 +82,7 @@ import java.util.regex.Pattern;
 @Slf4j
 @Getter
 public class DefaultDelegatedClientFactory implements DelegatedClientFactory<IndirectClient>, DisposableBean {
-    private static final Pattern PATTERN_LOGIN_URL = Pattern.compile("/login$");
+    private static final Pattern PATTERN_LOGIN_URL = Pattern.compile('/' + CasWebflowConfigurer.FLOW_ID_LOGIN + '$');
 
     private final CasConfigurationProperties casProperties;
 
@@ -480,19 +481,22 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 cfg.setUseNameQualifier(saml.isUseNameQualifier());
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
 
-                FunctionUtils.doIf(saml.getMessageStoreFactory().equalsIgnoreCase("EMPTY"),
-                    ig -> cfg.setSamlMessageStoreFactory(new EmptyStoreFactory())).accept(saml);
-                FunctionUtils.doIf(saml.getMessageStoreFactory().equalsIgnoreCase("SESSION"),
-                    ig -> cfg.setSamlMessageStoreFactory(new HttpSessionStoreFactory())).accept(saml);
-                if (saml.getMessageStoreFactory().contains(".")) {
-                    Unchecked.consumer(ig -> {
-                        val clazz = ClassUtils.getClass(DefaultDelegatedClientFactory.class.getClassLoader(), saml.getMessageStoreFactory());
-                        val factory = SAMLMessageStoreFactory.class.cast(clazz.getDeclaredConstructor().newInstance());
-                        cfg.setSamlMessageStoreFactory(factory);
-                    }).accept(saml);
+                if (applicationContext.containsBean(DelegatedClientFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)) {
+                    val factory = applicationContext.getBean(DelegatedClientFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY, SAMLMessageStoreFactory.class);
+                    cfg.setSamlMessageStoreFactory(factory);
+                } else {
+                    FunctionUtils.doIf(saml.getMessageStoreFactory().equalsIgnoreCase("EMPTY"),
+                        ig -> cfg.setSamlMessageStoreFactory(new EmptyStoreFactory())).accept(saml);
+                    FunctionUtils.doIf(saml.getMessageStoreFactory().equalsIgnoreCase("SESSION"),
+                        ig -> cfg.setSamlMessageStoreFactory(new HttpSessionStoreFactory())).accept(saml);
+                    if (saml.getMessageStoreFactory().contains(".")) {
+                        Unchecked.consumer(ig -> {
+                            val clazz = ClassUtils.getClass(DefaultDelegatedClientFactory.class.getClassLoader(), saml.getMessageStoreFactory());
+                            val factory = SAMLMessageStoreFactory.class.cast(clazz.getDeclaredConstructor().newInstance());
+                            cfg.setSamlMessageStoreFactory(factory);
+                        }).accept(saml);
+                    }
                 }
-                val beans = applicationContext.getBeansOfType(SAMLMessageStoreFactory.class).values();
-                FunctionUtils.doIf(!beans.isEmpty(), ig -> cfg.setSamlMessageStoreFactory(beans.iterator().next())).accept(saml);
 
                 if (saml.getAssertionConsumerServiceIndex() >= 0) {
                     cfg.setAssertionConsumerServiceIndex(saml.getAssertionConsumerServiceIndex());
