@@ -1,5 +1,7 @@
 description = "Apereo CAS Account Management and Registration Support"
 dependencies {
+    implementation libraries.jose4j
+
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-services")

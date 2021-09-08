@@ -8,7 +8,6 @@ import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClient
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
@@ -58,8 +57,11 @@ import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.metadata.SAML2ServiceProviderRequestedAttribute;
 import org.pac4j.saml.metadata.XMLSecSAML2MetadataSigner;
+import org.pac4j.saml.store.EmptyStoreFactory;
+import org.pac4j.saml.store.HttpSessionStoreFactory;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.context.ApplicationContext;
 
 import java.security.interfaces.ECPrivateKey;
 import java.time.Period;
@@ -88,7 +90,9 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
     private final Set<IndirectClient> clients = new LinkedHashSet<>();
 
     private final CasSSLContext casSSLContext;
-    
+
+    private final ApplicationContext applicationContext;
+
     @SneakyThrows
     private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc,
                                                                                  final Class<T> clazz) {
@@ -414,7 +418,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 cfg.setPrefixUrl(StringUtils.appendIfMissing(prefix, "/"));
                 cfg.setHostnameVerifier(casSSLContext.getHostnameVerifier());
                 cfg.setSslSocketFactory(casSSLContext.getSslContext().getSocketFactory());
-                
+
                 val client = new CasClient(cfg);
 
                 if (StringUtils.isBlank(cas.getClientName())) {
@@ -466,7 +470,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 cfg.setAcceptedSkew(Beans.newDuration(saml.getAcceptedSkew()).toSeconds());
                 cfg.setSslSocketFactory(casSSLContext.getSslContext().getSocketFactory());
                 cfg.setHostnameVerifier(casSSLContext.getHostnameVerifier());
-                
+
                 if (StringUtils.isNotBlank(saml.getPrincipalIdAttribute())) {
                     cfg.setAttributeAsId(saml.getPrincipalIdAttribute());
                 }
@@ -476,13 +480,19 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 cfg.setUseNameQualifier(saml.isUseNameQualifier());
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
 
-                try {
-                    val clazz = ClassUtils.getClass(DefaultDelegatedClientFactory.class.getClassLoader(), saml.getMessageStoreFactory());
-                    cfg.setSamlMessageStoreFactory(SAMLMessageStoreFactory.class.cast(clazz.getDeclaredConstructor().newInstance()));
-                } catch (final Exception e) {
-                    LOGGER.error("Unable to instantiate message store factory class [{}]", saml.getMessageStoreFactory());
-                    LoggingUtils.error(LOGGER, e);
+                FunctionUtils.doIf(saml.getMessageStoreFactory().equalsIgnoreCase("EMPTY"),
+                    ig -> cfg.setSamlMessageStoreFactory(new EmptyStoreFactory())).accept(saml);
+                FunctionUtils.doIf(saml.getMessageStoreFactory().equalsIgnoreCase("SESSION"),
+                    ig -> cfg.setSamlMessageStoreFactory(new HttpSessionStoreFactory())).accept(saml);
+                if (saml.getMessageStoreFactory().contains(".")) {
+                    Unchecked.consumer(ig -> {
+                        val clazz = ClassUtils.getClass(DefaultDelegatedClientFactory.class.getClassLoader(), saml.getMessageStoreFactory());
+                        val factory = SAMLMessageStoreFactory.class.cast(clazz.getDeclaredConstructor().newInstance());
+                        cfg.setSamlMessageStoreFactory(factory);
+                    }).accept(saml);
                 }
+                val beans = applicationContext.getBeansOfType(SAMLMessageStoreFactory.class).values();
+                FunctionUtils.doIf(!beans.isEmpty(), ig -> cfg.setSamlMessageStoreFactory(beans.iterator().next())).accept(saml);
 
                 if (saml.getAssertionConsumerServiceIndex() >= 0) {
                     cfg.setAssertionConsumerServiceIndex(saml.getAssertionConsumerServiceIndex());
