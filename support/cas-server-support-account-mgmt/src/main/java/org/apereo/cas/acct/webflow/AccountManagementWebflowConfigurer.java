@@ -20,7 +20,10 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @since 6.5.0
  */
 public class AccountManagementWebflowConfigurer extends AbstractCasWebflowConfigurer {
-    private static final String FLOW_ID_ACCOUNT_REGISTRATION = "acctreg";
+    /**
+     * Subflow id.
+     */
+    public static final String FLOW_ID_ACCOUNT_REGISTRATION = "acctreg";
 
     public AccountManagementWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                               final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -53,16 +56,27 @@ public class AccountManagementWebflowConfigurer extends AbstractCasWebflowConfig
     }
 
     private void registerAccountRegistrationFlowDefinition() {
+        val properties = casProperties.getAccountRegistration();
+        
         val acctRegFlow = buildFlow(FLOW_ID_ACCOUNT_REGISTRATION);
+        createEndState(acctRegFlow, "accountRegistrationCompleted");
+
         acctRegFlow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
-        val completeView = createViewState(acctRegFlow, "completeAccountRegistrationView", "acct-mgmt/casAccountSignupViewComplete");
-        createTransitionForState(completeView, CasWebflowConstants.STATE_ID_SUCCESS, "accountRegistrationCompletedView");
-        createEndState(acctRegFlow, "accountRegistrationCompletedView", "acct-mgmt/casAccountSignupViewCompleted");
+        val completeView = createViewState(acctRegFlow, CasWebflowConstants.STATE_ID_COMPLETE_ACCOUNT_REGISTRATION, "acct-mgmt/casAccountSignupViewComplete");
+        completeView.getEntryActionList().add(new ConsumerExecutionAction(context -> {
+            WebUtils.putPasswordPolicyPattern(context, properties.getCore().getPolicyPattern());
+            WebUtils.putAccountManagementRegistrationSecurityQuestionsCount(context, properties.getCore().getSecurityQuestionsCount());
+        }));
+
+        createTransitionForState(completeView, CasWebflowConstants.TRANSITION_ID_SUBMIT, "accountRegistrationCompletedView");
+        val completedView = createViewState(acctRegFlow, "accountRegistrationCompletedView", "acct-mgmt/casAccountSignupViewCompleted");
+        createStateDefaultTransition(completedView, "accountRegistrationCompleted");
+         
         acctRegFlow.setStartState(completeView);
         mainFlowDefinitionRegistry.registerFlowDefinition(acctRegFlow);
 
         val flow = getLoginFlow();
-        createSubflowState(flow, "accountRegistrationSubflow", FLOW_ID_ACCOUNT_REGISTRATION);
+        createSubflowState(flow, CasWebflowConstants.STATE_ID_ACCOUNT_REGISTRATION_SUBFLOW, FLOW_ID_ACCOUNT_REGISTRATION);
 
         val initializeLoginFormState = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
         val originalTargetState = initializeLoginFormState.getTransition(CasWebflowConstants.STATE_ID_SUCCESS).getTargetStateId();
@@ -74,7 +88,7 @@ public class AccountManagementWebflowConfigurer extends AbstractCasWebflowConfig
 
         val validateState = createActionState(flow, CasWebflowConstants.STATE_ID_VALIDATE_ACCOUNT_REGISTRATION_TOKEN,
             CasWebflowConstants.ACTION_ID_VALIDATE_ACCOUNT_REGISTRATION_TOKEN);
-        createTransitionForState(validateState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "accountRegistrationSubflow");
+        createTransitionForState(validateState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_ACCOUNT_REGISTRATION_SUBFLOW);
         createTransitionForState(validateState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
     }
 }

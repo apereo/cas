@@ -157,8 +157,10 @@
                 </a>
             </div>
         </form>
+
         <p id="pwddesc" th:unless="${passwordManagementEnabled}"
            th:utext="${expiredPass} ? #{screen.expiredpass.message('https://pwd.example.org')} : #{screen.mustchangepass.message('https://pwd.example.org')}">Expired/Must Change Password text</p>
+        
     </div>
 </main>
 </body>

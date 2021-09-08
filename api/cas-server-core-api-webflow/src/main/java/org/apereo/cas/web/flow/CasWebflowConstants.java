@@ -437,6 +437,16 @@ public interface CasWebflowConstants {
     String STATE_ID_VIEW_ACCOUNT_SIGNUP = "viewAccountSignUp";
 
     /**
+     * The state 'completeAccountRegistrationView'.
+     */
+    String STATE_ID_COMPLETE_ACCOUNT_REGISTRATION = "completeAccountRegistrationView";
+
+    /**
+     * The state 'accountRegistrationSubflow'.
+     */
+    String STATE_ID_ACCOUNT_REGISTRATION_SUBFLOW = "accountRegistrationSubflow";
+    
+    /**
      * The state 'accountSignUpInfoSent'.
      */
     String STATE_ID_SENT_ACCOUNT_SIGNUP_INFO = "accountSignUpInfoSent";

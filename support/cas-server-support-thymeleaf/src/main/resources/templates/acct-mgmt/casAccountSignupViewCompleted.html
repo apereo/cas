@@ -10,37 +10,8 @@
 <body id="cas">
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content" class="mdc-card p-4 m-auto w-lg-100">
-        <script>
-            function jqueryReady() {
-                document.forms[0].elements[0].focus();
-            }
-        </script>
-
         <h2 th:utext="#{cas.screen.acct.title}"/>
         <p class="intro" th:utext="#{cas.screen.acct.intro.completed}"/>
-
-        <form method="post" id="fm1">
-            <div class="banner banner-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
-                <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
-                   th:utext="${message.text}">Message Text</p>
-            </div>
-
-            <section th:each="entry : ${registrationProperties}" class="cas-field my-3">
-
-            </section>
-
-            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-            <input type="hidden" name="_eventId" value="submit"/>
-            <div class="form-actions d-flex justify-content-center">
-                <button class="mdc-button mdc-button--raised mr-2"
-                        name="submit"
-                        th:value="#{cas.screen.acct.button.submit}"
-                        id="submit"
-                        accesskey="s">
-                    <span class="mdc-button__label" th:value="#{cas.screen.acct.button.submit}">Submit</span>
-                </button>
-            </div>
-        </form>
     </div>
 </main>
 </body>

@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.account;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -50,6 +51,20 @@ public class AccountManagementRegistrationCoreProperties implements Serializable
      */
     private long expirationMinutes = 3;
 
+    /**
+     * A String value representing password policy regex pattern.
+     * Minimum 8 and Maximum 10 characters at least 1 Uppercase
+     * Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character.
+     */
+    @RequiredProperty
+    private String policyPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}";
+
+    /**
+     * Whether account registration should present security
+     * questions and how many, to complete the registration process.
+     */
+    private int securityQuestionsCount = 2;
+    
     /**
      * Crypto settings on how to generate registration requests.
      */
