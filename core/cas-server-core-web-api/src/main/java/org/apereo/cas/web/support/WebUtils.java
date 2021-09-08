@@ -1880,4 +1880,46 @@ public class WebUtils {
     public static void putAccountManagementRegistrationRequest(final RequestContext requestContext, final Serializable request) {
         requestContext.getFlowScope().put("accountManagementRegistrationRequest", request);
     }
+
+    /**
+     * Put account management registration security questions count.
+     *
+     * @param requestContext the request context
+     * @param count          the count
+     */
+    public static void putAccountManagementRegistrationSecurityQuestionsCount(final RequestContext requestContext, final int count) {
+        requestContext.getFlowScope().put("securityQuestionsCount", count);
+    }
+
+    /**
+     * Gets account management registration security questions count.
+     *
+     * @param requestContext the request context
+     * @return the account management registration security questions count
+     */
+    public static Integer getAccountManagementRegistrationSecurityQuestionsCount(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("securityQuestionsCount", Integer.class);
+    }
+
+    /**
+     * Put password reset password policy pattern string.
+     *
+     * @param requestContext the request context
+     * @param policyPattern  the policy pattern
+     */
+    public static void putPasswordPolicyPattern(final RequestContext requestContext, final String policyPattern) {
+        val flowScope = requestContext.getFlowScope();
+        flowScope.put("policyPattern", policyPattern);
+    }
+
+    /**
+     * Gets password reset password policy pattern.
+     *
+     * @param requestContext the request context
+     * @return the password reset password policy pattern
+     */
+    public static String getPasswordPolicyPattern(final RequestContext requestContext) {
+        val flowScope = requestContext.getFlowScope();
+        return flowScope.get("policyPattern", String.class);
+    }
 }

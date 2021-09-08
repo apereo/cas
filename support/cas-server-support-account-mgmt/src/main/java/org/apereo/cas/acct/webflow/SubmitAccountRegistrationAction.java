@@ -3,6 +3,7 @@ package org.apereo.cas.acct.webflow;
 import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.acct.AccountRegistrationService;
 import org.apereo.cas.acct.AccountRegistrationUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
@@ -27,7 +28,6 @@ import org.springframework.webflow.execution.RequestContext;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * This is {@link SubmitAccountRegistrationAction}.
@@ -147,7 +147,7 @@ public class SubmitAccountRegistrationAction extends AbstractAction {
         val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
         val properties = CollectionUtils.<String, Serializable>wrap(
             AccountRegistrationUtils.PROPERTY_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, token);
-        val ticket = transientFactory.create(UUID.randomUUID().toString(), properties);
+        val ticket = transientFactory.create((Service) null, properties);
         ticketRegistry.addTicket(ticket);
         return new URIBuilder(casProperties.getServer().getLoginUrl())
             .addParameter(AccountRegistrationUtils.REQUEST_PARAMETER_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, ticket.getId())

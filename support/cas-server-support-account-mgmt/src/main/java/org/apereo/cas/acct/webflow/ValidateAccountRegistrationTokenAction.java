@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.acct.AccountRegistrationService;
 import org.apereo.cas.acct.AccountRegistrationUtils;
 import org.apereo.cas.authentication.RootCasException;
+import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -15,6 +16,8 @@ import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.Objects;
 
 /**
  * This is {@link ValidateAccountRegistrationTokenAction}.
@@ -31,19 +34,25 @@ public class ValidateAccountRegistrationTokenAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
+        var accountRegTicket = (TransientSessionTicket) null;
         try {
-            val transientTicket = requestContext.getRequestParameters()
+            val activationToken = requestContext.getRequestParameters()
                 .getRequired(AccountRegistrationUtils.REQUEST_PARAMETER_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN);
-            val tst = centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
-            val token = tst.getProperty(AccountRegistrationUtils.PROPERTY_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, String.class);
+            accountRegTicket = centralAuthenticationService.getTicket(activationToken, TransientSessionTicket.class);
+            val token = accountRegTicket.getProperty(AccountRegistrationUtils.PROPERTY_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, String.class);
             val registrationRequest = accountRegistrationService.validateToken(token);
-            WebUtils.putAccountManagementRegistrationRequest(requestContext, registrationRequest);
+            WebUtils.putAccountManagementRegistrationRequest(requestContext, Objects.requireNonNull(registrationRequest));
+            ((TicketState) accountRegTicket).update();
             return success(registrationRequest);
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, e);
             requestContext.getFlashScope().put(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION,
                 RootCasException.withCode("screen.error.page.invalidrequest.desc"));
             return error(e);
+        } finally {
+            if (accountRegTicket != null && accountRegTicket.isExpired()) {
+                centralAuthenticationService.deleteTicket(accountRegTicket);
+            }
         }
     }
 }
