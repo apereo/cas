@@ -104,7 +104,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         }
         val customizers = applicationContext.getBeansOfType(DelegatedClientFactoryCustomizer.class, false, true).values();
         AnnotationAwareOrderComparator.sortIfNecessary(customizers);
-        return new DefaultDelegatedClientFactory(casProperties, customizers, casSslContext.getObject());
+        return new DefaultDelegatedClientFactory(casProperties, customizers, casSslContext.getObject(), applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionStore")

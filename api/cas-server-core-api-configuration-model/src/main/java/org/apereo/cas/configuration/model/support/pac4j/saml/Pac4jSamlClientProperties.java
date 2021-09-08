@@ -263,8 +263,21 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
     /**
      * Factory implementing this interface provides services for storing and retrieval of SAML messages for
      * e.g. verification of retrieved responses. The default factory is an always empty store.
-     * You may choose {@code org.pac4j.saml.store.HttpSessionStore} instead which allows SAML messages to be stored in a distributed session store
+     * You may choose {@code org.pac4j.saml.store.HttpSessionStore} instead which allows
+     * SAML messages to be stored in a distributed session store
      * specially required for high availability deployments and validation operations.
+     * <p>
+     * Available options are:
+     *
+     * <ul>
+     *     <li>{@code EMPTY}: Uses the {@code EmptyStoreFactory}</li>
+     *     <li>{@code SESSION}: Uses the {@code HttpSessionStore} </li>
+     *     <li>Fully-qualified class name of the message store implementation.</li>
+     * </ul>
+     * <p>
+     * Also note that the message store implementation can be supplied and configured at runtime as
+     * a Spring {@code @Bean} with the type {@code SAMLMessageStoreFactory} which, if found in the available
+     * application context, will override all other options.
      */
     private String messageStoreFactory = "org.pac4j.saml.store.EmptyStoreFactory";
 
