@@ -221,6 +221,9 @@ Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.
         dumpOnExit = true
         excludes = rootProject.excludedFilesFromTestCoverage
     }
+    filter {
+        setFailOnNoMatchingTests(false)
+    }
 }
 
 def shouldTest(Project project, String category) {
