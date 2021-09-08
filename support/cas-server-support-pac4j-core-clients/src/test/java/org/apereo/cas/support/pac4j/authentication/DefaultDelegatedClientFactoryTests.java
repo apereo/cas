@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.File;
 import java.util.List;
@@ -43,6 +44,9 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class
 })
 public class DefaultDelegatedClientFactoryTests {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Autowired
     @Qualifier("casSslContext")
     private CasSSLContext casSslContext;
@@ -80,7 +84,7 @@ public class DefaultDelegatedClientFactoryTests {
     }
 
     private DefaultDelegatedClientFactory getDefaultDelegatedClientFactory(final CasConfigurationProperties casSettings) {
-        return new DefaultDelegatedClientFactory(casSettings, List.of(), casSslContext);
+        return new DefaultDelegatedClientFactory(casSettings, List.of(), casSslContext, applicationContext);
     }
 
     @Test

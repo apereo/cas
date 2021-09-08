@@ -32,6 +32,7 @@ import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowManager;
+import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationPostProcessor;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
@@ -215,6 +216,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
             .argumentExtractor(argumentExtractor.getObject())
             .ticketFactory(ticketFactory.getObject())
             .delegatedClientIdentityProvidersProducer(delegatedClientIdentityProviderConfigurationProducer())
+            .delegatedClientIdentityProviderConfigurationPostProcessor(delegatedClientIdentityProviderConfigurationPostProcessor())
             .delegatedClientCookieGenerator(delegatedAuthenticationCookieGenerator())
             .delegatedClientDistributedSessionCookieGenerator(delegatedClientDistributedSessionCookieGenerator.getObject())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
@@ -271,6 +273,12 @@ public class DelegatedAuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "delegatedAuthenticationCasMultifactorWebflowCustomizer")
     public CasMultifactorWebflowCustomizer delegatedAuthenticationCasMultifactorWebflowCustomizer() {
         return () -> List.of(CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "delegatedClientIdentityProviderConfigurationPostProcessor")
+    public DelegatedClientIdentityProviderConfigurationPostProcessor delegatedClientIdentityProviderConfigurationPostProcessor() {
+        return DelegatedClientIdentityProviderConfigurationPostProcessor.noOp();
     }
 
     @Bean
