@@ -58,19 +58,19 @@ ext {
     ci = System.getenv("CI") || providers.systemProperty("CI").forUseAtConfigurationTime().present
 
     excludedFilesFromTestCoverage = [
-            '**/docs/**',
-            '**/soap/generated/**',
-            '**/com/duosecurity/**',
-            '**/support/openid/**',
-            '**/**ConfigurationMetadata**',
-            '**/**NtlmAuthenticationHandler**',
-            '**/**CosmosDbServiceRegistry**',
-            '**/**NimbusOAuthJacksonModule**',
-            '**/**Application**',
-            '**/**Application$**',
-            '**/**Exception$**',
-            '**/**Properties**',
-            '**/**Properties$**'
+        '**/docs/**',
+        '**/soap/generated/**',
+        '**/com/duosecurity/**',
+        '**/support/openid/**',
+        '**/**ConfigurationMetadata**',
+        '**/**NtlmAuthenticationHandler**',
+        '**/**CosmosDb**',
+        '**/**NimbusOAuthJacksonModule**',
+        '**/**Application**',
+        '**/**Application$**',
+        '**/**Exception$**',
+        '**/**Properties**',
+        '**/**Properties$**'
     ]
 }
 
