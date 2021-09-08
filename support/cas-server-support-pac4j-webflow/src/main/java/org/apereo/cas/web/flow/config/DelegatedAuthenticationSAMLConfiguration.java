@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Configuration("DelegatedAuthenticationSAMLConfiguration")
+@Configuration(value = "DelegatedAuthenticationSAMLConfiguration", proxyBeanMethods = false)
 public class DelegatedAuthenticationSAMLConfiguration {
 
     @Autowired
