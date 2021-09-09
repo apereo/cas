@@ -27,38 +27,21 @@ public class AccountRegistrationProperty implements Serializable {
 
     private String name;
 
-    private String format;
+    @Builder.Default
+    private String type = "text";
 
     @Builder.Default
-    private AccountRegistrationPropertyTypes type = AccountRegistrationPropertyTypes.TEXT;
+    private String pattern = ".+";
 
     private boolean required;
 
     private String label;
 
-    /**
-     * Define different types.
-     */
-    public enum AccountRegistrationPropertyTypes {
-        /**
-         * Text type.
-         */
-        TEXT,
-        /**
-         * Number type.
-         */
-        NUMBER,
-        /**
-         * Date type.
-         */
-        DATE,
-        /**
-         * Pasword type.
-         */
-        PASSWORD,
-        /**
-         * Field contains multiple values that can be selected from a list.
-         */
-        LIST
-    }
+    @Builder.Default
+    private String cssClass = "account-registration-field";
+
+    private String title;
+
+    @Builder.Default
+    private String validationMessage = "cas.screen.acct.error.invalid-value";
 }

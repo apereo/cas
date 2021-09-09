@@ -18,7 +18,6 @@
     "@class" : "org.apereo.cas.acct.AccountRegistrationProperty",
     "name" : "phone",
     "required" : false,
-    "format": "+1-{0}",
     "label" : "cas.screen.acct.label.phone",
     "order": 2
   }
