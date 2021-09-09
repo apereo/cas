@@ -24,17 +24,20 @@
                 <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
                    th:utext="${message.text}">Message Text</p>
             </div>
-            
+
+
             <section th:each="entry : ${registrationProperties}" class="cas-field my-3">
-                <div class="d-flex">
+                <div>
                     <label class="mdc-text-field mdc-text-field--outlined">
                         <input class="mdc-text-field__input"
                                th:id="${entry.name}"
                                th:name="${entry.name}"
                                size="25"
-                               type="text"
-                               th:attr="required=${entry.required ? 'true' : 'false'}"
+                               th:classappend="${entry.cssClass}"
+                               th:type="${entry.type}"
+                               th:attr="required=${entry.required ? 'true' : 'false'},pattern=${entry.pattern}"
                                autocapitalize="none"
+                               th:title="#{${entry.title}}"
                                spellcheck="false"
                                th:autocomplete="${entry.name}"/>
                         <span class="mdc-notched-outline">
@@ -45,6 +48,14 @@
                             <span class="mdc-notched-outline__trailing"></span>
                        </span>
                     </label>
+                    <div class="mdc-text-field-helper-line" th:if="${entry.validationMessage != null}">
+                        <div th:id="${'helpertext-' + entry.name}"
+                             class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg"
+                             aria-hidden="true">
+                            <span th:if="${entry.validationMessage != null}"
+                                  th:utext="#{${entry.validationMessage}}"></span>
+                        </div>
+                    </div>
                 </div>
 
             </section>

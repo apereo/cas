@@ -5,6 +5,9 @@
             material.autoInit();
         },
         attachFields: function () {
+            new material.textField.MDCTextFieldHelperText(
+                document.querySelector('.mdc-text-field-helper-text'));
+            
             let divs = document.querySelectorAll('.mdc-text-field'),
                 field;
             let div;

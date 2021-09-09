@@ -26,7 +26,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
-import java.text.MessageFormat;
 import java.util.Optional;
 
 /**
@@ -57,9 +56,6 @@ public class SubmitAccountRegistrationAction extends AbstractAction {
                 var value = entry.isRequired()
                     ? requestContext.getRequestParameters().getRequired(entry.getName())
                     : requestContext.getRequestParameters().get(entry.getName());
-                if (StringUtils.isNotBlank(entry.getFormat())) {
-                    value = MessageFormat.format(entry.getFormat(), value);
-                }
                 registrationRequest.putProperty(entry.getName(), value);
             });
 
