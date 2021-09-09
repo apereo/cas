@@ -57,6 +57,14 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      */
     RegisteredServiceMatchingStrategy getMatchingStrategy();
 
+
+    /**
+     * Gets interrupt policy that is assigned to this service.
+     *
+     * @return the interrupt policy
+     */
+    RegisteredServiceWebflowInterruptPolicy getWebflowInterruptPolicy();
+
     /**
      * The unique identifier for this service.
      *
@@ -73,7 +81,8 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     long getId();
 
     /**
-     * Sets the identifier for this service. Use {@link #INITIAL_IDENTIFIER_VALUE} to indicate a branch new service definition.
+     * Sets the identifier for this service. Use {@link #INITIAL_IDENTIFIER_VALUE} to
+     * indicate a branch new service definition.
      *
      * @param id the numeric identifier for the service.
      */

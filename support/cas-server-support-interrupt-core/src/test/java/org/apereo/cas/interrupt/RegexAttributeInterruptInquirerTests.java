@@ -2,7 +2,9 @@ package org.apereo.cas.interrupt;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
+import org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy;
 import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -24,8 +26,7 @@ import static org.mockito.Mockito.*;
 public class RegexAttributeInterruptInquirerTests {
     @Test
     public void verifyResponseCanBeFoundFromAttributes() {
-        val q =
-            new RegexAttributeInterruptInquirer("member..", "CA.|system");
+        val q = new RegexAttributeInterruptInquirer("member..", "CA.|system");
         val response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             CoreAuthenticationTestUtils.getRegisteredService(),
             CoreAuthenticationTestUtils.getService(),
@@ -48,6 +49,20 @@ public class RegexAttributeInterruptInquirerTests {
         value.addValue(Boolean.TRUE.toString());
         properties.put(RegisteredServiceProperty.RegisteredServiceProperties.SKIP_INTERRUPT_NOTIFICATIONS.getPropertyName(), value);
         when(registeredService.getProperties()).thenReturn(properties);
+        val response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
+            registeredService,
+            CoreAuthenticationTestUtils.getService(),
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+            new MockRequestContext());
+        assertNotNull(response);
+        assertFalse(response.isInterrupt());
+    }
+
+    @Test
+    public void verifyInterruptSkippedWithServicePolicy() {
+        val q = new RegexAttributeInterruptInquirer("member..", "CA.|system");
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService();
+        registeredService.setWebflowInterruptPolicy(new DefaultRegisteredServiceWebflowInterruptPolicy().setEnabled(false));
         val response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             registeredService,
             CoreAuthenticationTestUtils.getService(),

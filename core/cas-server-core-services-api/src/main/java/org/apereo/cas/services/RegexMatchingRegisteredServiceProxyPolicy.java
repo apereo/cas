@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
@@ -24,6 +25,7 @@ import java.net.URL;
 @Slf4j
 @ToString
 @Getter
+@Accessors(chain = true)
 @NoArgsConstructor
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
