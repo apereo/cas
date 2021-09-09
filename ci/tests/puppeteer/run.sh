@@ -79,6 +79,11 @@ echo -e "******************************************************\n"
 
 config="${scenario}/script.json"
 echo "Using scenario configuration file: ${config}"
+jq '.' "${config}" -e >/dev/null
+if [ $? -ne 0 ]; then
+ printred "\nFailed to parse scenario configuration file ${config}"
+ exit 1
+fi
 
 project=$(cat "${config}" | jq -j '.project // "tomcat"')
 projectType=war
@@ -97,7 +102,7 @@ dependencies=$(cat "${config}" | jq -j '.dependencies')
 if [[ "${REBUILD}" != "false" ]]; then
   printgreen "\nBuilding CAS found in $PWD for dependencies [${dependencies}]"
   ./gradlew :webapp:cas-server-webapp-${project}:build -DskipNestedConfigMetadataGen=true -x check -x javadoc \
-    --no-daemon --build-cache --configure-on-demand --parallel -PcasModules="${dependencies}" -q
+    --no-daemon --build-cache --configure-on-demand --parallel -PcasModules="${dependencies}" -q >/dev/null
   if [ $? -eq 1 ]; then
     printred "\nFailed to build CAS web application. Examine the build output."
     exit 1

@@ -7,7 +7,6 @@
         attachFields: function () {
             new material.textField.MDCTextFieldHelperText(
                 document.querySelector('.mdc-text-field-helper-text'));
-            
             let divs = document.querySelectorAll('.mdc-text-field'),
                 field;
             let div;
@@ -121,16 +120,16 @@ function preserveAnchorTagOnForm() {
         let location = self.document.location;
         let hash = decodeURIComponent(location.hash);
 
-        if (hash != undefined && hash != '' && hash.indexOf('#') === -1) {
+        if (hash !== undefined && hash != '' && hash.indexOf('#') === -1) {
             hash = `#${hash}`;
         }
 
         let action = $('#fm1').attr('action');
-        if (action == undefined) {
+        if (action === undefined) {
             action = location.href;
         } else {
             let qidx = location.href.indexOf('?');
-            if (qidx != -1) {
+            if (qidx !== -1) {
                 let queryParams = location.href.substring(qidx);
                 action += queryParams;
             }
@@ -175,7 +174,7 @@ function readFromSessionStorage() {
 }
 
 function resourceLoadedSuccessfully() {
-
+    
     $(document).ready(function () {
 
         if (trackGeoLocation) {
@@ -210,3 +209,4 @@ function resourceLoadedSuccessfully() {
     });
 
 }
+

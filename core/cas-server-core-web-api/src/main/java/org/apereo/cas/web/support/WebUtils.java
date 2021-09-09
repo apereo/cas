@@ -1909,7 +1909,7 @@ public class WebUtils {
      */
     public static void putPasswordPolicyPattern(final RequestContext requestContext, final String policyPattern) {
         val flowScope = requestContext.getFlowScope();
-        flowScope.put("policyPattern", policyPattern);
+        flowScope.put("passwordPolicyPattern", policyPattern);
     }
 
     /**
@@ -1920,6 +1920,6 @@ public class WebUtils {
      */
     public static String getPasswordPolicyPattern(final RequestContext requestContext) {
         val flowScope = requestContext.getFlowScope();
-        return flowScope.get("policyPattern", String.class);
+        return flowScope.get("passwordPolicyPattern", String.class);
     }
 }

@@ -49,18 +49,21 @@
                                                        id="token"
                                                        size="25"
                                                        required
-                                                       autocomplete="off" />
+                                                       autocomplete="off"/>
                                                 <span class="mdc-notched-outline">
                                                     <span class="mdc-notched-outline__leading"></span>
                                                     <span class="mdc-notched-outline__notch">
-                                                      <span class="mdc-floating-label" th:utext="#{cas.mfa.googleauth.label.token}">Token</span>
+                                                      <span class="mdc-floating-label"
+                                                            th:utext="#{cas.mfa.googleauth.label.token}">Token</span>
                                                     </span>
                                                     <span class="mdc-notched-outline__trailing"></span>
                                                 </span>
 
                                             </label>
-                                            
-                                            <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button" type="button">
+
+                                            <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button"
+                                                    tabindex="-1"
+                                                    type="button">
                                                 <i class="mdi mdi-eye reveal-password-icon"></i>
                                                 <span class="sr-only">Toggle Token</span>
                                             </button>
@@ -77,12 +80,13 @@
                                                        name="accountName"
                                                        id="accountName"
                                                        size="50"
-                                                       autocomplete="off" />
+                                                       autocomplete="off"/>
 
                                                 <span class="mdc-notched-outline">
                                                     <span class="mdc-notched-outline__leading"></span>
                                                     <span class="mdc-notched-outline__notch">
-                                                      <span class="mdc-floating-label" th:utext="#{screen.authentication.gauth.name}">Token</span>
+                                                      <span class="mdc-floating-label"
+                                                            th:utext="#{screen.authentication.gauth.name}">Token</span>
                                                     </span>
                                                     <span class="mdc-notched-outline__trailing"></span>
                                                 </span>
@@ -138,7 +142,7 @@
         <table>
             <tr>
                 <td>
-                    <img th:src="@{'data:image/jpeg;base64,' + ${QRcode}}" />
+                    <img th:src="@{'data:image/jpeg;base64,' + ${QRcode}}"/>
                 </td>
 
                 <td>
