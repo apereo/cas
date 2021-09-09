@@ -6,8 +6,16 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
     apply plugin: "org.springframework.boot"
 
     sourceSets {
+        /**
+         * Make resources become reloadable.
+         * Application’s static resources are loaded from their source location.
+         */
         bootRun {
             resources {
+                srcDirs new File("//etc/cas/templates/"),
+                        new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/"),
+                        new File("${project(":support").getProjectDir()}/cas-server-support-thymeleaf/src/main/resources/"),
+                        new File("${project(":support").getProjectDir()}/cas-server-support-themes-collection/src/main/resources/")
             }
         }
     }

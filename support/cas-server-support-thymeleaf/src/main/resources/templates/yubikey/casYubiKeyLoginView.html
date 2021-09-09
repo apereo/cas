@@ -32,7 +32,7 @@
                                    id="token"
                                    th:field="*{token}"
                                    size="25"
-                                   autocomplete="off" required />
+                                   autocomplete="off" required/>
 
                             <span class="mdc-notched-outline">
                                     <span class="mdc-notched-outline__leading"></span>
@@ -50,7 +50,9 @@
                         </p>
                     </div>
                 </div>
-                <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button" type="button">
+                <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button"
+                        tabindex="-1"
+                        type="button">
                     <i class="mdi mdi-eye reveal-password-icon"></i>
                     <span class="sr-only">Toggle Password</span>
                 </button>

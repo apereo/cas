@@ -76,7 +76,7 @@ public class PasswordManagementConfiguration implements InitializingBean {
     @RefreshScope
     @Bean
     public PasswordValidationService passwordValidationService() {
-        val policyPattern = casProperties.getAuthn().getPm().getCore().getPolicyPattern();
+        val policyPattern = casProperties.getAuthn().getPm().getCore().getPasswordPolicyPattern();
         return new DefaultPasswordValidationService(policyPattern, passwordHistoryService());
     }
 

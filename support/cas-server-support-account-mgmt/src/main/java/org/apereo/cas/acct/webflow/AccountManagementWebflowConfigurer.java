@@ -64,7 +64,7 @@ public class AccountManagementWebflowConfigurer extends AbstractCasWebflowConfig
         acctRegFlow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
         val completeView = createViewState(acctRegFlow, CasWebflowConstants.STATE_ID_COMPLETE_ACCOUNT_REGISTRATION, "acct-mgmt/casAccountSignupViewComplete");
         completeView.getEntryActionList().add(new ConsumerExecutionAction(context -> {
-            WebUtils.putPasswordPolicyPattern(context, properties.getCore().getPolicyPattern());
+            WebUtils.putPasswordPolicyPattern(context, properties.getCore().getPasswordPolicyPattern());
             WebUtils.putAccountManagementRegistrationSecurityQuestionsCount(context, properties.getCore().getSecurityQuestionsCount());
         }));
 

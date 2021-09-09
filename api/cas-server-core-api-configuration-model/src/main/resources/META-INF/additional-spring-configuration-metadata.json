@@ -1,6 +1,15 @@
 {
   "properties": [
     {
+      "name": "cas.authn.pm.core.policy-pattern",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.pm.core.password-policy-pattern",
+        "reason": "Setting is renamed to indicate it's the 'password' policy pattern",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.consent.enabled",
       "type": "java.lang.Boolean",
       "deprecation": {

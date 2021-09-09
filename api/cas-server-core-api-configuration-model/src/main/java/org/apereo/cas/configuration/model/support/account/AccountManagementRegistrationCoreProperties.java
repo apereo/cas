@@ -57,7 +57,7 @@ public class AccountManagementRegistrationCoreProperties implements Serializable
      * Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character.
      */
     @RequiredProperty
-    private String policyPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}";
+    private String passwordPolicyPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}";
 
     /**
      * Whether account registration should present security
