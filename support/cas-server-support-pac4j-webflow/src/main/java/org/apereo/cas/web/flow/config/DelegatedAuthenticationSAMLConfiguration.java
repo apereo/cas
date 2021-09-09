@@ -24,15 +24,17 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "DelegatedAuthenticationSAMLConfiguration", proxyBeanMethods = false)
 public class DelegatedAuthenticationSAMLConfiguration {
 
-    @Autowired
-    @Bean
-    @RefreshScope
     @ConditionalOnClass(value = HazelcastInstance.class)
-    @ConditionalOnBean(name = "casTicketRegistryHazelcastInstance")
-    @ConditionalOnMissingBean(name = DelegatedClientFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)
-    public SAMLMessageStoreFactory delegatedSaml2ClientSAMLMessageStoreFactory(
-        @Qualifier("casTicketRegistryHazelcastInstance")
-        final ObjectProvider<HazelcastInstance> casTicketRegistryHazelcastInstance) {
-        return new HazelcastSAMLMessageStoreFactory(casTicketRegistryHazelcastInstance.getObject());
+    @Configuration("DelegatedAuthenticationSAMLHazelcastConfiguration")
+    public static class DelegatedAuthenticationSAMLHazelcastConfiguration {
+        @Autowired
+        @Bean
+        @RefreshScope
+        @ConditionalOnBean(name = "casTicketRegistryHazelcastInstance")
+        @ConditionalOnMissingBean(name = DelegatedClientFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)
+        public SAMLMessageStoreFactory delegatedSaml2ClientSAMLMessageStoreFactory(
+            @Qualifier("casTicketRegistryHazelcastInstance") final ObjectProvider<HazelcastInstance> casTicketRegistryHazelcastInstance) {
+            return new HazelcastSAMLMessageStoreFactory(casTicketRegistryHazelcastInstance.getObject());
+        }
     }
 }

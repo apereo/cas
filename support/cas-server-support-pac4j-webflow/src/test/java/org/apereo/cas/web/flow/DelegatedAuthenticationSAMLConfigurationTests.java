@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
+import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactory;
 import org.apereo.cas.web.flow.config.DelegatedAuthenticationSAMLConfiguration;
 
 import com.hazelcast.core.Hazelcast;
@@ -35,12 +36,13 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     DelegatedAuthenticationSAMLConfigurationTests.SAMLTestConfiguration.class,
     DelegatedAuthenticationSAMLConfiguration.class,
+    DelegatedAuthenticationSAMLConfiguration.class,
     CasCoreHttpConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DelegatedAuthenticationSAMLConfigurationTests {
     @Autowired
-    @Qualifier("delegatedSaml2ClientHazelcastSAMLMessageStoreFactory")
+    @Qualifier(DelegatedClientFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)
     private SAMLMessageStoreFactory hazelcastSAMLMessageStoreFactory;
 
     @Test
