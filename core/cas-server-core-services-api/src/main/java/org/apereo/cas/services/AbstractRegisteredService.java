@@ -78,6 +78,8 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     private RegisteredServiceSingleSignOnParticipationPolicy singleSignOnParticipationPolicy;
 
+    private RegisteredServiceWebflowInterruptPolicy webflowInterruptPolicy;
+    
     private int evaluationOrder;
 
     private RegisteredServiceUsernameAttributeProvider usernameAttributeProvider = new DefaultRegisteredServiceUsernameProvider();

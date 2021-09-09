@@ -269,7 +269,9 @@ public interface RegisteredServiceProperty extends Serializable {
             "Determine whether secrets are Base64 encoded."),
         /**
          * Whether interrupt notifications should be skipped.
+         * @deprecated Since 6.5.0
          **/
+        @Deprecated(since = "6.5.0")
         SKIP_INTERRUPT_NOTIFICATIONS("skipInterrupt", "false",
             RegisteredServicePropertyGroups.INTERRUPTS, RegisteredServicePropertyTypes.BOOLEAN,
             "Whether interrupt notifications should be skipped."),
