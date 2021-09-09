@@ -108,6 +108,12 @@ JDK releases to ensure CAS can correctly switch the baseline requirement when de
 
 Language bundle and localization rules can now be applied 
 conditionally [on a per-application basis](../ux/User-Interface-Customization-Localization.html).
+     
+### Webflow Interrupts Per Service
+
+Application definitions [can now be assigned](../webflow/Webflow-Customization-Interrupt.html) a dedicated webflow interrupt policy
+to manage and handle interrupt notifications on a per-service basis. This is the preferred and recommended strategy going forward,
+and other options/properties that skip/disable interrupts for applications are now deprecated and scheduled to be removed.  
 
 ## Other Stuff
 
