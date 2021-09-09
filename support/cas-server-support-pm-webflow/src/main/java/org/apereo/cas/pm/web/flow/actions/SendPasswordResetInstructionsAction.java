@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.pm.PasswordManagementQuery;
@@ -39,7 +40,6 @@ import org.springframework.webflow.execution.RequestContext;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link SendPasswordResetInstructionsAction}.
@@ -106,10 +106,10 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(token)) {
             val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
             val pm = casProperties.getAuthn().getPm();
-            val expirationSeconds = TimeUnit.MINUTES.toSeconds(pm.getReset().getExpirationMinutes());
+            val seconds = Beans.newDuration(pm.getReset().getExpiration()).toSeconds();
             val properties = CollectionUtils.<String, Serializable>wrap(
                 PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN, token,
-                ExpirationPolicy.class.getName(), HardTimeoutExpirationPolicy.builder().timeToKillInSeconds(expirationSeconds).build());
+                ExpirationPolicy.class.getName(), HardTimeoutExpirationPolicy.builder().timeToKillInSeconds(seconds).build());
             val ticket = transientFactory.create(service, properties);
             this.ticketRegistry.addTicket(ticket);
 
@@ -157,8 +157,8 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         val url = buildPasswordResetUrl(query.getUsername(), passwordManagementService, casProperties, service);
         if (StringUtils.isNotBlank(url)) {
             val pm = casProperties.getAuthn().getPm();
-            LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)",
-                url, pm.getReset().getExpirationMinutes());
+            val duration = Beans.newDuration(pm.getReset().getExpiration());
+            LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url, duration);
             val sendEmail = sendPasswordResetEmailToAccount(query.getUsername(), email, url, requestContext);
             val sendSms = sendPasswordResetSmsToAccount(phone, url);
             if (sendEmail || sendSms) {

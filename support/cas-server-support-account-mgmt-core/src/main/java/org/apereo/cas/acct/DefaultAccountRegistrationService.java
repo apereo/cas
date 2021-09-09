@@ -1,6 +1,7 @@
 package org.apereo.cas.acct;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
@@ -78,7 +79,8 @@ public class DefaultAccountRegistrationService implements AccountRegistrationSer
         claims.setIssuer(casProperties.getServer().getPrefix());
         claims.setAudience(casProperties.getServer().getPrefix());
         val props = casProperties.getAccountRegistration().getCore();
-        claims.setExpirationTimeMinutesInTheFuture((float) props.getExpirationMinutes());
+        val minutes = Beans.newDuration(props.getExpiration()).toMinutes();
+        claims.setExpirationTimeMinutesInTheFuture((float) minutes);
         claims.setIssuedAtToNow();
 
         val holder = ClientInfoHolder.getClientInfo();
