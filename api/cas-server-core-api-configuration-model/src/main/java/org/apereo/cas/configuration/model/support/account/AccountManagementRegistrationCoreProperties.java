@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.account;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -49,7 +50,8 @@ public class AccountManagementRegistrationCoreProperties implements Serializable
     /**
      * How long in minutes should the registration link remain valid.
      */
-    private long expirationMinutes = 3;
+    @DurationCapable
+    private String expiration = "PTM";
 
     /**
      * A String value representing password policy regex pattern.
