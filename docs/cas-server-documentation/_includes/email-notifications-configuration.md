@@ -7,7 +7,7 @@ The following settings may also need to be defined to describe the mail server s
 <table>
     <tbody>
     {% for prop in mailServerProperties %} 
-        {% for module in site.data[version] %}
+        {% for module in site.data[siteDataVersion] %}
             {% assign moduleEntry = module[1] %}
             {% for cfg in moduleEntry %}
                 {% assign configBlock = cfg[1] %}
