@@ -51,7 +51,7 @@ public class AccountManagementRegistrationCoreProperties implements Serializable
      * How long in minutes should the registration link remain valid.
      */
     @DurationCapable
-    private String expiration = "PTM";
+    private String expiration = "PT1M";
 
     /**
      * A String value representing password policy regex pattern.
