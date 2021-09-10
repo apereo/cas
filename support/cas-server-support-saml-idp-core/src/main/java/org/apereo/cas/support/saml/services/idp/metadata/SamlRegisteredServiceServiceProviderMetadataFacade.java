@@ -71,7 +71,8 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
     public static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                                    final SamlRegisteredService registeredService,
                                                                                    final String entityID) {
-        return get(resolver, registeredService, entityID, new CriteriaSet());
+        val criteria = new CriteriaSet(new EntityIdCriterion(entityID));
+        return get(resolver, registeredService, entityID, criteria);
     }
 
     /**
