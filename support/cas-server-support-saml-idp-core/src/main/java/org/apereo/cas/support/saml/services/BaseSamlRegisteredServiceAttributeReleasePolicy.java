@@ -8,6 +8,7 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -44,7 +45,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
             val samlRegisteredService = (SamlRegisteredService) registeredService;
 
             val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-            val entityId = getEntityIdFromRequest(request);
+            val entityId = getEntityIdFromRequest(request, selectedService);
             if (StringUtils.isBlank(entityId)) {
                 LOGGER.warn("Could not locate the entity id for SAML attribute release policy processing");
                 return new HashMap<>(0);
@@ -75,12 +76,15 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
         return authorizeReleaseOfAllowedAttributes(principal, attributes, registeredService, selectedService);
     }
 
-    private static String getEntityIdFromRequest(final HttpServletRequest request) {
+    private static String getEntityIdFromRequest(final HttpServletRequest request, final Service selectedService) {
         if (request == null) {
             LOGGER.debug("No http request could be identified to locate the entity id");
             return null;
         }
-
+        val entityIdAttribute = selectedService.getAttributes().get(SamlProtocolConstants.PARAMETER_ENTITY_ID);
+        if (entityIdAttribute != null && !entityIdAttribute.isEmpty()) {
+            return CollectionUtils.firstElement(entityIdAttribute).map(Object::toString).orElseThrow();
+        }
         val entityId = request.getParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID);
         if (StringUtils.isNotBlank(entityId)) {
             return entityId;
