@@ -118,6 +118,7 @@ and other options/properties that skip/disable interrupts for applications are n
 ## Other Stuff
 
 - SAML2 Unsolicited endpoint is now able to preserve custom query parameters.
+- Signing SAML2 assertions can now honor the `WantAssertionsSigned` flag in the service provider metadata.
 - LDAP search entry handlers are now able to merges the values of one or more attributes in all entries into a single attribute.
 - SAML2 authentication requests that do not specify a protocol binding are pre-processed to locate the proper binding correctly.
 - Attribute resolution via Person Directory can optionally be taught to *not* recover from exceptions and block.
@@ -135,5 +136,8 @@ and other options/properties that skip/disable interrupts for applications are n
 - Groovy
 - Thymeleaf Dialect
 - Mockito
+- CosmosDb
+- Amazon SDK
+- UnboundID SCIM
 - Twilio
 - Hibernate

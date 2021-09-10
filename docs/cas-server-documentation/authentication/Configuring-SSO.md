@@ -23,10 +23,6 @@ the result for each respected key. The deployer MUST attempt to copy the generat
 settings in their CAS properties file, specially when running a multi-node CAS deployment. Failure to do so will prevent CAS
 to appropriate decrypt and encrypt the cookie value and will prevent successful single sign-on.
 
-<div class="alert alert-info"><strong>SSO Sessions</strong><p>It is possible to review the 
-current collection of active SSO sessions,
-and determine if CAS itself maintains an active SSO session. See <a href="../monitoring/Monitoring-Statistics.html">this page</a>.</p></div>
-
 ## Actuator Endpoints
 
 The following endpoints are provided by CAS:
@@ -43,7 +39,8 @@ The cookie has the following properties:
 2. Depending on container support, the cookie would be marked as http-only automatically.
 3. The cookie value is encrypted and signed via secret keys that need to be generated upon deployment.
 
-If keys are left undefined, on startup CAS will notice that no keys are defined and it will appropriately generate keys for you automatically. Your CAS logs will then show the following snippet:
+If keys are left undefined, on startup CAS will notice that no keys are defined and it 
+will appropriately generate keys for you automatically. Your CAS logs will then show the following snippet:
 
 ```bash
 WARN [...] - <Secret key for encryption is not defined. CAS will auto-generate the encryption key>
