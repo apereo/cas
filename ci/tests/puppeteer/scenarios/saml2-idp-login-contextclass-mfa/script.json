@@ -5,9 +5,12 @@
     "--cas.authn.saml-idp.core.authentication-context-class-mappings=https://refeds.org/profile/mfa->mfa-gauth",
     "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
 
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@example.org",
+
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net",
+    
     "--cas.audit.engine.enabled=false",
     "--cas.authn.accept.name=STATIC",
 

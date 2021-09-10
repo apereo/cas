@@ -1,7 +1,6 @@
 const puppeteer = require('puppeteer');
 const path = require('path');
 const cas = require('../../cas.js');
-const assert = require("assert");
 
 async function cleanUp(exec) {
     console.log("Killing SAML2 SP process...");
