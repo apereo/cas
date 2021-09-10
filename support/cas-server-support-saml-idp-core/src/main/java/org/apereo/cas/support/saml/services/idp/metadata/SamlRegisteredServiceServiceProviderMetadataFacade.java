@@ -16,6 +16,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.support.SAML2MetadataSupport;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
@@ -71,7 +72,8 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
     public static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                                    final SamlRegisteredService registeredService,
                                                                                    final String entityID) {
-        return get(resolver, registeredService, entityID, new CriteriaSet());
+        val criteria = new CriteriaSet(new EntityIdCriterion(entityID), new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
+        return get(resolver, registeredService, entityID, criteria);
     }
 
     /**
