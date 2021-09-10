@@ -36,7 +36,6 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     DelegatedAuthenticationSAMLConfigurationTests.SAMLTestConfiguration.class,
     DelegatedAuthenticationSAMLConfiguration.class,
-    DelegatedAuthenticationSAMLConfiguration.class,
     CasCoreHttpConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
