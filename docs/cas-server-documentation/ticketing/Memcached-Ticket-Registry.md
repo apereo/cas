@@ -27,6 +27,11 @@ Note that a change in the set of available cache nodes may produce a different t
 
 The actual memcached implementation may be supported via one of the following options, expected to be defined in the overlay.
 
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>Not all ticket 
+registry operations are supported by the memcached ticket registry implementation. In particular, operations
+that execute bulk queries such as deleting and fetching all tickets in a single request may be unsupported,
+as memcached itself is rather unable to process and support that type of query.</p></div>
+
 ##  Spymemcached
 
 Enable support via the [spymemcached library](https://code.google.com/p/spymemcached/). This is a simple, asynchronous, 
@@ -93,7 +98,6 @@ variance in the node selected to store the key, which is undesirable.
 The consistent strategy generally provides a target node that does not vary with the number of nodes. This strategy
 should be used in cases where the memcached pool may grow or shrink dynamically, including due to frequent node
 failure.
-
 
 ### Object Serialization
 

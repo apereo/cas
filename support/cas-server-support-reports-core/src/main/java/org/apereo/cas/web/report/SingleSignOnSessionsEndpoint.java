@@ -67,7 +67,9 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @return the sso sessions
      */
     @ReadOperation
-    @Operation(summary = "Get all single sign-on sessions with the given type",
+    @Operation(summary = "Get all single sign-on sessions with the given type. The functionality provided here requires that the underlying "
+        + "ticket registry and store is able to store, maintain and return a collection tickets that represent the single sign-on session. "
+        + "You will not be able to collect and review sessions, if the ticket registry does not have this capability",
         parameters = {@Parameter(name = "type", required = true)})
     public Map<String, Object> getSsoSessions(@Nullable final String type) {
         val sessionsMap = new HashMap<String, Object>();
