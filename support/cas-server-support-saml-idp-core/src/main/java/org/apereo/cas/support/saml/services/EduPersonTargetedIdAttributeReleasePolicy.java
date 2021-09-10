@@ -56,13 +56,13 @@ public class EduPersonTargetedIdAttributeReleasePolicy extends BaseSamlRegistere
 
     @Override
     protected Map<String, List<Object>> getAttributesForSamlRegisteredService(final Map<String, List<Object>> attributes,
-                                                                        final SamlRegisteredService service,
-                                                                        final ApplicationContext applicationContext,
-                                                                        final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                        final SamlRegisteredServiceServiceProviderMetadataFacade facade,
-                                                                        final EntityDescriptor entityDescriptor,
-                                                                        final Principal principal,
-                                                                        final Service selectedService) {
+                                                                              final SamlRegisteredService service,
+                                                                              final ApplicationContext applicationContext,
+                                                                              final SamlRegisteredServiceCachingMetadataResolver resolver,
+                                                                              final SamlRegisteredServiceServiceProviderMetadataFacade facade,
+                                                                              final EntityDescriptor entityDescriptor,
+                                                                              final Principal principal,
+                                                                              final Service selectedService) {
         val releaseAttributes = new HashMap<String, List<Object>>();
 
         val resolvedSalt = SpringExpressionLanguageValueResolver.getInstance().resolve(this.salt);
@@ -70,7 +70,7 @@ public class EduPersonTargetedIdAttributeReleasePolicy extends BaseSamlRegistere
 
         val resolvedAttrs = SpringExpressionLanguageValueResolver.getInstance().resolve(this.attribute);
         persistentIdGenerator.setAttribute(resolvedAttrs);
-        
+
         val principalId = persistentIdGenerator.determinePrincipalIdFromAttributes(principal.getId(), attributes);
         LOGGER.debug("Selected principal id [{}] to generate [{}] for service [{}]",
             principalId, ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID, selectedService);
