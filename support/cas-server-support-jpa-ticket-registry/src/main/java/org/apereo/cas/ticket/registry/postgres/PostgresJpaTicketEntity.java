@@ -2,13 +2,15 @@ package org.apereo.cas.ticket.registry.postgres;
 
 import org.apereo.cas.ticket.registry.generic.JpaTicketEntity;
 
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+
 
 /**
  * This is {@link PostgresJpaTicketEntity}.
