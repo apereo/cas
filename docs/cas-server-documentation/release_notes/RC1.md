@@ -122,6 +122,8 @@ and other options/properties that skip/disable interrupts for applications are n
 - LDAP search entry handlers are now able to merges the values of one or more attributes in all entries into a single attribute.
 - SAML2 authentication requests that do not specify a protocol binding are pre-processed to locate the proper binding correctly.
 - Attribute resolution via Person Directory can optionally be taught to *not* recover from exceptions and block.
+- Default redirect URLs can now also be used for logout attempts, when no authorized destination is defined.
+- Deleting ticket-granting tickets [via REST](../protocol/REST-Protocol-Request-TicketGrantingTicket.html) is now able to initiate SLO.
 
 ## Library Upgrades
 

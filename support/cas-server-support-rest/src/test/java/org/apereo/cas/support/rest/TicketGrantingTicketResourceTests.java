@@ -18,6 +18,10 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.logout.DefaultLogoutExecutionPlan;
+import org.apereo.cas.logout.DefaultLogoutManager;
+import org.apereo.cas.logout.slo.DefaultSingleLogoutRequestExecutor;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.rest.authentication.DefaultRestAuthenticationService;
 import org.apereo.cas.rest.factory.DefaultTicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
@@ -37,6 +41,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -88,7 +93,7 @@ public class TicketGrantingTicketResourceTests {
 
     @Mock
     private RequestedAuthenticationContextValidator requestedContextValidator;
-    
+
     @InjectMocks
     private TicketGrantingTicketResource ticketGrantingTicketResourceUnderTest;
 
@@ -108,7 +113,7 @@ public class TicketGrantingTicketResourceTests {
                 return List.of(new UsernamePasswordCredential("mfa-user", "mfa-user"));
             }
         };
-        
+
         val publisher = mock(ApplicationEventPublisher.class);
         val manager = mock(AuthenticationManager.class);
         lenient().when(manager.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
@@ -118,8 +123,9 @@ public class TicketGrantingTicketResourceTests {
             .thenReturn(AuthenticationContextValidationResult.builder().success(true).build());
         lenient().when(multifactorTriggerSelectionStrategy.resolve(any(), any(), any(), any()))
             .thenReturn(Optional.empty());
-        
-        val authenticationSystemSupport = new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(publisher, manager),
+
+        val authenticationSystemSupport = new DefaultAuthenticationSystemSupport(
+            new DefaultAuthenticationTransactionManager(publisher, manager),
             new DefaultPrincipalElectionStrategy(), new DefaultAuthenticationResultBuilderFactory(),
             new DefaultAuthenticationTransactionFactory());
         val api = new DefaultRestAuthenticationService(authenticationSystemSupport,
@@ -129,9 +135,12 @@ public class TicketGrantingTicketResourceTests {
             servicesManager,
             requestedContextValidator);
 
+        val logoutManager = new DefaultLogoutManager(false, new DefaultLogoutExecutionPlan());
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         this.ticketGrantingTicketResourceUnderTest = new TicketGrantingTicketResource(api,
             casMock, new DefaultTicketGrantingTicketResourceEntityResponseFactory(),
-            new GenericWebApplicationContext());
+            new GenericWebApplicationContext(), new DefaultSingleLogoutRequestExecutor(casMock, logoutManager, applicationContext));
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketGrantingTicketResourceUnderTest)
             .defaultRequest(get("/")
@@ -151,8 +160,8 @@ public class TicketGrantingTicketResourceTests {
         configureCasMockToCreateValidTGT();
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
-            .param(USERNAME, TEST_VALUE)
-            .param(PASSWORD, TEST_VALUE))
+                .param(USERNAME, TEST_VALUE)
+                .param(PASSWORD, TEST_VALUE))
             .andExpect(status().isCreated())
             .andExpect(header().string("Location", "http://localhost/cas/v1/tickets/TGT-1"))
             .andExpect(content().contentType(MediaType.TEXT_HTML))
@@ -168,10 +177,10 @@ public class TicketGrantingTicketResourceTests {
             + "<br><input type=\"submit\" value=\"Submit\"></form></body></html>";
 
         configureCasMockToCreateValidTGT();
-        this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
-            .param(USERNAME, TEST_VALUE)
-            .param(PASSWORD, TEST_VALUE)
-            .accept(MediaType.ALL))
+        mockMvc.perform(post(TICKETS_RESOURCE_URL)
+                .param(USERNAME, TEST_VALUE)
+                .param(PASSWORD, TEST_VALUE)
+                .accept(MediaType.ALL))
             .andExpect(status().isCreated())
             .andExpect(header().string("Location", "http://localhost/cas/v1/tickets/TGT-1"))
             .andExpect(content().contentType(MediaType.TEXT_HTML))
@@ -188,9 +197,9 @@ public class TicketGrantingTicketResourceTests {
 
         configureCasMockToCreateValidTGT();
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
-            .param(USERNAME, TEST_VALUE)
-            .param(PASSWORD, TEST_VALUE)
-            .accept(MediaType.TEXT_HTML))
+                .param(USERNAME, TEST_VALUE)
+                .param(PASSWORD, TEST_VALUE)
+                .accept(MediaType.TEXT_HTML))
             .andExpect(status().isCreated())
             .andExpect(header().string("Location", "http://localhost/cas/v1/tickets/TGT-1"))
             .andExpect(content().contentType(MediaType.TEXT_HTML))
@@ -203,9 +212,9 @@ public class TicketGrantingTicketResourceTests {
 
         configureCasMockToCreateValidTGT();
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
-            .param(USERNAME, TEST_VALUE)
-            .param(PASSWORD, TEST_VALUE)
-            .accept(MediaType.APPLICATION_JSON))
+                .param(USERNAME, TEST_VALUE)
+                .param(PASSWORD, TEST_VALUE)
+                .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isCreated())
             .andExpect(header().string("Location", "http://localhost/cas/v1/tickets/TGT-1"))
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -222,22 +231,22 @@ public class TicketGrantingTicketResourceTests {
         val expectedReturnEntityBody = "TGT-1";
         configureCasMockToCreateValidTGT();
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
-            .param(USERNAME, TEST_VALUE)
-            .param(PASSWORD, TEST_VALUE)
-            .accept(MediaType.APPLICATION_JSON))
+                .param(USERNAME, TEST_VALUE)
+                .param(PASSWORD, TEST_VALUE)
+                .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isCreated())
             .andExpect(header().string("Location", "http://localhost/cas/v1/tickets/TGT-1"))
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(content().string(expectedReturnEntityBody));
     }
-    
+
     @Test
     public void creationOfTGTWithAuthenticationException() throws Exception {
         configureCasMockTGTCreationToThrowAuthenticationException();
 
         val content = this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
-            .param(USERNAME, TEST_VALUE)
-            .param(PASSWORD, TEST_VALUE))
+                .param(USERNAME, TEST_VALUE)
+                .param(PASSWORD, TEST_VALUE))
             .andExpect(status().isUnauthorized())
             .andReturn().getResponse().getContentAsString();
         assertTrue(content.contains("Login failed"));
@@ -248,8 +257,8 @@ public class TicketGrantingTicketResourceTests {
         configureCasMockTGTCreationToThrow(new RuntimeException(OTHER_EXCEPTION));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
-            .param(USERNAME, TEST_VALUE)
-            .param(PASSWORD, TEST_VALUE))
+                .param(USERNAME, TEST_VALUE)
+                .param(PASSWORD, TEST_VALUE))
             .andExpect(status().is5xxServerError())
             .andExpect(content().string(OTHER_EXCEPTION));
     }
@@ -259,13 +268,15 @@ public class TicketGrantingTicketResourceTests {
         configureCasMockTGTCreationToThrow(new RuntimeException(OTHER_EXCEPTION));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
-            .param("no_username_param", TEST_VALUE)
-            .param("no_password_param", TEST_VALUE))
+                .param("no_username_param", TEST_VALUE)
+                .param("no_password_param", TEST_VALUE))
             .andExpect(status().is4xxClientError());
     }
 
     @Test
     public void deletionOfTGT() throws Exception {
+        when(this.casMock.getTicket(anyString(), any()))
+            .thenReturn(new MockTicketGrantingTicket("casuser"));
         this.mockMvc.perform(delete(TICKETS_RESOURCE_URL + "/TGT-1")).andExpect(status().isOk());
     }
 

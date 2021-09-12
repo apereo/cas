@@ -48,10 +48,10 @@ public class LogoutAction extends AbstractLogoutAction {
 
         val logoutRequests = WebUtils.getLogoutRequests(context);
         val needFrontSlo = FunctionUtils.doIf(logoutRequests != null,
-            () -> Objects.requireNonNull(logoutRequests)
-                .stream()
-                .anyMatch(logoutRequest -> logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED),
-            () -> Boolean.FALSE)
+                () -> Objects.requireNonNull(logoutRequests)
+                    .stream()
+                    .anyMatch(logoutRequest -> logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED),
+                () -> Boolean.FALSE)
             .get();
 
         logoutExecutionPlan.getLogoutRedirectionStrategies()
