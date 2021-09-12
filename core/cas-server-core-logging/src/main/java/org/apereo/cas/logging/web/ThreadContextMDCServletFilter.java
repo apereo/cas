@@ -15,11 +15,13 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.TimeZone;
+import java.util.UUID;
 
 /**
  * This is {@link ThreadContextMDCServletFilter}.
@@ -31,6 +33,7 @@ import java.util.TimeZone;
 public class ThreadContextMDCServletFilter implements Filter {
 
     private final TicketRegistrySupport ticketRegistrySupport;
+
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     private static void addContextAttribute(final String attributeName, final Object value) {
@@ -54,6 +57,7 @@ public class ThreadContextMDCServletFilter implements Filter {
                          final FilterChain filterChain) throws IOException, ServletException {
         try {
             val request = (HttpServletRequest) servletRequest;
+            val response = (HttpServletResponse) servletResponse;
 
             addContextAttribute("remoteAddress", request.getRemoteAddr());
             addContextAttribute("remoteUser", request.getRemoteUser());
@@ -73,6 +77,11 @@ public class ThreadContextMDCServletFilter implements Filter {
             addContextAttribute("requestUri", request.getRequestURI());
             addContextAttribute("scheme", request.getScheme());
             addContextAttribute("timezone", TimeZone.getDefault().getDisplayName());
+
+            val requestId = UUID.randomUUID().toString();
+            addContextAttribute("requestId", requestId);
+            request.setAttribute("requestId", requestId);
+            response.setHeader("requestId", requestId);
 
             val params = request.getParameterMap();
             params.keySet()

@@ -34,5 +34,6 @@ public class ConsumerExecutionActionTests {
         val action = new ConsumerExecutionAction(RequestContext::getFlowScope);
         action.setEventId("result");
         assertNotNull(action.execute(context));
+        assertNotNull(action.toString());
     }
 }
