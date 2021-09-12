@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
@@ -117,6 +118,10 @@ public class CasSupportActionsConfiguration {
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
+
+    @Autowired
+    @Qualifier("defaultSingleLogoutRequestExecutor")
+    private ObjectProvider<SingleLogoutRequestExecutor> defaultSingleLogoutRequestExecutor;
 
     @Autowired
     @Qualifier("casWebflowConfigurationContext")
@@ -323,7 +328,8 @@ public class CasSupportActionsConfiguration {
             warnCookieGenerator.getObject(),
             casProperties.getLogout(),
             logoutManager.getObject(),
-            applicationContext);
+            applicationContext,
+            defaultSingleLogoutRequestExecutor.getObject());
     }
 
     @Bean

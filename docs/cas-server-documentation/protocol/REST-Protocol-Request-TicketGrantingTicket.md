@@ -26,6 +26,14 @@ authenticated user may be allowed to access the given service.
 Location: http://www.whatever.com/cas/v1/tickets/{TGT id}
 ```
 
+Remember that REST is stateless. Since the caller is the recipient of the
+ticket-granting ticket that represents a single sign-on session, that means the caller is also responsible for managing and creating
+single sign-on sessions, removing that responsibility from CAS. In other words, the REST protocol allows one to use CAS 
+as an authentication engine, and not a single sign-on provider. There have been many workarounds, modifications and *hacks* 
+over the years to bypass this barrier and have REST calls to also, *somehow*, create the necessary cookies, flows and interactions 
+and whatever else necessary to allow applications to leverage a single sign-on session established via REST. Needless to say, 
+all such endeavors over time have resulted in maintenance headaches, premature aging and loss of DNA.
+
 ## Unsuccessful Response
 
 If incorrect credentials are sent, CAS will respond with a `401 Unauthorized`. A `400 Bad Request` error 

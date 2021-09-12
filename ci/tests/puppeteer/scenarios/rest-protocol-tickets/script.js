@@ -14,6 +14,7 @@ const cas = require('../../cas.js');
     await executeRequest(`https://localhost:8443/cas/v1/tickets/${st}`, "GET", 200);
     await executeRequest(`https://localhost:8443/cas/v1/tickets/${st}`, "DELETE", 200);
     await executeRequest(`https://localhost:8443/cas/v1/tickets/${tgt}`, "DELETE", 200);
+    await executeRequest(`https://localhost:8443/cas/v1/tickets/${tgt}`, 'GET', 404);
 })();
 
 async function executeRequest(url, method, statusCode) {

@@ -1,7 +1,10 @@
 package org.apereo.cas.logout;
 
-import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -24,9 +27,11 @@ import java.util.Optional;
 public class DefaultLogoutRedirectionStrategy implements LogoutRedirectionStrategy {
     private final ArgumentExtractor argumentExtractor;
 
-    private final LogoutProperties logoutProperties;
+    private final CasConfigurationProperties casProperties;
 
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
+
+    private final ServiceFactory<WebApplicationService> serviceFactory;
 
     @Override
     public boolean supports(final RequestContext context) {
@@ -37,10 +42,15 @@ public class DefaultLogoutRedirectionStrategy implements LogoutRedirectionStrate
     public void handle(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         Optional.ofNullable(argumentExtractor.extractService(request))
+            .or(() -> {
+                val redirectUrl = casProperties.getView().getDefaultRedirectUrl();
+                return FunctionUtils.doIf(StringUtils.isNotBlank(redirectUrl),
+                    () -> Optional.of(serviceFactory.createService(redirectUrl)), Optional::<WebApplicationService>empty).get();
+            })
             .filter(service -> singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(service, Optional.of(request)))
             .ifPresentOrElse(service -> {
                 WebUtils.putServiceIntoFlowScope(requestContext, service);
-                if (logoutProperties.isFollowServiceRedirects()) {
+                if (casProperties.getLogout().isFollowServiceRedirects()) {
                     LOGGER.debug("Redirecting to logout URL identified by service [{}]", service);
                     WebUtils.putLogoutRedirectUrl(requestContext, service.getOriginalUrl());
                 } else {
