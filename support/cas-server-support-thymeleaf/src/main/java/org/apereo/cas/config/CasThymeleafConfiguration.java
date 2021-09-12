@@ -115,7 +115,7 @@ public class CasThymeleafConfiguration {
             configureTemplateViewResolver(url);
             chain.addResolver(url);
         }
-        
+
         val templatePrefixes = casProperties.getView().getTemplatePrefixes();
         templatePrefixes.forEach(prefix -> {
             try {
@@ -149,7 +149,7 @@ public class CasThymeleafConfiguration {
         configureTemplateViewResolver(cpResolver);
         cpResolver.setPrefix("thymeleaf/templates/");
         chain.addResolver(cpResolver);
-        
+
         chain.initialize();
         return chain;
     }
@@ -192,8 +192,7 @@ public class CasThymeleafConfiguration {
     @Bean
     @RefreshScope
     @Autowired
-    public CasThymeleafLoginFormDirector casThymeleafLoginFormDirector(@Qualifier("casWebflowExecutionPlan")
-                                                                       final CasWebflowExecutionPlan webflowExecutionPlan) {
+    public CasThymeleafLoginFormDirector casThymeleafLoginFormDirector(@Qualifier("casWebflowExecutionPlan") final CasWebflowExecutionPlan webflowExecutionPlan) {
         return new CasThymeleafLoginFormDirector(webflowExecutionPlan);
     }
 
@@ -258,6 +257,19 @@ public class CasThymeleafConfiguration {
         return resolver;
     }
 
+    @Bean
+    public SpringTemplateEngine templateEngine(final ThymeleafProperties properties,
+                                               final ObjectProvider<ITemplateResolver> templateResolvers,
+                                               final ObjectProvider<IDialect> dialects) {
+        val engine = new SpringTemplateEngine();
+        engine.setEnableSpringELCompiler(properties.isEnableSpringElCompiler());
+        engine.setRenderHiddenMarkersBeforeCheckboxes(properties.isRenderHiddenMarkersBeforeCheckboxes());
+        templateResolvers.orderedStream().forEach(engine::addTemplateResolver);
+        dialects.orderedStream().forEach(engine::addDialect);
+
+        return engine;
+    }
+
     private void configureTemplateViewResolver(final AbstractConfigurableTemplateResolver resolver) {
         val props = thymeleafProperties.getObject();
         resolver.setCacheable(props.isCache());
@@ -267,18 +279,5 @@ public class CasThymeleafConfiguration {
         resolver.setOrder(0);
         resolver.setSuffix(".html");
         resolver.setTemplateMode(props.getMode());
-    }
-
-    @Bean
-    public SpringTemplateEngine templateEngine(final ThymeleafProperties properties,
-                                        final ObjectProvider<ITemplateResolver> templateResolvers,
-                                        final ObjectProvider<IDialect> dialects) {
-        val engine = new SpringTemplateEngine();
-        engine.setEnableSpringELCompiler(properties.isEnableSpringElCompiler());
-        engine.setRenderHiddenMarkersBeforeCheckboxes(properties.isRenderHiddenMarkersBeforeCheckboxes());
-        templateResolvers.orderedStream().forEach(engine::addTemplateResolver);
-        dialects.orderedStream().forEach(engine::addDialect);
-        
-        return engine;
     }
 }

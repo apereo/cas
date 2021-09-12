@@ -144,7 +144,6 @@ public class CasThemesConfiguration {
                     val resolver = new PathResourceResolver();
                     resolver.setAllowedLocations(resources);
                     chainRegistration.addResolver(resolver);
-
                 }
             }
         };

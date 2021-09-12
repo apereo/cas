@@ -34,6 +34,7 @@ may convey additional information about the nature of the request or the authent
 | `scheme`                            | Scheme of the HTTP request.
 | `timezone`                          | Timezone of the HTTP request.
 | `principal`                         | CAS authenticated principal id.
+| `requestId`                         | Generated identifier for this request. 
 
 Additionally, all available request attributes, headers, and parameters are exposed as variables.
 <div class="alert alert-warning">
