@@ -37,7 +37,20 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends Base
         servicesManager.deleteAll();
         defaultSamlRegisteredServiceCachingMetadataResolver.invalidate();
     }
-    
+
+    @Test
+    public void verifyUnknownScript() {
+        val filter = new GroovySamlRegisteredServiceAttributeReleasePolicy();
+        filter.setGroovyScript("classpath:unknown-123456.groovy");
+        filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));
+        val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
+        registeredService.setAttributeReleasePolicy(filter);
+        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
+            CoreAuthenticationTestUtils.getService(), registeredService);
+        assertTrue(attributes.isEmpty());
+    }
+
+
     @Test
     public void verifyScriptReleasesSamlAttributes() {
         val filter = new GroovySamlRegisteredServiceAttributeReleasePolicy();
