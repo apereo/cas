@@ -58,8 +58,14 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
         if (triggerMode == InterruptCoreProperties.InterruptTriggerModes.AFTER_AUTHENTICATION) {
             val ticketCreateState = getState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET, ActionState.class);
             prependActionsToActionStateExecutionList(flow, ticketCreateState, getInquireInterruptAction());
-            createTransitionForState(ticketCreateState, CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED, CasWebflowConstants.STATE_ID_INTERRUPT_VIEW);
+            createTransitionForState(ticketCreateState, CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED,
+                CasWebflowConstants.STATE_ID_INTERRUPT_VIEW);
         }
+
+        prependActionsToActionStateExecutionList(flow, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET,
+            CasWebflowConstants.STATE_ID_INQUIRE_INTERRUPT_ACTION);
+        createTransitionForState(flow, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET,
+            CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED, CasWebflowConstants.STATE_ID_INTERRUPT_VIEW);
     }
 
     private void createTransitionStateForMultifactorSubflows(final Flow flow) {
@@ -88,7 +94,7 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
         val target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
         val finalizeInterrupt = createActionState(flow, CasWebflowConstants.STATE_ID_FINALIZE_INTERRUPT_ACTION,
-            createEvaluateAction(CasWebflowConstants.ACTION_ID_FINALIZE_INTERRUPT));
+            CasWebflowConstants.ACTION_ID_FINALIZE_INTERRUPT);
         createTransitionForState(finalizeInterrupt, CasWebflowConstants.TRANSITION_ID_SUCCESS, target);
         createTransitionForState(finalizeInterrupt, CasWebflowConstants.TRANSITION_ID_STOP, CasWebflowConstants.STATE_ID_FINISHED_INTERRUPT);
         createEndState(flow, CasWebflowConstants.STATE_ID_FINISHED_INTERRUPT);

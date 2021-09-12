@@ -1922,4 +1922,32 @@ public class WebUtils {
         val flowScope = requestContext.getFlowScope();
         return flowScope.get("passwordPolicyPattern", String.class);
     }
+
+    /**
+     * Is interrupt authentication flow finalized.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static boolean isInterruptAuthenticationFlowFinalized(final RequestContext requestContext) {
+        return requestContext.getRequestScope().contains("authenticationFlowInterruptFinalized");
+    }
+
+    /**
+     * Put interrupt authentication flow finalized.
+     *
+     * @param requestContext the request context
+     */
+    public static void putInterruptAuthenticationFlowFinalized(final RequestContext requestContext) {
+        requestContext.getRequestScope().put("authenticationFlowInterruptFinalized", Boolean.TRUE);
+    }
+
+    /**
+     * Remove interrupt authentication flow finalized.
+     *
+     * @param requestContext the request context
+     */
+    public static void removeInterruptAuthenticationFlowFinalized(final RequestContext requestContext) {
+        requestContext.getRequestScope().remove("authenticationFlowInterruptFinalized");
+    }
 }

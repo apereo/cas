@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.model.TriStateBoolean;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -23,4 +25,6 @@ public class DefaultRegisteredServiceWebflowInterruptPolicy implements Registere
     private static final long serialVersionUID = -9011530431859480167L;
 
     private boolean enabled = true;
+
+    private TriStateBoolean forceExecution = TriStateBoolean.UNDEFINED;
 }

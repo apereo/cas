@@ -1,0 +1,7 @@
+{
+  "casuser" : {
+    "message" : "We interrupted your login. Note that SSO is marked as disabled, but interrupts are configured to execute after SSO",
+    "ssoEnabled" : false,
+    "interrupt" : true
+  }
+}

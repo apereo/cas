@@ -10,6 +10,7 @@ import org.apereo.cas.interrupt.webflow.actions.InquireInterruptAction;
 import org.apereo.cas.interrupt.webflow.actions.PrepareInterruptViewAction;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -40,6 +41,10 @@ import org.springframework.webflow.execution.Action;
 public class CasInterruptWebflowConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("interruptCookieGenerator")
+    private ObjectProvider<CasCookieBuilder> interruptCookieGenerator;
 
     @Autowired
     @Qualifier("interruptInquirer")
@@ -80,7 +85,8 @@ public class CasInterruptWebflowConfiguration {
     @Bean
     @RefreshScope
     public Action inquireInterruptAction() {
-        return new InquireInterruptAction(interruptInquirer.getObject().getInterruptInquirers(), casProperties);
+        return new InquireInterruptAction(interruptInquirer.getObject().getInterruptInquirers(),
+            casProperties, interruptCookieGenerator.getObject());
     }
 
     @ConditionalOnMissingBean(name = "prepareInterruptViewAction")
@@ -94,7 +100,7 @@ public class CasInterruptWebflowConfiguration {
     @Bean
     @RefreshScope
     public Action finalizeInterruptFlowAction() {
-        return new FinalizeInterruptFlowAction();
+        return new FinalizeInterruptFlowAction(interruptCookieGenerator.getObject());
     }
 
     @Bean

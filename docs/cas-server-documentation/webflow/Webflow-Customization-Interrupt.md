@@ -34,6 +34,14 @@ Support is enabled by including the following dependency in the WAR overlay:
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-interrupt-webflow" %}
 
 {% include_cached casproperties.html properties="cas.interrupt.core" %}
+      
+## Tracking Interrupts
+
+The execution of the interrupt inquiry is tracked and remembered as a dedicated CAS cookie and under a specific 
+authentication attribute. The calculation of the inquiry trigger would take into account both options, depending on
+whether interrupt is set to trigger after authentication or single sign-on.
+
+{% include_cached casproperties.html properties="cas.interrupt.cookie" %}
 
 ## Interrupt Payload
 
@@ -97,7 +105,7 @@ Interrupt queries can be executed via the following ways:
 | REST                | [See this guide](Webflow-Customization-Interrupt-REST.html).   
 | Custom              | [See this guide](Webflow-Customization-Interrupt-Custom.html).   
 
-## Application Interrupt Policy
+## Interrupt Policy Per Service
 
 Application definitions may be assigned a dedicated webflow interrupt policy. A sample JSON file follows:
 
@@ -109,7 +117,8 @@ Application definitions may be assigned a dedicated webflow interrupt policy. A 
   "id" : 100,
   "webflowInterruptPolicy" : {
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy",
-    "enabled": true
+    "enabled": true,
+    "forceExecution": "TRUE"
   }
 }
 ```
@@ -119,11 +128,12 @@ The following policy settings are supported:
 | Field               | Description                                           
 |---------------------------------------------------------------------------------------------------------------
 | `enabled`           | Whether interrupt notifications are enabled for this application. Default is `true`.
+| `forceExecution`    | Whether execution should proceed anyway regardless whether the flow/user is already interrupted. Accepted values are `TRUE`, `FALSE` or `UNDEFINED`.
 
 ## Skipping Interrupts
 
 <div class="alert alert-warning"><strong>Usage</strong>
-<p><strong>This option is deprecated and is scheduled to be removed in the future.</strong>. Consider
+<p><strong>This option is deprecated and is scheduled to be removed in the future</strong>. Consider
 assigning a dedicated interrupt policy to the application definition instead.</p>
 </div>
 
