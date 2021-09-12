@@ -53,4 +53,10 @@ public class InterruptProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private InterruptCoreProperties core = new InterruptCoreProperties();
+
+    /**
+     * Cookie settings.
+     */
+    @NestedConfigurationProperty
+    private InterruptCookieProperties cookie = new InterruptCookieProperties();
 }

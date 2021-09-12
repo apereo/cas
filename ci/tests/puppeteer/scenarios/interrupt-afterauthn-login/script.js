@@ -8,7 +8,6 @@ const cas = require('../../cas.js');
     await page.goto("https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "Mellon");
     await cas.loginDuoSecurityBypassCode(page, 'universal-prompt');
-
     console.log(`Duo Security authentication should now be complete`);
     console.log("Checking for page URL...")
     console.log(await page.url())

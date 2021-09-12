@@ -78,7 +78,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     private RegisteredServiceSingleSignOnParticipationPolicy singleSignOnParticipationPolicy;
 
-    private RegisteredServiceWebflowInterruptPolicy webflowInterruptPolicy;
+    private RegisteredServiceWebflowInterruptPolicy webflowInterruptPolicy = new DefaultRegisteredServiceWebflowInterruptPolicy();
     
     private int evaluationOrder;
 
@@ -170,6 +170,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         this.acceptableUsagePolicy = ObjectUtils.defaultIfNull(this.acceptableUsagePolicy, new DefaultRegisteredServiceAcceptableUsagePolicy());
         this.authenticationPolicy = ObjectUtils.defaultIfNull(this.authenticationPolicy, new DefaultRegisteredServiceAuthenticationPolicy());
         this.matchingStrategy = ObjectUtils.defaultIfNull(this.matchingStrategy, new FullRegexRegisteredServiceMatchingStrategy());
+        this.webflowInterruptPolicy = ObjectUtils.defaultIfNull(this.webflowInterruptPolicy, new DefaultRegisteredServiceWebflowInterruptPolicy());
     }
 
     /**
