@@ -63,18 +63,19 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
     /**
      * Endpoint for getting SSO Sessions in JSON format.
      *
-     * @param type the type
+     * @param type     the type
+     * @param username the username
      * @return the sso sessions
      */
     @ReadOperation
     @Operation(summary = "Get all single sign-on sessions with the given type. The functionality provided here requires that the underlying "
         + "ticket registry and store is able to store, maintain and return a collection tickets that represent the single sign-on session. "
         + "You will not be able to collect and review sessions, if the ticket registry does not have this capability",
-        parameters = {@Parameter(name = "type", required = true)})
-    public Map<String, Object> getSsoSessions(@Nullable final String type) {
+        parameters = {@Parameter(name = "type"), @Parameter(name = "username")})
+    public Map<String, Object> getSsoSessions(@Nullable final String type, @Nullable final String username) {
         val sessionsMap = new HashMap<String, Object>();
         val option = Optional.ofNullable(type).map(SsoSessionReportOptions::valueOf).orElse(SsoSessionReportOptions.ALL);
-        val activeSsoSessions = getActiveSsoSessions(option);
+        val activeSsoSessions = getActiveSsoSessions(option, username);
         sessionsMap.put("activeSsoSessions", activeSsoSessions);
         val totalTicketGrantingTickets = new AtomicLong();
         val totalProxyGrantingTickets = new AtomicLong();
@@ -159,7 +160,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
         val sessionsMap = new HashMap<String, Object>();
         val failedTickets = new HashMap<String, String>();
         val option = SsoSessionReportOptions.valueOf(type);
-        val collection = getActiveSsoSessions(option);
+        val collection = getActiveSsoSessions(option, username);
         collection
             .stream()
             .map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.getAttributeKey()).toString())
@@ -222,18 +223,14 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
         }
     }
 
-    /**
-     * Gets sso sessions.
-     *
-     * @param option the option
-     * @return the sso sessions
-     */
-    private Collection<Map<String, Object>> getActiveSsoSessions(final SsoSessionReportOptions option) {
+    private Collection<Map<String, Object>> getActiveSsoSessions(final SsoSessionReportOptions option,
+                                                                 final String username) {
         val dateFormat = new ISOStandardDateFormat();
         return getNonExpiredTicketGrantingTickets()
             .stream()
             .map(TicketGrantingTicket.class::cast)
             .filter(tgt -> !(option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null))
+            .filter(tgt -> StringUtils.isBlank(username) || StringUtils.equalsIgnoreCase(username, tgt.getAuthentication().getPrincipal().getId()))
             .map(tgt -> {
                 val authentication = tgt.getAuthentication();
                 val principal = authentication.getPrincipal();
