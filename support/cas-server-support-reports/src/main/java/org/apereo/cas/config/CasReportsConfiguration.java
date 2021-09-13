@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
@@ -59,6 +60,10 @@ import java.util.List;
 @Configuration(value = "casReportsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasReportsConfiguration {
+    @Autowired
+    @Qualifier("defaultSingleLogoutRequestExecutor")
+    private ObjectProvider<SingleLogoutRequestExecutor> defaultSingleLogoutRequestExecutor;
+
     @Autowired
     @Qualifier("casRuntimeModuleLoader")
     private ObjectProvider<CasRuntimeModuleLoader> casRuntimeModuleLoader;
@@ -157,7 +162,8 @@ public class CasReportsConfiguration {
     @Bean
     @ConditionalOnAvailableEndpoint
     public SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint() {
-        return new SingleSignOnSessionsEndpoint(centralAuthenticationService.getObject(), casProperties);
+        return new SingleSignOnSessionsEndpoint(centralAuthenticationService.getObject(),
+            casProperties, defaultSingleLogoutRequestExecutor.getObject());
     }
 
     @Bean
