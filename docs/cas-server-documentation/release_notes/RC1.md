@@ -138,6 +138,7 @@ consequence, interrupt policies are now able to determine whether executions sho
 - Okta SDK
 - Duo Security
 - Groovy
+- JGit
 - JUnit
 - Thymeleaf Dialect
 - Mockito
