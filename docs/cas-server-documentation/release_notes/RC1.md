@@ -113,17 +113,19 @@ conditionally [on a per-application basis](../ux/User-Interface-Customization-Lo
 
 Application definitions [can now be assigned](../webflow/Webflow-Customization-Interrupt.html) a dedicated webflow interrupt policy
 to manage and handle interrupt notifications on a per-service basis. This is the preferred and recommended strategy going forward,
-and other options/properties that skip/disable interrupts for applications are now deprecated and scheduled to be removed.  
+and other options/properties that skip/disable interrupts for applications are now deprecated and scheduled to be removed. As a
+consequence, interrupt policies are now able to determine whether executions should be always forced, globally or at the service level.
 
 ## Other Stuff
 
 - SAML2 Unsolicited endpoint is now able to preserve custom query parameters.
+- [SSO sessions endpoint](../authentication/Configuring-SSO.html) is now able to narrow down SSO sessions for a specific user.
 - Signing SAML2 assertions can now honor the `WantAssertionsSigned` flag in the service provider metadata.
 - LDAP search entry handlers are now able to merges the values of one or more attributes in all entries into a single attribute.
 - SAML2 authentication requests that do not specify a protocol binding are pre-processed to locate the proper binding correctly.
 - Attribute resolution via Person Directory can optionally be taught to *not* recover from exceptions and block.
 - Default redirect URLs can now also be used for logout attempts, when no authorized destination is defined.
-- Deleting ticket-granting tickets [via REST](../protocol/REST-Protocol-Request-TicketGrantingTicket.html) is now able to initiate SLO.
+- Deleting ticket-granting tickets [via REST](../protocol/REST-Protocol-Request-TicketGrantingTicket.html) should now initiate SLO.
 
 ## Library Upgrades
 
@@ -136,6 +138,7 @@ and other options/properties that skip/disable interrupts for applications are n
 - Okta SDK
 - Duo Security
 - Groovy
+- JUnit
 - Thymeleaf Dialect
 - Mockito
 - CosmosDb

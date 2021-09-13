@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -70,7 +71,8 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
 
     @Test
     public void verifyOperation() {
-        var results = singleSignOnSessionsEndpoint.getSsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType());
+        var results = singleSignOnSessionsEndpoint.getSsoSessions(
+            SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType(), StringUtils.EMPTY);
         assertFalse(results.isEmpty());
         assertTrue(results.containsKey("totalUsageCount"));
         assertTrue(results.containsKey("activeSsoSessions"));
@@ -99,9 +101,10 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
         val tgt = new MockTicketGrantingTicket("casuser");
         tgt.setProxiedBy(CoreAuthenticationTestUtils.getWebApplicationService());
         centralAuthenticationService.addTicket(tgt);
-        var results = singleSignOnSessionsEndpoint.getSsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType());
+        var results = singleSignOnSessionsEndpoint.getSsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType(),
+            StringUtils.EMPTY);
         assertFalse(results.isEmpty());
-        results = singleSignOnSessionsEndpoint.getSsoSessions(null);
+        results = singleSignOnSessionsEndpoint.getSsoSessions(StringUtils.EMPTY, StringUtils.EMPTY);
         assertFalse(results.isEmpty());
     }
 
@@ -110,9 +113,10 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
         val tgt = new MockTicketGrantingTicket("casuser");
         tgt.setProxiedBy(CoreAuthenticationTestUtils.getWebApplicationService());
         centralAuthenticationService.addTicket(tgt);
-        var results = singleSignOnSessionsEndpoint.getSsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.DIRECT.getType());
+        var results = singleSignOnSessionsEndpoint.getSsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.DIRECT.getType(),
+            StringUtils.EMPTY);
         assertFalse(results.isEmpty());
-        results = singleSignOnSessionsEndpoint.getSsoSessions(null);
+        results = singleSignOnSessionsEndpoint.getSsoSessions(StringUtils.EMPTY, StringUtils.EMPTY);
         assertFalse(results.isEmpty());
     }
 
