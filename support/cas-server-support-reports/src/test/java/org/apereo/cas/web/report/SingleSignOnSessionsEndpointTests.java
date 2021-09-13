@@ -3,6 +3,7 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 
 import lombok.val;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
@@ -39,6 +42,10 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
     private SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint;
 
     @Autowired
+    @Qualifier("defaultSingleLogoutRequestExecutor")
+    private SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor;
+
+    @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
@@ -52,19 +59,23 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
 
     @Test
     public void verifyDelete() {
-        var results = singleSignOnSessionsEndpoint.destroySsoSessions(null, null);
+        var results = singleSignOnSessionsEndpoint.destroySsoSessions(StringUtils.EMPTY, StringUtils.EMPTY,
+            new MockHttpServletRequest(), new MockHttpServletResponse());
         assertEquals(HttpStatus.BAD_REQUEST.value(), results.get("status"));
-        results = singleSignOnSessionsEndpoint.destroySsoSessions(null, CoreAuthenticationTestUtils.CONST_USERNAME);
+        results = singleSignOnSessionsEndpoint.destroySsoSessions(null, CoreAuthenticationTestUtils.CONST_USERNAME,
+            new MockHttpServletRequest(), new MockHttpServletResponse());
         assertFalse(results.isEmpty());
 
-        results = singleSignOnSessionsEndpoint.destroySsoSession("unknown-ticket");
+        results = singleSignOnSessionsEndpoint.destroySsoSession("unknown-ticket",
+            new MockHttpServletRequest(), new MockHttpServletResponse());
         assertTrue(results.containsKey("status"));
-        assertTrue(results.containsKey("message"));
         assertTrue(results.containsKey("ticketGrantingTicket"));
 
         val authResult = CoreAuthenticationTestUtils.getAuthenticationResult();
         centralAuthenticationService.createTicketGrantingTicket(authResult);
-        results = singleSignOnSessionsEndpoint.destroySsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType(), null);
+        results = singleSignOnSessionsEndpoint.destroySsoSessions(
+            SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType(), null,
+            new MockHttpServletRequest(), new MockHttpServletResponse());
         assertFalse(results.isEmpty());
         assertNotNull(singleSignOnSessionsEndpoint.toString());
     }
@@ -86,12 +97,13 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
 
         val tgt = Map.class.cast(sessions.get(0))
             .get(SingleSignOnSessionsEndpoint.SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.getAttributeKey()).toString();
-        results = singleSignOnSessionsEndpoint.destroySsoSession(tgt);
+        results = singleSignOnSessionsEndpoint.destroySsoSession(tgt, new MockHttpServletRequest(), new MockHttpServletResponse());
         assertFalse(results.isEmpty());
         assertTrue(results.containsKey("status"));
         assertTrue(results.containsKey("ticketGrantingTicket"));
 
-        results = singleSignOnSessionsEndpoint.destroySsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType(), null);
+        results = singleSignOnSessionsEndpoint.destroySsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType(),
+            null, new MockHttpServletRequest(), new MockHttpServletResponse());
         assertEquals(1, results.size());
         assertTrue(results.containsKey("status"));
     }
@@ -104,7 +116,7 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
         var results = singleSignOnSessionsEndpoint.getSsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType(),
             StringUtils.EMPTY);
         assertFalse(results.isEmpty());
-        results = singleSignOnSessionsEndpoint.getSsoSessions(StringUtils.EMPTY, StringUtils.EMPTY);
+        results = singleSignOnSessionsEndpoint.getSsoSessions(null, null);
         assertFalse(results.isEmpty());
     }
 
@@ -116,7 +128,7 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
         var results = singleSignOnSessionsEndpoint.getSsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.DIRECT.getType(),
             StringUtils.EMPTY);
         assertFalse(results.isEmpty());
-        results = singleSignOnSessionsEndpoint.getSsoSessions(StringUtils.EMPTY, StringUtils.EMPTY);
+        results = singleSignOnSessionsEndpoint.getSsoSessions(null, null);
         assertFalse(results.isEmpty());
     }
 
@@ -126,10 +138,10 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
         when(cas.getTickets(any(Predicate.class))).thenReturn(List.of(new MockTicketGrantingTicket("casuser")));
         when(cas.deleteTicket(anyString())).thenThrow(new RuntimeException());
 
-        val results = new SingleSignOnSessionsEndpoint(cas, casProperties).destroySsoSessions(
-            SingleSignOnSessionsEndpoint.SsoSessionReportOptions.DIRECT.getType(), null);
+        val results = new SingleSignOnSessionsEndpoint(cas, casProperties, defaultSingleLogoutRequestExecutor).destroySsoSessions(
+            SingleSignOnSessionsEndpoint.SsoSessionReportOptions.DIRECT.getType(), null,
+            new MockHttpServletRequest(), new MockHttpServletResponse());
         assertFalse(results.isEmpty());
-        assertTrue(results.containsKey("failedTicketGrantingTickets"));
     }
 }
 
