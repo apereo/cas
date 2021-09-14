@@ -7,6 +7,7 @@ import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.rest.audit.RestResponseEntityAuditResourceResolver;
 import org.apereo.cas.rest.authentication.RestAuthenticationService;
 import org.apereo.cas.rest.factory.CasProtocolServiceTicketResourceEntityResponseFactory;
@@ -55,7 +56,10 @@ import java.util.List;
 @Configuration("casRestConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasRestConfiguration {
-
+    @Autowired
+    @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
+    private ObjectProvider<LogoutManager> logoutManager;
+    
     @Autowired
     @Qualifier("restAuthenticationService")
     private ObjectProvider<RestAuthenticationService> restAuthenticationService;
@@ -136,7 +140,8 @@ public class CasRestConfiguration {
         return new TicketGrantingTicketResource(restAuthenticationService.getObject(),
             centralAuthenticationService.getObject(),
             ticketGrantingTicketResourceEntityResponseFactory(),
-            applicationContext);
+            applicationContext,
+            logoutManager.getObject());
     }
 
     @Bean
