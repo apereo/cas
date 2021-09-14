@@ -33,7 +33,7 @@ import java.time.ZonedDateTime;
 public class JpaTicketEntity implements Serializable {
     private static final long serialVersionUID = 6534421912995436609L;
 
-    @Column(nullable = false, length = 12_000)
+    @Column(nullable = false, length = 32_000)
     private String body;
 
     @Column(nullable = false, length = 768)
