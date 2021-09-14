@@ -68,7 +68,11 @@ public class AccountManagementWebflowConfigurer extends AbstractCasWebflowConfig
             WebUtils.putAccountManagementRegistrationSecurityQuestionsCount(context, properties.getCore().getSecurityQuestionsCount());
         }));
 
-        createTransitionForState(completeView, CasWebflowConstants.TRANSITION_ID_SUBMIT, "accountRegistrationCompletedView");
+        createTransitionForState(completeView, CasWebflowConstants.TRANSITION_ID_SUBMIT, "finalizeRegistrationRequest");
+        val finalize = createActionState(acctRegFlow, "finalizeRegistrationRequest", "finalizeAccountRegistrationRequestAction");
+        createTransitionForState(finalize, CasWebflowConstants.TRANSITION_ID_SUCCESS, "accountRegistrationCompletedView");
+        createTransitionForState(finalize, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_COMPLETE_ACCOUNT_REGISTRATION);
+
         val completedView = createViewState(acctRegFlow, "accountRegistrationCompletedView", "acct-mgmt/casAccountSignupViewCompleted");
         createStateDefaultTransition(completedView, "accountRegistrationCompleted");
          

@@ -8,8 +8,11 @@ import org.apereo.cas.acct.AccountRegistrationTokenCipherExecutor;
 import org.apereo.cas.acct.AccountRegistrationUsernameBuilder;
 import org.apereo.cas.acct.DefaultAccountRegistrationPropertyLoader;
 import org.apereo.cas.acct.DefaultAccountRegistrationService;
+import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
+import org.apereo.cas.acct.provision.RestfulAccountRegistrationProvisioner;
 import org.apereo.cas.acct.webflow.AccountManagementRegistrationCaptchaWebflowConfigurer;
 import org.apereo.cas.acct.webflow.AccountManagementWebflowConfigurer;
+import org.apereo.cas.acct.webflow.FinalizeAccountRegistrationAction;
 import org.apereo.cas.acct.webflow.LoadAccountRegistrationPropertiesAction;
 import org.apereo.cas.acct.webflow.SubmitAccountRegistrationAction;
 import org.apereo.cas.acct.webflow.ValidateAccountRegistrationTokenAction;
@@ -147,7 +150,16 @@ public class CasAccountManagementWebflowConfiguration {
     @ConditionalOnMissingBean(name = "accountMgmtRegistrationService")
     public AccountRegistrationService accountMgmtRegistrationService() {
         return new DefaultAccountRegistrationService(accountMgmtRegistrationPropertyLoader(),
-            casProperties, accountMgmtCipherExecutor(), accountRegistrationUsernameBuilder());
+            casProperties, accountMgmtCipherExecutor(),
+            accountRegistrationUsernameBuilder(),
+            accountMgmtRegistrationProvisioner());
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "accountMgmtRegistrationProvisioner")
+    public AccountRegistrationProvisioner accountMgmtRegistrationProvisioner() {
+        return new RestfulAccountRegistrationProvisioner();
     }
 
     @Bean
@@ -170,6 +182,14 @@ public class CasAccountManagementWebflowConfiguration {
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_VALIDATE_ACCOUNT_REGISTRATION_TOKEN)
     public Action validateAccountRegistrationTokenAction() {
         return new ValidateAccountRegistrationTokenAction(centralAuthenticationService.getObject(), accountMgmtRegistrationService());
+    }
+
+
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "finalizeAccountRegistrationRequestAction")
+    @Bean
+    public Action finalizeAccountRegistrationRequestAction() {
+        return new FinalizeAccountRegistrationAction(accountMgmtRegistrationService());
     }
 
     @ConditionalOnMissingBean(name = "accountRegistrationAuditTrailRecordResolutionPlanConfigurer")
