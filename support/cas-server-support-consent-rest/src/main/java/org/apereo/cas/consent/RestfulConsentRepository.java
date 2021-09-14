@@ -25,13 +25,13 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * This is {@link RestConsentRepository}.
+ * This is {@link RestfulConsentRepository}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @RequiredArgsConstructor
-public class RestConsentRepository implements ConsentRepository {
+public class RestfulConsentRepository implements ConsentRepository {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true)
         .build()

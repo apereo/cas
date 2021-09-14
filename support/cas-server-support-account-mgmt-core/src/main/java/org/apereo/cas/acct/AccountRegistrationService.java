@@ -1,5 +1,7 @@
 package org.apereo.cas.acct;
 
+import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
+
 /**
  * This is {@link AccountRegistrationService}.
  *
@@ -20,6 +22,13 @@ public interface AccountRegistrationService {
      * @return the account registration username builder
      */
     AccountRegistrationUsernameBuilder getAccountRegistrationUsernameBuilder();
+
+    /**
+     * Gets account registration provisioner.
+     *
+     * @return the account registration provisioner
+     */
+    AccountRegistrationProvisioner getAccountRegistrationProvisioner();
 
     /**
      * Create token.

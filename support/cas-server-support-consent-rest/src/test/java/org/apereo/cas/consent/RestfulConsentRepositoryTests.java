@@ -35,14 +35,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link RestConsentRepositoryTests}.
+ * This is {@link RestfulConsentRepositoryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Tag("RestfulApi")
 @SpringBootTest(classes = {
-    RestConsentRepositoryTests.RestConsentRepositoryTestConfiguration.class,
+    RestfulConsentRepositoryTests.RestConsentRepositoryTestConfiguration.class,
     CasConsentRestConfiguration.class,
     BaseConsentRepositoryTests.SharedTestConfiguration.class
 }, properties = {
@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @Getter
 @EnableAutoConfiguration
-public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
+public class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
