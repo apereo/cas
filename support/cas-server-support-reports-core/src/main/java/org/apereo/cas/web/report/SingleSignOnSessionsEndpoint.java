@@ -119,7 +119,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
     public Map<String, Object> getSsoSessions(@Nullable @RequestParam(name = "type", required = false) final String type,
                                               @Nullable @RequestParam(name = "username", required = false) final String username) {
         val sessionsMap = new HashMap<String, Object>();
-        val option = SsoSessionReportOptions.valueOf(type);
+        val option = Optional.ofNullable(type).map(SsoSessionReportOptions::valueOf).orElse(SsoSessionReportOptions.ALL);
         val activeSsoSessions = getActiveSsoSessions(option, username);
         sessionsMap.put("activeSsoSessions", activeSsoSessions);
         val totalTicketGrantingTickets = new AtomicLong();
