@@ -220,7 +220,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
             .build();
         val manager = new DefaultServicesManager(config);
 
-        // Service "https://prod.test.edu", low evaluationOrder (high priority), active in "current-env".
+        /* Service "https://prod.test.edu", low evaluationOrder (high priority), active in "current-env". */
         val prodTestEduService = new RegexRegisteredService();
         prodTestEduService.setServiceId("https://prod\\.test\\.edu.*");
         prodTestEduService.setId(RandomUtils.nextLong());
@@ -228,7 +228,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         prodTestEduService.setEvaluationOrder(0);
         prodTestEduService.setEnvironments(new HashSet<>(Collections.singleton("current-env")));
 
-        // Service "https://*.test.edu", high evaluationOrder (low priority), NOT active in "current-env".
+        /* Service "https://*.test.edu", high evaluationOrder (low priority), NOT active in "current-env". */
         val anyTestEduService = new RegexRegisteredService();
         anyTestEduService.setServiceId("https://[^.]+\\.test\\.edu.*");
         anyTestEduService.setId(RandomUtils.nextLong());
@@ -236,19 +236,21 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         anyTestEduService.setEvaluationOrder(1000);
         anyTestEduService.setEnvironments(new HashSet<>(Collections.singleton("non-current-env")));
 
-        // Initialize the service manager.
+        /* Initialize the service manager. */
         serviceRegistry.save(prodTestEduService);
         serviceRegistry.save(anyTestEduService);
         manager.load();
 
-        // Always worked: request for https://prod.test.edu before any request for https://[anything else].test.edu.
+        /* Always worked: request for https://prod.test.edu before any request for https://[anything else].test.edu. */
         var foundService = manager.findServiceBy(serviceFactory.createService("https://prod.test.edu"));
         assertSame(prodTestEduService, foundService);
 
-        // Now clear the cache and try the previous failure case: request for https://prod.test.edu comes after any
-        // request for https://[anything else].test.edu. Previously this would fail because https://*.test.edu matches
-        // https://prod.test.edu and exists in cache even though it is not associated with current-env. Null would have
-        // been returned.
+        /*
+         * Now clear the cache and try the previous failure case: request for https://prod.test.edu comes after any
+         * request for https://[anything else].test.edu. Previously this would fail because https://*.test.edu matches
+         * https://prod.test.edu and exists in cache even though it is not associated with current-env. Null would have
+         * been returned.
+         */
         cache.invalidateAll();
         foundService = manager.findServiceBy(serviceFactory.createService("https://not-prod.test.edu"));
         assertNull(foundService);
