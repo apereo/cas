@@ -59,6 +59,10 @@ public class SubmitAccountRegistrationAction extends AbstractAction {
                 registrationRequest.putProperty(entry.getName(), value);
             });
 
+            val username = accountRegistrationService.getAccountRegistrationUsernameBuilder().build(registrationRequest);
+            AccountRegistrationUtils.putAccountRegistrationRequest(requestContext, registrationRequest);
+            AccountRegistrationUtils.putAccountRegistrationRequestUsername(requestContext, username);
+
             val url = createAccountRegistrationActivationUrl(registrationRequest);
             val sendEmail = sendAccountRegistrationActivationEmail(registrationRequest, url, requestContext);
             val sendSms = sendAccountRegistrationActivationSms(registrationRequest, url);
@@ -141,8 +145,7 @@ public class SubmitAccountRegistrationAction extends AbstractAction {
     protected String createAccountRegistrationActivationUrl(final AccountRegistrationRequest registrationRequest) throws Exception {
         val token = accountRegistrationService.createToken(registrationRequest);
         val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
-        val properties = CollectionUtils.<String, Serializable>wrap(
-            AccountRegistrationUtils.PROPERTY_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, token);
+        val properties = CollectionUtils.<String, Serializable>wrap(AccountRegistrationUtils.PROPERTY_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, token);
         val ticket = transientFactory.create((Service) null, properties);
         ticketRegistry.addTicket(ticket);
         return new URIBuilder(casProperties.getServer().getLoginUrl())

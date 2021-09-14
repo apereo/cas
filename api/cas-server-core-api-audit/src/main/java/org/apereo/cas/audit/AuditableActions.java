@@ -149,4 +149,9 @@ public interface AuditableActions {
      * Auditable action {@code REQUEST_FORGOT_USERNAME}.
      */
     String REQUEST_FORGOT_USERNAME = "REQUEST_FORGOT_USERNAME";
+
+    /**
+     * Auditable action {@code ACCOUNT_REGISTRATION}.
+     */
+    String ACCOUNT_REGISTRATION = "ACCOUNT_REGISTRATION";
 }
