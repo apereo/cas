@@ -1,8 +1,10 @@
 package org.apereo.cas.web.report;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DateTimeUtils;
@@ -16,18 +18,21 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
-import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
-import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
-import org.springframework.boot.actuate.endpoint.annotation.Selector;
+import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -41,7 +46,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @ToString
 @Getter
-@Endpoint(id = "ssoSessions", enableByDefault = false)
+@RestControllerEndpoint(id = "ssoSessions", enableByDefault = false)
 public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
 
     private static final String STATUS = "status";
@@ -50,24 +55,24 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
 
     private final CentralAuthenticationService centralAuthenticationService;
 
+    private final LogoutManager logoutManager;
+
     public SingleSignOnSessionsEndpoint(final CentralAuthenticationService centralAuthenticationService,
-                                        final CasConfigurationProperties casProperties) {
+                                        final CasConfigurationProperties casProperties,
+                                        final LogoutManager logoutManager) {
         super(casProperties);
         this.centralAuthenticationService = centralAuthenticationService;
+        this.logoutManager = logoutManager;
     }
-
-    /**
-     * Gets sso sessions.
-     *
-     * @param option the option
-     * @return the sso sessions
-     */
-    private Collection<Map<String, Object>> getActiveSsoSessions(final SsoSessionReportOptions option) {
+    
+    private Collection<Map<String, Object>> getActiveSsoSessions(final SsoSessionReportOptions option,
+                                                                 final String username) {
         val dateFormat = new ISOStandardDateFormat();
         return getNonExpiredTicketGrantingTickets()
             .stream()
             .map(TicketGrantingTicket.class::cast)
             .filter(tgt -> !(option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null))
+            .filter(tgt -> StringUtils.isBlank(username) || StringUtils.equalsIgnoreCase(username, tgt.getAuthentication().getPrincipal().getId()))
             .map(tgt -> {
                 val authentication = tgt.getAuthentication();
                 val principal = authentication.getPrincipal();
@@ -106,14 +111,16 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
     /**
      * Endpoint for getting SSO Sessions in JSON format.
      *
-     * @param type the type
+     * @param type     the type
+     * @param username the username
      * @return the sso sessions
      */
-    @ReadOperation
-    public Map<String, Object> getSsoSessions(final String type) {
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> getSsoSessions(@Nullable @RequestParam(name = "type", required = false) final String type,
+                                              @Nullable @RequestParam(name = "username", required = false) final String username) {
         val sessionsMap = new HashMap<String, Object>();
         val option = SsoSessionReportOptions.valueOf(type);
-        val activeSsoSessions = getActiveSsoSessions(option);
+        val activeSsoSessions = getActiveSsoSessions(option, username);
         sessionsMap.put("activeSsoSessions", activeSsoSessions);
         val totalTicketGrantingTickets = new AtomicLong();
         val totalProxyGrantingTickets = new AtomicLong();
@@ -149,18 +156,28 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * Endpoint for destroying a single SSO Session.
      *
      * @param ticketGrantingTicket the ticket granting ticket
+     * @param request              the request
+     * @param response             the response
      * @return result map
      */
-    @DeleteOperation
-    public Map<String, Object> destroySsoSession(@Selector final String ticketGrantingTicket) {
-
+    @DeleteMapping(path = "/{ticketGrantingTicket}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> destroySsoSession(@PathVariable final String ticketGrantingTicket,
+                                                 final HttpServletRequest request,
+                                                 final HttpServletResponse response) {
         val sessionsMap = new HashMap<String, Object>(1);
         try {
-            if (centralAuthenticationService.deleteTicket(ticketGrantingTicket) == 0) {
-                throw new InvalidTicketException(ticketGrantingTicket);
-            }
+
+            val ticket = centralAuthenticationService.getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
+            AuthenticationCredentialsThreadLocalBinder.bindCurrent(ticket.getAuthentication());
+            val sloRequests = logoutManager.performLogout(
+                SingleLogoutExecutionRequest.builder()
+                    .ticketGrantingTicket(ticket)
+                    .httpServletRequest(Optional.of(request))
+                    .httpServletResponse(Optional.of(response))
+                    .build());
             sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
             sessionsMap.put(TICKET_GRANTING_TICKET, ticketGrantingTicket);
+            sessionsMap.put("singleLogoutRequests", sloRequests);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             sessionsMap.put(STATUS, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -175,10 +192,15 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      *
      * @param type     the type
      * @param username the username
+     * @param request  the request
+     * @param response the response
      * @return the map
      */
-    @DeleteOperation
-    public Map<String, Object> destroySsoSessions(@Nullable final String type, @Nullable final String username) {
+    @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> destroySsoSessions(@Nullable @RequestParam(name = "type", required = false) final String type,
+                                                  @Nullable @RequestParam(name = "username", required = false) final String username,
+                                                  final HttpServletRequest request,
+                                                  final HttpServletResponse response) {
         if (StringUtils.isBlank(username) && StringUtils.isBlank(type)) {
             return Map.of(STATUS, HttpServletResponse.SC_BAD_REQUEST);
         }
@@ -187,31 +209,18 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
             val sessionsMap = new HashMap<String, Object>(1);
             val tickets = centralAuthenticationService.getTickets(ticket -> ticket instanceof TicketGrantingTicket
                 && ((TicketGrantingTicket) ticket).getAuthentication().getPrincipal().getId().equalsIgnoreCase(username));
-            tickets.forEach(ticket -> sessionsMap.put(ticket.getId(), destroySsoSession(ticket.getId())));
+            tickets.forEach(ticket -> sessionsMap.put(ticket.getId(), destroySsoSession(ticket.getId(), request, response)));
             return sessionsMap;
         }
 
         val sessionsMap = new HashMap<String, Object>();
-        val failedTickets = new HashMap<String, String>();
         val option = SsoSessionReportOptions.valueOf(type);
-        val collection = getActiveSsoSessions(option);
+        val collection = getActiveSsoSessions(option, username);
         collection
             .stream()
             .map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.getAttributeKey()).toString())
-            .forEach(ticketGrantingTicket -> {
-                try {
-                    centralAuthenticationService.deleteTicket(ticketGrantingTicket);
-                } catch (final Exception e) {
-                    LoggingUtils.error(LOGGER, e);
-                    failedTickets.put(ticketGrantingTicket, e.getMessage());
-                }
-            });
-        if (failedTickets.isEmpty()) {
-            sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
-        } else {
-            sessionsMap.put(STATUS, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            sessionsMap.put("failedTicketGrantingTickets", failedTickets);
-        }
+            .forEach(ticketGrantingTicket -> destroySsoSession(ticketGrantingTicket, request, response));
+        sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
         return sessionsMap;
     }
 

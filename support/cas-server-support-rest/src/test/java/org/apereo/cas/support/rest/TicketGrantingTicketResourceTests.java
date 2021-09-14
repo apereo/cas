@@ -10,6 +10,8 @@ import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.rest.factory.DefaultTicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
@@ -25,10 +27,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.support.GenericWebApplicationContext;
 
 import javax.security.auth.login.LoginException;
 import java.util.HashMap;
@@ -72,11 +74,13 @@ public class TicketGrantingTicketResourceTests {
         lenient().when(manager.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         lenient().when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         this.ticketGrantingTicketResourceUnderTest = new TicketGrantingTicketResource(
             new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(publisher, manager),
                 new DefaultPrincipalElectionStrategy()), new UsernamePasswordRestHttpRequestCredentialFactory(),
             casMock, new WebApplicationServiceFactory(), new DefaultTicketGrantingTicketResourceEntityResponseFactory(),
-            new GenericWebApplicationContext());
+            applicationContext, mock(LogoutManager.class));
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketGrantingTicketResourceUnderTest)
             .defaultRequest(get("/")
@@ -192,6 +196,8 @@ public class TicketGrantingTicketResourceTests {
 
     @Test
     public void deletionOfTGT() throws Exception {
+        val tgt = new MockTicketGrantingTicket("casuser");
+        when(this.casMock.getTicket(anyString(), any())).thenReturn(tgt);
         this.mockMvc.perform(delete(TICKETS_RESOURCE_URL + "/TGT-1")).andExpect(status().isOk());
     }
 

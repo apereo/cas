@@ -1,12 +1,16 @@
 package org.apereo.cas.support.rest.resources;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.rest.BadRestRequestException;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
+import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.LoggingUtils;
 
@@ -26,6 +30,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 /**
  * {@link RestController} implementation of CAS' REST API.
@@ -58,6 +64,8 @@ public class TicketGrantingTicketResource {
     private final TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory;
 
     private final ApplicationContext applicationContext;
+
+    private final LogoutManager logoutManager;
 
     /**
      * Reject get response.
@@ -96,13 +104,27 @@ public class TicketGrantingTicketResource {
     /**
      * Destroy ticket granting ticket.
      *
-     * @param tgtId ticket granting ticket id URI path param
-     * @return {@link ResponseEntity} representing RESTful response. Signals
-     * {@link HttpStatus#OK} when successful.
+     * @param tgtId    ticket granting ticket id URI path param
+     * @param request  the request
+     * @param response the response
+     * @return {@link ResponseEntity} representing RESTful response. Signals {@link HttpStatus#OK} when successful.
      */
     @DeleteMapping(value = RestProtocolConstants.ENDPOINT_TICKETS + "/{tgtId:.+}")
-    public ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
-        this.centralAuthenticationService.deleteTicket(tgtId);
+    public ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId,
+                                                             final HttpServletRequest request,
+                                                             final HttpServletResponse response) {
+        LOGGER.trace("Removing ticket [{}] from registry...", tgtId);
+        val ticket = centralAuthenticationService.getTicket(tgtId, TicketGrantingTicket.class);
+        LOGGER.debug("Ticket [{}] found. Processing logout requests and then deleting the ticket...", ticket.getId());
+        AuthenticationCredentialsThreadLocalBinder.bindCurrent(ticket.getAuthentication());
+        logoutManager.performLogout(
+            SingleLogoutExecutionRequest.builder()
+                .ticketGrantingTicket(ticket)
+                .httpServletRequest(Optional.of(request))
+                .httpServletResponse(Optional.of(response))
+                .build());
+        centralAuthenticationService.deleteTicket(tgtId);
+        applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, ticket));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
