@@ -1,5 +1,8 @@
 package org.apereo.cas.acct;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -9,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
@@ -34,6 +38,9 @@ public class DefaultAccountRegistrationService implements AccountRegistrationSer
 
     private final AccountRegistrationUsernameBuilder accountRegistrationUsernameBuilder;
 
+    @Audit(action = AuditableActions.ACCOUNT_REGISTRATION,
+        actionResolverName = AuditActionResolvers.ACCOUNT_REGISTRATION_TOKEN_VALIDATION_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.ACCOUNT_REGISTRATION_TOKEN_VALIDATION_RESOURCE_RESOLVER)
     @Override
     public AccountRegistrationRequest validateToken(final String token) throws Exception {
         val claimsJson = this.cipherExecutor.decode(token);
@@ -71,6 +78,9 @@ public class DefaultAccountRegistrationService implements AccountRegistrationSer
         return new AccountRegistrationRequest(claims.getClaimsMap());
     }
 
+    @Audit(action = AuditableActions.ACCOUNT_REGISTRATION,
+        actionResolverName = AuditActionResolvers.ACCOUNT_REGISTRATION_TOKEN_CREATION_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.ACCOUNT_REGISTRATION_TOKEN_CREATION_RESOURCE_RESOLVER)
     @Override
     public String createToken(final AccountRegistrationRequest registrationRequest) {
         val token = UUID.randomUUID().toString();

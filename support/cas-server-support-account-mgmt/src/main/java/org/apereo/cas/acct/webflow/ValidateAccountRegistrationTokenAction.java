@@ -43,6 +43,11 @@ public class ValidateAccountRegistrationTokenAction extends AbstractAction {
             val registrationRequest = accountRegistrationService.validateToken(token);
             WebUtils.putAccountManagementRegistrationRequest(requestContext, Objects.requireNonNull(registrationRequest));
             ((TicketState) accountRegTicket).update();
+
+            val username = accountRegistrationService.getAccountRegistrationUsernameBuilder().build(registrationRequest);
+            AccountRegistrationUtils.putAccountRegistrationRequest(requestContext, registrationRequest);
+            AccountRegistrationUtils.putAccountRegistrationRequestUsername(requestContext, username);
+            
             return success(registrationRequest);
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, e);

@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
@@ -372,7 +373,8 @@ public class SamlIdPConfiguration {
     }
 
     @Bean
-    public SamlResponseAuditPrincipalIdProvider samlResponseAuditPrincipalIdProvider() {
+    @ConditionalOnMissingBean(name = "samlResponseAuditPrincipalIdProvider")
+    public AuditPrincipalIdProvider samlResponseAuditPrincipalIdProvider() {
         return new SamlResponseAuditPrincipalIdProvider();
     }
 
