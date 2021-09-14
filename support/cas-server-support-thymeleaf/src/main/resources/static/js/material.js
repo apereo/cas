@@ -64,7 +64,7 @@ function resourceLoadedSuccessfully() {
             $('.pwd').attr('type', 'password');
             $(".reveal-password-icon").removeClass("mdi mdi-eye-off").addClass("mdi mdi-eye");
             ev.preventDefault();
-        })
+        });
 
         $revealpassword.mousedown(function (ev) {
             $('.pwd').attr('type', 'text');
