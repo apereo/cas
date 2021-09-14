@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.acct.AccountRegistrationPropertyLoader;
+import org.apereo.cas.acct.AccountRegistrationRequestAuditPrincipalIdResolver;
 import org.apereo.cas.acct.AccountRegistrationService;
 import org.apereo.cas.acct.AccountRegistrationTokenCipherExecutor;
 import org.apereo.cas.acct.AccountRegistrationUsernameBuilder;
@@ -12,6 +13,11 @@ import org.apereo.cas.acct.webflow.AccountManagementWebflowConfigurer;
 import org.apereo.cas.acct.webflow.LoadAccountRegistrationPropertiesAction;
 import org.apereo.cas.acct.webflow.SubmitAccountRegistrationAction;
 import org.apereo.cas.acct.webflow.ValidateAccountRegistrationTokenAction;
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditPrincipalIdProvider;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditTrailConstants;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.ticket.TicketFactory;
@@ -27,6 +33,9 @@ import org.apereo.cas.web.flow.ValidateCaptchaAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -78,6 +87,10 @@ public class CasAccountManagementWebflowConfiguration {
     @Autowired
     @Qualifier("ticketRegistry")
     private ObjectProvider<TicketRegistry> ticketRegistry;
+
+    @Autowired
+    @Qualifier("returnValueResourceResolver")
+    private ObjectProvider<AuditResourceResolver> returnValueResourceResolver;
 
     @Autowired
     @Qualifier("communicationsManager")
@@ -147,11 +160,34 @@ public class CasAccountManagementWebflowConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "accountMgmtRegistrationAuditPrincipalIdResolver")
+    public AuditPrincipalIdProvider accountMgmtRegistrationAuditPrincipalIdResolver() {
+        return new AccountRegistrationRequestAuditPrincipalIdResolver(accountMgmtRegistrationService());
+    }
+
+    @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_VALIDATE_ACCOUNT_REGISTRATION_TOKEN)
     public Action validateAccountRegistrationTokenAction() {
         return new ValidateAccountRegistrationTokenAction(centralAuthenticationService.getObject(), accountMgmtRegistrationService());
     }
-    
+
+    @ConditionalOnMissingBean(name = "accountRegistrationAuditTrailRecordResolutionPlanConfigurer")
+    @Bean
+    public AuditTrailRecordResolutionPlanConfigurer accountRegistrationAuditTrailRecordResolutionPlanConfigurer() {
+        return plan -> {
+            plan.registerAuditActionResolver(AuditActionResolvers.ACCOUNT_REGISTRATION_TOKEN_VALIDATION_ACTION_RESOLVER,
+                new DefaultAuditActionResolver("_TOKEN" + AuditTrailConstants.AUDIT_ACTION_POSTFIX_VALIDATED, StringUtils.EMPTY));
+            plan.registerAuditResourceResolver(AuditResourceResolvers.ACCOUNT_REGISTRATION_TOKEN_VALIDATION_RESOURCE_RESOLVER,
+                returnValueResourceResolver.getObject());
+
+            plan.registerAuditActionResolver(AuditActionResolvers.ACCOUNT_REGISTRATION_TOKEN_CREATION_ACTION_RESOLVER,
+                new DefaultAuditActionResolver("_TOKEN" + AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, StringUtils.EMPTY));
+            plan.registerAuditResourceResolver(AuditResourceResolvers.ACCOUNT_REGISTRATION_TOKEN_CREATION_RESOURCE_RESOLVER,
+                returnValueResourceResolver.getObject());
+        };
+    }
+
     @ConditionalOnProperty(prefix = "cas.account-registration.google-recaptcha", name = "enabled", havingValue = "true")
     @Configuration(value = "casAccountManagementRegistrationCaptchaConfiguration", proxyBeanMethods = false)
     @DependsOn("accountMgmtWebflowConfigurer")

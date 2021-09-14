@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.acct.AccountRegistrationRequestAuditPrincipalIdResolverTests;
 import org.apereo.cas.acct.AccountRegistrationRequestTests;
 import org.apereo.cas.acct.DefaultAccountRegistrationPropertyLoaderTests;
 import org.apereo.cas.acct.DefaultAccountRegistrationServiceTests;
@@ -25,6 +26,7 @@ import org.junit.platform.suite.api.Suite;
     LoadAccountRegistrationPropertiesActionTests.class,
     DefaultAccountRegistrationPropertyLoaderTests.class,
     SubmitAccountRegistrationActionTests.class,
+    AccountRegistrationRequestAuditPrincipalIdResolverTests.class,
     AccountManagementRegistrationCaptchaWebflowConfigurerTests.class,
     AccountManagementWebflowConfigurerTests.class
 })
