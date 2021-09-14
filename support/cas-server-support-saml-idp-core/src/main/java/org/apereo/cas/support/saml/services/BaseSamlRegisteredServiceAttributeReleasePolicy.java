@@ -5,7 +5,9 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
+import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
@@ -18,6 +20,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.ApplicationContext;
 
@@ -44,13 +47,6 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
         if (registeredService instanceof SamlRegisteredService) {
             val samlRegisteredService = (SamlRegisteredService) registeredService;
 
-            val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-            val entityId = getEntityIdFromRequest(request, selectedService);
-            if (StringUtils.isBlank(entityId)) {
-                LOGGER.warn("Could not locate the entity id for SAML attribute release policy processing");
-                return new HashMap<>(0);
-            }
-
             val applicationContext = ApplicationContextProvider.getApplicationContext();
             if (applicationContext == null) {
                 LOGGER.warn("Could not locate the application context to process attributes");
@@ -58,6 +54,14 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
             }
             val resolver = applicationContext.getBean("defaultSamlRegisteredServiceCachingMetadataResolver",
                 SamlRegisteredServiceCachingMetadataResolver.class);
+
+            val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+            val entityId = getEntityIdFromRequest(request, selectedService, resolver);
+            if (StringUtils.isBlank(entityId)) {
+                LOGGER.warn("Could not locate the entity id for SAML attribute release policy processing");
+                return new HashMap<>(0);
+            }
+            LOGGER.debug("Located final SAML entity id for attribute release as [{}]", entityId);
             val facade = SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlRegisteredService, entityId);
 
             if (facade.isEmpty()) {
@@ -76,17 +80,31 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
         return authorizeReleaseOfAllowedAttributes(principal, attributes, registeredService, selectedService);
     }
 
-    private static String getEntityIdFromRequest(final HttpServletRequest request, final Service selectedService) {
+    private static String getEntityIdFromRequest(final HttpServletRequest request, final Service selectedService,
+                                                 final SamlRegisteredServiceCachingMetadataResolver resolver) {
         if (request == null) {
             LOGGER.debug("No http request could be identified to locate the entity id");
             return null;
         }
+        LOGGER.debug("Attempting to determine entity id for service [{}]", selectedService);
         val entityIdAttribute = selectedService.getAttributes().get(SamlProtocolConstants.PARAMETER_ENTITY_ID);
         if (entityIdAttribute != null && !entityIdAttribute.isEmpty()) {
+            LOGGER.debug("Found entity id [{}] as a service attribute", entityIdAttribute);
             return CollectionUtils.firstElement(entityIdAttribute).map(Object::toString).orElseThrow();
+        }
+        val samlRequest = selectedService.getAttributes().get(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
+        if (samlRequest != null && !samlRequest.isEmpty()) {
+            val attributeValue = CollectionUtils.firstElement(entityIdAttribute).map(Object::toString).orElseThrow();
+            val openSamlConfigBean = resolver.getOpenSamlConfigBean();
+            val authnRequest = SamlIdPUtils.retrieveSamlRequest(openSamlConfigBean, RequestAbstractType.class, attributeValue);
+            SamlUtils.logSamlObject(openSamlConfigBean, authnRequest);
+            val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
+            LOGGER.debug("Found entity id [{}] from SAML request issuer", issuer);
+            return issuer;
         }
         val entityId = request.getParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID);
         if (StringUtils.isNotBlank(entityId)) {
+            LOGGER.debug("Found entity id [{}] as a request parameter", entityId);
             return entityId;
         }
         val svcParam = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
