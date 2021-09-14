@@ -196,11 +196,10 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
      *      match {@code https://*.test.edu} is executed first.
      * </ul>
      * Failure is caused by "promotion" through the services cache. When the non-{@code https://prod.test.edu} request
-     * is matched, it is added to the cache <em>before</em> its associated environments were evaluated in
-     * {@code AbstractServicesManager#validateRegisteredService(RegisteredService)}: it ends up in cache even though it
-     * doesn't match the current environment. Subsequently, <em>all</em> requests matching {@code https://*.test.edu}
-     * will return {@code null} because they are validated against {@code https://*.test.edu}, which is not associated
-     * with {@code current-env}.
+     * is matched, it is added to the cache <em>before</em> its associated environments were evaluated: it ends up in
+     * cache even though it doesn't match the current environment. Subsequently, <em>all</em> requests matching
+     * {@code https://*.test.edu} will return {@code null} because they are validated against
+     * {@code https://*.test.edu}, which is not associated with {@code current-env}.
      *
      * This test verifies that the above situation does not occur. Requests for {@code https://prod.test.edu} should
      * return a valid service regardless of whether a request for {@code https://[anything else].test.edu} comes in
