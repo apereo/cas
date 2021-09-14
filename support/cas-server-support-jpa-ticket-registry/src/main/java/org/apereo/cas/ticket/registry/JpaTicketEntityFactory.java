@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.generic.JpaTicketEntity;
 import org.apereo.cas.ticket.registry.mysql.MySQLJpaTicketEntity;
+import org.apereo.cas.ticket.registry.postgres.PostgresJpaTicketEntity;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
@@ -89,6 +90,9 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<JpaTicketEn
     private Class<? extends JpaTicketEntity> getEntityClass() {
         if (isMySql()) {
             return MySQLJpaTicketEntity.class;
+        }
+        if (isPostgres()) {
+            return PostgresJpaTicketEntity.class;
         }
         return JpaTicketEntity.class;
     }
