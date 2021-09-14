@@ -1,14 +1,10 @@
 package org.apereo.cas.web.flow.logout;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
-import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
-import org.apereo.cas.ticket.InvalidTicketException;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -31,9 +27,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Terminates the CAS SSO session by destroying all SSO state data (i.e. TGT, cookies).
@@ -85,11 +79,51 @@ public class TerminateSessionAction extends AbstractAction {
      */
     protected final ConfigurableApplicationContext applicationContext;
 
+    /**
+     * Single logout executor.
+     */
+    protected final SingleLogoutRequestExecutor singleLogoutRequestExecutor;
+
+    /**
+     * Check if the logout must be confirmed.
+     *
+     * @param requestContext the request context
+     * @return if the logout must be confirmed
+     */
+    protected static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        return request.getParameterMap().containsKey(REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED);
+    }
+
+    /**
+     * Destroy application session.
+     * Also kills all delegated authn profiles via pac4j.
+     *
+     * @param request  the request
+     * @param response the response
+     */
+    @SuppressWarnings("java:S2441")
+    protected static void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
+        LOGGER.trace("Destroying application session");
+        val context = new JEEContext(request, response);
+        val manager = new ProfileManager(context, JEESessionStore.INSTANCE);
+        manager.removeProfiles();
+
+        val session = request.getSession(false);
+        if (session != null) {
+            val requestedUrl = session.getAttribute(Pac4jConstants.REQUESTED_URL);
+            session.invalidate();
+            if (requestedUrl != null && !requestedUrl.equals(StringUtils.EMPTY)) {
+                request.getSession(true).setAttribute(Pac4jConstants.REQUESTED_URL, requestedUrl);
+            }
+        }
+    }
+
     @Override
     public Event doExecute(final RequestContext requestContext) {
         val terminateSession = FunctionUtils.doIf(logoutProperties.isConfirmLogout(),
-            () -> isLogoutRequestConfirmed(requestContext),
-            () -> Boolean.TRUE)
+                () -> isLogoutRequestConfirmed(requestContext),
+                () -> Boolean.TRUE)
             .get();
 
         if (terminateSession) {
@@ -147,41 +181,6 @@ public class TerminateSessionAction extends AbstractAction {
     }
 
     /**
-     * Check if the logout must be confirmed.
-     *
-     * @param requestContext the request context
-     * @return if the logout must be confirmed
-     */
-    protected static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        return request.getParameterMap().containsKey(REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED);
-    }
-
-    /**
-     * Destroy application session.
-     * Also kills all delegated authn profiles via pac4j.
-     *
-     * @param request  the request
-     * @param response the response
-     */
-    @SuppressWarnings("java:S2441")
-    protected static void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
-        LOGGER.trace("Destroying application session");
-        val context = new JEEContext(request, response);
-        val manager = new ProfileManager(context, JEESessionStore.INSTANCE);
-        manager.removeProfiles();
-
-        val session = request.getSession(false);
-        if (session != null) {
-            val requestedUrl = session.getAttribute(Pac4jConstants.REQUESTED_URL);
-            session.invalidate();
-            if (requestedUrl != null && !requestedUrl.equals(StringUtils.EMPTY)) {
-                request.getSession(true).setAttribute(Pac4jConstants.REQUESTED_URL, requestedUrl);
-            }
-        }
-    }
-
-    /**
      * Initiate single logout.
      *
      * @param ticketGrantingTicketId the ticket granting ticket id
@@ -192,25 +191,6 @@ public class TerminateSessionAction extends AbstractAction {
     protected List<SingleLogoutRequestContext> initiateSingleLogout(final String ticketGrantingTicketId,
                                                                     final HttpServletRequest request,
                                                                     final HttpServletResponse response) {
-        try {
-            LOGGER.trace("Removing ticket [{}] from registry...", ticketGrantingTicketId);
-            val ticket = centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
-            LOGGER.debug("Ticket [{}] found. Processing logout requests and then deleting the ticket...", ticket.getId());
-
-            AuthenticationCredentialsThreadLocalBinder.bindCurrent(ticket.getAuthentication());
-            val logoutRequests = logoutManager.performLogout(
-                SingleLogoutExecutionRequest.builder()
-                    .ticketGrantingTicket(ticket)
-                    .httpServletRequest(Optional.of(request))
-                    .httpServletResponse(Optional.of(response))
-                    .build());
-            centralAuthenticationService.deleteTicket(ticketGrantingTicketId);
-            applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, ticket));
-            return logoutRequests;
-        } catch (final InvalidTicketException e) {
-            LOGGER.debug("Ticket-granting ticket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
-        }
-        return new ArrayList<>(0);
+        return singleLogoutRequestExecutor.execute(ticketGrantingTicketId, request, response);
     }
-
 }

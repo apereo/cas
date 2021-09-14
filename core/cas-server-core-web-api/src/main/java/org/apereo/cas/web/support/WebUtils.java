@@ -91,10 +91,6 @@ public class WebUtils {
 
     private static final String PARAMETER_UNAUTHORIZED_REDIRECT_URL = "unauthorizedRedirectUrl";
 
-    private static final String PARAMETER_REGISTERED_SERVICE = "registeredService";
-
-    private static final String PARAMETER_SERVICE = "service";
-
     private static final String PARAMETER_SERVICE_TICKET_ID = "serviceTicketId";
 
     private static final String PARAMETER_LOGOUT_REQUESTS = "logoutRequests";
@@ -195,7 +191,8 @@ public class WebUtils {
      * @return the service
      */
     public static WebApplicationService getService(final RequestContext context) {
-        return Optional.ofNullable(context).map(requestContext -> (WebApplicationService) requestContext.getFlowScope().get(PARAMETER_SERVICE)).orElse(null);
+        return Optional.ofNullable(context).map(requestContext
+            -> (WebApplicationService) requestContext.getFlowScope().get(CasWebflowConstants.ATTRIBUTE_SERVICE)).orElse(null);
     }
 
     /**
@@ -206,7 +203,8 @@ public class WebUtils {
      */
     public static RegisteredService getRegisteredService(final RequestContext context) {
         return Optional.ofNullable(context)
-            .map(requestContext -> (RegisteredService) requestContext.getFlowScope().get(PARAMETER_REGISTERED_SERVICE)).orElse(null);
+            .map(requestContext -> (RegisteredService)
+                requestContext.getFlowScope().get(CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE)).orElse(null);
     }
 
     /**
@@ -217,7 +215,7 @@ public class WebUtils {
      */
     public static RegisteredService getRegisteredService(final HttpServletRequest request) {
         return Optional.ofNullable(request)
-            .map(requestContext -> (RegisteredService) request.getAttribute(PARAMETER_REGISTERED_SERVICE)).orElse(null);
+            .map(requestContext -> (RegisteredService) request.getAttribute(CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE)).orElse(null);
     }
 
     /**
@@ -277,8 +275,8 @@ public class WebUtils {
      */
     public static void putTicketGrantingTicketIntoMap(final MutableAttributeMap<Object> map, final String ticketValue) {
         FunctionUtils.doIf(StringUtils.isNotBlank(ticketValue),
-            value -> map.put(PARAMETER_TICKET_GRANTING_TICKET_ID, value),
-            value -> map.remove(PARAMETER_TICKET_GRANTING_TICKET_ID))
+                value -> map.put(PARAMETER_TICKET_GRANTING_TICKET_ID, value),
+                value -> map.remove(PARAMETER_TICKET_GRANTING_TICKET_ID))
             .accept(ticketValue);
     }
 
@@ -381,7 +379,7 @@ public class WebUtils {
      * @param service the service
      */
     public static void putServiceIntoFlowScope(final RequestContext context, final Service service) {
-        context.getFlowScope().put(PARAMETER_SERVICE, service);
+        context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
     }
 
     /**
@@ -391,7 +389,7 @@ public class WebUtils {
      * @param service the service
      */
     public static void putServiceIntoFlashScope(final RequestContext context, final Service service) {
-        context.getFlashScope().put(PARAMETER_SERVICE, service);
+        context.getFlashScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
     }
 
     /**
@@ -422,7 +420,7 @@ public class WebUtils {
      * @param registeredService the registered service
      */
     public static void putRegisteredService(final HttpServletRequest request, final RegisteredService registeredService) {
-        request.setAttribute(PARAMETER_REGISTERED_SERVICE, registeredService);
+        request.setAttribute(CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE, registeredService);
     }
 
     /**
@@ -432,7 +430,7 @@ public class WebUtils {
      * @param registeredService the service
      */
     public static void putRegisteredService(final RequestContext context, final RegisteredService registeredService) {
-        context.getFlowScope().put(PARAMETER_REGISTERED_SERVICE, registeredService);
+        context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE, registeredService);
     }
 
     /**
@@ -1007,7 +1005,7 @@ public class WebUtils {
      * @return the model and view
      */
     public static ModelAndView produceErrorView(final String view, final Exception e) {
-        val mv = new ModelAndView(view, CollectionUtils.wrap("rootCauseException", e));
+        val mv = new ModelAndView(view, CollectionUtils.wrap(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, e));
         mv.setStatus(HttpStatus.BAD_REQUEST);
         return mv;
     }
@@ -1415,6 +1413,27 @@ public class WebUtils {
     }
 
     /**
+     * Put delegated authentication dynamic provider selection.
+     *
+     * @param context the context
+     * @param result  the result
+     */
+    public static void putDelegatedAuthenticationDynamicProviderSelection(final RequestContext context,
+                                                                          final Boolean result) {
+        context.getFlowScope().put("delegatedAuthenticationDynamicProviderSelection", result);
+    }
+
+    /**
+     * Put delegated authentication dynamic provider selection.
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    public static Boolean isDelegatedAuthenticationDynamicProviderSelection(final RequestContext context) {
+        return context.getFlowScope().get("delegatedAuthenticationDynamicProviderSelection", Boolean.class, Boolean.FALSE);
+    }
+
+    /**
      * Gets delegated authentication provider configurations.
      *
      * @param context the context
@@ -1785,7 +1804,7 @@ public class WebUtils {
      * Put the logout POST url in the flow scope.
      *
      * @param requestContext the flow context
-     * @param postUrl the POST url
+     * @param postUrl        the POST url
      */
     public static void putLogoutPostUrl(final RequestContext requestContext, final String postUrl) {
         requestContext.getFlowScope().put("logoutPostUrl", postUrl);
@@ -1795,7 +1814,7 @@ public class WebUtils {
      * Put the logout POST data in the flow scope.
      *
      * @param requestContext the flow context
-     * @param postData the POST data
+     * @param postData       the POST data
      */
     public static void putLogoutPostData(final RequestContext requestContext, final Map<String, Object> postData) {
         requestContext.getFlowScope().put("logoutPostData", postData);
@@ -1819,5 +1838,116 @@ public class WebUtils {
      */
     public static Map<String, Object> getLogoutPostData(final RequestContext requestContext) {
         return (Map<String, Object>) requestContext.getFlowScope().get("logoutPostData", Map.class);
+    }
+
+    /**
+     * Put account management sign up enabled.
+     *
+     * @param requestContext the request context
+     * @param value          the value
+     */
+    public static void putAccountManagementRegistrationEnabled(final RequestContext requestContext, final boolean value) {
+        requestContext.getFlowScope().put("accountManagementRegistrationEnabled", value);
+    }
+
+    /**
+     * Is account management registration captcha enabled.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static boolean isAccountManagementRegistrationCaptchaEnabled(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("accountManagementRegistrationCaptchaEnabled", Boolean.class);
+    }
+
+    /**
+     * Put account management sign up captcha enabled.
+     *
+     * @param requestContext the request context
+     * @param properties     the properties
+     */
+    public static void putAccountManagementRegistrationCaptchaEnabled(final RequestContext requestContext,
+                                                                      final GoogleRecaptchaProperties properties) {
+        requestContext.getFlowScope().put("accountManagementRegistrationCaptchaEnabled", properties.isEnabled());
+    }
+
+    /**
+     * Put account management registration request.
+     *
+     * @param requestContext the request context
+     * @param request        the request
+     */
+    public static void putAccountManagementRegistrationRequest(final RequestContext requestContext, final Serializable request) {
+        requestContext.getFlowScope().put("accountManagementRegistrationRequest", request);
+    }
+
+    /**
+     * Put account management registration security questions count.
+     *
+     * @param requestContext the request context
+     * @param count          the count
+     */
+    public static void putAccountManagementRegistrationSecurityQuestionsCount(final RequestContext requestContext, final int count) {
+        requestContext.getFlowScope().put("securityQuestionsCount", count);
+    }
+
+    /**
+     * Gets account management registration security questions count.
+     *
+     * @param requestContext the request context
+     * @return the account management registration security questions count
+     */
+    public static Integer getAccountManagementRegistrationSecurityQuestionsCount(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("securityQuestionsCount", Integer.class);
+    }
+
+    /**
+     * Put password reset password policy pattern string.
+     *
+     * @param requestContext the request context
+     * @param policyPattern  the policy pattern
+     */
+    public static void putPasswordPolicyPattern(final RequestContext requestContext, final String policyPattern) {
+        val flowScope = requestContext.getFlowScope();
+        flowScope.put("passwordPolicyPattern", policyPattern);
+    }
+
+    /**
+     * Gets password reset password policy pattern.
+     *
+     * @param requestContext the request context
+     * @return the password reset password policy pattern
+     */
+    public static String getPasswordPolicyPattern(final RequestContext requestContext) {
+        val flowScope = requestContext.getFlowScope();
+        return flowScope.get("passwordPolicyPattern", String.class);
+    }
+
+    /**
+     * Is interrupt authentication flow finalized.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static boolean isInterruptAuthenticationFlowFinalized(final RequestContext requestContext) {
+        return requestContext.getRequestScope().contains("authenticationFlowInterruptFinalized");
+    }
+
+    /**
+     * Put interrupt authentication flow finalized.
+     *
+     * @param requestContext the request context
+     */
+    public static void putInterruptAuthenticationFlowFinalized(final RequestContext requestContext) {
+        requestContext.getRequestScope().put("authenticationFlowInterruptFinalized", Boolean.TRUE);
+    }
+
+    /**
+     * Remove interrupt authentication flow finalized.
+     *
+     * @param requestContext the request context
+     */
+    public static void removeInterruptAuthenticationFlowFinalized(final RequestContext requestContext) {
+        requestContext.getRequestScope().remove("authenticationFlowInterruptFinalized");
     }
 }

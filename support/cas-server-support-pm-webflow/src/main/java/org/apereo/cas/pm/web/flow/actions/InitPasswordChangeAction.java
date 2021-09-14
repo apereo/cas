@@ -3,7 +3,6 @@ package org.apereo.cas.pm.web.flow.actions;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -26,8 +25,8 @@ public class InitPasswordChangeAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        PasswordManagementWebflowUtils.putPasswordResetPasswordPolicyPattern(requestContext,
-            casProperties.getAuthn().getPm().getCore().getPolicyPattern());
+        WebUtils.putPasswordPolicyPattern(requestContext,
+            casProperties.getAuthn().getPm().getCore().getPasswordPolicyPattern());
         val attributes = requestContext.getCurrentEvent().getAttributes();
         if (!attributes.isEmpty() && attributes.contains(Credential.class.getName())) {
             val upc = attributes.get(Credential.class.getName(), UsernamePasswordCredential.class);

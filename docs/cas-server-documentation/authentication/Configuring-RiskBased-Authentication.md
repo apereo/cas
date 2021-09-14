@@ -93,13 +93,13 @@ identified by the provider id.
 
 Support is enabled by including the following dependency in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-electrofence" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-electrofence" %}
 
-{% include casproperties.html properties="cas.authn.adaptive.policy" %}
+{% include_cached casproperties.html properties="cas.authn.adaptive.policy" %}
 
 ### Messaging & Notifications
 
-{% include casproperties.html properties="cas.authn.adaptive.risk.response.mail,cas.authn.adaptive.risk.response.sms" %}
+{% include_cached casproperties.html properties="cas.authn.adaptive.risk.response.mail,cas.authn.adaptive.risk.response.sms" %}
 
 To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html)
 or [this guide](../notifications/Sending-Email-Configuration.html).

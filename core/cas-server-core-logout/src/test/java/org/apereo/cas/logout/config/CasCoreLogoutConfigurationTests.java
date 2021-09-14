@@ -70,7 +70,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CasCoreLogoutConfigurationTests {
 
     @Autowired
-    @Qualifier("logoutManager")
+    @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
     private LogoutManager logoutManager;
 
     @Autowired

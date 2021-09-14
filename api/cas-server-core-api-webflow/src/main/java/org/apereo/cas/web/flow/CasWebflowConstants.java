@@ -7,11 +7,25 @@ package org.apereo.cas.web.flow;
  * @since 5.0.0
  */
 public interface CasWebflowConstants {
+    /*
+     ****************************************
+     * Errors.
+     ****************************************
+     */
 
     /**
-     * Base path for webflow configuration files.
+     * Attribute to track exceptions in models.
      */
-    String BASE_CLASSPATH_WEBFLOW = "classpath*:/webflow";
+    String ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION = "rootCauseException";
+
+    /**
+     * Attribute to track registered service in the flow.
+     */
+    String ATTRIBUTE_REGISTERED_SERVICE = "registeredService";
+    /**
+     * Attribute to track service in the flow.
+     */
+    String ATTRIBUTE_SERVICE = "service";
 
     /*
      ****************************************
@@ -19,6 +33,20 @@ public interface CasWebflowConstants {
      ****************************************
      */
 
+    /**
+     * The transition state 'discovery'.
+     */
+    String TRANSITION_ID_DISCOVERY = "discovery";
+
+    /**
+     * The transition state 'execute'.
+     */
+    String TRANSITION_ID_EXECUTE = "execute";
+
+    /**
+     * The transition state 'back'.
+     */
+    String TRANSITION_ID_BACK = "back";
 
     /**
      * The transition state 'captchaError'.
@@ -234,6 +262,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_ENROLL = "enroll";
 
     /**
+     * Signup transition id.
+     */
+    String TRANSITION_ID_SIGNUP = "signup";
+
+    /**
      * Renew transition id.
      */
     String TRANSITION_ID_RENEW = "renew";
@@ -399,6 +432,31 @@ public interface CasWebflowConstants {
     String STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN = "duoUniversalPromptPrepareValidate";
 
     /**
+     * The state 'viewAccountSignUp'.
+     */
+    String STATE_ID_VIEW_ACCOUNT_SIGNUP = "viewAccountSignUp";
+
+    /**
+     * The state 'completeAccountRegistrationView'.
+     */
+    String STATE_ID_COMPLETE_ACCOUNT_REGISTRATION = "completeAccountRegistrationView";
+
+    /**
+     * The state 'accountRegistrationSubflow'.
+     */
+    String STATE_ID_ACCOUNT_REGISTRATION_SUBFLOW = "accountRegistrationSubflow";
+    
+    /**
+     * The state 'accountSignUpInfoSent'.
+     */
+    String STATE_ID_SENT_ACCOUNT_SIGNUP_INFO = "accountSignUpInfoSent";
+
+    /**
+     * The state 'submitAccountRegistration'.
+     */
+    String STATE_ID_SUBMIT_ACCOUNT_REGISTRATION = "submitAccountRegistration";
+
+    /**
      * The state 'viewLoginForm'.
      */
     String STATE_ID_VIEW_LOGIN_FORM = "viewLoginForm";
@@ -504,6 +562,11 @@ public interface CasWebflowConstants {
     String STATE_ID_VIEW_SERVICE_ERROR = "viewServiceErrorView";
 
     /**
+     * The state 'viewWebflowConfigurationErrorView'.
+     */
+    String STATE_ID_VIEW_WEBFLOW_CONFIG_ERROR = "viewWebflowConfigurationErrorView";
+
+    /**
      * The state id 'warn'.
      */
     String STATE_ID_WARN = "warn";
@@ -567,6 +630,21 @@ public interface CasWebflowConstants {
      * State id 'finishLogout'.
      */
     String STATE_ID_FINISH_LOGOUT = "finishLogout";
+
+    /**
+     * State id 'redirectToDelegatedAuthnProviderView'.
+     */
+    String STATE_ID_REDIRECT_TO_DELEGATED_AUTHN_PROVIDER_VIEW = "redirectToDelegatedAuthnProviderView";
+
+    /**
+     * State id 'delegatedAuthenticationDynamicDiscoveryView'.
+     */
+    String STATE_ID_DELEGATED_AUTHN_DYNAMIC_DISCOVERY_VIEW = "delegatedAuthenticationDynamicDiscoveryView";
+
+    /**
+     * State id 'delegatedAuthenticationProviderDiscoveryExecution'.
+     */
+    String STATE_ID_DELEGATED_AUTHN_DYNAMIC_DISCOVERY_EXECUTION = "delegatedAuthenticationProviderDiscoveryExecution";
 
     /**
      * Delegated authentication state id.
@@ -637,7 +715,7 @@ public interface CasWebflowConstants {
      * State if for MFA composite events.
      */
     String STATE_ID_MFA_COMPOSITE = "mfa-composite";
-        
+
     /**
      * State that can be used by MFA providers that offer preAuth endpoints.
      */
@@ -791,6 +869,10 @@ public interface CasWebflowConstants {
      * State id 'compositeMfaProviderSelectedAction'.
      */
     String STATE_ID_MFA_PROVIDER_SELECTED = "compositeMfaProviderSelectedAction";
+    /**
+     * State id 'validateAccountRegistrationToken'.
+     */
+    String STATE_ID_VALIDATE_ACCOUNT_REGISTRATION_TOKEN = "validateAccountRegistrationToken";
 
     /*
      ****************************************
@@ -814,6 +896,11 @@ public interface CasWebflowConstants {
     String VIEW_ID_SERVICE_ERROR = "error/casServiceErrorView";
 
     /**
+     * The view id 'casWebflowConfigErrorView'.
+     */
+    String VIEW_ID_WEBFLOW_CONFIG_ERROR = "error/casWebflowConfigErrorView";
+
+    /**
      * View name used for form-login into admin/actuator endpoints.
      */
     String VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW = "admin/casAdminLoginView";
@@ -832,7 +919,7 @@ public interface CasWebflowConstants {
      * The view state 'casSessionStorageWriteView'.
      */
     String VIEW_ID_SESSION_STORAGE_WRITE = "storage/casSessionStorageWriteView";
-    
+
     /**
      * The view state 'casSessionStorageReadView'.
      */
@@ -885,6 +972,11 @@ public interface CasWebflowConstants {
      * Actions.
      ****************************************
      */
+
+    /**
+     * Action id 'delegatedAuthenticationProviderDynamicDiscoveryAction'.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_DYNAMIC_DISCOVERY_EXECUTION = "delegatedAuthenticationProviderDynamicDiscoveryExecutionAction";
 
     /**
      * Action id 'multifactorProviderSelectedAction'.
@@ -1155,9 +1247,26 @@ public interface CasWebflowConstants {
     String ACTION_ID_MFA_SET_TRUST_ACTION = "mfaSetTrustAction";
 
     /**
-     * Action id 'duoUniversalPromptPrepareLoginAction .
+     * Action id 'mfaPrepareTrustDeviceViewAction .
      */
     String ACTION_ID_MFA_PREPARE_TRUST_DEVICE_VIEW_ACTION = "mfaPrepareTrustDeviceViewAction";
 
+    /**
+     * Action id 'accountMgmtRegistrationInitializeCaptchaAction .
+     */
+    String ACTION_ID_ACCOUNT_REGISTRATION_INIT_CAPTCHA = "accountMgmtRegistrationInitializeCaptchaAction";
 
+    /**
+     * Action id 'accountMgmtRegistrationValidateCaptchaAction .
+     */
+    String ACTION_ID_ACCOUNT_REGISTRATION_VALIDATE_CAPTCHA = "accountMgmtRegistrationValidateCaptchaAction";
+    /**
+     * Action id 'validateAccountRegistrationTokenAction .
+     */
+    String ACTION_ID_VALIDATE_ACCOUNT_REGISTRATION_TOKEN = "validateAccountRegistrationTokenAction";
+
+    /**
+     * Action id 'submitAccountRegistrationAction .
+     */
+    String ACTION_ID_ACCOUNT_REGISTRATION_SUBMIT = "submitAccountRegistrationAction";
 }

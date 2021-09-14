@@ -23,19 +23,15 @@ the result for each respected key. The deployer MUST attempt to copy the generat
 settings in their CAS properties file, specially when running a multi-node CAS deployment. Failure to do so will prevent CAS
 to appropriate decrypt and encrypt the cookie value and will prevent successful single sign-on.
 
-<div class="alert alert-info"><strong>SSO Sessions</strong><p>It is possible to review the 
-current collection of active SSO sessions,
-and determine if CAS itself maintains an active SSO session. See <a href="../monitoring/Monitoring-Statistics.html">this page</a>.</p></div>
-
 ## Actuator Endpoints
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="ssoSessions,sso" casModule="cas-server-support-reports" %}
+{% include_cached actuators.html endpoints="ssoSessions,sso" casModule="cas-server-support-reports" %}
 
 ## Configuration
 
-{% include casproperties.html properties="cas.tgc,cas.ticket.tgt.core" %}
+{% include_cached casproperties.html properties="cas.tgc,cas.ticket.tgt.core" %}
 
 The cookie has the following properties:
 
@@ -43,7 +39,8 @@ The cookie has the following properties:
 2. Depending on container support, the cookie would be marked as http-only automatically.
 3. The cookie value is encrypted and signed via secret keys that need to be generated upon deployment.
 
-If keys are left undefined, on startup CAS will notice that no keys are defined and it will appropriately generate keys for you automatically. Your CAS logs will then show the following snippet:
+If keys are left undefined, on startup CAS will notice that no keys are defined and it 
+will appropriately generate keys for you automatically. Your CAS logs will then show the following snippet:
 
 ```bash
 WARN [...] - <Secret key for encryption is not defined. CAS will auto-generate the encryption key>
@@ -55,7 +52,7 @@ WARN [...] - <Generated signing key XYZ of size ... . The generated key MUST be 
 You should then grab each generated key for encryption and signing, and put them inside your CAS properties for each setting.
 If you wish you manually generate keys, you may [use the following tool](https://github.com/mitreid-connect/json-web-key-generator).
 
-{% include casproperties.html properties="cas.sso" %}
+{% include_cached casproperties.html properties="cas.sso" %}
 
 ## Authentication Protocol vs. SSO
 
@@ -104,7 +101,7 @@ please [review this guide](../services/Configuring-Service-SSO-Policy.html).
 A warning cookie set by CAS upon the establishment of the SSO session at the request of the user on the CAS login page.
 The cookie is used later to warn and prompt the user before a service ticket is generated and access to the service application is granted.
 
-{% include casproperties.html properties="cas.warning-cookie" %}
+{% include_cached casproperties.html properties="cas.warning-cookie" %}
 
 ## Public Workstations
 
@@ -128,7 +125,7 @@ In the event that no `service` is submitted to CAS, you may specify a default
 service url to which CAS will redirect. Note that this default service, much like
 all other services, MUST be authorized and registered with CAS.
 
-{% include casproperties.html properties="cas.view.default-redirect-url" %}
+{% include_cached casproperties.html properties="cas.view.default-redirect-url" %}
 
 ## Required Service
 

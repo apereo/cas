@@ -67,7 +67,7 @@ public class CasConsentCoreConfiguration {
     @Bean
     @RefreshScope
     public CipherExecutor consentCipherExecutor() {
-        val consent = casProperties.getConsent();
+        val consent = casProperties.getConsent().getCore();
         val crypto = consent.getCrypto();
         if (crypto.isEnabled()) {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, AttributeReleaseConsentCipherExecutor.class);

@@ -34,14 +34,12 @@ import java.util.TreeMap;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
-    private static final int MAP_SIZE = 8;
-
     private static final long serialVersionUID = -2814928645221579489L;
 
-    private Map<String, String> allowedAttributes = new LinkedHashMap<>(MAP_SIZE);
+    private Map<String, String> allowedAttributes = new LinkedHashMap<>();
 
     public WSFederationClaimsReleasePolicy() {
-        setAllowedAttributes(new LinkedHashMap<>(MAP_SIZE));
+        setAllowedAttributes(new LinkedHashMap<>());
     }
 
     public WSFederationClaimsReleasePolicy(final Map<String, String> allowedAttributes) {
@@ -63,8 +61,13 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
                 val claimName = entry.getKey();
                 val attributeValue = resolvedAttributes.get(entry.getValue());
                 val claim = WSFederationClaims.valueOf(claimName.toUpperCase());
-                LOGGER.trace("Evaluating claim [{}] mapped to attribute value [{}]", claim.getUri(), attributeValue);
-                mapSingleAttributeDefinition(claim.getUri(), entry.getValue(), attributeValue, resolvedAttributes, attributesToRelease);
+                if (resolvedAttributes.containsKey(claim.getUri())) {
+                    attributesToRelease.put(claim.getUri(), resolvedAttributes.get(claim.getUri()));
+                } else {
+                    LOGGER.trace("Evaluating claim [{}] mapped to attribute value [{}]", claim.getUri(), attributeValue);
+                    mapSingleAttributeDefinition(claim.getUri(), entry.getValue(),
+                        attributeValue, resolvedAttributes, attributesToRelease);
+                }
             });
         return attributesToRelease;
     }

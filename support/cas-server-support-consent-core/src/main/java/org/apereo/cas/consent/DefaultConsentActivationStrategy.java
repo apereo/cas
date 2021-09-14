@@ -41,7 +41,7 @@ public class DefaultConsentActivationStrategy implements ConsentActivationStrate
                     LOGGER.trace("Attribute consent policy for service [{}] is undefined", registeredService.getName());
             }
         }
-        if (casProperties.getConsent().isActive()) {
+        if (casProperties.getConsent().getCore().isActive()) {
             LOGGER.trace("Attribute consent is enabled globally for all requests");
             return consentEngine.isConsentRequiredFor(service, registeredService, authentication).isRequired();
         }

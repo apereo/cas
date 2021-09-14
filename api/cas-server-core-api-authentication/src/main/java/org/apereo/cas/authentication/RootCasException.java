@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +19,14 @@ import java.util.List;
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public abstract class RootCasException extends RuntimeException {
+public class RootCasException extends RuntimeException {
 
     private static final long serialVersionUID = -2384466176716541689L;
 
     private final String code;
 
     private final List<Object> args = new ArrayList<>(0);
-    
+
     protected RootCasException(final String code, final String msg) {
         super(msg);
         this.code = code;
@@ -46,11 +47,21 @@ public abstract class RootCasException extends RuntimeException {
         this.args.addAll(args);
     }
 
+    /**
+     * With code.
+     *
+     * @param code the code
+     * @return the root cas exception
+     */
+    public static RootCasException withCode(final String code) {
+        return new RootCasException(code, StringUtils.EMPTY);
+    }
 
     /**
      * If there is a chained exception it recursively
      * calls {@code getCode()} on the cause of the chained exception rather than the returning
      * the code itself.
+     *
      * @return Returns the code.
      */
     public String getCode() {

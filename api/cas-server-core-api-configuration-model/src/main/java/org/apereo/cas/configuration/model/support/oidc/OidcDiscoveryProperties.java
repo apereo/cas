@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -26,6 +27,27 @@ import java.util.stream.Stream;
 public class OidcDiscoveryProperties implements Serializable {
 
     private static final long serialVersionUID = 813028615694269276L;
+
+    /**
+     * Specifying whether this provider supports use of the claims parameter.
+     */
+    private boolean claimsParameterSupported = true;
+
+    /**
+     * Specifying whether this provider supports use of the {@code request} parameter.
+     */
+    private boolean requestParameterSupported = true;
+
+    /**
+     * Specifying whether this provider supports use of the {@code request_uri} parameter.
+     */
+    private boolean requestUriParameterSupported = true;
+
+    /**
+     * Parameter indicating whether the authorization server provides the {@code iss}
+     * parameter in the authorization response.
+     */
+    private boolean authorizationResponseIssuerParameterSupported;
 
     /**
      * List of supported scopes.
@@ -124,6 +146,12 @@ public class OidcDiscoveryProperties implements Serializable {
      * List of PKCE code challenge methods supported.
      */
     private List<String> codeChallengeMethodsSupported = Stream.of("plain", "S256").collect(Collectors.toList());
+
+    /**
+     * List of ACR values supported.
+     * This discovery element contains a list of the supported acr values supported by this server.
+     */
+    private List<String> acrValuesSupported = new ArrayList<>();
 
     /**
      * Supported algorithms for request object signing.

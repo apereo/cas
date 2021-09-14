@@ -2,7 +2,7 @@
   "dependencies": "generic,pm-webflow",
   "properties": [
     "--cas.authn.pm.core.enabled=true",
-    "--cas.authn.pm.core.policy-pattern=.+",
+    "--cas.authn.pm.core.password-policy-pattern=.+",
 
     "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/passwords.json",
     

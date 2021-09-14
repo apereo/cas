@@ -7,12 +7,11 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
-import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 
@@ -31,17 +30,17 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
     }
 
     @Override
-    protected boolean validateInternal(final JEEContext context, final String grantType,
+    protected boolean validateInternal(final WebContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) {
 
-        val request = context.getNativeRequest();
         val clientId = OAuth20Utils.getClientIdAndClientSecret(context, getConfigurationContext().getSessionStore()).getLeft();
-        if (!HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REFRESH_TOKEN) || clientId.isEmpty()) {
+        val refreshTokenResult = OAuth20Utils.getRequestParameter(context, OAuth20Constants.REFRESH_TOKEN);
+        if (refreshTokenResult.isEmpty() || clientId.isEmpty()) {
             return false;
         }
 
         var refreshToken = (OAuth20RefreshToken) null;
-        val token = request.getParameter(OAuth20Constants.REFRESH_TOKEN);
+        val token = refreshTokenResult.get();
         try {
             refreshToken = getConfigurationContext().getCentralAuthenticationService().getTicket(token, OAuth20RefreshToken.class);
             LOGGER.trace("Found valid refresh token [{}] in the registry", refreshToken);

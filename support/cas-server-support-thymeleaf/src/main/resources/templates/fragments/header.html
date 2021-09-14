@@ -30,19 +30,28 @@
                         <span class="visually-hidden" th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}">CAS</span>
                         <img id="cas-logo" class="cas-logo"
                             th:title="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}"
-                            th:src="@{${#strings.defaultString(#themes.code('cas.logo.file'), '/images/cas-logo.png')}}" />
+                            th:src="@{${#strings.defaultString(#themes.code('cas.logo.file'), '/images/cas-logo.png')}}"
+                            />
                     </span>
                 </section>
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
                     <button id="cas-notifications-menu"
-                        th:if="${'true' == #strings.defaultString(#themes.code('cas.notifications-menu.enabled'), 'true')}"
-                        class="mdc-icon-button mdc-top-app-bar__action-item cas-notification-toggle btn btn-outline-light"
-                        aria-label="Bookmark this page"
-                        data-bs-toggle="modal" data-bs-target="#cas-notification-dialog">
-                        <span class="mdi mdi-bell-alert fas fa-bell"></span>
-                        <span class="visually-hidden">notifications</span>
+                            th:if="${'true' == #strings.defaultString(#themes.code('cas.notifications-menu.enabled'), 'true')}"
+                            class="mdc-icon-button mdc-top-app-bar__action-item cas-notification-toggle btn btn-outline-light"
+                            aria-label="Bookmark this page">
+                        <span class="mdi mdi-bell-alert"></span>
+                        <span class="sr-only">notifications</span>
                         <i id="notifications-count" class="notifications-count count">2</i>
                     </button>
+
+<!--                <a id="cas-user-account"-->
+<!--                   th:href="@{/account}"-->
+<!--                   th:if="${ticketGrantingTicketId != null}"-->
+<!--                   class="mdc-icon-button mdc-top-app-bar__action-item"-->
+<!--                   aria-label="User Account">-->
+<!--                    <span class="mdi mdi-account-group"></span>-->
+<!--                    <span class="sr-only">user account</span>-->
+<!--                </a>-->
                 </section>
             </div>
         </nav>
@@ -102,7 +111,6 @@
             id="cas-notification-dialog" role="alertdialog"
             aria-modal="true" aria-labelledby="notif-dialog-title"
             aria-describedby="notif-dialog-content">
-        
         <div class="mdc-dialog__container modal-dialog">
             <div class="mdc-dialog__surface modal-content">
                 <h1 class="mdc-dialog__title mt-lg-2 modal-header modal-title" id="notif-dialog-title">
@@ -193,7 +201,7 @@
                     let appBar = document.getElementById('app-bar');
                     console.log('hi there')
                     if (appBar != null) {
-                        var topAppBar = material.topAppBar.MDCTopAppBar.attachTo(appBar);
+                        let topAppBar = material.topAppBar.MDCTopAppBar.attachTo(appBar);
                         topAppBar.setScrollTarget(document.getElementById('main-content'));
                         topAppBar.listen('MDCTopAppBar:nav', function () {
                             drawer.open = !drawer.open;

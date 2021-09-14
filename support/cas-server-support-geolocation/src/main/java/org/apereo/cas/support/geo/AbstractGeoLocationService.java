@@ -3,6 +3,7 @@ package org.apereo.cas.support.geo;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.util.LoggingUtils;
 
 import io.userinfo.client.UserInfo;
 import lombok.Getter;
@@ -23,12 +24,16 @@ import org.apache.commons.lang3.StringUtils;
 public abstract class AbstractGeoLocationService implements GeoLocationService {
     @Override
     public GeoLocationResponse locate(final String address) {
-        val info = UserInfo.getInfo(address);
-        if (info != null) {
-            val pos = info.getPosition();
-            if (pos != null && pos.getLatitude() != null && pos.getLongitude() != null) {
-                return locate(pos.getLatitude(), pos.getLongitude());
+        try {
+            val info = UserInfo.getInfo(address);
+            if (info != null) {
+                val pos = info.getPosition();
+                if (pos != null && pos.getLatitude() != null && pos.getLongitude() != null) {
+                    return locate(pos.getLatitude(), pos.getLongitude());
+                }
             }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

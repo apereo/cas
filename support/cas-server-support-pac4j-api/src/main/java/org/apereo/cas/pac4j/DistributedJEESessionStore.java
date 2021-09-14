@@ -31,6 +31,11 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 public class DistributedJEESessionStore implements SessionStore {
+    /**
+     * Default session store implementation bean.
+     */
+    public static final String DEFAULT_BEAN_NAME = "samlIdPDistributedSessionStore";
+
     private static final String SESSION_ID_IN_REQUEST_ATTRIBUTE = "sessionIdInRequestAttribute";
 
     private final CentralAuthenticationService centralAuthenticationService;

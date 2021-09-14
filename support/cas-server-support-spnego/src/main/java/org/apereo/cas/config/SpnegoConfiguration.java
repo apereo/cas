@@ -13,6 +13,7 @@ import org.apereo.cas.support.spnego.authentication.handler.support.JcifsConfig;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandler;
 import org.apereo.cas.support.spnego.authentication.handler.support.NtlmAuthenticationHandler;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import jcifs.spnego.Authentication;
@@ -65,8 +66,10 @@ public class SpnegoConfiguration {
 
         JcifsConfig.SystemSettings.initialize(applicationContext, spnegoSystem.getLoginConf());
 
-        val kerbConf = applicationContext.getResource(spnegoSystem.getKerberosConf());
-        FunctionUtils.doAndIgnore(o -> JcifsConfig.SystemSettings.setKerberosConf(kerbConf.getFile().getCanonicalPath()));
+        if (ResourceUtils.doesResourceExist(spnegoSystem.getKerberosConf())) {
+            val kerbConf = applicationContext.getResource(spnegoSystem.getKerberosConf());
+            FunctionUtils.doAndIgnore(o -> JcifsConfig.SystemSettings.setKerberosConf(kerbConf.getFile().getCanonicalPath()));
+        }
         
         JcifsConfig.SystemSettings.setKerberosDebug(spnegoSystem.getKerberosDebug());
         JcifsConfig.SystemSettings.setKerberosKdc(spnegoSystem.getKerberosKdc());

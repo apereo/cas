@@ -5,6 +5,8 @@
             material.autoInit();
         },
         attachFields: function () {
+            new material.textField.MDCTextFieldHelperText(
+                document.querySelector('.mdc-text-field-helper-text'));
             let divs = document.querySelectorAll('.mdc-text-field'),
                 field;
             let div;
@@ -15,7 +17,7 @@
                     field.foundation.adapter.registerInputInteractionHandler('keypress', cas.checkCaps);
                 }
             }
-            let selector = document.querySelector('.mdc-select.authn-source');
+            let selector = document.querySelector('.mdc-select');
             if (selector != null) {
                 const select = new material.select.MDCSelect(selector);
                 select.listen('MDCSelect:change', function () {
@@ -57,7 +59,7 @@ function resourceLoadedSuccessfully() {
         $('#fm1 input[name="username"],[name="password"]').trigger('input');
         $('#fm1 input[name="username"]').focus();
 
-        var $revealpassword = $('.reveal-password');
+        let $revealpassword = $('.reveal-password');
         $revealpassword.mouseup(function (ev) {
             $('.pwd').attr('type', 'password');
             $(".reveal-password-icon").removeClass("mdi mdi-eye-off").addClass("mdi mdi-eye");

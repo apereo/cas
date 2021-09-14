@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -10,18 +9,10 @@ const cas = require('../../cas.js');
     await cas.loginWith(page, "casuser", "Mellon");
 
     await page.waitForTimeout(1000)
-
-    let header = await cas.textContent(page, "#content h1");
-
-    assert(header === "Authentication Succeeded with Warnings")
-
+    await cas.assertTextContent(page, "#content h1", "Authentication Succeeded with Warnings")
     await cas.assertVisibility(page, '#changePassword')
-
     await cas.submitForm(page, "#changePasswordForm");
-
-    header = await cas.textContent(page, "#pwdmain h3");
-
-    assert(header === "Hello, casuser. You must change your password.")
+    await cas.assertTextContent(page, "#pwdmain h3", "Hello, casuser. You must change your password.")
 
     await typePassword(page, "123456", "123456")
     await page.waitForTimeout(1000)
@@ -43,20 +34,12 @@ const cas = require('../../cas.js');
 
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
-
-    header = await cas.textContent(page, "#content h2");
-    assert(header === "Password Change Successful");
-
-    header = await cas.textContent(page, "#content p");
-    assert(header === "Your account password is successfully updated.")
-
+    await cas.assertTextContent(page, "#content h2", "Password Change Successful");
+    await cas.assertTextContent(page, "#content p", "Your account password is successfully updated.")
     await cas.submitForm(page, "#form");
 
-    let element = await cas.innerText(page, '#content div h2');
-    assert(element === "Log In Successful")
-
+    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.assertTicketGrantingCookie(page);
-
     await page.waitForTimeout(1000)
     await browser.close();
 })();

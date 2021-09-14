@@ -19,7 +19,6 @@ import org.springframework.context.ApplicationEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -132,7 +131,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         var foundService = configurationContext.getRegisteredServiceLocators()
             .stream()
             .map(locator -> locator.locate(candidates, service))
-            .filter(Objects::nonNull)
+            .filter(s -> validateRegisteredService(s) != null)
             .findFirst();
 
         if (foundService.isEmpty()) {

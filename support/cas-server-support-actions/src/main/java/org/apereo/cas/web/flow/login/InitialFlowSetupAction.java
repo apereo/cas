@@ -109,6 +109,7 @@ public class InitialFlowSetupAction extends AbstractAction {
             return ticket.getId();
         }
         ticketGrantingTicketCookieGenerator.removeCookie(response);
+        ticketGrantingTicketCookieGenerator.removeAll(request, response);
         WebUtils.putTicketGrantingTicketInScopes(context, StringUtils.EMPTY);
         return null;
     }
@@ -153,14 +154,14 @@ public class InitialFlowSetupAction extends AbstractAction {
                     WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, accessStrategy.getUnauthorizedRedirectUrl());
                 }
             }
+            WebUtils.putServiceIntoFlowScope(context, service);
         }
-        WebUtils.putServiceIntoFlowScope(context, service);
     }
 
     /**
      * Configure the SSO participation in webflow.
      *
-     * @param context the webflow context
+     * @param context                the webflow context
      * @param ticketGrantingTicketId the TGT identifier
      */
     protected void configureWebflowForSsoParticipation(final RequestContext context, final String ticketGrantingTicketId) {

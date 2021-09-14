@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
@@ -11,6 +12,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilderConfigurer;
+import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
@@ -95,7 +97,7 @@ public class SamlIdPConfiguration {
     private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
-    @Qualifier("samlIdPDistributedSessionStore")
+    @Qualifier(DistributedJEESessionStore.DEFAULT_BEAN_NAME)
     private ObjectProvider<SessionStore> samlIdPDistributedSessionStore;
 
     @Autowired
@@ -371,7 +373,8 @@ public class SamlIdPConfiguration {
     }
 
     @Bean
-    public SamlResponseAuditPrincipalIdProvider samlResponseAuditPrincipalIdProvider() {
+    @ConditionalOnMissingBean(name = "samlResponseAuditPrincipalIdProvider")
+    public AuditPrincipalIdProvider samlResponseAuditPrincipalIdProvider() {
         return new SamlResponseAuditPrincipalIdProvider();
     }
 

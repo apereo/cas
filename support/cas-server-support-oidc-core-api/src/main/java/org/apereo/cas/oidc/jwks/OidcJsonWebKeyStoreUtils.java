@@ -108,7 +108,7 @@ public class OidcJsonWebKeyStoreUtils {
             LOGGER.warn("Unable to locate JSON web key for [{}]", kid.map(Object::toString));
             return null;
         }
-        LOGGER.debug("Located JSON web key [{}]", key.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY));
+        LOGGER.trace("Located JSON web key [{}]", key.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY));
         if (StringUtils.isBlank(key.getAlgorithm())) {
             LOGGER.warn("Located JSON web key [{}] has no algorithm defined", key);
         }

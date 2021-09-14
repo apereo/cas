@@ -60,6 +60,12 @@ public class HazelcastDiscoveryProperties implements Serializable {
     private HazelcastAzureDiscoveryProperties azure = new HazelcastAzureDiscoveryProperties();
 
     /**
+     * Describe discovery strategy based on Zookeeper.
+     */
+    @NestedConfigurationProperty
+    private HazelcastZooKeeperDiscoveryProperties zookeeper = new HazelcastZooKeeperDiscoveryProperties();
+
+    /**
      * Describe discovery strategy based on Kubernetes.
      */
     @NestedConfigurationProperty

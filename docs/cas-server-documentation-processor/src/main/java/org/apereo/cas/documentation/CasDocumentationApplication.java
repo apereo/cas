@@ -5,8 +5,15 @@ import org.apereo.cas.metadata.CasConfigurationMetadataCatalog;
 import org.apereo.cas.metadata.CasReferenceProperty;
 import org.apereo.cas.metadata.ConfigurationMetadataCatalogQuery;
 import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.util.RegexUtils;
 
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.val;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.Option;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RegExUtils;
@@ -34,6 +41,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -59,15 +68,57 @@ public class CasDocumentationApplication {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasDocumentationApplication.class);
 
     public static void main(final String[] args) throws Exception {
+        var options = new Options();
+        var dt = new Option("d", "data", true, "Data directory");
+        dt.setRequired(true);
+        options.addOption(dt);
+        var ver = new Option("v", "version", true, "Project version");
+        ver.setRequired(true);
+        options.addOption(ver);
+        var root = new Option("r", "root", true, "Project root directory");
+        root.setRequired(true);
+        options.addOption(root);
+        var ft = new Option("f", "filter", true, "Property filter pattern");
+        ft.setRequired(false);
+        options.addOption(ft);
+        var act = new Option("a", "actuators", true, "Generate data for actuator endpoints");
+        act.setRequired(false);
+        options.addOption(act);
+        var tp = new Option("tp", "thirdparty", true, "Generate data for third party");
+        tp.setRequired(false);
+        options.addOption(tp);
+        var sp = new Option("sp", "serviceproperties", true, "Generate data for registered services properties");
+        sp.setRequired(false);
+        options.addOption(sp);
+        
+        new HelpFormatter().printHelp("CAS Documentation", options);
+        var cmd = new DefaultParser().parse(options, args);
+
+        var dataDirectory = cmd.getOptionValue("data");
+        var projectVersion =  cmd.getOptionValue("version");
+        var projectRootDirectory = cmd.getOptionValue("root");
+        var propertyFilter = cmd.getOptionValue("filter", ".+");
+
         var results = CasConfigurationMetadataCatalog.query(
             ConfigurationMetadataCatalogQuery.builder()
                 .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.CAS)
+                .queryFilter(property -> RegexUtils.find(propertyFilter, property.getName()))
                 .build());
 
         var groups = new HashMap<String, Set<CasReferenceProperty>>();
         results.properties()
             .stream()
             .filter(property -> StringUtils.isNotBlank(property.getModule()))
+            .peek(property -> {
+                var desc = property.getDescription()
+                    .replace("{@code ", "<code>")
+                    .replace("{@value ", "<code>")
+                    .replace("{@link ", "<code>")
+                    .replace("}}", "[%s]</code>")
+                    .replace("}", "</code>")
+                    .replace("[%s]", "}");
+                property.setDescription(desc);
+            })
             .forEach(property -> {
                 if (groups.containsKey(property.getModule())) {
                     groups.get(property.getModule()).add(property);
@@ -78,13 +129,6 @@ public class CasDocumentationApplication {
                 }
             });
 
-        if (args.length != 3) {
-            System.err.println("Error: data directory, project version and project root directory are unspecified");
-            System.exit(1);
-        }
-        var dataDirectory = args[0];
-        var projectVersion = args[1];
-        var projectRootDirectory = args[2];
 
         var dataPath = new File(dataDirectory, projectVersion);
         if (dataPath.exists()) {
@@ -98,11 +142,22 @@ public class CasDocumentationApplication {
             CasConfigurationMetadataCatalog.export(configFile, value);
         });
 
-        exportThirdPartyConfiguration(dataPath);
-        exportRegisteredServiceProperties(dataPath);
+        var thirdparty = cmd.getOptionValue("thirdparty", "true");
+        if (StringUtils.equalsIgnoreCase("true", thirdparty)) {
+            exportThirdPartyConfiguration(dataPath, propertyFilter);
+        }
+
+        var registeredServicesProps = cmd.getOptionValue("serviceproperties", "true");
+        if (StringUtils.equalsIgnoreCase("true", registeredServicesProps)) {
+            exportRegisteredServiceProperties(dataPath);
+        }
         exportTemplateViews(projectRootDirectory, dataPath);
         exportThemeProperties(projectRootDirectory, dataPath);
-        exportActuatorEndpoints(dataPath);
+
+        var actuators = cmd.getOptionValue("actuators", "true");
+        if (StringUtils.equalsIgnoreCase("true", actuators)) {
+            exportActuatorEndpoints(dataPath);
+        }
     }
 
     private static void exportActuatorEndpoints(final File dataPath) throws Exception {
@@ -421,7 +476,10 @@ public class CasDocumentationApplication {
                 map.put("deprecated", true);
             }
             map.put("summary", StringUtils.appendIfMissing(operation.summary(), "."));
-            if (operation.parameters().length == 0 && method.getParameterCount() > 0) {
+            var paramCount = Arrays.stream(method.getParameterTypes())
+                .filter(type -> !type.equals(HttpServletRequest.class) && !type.equals(HttpServletResponse.class)).count();
+
+            if (operation.parameters().length == 0 && paramCount > 0) {
                 throw new RuntimeException("Unable to locate @Parameter annotation for " + method.toGenericString()
                     + " in declaring class " + clazz.getName());
             }
@@ -540,10 +598,11 @@ public class CasDocumentationApplication {
         CasConfigurationMetadataCatalog.export(servicePropsFile, properties);
     }
 
-    private static void exportThirdPartyConfiguration(final File dataPath) {
+    private static void exportThirdPartyConfiguration(final File dataPath, final String propertyFilter) {
         var results = CasConfigurationMetadataCatalog.query(
             ConfigurationMetadataCatalogQuery.builder()
                 .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.THIRD_PARTY)
+                .queryFilter(property -> RegexUtils.find(propertyFilter, property.getName()))
                 .build());
         var destination = new File(dataPath, "third-party");
         if (destination.exists()) {

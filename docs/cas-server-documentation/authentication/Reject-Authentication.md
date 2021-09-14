@@ -15,6 +15,6 @@ Those that fail to match against the predefined set will blindly be accepted.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-generic" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-generic" %}
 
-{% include casproperties.html properties="cas.authn.reject" %}
+{% include_cached casproperties.html properties="cas.authn.reject" %}

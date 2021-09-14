@@ -20,9 +20,9 @@ the likes of [LastPass Authenticator](https://lastpass.com/auth), etc.
 
 Support is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-gauth" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-gauth" %}
 
-{% include casproperties.html properties="cas.authn.mfa.gauth.core" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.gauth.core" %}
 
 ## Repository Cleaner
 
@@ -31,13 +31,13 @@ repository periodically and remove expired device registration records
 based on configured parameters. In the default setting, devices
 expire after a fixed period since a user registered their device.
 
-{% include casproperties.html properties="cas.authn.mfa.gauth.cleaner" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.gauth.cleaner" %}
 
 ## Actuator Endpoints
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="gauthCredentialRepository" %}
+{% include_cached actuators.html endpoints="gauthCredentialRepository" %}
 
 ## Token Repository
 
@@ -69,6 +69,7 @@ records can be controlled via CAS settings.
 | JPA              | [See this guide](GoogleAuthenticator-Authentication-Registration-JPA.html).
 | CouchDb          | [See this guide](GoogleAuthenticator-Authentication-Registration-CouchDb.html).
 | MongoDb          | [See this guide](GoogleAuthenticator-Authentication-Registration-MongoDb.html).
+| DynamoDb         | [See this guide](GoogleAuthenticator-Authentication-Registration-DynamoDb.html).
 | Redis            | [See this guide](GoogleAuthenticator-Authentication-Registration-Redis.html).
 | LDAP             | [See this guide](GoogleAuthenticator-Authentication-Registration-LDAP.html).
 | REST             | [See this guide](GoogleAuthenticator-Authentication-Registration-Rest.html).

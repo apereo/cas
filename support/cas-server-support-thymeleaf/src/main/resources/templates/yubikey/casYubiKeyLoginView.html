@@ -20,11 +20,11 @@
             <div class="banner banner-danger alert alert-danger my-2" th:if="${#fields.hasErrors('*')}">
                 <span th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Error message</span>
             </div>
-
             <section class="cas-field form-group my-3 mdc-input-group">
                 <div class="d-flex">
                     <div class="mdc-input-group-field mdc-input-group-field-append">
-                        <label for="token" class="mdc-text-field caps-check mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
+                        <label for="token"
+                            class="mdc-text-field caps-check mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
                             <span class="mdc-notched-outline">
                                 <span class="mdc-notched-outline__leading"></span>
                                 <span class="mdc-notched-outline__notch">
@@ -32,12 +32,19 @@
                                 </span>
                                 <span class="mdc-notched-outline__trailing"></span>
                             </span>
-                            <input class="mdc-text-field__input form-control pwd" type="password" name="token" id="token" th:field="*{token}"
-                                size="25" autocomplete="off" required />
+                            <input class="mdc-text-field__input form-control pwd"
+                                type="password"
+                                name="token"
+                                id="token"
+                                th:field="*{token}"
+                                size="25"
+                                autocomplete="off"
+                                required />
                         </label>
                     </div>
                     <button
                         class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
+                        tabindex="-1"
                         type="button">
                         <i class="mdi mdi-eye fas fa-eye reveal-password-icon"></i>
                         <span class="visually-hidden">Toggle Password</span>

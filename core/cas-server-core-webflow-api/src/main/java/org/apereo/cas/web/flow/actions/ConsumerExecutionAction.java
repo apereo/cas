@@ -28,4 +28,9 @@ public class ConsumerExecutionAction implements Action {
         this.task.accept(requestContext);
         return StringUtils.isNotBlank(this.eventId) ? new EventFactorySupport().event(this, this.eventId) : null;
     }
+
+    @Override
+    public String toString() {
+        return "Inline Consumer Action, returning " + this.eventId;
+    }
 }

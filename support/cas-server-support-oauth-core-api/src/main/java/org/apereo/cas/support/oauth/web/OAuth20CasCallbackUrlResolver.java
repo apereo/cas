@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -9,6 +10,7 @@ import lombok.val;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
+import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.http.url.UrlResolver;
 
@@ -29,16 +31,16 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
 
     @SneakyThrows
     private static Optional<NameValuePair> getQueryParameter(final WebContext context, final String name) {
-        val builderContext = new URIBuilder(context.getFullRequestURL());
-        val result = builderContext.getQueryParams()
-            .stream()
-            .filter(p -> p.getName().equalsIgnoreCase(name))
-            .findFirst();
-        if (result.isEmpty()) {
-            val value = context.getRequestParameter(name);
-            return value.map(v -> new BasicNameValuePair(name, v));
-        }
-        return result;
+        val value = OAuth20Utils.getRequestParameter(context, name)
+            .or(Unchecked.supplier(() -> {
+                val builderContext = new URIBuilder(context.getFullRequestURL());
+                return builderContext.getQueryParams()
+                    .stream()
+                    .filter(p -> p.getName().equalsIgnoreCase(name))
+                    .map(NameValuePair::getValue)
+                    .findFirst();
+            }));
+        return value.map(v -> new BasicNameValuePair(name, v));
     }
 
     private static void addUrlParameter(final WebContext context, final URIBuilder builder, final String parameterName) {

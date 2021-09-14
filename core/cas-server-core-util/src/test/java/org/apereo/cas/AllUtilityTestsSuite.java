@@ -18,6 +18,7 @@ import org.apereo.cas.util.cipher.RsaKeyPairCipherExecutorTests;
 import org.apereo.cas.util.cipher.StringCipherExecutorTests;
 import org.apereo.cas.util.cipher.TicketGrantingCookieCipherExecutorTests;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutorTests;
+import org.apereo.cas.util.feature.DefaultCasRuntimeModuleLoaderTests;
 import org.apereo.cas.util.gen.ChainingPrincipalNameTransformerTests;
 import org.apereo.cas.util.gen.DefaultLongNumericGeneratorTests;
 import org.apereo.cas.util.gen.DefaultRandomStringGeneratorTests;
@@ -52,6 +53,7 @@ import org.junit.platform.suite.api.Suite;
     DefaultRandomStringGeneratorTests.class,
     DefaultTicketCipherExecutorTests.class,
     EncodingUtilsTests.class,
+    DefaultCasRuntimeModuleLoaderTests.class,
     HexRandomStringGeneratorTests.class,
     RegexUtilsTests.class,
     StringCipherExecutorTests.class,

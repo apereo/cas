@@ -133,6 +133,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             createDecisionState(flow, CasWebflowConstants.DECISION_STATE_CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION, "requestParameters."
                 + PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN
                 + " != null", CasWebflowConstants.STATE_ID_PASSWORD_RESET_SUBFLOW, originalTargetState);
+            
             createTransitionForState(initializeLoginFormState,
                 CasWebflowConstants.STATE_ID_SUCCESS,
                 CasWebflowConstants.DECISION_STATE_CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION, true);

@@ -23,7 +23,7 @@ is used, but when working with Unicode strings as properties values it does matt
 files using the `ISO-8859-1` encoding. YAML files are loaded with UTF-8 encoding. If you are setting Unicode
 values try using a YAML configuration file.</p></div>
 
-{% include casproperties.html properties="cas.server.name,cas.server.prefix,cas.server.scope,cas.host." %}
+{% include_cached casproperties.html properties="cas.server.name,cas.server.prefix,cas.server.scope,cas.host." %}
 
 On startup, CAS will display a banner along with some diagnostics info.
 In order to skip this step and summarize, set the system property `-DCAS_BANNER_SKIP=true`.
@@ -65,7 +65,7 @@ to <a href="../monitoring/Monitoring-Statistics.html">CAS administration panels.
 
 The following endpoints are provided:
 
-{% include actuators.html endpoints="configProps,env,beans,conditions" %}
+{% include_cached actuators.html endpoints="configProps,env,beans,conditions" %}
 
 ## Configuration Server
 
@@ -81,7 +81,7 @@ configuration, please [review this guide](Configuration-Management-Extensions.ht
 
 ## Custom CAS Settings
 
-{% include casproperties.html properties="cas.custom.properties" %}
+{% include_cached casproperties.html properties="cas.custom.properties" %}
 
 ## Auto Configuration Strategy
 

@@ -11,17 +11,17 @@ category: Integration
 The functionality described here presents a dedicated integration strategy between CAS and AWS. Support is enabled by 
 including the following dependency in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-aws" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-aws" %}
 
 ## Configuration
 
-{% include casproperties.html properties="cas.amazon-sts." %}
+{% include_cached casproperties.html properties="cas.amazon-sts." %}
 
 ## Actuator Endpoints
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="awsSts" %}
+{% include_cached actuators.html endpoints="awsSts" %}
 
 ## Temporary Security Credentials
 

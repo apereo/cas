@@ -3,7 +3,7 @@
   "properties": [
     "--cas.rest.services.attribute-name=mail",
     "--cas.rest.services.attribute-value=.*@example.org",
-
+    "--cas.audit.engine.enabled=false",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org"
   ]
 }

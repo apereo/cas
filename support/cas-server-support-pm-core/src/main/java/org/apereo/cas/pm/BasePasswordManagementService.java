@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -94,7 +95,9 @@ public abstract class BasePasswordManagementService implements PasswordManagemen
             claims.setJwtId(token);
             claims.setIssuer(issuer);
             claims.setAudience(issuer);
-            claims.setExpirationTimeMinutesInTheFuture((float) resetProperties.getExpirationMinutes());
+
+            val minutes = Beans.newDuration(resetProperties.getExpiration()).toMinutes();
+            claims.setExpirationTimeMinutesInTheFuture((float) minutes);
             claims.setIssuedAtToNow();
 
             val holder = ClientInfoHolder.getClientInfo();

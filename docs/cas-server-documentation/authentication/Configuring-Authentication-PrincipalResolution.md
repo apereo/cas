@@ -10,7 +10,7 @@ category: Authentication
 
 In the event that a separate resolver is put into place, control how the final principal should be constructed by default.
 
-{% include casproperties.html properties="cas.person-directory" %}
+{% include_cached casproperties.html properties="cas.person-directory" %}
 
 ## Principal Transformation
 
@@ -24,4 +24,4 @@ that are supplied via the CAS configuration. The following section demonstrates 
 particular method of authentication can be assigned a group of settings that affect
 the principal transformation process.
 
-{% include casproperties.html properties="cas.authn.accept" %}
+{% include_cached casproperties.html properties="cas.authn.accept" %}

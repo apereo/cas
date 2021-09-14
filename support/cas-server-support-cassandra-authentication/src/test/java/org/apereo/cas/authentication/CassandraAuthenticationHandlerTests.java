@@ -62,7 +62,9 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.cassandra.local-dc=datacenter1",
     "cas.authn.cassandra.username-attribute=user_attr",
     "cas.authn.cassandra.password-attribute=pwd_attr",
-    "cas.authn.cassandra.keyspace=cas"
+    "cas.authn.cassandra.keyspace=cas",
+    "cas.authn.cassandra.username=casuser",
+    "cas.authn.cassandra.password=password"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Cassandra")

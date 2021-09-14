@@ -10,6 +10,7 @@ import org.apereo.cas.services.web.ThemeViewResolverFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.CasProtocolViewFactory;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.view.CasProtocolThymeleafViewFactory;
 import org.apereo.cas.web.view.ChainingTemplateViewResolver;
 import org.apereo.cas.web.view.RestfulUrlTemplateResolver;
@@ -18,6 +19,7 @@ import org.apereo.cas.web.view.ThemeFileTemplateResolver;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +100,11 @@ public class CasThymeleafConfiguration {
     }
 
     @Bean
+    public LayoutDialect layoutDialect() {
+        return new LayoutDialect();
+    }
+
+    @Bean
     @ConditionalOnMissingBean(name = "chainingTemplateViewResolver")
     public AbstractTemplateResolver chainingTemplateViewResolver() {
         val chain = new ChainingTemplateViewResolver();
@@ -108,7 +115,7 @@ public class CasThymeleafConfiguration {
             configureTemplateViewResolver(url);
             chain.addResolver(url);
         }
-        
+
         val templatePrefixes = casProperties.getView().getTemplatePrefixes();
         templatePrefixes.forEach(prefix -> {
             try {
@@ -142,7 +149,7 @@ public class CasThymeleafConfiguration {
         configureTemplateViewResolver(cpResolver);
         cpResolver.setPrefix("thymeleaf/templates/");
         chain.addResolver(cpResolver);
-        
+
         chain.initialize();
         return chain;
     }
@@ -184,8 +191,9 @@ public class CasThymeleafConfiguration {
     @ConditionalOnMissingBean(name = "casThymeleafLoginFormDirector")
     @Bean
     @RefreshScope
-    public CasThymeleafLoginFormDirector casThymeleafLoginFormDirector() {
-        return new CasThymeleafLoginFormDirector();
+    @Autowired
+    public CasThymeleafLoginFormDirector casThymeleafLoginFormDirector(@Qualifier("casWebflowExecutionPlan") final CasWebflowExecutionPlan webflowExecutionPlan) {
+        return new CasThymeleafLoginFormDirector(webflowExecutionPlan);
     }
 
     @ConditionalOnMissingBean(name = "themeViewResolverFactory")
@@ -249,6 +257,19 @@ public class CasThymeleafConfiguration {
         return resolver;
     }
 
+    @Bean
+    public SpringTemplateEngine templateEngine(final ThymeleafProperties properties,
+                                               final ObjectProvider<ITemplateResolver> templateResolvers,
+                                               final ObjectProvider<IDialect> dialects) {
+        val engine = new SpringTemplateEngine();
+        engine.setEnableSpringELCompiler(properties.isEnableSpringElCompiler());
+        engine.setRenderHiddenMarkersBeforeCheckboxes(properties.isRenderHiddenMarkersBeforeCheckboxes());
+        templateResolvers.orderedStream().forEach(engine::addTemplateResolver);
+        dialects.orderedStream().forEach(engine::addDialect);
+
+        return engine;
+    }
+
     private void configureTemplateViewResolver(final AbstractConfigurableTemplateResolver resolver) {
         val props = thymeleafProperties.getObject();
         resolver.setCacheable(props.isCache());
@@ -258,18 +279,5 @@ public class CasThymeleafConfiguration {
         resolver.setOrder(0);
         resolver.setSuffix(".html");
         resolver.setTemplateMode(props.getMode());
-    }
-
-    @Bean
-    public SpringTemplateEngine templateEngine(final ThymeleafProperties properties,
-                                        final ObjectProvider<ITemplateResolver> templateResolvers,
-                                        final ObjectProvider<IDialect> dialects) {
-        val engine = new SpringTemplateEngine();
-        engine.setEnableSpringELCompiler(properties.isEnableSpringElCompiler());
-        engine.setRenderHiddenMarkersBeforeCheckboxes(properties.isRenderHiddenMarkersBeforeCheckboxes());
-        templateResolvers.orderedStream().forEach(engine::addTemplateResolver);
-        dialects.orderedStream().forEach(engine::addDialect);
-        
-        return engine;
     }
 }

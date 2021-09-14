@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -40,6 +41,14 @@ public abstract class BaseInterruptInquirer implements InterruptInquirer {
             LOGGER.trace("Checking interrupt rules for service [{}]", registeredService.getName());
             if (RegisteredServiceProperties.SKIP_INTERRUPT_NOTIFICATIONS.isAssignedTo(registeredService)) {
                 LOGGER.debug("Service [{}] is set to skip interrupt notifications", registeredService.getName());
+                LOGGER.warn("Assigning [{}] property to the registered service [{}] to skip interrupt notification is deprecated "
+                        + "and scheduled to be removed in future CAS releases. Consider using an interrupt webflow policy instead.",
+                    RegisteredServiceProperties.SKIP_INTERRUPT_NOTIFICATIONS.getPropertyName(), registeredService.getName());
+                return true;
+            }
+            val policy = registeredService.getWebflowInterruptPolicy();
+            if (policy != null && !policy.isEnabled()) {
+                LOGGER.debug("Service [{}] is assigned an interrupt policy that disables interrupt notifications", registeredService.getName());
                 return true;
             }
             LOGGER.debug("Service [{}] is set to allow interrupt notifications", registeredService.getName());

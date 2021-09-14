@@ -42,6 +42,9 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.config.OidcComponentSerializationConfiguration;
 import org.apereo.cas.oidc.config.OidcConfiguration;
+import org.apereo.cas.oidc.config.OidcEndpointsConfiguration;
+import org.apereo.cas.oidc.config.OidcLogoutConfiguration;
+import org.apereo.cas.oidc.config.OidcResponseConfiguration;
 import org.apereo.cas.oidc.config.OidcThrottleConfiguration;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
@@ -491,6 +494,9 @@ public abstract class AbstractOidcTests {
         CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         OidcConfiguration.class,
+        OidcEndpointsConfiguration.class,
+        OidcResponseConfiguration.class,
+        OidcLogoutConfiguration.class,
         OidcThrottleConfiguration.class,
         OidcComponentSerializationConfiguration.class
     })

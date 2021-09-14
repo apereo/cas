@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -16,6 +17,7 @@ import org.apereo.cas.web.flow.configurer.DynamicFlowModelBuilder;
 import org.apereo.cas.web.flow.configurer.GroovyWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.plan.DefaultCasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.executor.WebflowExecutorFactory;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
 
 import lombok.val;
@@ -92,6 +94,14 @@ public class CasWebflowContextConfiguration {
     @Autowired
     @Qualifier("webflowCipherExecutor")
     private ObjectProvider<CipherExecutor> webflowCipherExecutor;
+
+    @Autowired
+    @Qualifier("argumentExtractor")
+    private ObjectProvider<ArgumentExtractor> argumentExtractor;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("themeChangeInterceptor")
@@ -171,8 +181,11 @@ public class CasWebflowContextConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "localeChangeInterceptor")
     public LocaleChangeInterceptor localeChangeInterceptor() {
-        val interceptor = new CasLocaleChangeInterceptor(casProperties.getLocale());
+        val interceptor = new CasLocaleChangeInterceptor(casProperties.getLocale(), argumentExtractor.getObject(), servicesManager.getObject());
         interceptor.setParamName(casProperties.getLocale().getParamName());
+        interceptor.setSupportedFlows(List.of(
+            CasWebflowConfigurer.FLOW_ID_LOGOUT,
+            CasWebflowConfigurer.FLOW_ID_LOGIN));
         return interceptor;
     }
 

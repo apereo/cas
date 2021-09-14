@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.pm;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -66,11 +67,13 @@ public class ResetPasswordManagementProperties implements Serializable {
     /**
      * How long in minutes should the password expiration link remain valid.
      */
-    private long expirationMinutes = 1;
+    @DurationCapable
+    private String expiration = "PT1M";
 
     public ResetPasswordManagementProperties() {
         mail.setAttributeName("mail");
         mail.setText("Reset your password via this link: %s");
+        sms.setText("Reset your password via this link: %s");
         mail.setSubject("Password Reset");
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);

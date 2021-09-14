@@ -38,9 +38,11 @@ import java.security.GeneralSecurityException;
 @Getter
 public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler implements MultifactorAuthenticationHandler {
     private final YubiKeyAccountRegistry registry;
+
     private final YubicoClient client;
 
-    public YubiKeyAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public YubiKeyAuthenticationHandler(final String name,
+                                        final ServicesManager servicesManager,
                                         final PrincipalFactory principalFactory,
                                         final YubicoClient client,
                                         final YubiKeyAccountRegistry registry,
@@ -53,6 +55,16 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
     public YubiKeyAuthenticationHandler(final YubicoClient client) {
         this(StringUtils.EMPTY, null, null,
             client, new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()), null);
+    }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return YubiKeyCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
+    public boolean supports(final Credential credential) {
+        return YubiKeyCredential.class.isAssignableFrom(credential.getClass());
     }
 
     @Override
@@ -90,15 +102,5 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
             LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException("YubiKey validation failed: " + e.getMessage());
         }
-    }
-
-    @Override
-    public boolean supports(final Class<? extends Credential> clazz) {
-        return YubiKeyCredential.class.isAssignableFrom(clazz);
-    }
-
-    @Override
-    public boolean supports(final Credential credential) {
-        return YubiKeyCredential.class.isAssignableFrom(credential.getClass());
     }
 }

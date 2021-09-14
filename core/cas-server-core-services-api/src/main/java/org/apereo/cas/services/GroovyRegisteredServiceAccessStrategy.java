@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import lombok.experimental.Accessors;
 import lombok.val;
 
 import javax.persistence.Transient;
@@ -26,6 +27,7 @@ import java.util.Set;
  */
 @Getter
 @Setter
+@Accessors(chain = true)
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"order", "groovyScript"})
 public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {

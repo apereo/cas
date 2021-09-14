@@ -1,10 +1,9 @@
 package org.apereo.cas.cosmosdb;
 
-import com.microsoft.azure.spring.data.documentdb.core.mapping.Document;
-import com.microsoft.azure.spring.data.documentdb.core.mapping.PartitionKey;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
+
+import java.io.Serializable;
 
 /**
  * This is {@link CosmosDbDocument}.
@@ -12,16 +11,14 @@ import org.springframework.data.annotation.Id;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Document
 @Getter
 @Setter
-public class CosmosDbDocument {
+public class CosmosDbDocument implements Serializable {
+    private static final long serialVersionUID = -8481978861727839081L;
 
-    @Id
     private String id;
 
-    @PartitionKey
-    private String partitionKey;
+    private String serviceId;
 
     private String body;
 }

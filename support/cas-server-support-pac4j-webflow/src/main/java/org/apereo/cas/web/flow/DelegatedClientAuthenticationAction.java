@@ -90,7 +90,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 model.put("description", StringEscapeUtils.escapeHtml4(request.getParameter("error_message")));
             }
             model.put(CasProtocolConstants.PARAMETER_SERVICE, request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
-            model.put("client", StringEscapeUtils.escapeHtml4(request.getParameter("client_name")));
+            model.put("client", StringEscapeUtils.escapeHtml4(request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER)));
             LOGGER.debug("Delegation request has failed. Details are [{}]", model);
             return Optional.of(new ModelAndView(CasWebflowConstants.VIEW_ID_PAC4J_STOP_WEBFLOW, model));
         }
@@ -178,13 +178,15 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @param context  the context
      * @param response the response
      */
-    protected void produceDelegatedAuthenticationClientsForContext(final RequestContext context, final HttpServletResponse response) {
+    protected void produceDelegatedAuthenticationClientsForContext(final RequestContext context,
+                                                                   final HttpServletResponse response) {
         val providers = configContext.getDelegatedClientIdentityProvidersProducer().produce(context);
         LOGGER.trace("Delegated authentication providers are finalized as [{}]", providers);
         WebUtils.createCredential(context);
         if (response.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
             throw new UnauthorizedAuthenticationException("Authentication is not authorized: " + response.getStatus());
         }
+        configContext.getDelegatedClientIdentityProviderConfigurationPostProcessor().process(context, providers);
     }
 
     @Override
@@ -295,7 +297,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @return the event
      */
     protected Event stopWebflow(final Exception e, final RequestContext requestContext) {
-        requestContext.getFlashScope().put("rootCauseException", e);
+        requestContext.getFlashScope().put(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, e);
         return new Event(this, CasWebflowConstants.TRANSITION_ID_STOP, new LocalAttributeMap<>("error", e));
     }
 

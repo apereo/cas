@@ -1,5 +1,7 @@
 package org.apereo.cas.pm.web.flow;
 
+import org.apereo.cas.web.support.WebUtils;
+
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -32,7 +34,7 @@ public class PasswordManagementWebflowUtilsTests {
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
         PasswordManagementWebflowUtils.putPasswordResetSecurityQuestions(context, List.of("Q1", "Q2"));
-        PasswordManagementWebflowUtils.putPasswordResetPasswordPolicyPattern(context, ".*");
+        WebUtils.putPasswordPolicyPattern(context, ".*");
         assertFalse(PasswordManagementWebflowUtils.getPasswordResetQuestions(context).isEmpty());
     }
 

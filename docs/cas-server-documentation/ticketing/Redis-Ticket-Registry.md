@@ -10,7 +10,7 @@ category: Ticketing
 
 Redis integration is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-redis-ticket-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-redis-ticket-registry" %}
 
 This registry stores tickets in one or more [Redis](http://redis.io/) instances. The
 [spring data redis](http://projects.spring.io/spring-data-redis/) library used by this component presents Redis as a
@@ -20,7 +20,7 @@ The Redis ticket registry supports Redis Sentinel, which provides high availabil
 
 ## Configuration
 
-{% include casproperties.html properties="cas.ticket.registry.redis" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.redis" %}
 
 ### Eviction Policy
 

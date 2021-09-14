@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc;
 
+import org.apereo.cas.oidc.claims.OidcIdTokenClaimCollector;
 import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.util.OidcRequestSupport;
@@ -22,4 +23,6 @@ public class OidcConfigurationContext extends OAuth20ConfigurationContext {
     private final OidcIssuerService issuerService;
 
     private final OidcRequestSupport oidcRequestSupport;
+
+    private final OidcIdTokenClaimCollector idTokenClaimCollector;
 }

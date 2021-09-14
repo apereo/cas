@@ -77,6 +77,7 @@ public class CasConfigurationMetadataCatalog {
                 }
                 return true;
             })
+            .filter(entry -> query.getQueryFilter().test(entry.getValue()))
             .collect(Collectors.toList());
 
         val properties = allProperties

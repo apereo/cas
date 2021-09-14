@@ -1,0 +1,47 @@
+{
+  "@class" : "java.util.HashMap",
+  "username" : {
+    "@class" : "org.apereo.cas.acct.AccountRegistrationProperty",
+    "name" : "username",
+    "required" : true,
+    "label" : "cas.screen.acct.label.username",
+    "title" : "cas.screen.acct.title.username",
+    "order": 0
+  },
+  "firstName" : {
+    "@class" : "org.apereo.cas.acct.AccountRegistrationProperty",
+    "name" : "firstName",
+    "required" : true,
+    "label" : "cas.screen.acct.label.firstName",
+    "title" : "cas.screen.acct.title.firstName",
+    "order": 1
+  },
+  "lastName" : {
+    "@class" : "org.apereo.cas.acct.AccountRegistrationProperty",
+    "name" : "lastName",
+    "required" : true,
+    "label" : "cas.screen.acct.label.lastName",
+    "title" : "cas.screen.acct.title.lastName",
+    "order": 2
+  },
+  "email" : {
+    "@class" : "org.apereo.cas.acct.AccountRegistrationProperty",
+    "name" : "email",
+    "required" : true,
+    "label" : "cas.screen.acct.label.email",
+    "title" : "cas.screen.acct.title.email",
+    "pattern": "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])",
+    "type": "email",
+    "order": 3
+  },
+  "phone" : {
+    "@class" : "org.apereo.cas.acct.AccountRegistrationProperty",
+    "name" : "phone",
+    "required" : false,
+    "label" : "cas.screen.acct.label.phone",
+    "title" : "cas.screen.acct.title.phone",
+    "pattern": "^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$",
+    "type": "tel",
+    "order": 4
+  }
+}

@@ -10,7 +10,7 @@ category: Authentication
 
 For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 
-{% include casproperties.html properties="cas.authn.pac4j.oidc[].generic" %}
+{% include_cached casproperties.html properties="cas.authn.pac4j.oidc[].generic" %}
 
 ## Per Service Customizations
 
@@ -19,7 +19,7 @@ via CAS configuration settings and applies to all applications and relying parti
 certain aspects this configuration on a per application basis by assigning
 dedicated [properties to the service definition](../services/Configuring-Service-Custom-Properties.html).
 
-{% include registeredserviceproperties.html groups="DELEGATED_AUTHN,DELEGATED_AUTHN_OIDC" %}
+{% include_cached registeredserviceproperties.html groups="DELEGATED_AUTHN,DELEGATED_AUTHN_OIDC" %}
 
 A sample JSON file follows:
 

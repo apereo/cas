@@ -18,7 +18,7 @@ function randomWord() {
 
     let n1 = things[Math.floor(Math.random() * things.length)];
     let n2 = names[Math.floor(Math.random() * names.length)];
-    return n1 + "_" + n2
+    return `${n1}_${n2}`
 }
 
 function copyClipboard(element) {
@@ -65,9 +65,8 @@ function logGeoLocationError(error) {
 }
 
 function showGeoPosition(position) {
-    let loc = position.coords.latitude + ',' + position.coords.longitude
-        + ',' + position.coords.accuracy + ',' + position.timestamp;
-    console.log("Tracking geolocation for " + loc);
+    let loc = `${position.coords.latitude},${position.coords.longitude},${position.coords.accuracy},${position.timestamp}`;
+    console.log(`Tracking geolocation for ${loc}`);
     $('[name="geolocation"]').val(loc);
 }
 
@@ -77,16 +76,16 @@ function preserveAnchorTagOnForm() {
         let location = self.document.location;
         let hash = decodeURIComponent(location.hash);
 
-        if (hash != undefined && hash != '' && hash.indexOf('#') === -1) {
-            hash = '#' + hash;
+        if (hash !== undefined && hash != '' && hash.indexOf('#') === -1) {
+            hash = `#${hash}`;
         }
 
         let action = $('#fm1').attr('action');
-        if (action == undefined) {
+        if (action === undefined) {
             action = location.href;
         } else {
             let qidx = location.href.indexOf('?');
-            if (qidx != -1) {
+            if (qidx !== -1) {
                 let queryParams = location.href.substring(qidx);
                 action += queryParams;
             }

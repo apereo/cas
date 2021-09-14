@@ -5,7 +5,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +37,7 @@ public class SingleSignOnSessionStatusEndpoint {
      * @return the response entity
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get current status of single sign-on", parameters = {@Parameter(name = "request", required = true)})
+    @Operation(summary = "Get current status of single sign-on")
     public ResponseEntity<Map<?, ?>> ssoStatus(final HttpServletRequest request) {
         val tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         if (StringUtils.isBlank(tgtId)) {

@@ -1,0 +1,17 @@
+ext {
+    mainClassName = "org.apereo.cas.web.CasWebApplication"
+}
+description = "Apereo CAS Starter with Apache Tomcat"
+
+apply from: rootProject.file("gradle/springboot.gradle")
+apply from: rootProject.file("gradle/webapp-dependencies.gradle")
+
+dependencies {
+    implementation project(":webapp:cas-server-webapp-init-tomcat")
+
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+}
