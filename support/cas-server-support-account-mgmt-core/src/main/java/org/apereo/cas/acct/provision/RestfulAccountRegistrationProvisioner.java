@@ -2,7 +2,7 @@ package org.apereo.cas.acct.provision;
 
 import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.acct.AccountRegistrationResponse;
-import org.apereo.cas.configuration.model.support.account.RestfulAccountManagementRegistrationProvisioningProperties;
+import org.apereo.cas.configuration.model.support.account.provision.RestfulAccountManagementRegistrationProvisioningProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;

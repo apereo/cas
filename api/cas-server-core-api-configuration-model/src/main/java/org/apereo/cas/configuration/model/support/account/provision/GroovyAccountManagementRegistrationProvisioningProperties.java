@@ -1,6 +1,6 @@
-package org.apereo.cas.configuration.model.support.account;
+package org.apereo.cas.configuration.model.support.account.provision;
 
-import org.apereo.cas.configuration.model.BaseRestEndpointProperties;
+import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * This is {@link RestfulAccountManagementRegistrationProvisioningProperties}.
+ * This is {@link GroovyAccountManagementRegistrationProvisioningProperties}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("RestfulAccountManagementRegistrationProvisioningProperties")
-public class RestfulAccountManagementRegistrationProvisioningProperties extends BaseRestEndpointProperties {
+@JsonFilter("GroovyAccountManagementRegistrationProvisioningProperties")
+public class GroovyAccountManagementRegistrationProvisioningProperties extends SpringResourceProperties {
     private static final long serialVersionUID = 6855936824474022021L;
 }

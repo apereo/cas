@@ -4,6 +4,8 @@ import org.apereo.cas.acct.AccountRegistrationRequestAuditPrincipalIdResolverTes
 import org.apereo.cas.acct.AccountRegistrationRequestTests;
 import org.apereo.cas.acct.DefaultAccountRegistrationPropertyLoaderTests;
 import org.apereo.cas.acct.DefaultAccountRegistrationServiceTests;
+import org.apereo.cas.acct.provision.AccountRegistrationProvisionerConfigurerTests;
+import org.apereo.cas.acct.provision.GroovyAccountRegistrationProvisionerTests;
 import org.apereo.cas.acct.provision.RestfulAccountRegistrationProvisionerTests;
 import org.apereo.cas.acct.webflow.AccountManagementRegistrationCaptchaWebflowConfigurerTests;
 import org.apereo.cas.acct.webflow.AccountManagementWebflowConfigurerTests;
@@ -23,6 +25,8 @@ import org.junit.platform.suite.api.Suite;
  */
 @SelectClasses({
     RestfulAccountRegistrationProvisionerTests.class,
+    GroovyAccountRegistrationProvisionerTests.class,
+    AccountRegistrationProvisionerConfigurerTests.class,
     AccountRegistrationRequestTests.class,
     DefaultAccountRegistrationServiceTests.class,
     LoadAccountRegistrationPropertiesActionTests.class,

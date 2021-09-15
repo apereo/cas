@@ -12,6 +12,7 @@ import org.apereo.cas.acct.DefaultAccountRegistrationService;
 import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
 import org.apereo.cas.acct.provision.AccountRegistrationProvisionerConfigurer;
 import org.apereo.cas.acct.provision.ChainingAccountRegistrationProvisioner;
+import org.apereo.cas.acct.provision.GroovyAccountRegistrationProvisioner;
 import org.apereo.cas.acct.provision.RestfulAccountRegistrationProvisioner;
 import org.apereo.cas.acct.webflow.AccountManagementRegistrationCaptchaWebflowConfigurer;
 import org.apereo.cas.acct.webflow.AccountManagementWebflowConfigurer;
@@ -30,6 +31,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -225,6 +227,17 @@ public class CasAccountManagementWebflowConfiguration {
         return () -> {
             val props = casProperties.getAccountRegistration().getProvisioning().getRest();
             return new RestfulAccountRegistrationProvisioner(props);
+        };
+    }
+
+    @ConditionalOnMissingBean(name = "groovyAccountRegistrationProvisionerConfigurer")
+    @Bean
+    @RefreshScope
+    @ConditionalOnProperty(name = "cas.account-registration.provisioning.groovy.location")
+    public AccountRegistrationProvisionerConfigurer groovyAccountRegistrationProvisionerConfigurer() {
+        return () -> {
+            val groovy = casProperties.getAccountRegistration().getProvisioning().getGroovy();
+            return new GroovyAccountRegistrationProvisioner(new WatchableGroovyScriptResource(groovy.getLocation()), applicationContext);
         };
     }
 
