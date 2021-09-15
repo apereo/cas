@@ -1260,6 +1260,12 @@ public interface CasWebflowConstants {
      * Action id 'accountMgmtRegistrationValidateCaptchaAction .
      */
     String ACTION_ID_ACCOUNT_REGISTRATION_VALIDATE_CAPTCHA = "accountMgmtRegistrationValidateCaptchaAction";
+
+    /**
+     * Action id 'finalizeAccountRegistrationRequestAction .
+     */
+    String ACTION_ID_FINALIZE_ACCOUNT_REGISTRATION_REQUEST = "finalizeAccountRegistrationRequestAction";
+
     /**
      * Action id 'validateAccountRegistrationTokenAction .
      */

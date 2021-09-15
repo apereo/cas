@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +15,6 @@ import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.Objects;
 
 /**
  * This is {@link ValidateAccountRegistrationTokenAction}.
@@ -41,13 +38,12 @@ public class ValidateAccountRegistrationTokenAction extends AbstractAction {
             accountRegTicket = centralAuthenticationService.getTicket(activationToken, TransientSessionTicket.class);
             val token = accountRegTicket.getProperty(AccountRegistrationUtils.PROPERTY_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, String.class);
             val registrationRequest = accountRegistrationService.validateToken(token);
-            WebUtils.putAccountManagementRegistrationRequest(requestContext, Objects.requireNonNull(registrationRequest));
             ((TicketState) accountRegTicket).update();
 
             val username = accountRegistrationService.getAccountRegistrationUsernameBuilder().build(registrationRequest);
             AccountRegistrationUtils.putAccountRegistrationRequest(requestContext, registrationRequest);
             AccountRegistrationUtils.putAccountRegistrationRequestUsername(requestContext, username);
-            
+
             return success(registrationRequest);
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, e);

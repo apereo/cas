@@ -6,6 +6,7 @@ import org.apereo.cas.acct.AccountRegistrationRequestAuditPrincipalIdResolver;
 import org.apereo.cas.acct.AccountRegistrationService;
 import org.apereo.cas.acct.AccountRegistrationTokenCipherExecutor;
 import org.apereo.cas.acct.AccountRegistrationUsernameBuilder;
+import org.apereo.cas.acct.AccountRegistrationUtils;
 import org.apereo.cas.acct.DefaultAccountRegistrationPropertyLoader;
 import org.apereo.cas.acct.DefaultAccountRegistrationService;
 import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
@@ -35,7 +36,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.InitializeCaptchaAction;
 import org.apereo.cas.web.flow.ValidateCaptchaAction;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -195,7 +195,7 @@ public class CasAccountManagementWebflowConfiguration {
 
 
     @RefreshScope
-    @ConditionalOnMissingBean(name = "finalizeAccountRegistrationRequestAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FINALIZE_ACCOUNT_REGISTRATION_REQUEST)
     @Bean
     public Action finalizeAccountRegistrationRequestAction() {
         return new FinalizeAccountRegistrationAction(accountMgmtRegistrationService());
@@ -261,7 +261,7 @@ public class CasAccountManagementWebflowConfiguration {
             return new InitializeCaptchaAction(recaptcha) {
                 @Override
                 protected Event doExecute(final RequestContext requestContext) {
-                    WebUtils.putAccountManagementRegistrationCaptchaEnabled(requestContext, recaptcha);
+                    AccountRegistrationUtils.putAccountRegistrationCaptchaEnabled(requestContext, recaptcha);
                     return super.doExecute(requestContext);
                 }
             };

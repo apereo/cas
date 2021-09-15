@@ -12,7 +12,7 @@
 
 <body>
     <div th:fragment="pmlinks" id="pmlinks" class="my-2">
-        <form th:if="${accountManagementRegistrationEnabled}" method="post" id="accountMgmtSignupForm">
+        <form th:if="${accountRegistrationEnabled}" method="post" id="accountMgmtSignupForm">
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
             <input type="hidden" name="_eventId" value="signup" />
             <span class="mdi mdi-account-group"></span>
