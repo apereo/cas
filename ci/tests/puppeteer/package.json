@@ -7,6 +7,8 @@
     "perf_hooks": "^0.0.1",
     "puppeteer": "^5.5.0",
     "request": "^2.88.2",
-    "wait-on": "^6.0.0"
+    "wait-on": "^6.0.0",
+    "puppeteer-loadtest": "^2.2.0",
+    "jsonpath-plus": "^6.0.1"
   }
 }
