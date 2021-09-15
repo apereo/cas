@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.nameid;
 
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
@@ -41,9 +42,13 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
 
     private final PersistentIdGenerator persistentIdGenerator;
 
-    public SamlProfileSamlNameIdBuilder(final OpenSamlConfigBean configBean, final PersistentIdGenerator persistentIdGenerator) {
+    private final CasConfigurationProperties casProperties;
+
+    public SamlProfileSamlNameIdBuilder(final OpenSamlConfigBean configBean, final PersistentIdGenerator persistentIdGenerator,
+                                        final CasConfigurationProperties casProperties) {
         super(configBean);
         this.persistentIdGenerator = persistentIdGenerator;
+        this.casProperties = casProperties;
     }
 
     /**
@@ -176,7 +181,10 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
             if (StringUtils.isNotBlank(service.getNameIdQualifier())) {
                 nameid.setNameQualifier(service.getNameIdQualifier());
             } else {
-                val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
+                var issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
+                if (StringUtils.equals(parseAndBuildRequiredNameIdFormat(service), NameIDType.PERSISTENT)) {
+                    issuer = casProperties.getAuthn().getSamlIdp().getCore().getEntityId();
+                }
                 nameid.setNameQualifier(issuer);
             }
             if (StringUtils.isNotBlank(service.getServiceProviderNameIdQualifier())) {
