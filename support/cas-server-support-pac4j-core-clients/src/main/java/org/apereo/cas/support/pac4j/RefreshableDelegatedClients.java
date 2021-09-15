@@ -41,7 +41,7 @@ public class RefreshableDelegatedClients extends Clients {
         return super.findAllClients();
     }
 
-    private List<Client> buildDelegatedClients() {
+    protected List<Client> buildDelegatedClients() {
         val clients = delegatedClientFactory.build();
         LOGGER.debug("The following clients are built: [{}]", clients);
         return new ArrayList<>(clients);
