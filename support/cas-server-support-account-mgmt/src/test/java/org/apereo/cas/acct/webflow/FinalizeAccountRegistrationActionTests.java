@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
 })
 public class FinalizeAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
     @Autowired
-    @Qualifier("finalizeAccountRegistrationRequestAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_FINALIZE_ACCOUNT_REGISTRATION_REQUEST)
     private Action finalizeAccountRegistrationAction;
 
     private RequestContext context;

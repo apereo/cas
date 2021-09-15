@@ -1,5 +1,7 @@
 package org.apereo.cas.acct;
 
+import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
+
 import lombok.experimental.UtilityClass;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -29,7 +31,7 @@ public class AccountRegistrationUtils {
      */
     public static void putAccountRegistrationRequest(final RequestContext requestContext,
                                                      final AccountRegistrationRequest registrationRequest) {
-        requestContext.getFlowScope().put("accountRegistrationRequest", registrationRequest);
+        requestContext.getConversationScope().put("accountRegistrationRequest", registrationRequest);
     }
 
     /**
@@ -39,7 +41,7 @@ public class AccountRegistrationUtils {
      * @param username       the username
      */
     public static void putAccountRegistrationRequestUsername(final RequestContext requestContext, final String username) {
-        requestContext.getFlowScope().put("accountRegistrationRequestUsername", username);
+        requestContext.getConversationScope().put("accountRegistrationRequestUsername", username);
     }
 
     /**
@@ -49,7 +51,7 @@ public class AccountRegistrationUtils {
      * @return the account registration request username
      */
     public static String getAccountRegistrationRequestUsername(final RequestContext requestContext) {
-        return requestContext.getFlowScope().get("accountRegistrationRequestUsername", String.class);
+        return requestContext.getConversationScope().get("accountRegistrationRequestUsername", String.class);
     }
 
     /**
@@ -59,6 +61,57 @@ public class AccountRegistrationUtils {
      * @return the account registration request
      */
     public static AccountRegistrationRequest getAccountRegistrationRequest(final RequestContext requestContext) {
-        return requestContext.getFlowScope().get("accountRegistrationRequest", AccountRegistrationRequest.class);
+        return requestContext.getConversationScope().get("accountRegistrationRequest", AccountRegistrationRequest.class);
+    }
+
+    /**
+     * Put account management registration security questions count.
+     *
+     * @param requestContext the request context
+     * @param count          the count
+     */
+    public static void putAccountRegistrationSecurityQuestionsCount(final RequestContext requestContext, final int count) {
+        requestContext.getFlowScope().put("accountRegistrationSecurityQuestionsCount", count);
+    }
+
+    /**
+     * Gets account management registration security questions count.
+     *
+     * @param requestContext the request context
+     * @return the account management registration security questions count
+     */
+    public static Integer getAccountRegistrationSecurityQuestionsCount(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("accountRegistrationSecurityQuestionsCount", Integer.class);
+    }
+
+    /**
+     * Put account management sign up enabled.
+     *
+     * @param requestContext the request context
+     * @param value          the value
+     */
+    public static void putAccountRegistrationEnabled(final RequestContext requestContext, final boolean value) {
+        requestContext.getFlowScope().put("accountRegistrationEnabled", value);
+    }
+
+    /**
+     * Is account management registration captcha enabled.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static boolean isAccountRegistrationCaptchaEnabled(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("accountRegistrationCaptchaEnabled", Boolean.class);
+    }
+
+    /**
+     * Put account management sign up captcha enabled.
+     *
+     * @param requestContext the request context
+     * @param properties     the properties
+     */
+    public static void putAccountRegistrationCaptchaEnabled(final RequestContext requestContext,
+                                                                      final GoogleRecaptchaProperties properties) {
+        requestContext.getFlowScope().put("accountRegistrationCaptchaEnabled", properties.isEnabled());
     }
 }

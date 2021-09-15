@@ -1,5 +1,6 @@
 package org.apereo.cas.acct.webflow;
 
+import org.apereo.cas.acct.AccountRegistrationUtils;
 import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -57,7 +58,7 @@ public class AccountManagementRegistrationCaptchaWebflowConfigurerTests extends 
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
         initCaptchaAction.execute(context);
-        assertTrue(WebUtils.isAccountManagementRegistrationCaptchaEnabled(context));
+        assertTrue(AccountRegistrationUtils.isAccountRegistrationCaptchaEnabled(context));
     }
 
     @Test

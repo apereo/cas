@@ -103,8 +103,8 @@
                 </div>
             </div>
 
-            <section th:if="${securityQuestionsCount gt 0}">
-                <div class="cas-field my-3" th:each="count : ${#numbers.sequence(1, securityQuestionsCount)}">
+            <section th:if="${accountRegistrationSecurityQuestionsCount gt 0}">
+                <div class="cas-field my-3" th:each="count : ${#numbers.sequence(1, accountRegistrationSecurityQuestionsCount)}">
                     <div class="d-flex">
                         <label class="mdc-text-field mdc-text-field--outlined">
                             <input class="mdc-text-field__input"
