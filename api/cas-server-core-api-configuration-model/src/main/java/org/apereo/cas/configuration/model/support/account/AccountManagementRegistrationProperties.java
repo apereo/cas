@@ -58,6 +58,12 @@ public class AccountManagementRegistrationProperties implements Serializable {
     @NestedConfigurationProperty
     private AccountManagementRegistrationCoreProperties core = new AccountManagementRegistrationCoreProperties();
 
+    /**
+     * Provisioning settings.
+     */
+    @NestedConfigurationProperty
+    private AccountManagementRegistrationProvisioningProperties provisioning = new AccountManagementRegistrationProvisioningProperties();
+
     public AccountManagementRegistrationProperties() {
         mail.setAttributeName("mail");
         mail.setText("Activate your account registration via this link: %s");

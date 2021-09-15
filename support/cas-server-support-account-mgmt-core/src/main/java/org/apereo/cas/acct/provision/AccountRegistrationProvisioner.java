@@ -17,6 +17,7 @@ public interface AccountRegistrationProvisioner {
      *
      * @param request the request
      * @return the account registration response
+     * @throws Exception the exception
      */
-    AccountRegistrationResponse provision(AccountRegistrationRequest request);
+    AccountRegistrationResponse provision(AccountRegistrationRequest request) throws Exception;
 }

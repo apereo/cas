@@ -31,7 +31,9 @@ public class FinalizeAccountRegistrationAction extends AbstractAction {
             val registrationRequest = AccountRegistrationUtils.getAccountRegistrationRequest(requestContext);
             Objects.requireNonNull(registrationRequest).putProperties(requestContext.getRequestParameters().asAttributeMap().asMap());
             val response = accountRegistrationService.getAccountRegistrationProvisioner().provision(registrationRequest);
-            return success(response);
+            if (response.isSuccess()) {
+                return success(response);
+            }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }

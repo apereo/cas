@@ -9,6 +9,8 @@ import org.apereo.cas.acct.AccountRegistrationUsernameBuilder;
 import org.apereo.cas.acct.DefaultAccountRegistrationPropertyLoader;
 import org.apereo.cas.acct.DefaultAccountRegistrationService;
 import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
+import org.apereo.cas.acct.provision.AccountRegistrationProvisionerConfigurer;
+import org.apereo.cas.acct.provision.ChainingAccountRegistrationProvisioner;
 import org.apereo.cas.acct.provision.RestfulAccountRegistrationProvisioner;
 import org.apereo.cas.acct.webflow.AccountManagementRegistrationCaptchaWebflowConfigurer;
 import org.apereo.cas.acct.webflow.AccountManagementWebflowConfigurer;
@@ -50,11 +52,15 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasAccountManagementWebflowConfiguration}.
@@ -159,7 +165,10 @@ public class CasAccountManagementWebflowConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "accountMgmtRegistrationProvisioner")
     public AccountRegistrationProvisioner accountMgmtRegistrationProvisioner() {
-        return new RestfulAccountRegistrationProvisioner();
+        val beans = new ArrayList<>(applicationContext.getBeansOfType(AccountRegistrationProvisionerConfigurer.class, false, true).values());
+        AnnotationAwareOrderComparator.sortIfNecessary(beans);
+        val configurers = beans.stream().map(AccountRegistrationProvisionerConfigurer::configure).sorted().collect(Collectors.toList());
+        return new ChainingAccountRegistrationProvisioner(configurers);
     }
 
     @Bean
@@ -205,6 +214,17 @@ public class CasAccountManagementWebflowConfiguration {
                 new DefaultAuditActionResolver("_TOKEN" + AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, StringUtils.EMPTY));
             plan.registerAuditResourceResolver(AuditResourceResolvers.ACCOUNT_REGISTRATION_TOKEN_CREATION_RESOURCE_RESOLVER,
                 returnValueResourceResolver.getObject());
+        };
+    }
+
+    @ConditionalOnMissingBean(name = "restfulAccountRegistrationProvisionerConfigurer")
+    @Bean
+    @RefreshScope
+    @ConditionalOnProperty(name = "cas.account-registration.provisioning.rest.url")
+    public AccountRegistrationProvisionerConfigurer restfulAccountRegistrationProvisionerConfigurer() {
+        return () -> {
+            val props = casProperties.getAccountRegistration().getProvisioning().getRest();
+            return new RestfulAccountRegistrationProvisioner(props);
         };
     }
 

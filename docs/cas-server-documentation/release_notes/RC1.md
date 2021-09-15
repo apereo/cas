@@ -143,6 +143,7 @@ consequence, interrupt policies are now able to determine whether executions sho
 - Thymeleaf Dialect
 - Mockito
 - CosmosDb
+- Apache Tomcat
 - Amazon SDK
 - UnboundID SCIM
 - Twilio
