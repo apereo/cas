@@ -1,4 +1,4 @@
-package org.apereo.cas.configuration.model.support.account;
+package org.apereo.cas.configuration.model.support.account.provision;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -29,5 +29,11 @@ public class AccountManagementRegistrationProvisioningProperties implements Seri
      */
     @NestedConfigurationProperty
     private RestfulAccountManagementRegistrationProvisioningProperties rest = new RestfulAccountManagementRegistrationProvisioningProperties();
+
+    /**
+     * Provision accounts via Groovy.
+     */
+    @NestedConfigurationProperty
+    private GroovyAccountManagementRegistrationProvisioningProperties groovy = new GroovyAccountManagementRegistrationProvisioningProperties();
 
 }
