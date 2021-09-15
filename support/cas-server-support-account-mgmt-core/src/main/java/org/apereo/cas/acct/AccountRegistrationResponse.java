@@ -1,7 +1,12 @@
 package org.apereo.cas.acct;
 
+import org.apereo.cas.util.CollectionUtils;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -14,6 +19,8 @@ import java.util.Map;
  * @since 6.5.0
  */
 @NoArgsConstructor
+@Accessors(chain = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class AccountRegistrationResponse implements Serializable {
     private static final long serialVersionUID = -1822843820128948428L;
 
@@ -21,7 +28,26 @@ public class AccountRegistrationResponse implements Serializable {
     private final Map<String, Object> properties = new LinkedHashMap<>();
 
     public AccountRegistrationResponse(final Map<String, Object> properties) {
-        this.properties.putAll(properties);
+        putProperties(properties);
+    }
+
+    /**
+     * Success.
+     *
+     * @return the account registration response
+     */
+    public static AccountRegistrationResponse success() {
+        return new AccountRegistrationResponse(CollectionUtils.wrap("success", Boolean.TRUE));
+    }
+
+    /**
+     * Is success.
+     *
+     * @return true/false
+     */
+    @JsonIgnore
+    public boolean isSuccess() {
+        return containsProperty("success") && getProperty("success", Boolean.class);
     }
 
     /**
@@ -32,6 +58,7 @@ public class AccountRegistrationResponse implements Serializable {
      * @param clazz the clazz
      * @return the property
      */
+    @JsonIgnore
     public <T> T getProperty(final String name, final Class<T> clazz) {
         return clazz.cast(properties.get(name));
     }
@@ -63,5 +90,14 @@ public class AccountRegistrationResponse implements Serializable {
      */
     public void putProperties(final Map<String, Object> map) {
         this.properties.putAll(map);
+    }
+
+    /**
+     * Import from another response..
+     *
+     * @param response the response
+     */
+    public void collect(final AccountRegistrationResponse response) {
+        putProperties(response.getProperties());
     }
 }

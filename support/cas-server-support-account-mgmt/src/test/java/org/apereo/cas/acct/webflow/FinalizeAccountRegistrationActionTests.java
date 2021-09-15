@@ -1,9 +1,9 @@
 package org.apereo.cas.acct.webflow;
 
-import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
 import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.acct.AccountRegistrationResponse;
 import org.apereo.cas.acct.AccountRegistrationUtils;
+import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
 import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -78,8 +78,9 @@ public class FinalizeAccountRegistrationActionTests extends BaseWebflowConfigure
     @TestConfiguration("FinalizeAccountRegistrationActionTestConfiguration")
     public static class FinalizeAccountRegistrationActionTestConfiguration {
         @Bean
-        public AccountRegistrationProvisioner accountMgmtRegistrationProvisioner() {
+        public AccountRegistrationProvisioner accountMgmtRegistrationProvisioner() throws Exception {
             val response = new AccountRegistrationResponse();
+            response.putProperty("success", true);
             val provisioner = mock(AccountRegistrationProvisioner.class);
             when(provisioner.provision(any())).thenReturn(response);
             return provisioner;
