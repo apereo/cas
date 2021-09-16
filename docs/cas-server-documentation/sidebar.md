@@ -293,12 +293,12 @@ layout: null
         *   [Overview](/cas/{{ version }}/mfa/Configuring-Adaptive-Authentication.html)
         *   [GeoTracking](/cas/{{ version }}/authentication/GeoTracking-Authentication-Requests.html)
 
-*   [SSO & SLO](#ssoandslo)
+* [SSO & SLO](#ssoandslo)
     *   [SSO Session](/cas/{{ version }}/authentication/Configuring-SSO.html)
     *   [Remember Me](/cas/{{ version }}/authentication/Configuring-LongTerm-Authentication.html)
     *   [Logout & SLO](/cas/{{ version }}/installation/Logout-Single-Signout.html)
 
-*   [Password Management](#pswmgmt)
+* [Password Management](#pswmgmt)
     *   [Overview](/cas/{{ version }}/password_management/Password-Management.html)
     *   [Password History](/cas/{{ version }}/password_management/Password-Management-History.html)
     *   [Forgot Username](/cas/{{ version }}/password_management/Password-Management-ForgotUsername.html)
@@ -373,6 +373,9 @@ layout: null
         *   [REST](/cas/{{ version }}/services/REST-Service-Management.html)
         *   [Custom](/cas/{{ version }}/services/Custom-Service-Management.html)
 
+* [Account Registration](#acctregistration)
+    *   [Overview](/cas/{{ version }}/registration/Account-Registration-Overview.html)
+
 * [Logs & Audits](#logs_audits)
     *   [Logging](#loggingoverview)
         *   [Overview](/cas/{{ version }}/logging/Logging.html)
@@ -444,7 +447,7 @@ layout: null
     *   [REST](/cas/{{ version }}/webflow/Webflow-Customization-Interrupt-REST.html)
     *   [Custom](/cas/{{ version }}/webflow/Webflow-Customization-Interrupt-Custom.html)
 
-*   [Webflow Management](#webflowmgmt)
+* [Webflow Management](#webflowmgmt)
     *   [Overview](/cas/{{ version }}/webflow/Webflow-Customization.html)
     *   [Error Handling](/cas/{{ version }}/webflow/Webflow-Customization-Exceptions.html)
     *   [Extending Webflow](/cas/{{ version }}/webflow/Webflow-Customization-Extensions.html)
