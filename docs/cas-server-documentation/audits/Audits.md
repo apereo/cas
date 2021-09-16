@@ -76,3 +76,4 @@ The following events are tracked and recorded in the audit log:
 | `MITIGATE_RISKY_AUTHENTICATION`       | N/A
 | `MULTIFACTOR_AUTHENTICATION_BYPASS`   | N/A
 | `REQUEST_CHANGE_PASSWORD`             | N/A
+| `ACCOUNT_REGISTRATION`                | `TOKEN_VALIDATED`, `TOKEN_CREATED`, `PROVISIONING_SUCCESS`

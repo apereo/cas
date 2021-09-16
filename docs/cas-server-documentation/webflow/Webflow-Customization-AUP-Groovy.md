@@ -9,9 +9,11 @@ category: Webflow Management
 # Groovy Acceptable Usage Policy
 
 Alternatively, CAS can be configured to use a Groovy script to verify status
-of policies and store results. The script should match the following:
+of policies and store results. 
 
 {% include_cached casproperties.html properties="cas.acceptable-usage-policy.groovy" %}
+
+The script should match the following:
 
 ```groovy
 import org.apereo.cas.authentication.principal.*

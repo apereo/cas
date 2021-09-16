@@ -40,6 +40,6 @@ public class AccountRegistrationRequestAuditPrincipalIdResolver implements Audit
                             final Object resultValue, final Exception exception) {
         val context = RequestContextHolder.getRequestContext();
         return resultValue instanceof AccountRegistrationRequest
-            || AccountRegistrationUtils.getAccountRegistrationRequest(context) != null;
+            || context != null && AccountRegistrationUtils.getAccountRegistrationRequest(context) != null;
     }
 }
