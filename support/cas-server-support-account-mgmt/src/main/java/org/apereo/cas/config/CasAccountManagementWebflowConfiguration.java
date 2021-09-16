@@ -6,10 +6,17 @@ import org.apereo.cas.acct.AccountRegistrationRequestAuditPrincipalIdResolver;
 import org.apereo.cas.acct.AccountRegistrationService;
 import org.apereo.cas.acct.AccountRegistrationTokenCipherExecutor;
 import org.apereo.cas.acct.AccountRegistrationUsernameBuilder;
+import org.apereo.cas.acct.AccountRegistrationUtils;
 import org.apereo.cas.acct.DefaultAccountRegistrationPropertyLoader;
 import org.apereo.cas.acct.DefaultAccountRegistrationService;
+import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
+import org.apereo.cas.acct.provision.AccountRegistrationProvisionerConfigurer;
+import org.apereo.cas.acct.provision.ChainingAccountRegistrationProvisioner;
+import org.apereo.cas.acct.provision.GroovyAccountRegistrationProvisioner;
+import org.apereo.cas.acct.provision.RestfulAccountRegistrationProvisioner;
 import org.apereo.cas.acct.webflow.AccountManagementRegistrationCaptchaWebflowConfigurer;
 import org.apereo.cas.acct.webflow.AccountManagementWebflowConfigurer;
+import org.apereo.cas.acct.webflow.FinalizeAccountRegistrationAction;
 import org.apereo.cas.acct.webflow.LoadAccountRegistrationPropertiesAction;
 import org.apereo.cas.acct.webflow.SubmitAccountRegistrationAction;
 import org.apereo.cas.acct.webflow.ValidateAccountRegistrationTokenAction;
@@ -24,13 +31,13 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.InitializeCaptchaAction;
 import org.apereo.cas.web.flow.ValidateCaptchaAction;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -47,11 +54,15 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasAccountManagementWebflowConfiguration}.
@@ -147,7 +158,19 @@ public class CasAccountManagementWebflowConfiguration {
     @ConditionalOnMissingBean(name = "accountMgmtRegistrationService")
     public AccountRegistrationService accountMgmtRegistrationService() {
         return new DefaultAccountRegistrationService(accountMgmtRegistrationPropertyLoader(),
-            casProperties, accountMgmtCipherExecutor(), accountRegistrationUsernameBuilder());
+            casProperties, accountMgmtCipherExecutor(),
+            accountRegistrationUsernameBuilder(),
+            accountMgmtRegistrationProvisioner());
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "accountMgmtRegistrationProvisioner")
+    public AccountRegistrationProvisioner accountMgmtRegistrationProvisioner() {
+        val beans = new ArrayList<>(applicationContext.getBeansOfType(AccountRegistrationProvisionerConfigurer.class, false, true).values());
+        AnnotationAwareOrderComparator.sortIfNecessary(beans);
+        val configurers = beans.stream().map(AccountRegistrationProvisionerConfigurer::configure).sorted().collect(Collectors.toList());
+        return new ChainingAccountRegistrationProvisioner(configurers);
     }
 
     @Bean
@@ -172,6 +195,14 @@ public class CasAccountManagementWebflowConfiguration {
         return new ValidateAccountRegistrationTokenAction(centralAuthenticationService.getObject(), accountMgmtRegistrationService());
     }
 
+
+    @RefreshScope
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FINALIZE_ACCOUNT_REGISTRATION_REQUEST)
+    @Bean
+    public Action finalizeAccountRegistrationRequestAction() {
+        return new FinalizeAccountRegistrationAction(accountMgmtRegistrationService());
+    }
+
     @ConditionalOnMissingBean(name = "accountRegistrationAuditTrailRecordResolutionPlanConfigurer")
     @Bean
     public AuditTrailRecordResolutionPlanConfigurer accountRegistrationAuditTrailRecordResolutionPlanConfigurer() {
@@ -185,6 +216,28 @@ public class CasAccountManagementWebflowConfiguration {
                 new DefaultAuditActionResolver("_TOKEN" + AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, StringUtils.EMPTY));
             plan.registerAuditResourceResolver(AuditResourceResolvers.ACCOUNT_REGISTRATION_TOKEN_CREATION_RESOURCE_RESOLVER,
                 returnValueResourceResolver.getObject());
+        };
+    }
+
+    @ConditionalOnMissingBean(name = "restfulAccountRegistrationProvisionerConfigurer")
+    @Bean
+    @RefreshScope
+    @ConditionalOnProperty(name = "cas.account-registration.provisioning.rest.url")
+    public AccountRegistrationProvisionerConfigurer restfulAccountRegistrationProvisionerConfigurer() {
+        return () -> {
+            val props = casProperties.getAccountRegistration().getProvisioning().getRest();
+            return new RestfulAccountRegistrationProvisioner(props);
+        };
+    }
+
+    @ConditionalOnMissingBean(name = "groovyAccountRegistrationProvisionerConfigurer")
+    @Bean
+    @RefreshScope
+    @ConditionalOnProperty(name = "cas.account-registration.provisioning.groovy.location")
+    public AccountRegistrationProvisionerConfigurer groovyAccountRegistrationProvisionerConfigurer() {
+        return () -> {
+            val groovy = casProperties.getAccountRegistration().getProvisioning().getGroovy();
+            return new GroovyAccountRegistrationProvisioner(new WatchableGroovyScriptResource(groovy.getLocation()), applicationContext);
         };
     }
 
@@ -221,7 +274,7 @@ public class CasAccountManagementWebflowConfiguration {
             return new InitializeCaptchaAction(recaptcha) {
                 @Override
                 protected Event doExecute(final RequestContext requestContext) {
-                    WebUtils.putAccountManagementRegistrationCaptchaEnabled(requestContext, recaptcha);
+                    AccountRegistrationUtils.putAccountRegistrationCaptchaEnabled(requestContext, recaptcha);
                     return super.doExecute(requestContext);
                 }
             };

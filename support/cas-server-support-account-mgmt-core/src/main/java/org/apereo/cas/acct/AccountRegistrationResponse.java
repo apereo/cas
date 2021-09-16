@@ -1,80 +1,53 @@
 package org.apereo.cas.acct;
 
+import org.apereo.cas.util.CollectionUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * This is {@link AccountRegistrationRequest}.
+ * This is {@link AccountRegistrationResponse}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
  */
 @NoArgsConstructor
+@Accessors(chain = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public class AccountRegistrationRequest implements Serializable {
-    private static final long serialVersionUID = -7833843820128948428L;
+public class AccountRegistrationResponse implements Serializable {
+    private static final long serialVersionUID = -1822843820128948428L;
 
     @Getter
     private final Map<String, Object> properties = new LinkedHashMap<>();
 
-    public AccountRegistrationRequest(final Map<String, Object> properties) {
-        this.properties.putAll(properties);
+    public AccountRegistrationResponse(final Map<String, Object> properties) {
+        putProperties(properties);
     }
 
     /**
-     * Gets username.
+     * Success.
      *
-     * @return the username
+     * @return the account registration response
      */
-    @JsonIgnore
-    public String getUsername() {
-        return getProperty("username", String.class);
+    public static AccountRegistrationResponse success() {
+        return new AccountRegistrationResponse(CollectionUtils.wrap("success", Boolean.TRUE));
     }
 
     /**
-     * Gets first name.
+     * Is success.
      *
-     * @return the first name
+     * @return true/false
      */
     @JsonIgnore
-    public String getFirstName() {
-        return getProperty("firstName", String.class);
-    }
-
-    /**
-     * Gets last name.
-     *
-     * @return the last name
-     */
-    @JsonIgnore
-    public String getLastName() {
-        return getProperty("lastName", String.class);
-    }
-
-    /**
-     * Gets email.
-     *
-     * @return the email
-     */
-    @JsonIgnore
-    public String getEmail() {
-        return getProperty("email", String.class);
-    }
-
-    /**
-     * Gets phone.
-     *
-     * @return the phone
-     */
-    @JsonIgnore
-    public String getPhone() {
-        return getProperty("phone", String.class);
+    public boolean isSuccess() {
+        return containsProperty("success") && getProperty("success", Boolean.class);
     }
 
     /**
@@ -117,5 +90,14 @@ public class AccountRegistrationRequest implements Serializable {
      */
     public void putProperties(final Map<String, Object> map) {
         this.properties.putAll(map);
+    }
+
+    /**
+     * Import from another response..
+     *
+     * @param response the response
+     */
+    public void collect(final AccountRegistrationResponse response) {
+        putProperties(response.getProperties());
     }
 }

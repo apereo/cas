@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.account;
 
 import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
+import org.apereo.cas.configuration.model.support.account.provision.AccountManagementRegistrationProvisioningProperties;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
@@ -57,6 +58,12 @@ public class AccountManagementRegistrationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AccountManagementRegistrationCoreProperties core = new AccountManagementRegistrationCoreProperties();
+
+    /**
+     * Provisioning settings.
+     */
+    @NestedConfigurationProperty
+    private AccountManagementRegistrationProvisioningProperties provisioning = new AccountManagementRegistrationProvisioningProperties();
 
     public AccountManagementRegistrationProperties() {
         mail.setAttributeName("mail");

@@ -35,7 +35,7 @@ public class AccountManagementWebflowConfigurer extends AbstractCasWebflowConfig
     @Override
     protected void doInitialize() {
         val flow = getLoginFlow();
-        val startAction = new ConsumerExecutionAction(context -> WebUtils.putAccountManagementRegistrationEnabled(context, true));
+        val startAction = new ConsumerExecutionAction(context -> AccountRegistrationUtils.putAccountRegistrationEnabled(context, true));
         flow.getStartActionList().add(startAction);
 
         val signUpView = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_ACCOUNT_SIGNUP, "acct-mgmt/casAccountSignupView");
@@ -57,7 +57,7 @@ public class AccountManagementWebflowConfigurer extends AbstractCasWebflowConfig
 
     private void registerAccountRegistrationFlowDefinition() {
         val properties = casProperties.getAccountRegistration();
-        
+
         val acctRegFlow = buildFlow(FLOW_ID_ACCOUNT_REGISTRATION);
         createEndState(acctRegFlow, "accountRegistrationCompleted");
 
@@ -65,13 +65,17 @@ public class AccountManagementWebflowConfigurer extends AbstractCasWebflowConfig
         val completeView = createViewState(acctRegFlow, CasWebflowConstants.STATE_ID_COMPLETE_ACCOUNT_REGISTRATION, "acct-mgmt/casAccountSignupViewComplete");
         completeView.getEntryActionList().add(new ConsumerExecutionAction(context -> {
             WebUtils.putPasswordPolicyPattern(context, properties.getCore().getPasswordPolicyPattern());
-            WebUtils.putAccountManagementRegistrationSecurityQuestionsCount(context, properties.getCore().getSecurityQuestionsCount());
+            AccountRegistrationUtils.putAccountRegistrationSecurityQuestionsCount(context, properties.getCore().getSecurityQuestionsCount());
         }));
 
-        createTransitionForState(completeView, CasWebflowConstants.TRANSITION_ID_SUBMIT, "accountRegistrationCompletedView");
+        createTransitionForState(completeView, CasWebflowConstants.TRANSITION_ID_SUBMIT, "finalizeRegistrationRequest");
+        val finalize = createActionState(acctRegFlow, "finalizeRegistrationRequest", CasWebflowConstants.ACTION_ID_FINALIZE_ACCOUNT_REGISTRATION_REQUEST);
+        createTransitionForState(finalize, CasWebflowConstants.TRANSITION_ID_SUCCESS, "accountRegistrationCompletedView");
+        createTransitionForState(finalize, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_COMPLETE_ACCOUNT_REGISTRATION);
+
         val completedView = createViewState(acctRegFlow, "accountRegistrationCompletedView", "acct-mgmt/casAccountSignupViewCompleted");
         createStateDefaultTransition(completedView, "accountRegistrationCompleted");
-         
+
         acctRegFlow.setStartState(completeView);
         mainFlowDefinitionRegistry.registerFlowDefinition(acctRegFlow);
 

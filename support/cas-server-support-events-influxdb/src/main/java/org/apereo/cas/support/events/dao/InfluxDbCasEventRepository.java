@@ -16,6 +16,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -62,8 +63,8 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
         val events = new ArrayList<CasEvent>(queryResults.size());
         queryResults
             .stream()
-            .filter(r -> r.getSeries() != null)
             .map(QueryResult.Result::getSeries)
+            .filter(Objects::nonNull)
             .forEach(r -> r.forEach(s -> {
                 try {
                     val it = s.getValues().iterator();

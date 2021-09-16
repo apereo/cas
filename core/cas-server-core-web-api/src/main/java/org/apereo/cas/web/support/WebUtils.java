@@ -1841,67 +1841,6 @@ public class WebUtils {
     }
 
     /**
-     * Put account management sign up enabled.
-     *
-     * @param requestContext the request context
-     * @param value          the value
-     */
-    public static void putAccountManagementRegistrationEnabled(final RequestContext requestContext, final boolean value) {
-        requestContext.getFlowScope().put("accountManagementRegistrationEnabled", value);
-    }
-
-    /**
-     * Is account management registration captcha enabled.
-     *
-     * @param requestContext the request context
-     * @return the boolean
-     */
-    public static boolean isAccountManagementRegistrationCaptchaEnabled(final RequestContext requestContext) {
-        return requestContext.getFlowScope().get("accountManagementRegistrationCaptchaEnabled", Boolean.class);
-    }
-
-    /**
-     * Put account management sign up captcha enabled.
-     *
-     * @param requestContext the request context
-     * @param properties     the properties
-     */
-    public static void putAccountManagementRegistrationCaptchaEnabled(final RequestContext requestContext,
-                                                                      final GoogleRecaptchaProperties properties) {
-        requestContext.getFlowScope().put("accountManagementRegistrationCaptchaEnabled", properties.isEnabled());
-    }
-
-    /**
-     * Put account management registration request.
-     *
-     * @param requestContext the request context
-     * @param request        the request
-     */
-    public static void putAccountManagementRegistrationRequest(final RequestContext requestContext, final Serializable request) {
-        requestContext.getFlowScope().put("accountManagementRegistrationRequest", request);
-    }
-
-    /**
-     * Put account management registration security questions count.
-     *
-     * @param requestContext the request context
-     * @param count          the count
-     */
-    public static void putAccountManagementRegistrationSecurityQuestionsCount(final RequestContext requestContext, final int count) {
-        requestContext.getFlowScope().put("securityQuestionsCount", count);
-    }
-
-    /**
-     * Gets account management registration security questions count.
-     *
-     * @param requestContext the request context
-     * @return the account management registration security questions count
-     */
-    public static Integer getAccountManagementRegistrationSecurityQuestionsCount(final RequestContext requestContext) {
-        return requestContext.getFlowScope().get("securityQuestionsCount", Integer.class);
-    }
-
-    /**
      * Put password reset password policy pattern string.
      *
      * @param requestContext the request context

@@ -128,7 +128,9 @@ consequence, interrupt policies are now able to determine whether executions sho
 - Deleting ticket-granting tickets [via REST](../protocol/REST-Protocol-Request-TicketGrantingTicket.html) should now initiate SLO.
 
 ## Library Upgrades
-
+       
+- Spring Security
+- Spring
 - Pac4j
 - Spring Boot Admin
 - Nimbus JWT
@@ -143,6 +145,7 @@ consequence, interrupt policies are now able to determine whether executions sho
 - Thymeleaf Dialect
 - Mockito
 - CosmosDb
+- Apache Tomcat
 - Amazon SDK
 - UnboundID SCIM
 - Twilio

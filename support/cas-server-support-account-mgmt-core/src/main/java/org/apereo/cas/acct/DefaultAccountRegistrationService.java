@@ -1,5 +1,6 @@
 package org.apereo.cas.acct;
 
+import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
@@ -37,6 +38,8 @@ public class DefaultAccountRegistrationService implements AccountRegistrationSer
     private final CipherExecutor<Serializable, String> cipherExecutor;
 
     private final AccountRegistrationUsernameBuilder accountRegistrationUsernameBuilder;
+
+    private final AccountRegistrationProvisioner accountRegistrationProvisioner;
 
     @Audit(action = AuditableActions.ACCOUNT_REGISTRATION,
         actionResolverName = AuditActionResolvers.ACCOUNT_REGISTRATION_TOKEN_VALIDATION_ACTION_RESOLVER,
