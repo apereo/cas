@@ -375,6 +375,10 @@ layout: null
 
 * [Account Registration](#acctregistration)
     *   [Overview](/cas/{{ version }}/registration/Account-Registration-Overview.html)
+    *   [Provisioning](#acctregprovisioning)
+        *   [Groovy](/cas/{{ version }}/registration/Account-Registration-Provisioning-Groovy.html)
+        *   [REST](/cas/{{ version }}/registration/Account-Registration-Provisioning-REST.html)
+        *   [Custom](/cas/{{ version }}/registration/Account-Registration-Provisioning-Custom.html)
 
 * [Logs & Audits](#logs_audits)
     *   [Logging](#loggingoverview)

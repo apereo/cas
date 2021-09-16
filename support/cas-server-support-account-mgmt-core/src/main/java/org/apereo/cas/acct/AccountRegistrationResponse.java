@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -21,6 +22,7 @@ import java.util.Map;
 @NoArgsConstructor
 @Accessors(chain = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+@ToString(of = "properties")
 public class AccountRegistrationResponse implements Serializable {
     private static final long serialVersionUID = -1822843820128948428L;
 

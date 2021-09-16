@@ -158,7 +158,8 @@ public class CasAccountManagementWebflowConfiguration {
     @ConditionalOnMissingBean(name = "accountMgmtRegistrationService")
     public AccountRegistrationService accountMgmtRegistrationService() {
         return new DefaultAccountRegistrationService(accountMgmtRegistrationPropertyLoader(),
-            casProperties, accountMgmtCipherExecutor(),
+            casProperties,
+            accountMgmtCipherExecutor(),
             accountRegistrationUsernameBuilder(),
             accountMgmtRegistrationProvisioner());
     }
@@ -215,6 +216,11 @@ public class CasAccountManagementWebflowConfiguration {
             plan.registerAuditActionResolver(AuditActionResolvers.ACCOUNT_REGISTRATION_TOKEN_CREATION_ACTION_RESOLVER,
                 new DefaultAuditActionResolver("_TOKEN" + AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, StringUtils.EMPTY));
             plan.registerAuditResourceResolver(AuditResourceResolvers.ACCOUNT_REGISTRATION_TOKEN_CREATION_RESOURCE_RESOLVER,
+                returnValueResourceResolver.getObject());
+
+            plan.registerAuditActionResolver(AuditActionResolvers.ACCOUNT_REGISTRATION_PROVISIONING_ACTION_RESOLVER,
+                new DefaultAuditActionResolver("_PROVISIONING" + AuditTrailConstants.AUDIT_ACTION_POSTFIX_SUCCESS, StringUtils.EMPTY));
+            plan.registerAuditResourceResolver(AuditResourceResolvers.ACCOUNT_REGISTRATION_PROVISIONING_RESOURCE_RESOLVER,
                 returnValueResourceResolver.getObject());
         };
     }

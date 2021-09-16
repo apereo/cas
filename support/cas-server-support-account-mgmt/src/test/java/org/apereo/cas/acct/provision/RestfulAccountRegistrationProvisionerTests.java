@@ -8,6 +8,7 @@ import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,13 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.webflow.context.ExternalContextHolder;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.RequestContextHolder;
+import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.Map;
 
@@ -40,6 +48,16 @@ public class RestfulAccountRegistrationProvisionerTests {
     @Qualifier("accountMgmtRegistrationProvisioner")
     private AccountRegistrationProvisioner accountMgmtRegistrationProvisioner;
 
+    @BeforeEach
+    public void setup() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+    }
+    
     @Test
     public void verifyOperation() throws Exception {
         try (val webServer = new MockWebServer(5002, HttpStatus.OK)) {

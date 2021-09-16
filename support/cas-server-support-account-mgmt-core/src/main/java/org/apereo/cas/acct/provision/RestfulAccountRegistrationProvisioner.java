@@ -5,6 +5,7 @@ import org.apereo.cas.acct.AccountRegistrationResponse;
 import org.apereo.cas.configuration.model.support.account.provision.RestfulAccountManagementRegistrationProvisioningProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,6 +60,8 @@ public class RestfulAccountRegistrationProvisioner implements AccountRegistratio
                 val success = AccountRegistrationResponse.success();
                 Arrays.stream(response.getAllHeaders())
                     .forEach(header -> success.putProperty(header.getName(), header.getValue()));
+                FunctionUtils.doIf(StringUtils.isNotBlank(entity),
+                    value -> success.putProperty("entity", value)).accept(StringUtils.defaultString(entity));
                 success.putProperty("status", response.getStatusLine().getStatusCode());
                 success.putProperty("entity", StringUtils.defaultString(entity));
                 return success;
