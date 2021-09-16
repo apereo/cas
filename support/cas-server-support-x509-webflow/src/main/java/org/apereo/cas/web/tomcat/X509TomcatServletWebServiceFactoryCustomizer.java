@@ -2,6 +2,8 @@ package org.apereo.cas.web.tomcat;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
+import java.io.FileNotFoundException;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.catalina.connector.Connector;
@@ -9,7 +11,9 @@ import org.apache.coyote.http11.AbstractHttp11JsseProtocol;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.WebServerException;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
+import org.springframework.util.ResourceUtils;
 
 /**
  * This is {@link X509TomcatServletWebServiceFactoryCustomizer}.
@@ -46,10 +50,15 @@ public class X509TomcatServletWebServiceFactoryCustomizer extends ServletWebServ
             protocol.setSSLEnabled(true);
             protocol.setSslProtocol("TLS");
             protocol.setClientAuth(webflow.getClientAuth());
-            protocol.setKeystoreFile(serverProperties.getSsl().getKeyStore());
             protocol.setKeystorePass(serverProperties.getSsl().getKeyStorePassword());
-            protocol.setTruststoreFile(serverProperties.getSsl().getTrustStore());
             protocol.setTruststorePass(serverProperties.getSsl().getTrustStorePassword());
+            try {
+                protocol.setKeystoreFile(ResourceUtils.getURL(serverProperties.getSsl().getKeyStore()).toString());
+                protocol.setTruststoreFile(ResourceUtils.getURL(serverProperties.getSsl().getTrustStore()).toString());
+            } catch (FileNotFoundException e) {
+                throw new WebServerException("Could not load store: " + e.getMessage(), e);
+            }
+
             tomcat.addAdditionalTomcatConnectors(connector);
         }
     }
