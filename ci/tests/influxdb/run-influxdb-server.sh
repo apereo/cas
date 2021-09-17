@@ -4,7 +4,7 @@
 
 echo "Running InfluxDb docker image..."
 docker stop influxdb-server || true && docker rm influxdb-server || true
-docker run --rm -d -p 8083:8083 -p 8086:8086 --name="influxdb-server" influxdb:1.7.1-alpine
+docker run --rm -d -p 8083:8083 -p 8086:8086 --name="influxdb-server" influxdb:2.0-alpine
 
 docker ps | grep "influxdb-server"
 retVal=$?
