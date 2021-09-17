@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
     JpaServiceRegistryConfiguration.class,
     CasHibernateJpaConfiguration.class,
     CasCoreServicesConfiguration.class
-}, properties = "cas.jdbc.show-sql=false")
+}, properties = "cas.jdbc.show-sql=true")
 @Tag("JDBC")
 @Getter
 public class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
