@@ -3,5 +3,4 @@
 **/src/test/
 .m2
 test
-**/*.md
 target
