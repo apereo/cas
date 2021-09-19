@@ -10,4 +10,4 @@ casbot:
       organization: apereo
       name: cas
       url: https://github.com/apereo/cas
-      committers: mmoayyed,julienhuon,dima767,tsschmidt,leleuj,hdeadman
+      committers: mmoayyed,tsschmidt,leleuj,hdeadman
