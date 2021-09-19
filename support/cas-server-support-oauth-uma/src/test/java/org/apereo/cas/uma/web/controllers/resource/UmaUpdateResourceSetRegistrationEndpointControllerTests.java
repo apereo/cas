@@ -1,6 +1,7 @@
 package org.apereo.cas.uma.web.controllers.resource;
 
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -61,9 +62,10 @@ public class UmaUpdateResourceSetRegistrationEndpointControllerTests extends Bas
 
     @Test
     public void verifyFailsMissing() throws Exception {
+        val id = RandomUtils.nextLong();
         val results = authenticateUmaRequestWithProtectionScope();
-        var body = createUmaResourceRegistrationRequest(1000).toJson();
-        val response = umaUpdateResourceSetRegistrationEndpointController.updateResourceSet(1000, body, results.getLeft(), results.getMiddle());
+        var body = createUmaResourceRegistrationRequest(id).toJson();
+        val response = umaUpdateResourceSetRegistrationEndpointController.updateResourceSet(id, body, results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 

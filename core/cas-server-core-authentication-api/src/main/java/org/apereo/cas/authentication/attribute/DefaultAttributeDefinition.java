@@ -10,12 +10,12 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @Slf4j
 public class DefaultAttributeDefinition implements AttributeDefinition {
