@@ -124,7 +124,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
                                  final RequestAbstractType authnRequest,
                                  final MessageContext messageContext) throws SamlException {
 
-        if (service.isSignAssertions()) {
+        if (service.isSignAssertions() || adaptor.isWantAssertionsSigned()) {
             LOGGER.debug("SAML registered service [{}] requires assertions to be signed", adaptor.getEntityId());
             samlObjectSigner.encode(assertion, service, adaptor, response, request, binding, authnRequest, messageContext);
         } else {
