@@ -370,14 +370,18 @@ exports.uploadSamlMetadata = async (page, metadata) => {
     await page.waitForTimeout(2000)
 }
 
-exports.fetchDuoSecurityBypassCode = async (user = "casuser") => {
+exports.fetchDuoSecurityBypassCodes = async (user = "casuser") => {
     console.log(`Fetching Bypass codes from Duo Security for ${user}...`);
     const response = await this.doRequest(`https://localhost:8443/cas/actuator/duoAdmin/bypassCodes?username=${user}`,
         "POST", {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
         });
-    return JSON.stringify(JSON.parse(response)["mfa-duo"][0]);
+    return JSON.parse(response)["mfa-duo"];
+}
+
+exports.fetchDuoSecurityBypassCode = async (user = "casuser") => {
+    return await this.fetchDuoSecurityBypassCode(user)[0];
 }
 
 exports.screenshot = async (page) => {
@@ -420,13 +424,40 @@ exports.loginDuoSecurityBypassCode = async (page, type) => {
     } else {
         await this.click(page, "button#passcode");
     }
-    let bypassCode = await this.fetchDuoSecurityBypassCode();
-    await page.keyboard.sendCharacter(bypassCode);
-    // await this.screenshot(page);
-    console.log(`Submitting Duo Security bypass code`);
-    await page.keyboard.down('Enter');
-    await page.keyboard.up('Enter');
-    await this.screenshot(page);
-    console.log(`Waiting for Duo Security to accept bypass code...`);
-    await page.waitForTimeout(13000)
+    let bypassCodes = await this.fetchDuoSecurityBypassCodes();
+    console.log(`Duo Security ${type}: Retrieved bypass codes ${bypassCodes}`);
+    if (type === "websdk") {
+        let bypassCode = String(bypassCodes[0]);
+        await page.keyboard.sendCharacter(bypassCode);
+        await this.screenshot(page);
+        console.log(`Submitting Duo Security bypass code ${bypassCode}`);
+        await page.keyboard.down('Enter');
+        await page.keyboard.up('Enter');
+        await this.screenshot(page);
+        console.log(`Waiting for Duo Security to accept bypass code...`);
+        await page.waitForTimeout(15000);
+    } else {
+        let i = 0;
+        let error = false;
+        while (!error && i < bypassCodes.length) {
+            let bypassCode = `${String(bypassCodes[i])}`;
+            await page.keyboard.sendCharacter(bypassCode);
+            await this.screenshot(page);
+            console.log(`Submitting Duo Security bypass code ${bypassCode}`);
+            await this.type(page, "input[name='passcode']", bypassCode);
+            await this.screenshot(page);
+            await page.keyboard.press('Enter');
+            console.log(`Waiting for Duo Security to accept bypass code...`);
+            await page.waitForTimeout(10000);
+            let error = await this.isVisible(page, "div.message.error");
+            if (error) {
+                console.log(`Duo Security is unable to accept bypass code`);
+                await this.screenshot(page);
+                i++;
+            } else {
+                console.log(`Duo Security accepted the bypass code ${bypassCode}`)
+                return;
+            }
+        }
+    }
 }
