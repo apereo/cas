@@ -26,6 +26,7 @@ public class CasEventsInfluxDbRepositoryConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
+    @ConditionalOnMissingBean(name = "influxDbEventsConnectionFactory")
     public InfluxDbConnectionFactory influxDbEventsConnectionFactory() {
         return new InfluxDbConnectionFactory(casProperties.getEvents().getInfluxDb());
     }

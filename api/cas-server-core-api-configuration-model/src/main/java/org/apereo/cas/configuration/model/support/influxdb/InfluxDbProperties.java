@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.influxdb;
 
-import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -40,7 +39,7 @@ public class InfluxDbProperties implements Serializable {
      * InfluxDb connection password.
      */
     @RequiredProperty
-    private String password = "root";
+    private String password = "password";
 
     /**
      * Database name.
@@ -49,38 +48,8 @@ public class InfluxDbProperties implements Serializable {
     private String database;
 
     /**
-     * Database retention policy to use.
+     * Organization name.
      */
-    private String retentionPolicy = "autogen";
-
-    /**
-     * Whether the indicated database should be dropped
-     * and recreated.
-     */
-    private boolean dropDatabase;
-
-    /**
-     * The number of point to flush and write to the database
-     * as part of the batch.
-     */
-    private int pointsToFlush = 100;
-
-    /**
-     * The interval used to run batch jobs
-     * to flush points.
-     */
-    @DurationCapable
-    private String batchInterval = "PT5S";
-
-    /**
-     * Database consistency level.
-     * Acceptable values are {@code ALL, ANY, ONE, QUORUM}.
-     * <ul>
-     * <li>ALL - Write succeeds only if write reached all cluster members.</li>
-     * <li>ANY - Write succeeds if write reached any cluster members.</li>
-     * <li>ONE - Write succeeds if write reached at least one cluster members.</li>
-     * <li>QUORUM - Write succeeds only if write reached a quorum of cluster members.</li>
-     * </ul>
-     */
-    private String consistencyLevel = "ALL";
+    @RequiredProperty
+    private String organization = "CAS";
 }

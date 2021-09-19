@@ -197,7 +197,7 @@ ext.libraries = [
                 }
         ],
         influxdb                : [
-                dependencies.create("org.influxdb:influxdb-java:$influxDbVersion") {
+                dependencies.create("com.influxdb:influxdb-client-java:$influxDbVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.squareup.retrofit2", module: "retrofit")
                     exclude(group: "com.squareup.okio", module: "okio")
