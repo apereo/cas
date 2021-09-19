@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -36,6 +37,8 @@ public class DefaultConsentEngine implements ConsentEngine {
     private final ConsentRepository consentRepository;
 
     private final ConsentDecisionBuilder consentDecisionBuilder;
+
+    private final CasConfigurationProperties casProperties;
 
     @Audit(action = AuditableActions.SAVE_CONSENT,
         actionResolverName = AuditActionResolvers.SAVE_CONSENT_ACTION_RESOLVER,
@@ -76,7 +79,12 @@ public class DefaultConsentEngine implements ConsentEngine {
         LOGGER.debug("Retrieving consentable attributes for [{}]", registeredService);
         val policy = registeredService.getAttributeReleasePolicy();
         if (policy != null) {
-            return policy.getConsentableAttributes(authentication.getPrincipal(), service, registeredService);
+            val consentableAttributes = policy.getConsentableAttributes(authentication.getPrincipal(), service, registeredService);
+            consentableAttributes.entrySet().removeIf(entry -> {
+                val excludedAttributes = casProperties.getConsent().getCore().getExcludedAttributes();
+                return excludedAttributes.contains(entry.getKey());
+            });
+            return consentableAttributes;
         }
         return new LinkedHashMap<>();
     }

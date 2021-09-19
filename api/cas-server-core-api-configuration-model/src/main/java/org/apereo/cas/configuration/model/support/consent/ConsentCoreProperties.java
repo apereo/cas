@@ -13,6 +13,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link ConsentCoreProperties}.
@@ -51,6 +54,14 @@ public class ConsentCoreProperties implements Serializable {
      * in cases no changes are detected.
      */
     private ChronoUnit reminderTimeUnit = ChronoUnit.DAYS;
+
+    /**
+     * Attributes that should always and globally be excluded
+     * from the list of consentable attributes. Such attributes
+     * are always ignored during consent rule calculations
+     * and users will not be prmopted to consent to their release..
+     */
+    private List<String> excludedAttributes = Stream.of("eduPersonTargetedID").collect(Collectors.toList());
 
     /**
      * Signing/encryption settings.
