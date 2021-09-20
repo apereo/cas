@@ -87,7 +87,7 @@ public abstract class AbstractCasEventRepositoryTests {
         val dto = new CasEvent();
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
-        dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().format(DateTimeFormatter.ISO_ZONED_DATE_TIME));
         dto.putEventId(event.getTicketGrantingTicket().getId());
         dto.putClientIpAddress("1.2.3.4");
         dto.putServerIpAddress("1.2.3.4");
