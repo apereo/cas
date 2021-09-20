@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry.generic;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,10 +8,8 @@ import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Table;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
