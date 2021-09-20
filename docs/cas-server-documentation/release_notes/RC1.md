@@ -108,6 +108,11 @@ JDK releases to ensure CAS can correctly switch the baseline requirement when de
 
 Language bundle and localization rules can now be applied 
 conditionally [on a per-application basis](../ux/User-Interface-Customization-Localization.html).
+
+### InfluxDb v2 Integration
+
+[Integrations with InfluxDb](../authentication/Configuring-Authentication-Events-InfluxDb.html) to support 
+authentication event tracking and storage is now updated to support InfluxDb v2.
      
 ### Webflow Interrupts Per Service
 
@@ -125,6 +130,7 @@ consequence, interrupt policies are now able to determine whether executions sho
 - SAML2 authentication requests that do not specify a protocol binding are pre-processed to locate the proper binding correctly.
 - Attribute resolution via Person Directory can optionally be taught to *not* recover from exceptions and block.
 - Default redirect URLs can now also be used for logout attempts, when no authorized destination is defined.
+- [Attribute Consent](../integration/Attribute-Release-Consent.html) is now given a dedicated setting to exclude attributes globally.
 - Deleting ticket-granting tickets [via REST](../protocol/REST-Protocol-Request-TicketGrantingTicket.html) should now initiate SLO.
 
 ## Library Upgrades

@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.adaptors.redis.services.RedisServiceRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
@@ -29,7 +30,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("redisServiceRegistryConfiguration")
+@Configuration(value = "redisServiceRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.service-registry.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class RedisServiceRegistryConfiguration {
@@ -43,32 +44,37 @@ public class RedisServiceRegistryConfiguration {
     @Autowired
     @Qualifier("serviceRegistryListeners")
     private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
-    
+
     @Bean
     @ConditionalOnMissingBean(name = "redisServiceConnectionFactory")
+    @RefreshScope
     public RedisConnectionFactory redisServiceConnectionFactory() {
         val redis = casProperties.getServiceRegistry().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
     }
 
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "registeredServiceRedisTemplate")
-    public RedisTemplate registeredServiceRedisTemplate() {
-        return RedisObjectFactory.newRedisTemplate(redisServiceConnectionFactory());
+    public RedisTemplate<String, RegisteredService> registeredServiceRedisTemplate(@Qualifier("redisServiceConnectionFactory") final RedisConnectionFactory redisServiceConnectionFactory) {
+        return RedisObjectFactory.newRedisTemplate(redisServiceConnectionFactory);
     }
 
     @Bean
     @RefreshScope
+    @Autowired
     @ConditionalOnMissingBean(name = "redisServiceRegistry")
-    public ServiceRegistry redisServiceRegistry() {
-        return new RedisServiceRegistry(applicationContext, registeredServiceRedisTemplate(), serviceRegistryListeners.getObject());
+    public ServiceRegistry redisServiceRegistry(@Qualifier("registeredServiceRedisTemplate") final RedisTemplate<String, RegisteredService> registeredServiceRedisTemplate) {
+        return new RedisServiceRegistry(applicationContext, registeredServiceRedisTemplate, serviceRegistryListeners.getObject());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "redisServiceRegistryExecutionPlanConfigurer")
     @RefreshScope
-    public ServiceRegistryExecutionPlanConfigurer redisServiceRegistryExecutionPlanConfigurer() {
-        return plan -> plan.registerServiceRegistry(redisServiceRegistry());
+    @Autowired
+    public ServiceRegistryExecutionPlanConfigurer redisServiceRegistryExecutionPlanConfigurer(
+        @Qualifier("redisServiceRegistry") final ServiceRegistry redisServiceRegistry) {
+        return plan -> plan.registerServiceRegistry(redisServiceRegistry);
     }
 
 }

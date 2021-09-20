@@ -39,19 +39,33 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("igniteTicketRegistryConfiguration")
+@Configuration(value = "igniteTicketRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class IgniteTicketRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    /**
-     * Ignite configuration ignite configuration.
-     *
-     * @param ticketCatalog the ticket catalog
-     * @return the ignite configuration
-     */
+    private static Collection<CacheConfiguration> buildIgniteTicketCaches(final IgniteProperties ignite,
+                                                                          final TicketCatalog ticketCatalog) {
+        val definitions = ticketCatalog.findAll();
+        return definitions
+            .stream()
+            .map(t -> {
+                val ticketsCache = new CacheConfiguration();
+                ticketsCache.setName(t.getProperties().getStorageName());
+                ticketsCache.setCacheMode(CacheMode.valueOf(ignite.getTicketsCache().getCacheMode()));
+                ticketsCache.setAtomicityMode(CacheAtomicityMode.valueOf(ignite.getTicketsCache().getAtomicityMode()));
+                val writeSync =
+                    CacheWriteSynchronizationMode.valueOf(ignite.getTicketsCache().getWriteSynchronizationMode());
+                ticketsCache.setWriteSynchronizationMode(writeSync);
+                val duration = new Duration(TimeUnit.SECONDS, t.getProperties().getStorageTimeout());
+                ticketsCache.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(duration));
+                return ticketsCache;
+            })
+            .collect(Collectors.toSet());
+    }
+
     @Autowired
     @RefreshScope
     @Bean
@@ -61,7 +75,7 @@ public class IgniteTicketRegistryConfiguration {
         val config = new IgniteConfiguration();
         val spi = new TcpDiscoverySpi();
 
-        if (!StringUtils.isEmpty(ignite.getLocalAddress())) {
+        if (StringUtils.hasLength(ignite.getLocalAddress())) {
             spi.setLocalAddress(ignite.getLocalAddress());
         }
         if (ignite.getLocalPort() != -1) {
@@ -109,26 +123,6 @@ public class IgniteTicketRegistryConfiguration {
         r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(igniteProperties.getCrypto(), "ignite"));
         r.initialize();
         return r;
-    }
-
-    private static Collection<CacheConfiguration> buildIgniteTicketCaches(final IgniteProperties ignite,
-                                                                          final TicketCatalog ticketCatalog) {
-        val definitions = ticketCatalog.findAll();
-        return definitions
-            .stream()
-            .map(t -> {
-                val ticketsCache = new CacheConfiguration();
-                ticketsCache.setName(t.getProperties().getStorageName());
-                ticketsCache.setCacheMode(CacheMode.valueOf(ignite.getTicketsCache().getCacheMode()));
-                ticketsCache.setAtomicityMode(CacheAtomicityMode.valueOf(ignite.getTicketsCache().getAtomicityMode()));
-                val writeSync =
-                    CacheWriteSynchronizationMode.valueOf(ignite.getTicketsCache().getWriteSynchronizationMode());
-                ticketsCache.setWriteSynchronizationMode(writeSync);
-                val duration = new Duration(TimeUnit.SECONDS, t.getProperties().getStorageTimeout());
-                ticketsCache.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(duration));
-                return ticketsCache;
-            })
-            .collect(Collectors.toSet());
     }
 
     private SslContextFactory buildSecureTransportForIgniteConfiguration() {
