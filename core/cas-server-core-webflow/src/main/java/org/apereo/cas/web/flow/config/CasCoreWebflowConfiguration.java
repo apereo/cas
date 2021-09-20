@@ -79,7 +79,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casCoreWebflowConfiguration")
+@Configuration(value = "casCoreWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreWebflowConfiguration {
@@ -148,8 +148,10 @@ public class CasCoreWebflowConfiguration {
     @ConditionalOnMissingBean(name = "serviceTicketRequestWebflowEventResolver")
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver serviceTicketRequestWebflowEventResolver() {
-        return new ServiceTicketRequestWebflowEventResolver(casWebflowConfigurationContext());
+    @Autowired
+    public CasWebflowEventResolver serviceTicketRequestWebflowEventResolver(
+        @Qualifier("casWebflowConfigurationContext") final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
+        return new ServiceTicketRequestWebflowEventResolver(casWebflowConfigurationContext);
     }
 
     @Bean
@@ -217,8 +219,10 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "renewAuthenticationRequestCheckAction")
     @RefreshScope
-    public Action renewAuthenticationRequestCheckAction() {
-        return new RenewAuthenticationRequestCheckAction(singleSignOnParticipationStrategy());
+    @Autowired
+    public Action renewAuthenticationRequestCheckAction(@Qualifier("singleSignOnParticipationStrategy")
+                                                        final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy) {
+        return new RenewAuthenticationRequestCheckAction(singleSignOnParticipationStrategy);
     }
 
     @Bean
@@ -259,25 +263,32 @@ public class CasCoreWebflowConfiguration {
     @ConditionalOnMissingBean(name = "defaultCasWebflowAuthenticationExceptionHandler")
     @Bean
     @RefreshScope
-    public CasWebflowExceptionHandler defaultCasWebflowAuthenticationExceptionHandler() {
+    @Autowired
+    public CasWebflowExceptionHandler defaultCasWebflowAuthenticationExceptionHandler(@Qualifier("handledAuthenticationExceptions")
+                                                                                      final Set<Class<? extends Throwable>> handledAuthenticationExceptions) {
         return new DefaultCasWebflowAuthenticationExceptionHandler(
-            handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+            handledAuthenticationExceptions, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
     }
 
     @ConditionalOnMissingBean(name = "defaultCasWebflowAbstractTicketExceptionHandler")
     @Bean
     @RefreshScope
-    public CasWebflowExceptionHandler defaultCasWebflowAbstractTicketExceptionHandler() {
+    @Autowired
+    public CasWebflowExceptionHandler defaultCasWebflowAbstractTicketExceptionHandler(@Qualifier("handledAuthenticationExceptions")
+                                                                                      final Set<Class<? extends Throwable>> handledAuthenticationExceptions) {
         return new DefaultCasWebflowAbstractTicketExceptionHandler(
-            handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+            handledAuthenticationExceptions, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
     }
 
     @ConditionalOnMissingBean(name = "genericCasWebflowExceptionHandler")
     @Bean
     @RefreshScope
-    public CasWebflowExceptionHandler genericCasWebflowExceptionHandler() {
+    @Autowired
+    public CasWebflowExceptionHandler genericCasWebflowExceptionHandler(
+        @Qualifier("handledAuthenticationExceptions")
+        final Set<Class<? extends Throwable>> handledAuthenticationExceptions) {
         return new GenericCasWebflowExceptionHandler(
-            handledAuthenticationExceptions(), MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+            handledAuthenticationExceptions, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
     }
 
 
@@ -338,8 +349,10 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "defaultSingleSignOnParticipationStrategyConfigurer")
     @RefreshScope
-    public SingleSignOnParticipationStrategyConfigurer defaultSingleSignOnParticipationStrategyConfigurer() {
-        return chain -> chain.addStrategy(defaultSingleSignOnParticipationStrategy());
+    @Autowired
+    public SingleSignOnParticipationStrategyConfigurer defaultSingleSignOnParticipationStrategyConfigurer(
+        @Qualifier("defaultSingleSignOnParticipationStrategy") final SingleSignOnParticipationStrategy defaultSingleSignOnParticipationStrategy) {
+        return chain -> chain.addStrategy(defaultSingleSignOnParticipationStrategy);
     }
 
     @Bean
@@ -354,7 +367,10 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "requiredAuthenticationHandlersSingleSignOnParticipationStrategyConfigurer")
     @RefreshScope
-    public SingleSignOnParticipationStrategyConfigurer requiredAuthenticationHandlersSingleSignOnParticipationStrategyConfigurer() {
-        return chain -> chain.addStrategy(requiredAuthenticationHandlersSingleSignOnParticipationStrategy());
+    @Autowired
+    public SingleSignOnParticipationStrategyConfigurer requiredAuthenticationHandlersSingleSignOnParticipationStrategyConfigurer(
+        @Qualifier("requiredAuthenticationHandlersSingleSignOnParticipationStrategy")
+        final SingleSignOnParticipationStrategy requiredAuthenticationHandlersSingleSignOnParticipationStrategy) {
+        return chain -> chain.addStrategy(requiredAuthenticationHandlersSingleSignOnParticipationStrategy);
     }
 }

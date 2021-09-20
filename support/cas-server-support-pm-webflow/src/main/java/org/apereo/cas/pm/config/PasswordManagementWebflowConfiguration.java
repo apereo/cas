@@ -62,7 +62,7 @@ import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("passwordManagementWebflowConfiguration")
+@Configuration(value = "passwordManagementWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class PasswordManagementWebflowConfiguration {
@@ -102,17 +102,6 @@ public class PasswordManagementWebflowConfiguration {
     private ObjectProvider<CommunicationsManager> communicationsManager;
 
     @Autowired
-    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
-
-    @Autowired
-    @Qualifier("loginFlowExecutor")
-    private ObjectProvider<FlowExecutor> loginFlowExecutor;
-
-    @Autowired
     @Qualifier("defaultTicketFactory")
     private ObjectProvider<TicketFactory> ticketFactory;
 
@@ -138,13 +127,15 @@ public class PasswordManagementWebflowConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "passwordManagementSingleSignOnParticipationStrategyConfigurer")
-    public SingleSignOnParticipationStrategyConfigurer passwordManagementSingleSignOnParticipationStrategyConfigurer() {
-        return chain -> chain.addStrategy(passwordManagementSingleSignOnParticipationStrategy());
+    public SingleSignOnParticipationStrategyConfigurer passwordManagementSingleSignOnParticipationStrategyConfigurer(
+        @Qualifier("passwordManagementSingleSignOnParticipationStrategy") final SingleSignOnParticipationStrategy passwordManagementSingleSignOnParticipationStrategy) {
+        return chain -> chain.addStrategy(passwordManagementSingleSignOnParticipationStrategy);
     }
 
     @RefreshScope
     @Bean
-    public HandlerAdapter passwordResetHandlerAdapter() {
+    @Autowired
+    public HandlerAdapter passwordResetHandlerAdapter(@Qualifier("loginFlowExecutor") final FlowExecutor loginFlowExecutor) {
         val handler = new FlowHandlerAdapter() {
             @Override
             public boolean supports(final Object handler) {
@@ -152,13 +143,13 @@ public class PasswordManagementWebflowConfiguration {
                     .getFlowId().equals(PasswordManagementWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
             }
         };
-        handler.setFlowExecutor(loginFlowExecutor.getObject());
+        handler.setFlowExecutor(loginFlowExecutor);
         return handler;
     }
 
-    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INIT_PASSWORD_CHANGE)
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INIT_PASSWORD_CHANGE)
     public Action initPasswordChangeAction() {
         return new InitPasswordChangeAction(casProperties);
     }
@@ -223,17 +214,21 @@ public class PasswordManagementWebflowConfiguration {
     @ConditionalOnMissingBean(name = "passwordManagementWebflowConfigurer")
     @RefreshScope
     @Bean
+    @Autowired
     @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer passwordManagementWebflowConfigurer() {
-        return new PasswordManagementWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(),
+    public CasWebflowConfigurer passwordManagementWebflowConfigurer(@Qualifier("loginFlowRegistry") final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                                    @Qualifier("flowBuilderServices") final FlowBuilderServices flowBuilderServices) {
+        return new PasswordManagementWebflowConfigurer(flowBuilderServices,
+            loginFlowDefinitionRegistry,
             applicationContext, casProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "passwordManagementCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer passwordManagementCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(passwordManagementWebflowConfigurer());
+    @Autowired
+    public CasWebflowExecutionPlanConfigurer passwordManagementCasWebflowExecutionPlanConfigurer(
+        @Qualifier("passwordManagementWebflowConfigurer") final CasWebflowConfigurer passwordManagementWebflowConfigurer) {
+        return plan -> plan.registerWebflowConfigurer(passwordManagementWebflowConfigurer);
     }
 
     @ConditionalOnProperty(prefix = "cas.authn.pm.google-recaptcha", name = "enabled", havingValue = "true")
@@ -244,10 +239,11 @@ public class PasswordManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = "passwordManagementCaptchaWebflowConfigurer")
         @RefreshScope
         @Bean
-        public CasWebflowConfigurer passwordManagementCaptchaWebflowConfigurer() {
-            val configurer = new PasswordManagementCaptchaWebflowConfigurer(flowBuilderServices.getObject(),
-                loginFlowDefinitionRegistry.getObject(),
-                applicationContext, casProperties);
+        @Autowired
+        public CasWebflowConfigurer passwordManagementCaptchaWebflowConfigurer(@Qualifier("loginFlowRegistry") final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                                               @Qualifier("flowBuilderServices") final FlowBuilderServices flowBuilderServices) {
+            val configurer = new PasswordManagementCaptchaWebflowConfigurer(flowBuilderServices,
+                loginFlowDefinitionRegistry, applicationContext, casProperties);
             configurer.setOrder(casProperties.getAuthn().getPm().getWebflow().getOrder() + 1);
             return configurer;
         }

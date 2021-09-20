@@ -13,6 +13,11 @@ import java.util.Collection;
 public interface CasWebflowExecutionPlan {
 
     /**
+     * Implementation bean name.
+     */
+    String BEAN_NAME = "casWebflowExecutionPlan";
+
+    /**
      * Register webflow login context provider.
      *
      * @param provider the provider

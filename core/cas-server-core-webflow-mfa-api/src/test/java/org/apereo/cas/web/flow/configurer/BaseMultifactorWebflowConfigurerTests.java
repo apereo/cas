@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public abstract class BaseMultifactorWebflowConfigurerTests {
     @Autowired
-    @Qualifier("casWebflowExecutionPlan")
+    @Qualifier(CasWebflowExecutionPlan.BEAN_NAME)
     protected CasWebflowExecutionPlan casWebflowExecutionPlan;
 
     @Autowired

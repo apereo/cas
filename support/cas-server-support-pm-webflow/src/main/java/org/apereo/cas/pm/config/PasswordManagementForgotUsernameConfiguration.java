@@ -46,7 +46,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Configuration("PasswordManagementForgotUsernameConfiguration")
+@Configuration(value = "PasswordManagementForgotUsernameConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class PasswordManagementForgotUsernameConfiguration {
 
@@ -63,13 +63,6 @@ public class PasswordManagementForgotUsernameConfiguration {
     @Autowired
     @Qualifier("communicationsManager")
     private ObjectProvider<CommunicationsManager> communicationsManager;
-
-    @Autowired
-    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
@@ -91,9 +84,12 @@ public class PasswordManagementForgotUsernameConfiguration {
     @RefreshScope
     @Bean
     @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer forgotUsernameWebflowConfigurer() {
-        return new ForgotUsernameWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(),
+    @Autowired
+    public CasWebflowConfigurer forgotUsernameWebflowConfigurer(
+        @Qualifier("loginFlowRegistry") final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier("flowBuilderServices") final FlowBuilderServices flowBuilderServices) {
+        return new ForgotUsernameWebflowConfigurer(flowBuilderServices,
+            loginFlowDefinitionRegistry,
             applicationContext, casProperties);
     }
 
@@ -111,9 +107,11 @@ public class PasswordManagementForgotUsernameConfiguration {
     }
 
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "forgotUsernameCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer forgotUsernameCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(forgotUsernameWebflowConfigurer());
+    public CasWebflowExecutionPlanConfigurer forgotUsernameCasWebflowExecutionPlanConfigurer(
+        @Qualifier("forgotUsernameWebflowConfigurer") final CasWebflowConfigurer forgotUsernameWebflowConfigurer) {
+        return plan -> plan.registerWebflowConfigurer(forgotUsernameWebflowConfigurer);
     }
 
     @ConditionalOnProperty(prefix = "cas.authn.pm.forgot-username.google-recaptcha", name = "enabled", havingValue = "true")
@@ -124,10 +122,13 @@ public class PasswordManagementForgotUsernameConfiguration {
         @ConditionalOnMissingBean(name = "forgotUsernameCaptchaWebflowConfigurer")
         @RefreshScope
         @Bean
-        public CasWebflowConfigurer forgotUsernameCaptchaWebflowConfigurer() {
+        @Autowired
+        public CasWebflowConfigurer forgotUsernameCaptchaWebflowConfigurer(
+            @Qualifier("loginFlowRegistry") final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier("flowBuilderServices") final FlowBuilderServices flowBuilderServices) {
             val configurer = new ForgotUsernameCaptchaWebflowConfigurer(
-                flowBuilderServices.getObject(),
-                loginFlowDefinitionRegistry.getObject(),
+                flowBuilderServices,
+                loginFlowDefinitionRegistry,
                 applicationContext, casProperties);
             configurer.setOrder(casProperties.getAuthn().getPm().getWebflow().getOrder() + 2);
             return configurer;
