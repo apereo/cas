@@ -59,7 +59,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
         }
         val samlRequest = selectedService.getAttributes().get(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
         if (samlRequest != null && !samlRequest.isEmpty()) {
-            val attributeValue = CollectionUtils.firstElement(entityIdAttribute).map(Object::toString).orElseThrow();
+            val attributeValue = CollectionUtils.firstElement(samlRequest).map(Object::toString).orElseThrow();
             val openSamlConfigBean = resolver.getOpenSamlConfigBean();
             val authnRequest = SamlIdPUtils.retrieveSamlRequest(openSamlConfigBean, RequestAbstractType.class, attributeValue);
             SamlUtils.logSamlObject(openSamlConfigBean, authnRequest);
