@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry.postgres;
 
-import org.apereo.cas.ticket.registry.generic.JpaTicketEntity;
+import org.apereo.cas.ticket.registry.generic.BaseTicketEntity;
 
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -25,6 +25,6 @@ import javax.persistence.Table;
 })
 @Table(name = "CasTickets")
 @Entity(name = "PostgresJpaTicketEntity")
-public class PostgresJpaTicketEntity extends JpaTicketEntity {
+public class PostgresJpaTicketEntity extends BaseTicketEntity {
     private static final long serialVersionUID = 6546716187959834795L;
 }

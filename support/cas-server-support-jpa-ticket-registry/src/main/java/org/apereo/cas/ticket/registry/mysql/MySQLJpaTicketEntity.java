@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry.mysql;
 
-import org.apereo.cas.ticket.registry.generic.JpaTicketEntity;
+import org.apereo.cas.ticket.registry.generic.BaseTicketEntity;
 
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -24,6 +24,6 @@ import javax.persistence.Table;
 })
 @Table(name = "CasTickets")
 @Entity(name = "MySQLJpaTicketEntity")
-public class MySQLJpaTicketEntity extends JpaTicketEntity {
+public class MySQLJpaTicketEntity extends BaseTicketEntity {
     private static final long serialVersionUID = 6546716187959834795L;
 }
