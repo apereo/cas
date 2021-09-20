@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -28,7 +29,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casCookieConfiguration")
+@Configuration(value = "casCookieConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCookieConfiguration {
@@ -37,6 +38,7 @@ public class CasCookieConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "warnCookieGenerator")
     public CasCookieBuilder warnCookieGenerator() {
         val props = casProperties.getWarningCookie();
         return new WarningCookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
@@ -44,9 +46,11 @@ public class CasCookieConfiguration {
 
     @ConditionalOnMissingBean(name = "cookieValueManager")
     @Bean
-    public CookieValueManager cookieValueManager() {
+    @Autowired
+    @RefreshScope
+    public CookieValueManager cookieValueManager(@Qualifier("cookieCipherExecutor") final CipherExecutor cookieCipherExecutor) {
         if (casProperties.getTgc().getCrypto().isEnabled()) {
-            return new DefaultCasCookieValueManager(cookieCipherExecutor(), casProperties.getTgc());
+            return new DefaultCasCookieValueManager(cookieCipherExecutor, casProperties.getTgc());
         }
         return NoOpCookieValueManager.INSTANCE;
     }
@@ -76,9 +80,9 @@ public class CasCookieConfiguration {
     @ConditionalOnMissingBean(name = "ticketGrantingTicketCookieGenerator")
     @Bean
     @RefreshScope
-    public CasCookieBuilder ticketGrantingTicketCookieGenerator() {
-        val tgc = casProperties.getTgc();
-        return new TicketGrantingCookieRetrievingCookieGenerator(
-            CookieUtils.buildCookieGenerationContext(tgc), cookieValueManager());
+    @Autowired
+    public CasCookieBuilder ticketGrantingTicketCookieGenerator(@Qualifier("cookieValueManager") final CookieValueManager cookieValueManager) {
+        val context = CookieUtils.buildCookieGenerationContext(casProperties.getTgc());
+        return new TicketGrantingCookieRetrievingCookieGenerator(context, cookieValueManager);
     }
 }
