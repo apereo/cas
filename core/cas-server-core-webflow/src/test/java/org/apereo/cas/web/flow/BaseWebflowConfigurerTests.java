@@ -59,7 +59,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 })
 public class BaseWebflowConfigurerTests {
     @Autowired
-    @Qualifier("casWebflowExecutionPlan")
+    @Qualifier(CasWebflowExecutionPlan.BEAN_NAME)
     protected CasWebflowExecutionPlan casWebflowExecutionPlan;
 
     @Autowired
