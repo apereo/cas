@@ -51,14 +51,6 @@ public class CasFiltersConfiguration {
     private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
     @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("argumentExtractor")
-    private ObjectProvider<ArgumentExtractor> argumentExtractor;
-
-    @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
@@ -87,33 +79,16 @@ public class CasFiltersConfiguration {
         return bean;
     }
 
-    @Bean
-    @ConditionalOnProperty(prefix = "cas.http-web-request.cors", name = "enabled", havingValue = "true")
-    @ConditionalOnMissingBean(name = "corsConfigurationSource")
-    @RefreshScope
-    public CorsConfigurationSource corsConfigurationSource() {
-        return new RegisteredServiceCorsConfigurationSource(casProperties,
-            servicesManager.getObject(), argumentExtractor.getObject());
-    }
-
-    @ConditionalOnProperty(prefix = "cas.http-web-request.cors", name = "enabled", havingValue = "true")
-    @Bean
-    @RefreshScope
-    @Autowired
-    public FilterRegistrationBean<CorsFilter> casCorsFilter(
-        @Qualifier("corsConfigurationSource") final CorsConfigurationSource corsConfigurationSource) {
-
-        val bean = new FilterRegistrationBean<>(new CorsFilter(corsConfigurationSource));
-        bean.setName("casCorsFilter");
-        bean.setAsyncSupported(true);
-        bean.setOrder(0);
-        return bean;
-    }
 
     @ConditionalOnProperty(prefix = "cas.http-web-request.header", name = "enabled", havingValue = "true", matchIfMissing = true)
     @RefreshScope
     @Bean
-    public FilterRegistrationBean responseHeadersSecurityFilter() {
+    @Autowired
+    public FilterRegistrationBean responseHeadersSecurityFilter(
+        @Qualifier("argumentExtractor")
+        final ArgumentExtractor argumentExtractor,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager) {
         val header = casProperties.getHttpWebRequest().getHeader();
         val initParams = new HashMap<String, String>();
         initParams.put(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_CACHE_CONTROL, BooleanUtils.toStringTrueFalse(header.isCache()));
@@ -127,8 +102,8 @@ public class CasFiltersConfiguration {
             initParams.put(ResponseHeadersEnforcementFilter.INIT_PARAM_CONTENT_SECURITY_POLICY, header.getContentSecurityPolicy());
         }
         val bean = new FilterRegistrationBean<RegisteredServiceResponseHeadersEnforcementFilter>();
-        bean.setFilter(new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager.getObject(),
-            argumentExtractor.getObject(), authenticationRequestServiceSelectionStrategies.getObject(),
+        bean.setFilter(new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager,
+            argumentExtractor, authenticationRequestServiceSelectionStrategies.getObject(),
             registeredServiceAccessStrategyEnforcer.getObject()));
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setInitParameters(initParams);
@@ -176,5 +151,38 @@ public class CasFiltersConfiguration {
         bean.setName("currentCredentialsAndAuthenticationClearingFilter");
         bean.setAsyncSupported(true);
         return bean;
+    }
+
+    @Configuration(value = "CasFiltersCorsConfiguration", proxyBeanMethods = false)
+    @ConditionalOnProperty(prefix = "cas.http-web-request.cors", name = "enabled", havingValue = "true")
+    public static class CasFiltersCorsConfiguration {
+        @Autowired
+        private CasConfigurationProperties casProperties;
+
+        @Bean
+        @ConditionalOnMissingBean(name = "corsConfigurationSource")
+        @RefreshScope
+        @Autowired
+        public CorsConfigurationSource corsConfigurationSource(
+            @Qualifier("argumentExtractor")
+            final ArgumentExtractor argumentExtractor,
+            @Qualifier("servicesManager")
+            final ServicesManager servicesManager) {
+            return new RegisteredServiceCorsConfigurationSource(casProperties, servicesManager, argumentExtractor);
+        }
+
+        @Bean
+        @RefreshScope
+        @Autowired
+        public FilterRegistrationBean<CorsFilter> casCorsFilter(
+            @Qualifier("corsConfigurationSource")
+            final CorsConfigurationSource corsConfigurationSource) {
+            val bean = new FilterRegistrationBean<>(new CorsFilter(corsConfigurationSource));
+            bean.setName("casCorsFilter");
+            bean.setAsyncSupported(true);
+            bean.setOrder(0);
+            return bean;
+        }
+
     }
 }
