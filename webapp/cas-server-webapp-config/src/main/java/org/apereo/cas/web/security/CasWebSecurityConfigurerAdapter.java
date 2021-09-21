@@ -22,12 +22,14 @@ import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
+import org.springframework.security.web.FilterInvocation;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,7 +53,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     private final SecurityProperties securityProperties;
 
-    private final CasWebSecurityExpressionHandler casWebSecurityExpressionHandler;
+    private final SecurityExpressionHandler<FilterInvocation> casWebSecurityExpressionHandler;
 
     private final PathMappedEndpoints pathMappedEndpoints;
 

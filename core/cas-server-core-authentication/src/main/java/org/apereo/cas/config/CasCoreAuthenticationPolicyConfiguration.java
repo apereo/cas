@@ -24,13 +24,9 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casCoreAuthenticationPolicyConfiguration")
+@Configuration(value = "casCoreAuthenticationPolicyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreAuthenticationPolicyConfiguration {
-
-    @Autowired
-    @Qualifier("geoLocationService")
-    private ObjectProvider<GeoLocationService> geoLocationService;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -41,7 +37,6 @@ public class CasCoreAuthenticationPolicyConfiguration {
     public AuthenticationEventExecutionPlanConfigurer authenticationPolicyExecutionPlanConfigurer() {
         return plan -> {
             val policyProps = casProperties.getAuthn().getPolicy();
-
             val authPolicy = CoreAuthenticationUtils.newAuthenticationPolicy(policyProps);
             if (authPolicy != null) {
                 plan.registerAuthenticationPolicies(authPolicy);
@@ -52,9 +47,14 @@ public class CasCoreAuthenticationPolicyConfiguration {
     @ConditionalOnMissingBean(name = "adaptiveAuthenticationPolicy")
     @Bean
     @RefreshScope
-    public AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy() {
-        return new DefaultAdaptiveAuthenticationPolicy(this.geoLocationService.getIfAvailable(),
-            ipAddressIntelligenceService(), casProperties.getAuthn().getAdaptive());
+    @Autowired
+    public AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy(
+        @Qualifier("ipAddressIntelligenceService")
+        final IPAddressIntelligenceService ipAddressIntelligenceService,
+        @Qualifier("geoLocationService")
+        final ObjectProvider<GeoLocationService> geoLocationService) {
+        return new DefaultAdaptiveAuthenticationPolicy(geoLocationService.getIfAvailable(),
+            ipAddressIntelligenceService, casProperties.getAuthn().getAdaptive());
     }
 
     @ConditionalOnMissingBean(name = "ipAddressIntelligenceService")

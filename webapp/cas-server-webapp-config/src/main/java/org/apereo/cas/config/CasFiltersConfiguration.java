@@ -39,7 +39,7 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casFiltersConfiguration", proxyBeanMethods = true)
+@Configuration(value = "casFiltersConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasFiltersConfiguration {
 
@@ -99,8 +99,11 @@ public class CasFiltersConfiguration {
     @ConditionalOnProperty(prefix = "cas.http-web-request.cors", name = "enabled", havingValue = "true")
     @Bean
     @RefreshScope
-    public FilterRegistrationBean<CorsFilter> casCorsFilter() {
-        val bean = new FilterRegistrationBean<>(new CorsFilter(corsConfigurationSource()));
+    @Autowired
+    public FilterRegistrationBean<CorsFilter> casCorsFilter(
+        @Qualifier("corsConfigurationSource") final CorsConfigurationSource corsConfigurationSource) {
+
+        val bean = new FilterRegistrationBean<>(new CorsFilter(corsConfigurationSource));
         bean.setName("casCorsFilter");
         bean.setAsyncSupported(true);
         bean.setOrder(0);

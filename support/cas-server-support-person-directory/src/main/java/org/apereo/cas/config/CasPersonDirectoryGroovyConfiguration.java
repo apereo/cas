@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnMultiValuedProperty;
@@ -12,6 +11,7 @@ import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.GroovyPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -29,16 +29,16 @@ import java.util.List;
  * @since 6.4.0
  */
 @ConditionalOnMultiValuedProperty(name = "cas.authn.attribute-repository.groovy[0]", value = "location")
-@Configuration("CasPersonDirectoryGroovyConfiguration")
+@Configuration(value = "CasPersonDirectoryGroovyConfiguration", proxyBeanMethods = false)
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasPersonDirectoryGroovyConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
+public class CasPersonDirectoryGroovyConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-    
+
     @ConditionalOnMissingBean(name = "groovyAttributeRepositories")
     @Bean
     @RefreshScope
@@ -58,8 +58,11 @@ public class CasPersonDirectoryGroovyConfiguration implements PersonDirectoryAtt
         return list;
     }
 
-    @Override
-    public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
-        plan.registerAttributeRepositories(groovyAttributeRepositories());
+    @Bean
+    @Autowired
+    public PersonDirectoryAttributeRepositoryPlanConfigurer groovyPersonDirectoryAttributeRepositoryPlanConfigurer(
+        @Qualifier("groovyAttributeRepositories") final List<IPersonAttributeDao> groovyAttributeRepositories) {
+        return plan -> plan.registerAttributeRepositories(groovyAttributeRepositories);
     }
+
 }
