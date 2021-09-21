@@ -9,6 +9,7 @@ import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casCoreTicketsSerializationConfiguration")
+@Configuration(value = "casCoreTicketsSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreTicketsSerializationConfiguration {
 
@@ -43,9 +44,12 @@ public class CasCoreTicketsSerializationConfiguration {
     }
 
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "ticketSerializationManager")
-    public TicketSerializationManager ticketSerializationManager() {
-        return new DefaultTicketStringSerializationManager(ticketSerializationExecutionPlan());
+    public TicketSerializationManager ticketSerializationManager(
+        @Qualifier("ticketSerializationExecutionPlan")
+        final TicketSerializationExecutionPlan ticketSerializationExecutionPlan) {
+        return new DefaultTicketStringSerializationManager(ticketSerializationExecutionPlan);
     }
 
 }

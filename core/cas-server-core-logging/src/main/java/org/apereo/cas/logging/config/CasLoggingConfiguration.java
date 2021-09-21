@@ -68,7 +68,7 @@ public class CasLoggingConfiguration {
      * Log4j configuration.
      */
     @ConditionalOnClass(value = LoggerContext.class)
-    @Configuration("casLog4jConfiguration")
+    @Configuration(value = "casLog4jConfiguration", proxyBeanMethods = false)
     public static class CasLog4jConfiguration {
         @Autowired
         private CasConfigurationProperties casProperties;

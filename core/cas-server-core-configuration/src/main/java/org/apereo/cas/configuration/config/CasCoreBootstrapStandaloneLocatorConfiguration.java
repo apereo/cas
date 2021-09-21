@@ -25,7 +25,7 @@ import org.springframework.core.env.Environment;
  */
 @Profile("standalone")
 @ConditionalOnProperty(value = "spring.cloud.config.enabled", havingValue = "false")
-@Configuration("casCoreBootstrapStandaloneLocatorConfiguration")
+@Configuration(value = "casCoreBootstrapStandaloneLocatorConfiguration", proxyBeanMethods = false)
 public class CasCoreBootstrapStandaloneLocatorConfiguration {
 
     @Autowired
@@ -37,10 +37,13 @@ public class CasCoreBootstrapStandaloneLocatorConfiguration {
 
     @ConditionalOnMissingBean(name = "casConfigurationPropertiesSourceLocator")
     @Bean
-    public CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator() {
+    @Autowired
+    public CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator(
+        @Qualifier("configurationPropertiesLoaderFactory")
+        final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory) {
         return new DefaultCasConfigurationPropertiesSourceLocator(
             configurationPropertiesEnvironmentManager.getObject(),
-            configurationPropertiesLoaderFactory());
+            configurationPropertiesLoaderFactory);
     }
 
     @ConditionalOnMissingBean(name = "casConfigurationCipherExecutor")
@@ -51,8 +54,11 @@ public class CasCoreBootstrapStandaloneLocatorConfiguration {
 
     @ConditionalOnMissingBean(name = "configurationPropertiesLoaderFactory")
     @Bean
-    public ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory() {
-        return new ConfigurationPropertiesLoaderFactory(casConfigurationCipherExecutor(), environment);
+    @Autowired
+    public ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory(
+        @Qualifier("casConfigurationCipherExecutor")
+        final CipherExecutor<String, String> casConfigurationCipherExecutor) {
+        return new ConfigurationPropertiesLoaderFactory(casConfigurationCipherExecutor, environment);
     }
 
 }

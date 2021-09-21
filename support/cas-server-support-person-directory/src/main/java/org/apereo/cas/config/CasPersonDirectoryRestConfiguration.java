@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -14,6 +13,7 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.RestfulPersonAttributeDao;
 import org.apereo.services.persondir.support.SimpleUsernameAttributeProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -34,10 +34,10 @@ import java.util.Objects;
  */
 
 @ConditionalOnMultiValuedProperty(name = "cas.authn.attribute-repository.rest[0]", value = "url")
-@Configuration("CasPersonDirectoryRestConfiguration")
+@Configuration(value = "CasPersonDirectoryRestConfiguration", proxyBeanMethods = false)
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasPersonDirectoryRestConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
+public class CasPersonDirectoryRestConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -77,9 +77,11 @@ public class CasPersonDirectoryRestConfiguration implements PersonDirectoryAttri
         return list;
     }
 
-    @Override
-    public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
-        plan.registerAttributeRepositories(restfulAttributeRepositories());
+    @Bean
+    @Autowired
+    public PersonDirectoryAttributeRepositoryPlanConfigurer restfulPersonDirectoryAttributeRepositoryPlanConfigurer(
+        @Qualifier("restfulAttributeRepositories") final List<IPersonAttributeDao> restfulAttributeRepositories) {
+        return plan -> plan.registerAttributeRepositories(restfulAttributeRepositories);
     }
 }
 

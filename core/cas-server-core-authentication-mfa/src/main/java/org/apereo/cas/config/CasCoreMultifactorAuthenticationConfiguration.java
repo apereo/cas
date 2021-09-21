@@ -11,7 +11,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,7 +26,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Travis Schmidt
  * @since 6.0.0
  */
-@Configuration("casCoreMultifactorAuthenticationConfiguration")
+@Configuration(value = "casCoreMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreMultifactorAuthenticationConfiguration {
 
@@ -36,14 +35,6 @@ public class CasCoreMultifactorAuthenticationConfiguration {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("defaultMultifactorTriggerSelectionStrategy")
-    private ObjectProvider<MultifactorAuthenticationTriggerSelectionStrategy> multifactorTriggerSelectionStrategy;
 
     @RefreshScope
     @Bean
@@ -57,10 +48,16 @@ public class CasCoreMultifactorAuthenticationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "requestedContextValidator")
-    public RequestedAuthenticationContextValidator requestedContextValidator() {
-        return new DefaultRequestedAuthenticationContextValidator(servicesManager.getObject(),
-            multifactorTriggerSelectionStrategy.getObject(),
-            authenticationContextValidator());
+    @Autowired
+    public RequestedAuthenticationContextValidator requestedContextValidator(
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        @Qualifier("defaultMultifactorTriggerSelectionStrategy")
+        final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
+        @Qualifier("authenticationContextValidator")
+        final MultifactorAuthenticationContextValidator authenticationContextValidator) {
+        return new DefaultRequestedAuthenticationContextValidator(servicesManager,
+            multifactorTriggerSelectionStrategy, authenticationContextValidator);
     }
 
     @RefreshScope

@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -14,6 +13,7 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.JsonBackedComplexStubPersonAttributeDao;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -29,12 +29,13 @@ import java.util.List;
  * @since 6.4.0
  */
 @ConditionalOnMultiValuedProperty(name = "cas.authn.attribute-repository.json[0]", value = "location")
-@Configuration("CasPersonDirectoryJsonConfiguration")
+@Configuration(value = "CasPersonDirectoryJsonConfiguration", proxyBeanMethods = false)
 @Slf4j
-public class CasPersonDirectoryJsonConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
+public class CasPersonDirectoryJsonConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
     @ConditionalOnMissingBean(name = "jsonAttributeRepositories")
     @Bean
     @RefreshScope
@@ -60,9 +61,10 @@ public class CasPersonDirectoryJsonConfiguration implements PersonDirectoryAttri
         return list;
     }
 
-
-    @Override
-    public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
-        plan.registerAttributeRepositories(jsonAttributeRepositories());
+    @Bean
+    @Autowired
+    public PersonDirectoryAttributeRepositoryPlanConfigurer jsonPersonDirectoryAttributeRepositoryPlanConfigurer(
+        @Qualifier("jsonAttributeRepositories") final List<IPersonAttributeDao> jsonAttributeRepositories) {
+        return plan -> plan.registerAttributeRepositories(jsonAttributeRepositories);
     }
 }

@@ -10,6 +10,7 @@ import org.apereo.cas.web.security.flow.PopulateSpringSecurityContextAction;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -19,9 +20,11 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.FilterInvocation;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.webflow.execution.Action;
@@ -32,7 +35,7 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration("casWebAppSecurityConfiguration")
+@Configuration(value = "casWebAppSecurityConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class CasWebAppSecurityConfiguration implements WebMvcConfigurer {
@@ -50,16 +53,19 @@ public class CasWebAppSecurityConfiguration implements WebMvcConfigurer {
 
     @Bean
     @ConditionalOnMissingBean(name = "casWebSecurityExpressionHandler")
-    public CasWebSecurityExpressionHandler casWebSecurityExpressionHandler() {
+    public SecurityExpressionHandler<FilterInvocation> casWebSecurityExpressionHandler() {
         return new CasWebSecurityExpressionHandler();
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "casWebSecurityConfigurerAdapter")
-    public WebSecurityConfigurerAdapter casWebSecurityConfigurerAdapter() {
+    @Autowired
+    public WebSecurityConfigurerAdapter casWebSecurityConfigurerAdapter(
+        @Qualifier("casWebSecurityExpressionHandler")
+        final SecurityExpressionHandler<FilterInvocation> casWebSecurityExpressionHandler) {
         return new CasWebSecurityConfigurerAdapter(casProperties,
             securityProperties.getObject(),
-            casWebSecurityExpressionHandler(),
+            casWebSecurityExpressionHandler,
             pathMappedEndpoints.getObject());
     }
 
