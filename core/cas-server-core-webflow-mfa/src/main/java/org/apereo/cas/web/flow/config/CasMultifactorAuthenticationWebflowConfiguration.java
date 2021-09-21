@@ -49,6 +49,7 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -284,7 +285,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
         final CasWebflowEventResolver authenticationAttributeAuthenticationPolicyWebflowEventResolver,
         @Qualifier("registeredServiceAuthenticationPolicyWebflowEventResolver")
         final CasWebflowEventResolver registeredServiceAuthenticationPolicyWebflowEventResolver) {
-        
+
         val resolver = new DefaultCasDelegatingWebflowEventResolver(casWebflowConfigurationContext,
             selectiveAuthenticationProviderWebflowEventResolver);
         resolver.addDelegate(adaptiveAuthenticationPolicyWebflowEventResolver);
@@ -515,7 +516,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
 
     @Configuration(value = "CasCoreMultifactorAuthenticationProviderSelectiveConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.core", name = "provider-selection-enabled", havingValue = "false")
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.core", name = "provider-selection-enabled", havingValue = "false", matchIfMissing = true)
     public static class CasCoreMultifactorAuthenticationProviderSelectiveConfiguration {
         @ConditionalOnMissingBean(name = "selectiveAuthenticationProviderWebflowEventResolver")
         @Bean
