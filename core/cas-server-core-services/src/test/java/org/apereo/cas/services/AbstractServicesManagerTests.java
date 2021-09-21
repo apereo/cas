@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -178,6 +179,82 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
             assertNotNull(servicesManager.findServiceBy(testService));
         });
         loadingThread.join();
+    }
+
+    /**
+     * Verify that a service which is <strong>not</strong> associated with the current environment ({@code current-env}
+     * in this test) is not incorrectly selected due to "promotion" through the services cache. Scenario is as follows:
+     * <ul>
+     *      <li/> Active environment is {@code current-env}.
+     *      <li/> Service {@code https://prod.test.edu} associated with {@code current-env}, low
+     *      {@link RegisteredService#getEvaluationOrder()}.
+     *      <li/> Service {@code https://*.test.edu} <strong>not</strong> associated with {@code current-env}, high
+     *      {@link RegisteredService#getEvaluationOrder()}.
+     *      <li/> {@code https://prod.test.edu} is matched correctly <em>if</em> no request for some other domain which
+     *      would match {@code https://*.test.edu} is executed first.
+     *      <li/> {@code https://prod.test.edu} fails to match <em>if</em> a request for some other domain which would
+     *      match {@code https://*.test.edu} is executed first.
+     * </ul>
+     * Failure is caused by "promotion" through the services cache. When the non-{@code https://prod.test.edu} request
+     * is matched, it is added to the cache <em>before</em> its associated environments were evaluated: it ends up in
+     * cache even though it doesn't match the current environment. Subsequently, <em>all</em> requests matching
+     * {@code https://*.test.edu} will return {@code null} because they are validated against
+     * {@code https://*.test.edu}, which is not associated with {@code current-env}.
+     *
+     * This test verifies that the above situation does not occur. Requests for {@code https://prod.test.edu} should
+     * return a valid service regardless of whether a request for {@code https://[anything else].test.edu} comes in
+     * first. A service which is not associated with the current environment should not interfere.
+     */
+    @Test
+    public void verifyInvalidServiceNotPromotedByCache() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        val cache = Caffeine.newBuilder().expireAfterWrite(Duration.ofDays(1000L)).<Long, RegisteredService>build();
+        val config = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(serviceRegistry)
+            .applicationContext(applicationContext)
+            .environments(Collections.singleton("current-env"))
+            .registeredServiceLocators(Collections.singletonList(new DefaultServicesManagerRegisteredServiceLocator()))
+            .servicesCache(cache)
+            .build();
+        val manager = new DefaultServicesManager(config);
+
+        /* Service "https://prod.test.edu", low evaluationOrder (high priority), active in "current-env". */
+        val prodTestEduService = new RegexRegisteredService();
+        prodTestEduService.setServiceId("https://prod\\.test\\.edu.*");
+        prodTestEduService.setId(RandomUtils.nextLong());
+        prodTestEduService.setName("Specific Subdomain Service");
+        prodTestEduService.setEvaluationOrder(0);
+        prodTestEduService.setEnvironments(new HashSet<>(Collections.singleton("current-env")));
+
+        /* Service "https://*.test.edu", high evaluationOrder (low priority), NOT active in "current-env". */
+        val anyTestEduService = new RegexRegisteredService();
+        anyTestEduService.setServiceId("https://[^.]+\\.test\\.edu.*");
+        anyTestEduService.setId(RandomUtils.nextLong());
+        anyTestEduService.setName("Any Subdomain Service");
+        anyTestEduService.setEvaluationOrder(1000);
+        anyTestEduService.setEnvironments(new HashSet<>(Collections.singleton("non-current-env")));
+
+        /* Initialize the service manager. */
+        serviceRegistry.save(prodTestEduService);
+        serviceRegistry.save(anyTestEduService);
+        manager.load();
+
+        /* Always worked: request for https://prod.test.edu before any request for https://[anything else].test.edu. */
+        var foundService = manager.findServiceBy(serviceFactory.createService("https://prod.test.edu"));
+        assertSame(prodTestEduService, foundService);
+
+        /*
+         * Now clear the cache and try the previous failure case: request for https://prod.test.edu comes after any
+         * request for https://[anything else].test.edu. Previously this would fail because https://*.test.edu matches
+         * https://prod.test.edu and exists in cache even though it is not associated with current-env. Null would have
+         * been returned.
+         */
+        cache.invalidateAll();
+        foundService = manager.findServiceBy(serviceFactory.createService("https://not-prod.test.edu"));
+        assertNull(foundService);
+        foundService = manager.findServiceBy(serviceFactory.createService("https://prod.test.edu"));
+        assertSame(prodTestEduService, foundService);
     }
 
     protected ServicesManager getServicesManagerInstance() {
