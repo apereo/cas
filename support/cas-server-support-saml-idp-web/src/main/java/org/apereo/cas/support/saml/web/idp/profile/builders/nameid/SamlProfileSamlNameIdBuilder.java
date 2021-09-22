@@ -4,23 +4,30 @@ import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.validation.Assertion;
+import org.jooq.lambda.Unchecked;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,9 +48,14 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
 
     private final PersistentIdGenerator persistentIdGenerator;
 
-    public SamlProfileSamlNameIdBuilder(final OpenSamlConfigBean configBean, final PersistentIdGenerator persistentIdGenerator) {
+    private final MetadataResolver samlIdPMetadataResolver;
+
+    public SamlProfileSamlNameIdBuilder(final OpenSamlConfigBean configBean,
+                                        final PersistentIdGenerator persistentIdGenerator,
+                                        final MetadataResolver samlIdPMetadataResolver) {
         super(configBean);
         this.persistentIdGenerator = persistentIdGenerator;
+        this.samlIdPMetadataResolver = samlIdPMetadataResolver;
     }
 
     /**
@@ -176,8 +188,25 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
             if (StringUtils.isNotBlank(service.getNameIdQualifier())) {
                 nameid.setNameQualifier(service.getNameIdQualifier());
             } else {
-                val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
-                nameid.setNameQualifier(issuer);
+                val nameIdFormat = parseAndBuildRequiredNameIdFormat(service);
+                if (StringUtils.equals(nameIdFormat, NameIDType.PERSISTENT)) {
+                    val nameQualifier = FunctionUtils.doIf(StringUtils.isNotBlank(service.getIssuerEntityId()),
+                            service::getIssuerEntityId,
+                            Unchecked.supplier(() -> {
+                                val criteriaSet = new CriteriaSet(
+                                    new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME),
+                                    new SamlIdPSamlRegisteredServiceCriterion(service));
+                                LOGGER.trace("Resolving entity id from SAML2 IdP metadata to determine issuer for [{}]", service.getName());
+                                val entityDescriptor = Objects.requireNonNull(samlIdPMetadataResolver.resolveSingle(criteriaSet));
+                                return entityDescriptor.getEntityID();
+                            }))
+                        .get();
+                    LOGGER.debug("Using name qualifier [{}] for the Name ID", nameQualifier);
+                    nameid.setNameQualifier(nameQualifier);
+                } else {
+                    val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
+                    nameid.setNameQualifier(issuer);
+                }
             }
             if (StringUtils.isNotBlank(service.getServiceProviderNameIdQualifier())) {
                 nameid.setSPNameQualifier(service.getServiceProviderNameIdQualifier());

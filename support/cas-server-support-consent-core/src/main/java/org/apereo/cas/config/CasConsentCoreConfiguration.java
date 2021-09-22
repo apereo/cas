@@ -8,6 +8,7 @@ import org.apereo.cas.consent.ConsentActivationStrategy;
 import org.apereo.cas.consent.ConsentDecisionBuilder;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentRepository;
+import org.apereo.cas.consent.ConsentableAttributeBuilder;
 import org.apereo.cas.consent.DefaultConsentActivationStrategy;
 import org.apereo.cas.consent.DefaultConsentDecisionBuilder;
 import org.apereo.cas.consent.DefaultConsentEngine;
@@ -29,8 +30,12 @@ import org.springframework.boot.actuate.autoconfigure.endpoint.condition.Conditi
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+
+import java.util.ArrayList;
 
 /**
  * This is {@link CasConsentCoreConfiguration}.
@@ -54,11 +59,17 @@ public class CasConsentCoreConfiguration {
     @Qualifier("returnValueResourceResolver")
     private ObjectProvider<AuditResourceResolver> returnValueResourceResolver;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @ConditionalOnMissingBean(name = "consentEngine")
     @Bean
     @RefreshScope
     public ConsentEngine consentEngine() {
-        return new DefaultConsentEngine(consentRepository(), consentDecisionBuilder());
+        val builders = new ArrayList<>(applicationContext.getBeansOfType(
+            ConsentableAttributeBuilder.class, false, true).values());
+        AnnotationAwareOrderComparator.sortIfNecessary(builders);
+        return new DefaultConsentEngine(consentRepository(), consentDecisionBuilder(), builders);
     }
 
     @ConditionalOnMissingBean(name = "consentCipherExecutor")

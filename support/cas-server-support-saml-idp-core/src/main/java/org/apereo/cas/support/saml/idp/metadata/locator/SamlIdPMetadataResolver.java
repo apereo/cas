@@ -45,6 +45,7 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
         this.locator = locator;
         this.generator = generator;
         this.openSamlConfigBean = openSamlConfigBean;
+        setResolveViaPredicatesOnly(true);
     }
 
     @Override

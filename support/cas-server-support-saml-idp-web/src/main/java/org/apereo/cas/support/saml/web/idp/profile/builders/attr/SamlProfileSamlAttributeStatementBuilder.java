@@ -23,7 +23,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.AttributeStatement;
+import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,16 +52,20 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
 
     private final ServiceFactory<WebApplicationService> serviceFactory;
 
+    private final transient SamlProfileObjectBuilder<NameID> samlNameIdBuilder;
+
     public SamlProfileSamlAttributeStatementBuilder(final OpenSamlConfigBean configBean,
                                                     final SamlIdPProperties samlIdPProperties,
                                                     final SamlIdPObjectEncrypter samlObjectEncrypter,
                                                     final AttributeDefinitionStore attributeDefinitionStore,
-                                                    final ServiceFactory<WebApplicationService> serviceFactory) {
+                                                    final ServiceFactory<WebApplicationService> serviceFactory,
+                                                    final SamlProfileObjectBuilder<NameID> samlNameIdBuilder) {
         super(configBean);
         this.samlIdPProperties = samlIdPProperties;
         this.samlObjectEncrypter = samlObjectEncrypter;
         this.attributeDefinitionStore = attributeDefinitionStore;
         this.serviceFactory = serviceFactory;
+        this.samlNameIdBuilder = samlNameIdBuilder;
     }
 
     @Override
@@ -78,20 +85,36 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         val encodedAttrs = ProtocolAttributeEncoder.decodeAttributes(attributes, registeredService, webApplicationService);
 
         val attrBuilder = new SamlProfileSamlRegisteredServiceAttributeBuilder(registeredService, adaptor, samlObjectEncrypter);
-        return newAttributeStatement(encodedAttrs, attrBuilder, registeredService);
+        return newAttributeStatement(authnRequest, request, response,
+            casAssertion, registeredService, adaptor, binding,
+            messageContext, encodedAttrs, attrBuilder);
     }
 
     /**
      * New attribute statement.
      *
+     * @param authnRequest          the authn request
+     * @param request               the request
+     * @param response              the response
+     * @param casAssertion          the cas assertion
+     * @param samlRegisteredService the saml registered service
+     * @param adaptor               the adaptor
+     * @param binding               the binding
+     * @param messageContext        the message context
      * @param attributes            the attributes
      * @param builder               the builder
-     * @param samlRegisteredService the saml registered service
      * @return the attribute statement
      */
-    public AttributeStatement newAttributeStatement(final Map<String, Object> attributes,
-                                                    final Saml20AttributeBuilder builder,
-                                                    final SamlRegisteredService samlRegisteredService) {
+    public AttributeStatement newAttributeStatement(final RequestAbstractType authnRequest,
+                                                    final HttpServletRequest request,
+                                                    final HttpServletResponse response,
+                                                    final Object casAssertion,
+                                                    final SamlRegisteredService samlRegisteredService,
+                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                    final String binding,
+                                                    final MessageContext messageContext,
+                                                    final Map<String, Object> attributes,
+                                                    final Saml20AttributeBuilder builder) {
         val attrStatement = SamlUtils.newSamlObject(AttributeStatement.class);
 
         val resp = samlIdPProperties.getResponse();
@@ -117,8 +140,13 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
 
         friendlyNames.putAll(samlRegisteredService.getAttributeFriendlyNames());
 
+        val nameId = samlNameIdBuilder.build(authnRequest, request, response, casAssertion,
+            samlRegisteredService, adaptor, binding, messageContext);
+
         for (val e : attributes.entrySet()) {
-            if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
+            var attributeValue = e.getValue();
+
+            if (attributeValue instanceof Collection<?> && ((Collection<?>) attributeValue).isEmpty()) {
                 LOGGER.info("Skipping attribute [{}] because it does not have any values.", e.getKey());
                 continue;
             }
@@ -127,12 +155,24 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
             val name = urns.containsKey(e.getKey())
                 ? urns.get(e.getKey())
                 : attributeDefinitionStore.locateAttributeDefinition(e.getKey())
-                    .map(AttributeDefinition::getName)
-                    .filter(StringUtils::isNotBlank)
-                    .orElseGet(e::getKey);
+                .map(AttributeDefinition::getName)
+                .filter(StringUtils::isNotBlank)
+                .orElseGet(e::getKey);
 
-            LOGGER.trace("Creating SAML attribute [{}] with value [{}], friendlyName [{}]", name, e.getValue(), friendlyName);
-            val attribute = newAttribute(friendlyName, name, e.getValue(),
+            LOGGER.trace("Creating SAML attribute [{}] with value [{}], friendlyName [{}]", name, attributeValue, friendlyName);
+
+            val valueType = samlRegisteredService.getAttributeValueTypes().get(name);
+            if (StringUtils.isNotBlank(valueType) && NameIDType.class.getSimpleName().equalsIgnoreCase(valueType)) {
+                val nameIDBuilder = new NameIDBuilder();
+                val nameID = nameIDBuilder.buildObject();
+                nameID.setFormat(nameId.getFormat());
+                nameID.setNameQualifier(nameId.getNameQualifier());
+                nameID.setSPNameQualifier(nameId.getSPNameQualifier());
+                nameID.setValue(nameId.getValue());
+                attributeValue = nameID;
+            }
+
+            val attribute = newAttribute(friendlyName, name, attributeValue,
                 nameFormats,
                 resp.getDefaultAttributeNameFormat(),
                 samlRegisteredService.getAttributeValueTypes());

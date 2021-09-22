@@ -10,13 +10,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 /**
  * This is {@link DefaultConsentEngine}.
@@ -36,9 +40,11 @@ public class DefaultConsentEngine implements ConsentEngine {
 
     private final ConsentDecisionBuilder consentDecisionBuilder;
 
+    private final List<ConsentableAttributeBuilder> consentableAttributeBuilders;
+
     @Audit(action = "SAVE_CONSENT",
-        actionResolverName = "SAVE_CONSENT_ACTION_RESOLVER",
-        resourceResolverName = "SAVE_CONSENT_RESOURCE_RESOLVER")
+           actionResolverName = "SAVE_CONSENT_ACTION_RESOLVER",
+           resourceResolverName = "SAVE_CONSENT_RESOURCE_RESOLVER")
     @Override
     public ConsentDecision storeConsentDecision(final Service service,
                                                 final RegisteredService registeredService,
@@ -47,8 +53,21 @@ public class DefaultConsentEngine implements ConsentEngine {
                                                 final ChronoUnit reminderTimeUnit,
                                                 final ConsentReminderOptions options) {
         val attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
-        val principalId = authentication.getPrincipal().getId();
+        attributes.replaceAll((key, value) -> {
+            var attr = CasConsentableAttribute.builder()
+                .name(key)
+                .values(value)
+                .build();
 
+            for (val builder : this.consentableAttributeBuilders) {
+                LOGGER.trace("Preparing to build consentable attribute [{}] via [{}]", attr, builder.getName());
+                attr = builder.build(attr);
+                LOGGER.trace("Finalized consentable attribute [{}]", attr);
+            }
+            return attr.getValues();
+        });
+
+        val principalId = authentication.getPrincipal().getId();
         val decisionFound = findConsentDecision(service, registeredService, authentication);
         val supplier = FunctionUtils.doIfNull(decisionFound,
             () -> consentDecisionBuilder.build(service, registeredService, principalId, attributes),

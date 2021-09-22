@@ -15,6 +15,8 @@ import org.apereo.cas.web.flow.login.SessionStoreTicketGrantingTicketAction;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.opensaml.core.xml.schema.XSString;
+import org.opensaml.core.xml.schema.XSURI;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
@@ -31,6 +33,8 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
+
+import java.io.Serializable;
 
 /**
  * This is {@link SamlIdPWebflowConfiguration}.
@@ -130,6 +134,18 @@ public class SamlIdPWebflowConfiguration {
                     val samlAttr = SamlIdPAttributeDefinition.class.cast(result.get());
                     attribute.setFriendlyName(samlAttr.getFriendlyName());
                 }
+                attribute.getValues().replaceAll(o -> {
+                    if (o instanceof XSString) {
+                        return ((XSString) o).getValue();
+                    }
+                    if (o instanceof XSURI) {
+                        return ((XSURI) o).getURI();
+                    }
+                    if (o instanceof Serializable) {
+                        return o;
+                    }
+                    return o.toString();
+                });
                 return attribute;
             };
         }
