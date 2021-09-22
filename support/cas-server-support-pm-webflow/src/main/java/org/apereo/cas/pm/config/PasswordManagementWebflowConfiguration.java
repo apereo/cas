@@ -212,7 +212,6 @@ public class PasswordManagementWebflowConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "passwordManagementWebflowConfigurer")
-    @RefreshScope
     @Bean
     @Autowired
     @DependsOn("defaultWebflowConfigurer")

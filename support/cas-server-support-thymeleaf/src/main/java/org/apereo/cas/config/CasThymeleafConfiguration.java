@@ -35,6 +35,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.OrderComparator;
 import org.springframework.core.Ordered;
 import org.springframework.util.MimeType;
@@ -175,14 +176,15 @@ public class CasThymeleafConfiguration {
 
     @Configuration(value = "ThymeleafWebflowConfiguration", proxyBeanMethods = false)
     @ConditionalOnBean(name = CasWebflowExecutionPlan.BEAN_NAME)
+    @DependsOn(CasWebflowExecutionPlan.BEAN_NAME)
     public static class ThymeleafWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "casThymeleafLoginFormDirector")
         @Bean
-        @RefreshScope
         @Autowired
-        public CasThymeleafLoginFormDirector casThymeleafLoginFormDirector(@Qualifier(CasWebflowExecutionPlan.BEAN_NAME)
-                                                                           final CasWebflowExecutionPlan webflowExecutionPlan) {
+        public CasThymeleafLoginFormDirector casThymeleafLoginFormDirector(
+            @Qualifier(CasWebflowExecutionPlan.BEAN_NAME)
+            final CasWebflowExecutionPlan webflowExecutionPlan) {
             return new CasThymeleafLoginFormDirector(webflowExecutionPlan);
         }
     }
@@ -231,7 +233,9 @@ public class CasThymeleafConfiguration {
         @Bean
         @Autowired
         @RefreshScope
-        public ViewResolver registeredServiceViewResolver(@Qualifier("themeViewResolverFactory") final ThemeViewResolverFactory themeViewResolverFactory) {
+        public ViewResolver registeredServiceViewResolver(
+            @Qualifier("themeViewResolverFactory")
+            final ThemeViewResolverFactory themeViewResolverFactory) {
             val resolver = new ThemeBasedViewResolver(this.themeResolver.getObject(), themeViewResolverFactory);
             resolver.setOrder(THYMELEAF_VIEW_RESOLVER_ORDER - 1);
             return resolver;
@@ -241,8 +245,10 @@ public class CasThymeleafConfiguration {
         @Bean
         @RefreshScope
         @Autowired
-        public ThemeViewResolverFactory themeViewResolverFactory(@Qualifier("thymeleafViewResolver") final ThymeleafViewResolver thymeleafViewResolver,
-                                                                 final List<CasThymeleafViewResolverConfigurer> thymeleafViewResolverConfigurers) {
+        public ThemeViewResolverFactory themeViewResolverFactory(
+            @Qualifier("thymeleafViewResolver")
+            final ThymeleafViewResolver thymeleafViewResolver,
+            final List<CasThymeleafViewResolverConfigurer> thymeleafViewResolverConfigurers) {
             val factory = new ThemeViewResolver.Factory(thymeleafViewResolver,
                 thymeleafProperties.getObject(), casProperties, thymeleafViewResolverConfigurers);
             factory.setApplicationContext(applicationContext);

@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.SurrogateAuthenticationMetaDataPopulator;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
-@Configuration("SurrogateAuthenticationMetadataConfiguration")
+@Configuration(value = "SurrogateAuthenticationMetadataConfiguration", proxyBeanMethods = false)
 public class SurrogateAuthenticationMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "surrogateAuthenticationMetadataPopulator")
@@ -26,7 +28,10 @@ public class SurrogateAuthenticationMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "surrogateAuthenticationMetadataConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationMetadataConfigurer() {
-        return plan -> plan.registerAuthenticationMetadataPopulator(surrogateAuthenticationMetadataPopulator());
+    @Autowired
+    public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationMetadataConfigurer(
+        @Qualifier("surrogateAuthenticationMetadataPopulator")
+        final AuthenticationMetaDataPopulator surrogateAuthenticationMetadataPopulator) {
+        return plan -> plan.registerAuthenticationMetadataPopulator(surrogateAuthenticationMetadataPopulator);
     }
 }

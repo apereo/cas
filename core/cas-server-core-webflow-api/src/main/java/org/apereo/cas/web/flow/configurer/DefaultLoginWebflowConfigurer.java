@@ -47,14 +47,6 @@ import javax.security.auth.login.FailedLoginException;
 @Slf4j
 public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    /**
-     * Instantiates a new Default webflow configurer.
-     *
-     * @param flowBuilderServices    the flow builder services
-     * @param flowDefinitionRegistry the flow definition registry
-     * @param applicationContext     the application context
-     * @param casProperties          the cas properties
-     */
     public DefaultLoginWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                          final FlowDefinitionRegistry flowDefinitionRegistry,
                                          final ConfigurableApplicationContext applicationContext,

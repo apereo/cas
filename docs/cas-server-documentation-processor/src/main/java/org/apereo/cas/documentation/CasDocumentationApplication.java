@@ -8,8 +8,6 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.util.RegexUtils;
 
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.val;
-import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;

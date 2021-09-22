@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -25,11 +24,7 @@ import org.springframework.context.annotation.Configuration;
 public class SurrogateAuthenticationRestConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("surrogateAuthenticationService")
-    private ObjectProvider<SurrogateAuthenticationService> surrogateAuthenticationService;
-
+    
     /**
      * Override the core bean definition
      * that handles username+password to
@@ -38,9 +33,12 @@ public class SurrogateAuthenticationRestConfiguration {
      * @return configurer instance
      */
     @Bean
-    public RestHttpRequestCredentialFactoryConfigurer restHttpRequestCredentialFactoryConfigurer() {
+    @Autowired
+    public RestHttpRequestCredentialFactoryConfigurer restHttpRequestCredentialFactoryConfigurer(
+        @Qualifier("surrogateAuthenticationService")
+        final SurrogateAuthenticationService surrogateAuthenticationService) {
         return factory -> factory.registerCredentialFactory(
-            new SurrogateAuthenticationRestHttpRequestCredentialFactory(surrogateAuthenticationService.getObject(),
-                casProperties.getAuthn().getSurrogate()));
+            new SurrogateAuthenticationRestHttpRequestCredentialFactory(
+                surrogateAuthenticationService, casProperties.getAuthn().getSurrogate()));
     }
 }
