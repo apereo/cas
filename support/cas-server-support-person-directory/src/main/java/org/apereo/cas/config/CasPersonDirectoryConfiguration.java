@@ -141,7 +141,6 @@ public class CasPersonDirectoryConfiguration {
         return list;
     }
 
-    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     @Bean(name = {"cachingAttributeRepository", PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY})
     @ConditionalOnMissingBean(name = {"cachingAttributeRepository", PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY})
     @RefreshScope

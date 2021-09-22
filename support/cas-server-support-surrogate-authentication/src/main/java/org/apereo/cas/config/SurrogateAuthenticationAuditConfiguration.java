@@ -13,6 +13,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,9 +24,9 @@ import org.springframework.context.annotation.Configuration;
  * @author Dmitriy Kopylenko
  * @since 5.3.0
  */
-@Configuration("surrogateAuthenticationAuditConfiguration")
+@Configuration(value = "surrogateAuthenticationAuditConfiguration", proxyBeanMethods = false)
 public class SurrogateAuthenticationAuditConfiguration {
-    
+
     @Bean
     @ConditionalOnMissingBean(name = "surrogateEligibilityAuditableExecution")
     public AuditableExecution surrogateEligibilityAuditableExecution() {
@@ -46,16 +47,20 @@ public class SurrogateAuthenticationAuditConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "surrogateAuditTrailRecordResolutionPlanConfigurer")
-    public AuditTrailRecordResolutionPlanConfigurer surrogateAuditTrailRecordResolutionPlanConfigurer() {
+    public AuditTrailRecordResolutionPlanConfigurer surrogateAuditTrailRecordResolutionPlanConfigurer(
+        @Qualifier("surrogateEligibilityVerificationAuditResourceResolver")
+        final AuditResourceResolver surrogateEligibilityVerificationAuditResourceResolver,
+        @Qualifier("surrogateEligibilitySelectionAuditResourceResolver")
+        final AuditResourceResolver surrogateEligibilitySelectionAuditResourceResolver) {
         return plan -> {
             val actionResolver = new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_TRIGGERED, StringUtils.EMPTY);
             plan.registerAuditActionResolver(AuditActionResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION_ACTION_RESOLVER, actionResolver);
             plan.registerAuditActionResolver(AuditActionResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION_ACTION_RESOLVER, actionResolver);
 
             plan.registerAuditResourceResolver(AuditResourceResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION_RESOURCE_RESOLVER,
-                surrogateEligibilityVerificationAuditResourceResolver());
+                surrogateEligibilityVerificationAuditResourceResolver);
             plan.registerAuditResourceResolver(AuditResourceResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION_RESOURCE_RESOLVER,
-                surrogateEligibilitySelectionAuditResourceResolver());
+                surrogateEligibilitySelectionAuditResourceResolver);
         };
     }
 }

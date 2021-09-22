@@ -81,9 +81,7 @@ public class PasswordManagementForgotUsernameConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "forgotUsernameWebflowConfigurer")
-    @RefreshScope
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
     @Autowired
     public CasWebflowConfigurer forgotUsernameWebflowConfigurer(
         @Qualifier("loginFlowRegistry") final FlowDefinitionRegistry loginFlowDefinitionRegistry,
