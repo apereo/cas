@@ -44,9 +44,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasPersonDirectoryJdbcConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     private static AbstractJdbcPersonAttributeDao configureJdbcPersonAttributeDao(
         final AbstractJdbcPersonAttributeDao dao, final JdbcPrincipalAttributesProperties jdbc) {
 
@@ -86,8 +83,9 @@ public class CasPersonDirectoryJdbcConfiguration {
 
     @ConditionalOnMissingBean(name = "jdbcAttributeRepositories")
     @Bean
+    @Autowired
     @RefreshScope
-    public List<IPersonAttributeDao> jdbcAttributeRepositories() {
+    public List<IPersonAttributeDao> jdbcAttributeRepositories(final CasConfigurationProperties casProperties) {
         val list = new ArrayList<IPersonAttributeDao>();
         val attrs = casProperties.getAuthn().getAttributeRepository();
         attrs.getJdbc()

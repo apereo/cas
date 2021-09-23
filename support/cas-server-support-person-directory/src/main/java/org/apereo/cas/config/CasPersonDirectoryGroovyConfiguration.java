@@ -33,16 +33,14 @@ import java.util.List;
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasPersonDirectoryGroovyConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     @ConditionalOnMissingBean(name = "groovyAttributeRepositories")
     @Bean
     @RefreshScope
-    public List<IPersonAttributeDao> groovyAttributeRepositories() {
+    @Autowired
+    public List<IPersonAttributeDao> groovyAttributeRepositories(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties) {
         val list = new ArrayList<IPersonAttributeDao>();
         casProperties.getAuthn().getAttributeRepository().getGroovy()
             .stream()

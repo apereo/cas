@@ -38,13 +38,11 @@ import java.util.Objects;
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasPersonDirectoryRestConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @ConditionalOnMissingBean(name = "restfulAttributeRepositories")
     @Bean
     @RefreshScope
-    public List<IPersonAttributeDao> restfulAttributeRepositories() {
+    @Autowired
+    public List<IPersonAttributeDao> restfulAttributeRepositories(final CasConfigurationProperties casProperties) {
         val list = new ArrayList<IPersonAttributeDao>();
         casProperties.getAuthn().getAttributeRepository().getRest()
             .stream()

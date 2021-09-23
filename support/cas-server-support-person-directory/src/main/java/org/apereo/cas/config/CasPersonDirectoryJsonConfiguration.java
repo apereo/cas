@@ -33,13 +33,11 @@ import java.util.List;
 @Slf4j
 public class CasPersonDirectoryJsonConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @ConditionalOnMissingBean(name = "jsonAttributeRepositories")
     @Bean
     @RefreshScope
-    public List<IPersonAttributeDao> jsonAttributeRepositories() {
+    @Autowired
+    public List<IPersonAttributeDao> jsonAttributeRepositories(final CasConfigurationProperties casProperties) {
         val list = new ArrayList<IPersonAttributeDao>();
         casProperties.getAuthn().getAttributeRepository().getJson()
             .stream()

@@ -32,13 +32,11 @@ import java.util.List;
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasPersonDirectoryGrouperConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @ConditionalOnMissingBean(name = "grouperAttributeRepositories")
     @Bean
     @RefreshScope
-    public List<IPersonAttributeDao> grouperAttributeRepositories() {
+    @Autowired
+    public List<IPersonAttributeDao> grouperAttributeRepositories(final CasConfigurationProperties casProperties) {
         val list = new ArrayList<IPersonAttributeDao>();
         val gp = casProperties.getAuthn().getAttributeRepository().getGrouper();
 

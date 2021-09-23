@@ -260,6 +260,7 @@ public class CasCoreServicesConfiguration {
         }
 
         @Bean
+        @RefreshScope
         @ConditionalOnMissingBean(name = "defaultServicesManagerRegisteredServiceLocator")
         public ServicesManagerRegisteredServiceLocator defaultServicesManagerRegisteredServiceLocator() {
             return new DefaultServicesManagerRegisteredServiceLocator();
@@ -314,6 +315,7 @@ public class CasCoreServicesConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "webApplicationServiceResponseBuilder")
         @Autowired
+        @RefreshScope
         public ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder(
             @Qualifier("servicesManager")
             final ServicesManager servicesManager,
