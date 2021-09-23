@@ -83,7 +83,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
     }
 
     private static String parseAndBuildRequiredNameIdFormat(final SamlRegisteredService service) {
-        val fmt = service.getRequiredNameIdFormat().trim();
+        val fmt = StringUtils.defaultString(service.getRequiredNameIdFormat()).trim();
         LOGGER.debug("Required NameID format assigned to service [{}] is [{}]", service.getName(), fmt);
 
         if (StringUtils.containsIgnoreCase(NameIDType.EMAIL, fmt)) {
