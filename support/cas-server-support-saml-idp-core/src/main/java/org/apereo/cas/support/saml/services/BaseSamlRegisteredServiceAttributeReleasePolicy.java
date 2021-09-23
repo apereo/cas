@@ -47,7 +47,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
 
     private static String getEntityIdFromRequest(final HttpServletRequest request, final Service selectedService,
                                                  final SamlRegisteredServiceCachingMetadataResolver resolver) {
-        if (request == null) {
+        if (request == null || selectedService == null) {
             LOGGER.debug("No http request could be identified to locate the entity id");
             return null;
         }
