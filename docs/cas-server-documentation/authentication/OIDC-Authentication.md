@@ -55,7 +55,7 @@ Instead, use the Dynamic Discovery endpoint and parse the discovery document to 
 
 ## Configuration
 
-{% include_cached casproperties.html properties="cas.authn.oidc.core,cas.client" %}
+{% include_cached casproperties.html properties="cas.authn.oidc.core" %}
 
 ## Server Configuration
 

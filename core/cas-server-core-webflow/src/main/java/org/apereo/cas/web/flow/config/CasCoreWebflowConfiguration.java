@@ -84,12 +84,6 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreWebflowConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @ConditionalOnMissingBean(name = "serviceTicketRequestWebflowEventResolver")
     @Bean
     @RefreshScope
@@ -104,6 +98,8 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     @Autowired
     public CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
         @Qualifier("defaultTicketRegistrySupport")
         final TicketRegistrySupport ticketRegistrySupport,
         @Qualifier("defaultAuthenticationSystemSupport")
@@ -151,7 +147,8 @@ public class CasCoreWebflowConfiguration {
 
     @Bean
     @RefreshScope
-    public CipherExecutor webflowCipherExecutor() {
+    @Autowired
+    public CipherExecutor webflowCipherExecutor(final CasConfigurationProperties casProperties) {
         val webflow = casProperties.getWebflow();
         val crypto = webflow.getCrypto();
 
@@ -185,7 +182,8 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "checkWebAuthenticationRequestAction")
     @RefreshScope
-    public Action checkWebAuthenticationRequestAction() {
+    @Autowired
+    public Action checkWebAuthenticationRequestAction(final CasConfigurationProperties casProperties) {
         return new CheckWebAuthenticationRequestAction(casProperties.getAuthn().getMfa().getCore().getContentType());
     }
 
@@ -222,9 +220,11 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "singleSignOnParticipationStrategy")
     @RefreshScope
-    public SingleSignOnParticipationStrategy singleSignOnParticipationStrategy() {
+    @Autowired
+    public SingleSignOnParticipationStrategy singleSignOnParticipationStrategy(
+        final ConfigurableApplicationContext applicationContext) {
         val resolvers = applicationContext.getBeansOfType(SingleSignOnParticipationStrategyConfigurer.class, false, true);
-        val providers = new ArrayList<>(resolvers.values());
+        val providers = new ArrayList<SingleSignOnParticipationStrategyConfigurer>(resolvers.values());
         AnnotationAwareOrderComparator.sort(providers);
         val chain = new ChainingSingleSignOnParticipationStrategy();
         providers.forEach(provider -> provider.configureStrategy(chain));
@@ -234,8 +234,11 @@ public class CasCoreWebflowConfiguration {
     @ConditionalOnMissingBean(name = "groovyCasWebflowAuthenticationExceptionHandler")
     @Bean
     @RefreshScope
+    @Autowired
     @ConditionalOnProperty(name = "cas.authn.errors.groovy.location")
-    public CasWebflowExceptionHandler<Exception> groovyCasWebflowAuthenticationExceptionHandler() {
+    public CasWebflowExceptionHandler<Exception> groovyCasWebflowAuthenticationExceptionHandler(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties) {
         return new GroovyCasWebflowAuthenticationExceptionHandler(
             casProperties.getAuthn().getErrors().getGroovy().getLocation(), applicationContext);
     }
@@ -277,17 +280,20 @@ public class CasCoreWebflowConfiguration {
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER)
     @Bean
     @RefreshScope
-    public Action authenticationExceptionHandler() {
+    @Autowired
+    public Action authenticationExceptionHandler(final ConfigurableApplicationContext applicationContext) {
         val beans = applicationContext.getBeansOfType(CasWebflowExceptionHandler.class, false, true);
-        val handlers = new ArrayList<>(beans.values());
+        val handlers = new ArrayList<CasWebflowExceptionHandler>(beans.values());
         AnnotationAwareOrderComparator.sort(handlers);
         return new AuthenticationExceptionHandlerAction(handlers);
     }
 
     @RefreshScope
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "handledAuthenticationExceptions")
-    public Set<Class<? extends Throwable>> handledAuthenticationExceptions() {
+    public Set<Class<? extends Throwable>> handledAuthenticationExceptions(
+        final CasConfigurationProperties casProperties) {
         /*
          * Order is important here; We want the account policy exceptions to be handled
          * first before moving onto more generic errors. In the event that multiple handlers
@@ -323,6 +329,7 @@ public class CasCoreWebflowConfiguration {
     @ConditionalOnMissingBean(name = "defaultSingleSignOnParticipationStrategy")
     @Autowired
     public SingleSignOnParticipationStrategy defaultSingleSignOnParticipationStrategy(
+        final CasConfigurationProperties casProperties,
         @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
         @Qualifier("defaultTicketRegistrySupport")
@@ -350,6 +357,7 @@ public class CasCoreWebflowConfiguration {
     @ConditionalOnMissingBean(name = "requiredAuthenticationHandlersSingleSignOnParticipationStrategy")
     @Autowired
     public SingleSignOnParticipationStrategy requiredAuthenticationHandlersSingleSignOnParticipationStrategy(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
         @Qualifier("servicesManager")

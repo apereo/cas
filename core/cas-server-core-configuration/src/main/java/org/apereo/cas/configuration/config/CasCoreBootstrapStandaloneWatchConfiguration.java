@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.configuration.CasConfigurationWatchService;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -27,15 +26,12 @@ import org.springframework.context.annotation.Profile;
 public class CasCoreBootstrapStandaloneWatchConfiguration {
 
     @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("configurationPropertiesEnvironmentManager")
-    private ObjectProvider<CasConfigurationPropertiesEnvironmentManager> configurationPropertiesEnvironmentManager;
-
     @ConditionalOnProperty(value = "cas.events.core.track-configuration-modifications", havingValue = "true")
     @Bean
-    public CasConfigurationWatchService casConfigurationWatchService() {
-        return new CasConfigurationWatchService(configurationPropertiesEnvironmentManager.getObject(), applicationContext);
+    public CasConfigurationWatchService casConfigurationWatchService(
+        @Qualifier("configurationPropertiesEnvironmentManager")
+        final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager,
+        final ConfigurableApplicationContext applicationContext) {
+        return new CasConfigurationWatchService(configurationPropertiesEnvironmentManager, applicationContext);
     }
 }

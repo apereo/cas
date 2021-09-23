@@ -66,8 +66,7 @@ import java.util.List;
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasServiceRegistryInitializationConfiguration {
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
+
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -99,9 +98,10 @@ public class CasServiceRegistryInitializationConfiguration {
     @Bean
     @Autowired
     public ServiceRegistry embeddedJsonServiceRegistry(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("serviceRegistryListeners")
         final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners) throws Exception {
-        val location = getServiceRegistryInitializerServicesDirectoryResource();
+        val location = getServiceRegistryInitializerServicesDirectoryResource(applicationContext);
         val registry = new EmbeddedResourceBasedServiceRegistry(applicationContext, location,
             serviceRegistryListeners.getObject(), WatcherService.noOp());
         if (!(location instanceof ClassPathResource)) {
@@ -142,7 +142,7 @@ public class CasServiceRegistryInitializationConfiguration {
     }
 
     @SneakyThrows
-    private Resource getServiceRegistryInitializerServicesDirectoryResource() {
+    private Resource getServiceRegistryInitializerServicesDirectoryResource(final ConfigurableApplicationContext applicationContext) {
         val registry = casProperties.getServiceRegistry().getJson();
         if (ResourceUtils.doesResourceExist(registry.getLocation())) {
             LOGGER.debug("Using JSON service registry location [{}] for embedded service definitions", registry.getLocation());

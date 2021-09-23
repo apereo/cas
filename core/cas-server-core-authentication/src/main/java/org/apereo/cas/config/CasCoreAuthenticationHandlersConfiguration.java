@@ -55,8 +55,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
+
 
     @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
     @Bean
@@ -96,6 +95,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @ConditionalOnMissingBean(name = "acceptUsersAuthenticationHandler")
     @Autowired
     public AuthenticationHandler acceptUsersAuthenticationHandler(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("servicesManager")
         final ServicesManager servicesManager,
         @Qualifier("acceptUsersPrincipalFactory")
@@ -198,6 +198,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
         @Bean
         @Autowired
         public List<AuthenticationHandler> jaasAuthenticationHandlers(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("servicesManager")
             final ServicesManager servicesManager,
             @Qualifier("jaasPrincipalFactory")

@@ -123,9 +123,7 @@ Token type may be configured on a per-service basis:
 
 ## Configuration
 
-{% include_cached casproperties.html 
-module="cas-server-support-ws-idp,cas-server-support-ws-sts"
-properties="cas.client." %}
+{% include_cached casproperties.html module="cas-server-support-ws-idp,cas-server-support-ws-sts" %}
 
 You may also need to declare the following repository in
 your CAS Overlay to be able to resolve dependencies:

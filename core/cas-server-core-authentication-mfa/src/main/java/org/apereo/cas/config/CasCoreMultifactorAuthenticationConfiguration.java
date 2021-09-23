@@ -29,17 +29,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "casCoreMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreMultifactorAuthenticationConfiguration {
-
     @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "authenticationContextValidator")
-    public MultifactorAuthenticationContextValidator authenticationContextValidator() {
+    public MultifactorAuthenticationContextValidator authenticationContextValidator(
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext) {
         val mfa = casProperties.getAuthn().getMfa();
         val contextAttribute = mfa.getCore().getAuthenticationContextAttribute();
         val authnAttributeName = mfa.getTrusted().getCore().getAuthenticationContextAttribute();
@@ -63,7 +59,8 @@ public class CasCoreMultifactorAuthenticationConfiguration {
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "failureModeEvaluator")
-    public MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator() {
+    @Autowired
+    public MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator(final CasConfigurationProperties casProperties) {
         return new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties);
     }
 }

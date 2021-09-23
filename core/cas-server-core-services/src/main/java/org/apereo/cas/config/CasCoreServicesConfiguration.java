@@ -83,6 +83,13 @@ import java.util.stream.Collectors;
 @EnableAsync
 public class CasCoreServicesConfiguration {
 
+    private static Optional<List<RegisteredService>> getInMemoryRegisteredServices(final ApplicationContext applicationContext) {
+        if (applicationContext.containsBean("inMemoryRegisteredServices")) {
+            return Optional.of(applicationContext.getBean("inMemoryRegisteredServices", List.class));
+        }
+        return Optional.empty();
+    }
+
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "shibbolethCompatiblePersistentIdGenerator")
@@ -179,16 +186,11 @@ public class CasCoreServicesConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreServicesExecutionConfiguration {
 
-        @Autowired
-        private ConfigurableApplicationContext applicationContext;
-
-        @Autowired
-        private CasConfigurationProperties casProperties;
-
         @ConditionalOnProperty(prefix = "cas.service-registry.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
         @Bean
         @Autowired
         public Runnable servicesManagerScheduledLoader(
+            final CasConfigurationProperties casProperties,
             @Qualifier("serviceRegistryExecutionPlan")
             final ServiceRegistryExecutionPlan serviceRegistryExecutionPlan,
             @Qualifier("servicesManager")
@@ -206,7 +208,9 @@ public class CasCoreServicesConfiguration {
         @ConditionalOnMissingBean(name = "serviceRegistryExecutionPlan")
         @Bean
         @RefreshScope
-        public ServiceRegistryExecutionPlan serviceRegistryExecutionPlan() {
+        @Autowired
+        public ServiceRegistryExecutionPlan serviceRegistryExecutionPlan(
+            final ConfigurableApplicationContext applicationContext) {
             val configurers = applicationContext.getBeansOfType(ServiceRegistryExecutionPlanConfigurer.class, false, true);
             val plan = new DefaultServiceRegistryExecutionPlan();
             configurers.values().forEach(Unchecked.consumer(c -> {
@@ -221,6 +225,7 @@ public class CasCoreServicesConfiguration {
         @RefreshScope
         @Autowired
         public ChainingServiceRegistry serviceRegistry(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("serviceRegistryExecutionPlan")
             final ServiceRegistryExecutionPlan serviceRegistryExecutionPlan,
             @Qualifier("inMemoryServiceRegistry")
@@ -242,16 +247,12 @@ public class CasCoreServicesConfiguration {
     @Configuration(value = "CasCoreServicesManagerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreServicesManagerConfiguration {
-        @Autowired
-        private ConfigurableApplicationContext applicationContext;
-
-        @Autowired
-        private CasConfigurationProperties casProperties;
-
         @Bean
         @RefreshScope
         @ConditionalOnMissingBean(name = "servicesManagerRegisteredServiceLocators")
-        public List<ServicesManagerRegisteredServiceLocator> servicesManagerRegisteredServiceLocators() {
+        @Autowired
+        public List<ServicesManagerRegisteredServiceLocator> servicesManagerRegisteredServiceLocators(
+            final ConfigurableApplicationContext applicationContext) {
             val locators = applicationContext.getBeansOfType(ServicesManagerRegisteredServiceLocator.class, false, true);
             val sortedLocators = new ArrayList<>(locators.values());
             AnnotationAwareOrderComparator.sortIfNecessary(sortedLocators);
@@ -269,6 +270,7 @@ public class CasCoreServicesConfiguration {
         @ConditionalOnMissingBean(name = "domainServicesManagerExecutionPlanConfigurer")
         @ConditionalOnProperty(prefix = "cas.service-registry.core", name = "management-type", havingValue = "DOMAIN")
         public ServicesManagerExecutionPlanConfigurer domainServicesManagerExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("serviceRegistry")
             final ChainingServiceRegistry serviceRegistry,
             @Qualifier("servicesManagerCache")
@@ -290,7 +292,8 @@ public class CasCoreServicesConfiguration {
         @ConditionalOnMissingBean(name = "servicesManager")
         @Bean
         @RefreshScope
-        public ServicesManager servicesManager() {
+        @Autowired
+        public ServicesManager servicesManager(final ConfigurableApplicationContext applicationContext) {
             val configurers = applicationContext.getBeansOfType(ServicesManagerExecutionPlanConfigurer.class, false, true);
             val chain = new ChainingServicesManager();
             configurers.values().forEach(c -> chain.registerServiceManager(c.configureServicesManager()));
@@ -300,6 +303,7 @@ public class CasCoreServicesConfiguration {
         @Bean
         @Autowired
         public RegisteredServicesEventListener registeredServicesEventListener(
+            final CasConfigurationProperties casProperties,
             @Qualifier("servicesManager")
             final ServicesManager servicesManager,
             @Qualifier("communicationsManager")
@@ -321,7 +325,8 @@ public class CasCoreServicesConfiguration {
         @RefreshScope
         @Bean
         @ConditionalOnMissingBean(name = "servicesManagerCache")
-        public Cache<Long, RegisteredService> servicesManagerCache() {
+        @Autowired
+        public Cache<Long, RegisteredService> servicesManagerCache(final CasConfigurationProperties casProperties) {
             val cacheProperties = casProperties.getServiceRegistry().getCache();
             val builder = Caffeine.newBuilder();
             val duration = Beans.newDuration(cacheProperties.getDuration());
@@ -338,12 +343,5 @@ public class CasCoreServicesConfiguration {
             val servicesManager = event.getApplicationContext().getBean("servicesManager", ServicesManager.class);
             servicesManager.load();
         }
-    }
-
-    private static Optional<List<RegisteredService>> getInMemoryRegisteredServices(final ApplicationContext applicationContext) {
-        if (applicationContext.containsBean("inMemoryRegisteredServices")) {
-            return Optional.of(applicationContext.getBean("inMemoryRegisteredServices", List.class));
-        }
-        return Optional.empty();
     }
 }
