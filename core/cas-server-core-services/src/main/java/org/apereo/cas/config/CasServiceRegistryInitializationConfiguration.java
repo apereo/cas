@@ -34,7 +34,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -65,11 +64,26 @@ import java.util.List;
 @EnableAsync
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasServiceRegistryInitializationConfiguration {
-
-
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
+    @SneakyThrows
+    private static Resource getServiceRegistryInitializerServicesDirectoryResource(
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext) {
+        val registry = casProperties.getServiceRegistry().getJson();
+        if (ResourceUtils.doesResourceExist(registry.getLocation())) {
+            LOGGER.debug("Using JSON service registry location [{}] for embedded service definitions", registry.getLocation());
+            return registry.getLocation();
+        }
+        val parent = new File(FileUtils.getTempDirectory(), "cas");
+        if (!parent.mkdirs()) {
+            LOGGER.warn("Unable to create folder [{}]", parent);
+        }
+        val resources = ResourcePatternUtils.getResourcePatternResolver(applicationContext)
+            .getResources("classpath*:/services/*.json");
+        Arrays.stream(resources)
+            .forEach(resource -> ResourceUtils.exportClasspathResourceToFile(parent, resource));
+        LOGGER.debug("Using service registry location [{}] for embedded service definitions", parent);
+        return new FileSystemResource(parent);
+    }
 
     @Bean
     @Autowired
@@ -79,7 +93,7 @@ public class CasServiceRegistryInitializationConfiguration {
         @Qualifier("servicesManager")
         final ServicesManager servicesManager,
         @Qualifier("serviceRegistry")
-        final ChainingServiceRegistry serviceRegistry) throws Exception {
+        final ChainingServiceRegistry serviceRegistry) {
         val initializer = new ServiceRegistryInitializer(embeddedJsonServiceRegistry, serviceRegistry, servicesManager);
         LOGGER.info("Attempting to initialize the service registry [{}]", serviceRegistry.getName());
         initializer.initServiceRegistryIfNecessary();
@@ -98,10 +112,11 @@ public class CasServiceRegistryInitializationConfiguration {
     @Bean
     @Autowired
     public ServiceRegistry embeddedJsonServiceRegistry(
+        final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("serviceRegistryListeners")
         final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners) throws Exception {
-        val location = getServiceRegistryInitializerServicesDirectoryResource(applicationContext);
+        val location = getServiceRegistryInitializerServicesDirectoryResource(casProperties, applicationContext);
         val registry = new EmbeddedResourceBasedServiceRegistry(applicationContext, location,
             serviceRegistryListeners.getObject(), WatcherService.noOp());
         if (!(location instanceof ClassPathResource)) {
@@ -139,24 +154,5 @@ public class CasServiceRegistryInitializationConfiguration {
         protected String[] getExtensions() {
             return new String[]{"json"};
         }
-    }
-
-    @SneakyThrows
-    private Resource getServiceRegistryInitializerServicesDirectoryResource(final ConfigurableApplicationContext applicationContext) {
-        val registry = casProperties.getServiceRegistry().getJson();
-        if (ResourceUtils.doesResourceExist(registry.getLocation())) {
-            LOGGER.debug("Using JSON service registry location [{}] for embedded service definitions", registry.getLocation());
-            return registry.getLocation();
-        }
-        val parent = new File(FileUtils.getTempDirectory(), "cas");
-        if (!parent.mkdirs()) {
-            LOGGER.warn("Unable to create folder [{}]", parent);
-        }
-        val resources = ResourcePatternUtils.getResourcePatternResolver(applicationContext)
-            .getResources("classpath*:/services/*.json");
-        Arrays.stream(resources)
-            .forEach(resource -> ResourceUtils.exportClasspathResourceToFile(parent, resource));
-        LOGGER.debug("Using service registry location [{}] for embedded service definitions", parent);
-        return new FileSystemResource(parent);
     }
 }

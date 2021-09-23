@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -39,18 +38,11 @@ import java.util.Optional;
  */
 @Configuration(value = "casWebAppConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasWebAppConfiguration implements WebMvcConfigurer {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("localeChangeInterceptor")
-    private ObjectProvider<LocaleChangeInterceptor> localeChangeInterceptor;
-
+public class CasWebAppConfiguration {
     @RefreshScope
     @Bean
-    public ThemeChangeInterceptor themeChangeInterceptor() {
+    @Autowired
+    public ThemeChangeInterceptor themeChangeInterceptor(final CasConfigurationProperties casProperties) {
         val bean = new ThemeChangeInterceptor();
         bean.setParamName(casProperties.getTheme().getParamName());
         return bean;
@@ -59,7 +51,8 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean(name = "casLocaleResolver")
     @Bean
     @RefreshScope
-    public LocaleResolver localeResolver() {
+    @Autowired
+    public LocaleResolver localeResolver(final CasConfigurationProperties casProperties) {
         val localeProps = casProperties.getLocale();
         val localeCookie = localeProps.getCookie();
 
@@ -87,7 +80,9 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
 
     @Bean
     @Autowired
-    public SimpleUrlHandlerMapping handlerMapping(@Qualifier("rootController") final Controller rootController) {
+    public SimpleUrlHandlerMapping handlerMapping(
+        @Qualifier("rootController")
+        final Controller rootController) {
         val mapping = new SimpleUrlHandlerMapping();
 
         mapping.setOrder(1);
@@ -100,10 +95,15 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
         return mapping;
     }
 
-    @Override
-    public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(localeChangeInterceptor.getObject())
-            .addPathPatterns("/**");
+    @Bean
+    @Autowired
+    public WebMvcConfigurer casWebAppWebMvcConfigurer(@Qualifier("localeChangeInterceptor") final LocaleChangeInterceptor localeChangeInterceptor) {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addInterceptors(final InterceptorRegistry registry) {
+                registry.addInterceptor(localeChangeInterceptor).addPathPatterns("/**");
+            }
+        };
     }
 
     @Bean

@@ -63,18 +63,12 @@ public class CasLoggingConfiguration {
     @ConditionalOnClass(value = LoggerContext.class)
     @Configuration(value = "casLog4jConfiguration", proxyBeanMethods = false)
     public static class CasLog4jConfiguration {
-        @Autowired
-        private CasConfigurationProperties casProperties;
-
-        @Autowired
-        private ResourceLoader resourceLoader;
-
-        @Autowired
-        private Environment environment;
-
         @Bean
         @ConditionalOnAvailableEndpoint
-        public LoggingConfigurationEndpoint loggingConfigurationEndpoint() {
+        @Autowired
+        public LoggingConfigurationEndpoint loggingConfigurationEndpoint(final CasConfigurationProperties casProperties,
+                                                                         final Environment environment,
+                                                                         final ResourceLoader resourceLoader) {
             return new LoggingConfigurationEndpoint(casProperties, resourceLoader, environment);
         }
 

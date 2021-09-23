@@ -8,7 +8,6 @@ import org.apereo.cas.web.security.CasWebSecurityJdbcConfigurerAdapter;
 import org.apereo.cas.web.security.flow.PopulateSpringSecurityContextAction;
 
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
@@ -38,19 +37,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration(value = "casWebAppSecurityConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
-public class CasWebAppSecurityConfiguration implements WebMvcConfigurer {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ObjectProvider<SecurityProperties> securityProperties;
-
-    @Autowired
-    private ObjectProvider<PathMappedEndpoints> pathMappedEndpoints;
-
+public class CasWebAppSecurityConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "casWebSecurityExpressionHandler")
     public SecurityExpressionHandler<FilterInvocation> casWebSecurityExpressionHandler() {
@@ -61,18 +48,22 @@ public class CasWebAppSecurityConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean(name = "casWebSecurityConfigurerAdapter")
     @Autowired
     public WebSecurityConfigurerAdapter casWebSecurityConfigurerAdapter(
+        final PathMappedEndpoints pathMappedEndpoints,
+        final SecurityProperties securityProperties,
+        final CasConfigurationProperties casProperties,
         @Qualifier("casWebSecurityExpressionHandler")
         final SecurityExpressionHandler<FilterInvocation> casWebSecurityExpressionHandler) {
-        return new CasWebSecurityConfigurerAdapter(casProperties,
-            securityProperties.getObject(),
-            casWebSecurityExpressionHandler,
-            pathMappedEndpoints.getObject());
+        return new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
+            casWebSecurityExpressionHandler, pathMappedEndpoints);
     }
 
     @ConditionalOnProperty(name = "cas.monitor.endpoints.jdbc.query")
     @Bean
     @ConditionalOnMissingBean(name = "casWebSecurityConfigurerJdbcAdapter")
-    public CasWebSecurityJdbcConfigurerAdapter casWebSecurityConfigurerJdbcAdapter() {
+    @Autowired
+    public CasWebSecurityJdbcConfigurerAdapter casWebSecurityConfigurerJdbcAdapter(
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext) {
         return new CasWebSecurityJdbcConfigurerAdapter(casProperties, applicationContext);
     }
 
@@ -86,11 +77,16 @@ public class CasWebAppSecurityConfiguration implements WebMvcConfigurer {
     public Action populateSpringSecurityContextAction() {
         return new PopulateSpringSecurityContextAction();
     }
-    
-    @Override
-    public void addViewControllers(final ViewControllerRegistry registry) {
-        registry.addViewController(CasWebSecurityConfigurerAdapter.ENDPOINT_URL_ADMIN_FORM_LOGIN)
-            .setViewName(CasWebflowConstants.VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW);
-        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+
+    @Bean
+    public WebMvcConfigurer casWebAppSecurityWebMvcConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addViewControllers(final ViewControllerRegistry registry) {
+                registry.addViewController(CasWebSecurityConfigurerAdapter.ENDPOINT_URL_ADMIN_FORM_LOGIN)
+                    .setViewName(CasWebflowConstants.VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW);
+                registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+            }
+        };
     }
 }

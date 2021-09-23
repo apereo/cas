@@ -25,12 +25,10 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasDefaultServiceTicketIdGeneratorsConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @RefreshScope
     @Bean
-    public UniqueTicketIdGenerator serviceTicketUniqueIdGenerator() {
+    @Autowired
+    public UniqueTicketIdGenerator serviceTicketUniqueIdGenerator(final CasConfigurationProperties casProperties) {
         return new ServiceTicketIdGenerator(
             casProperties.getTicket().getSt().getMaxLength(),
             casProperties.getHost().getName());
@@ -41,6 +39,7 @@ public class CasDefaultServiceTicketIdGeneratorsConfiguration {
     public UniqueTicketIdGeneratorConfigurer casDefaultServiceTicketUniqueTicketIdGeneratorConfigurer(
         @Qualifier("serviceTicketUniqueIdGenerator")
         final UniqueTicketIdGenerator serviceTicketUniqueIdGenerator) {
-        return () -> CollectionUtils.wrap(Pair.of(SimpleWebApplicationServiceImpl.class.getName(), serviceTicketUniqueIdGenerator));
+        return () -> CollectionUtils.wrap(
+            Pair.of(SimpleWebApplicationServiceImpl.class.getName(), serviceTicketUniqueIdGenerator));
     }
 }

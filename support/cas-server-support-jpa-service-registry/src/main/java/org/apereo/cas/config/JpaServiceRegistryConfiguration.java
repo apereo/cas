@@ -33,7 +33,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
 import javax.sql.DataSource;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
