@@ -46,14 +46,6 @@ public class CasFiltersConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired
-    @Qualifier("registeredServiceAccessStrategyEnforcer")
-    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
-
-    @Autowired
-    @Qualifier("authenticationServiceSelectionPlan")
-    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
-
     @RefreshScope
     @Bean
     public FilterRegistrationBean characterEncodingFilter() {
@@ -78,8 +70,7 @@ public class CasFiltersConfiguration {
         bean.setAsyncSupported(true);
         return bean;
     }
-
-
+    
     @ConditionalOnProperty(prefix = "cas.http-web-request.header", name = "enabled", havingValue = "true", matchIfMissing = true)
     @RefreshScope
     @Bean
@@ -88,7 +79,11 @@ public class CasFiltersConfiguration {
         @Qualifier("argumentExtractor")
         final ArgumentExtractor argumentExtractor,
         @Qualifier("servicesManager")
-        final ServicesManager servicesManager) {
+        final ServicesManager servicesManager,
+        @Qualifier("registeredServiceAccessStrategyEnforcer")
+        final AuditableExecution registeredServiceAccessStrategyEnforcer,
+        @Qualifier("authenticationServiceSelectionPlan")
+        final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies) {
         val header = casProperties.getHttpWebRequest().getHeader();
         val initParams = new HashMap<String, String>();
         initParams.put(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_CACHE_CONTROL, BooleanUtils.toStringTrueFalse(header.isCache()));
@@ -103,8 +98,8 @@ public class CasFiltersConfiguration {
         }
         val bean = new FilterRegistrationBean<RegisteredServiceResponseHeadersEnforcementFilter>();
         bean.setFilter(new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager,
-            argumentExtractor, authenticationRequestServiceSelectionStrategies.getObject(),
-            registeredServiceAccessStrategyEnforcer.getObject()));
+            argumentExtractor, authenticationRequestServiceSelectionStrategies,
+            registeredServiceAccessStrategyEnforcer));
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setInitParameters(initParams);
         bean.setName("responseHeadersSecurityFilter");

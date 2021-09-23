@@ -14,12 +14,15 @@ import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.Ordered;
 import org.springframework.core.convert.converter.Converter;
@@ -38,13 +41,14 @@ import java.time.ZonedDateTime;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casCoreUtilConfiguration", proxyBeanMethods = true)
+@Configuration(value = "casCoreUtilConfiguration", proxyBeanMethods = false)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasCoreUtilConfiguration implements InitializingBean {
+public class CasCoreUtilConfiguration {
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    @Lazy(false)
     public ApplicationContextProvider casApplicationContextProvider() {
         return new ApplicationContextProvider();
     }
@@ -81,10 +85,18 @@ public class CasCoreUtilConfiguration implements InitializingBean {
         return new DefaultCasRuntimeModuleLoader();
     }
 
-    @Override
-    public void afterPropertiesSet() {
-        Assert.notNull(casApplicationContextProvider(), "Application context cannot be initialized");
-        val registry = (ConverterRegistry) DefaultConversionService.getSharedInstance();
-        registry.addConverter(zonedDateTimeToStringConverter());
+    @Bean
+    @Autowired
+    public InitializingBean casCoreUtilInitialization(
+        @Qualifier("casApplicationContextProvider")
+        final ApplicationContextProvider casApplicationContextProvider,
+        @Qualifier("zonedDateTimeToStringConverter")
+        final Converter<ZonedDateTime, String> zonedDateTimeToStringConverter) {
+        return () -> {
+            Assert.notNull(casApplicationContextProvider, "Application context cannot be initialized");
+            val registry = (ConverterRegistry) DefaultConversionService.getSharedInstance();
+            registry.addConverter(zonedDateTimeToStringConverter);
+        };
     }
+
 }

@@ -21,14 +21,15 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.List;
@@ -39,41 +40,16 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casCoreConfiguration")
+@Configuration(value = "casCoreConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 @Slf4j
 public class CasCoreConfiguration {
-
-    @Autowired
-    @Qualifier("registeredServiceAccessStrategyEnforcer")
-    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
-
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private ObjectProvider<TicketRegistry> ticketRegistry;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("defaultTicketFactory")
-    private ObjectProvider<TicketFactory> ticketFactory;
-
-    @Autowired
-    @Qualifier("principalFactory")
-    private ObjectProvider<PrincipalFactory> principalFactory;
-
-    @Autowired
-    @Qualifier("protocolTicketCipherExecutor")
-    private ObjectProvider<CipherExecutor> cipherExecutor;
 
     @Bean
     @ConditionalOnMissingBean(name = "authenticationPolicyFactory")
@@ -86,39 +62,58 @@ public class CasCoreConfiguration {
         return new AcceptAnyAuthenticationPolicyFactory();
     }
 
-    @ConditionalOnMissingBean(name = "authenticationServiceSelectionPlan")
-    @Autowired
-    @Bean
-    public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan(
-        final List<AuthenticationServiceSelectionStrategyConfigurer> configurers) {
-        val plan = new DefaultAuthenticationServiceSelectionPlan();
-        configurers.forEach(c -> {
-            LOGGER.trace("Configuring authentication request service selection strategy plan [{}]", c.getName());
-            c.configureAuthenticationServiceSelectionStrategy(plan);
-        });
-        return plan;
-    }
 
     @Bean
     @ConditionalOnMissingBean(name = "serviceMatchingStrategy")
-    public ServiceMatchingStrategy serviceMatchingStrategy() {
-        return new DefaultServiceMatchingStrategy(servicesManager.getObject());
+    @Autowired
+    public ServiceMatchingStrategy serviceMatchingStrategy(
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager) {
+        return new DefaultServiceMatchingStrategy(servicesManager);
     }
 
     @Bean
     @Autowired
     @ConditionalOnMissingBean(name = "centralAuthenticationService")
     public CentralAuthenticationService centralAuthenticationService(
-        @Qualifier("authenticationServiceSelectionPlan") final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
+        @Qualifier("authenticationServiceSelectionPlan")
+        final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
+        @Qualifier("protocolTicketCipherExecutor")
+        final CipherExecutor cipherExecutor,
+        @Qualifier("principalFactory")
+        final PrincipalFactory principalFactory,
+        @Qualifier("ticketRegistry")
+        final TicketRegistry ticketRegistry,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        @Qualifier("defaultTicketFactory")
+        final TicketFactory ticketFactory,
+        @Qualifier("registeredServiceAccessStrategyEnforcer")
+        final AuditableExecution registeredServiceAccessStrategyEnforcer,
+        @Qualifier("authenticationPolicyFactory")
+        final ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory,
+        @Qualifier("serviceMatchingStrategy")
+        final ServiceMatchingStrategy serviceMatchingStrategy) {
         return new DefaultCentralAuthenticationService(applicationContext,
-            ticketRegistry.getObject(),
-            servicesManager.getObject(),
-            ticketFactory.getObject(),
-            authenticationServiceSelectionPlan,
-            authenticationPolicyFactory(),
-            principalFactory.getObject(),
-            cipherExecutor.getObject(),
-            registeredServiceAccessStrategyEnforcer.getObject(),
-            serviceMatchingStrategy());
+            ticketRegistry, servicesManager, ticketFactory,
+            authenticationServiceSelectionPlan, authenticationPolicyFactory, principalFactory,
+            cipherExecutor, registeredServiceAccessStrategyEnforcer, serviceMatchingStrategy);
+    }
+
+    @Configuration(value = "CasCoreAuthenticationServiceSelectionConfiguration", proxyBeanMethods = false)
+    @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
+    public static class CasCoreAuthenticationServiceSelectionConfiguration {
+        @ConditionalOnMissingBean(name = "authenticationServiceSelectionPlan")
+        @Autowired
+        @Bean
+        public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan(
+            final List<AuthenticationServiceSelectionStrategyConfigurer> configurers) {
+            val plan = new DefaultAuthenticationServiceSelectionPlan();
+            configurers.forEach(c -> {
+                LOGGER.trace("Configuring authentication request service selection strategy plan [{}]", c.getName());
+                c.configureAuthenticationServiceSelectionStrategy(plan);
+            });
+            return plan;
+        }
     }
 }

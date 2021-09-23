@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * This is {@link DynamoDbServiceRegistryConfiguration}.
@@ -39,7 +40,7 @@ public class DynamoDbServiceRegistryConfiguration {
 
     @Autowired
     @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
+    private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
 
     @RefreshScope
     @Bean

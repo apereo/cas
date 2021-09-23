@@ -34,6 +34,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
 import javax.sql.DataSource;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -57,7 +58,7 @@ public class JpaServiceRegistryConfiguration {
 
     @Autowired
     @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
+    private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;

@@ -23,6 +23,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * This is {@link RedisServiceRegistryConfiguration}.
@@ -43,7 +44,7 @@ public class RedisServiceRegistryConfiguration {
 
     @Autowired
     @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
+    private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Bean
     @ConditionalOnMissingBean(name = "redisServiceConnectionFactory")

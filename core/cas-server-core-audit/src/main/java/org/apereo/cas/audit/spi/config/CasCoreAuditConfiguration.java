@@ -40,7 +40,6 @@ import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.audit.AuditEventRepository;
@@ -73,20 +72,6 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreAuditConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("auditTrailExecutionPlan")
-    private ObjectProvider<AuditTrailExecutionPlan> auditTrailExecutionPlan;
-
-    @Autowired
-    @Qualifier("auditTrailRecordResolutionPlan")
-    private ObjectProvider<AuditTrailRecordResolutionPlan> auditTrailRecordResolutionPlan;
-
     @Bean
     @ConditionalOnProperty(prefix = "cas.audit.engine", name = "enabled", havingValue = "true", matchIfMissing = true)
     @ConditionalOnMissingBean(name = "inMemoryAuditEventRepository")
@@ -99,20 +84,22 @@ public class CasCoreAuditConfiguration {
     @ConditionalOnMissingBean(name = "auditTrailManagementAspect")
     @ConditionalOnProperty(prefix = "cas.audit.engine", name = "enabled", havingValue = "true", matchIfMissing = true)
     public AuditTrailManagementAspect auditTrailManagementAspect(
+        @Qualifier("auditTrailRecordResolutionPlan")
+        final AuditTrailRecordResolutionPlan auditTrailRecordResolutionPlan,
         @Qualifier("auditablePrincipalResolver")
         final PrincipalResolver auditablePrincipalResolver,
         @Qualifier("filterAndDelegateAuditTrailManager")
-        final AuditTrailManager filterAndDelegateAuditTrailManager) {
+        final AuditTrailManager filterAndDelegateAuditTrailManager,
+        final CasConfigurationProperties casProperties) {
         val audit = casProperties.getAudit().getEngine();
         val auditFormat = AbstractStringAuditTrailManager.AuditFormats.valueOf(audit.getAuditFormat().name());
-        val auditRecordResolutionPlan = auditTrailRecordResolutionPlan.getObject();
         val aspect = new AuditTrailManagementAspect(
             audit.getAppCode(),
             auditablePrincipalResolver,
             CollectionUtils.wrapList(filterAndDelegateAuditTrailManager),
-            auditRecordResolutionPlan.getAuditActionResolvers(),
-            auditRecordResolutionPlan.getAuditResourceResolvers(),
-            auditRecordResolutionPlan.getAuditPrincipalResolvers(),
+            auditTrailRecordResolutionPlan.getAuditActionResolvers(),
+            auditTrailRecordResolutionPlan.getAuditResourceResolvers(),
+            auditTrailRecordResolutionPlan.getAuditPrincipalResolvers(),
             auditFormat);
         aspect.setFailOnAuditFailures(!audit.isIgnoreAuditFailures());
         return aspect;
@@ -143,7 +130,9 @@ public class CasCoreAuditConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean casClientInfoLoggingFilter() {
+    @Autowired
+    public FilterRegistrationBean casClientInfoLoggingFilter(
+        final CasConfigurationProperties casProperties) {
         val audit = casProperties.getAudit().getEngine();
 
         val bean = new FilterRegistrationBean<ClientInfoThreadLocalFilter>();
@@ -230,7 +219,8 @@ public class CasCoreAuditConfiguration {
     @Autowired
     public AuditResourceResolver ticketValidationResourceResolver(
         @Qualifier("ticketResourceResolver")
-        final AuditResourceResolver ticketResourceResolver) {
+        final AuditResourceResolver ticketResourceResolver,
+        final CasConfigurationProperties casProperties) {
         if (casProperties.getAudit().getEngine().isIncludeValidationAssertion()) {
             return new TicketValidationResourceResolver();
         }
@@ -239,7 +229,9 @@ public class CasCoreAuditConfiguration {
 
     @ConditionalOnMissingBean(name = "messageBundleAwareResourceResolver")
     @Bean
-    public AuditResourceResolver messageBundleAwareResourceResolver() {
+    @Autowired
+    public AuditResourceResolver messageBundleAwareResourceResolver(
+        final ConfigurableApplicationContext applicationContext) {
         val resolver = new MessageBundleAwareResourceResolver(applicationContext);
         resolver.setResourcePostProcessor(inputs -> Arrays.stream(inputs)
             .map(MessageSanitizationUtils::sanitize)
@@ -280,7 +272,9 @@ public class CasCoreAuditConfiguration {
 
     @ConditionalOnMissingBean(name = "auditPrincipalIdProvider")
     @Bean
-    public AuditPrincipalIdProvider auditPrincipalIdProvider() {
+    @Autowired
+    public AuditPrincipalIdProvider auditPrincipalIdProvider(
+        final ConfigurableApplicationContext applicationContext) {
         val resolvers = applicationContext.getBeansOfType(AuditPrincipalIdProvider.class, false, true);
         val providers = new ArrayList<>(resolvers.values());
         AnnotationAwareOrderComparator.sortIfNecessary(providers);
@@ -288,9 +282,11 @@ public class CasCoreAuditConfiguration {
     }
 
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "casAuditTrailExecutionPlanConfigurer")
     @ConditionalOnProperty(prefix = "cas.audit.slf4j", name = "enabled", havingValue = "true", matchIfMissing = true)
-    public AuditTrailExecutionPlanConfigurer casAuditTrailExecutionPlanConfigurer() {
+    public AuditTrailExecutionPlanConfigurer casAuditTrailExecutionPlanConfigurer(
+        final CasConfigurationProperties casProperties) {
         return plan -> {
             val slf4j = casProperties.getAudit().getSlf4j();
             val slf4jManager = new Slf4jLoggingAuditTrailManager();
@@ -378,7 +374,9 @@ public class CasCoreAuditConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "protocolSpecificationValidationResourceResolver")
-    public AuditResourceResolver protocolSpecificationValidationResourceResolver() {
+    @Autowired
+    public AuditResourceResolver protocolSpecificationValidationResourceResolver(
+        final CasConfigurationProperties casProperties) {
         return new ProtocolSpecificationValidationAuditResourceResolver(casProperties);
     }
 
@@ -391,11 +389,15 @@ public class CasCoreAuditConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "filterAndDelegateAuditTrailManager")
-    protected AuditTrailManager filterAndDelegateAuditTrailManager() {
+    @Autowired
+    protected AuditTrailManager filterAndDelegateAuditTrailManager(
+        @Qualifier("auditTrailExecutionPlan")
+        final AuditTrailExecutionPlan auditTrailExecutionPlan,
+        final CasConfigurationProperties casProperties) {
         val audit = casProperties.getAudit().getEngine();
         val auditFormat = AbstractStringAuditTrailManager.AuditFormats.valueOf(audit.getAuditFormat().name());
         val auditManager = new FilterAndDelegateAuditTrailManager(
-            auditTrailExecutionPlan.getObject().getAuditTrailManagers(),
+            auditTrailExecutionPlan.getAuditTrailManagers(),
             audit.getSupportedActions(), audit.getExcludedActions());
         auditManager.setAuditFormat(auditFormat);
         return auditManager;

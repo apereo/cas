@@ -34,7 +34,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.Order;
@@ -83,19 +82,7 @@ public class CasWebflowContextConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("authenticationThrottlingExecutionPlan")
-    private ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan;
-
-    @Autowired
     private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("argumentExtractor")
-    private ObjectProvider<ArgumentExtractor> argumentExtractor;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
 
     @Bean
     public FlowUrlHandler loginFlowUrlHandler() {
@@ -137,10 +124,15 @@ public class CasWebflowContextConfiguration {
 
     @RefreshScope
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "localeChangeInterceptor")
-    public LocaleChangeInterceptor localeChangeInterceptor() {
+    public LocaleChangeInterceptor localeChangeInterceptor(
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        @Qualifier("argumentExtractor")
+        final ArgumentExtractor argumentExtractor) {
         val interceptor = new CasLocaleChangeInterceptor(casProperties.getLocale(),
-            argumentExtractor.getObject(), servicesManager.getObject());
+            argumentExtractor, servicesManager);
         interceptor.setParamName(casProperties.getLocale().getParamName());
         interceptor.setSupportedFlows(List.of(
             CasWebflowConfigurer.FLOW_ID_LOGOUT,
@@ -219,8 +211,7 @@ public class CasWebflowContextConfiguration {
         final FlowDefinitionRegistry logoutFlowRegistry,
         @Qualifier("flowBuilderServices")
         final FlowBuilderServices flowBuilderServices) {
-        val c = new DefaultLogoutWebflowConfigurer(flowBuilderServices, loginFlowRegistry,
-            applicationContext, casProperties);
+        val c = new DefaultLogoutWebflowConfigurer(flowBuilderServices, loginFlowRegistry, applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry);
         c.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return c;
@@ -256,7 +247,9 @@ public class CasWebflowContextConfiguration {
         @Qualifier("localeChangeInterceptor")
         final LocaleChangeInterceptor localeChangeInterceptor,
         @Qualifier("themeChangeInterceptor")
-        final ObjectProvider<ThemeChangeInterceptor> themeChangeInterceptor) {
+        final ObjectProvider<ThemeChangeInterceptor> themeChangeInterceptor,
+        @Qualifier("authenticationThrottlingExecutionPlan")
+        final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
         return plan -> {
             plan.registerWebflowConfigurer(defaultWebflowConfigurer);
             plan.registerWebflowConfigurer(defaultLogoutWebflowConfigurer);

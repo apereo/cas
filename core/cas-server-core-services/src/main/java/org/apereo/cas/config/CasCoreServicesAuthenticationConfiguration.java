@@ -8,7 +8,6 @@ import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -29,18 +28,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 public class CasCoreServicesAuthenticationConfiguration {
 
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("cacheCredentialsCipherExecutor")
-    private ObjectProvider<CipherExecutor> cacheCredentialsCipherExecutor;
-
-    @Autowired
-    @Qualifier(RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME)
-    private ObjectProvider<RegisteredServiceCipherExecutor> registeredServiceCipherExecutor;
-
     @Bean
     public ProtocolAttributeEncoder noOpCasAttributeEncoder() {
         return new NoOpProtocolAttributeEncoder();
@@ -49,9 +36,14 @@ public class CasCoreServicesAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "casAttributeEncoder")
     @RefreshScope
     @Bean
-    public ProtocolAttributeEncoder casAttributeEncoder() {
-        return new DefaultCasProtocolAttributeEncoder(servicesManager.getObject(),
-            registeredServiceCipherExecutor.getObject(),
-            cacheCredentialsCipherExecutor.getObject());
+    @Autowired
+    public ProtocolAttributeEncoder casAttributeEncoder(
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        @Qualifier("cacheCredentialsCipherExecutor")
+        final CipherExecutor cacheCredentialsCipherExecutor,
+        @Qualifier(RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME)
+        final RegisteredServiceCipherExecutor registeredServiceCipherExecutor) {
+        return new DefaultCasProtocolAttributeEncoder(servicesManager, registeredServiceCipherExecutor, cacheCredentialsCipherExecutor);
     }
 }
