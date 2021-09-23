@@ -35,8 +35,7 @@ import java.util.ArrayList;
 @Slf4j
 public class CasCoreRestConfiguration {
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
+
 
     @Bean
     @ConditionalOnMissingBean(name = "restAuthenticationService")
@@ -62,7 +61,9 @@ public class CasCoreRestConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "restHttpRequestCredentialFactory")
-    public RestHttpRequestCredentialFactory restHttpRequestCredentialFactory() {
+    @Autowired
+    public RestHttpRequestCredentialFactory restHttpRequestCredentialFactory(
+        final ConfigurableApplicationContext applicationContext) {
         val configurers = new ArrayList<>(applicationContext.getBeansOfType(RestHttpRequestCredentialFactoryConfigurer.class).values());
         LOGGER.trace("building REST credential factory from [{}]", configurers);
 

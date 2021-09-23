@@ -78,12 +78,6 @@ public class CasWebflowContextConfiguration {
 
     private static final FlowExecutionListener[] FLOW_EXECUTION_LISTENERS = new FlowExecutionListener[0];
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @Bean
     public FlowUrlHandler loginFlowUrlHandler() {
         return new CasDefaultFlowUrlHandler();
@@ -127,6 +121,7 @@ public class CasWebflowContextConfiguration {
     @Autowired
     @ConditionalOnMissingBean(name = "localeChangeInterceptor")
     public LocaleChangeInterceptor localeChangeInterceptor(
+        final CasConfigurationProperties casProperties,
         @Qualifier("servicesManager")
         final ServicesManager servicesManager,
         @Qualifier("argumentExtractor")
@@ -159,6 +154,7 @@ public class CasWebflowContextConfiguration {
     @Bean
     @Autowired
     public FlowExecutor logoutFlowExecutor(
+        final CasConfigurationProperties casProperties,
         @Qualifier("logoutFlowRegistry")
         final FlowDefinitionRegistry logoutFlowRegistry,
         @Qualifier("webflowCipherExecutor")
@@ -172,6 +168,7 @@ public class CasWebflowContextConfiguration {
     @Bean
     @Autowired
     public FlowExecutor loginFlowExecutor(
+        final CasConfigurationProperties casProperties,
         @Qualifier("loginFlowRegistry")
         final FlowDefinitionRegistry loginFlowRegistry,
         @Qualifier("webflowCipherExecutor")
@@ -188,6 +185,8 @@ public class CasWebflowContextConfiguration {
     @Order(Ordered.HIGHEST_PRECEDENCE)
     @Autowired
     public CasWebflowConfigurer defaultWebflowConfigurer(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
         @Qualifier("loginFlowRegistry")
         final FlowDefinitionRegistry loginFlowRegistry,
         @Qualifier("logoutFlowRegistry")
@@ -205,6 +204,8 @@ public class CasWebflowContextConfiguration {
     @Order(Ordered.HIGHEST_PRECEDENCE)
     @Autowired
     public CasWebflowConfigurer defaultLogoutWebflowConfigurer(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
         @Qualifier("loginFlowRegistry")
         final FlowDefinitionRegistry loginFlowRegistry,
         @Qualifier("logoutFlowRegistry")
@@ -223,6 +224,8 @@ public class CasWebflowContextConfiguration {
     @RefreshScope
     @Autowired
     public CasWebflowConfigurer groovyWebflowConfigurer(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
         @Qualifier("loginFlowRegistry")
         final FlowDefinitionRegistry loginFlowRegistry,
         @Qualifier("logoutFlowRegistry")
@@ -266,8 +269,7 @@ public class CasWebflowContextConfiguration {
     @Configuration(value = "CasWebflowDefinitionsConfiguration", proxyBeanMethods = false)
     @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
     public static class CasWebflowDefinitionsConfiguration {
-        @Autowired
-        private ConfigurableApplicationContext applicationContext;
+
 
         @Bean
         public FlowBuilder flowBuilder() {
@@ -277,6 +279,7 @@ public class CasWebflowContextConfiguration {
         @Bean
         @Autowired
         public FlowDefinitionRegistry logoutFlowRegistry(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("flowBuilderServices")
             final FlowBuilderServices flowBuilderServices,
             @Qualifier("flowBuilder")
@@ -289,6 +292,7 @@ public class CasWebflowContextConfiguration {
         @Bean
         @Autowired
         public FlowDefinitionRegistry loginFlowRegistry(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("flowBuilderServices")
             final FlowBuilderServices flowBuilderServices,
             @Qualifier("flowBuilder")
@@ -329,6 +333,7 @@ public class CasWebflowContextConfiguration {
         @Bean
         @Autowired
         public ViewFactoryCreator viewFactoryCreator(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("registeredServiceViewResolver")
             final ObjectProvider<ViewResolver> registeredServiceViewResolver) {
             val viewResolver = registeredServiceViewResolver.getIfAvailable();

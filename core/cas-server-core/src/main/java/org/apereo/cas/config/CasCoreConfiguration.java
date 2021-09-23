@@ -45,15 +45,11 @@ import java.util.List;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Slf4j
 public class CasCoreConfiguration {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "authenticationPolicyFactory")
-    public ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory() {
+    public ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory(
+        final CasConfigurationProperties casProperties) {
         if (casProperties.getAuthn().getPolicy().isRequiredHandlerAuthenticationPolicyEnabled()) {
             LOGGER.trace("Applying configuration for Required Handler Authentication Policy");
             return new RequiredHandlerAuthenticationPolicyFactory();
@@ -93,7 +89,8 @@ public class CasCoreConfiguration {
         @Qualifier("authenticationPolicyFactory")
         final ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory,
         @Qualifier("serviceMatchingStrategy")
-        final ServiceMatchingStrategy serviceMatchingStrategy) {
+        final ServiceMatchingStrategy serviceMatchingStrategy,
+        final ConfigurableApplicationContext applicationContext) {
         return new DefaultCentralAuthenticationService(applicationContext,
             ticketRegistry, servicesManager, ticketFactory,
             authenticationServiceSelectionPlan, authenticationPolicyFactory, principalFactory,

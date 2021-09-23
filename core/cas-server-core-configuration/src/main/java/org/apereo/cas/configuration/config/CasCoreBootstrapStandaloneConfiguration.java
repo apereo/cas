@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.config;
 import org.apereo.cas.configuration.CommaSeparatedStringToThrowablesConverter;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -16,8 +15,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ResourceLoader;
 
 import java.util.List;
@@ -32,14 +29,7 @@ import java.util.List;
 @ConditionalOnProperty(value = "spring.cloud.config.enabled", havingValue = "false")
 @Configuration(value = "casStandaloneBootstrapConfiguration", proxyBeanMethods = false)
 @AutoConfigureAfter(CasCoreBootstrapStandaloneLocatorConfiguration.class)
-public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLocator, PriorityOrdered {
-
-    @Autowired
-    private ResourceLoader resourceLoader;
-
-    @Autowired
-    @Qualifier("casConfigurationPropertiesSourceLocator")
-    private ObjectProvider<CasConfigurationPropertiesSourceLocator> casConfigurationPropertiesSourceLocator;
+public class CasCoreBootstrapStandaloneConfiguration implements PriorityOrdered {
 
     @ConfigurationPropertiesBinding
     @Bean
@@ -47,9 +37,13 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
         return new CommaSeparatedStringToThrowablesConverter();
     }
 
-    @Override
-    public PropertySource<?> locate(final Environment environment) {
-        return casConfigurationPropertiesSourceLocator.getObject().locate(environment, this.resourceLoader);
+    @Autowired
+    @Bean
+    public PropertySourceLocator casCoreBootstrapPropertySourceLocator(
+        @Qualifier("casConfigurationPropertiesSourceLocator")
+        final CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator,
+        final ResourceLoader resourceLoader) {
+        return environment -> casConfigurationPropertiesSourceLocator.locate(environment, resourceLoader);
     }
 
     @Override

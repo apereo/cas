@@ -11,7 +11,6 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import lombok.val;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.web.Log4jServletContextListener;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -23,7 +22,6 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
@@ -39,21 +37,16 @@ import java.util.HashMap;
 @Configuration(value = "casLoggingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasLoggingConfiguration {
-
     @Autowired
-    @Qualifier("ticketGrantingTicketCookieGenerator")
-    private ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
-
     @ConditionalOnBean(value = TicketRegistry.class)
     @ConditionalOnProperty(prefix = "cas.logging", name = "mdc-enabled", havingValue = "true", matchIfMissing = true)
     @Bean
-    public FilterRegistrationBean threadContextMDCServletFilter() {
-        val filter = new ThreadContextMDCServletFilter(ticketRegistrySupport.getObject(),
-            this.ticketGrantingTicketCookieGenerator.getObject());
+    public FilterRegistrationBean threadContextMDCServletFilter(
+        @Qualifier("defaultTicketRegistrySupport")
+        final TicketRegistrySupport ticketRegistrySupport,
+        @Qualifier("ticketGrantingTicketCookieGenerator")
+        final CasCookieBuilder ticketGrantingTicketCookieGenerator) {
+        val filter = new ThreadContextMDCServletFilter(ticketRegistrySupport, ticketGrantingTicketCookieGenerator);
         val initParams = new HashMap<String, String>();
         val bean = new FilterRegistrationBean<ThreadContextMDCServletFilter>();
         bean.setFilter(filter);
@@ -86,7 +79,6 @@ public class CasLoggingConfiguration {
         }
 
         @Bean
-        @Lazy
         public ServletListenerRegistrationBean log4jServletContextListener() {
             val bean = new ServletListenerRegistrationBean<Log4jServletContextListener>();
             bean.setEnabled(true);

@@ -30,11 +30,9 @@ import java.util.ArrayList;
 public class CasCoreTicketsSerializationConfiguration {
 
     @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @Bean
     @ConditionalOnMissingBean(name = "ticketSerializationExecutionPlan")
-    public TicketSerializationExecutionPlan ticketSerializationExecutionPlan() {
+    public TicketSerializationExecutionPlan ticketSerializationExecutionPlan(final ConfigurableApplicationContext applicationContext) {
         val resolvers = applicationContext.getBeansOfType(TicketSerializationExecutionPlanConfigurer.class, false, true);
         val providers = new ArrayList<>(resolvers.values());
         AnnotationAwareOrderComparator.sort(providers);

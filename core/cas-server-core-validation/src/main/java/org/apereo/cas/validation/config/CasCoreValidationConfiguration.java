@@ -37,8 +37,7 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreValidationConfiguration {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
+
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -86,11 +85,13 @@ public class CasCoreValidationConfiguration {
     @Autowired
     @ConditionalOnMissingBean(name = "authenticationPolicyAwareServiceTicketValidationAuthorizer")
     public ServiceTicketValidationAuthorizer authenticationPolicyAwareServiceTicketValidationAuthorizer(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("servicesManager")
         final ServicesManager servicesManager,
         @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
         final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
-        return new AuthenticationPolicyAwareServiceTicketValidationAuthorizer(servicesManager, authenticationEventExecutionPlan, applicationContext);
+        return new AuthenticationPolicyAwareServiceTicketValidationAuthorizer(servicesManager,
+            authenticationEventExecutionPlan, applicationContext);
     }
 
     @Bean

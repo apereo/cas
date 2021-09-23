@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,27 +27,24 @@ import org.springframework.core.env.Environment;
 @Configuration(value = "casCoreBootstrapStandaloneLocatorConfiguration", proxyBeanMethods = false)
 public class CasCoreBootstrapStandaloneLocatorConfiguration {
 
-    @Autowired
-    private Environment environment;
-
-    @Autowired
-    @Qualifier("configurationPropertiesEnvironmentManager")
-    private ObjectProvider<CasConfigurationPropertiesEnvironmentManager> configurationPropertiesEnvironmentManager;
-
     @ConditionalOnMissingBean(name = "casConfigurationPropertiesSourceLocator")
     @Bean
     @Autowired
     public CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator(
         @Qualifier("configurationPropertiesLoaderFactory")
-        final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory) {
+        final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory,
+        @Qualifier("configurationPropertiesEnvironmentManager")
+        final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager) {
         return new DefaultCasConfigurationPropertiesSourceLocator(
-            configurationPropertiesEnvironmentManager.getObject(),
+            configurationPropertiesEnvironmentManager,
             configurationPropertiesLoaderFactory);
     }
 
     @ConditionalOnMissingBean(name = "casConfigurationCipherExecutor")
     @Bean
-    public CipherExecutor<String, String> casConfigurationCipherExecutor() {
+    @Autowired
+    public CipherExecutor<String, String> casConfigurationCipherExecutor(
+        final Environment environment) {
         return new CasConfigurationJasyptCipherExecutor(environment);
     }
 
@@ -57,7 +53,8 @@ public class CasCoreBootstrapStandaloneLocatorConfiguration {
     @Autowired
     public ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory(
         @Qualifier("casConfigurationCipherExecutor")
-        final CipherExecutor<String, String> casConfigurationCipherExecutor) {
+        final CipherExecutor<String, String> casConfigurationCipherExecutor,
+        final Environment environment) {
         return new ConfigurationPropertiesLoaderFactory(casConfigurationCipherExecutor, environment);
     }
 

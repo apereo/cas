@@ -20,7 +20,6 @@ import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -45,39 +44,30 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreAuthenticationConfiguration {
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
-    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
-
     @Bean
     @RefreshScope
     @Autowired
     @ConditionalOnMissingBean(name = "authenticationTransactionManager")
-    public AuthenticationTransactionManager authenticationTransactionManager(@Qualifier("casAuthenticationManager")
-                                                                             final AuthenticationManager casAuthenticationManager) {
+    public AuthenticationTransactionManager authenticationTransactionManager(
+        @Qualifier("casAuthenticationManager")
+        final AuthenticationManager casAuthenticationManager,
+        final ConfigurableApplicationContext applicationContext) {
         return new DefaultAuthenticationTransactionManager(applicationContext, casAuthenticationManager);
     }
 
     @ConditionalOnMissingBean(name = "casAuthenticationManager")
     @Bean
     @RefreshScope
-    public AuthenticationManager casAuthenticationManager() {
-        return new DefaultAuthenticationManager(
-            authenticationEventExecutionPlan.getObject(),
-            casProperties.getPersonDirectory().getPrincipalResolutionFailureFatal() == TriStateBoolean.TRUE,
-            applicationContext
-        );
+    @Autowired
+    public AuthenticationManager casAuthenticationManager(
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier("defaultAuthenticationSystemSupport")
+        final AuthenticationSystemSupport authenticationSystemSupport,
+        @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
+        final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+        val isFatal = casProperties.getPersonDirectory().getPrincipalResolutionFailureFatal() == TriStateBoolean.TRUE;
+        return new DefaultAuthenticationManager(authenticationEventExecutionPlan, isFatal, applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "authenticationResultBuilderFactory")
@@ -93,13 +83,18 @@ public class CasCoreAuthenticationConfiguration {
     public AuthenticationTransactionFactory authenticationTransactionFactory() {
         return new DefaultAuthenticationTransactionFactory();
     }
-    
+
     @ConditionalOnMissingBean(name = AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
     @Autowired
     @Bean
     @RefreshScope
-    public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(final List<AuthenticationEventExecutionPlanConfigurer> configurers) {
-        val plan = new DefaultAuthenticationEventExecutionPlan(authenticationSystemSupport.getObject());
+    public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(
+        @Qualifier("defaultAuthenticationSystemSupport")
+        final AuthenticationSystemSupport authenticationSystemSupport,
+        final List<AuthenticationEventExecutionPlanConfigurer> configurers,
+        @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
+        final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+        val plan = new DefaultAuthenticationEventExecutionPlan(authenticationSystemSupport);
         val sortedConfigurers = new ArrayList<>(configurers);
         AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
 
@@ -113,7 +108,8 @@ public class CasCoreAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "authenticationAttributeReleasePolicy")
     @RefreshScope
     @Bean
-    public AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy() {
+    @Autowired
+    public AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy(final CasConfigurationProperties casProperties) {
         val release = casProperties.getAuthn().getAuthenticationAttributeRelease();
         if (!release.isEnabled()) {
             LOGGER.debug("CAS is configured to not release protocol-level authentication attributes.");

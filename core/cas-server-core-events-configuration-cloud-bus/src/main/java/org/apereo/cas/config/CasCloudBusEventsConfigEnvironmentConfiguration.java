@@ -22,15 +22,13 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCloudBusEventsConfigEnvironmentConfiguration {
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @ConditionalOnMissingBean(name = "casCloudBusConfigurationEventListener")
     @Bean
     @Autowired
     public CasCloudBusConfigurationEventListener casCloudBusConfigurationEventListener(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("configurationPropertiesEnvironmentManager") final CasConfigurationPropertiesEnvironmentManager manager) {
-        return new CasCloudBusConfigurationEventListener(manager, this.applicationContext);
+        return new CasCloudBusConfigurationEventListener(manager, applicationContext);
     }
 
 }

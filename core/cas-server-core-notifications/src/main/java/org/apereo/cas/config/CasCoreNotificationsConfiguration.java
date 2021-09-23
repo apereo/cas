@@ -38,26 +38,24 @@ import java.util.stream.Collectors;
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreNotificationsConfiguration {
-    @Autowired
-    @Qualifier("mailSender")
-    private ObjectProvider<JavaMailSender> mailSender;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "communicationsManager")
-    public CommunicationsManager communicationsManager() {
-        return new CommunicationsManager(smsSender(), mailSender.getIfAvailable(), notificationSender());
+    public CommunicationsManager communicationsManager(
+        @Qualifier("mailSender")
+        final ObjectProvider<JavaMailSender> mailSender,
+        @Qualifier("smsSender")
+        final SmsSender smsSender,
+        @Qualifier("notificationSender")
+        final NotificationSender notificationSender) {
+        return new CommunicationsManager(smsSender, mailSender.getIfAvailable(), notificationSender);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "smsSender")
     @RefreshScope
-    public SmsSender smsSender() {
+    @Autowired
+    public SmsSender smsSender(final CasConfigurationProperties casProperties) {
         val groovy = casProperties.getSmsProvider().getGroovy();
         if (groovy.getLocation() != null) {
             return new GroovySmsSender(groovy.getLocation());
@@ -72,7 +70,8 @@ public class CasCoreNotificationsConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "notificationSender")
     @RefreshScope
-    public NotificationSender notificationSender() {
+    @Autowired
+    public NotificationSender notificationSender(final ConfigurableApplicationContext applicationContext) {
         val configurers = applicationContext.getBeansOfType(NotificationSenderExecutionPlanConfigurer.class, false, true);
         val results = configurers.values()
             .stream()
