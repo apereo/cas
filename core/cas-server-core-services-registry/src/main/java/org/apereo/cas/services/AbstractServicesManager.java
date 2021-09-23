@@ -132,7 +132,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         var foundService = configurationContext.getRegisteredServiceLocators()
             .stream()
             .map(locator -> locator.locate(candidates, service))
-            .filter(Objects::nonNull)
+            .filter(candidate -> validateRegisteredService(candidate) != null)
             .findFirst();
 
         if (foundService.isEmpty()) {
