@@ -20,15 +20,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "casCoreConfigurationMetadataConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreConfigurationMetadataConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
     @ConditionalOnAvailableEndpoint
     @Autowired
     public CasConfigurationMetadataServerEndpoint configurationMetadataServerEndpoint(
         @Qualifier("casConfigurationMetadataRepository")
-        final CasConfigurationMetadataRepository casConfigurationMetadataRepository) {
+        final CasConfigurationMetadataRepository casConfigurationMetadataRepository,
+        final CasConfigurationProperties casProperties) {
         return new CasConfigurationMetadataServerEndpoint(casProperties, casConfigurationMetadataRepository);
     }
 

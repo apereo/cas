@@ -52,10 +52,17 @@ import java.util.stream.Stream;
 @Slf4j
 public class CasCoreAuthenticationHandlersConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-
+    private static Map<String, String> getParsedUsers(final CasConfigurationProperties casProperties) {
+        val accept = casProperties.getAuthn().getAccept();
+        val usersProperty = accept.getUsers();
+        if (accept.isEnabled() && StringUtils.isNotBlank(usersProperty) && usersProperty.contains("::")) {
+            val pattern = Pattern.compile("::");
+            return Stream.of(usersProperty.split(","))
+                .map(pattern::split)
+                .collect(Collectors.toMap(userAndPassword -> userAndPassword[0], userAndPassword -> userAndPassword[1]));
+        }
+        return new HashMap<>(0);
+    }
 
     @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
     @Bean
@@ -95,6 +102,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @ConditionalOnMissingBean(name = "acceptUsersAuthenticationHandler")
     @Autowired
     public AuthenticationHandler acceptUsersAuthenticationHandler(
+        final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("servicesManager")
         final ServicesManager servicesManager,
@@ -104,7 +112,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
         final PasswordPolicyContext acceptPasswordPolicyConfiguration) {
         val props = casProperties.getAuthn().getAccept();
         val h = new AcceptUsersAuthenticationHandler(props.getName(),
-            servicesManager, acceptUsersPrincipalFactory, props.getOrder(), getParsedUsers());
+            servicesManager, acceptUsersPrincipalFactory, props.getOrder(), getParsedUsers(casProperties));
         h.setState(props.getState());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(props.getPasswordEncoder(), applicationContext));
         h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration);
@@ -163,7 +171,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
      */
     @Configuration(value = "jaasAuthenticationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public class JaasAuthenticationConfiguration {
+    public static class JaasAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "jaasPrincipalFactory")
         @Bean
         @RefreshScope
@@ -176,6 +184,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
         @RefreshScope
         @Autowired
         public List<PrincipalResolver> jaasPersonDirectoryPrincipalResolvers(
+            final CasConfigurationProperties casProperties,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
             final IPersonAttributeDao attributeRepository,
             @Qualifier("jaasPrincipalFactory")
@@ -198,6 +207,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
         @Bean
         @Autowired
         public List<AuthenticationHandler> jaasAuthenticationHandlers(
+            final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("servicesManager")
             final ServicesManager servicesManager,
@@ -247,19 +257,8 @@ public class CasCoreAuthenticationHandlersConfiguration {
             final List<AuthenticationHandler> jaasAuthenticationHandlers,
             @Qualifier("jaasPersonDirectoryPrincipalResolvers")
             final List<PrincipalResolver> jaasPersonDirectoryPrincipalResolvers) {
-            return plan -> plan.registerAuthenticationHandlerWithPrincipalResolvers(jaasAuthenticationHandlers, jaasPersonDirectoryPrincipalResolvers);
+            return plan -> plan.registerAuthenticationHandlerWithPrincipalResolvers(jaasAuthenticationHandlers,
+                jaasPersonDirectoryPrincipalResolvers);
         }
-    }
-
-    private Map<String, String> getParsedUsers() {
-        val accept = casProperties.getAuthn().getAccept();
-        val usersProperty = accept.getUsers();
-        if (accept.isEnabled() && StringUtils.isNotBlank(usersProperty) && usersProperty.contains("::")) {
-            val pattern = Pattern.compile("::");
-            return Stream.of(usersProperty.split(","))
-                .map(pattern::split)
-                .collect(Collectors.toMap(userAndPassword -> userAndPassword[0], userAndPassword -> userAndPassword[1]));
-        }
-        return new HashMap<>(0);
     }
 }

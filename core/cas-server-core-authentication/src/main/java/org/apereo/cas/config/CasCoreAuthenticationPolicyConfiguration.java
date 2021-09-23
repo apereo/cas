@@ -28,13 +28,12 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreAuthenticationPolicyConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @ConditionalOnMissingBean(name = "authenticationPolicyExecutionPlanConfigurer")
     @Bean
     @RefreshScope
-    public AuthenticationEventExecutionPlanConfigurer authenticationPolicyExecutionPlanConfigurer() {
+    @Autowired
+    public AuthenticationEventExecutionPlanConfigurer authenticationPolicyExecutionPlanConfigurer(
+        final CasConfigurationProperties casProperties) {
         return plan -> {
             val policyProps = casProperties.getAuthn().getPolicy();
             val authPolicy = CoreAuthenticationUtils.newAuthenticationPolicy(policyProps);
@@ -49,6 +48,7 @@ public class CasCoreAuthenticationPolicyConfiguration {
     @RefreshScope
     @Autowired
     public AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy(
+        final CasConfigurationProperties casProperties,
         @Qualifier("ipAddressIntelligenceService")
         final IPAddressIntelligenceService ipAddressIntelligenceService,
         @Qualifier("geoLocationService")
@@ -60,7 +60,8 @@ public class CasCoreAuthenticationPolicyConfiguration {
     @ConditionalOnMissingBean(name = "ipAddressIntelligenceService")
     @Bean
     @RefreshScope
-    public IPAddressIntelligenceService ipAddressIntelligenceService() {
+    @Autowired
+    public IPAddressIntelligenceService ipAddressIntelligenceService(final CasConfigurationProperties casProperties) {
         val adaptive = casProperties.getAuthn().getAdaptive();
         return CoreAuthenticationUtils.newIpAddressIntelligenceService(adaptive);
     }

@@ -32,11 +32,8 @@ import java.util.Map;
 @TestConfiguration("casPersonDirectoryTestConfiguration")
 @Lazy(false)
 @ConditionalOnProperty(value = "spring.boot.config.CasPersonDirectoryTestConfiguration.enabled",
-    havingValue = "true", matchIfMissing = true)
+                       havingValue = "true", matchIfMissing = true)
 public class CasPersonDirectoryTestConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-    
     @Bean
     public List<IPersonAttributeDao> attributeRepositories() {
         return CollectionUtils.wrap(attributeRepository());
@@ -54,7 +51,8 @@ public class CasPersonDirectoryTestConfiguration {
 
     @ConditionalOnMissingBean(name = AttributeDefinitionStore.BEAN_NAME)
     @Bean
-    public AttributeDefinitionStore attributeDefinitionStore() throws Exception {
+    @Autowired
+    public AttributeDefinitionStore attributeDefinitionStore(final CasConfigurationProperties casProperties) throws Exception {
         val resource = casProperties.getAuthn().getAttributeRepository()
             .getAttributeDefinitionStore().getJson().getLocation();
         if (ResourceUtils.doesResourceExist(resource)) {
@@ -62,9 +60,11 @@ public class CasPersonDirectoryTestConfiguration {
         }
         return new DefaultAttributeDefinitionStore();
     }
-    
+
     @Bean
-    public PrincipalResolutionExecutionPlanConfigurer testPersonDirectoryPrincipalResolutionExecutionPlanConfigurer() {
+    @Autowired
+    public PrincipalResolutionExecutionPlanConfigurer testPersonDirectoryPrincipalResolutionExecutionPlanConfigurer(
+        final CasConfigurationProperties casProperties) {
         return plan -> {
             val personDirectory = casProperties.getPersonDirectory();
             val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),

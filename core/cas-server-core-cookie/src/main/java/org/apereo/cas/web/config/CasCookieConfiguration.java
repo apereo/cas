@@ -33,13 +33,11 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCookieConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "warnCookieGenerator")
-    public CasCookieBuilder warnCookieGenerator() {
+    @Autowired
+    public CasCookieBuilder warnCookieGenerator(final CasConfigurationProperties casProperties) {
         val props = casProperties.getWarningCookie();
         return new WarningCookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
     }
@@ -48,7 +46,10 @@ public class CasCookieConfiguration {
     @Bean
     @Autowired
     @RefreshScope
-    public CookieValueManager cookieValueManager(@Qualifier("cookieCipherExecutor") final CipherExecutor cookieCipherExecutor) {
+    public CookieValueManager cookieValueManager(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("cookieCipherExecutor")
+        final CipherExecutor cookieCipherExecutor) {
         if (casProperties.getTgc().getCrypto().isEnabled()) {
             return new DefaultCasCookieValueManager(cookieCipherExecutor, casProperties.getTgc());
         }
@@ -58,7 +59,8 @@ public class CasCookieConfiguration {
     @ConditionalOnMissingBean(name = "cookieCipherExecutor")
     @RefreshScope
     @Bean
-    public CipherExecutor cookieCipherExecutor() {
+    @Autowired
+    public CipherExecutor cookieCipherExecutor(final CasConfigurationProperties casProperties) {
         val crypto = casProperties.getTgc().getCrypto();
         var enabled = crypto.isEnabled();
         if (!enabled && StringUtils.isNotBlank(crypto.getEncryption().getKey()) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
@@ -81,7 +83,10 @@ public class CasCookieConfiguration {
     @Bean
     @RefreshScope
     @Autowired
-    public CasCookieBuilder ticketGrantingTicketCookieGenerator(@Qualifier("cookieValueManager") final CookieValueManager cookieValueManager) {
+    public CasCookieBuilder ticketGrantingTicketCookieGenerator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("cookieValueManager")
+        final CookieValueManager cookieValueManager) {
         val context = CookieUtils.buildCookieGenerationContext(casProperties.getTgc());
         return new TicketGrantingCookieRetrievingCookieGenerator(context, cookieValueManager);
     }

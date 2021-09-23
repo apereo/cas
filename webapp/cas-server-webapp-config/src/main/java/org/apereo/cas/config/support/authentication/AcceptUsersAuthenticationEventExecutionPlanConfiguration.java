@@ -9,7 +9,6 @@ import org.apereo.cas.util.AsciiArtUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -29,21 +28,16 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("defaultPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
-
-    @Autowired
-    @Qualifier("acceptUsersAuthenticationHandler")
-    private ObjectProvider<AuthenticationHandler> acceptUsersAuthenticationHandler;
-
     @ConditionalOnMissingBean(name = "acceptUsersAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @RefreshScope
-    public AuthenticationEventExecutionPlanConfigurer acceptUsersAuthenticationEventExecutionPlanConfigurer() {
+    @Autowired
+    public AuthenticationEventExecutionPlanConfigurer acceptUsersAuthenticationEventExecutionPlanConfigurer(
+        @Qualifier("acceptUsersAuthenticationHandler")
+        final AuthenticationHandler acceptUsersAuthenticationHandler,
+        @Qualifier("defaultPrincipalResolver")
+        final PrincipalResolver defaultPrincipalResolver,
+        final CasConfigurationProperties casProperties) {
         return plan -> {
             val accept = casProperties.getAuthn().getAccept();
             if (accept.isEnabled() && StringUtils.isNotBlank(accept.getUsers())) {
@@ -53,7 +47,7 @@ public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
                         + "that you DISABLE this authentication method by setting 'cas.authn.accept.enabled=false' "
                         + "and switch to a mode that is more suitable for production.";
                 AsciiArtUtils.printAsciiArtWarning(LOGGER, header);
-                plan.registerAuthenticationHandlerWithPrincipalResolver(acceptUsersAuthenticationHandler.getObject(), defaultPrincipalResolver.getObject());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(acceptUsersAuthenticationHandler, defaultPrincipalResolver);
             }
         };
     }

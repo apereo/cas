@@ -42,9 +42,6 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreAuthenticationSupportConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "defaultAuthenticationSystemSupport")
@@ -68,6 +65,7 @@ public class CasCoreAuthenticationSupportConfiguration {
     @Autowired
     @ConditionalOnMissingBean(name = "registeredServiceAuthenticationHandlerResolver")
     public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver(
+        final CasConfigurationProperties casProperties,
         @Qualifier("servicesManager")
         final ServicesManager servicesManager,
         @Qualifier("authenticationServiceSelectionPlan")
@@ -97,6 +95,7 @@ public class CasCoreAuthenticationSupportConfiguration {
     @ConditionalOnMissingBean(name = "groovyAuthenticationHandlerResolver")
     @ConditionalOnProperty(name = "cas.authn.core.groovy-authentication-resolution.location")
     public AuthenticationHandlerResolver groovyAuthenticationHandlerResolver(
+        final CasConfigurationProperties casProperties,
         @Qualifier("servicesManager")
         final ServicesManager servicesManager) {
         val groovy = casProperties.getAuthn().getCore().getGroovyAuthenticationResolution();
@@ -135,7 +134,9 @@ public class CasCoreAuthenticationSupportConfiguration {
     @ConditionalOnMissingBean(name = "groovyAuthenticationProcessorExecutionPlanConfigurer")
     @Bean
     @RefreshScope
-    public AuthenticationEventExecutionPlanConfigurer groovyAuthenticationProcessorExecutionPlanConfigurer() {
+    @Autowired
+    public AuthenticationEventExecutionPlanConfigurer groovyAuthenticationProcessorExecutionPlanConfigurer(
+        final CasConfigurationProperties casProperties) {
         return plan -> {
             val engine = casProperties.getAuthn().getCore().getEngine();
             val preResource = engine.getGroovyPreProcessor().getLocation();

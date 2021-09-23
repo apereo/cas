@@ -16,7 +16,6 @@ import org.apereo.cas.web.support.filters.ResponseHeadersEnforcementFilter;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -43,12 +42,10 @@ import java.util.HashMap;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasFiltersConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @RefreshScope
     @Bean
-    public FilterRegistrationBean characterEncodingFilter() {
+    @Autowired
+    public FilterRegistrationBean<CharacterEncodingFilter> characterEncodingFilter(final CasConfigurationProperties casProperties) {
         val bean = new FilterRegistrationBean<CharacterEncodingFilter>();
         val web = casProperties.getHttpWebRequest().getWeb();
         bean.setFilter(new CharacterEncodingFilter(web.getEncoding(), web.isForceEncoding()));
@@ -60,7 +57,8 @@ public class CasFiltersConfiguration {
 
     @RefreshScope
     @Bean
-    public FilterRegistrationBean responseHeadersFilter() {
+    @Autowired
+    public FilterRegistrationBean<AddResponseHeadersFilter> responseHeadersFilter(final CasConfigurationProperties casProperties) {
         val bean = new FilterRegistrationBean<AddResponseHeadersFilter>();
         val filter = new AddResponseHeadersFilter();
         filter.setHeadersMap(casProperties.getHttpWebRequest().getCustomHeaders());
@@ -70,12 +68,13 @@ public class CasFiltersConfiguration {
         bean.setAsyncSupported(true);
         return bean;
     }
-    
+
     @ConditionalOnProperty(prefix = "cas.http-web-request.header", name = "enabled", havingValue = "true", matchIfMissing = true)
     @RefreshScope
     @Bean
     @Autowired
-    public FilterRegistrationBean responseHeadersSecurityFilter(
+    public FilterRegistrationBean<RegisteredServiceResponseHeadersEnforcementFilter> responseHeadersSecurityFilter(
+        final CasConfigurationProperties casProperties,
         @Qualifier("argumentExtractor")
         final ArgumentExtractor argumentExtractor,
         @Qualifier("servicesManager")
@@ -109,7 +108,9 @@ public class CasFiltersConfiguration {
 
     @RefreshScope
     @Bean
-    public FilterRegistrationBean requestParameterSecurityFilter() {
+    @Autowired
+    public FilterRegistrationBean<RequestParameterPolicyEnforcementFilter> requestParameterSecurityFilter(
+        final CasConfigurationProperties casProperties) {
         val httpWebRequest = casProperties.getHttpWebRequest();
         val initParams = new HashMap<String, String>();
         if (StringUtils.isNotBlank(httpWebRequest.getParamsToCheck())) {
@@ -139,7 +140,7 @@ public class CasFiltersConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean currentCredentialsAndAuthenticationClearingFilter() {
+    public FilterRegistrationBean<AuthenticationCredentialsThreadLocalBinderClearingFilter> currentCredentialsAndAuthenticationClearingFilter() {
         val bean = new FilterRegistrationBean<AuthenticationCredentialsThreadLocalBinderClearingFilter>();
         bean.setFilter(new AuthenticationCredentialsThreadLocalBinderClearingFilter());
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
@@ -151,14 +152,12 @@ public class CasFiltersConfiguration {
     @Configuration(value = "CasFiltersCorsConfiguration", proxyBeanMethods = false)
     @ConditionalOnProperty(prefix = "cas.http-web-request.cors", name = "enabled", havingValue = "true")
     public static class CasFiltersCorsConfiguration {
-        @Autowired
-        private CasConfigurationProperties casProperties;
-
         @Bean
         @ConditionalOnMissingBean(name = "corsConfigurationSource")
         @RefreshScope
         @Autowired
         public CorsConfigurationSource corsConfigurationSource(
+            final CasConfigurationProperties casProperties,
             @Qualifier("argumentExtractor")
             final ArgumentExtractor argumentExtractor,
             @Qualifier("servicesManager")

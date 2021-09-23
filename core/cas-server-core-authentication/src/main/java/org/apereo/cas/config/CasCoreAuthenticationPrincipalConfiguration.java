@@ -42,15 +42,12 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreAuthenticationPrincipalConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @ConditionalOnMissingBean(name = "principalElectionStrategy")
     @Bean
     @RefreshScope
     @Autowired
-    public PrincipalElectionStrategy principalElectionStrategy(final List<PrincipalElectionStrategyConfigurer> configurers) {
+    public PrincipalElectionStrategy principalElectionStrategy(final List<PrincipalElectionStrategyConfigurer> configurers,
+                                                               final CasConfigurationProperties casProperties) {
         LOGGER.trace("Building principal election strategies from [{}]", configurers);
         val chain = new ChainingPrincipalElectionStrategy();
         val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
@@ -69,6 +66,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @RefreshScope
     @Autowired
     public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer(
+        final CasConfigurationProperties casProperties,
         @Qualifier("principalFactory")
         final PrincipalFactory principalFactory) {
         return chain -> {
@@ -90,7 +88,8 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_GLOBAL_PRINCIPAL_ATTRIBUTE_REPOSITORY)
-    public RegisteredServicePrincipalAttributesRepository globalPrincipalAttributeRepository() {
+    @Autowired
+    public RegisteredServicePrincipalAttributesRepository globalPrincipalAttributeRepository(final CasConfigurationProperties casProperties) {
         val props = casProperties.getAuthn().getAttributeRepository().getCore();
         val cacheTime = props.getExpirationTime();
         if (cacheTime <= 0) {
@@ -105,6 +104,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @RefreshScope
     @Autowired
     public PrincipalResolver defaultPrincipalResolver(final List<PrincipalResolutionExecutionPlanConfigurer> configurers,
+                                                      final CasConfigurationProperties casProperties,
                                                       @Qualifier("principalElectionStrategy")
                                                       final PrincipalElectionStrategy principalElectionStrategy) {
         val plan = new DefaultPrincipalResolutionExecutionPlan();

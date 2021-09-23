@@ -46,9 +46,6 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreWebConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     /**
      * Load property files containing non-i18n fallback values
      * that should be exposed to Thyme templates.
@@ -59,7 +56,8 @@ public class CasCoreWebConfiguration {
      * @return PropertiesFactoryBean containing all common (non-i18n) messages
      */
     @Bean
-    public PropertiesFactoryBean casCommonMessages() {
+    @Autowired
+    public PropertiesFactoryBean casCommonMessages(final CasConfigurationProperties casProperties) {
         val properties = new PropertiesFactoryBean();
         val resourceLoader = new DefaultResourceLoader();
         val commonNames = casProperties.getMessageBundle().getCommonNames();
@@ -78,7 +76,10 @@ public class CasCoreWebConfiguration {
     @RefreshScope
     @Bean
     @Autowired
-    public HierarchicalMessageSource messageSource(@Qualifier("casCommonMessages") final Properties casCommonMessages) {
+    public HierarchicalMessageSource messageSource(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("casCommonMessages")
+        final Properties casCommonMessages) {
         val bean = new CasReloadableMessageBundle();
         val mb = casProperties.getMessageBundle();
         bean.setDefaultEncoding(mb.getEncoding());
@@ -103,12 +104,14 @@ public class CasCoreWebConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "urlValidator")
-    public FactoryBean<UrlValidator> urlValidator() {
-        val httpClient = this.casProperties.getHttpClient();
+    @Autowired
+    public FactoryBean<UrlValidator> urlValidator(final CasConfigurationProperties casProperties) {
+        val httpClient = casProperties.getHttpClient();
         val allowLocalLogoutUrls = httpClient.isAllowLocalUrls();
         val authorityValidationRegEx = httpClient.getAuthorityValidationRegex();
         val authorityValidationRegExCaseSensitive = httpClient.isAuthorityValidationRegExCaseSensitive();
-        return new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls, authorityValidationRegEx, authorityValidationRegExCaseSensitive);
+        return new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls, authorityValidationRegEx,
+            authorityValidationRegExCaseSensitive);
     }
 
     @Bean

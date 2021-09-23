@@ -21,7 +21,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.TextIndexDefinition;
 
 import javax.net.ssl.SSLContext;
-import java.util.Collection;
 import java.util.List;
 
 /**

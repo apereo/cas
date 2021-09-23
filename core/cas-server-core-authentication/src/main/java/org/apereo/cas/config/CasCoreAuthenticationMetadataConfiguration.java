@@ -35,9 +35,6 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreAuthenticationMetadataConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @ConditionalOnMissingBean(name = "successfulHandlerMetaDataPopulator")
     @Bean
     public AuthenticationMetaDataPopulator successfulHandlerMetaDataPopulator() {
@@ -46,14 +43,17 @@ public class CasCoreAuthenticationMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "rememberMeAuthenticationMetaDataPopulator")
     @Bean
-    public AuthenticationMetaDataPopulator rememberMeAuthenticationMetaDataPopulator() {
+    @Autowired
+    public AuthenticationMetaDataPopulator rememberMeAuthenticationMetaDataPopulator(
+        final CasConfigurationProperties casProperties) {
         return new RememberMeAuthenticationMetaDataPopulator(casProperties.getTicket().getTgt().getRememberMe());
     }
 
     @ConditionalOnMissingBean(name = "cacheCredentialsCipherExecutor")
     @Bean
     @RefreshScope
-    public CipherExecutor cacheCredentialsCipherExecutor() {
+    @Autowired
+    public CipherExecutor cacheCredentialsCipherExecutor(final CasConfigurationProperties casProperties) {
         val cp = casProperties.getClearpass();
         if (cp.isCacheCredential()) {
             val crypto = cp.getCrypto();
@@ -94,6 +94,7 @@ public class CasCoreAuthenticationMetadataConfiguration {
     @Bean
     @Autowired
     public AuthenticationEventExecutionPlanConfigurer casCoreAuthenticationMetadataAuthenticationEventExecutionPlanConfigurer(
+        final CasConfigurationProperties casProperties,
         @Qualifier("authenticationCredentialTypeMetaDataPopulator")
         final AuthenticationMetaDataPopulator authenticationCredentialTypeMetaDataPopulator,
         @Qualifier("credentialCustomFieldsAttributeMetaDataPopulator")

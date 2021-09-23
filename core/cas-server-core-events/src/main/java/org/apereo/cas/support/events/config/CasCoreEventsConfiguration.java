@@ -27,9 +27,6 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(prefix = "cas.events.core", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasCoreEventsConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @ConditionalOnMissingBean(name = "defaultCasEventListener")
     @Bean
     @Autowired
@@ -49,6 +46,7 @@ public class CasCoreEventsConfiguration {
     @ConditionalOnAvailableEndpoint
     @Autowired
     public CasEventsReportEndpoint casEventsReportEndpoint(
+        final CasConfigurationProperties casProperties,
         @Qualifier("casEventRepository")
         final CasEventRepository casEventRepository) {
         return new CasEventsReportEndpoint(casProperties, casEventRepository);
