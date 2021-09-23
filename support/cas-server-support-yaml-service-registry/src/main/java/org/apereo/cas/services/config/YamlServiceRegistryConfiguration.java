@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * This is {@link YamlServiceRegistryConfiguration}.
@@ -49,7 +50,7 @@ public class YamlServiceRegistryConfiguration {
 
     @Autowired
     @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
+    private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Bean
     @RefreshScope

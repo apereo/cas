@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.services.s3.S3Client;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * This is {@link AmazonS3ServiceRegistryConfiguration}.
@@ -37,7 +38,7 @@ public class AmazonS3ServiceRegistryConfiguration {
 
     @Autowired
     @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
+    private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Bean
     @RefreshScope

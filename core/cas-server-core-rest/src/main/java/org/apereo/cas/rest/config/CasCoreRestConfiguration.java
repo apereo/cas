@@ -15,7 +15,6 @@ import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,43 +31,33 @@ import java.util.ArrayList;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Configuration(value = "CasCoreRestConfiguration", proxyBeanMethods = true)
+@Configuration(value = "CasCoreRestConfiguration", proxyBeanMethods = false)
 @Slf4j
 public class CasCoreRestConfiguration {
 
     @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("requestedContextValidator")
-    private ObjectProvider<RequestedAuthenticationContextValidator> requestedContextValidator;
-    
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
-
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
-
-    @Autowired
     private ConfigurableApplicationContext applicationContext;
 
-    @Autowired
-    @Qualifier("defaultMultifactorTriggerSelectionStrategy")
-    private ObjectProvider<MultifactorAuthenticationTriggerSelectionStrategy> multifactorTriggerSelectionStrategy;
-    
     @Bean
     @ConditionalOnMissingBean(name = "restAuthenticationService")
-    public RestAuthenticationService restAuthenticationService() {
+    @Autowired
+    public RestAuthenticationService restAuthenticationService(
+        @Qualifier("restHttpRequestCredentialFactory")
+        final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory,
+        @Qualifier("defaultMultifactorTriggerSelectionStrategy")
+        final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
+        @Qualifier("webApplicationServiceFactory")
+        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+        @Qualifier("defaultAuthenticationSystemSupport")
+        final AuthenticationSystemSupport authenticationSystemSupport,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        @Qualifier("requestedContextValidator")
+        final RequestedAuthenticationContextValidator requestedContextValidator) {
         return new DefaultRestAuthenticationService(
-            authenticationSystemSupport.getObject(),
-            restHttpRequestCredentialFactory(),
-            webApplicationServiceFactory.getObject(),
-            multifactorTriggerSelectionStrategy.getObject(),
-            servicesManager.getObject(),
-            requestedContextValidator.getObject());
+            authenticationSystemSupport, restHttpRequestCredentialFactory,
+            webApplicationServiceFactory, multifactorTriggerSelectionStrategy,
+            servicesManager, requestedContextValidator);
     }
 
     @Bean

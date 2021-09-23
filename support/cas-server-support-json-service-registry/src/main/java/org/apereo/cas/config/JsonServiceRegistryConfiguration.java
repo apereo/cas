@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * This is {@link JsonServiceRegistryConfiguration}.
@@ -53,7 +54,7 @@ public class JsonServiceRegistryConfiguration {
 
     @Autowired
     @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
+    private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Bean
     @RefreshScope

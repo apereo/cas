@@ -15,7 +15,6 @@ import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -34,40 +33,41 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casCoreValidationConfiguration")
+@Configuration(value = "casCoreValidationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreValidationConfiguration {
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
-    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
-
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    @Autowired
     @ConditionalOnMissingBean(name = "cas10ProtocolValidationSpecification")
-    public CasProtocolValidationSpecification cas10ProtocolValidationSpecification() {
-        return new Cas10ProtocolValidationSpecification(servicesManager.getObject());
+    public CasProtocolValidationSpecification cas10ProtocolValidationSpecification(
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager) {
+        return new Cas10ProtocolValidationSpecification(servicesManager);
     }
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    @Autowired
     @ConditionalOnMissingBean(name = "cas20ProtocolValidationSpecification")
-    public CasProtocolValidationSpecification cas20ProtocolValidationSpecification() {
-        return new Cas20ProtocolValidationSpecification(servicesManager.getObject());
+    public CasProtocolValidationSpecification cas20ProtocolValidationSpecification(
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager) {
+        return new Cas20ProtocolValidationSpecification(servicesManager);
     }
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     @ConditionalOnMissingBean(name = "cas20WithoutProxyProtocolValidationSpecification")
-    public CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification() {
-        return new Cas20WithoutProxyingValidationSpecification(servicesManager.getObject());
+    @Autowired
+    public CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification(
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager) {
+        return new Cas20WithoutProxyingValidationSpecification(servicesManager);
     }
 
     @Autowired
@@ -83,16 +83,22 @@ public class CasCoreValidationConfiguration {
     }
 
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "authenticationPolicyAwareServiceTicketValidationAuthorizer")
-    public ServiceTicketValidationAuthorizer authenticationPolicyAwareServiceTicketValidationAuthorizer() {
-        return new AuthenticationPolicyAwareServiceTicketValidationAuthorizer(
-            servicesManager.getObject(), authenticationEventExecutionPlan.getObject(),
-            applicationContext);
+    public ServiceTicketValidationAuthorizer authenticationPolicyAwareServiceTicketValidationAuthorizer(
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
+        final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+        return new AuthenticationPolicyAwareServiceTicketValidationAuthorizer(servicesManager, authenticationEventExecutionPlan, applicationContext);
     }
 
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "casCoreServiceTicketValidationAuthorizerConfigurer")
-    public ServiceTicketValidationAuthorizerConfigurer casCoreServiceTicketValidationAuthorizerConfigurer() {
-        return plan -> plan.registerAuthorizer(authenticationPolicyAwareServiceTicketValidationAuthorizer());
+    public ServiceTicketValidationAuthorizerConfigurer casCoreServiceTicketValidationAuthorizerConfigurer(
+        @Qualifier("authenticationPolicyAwareServiceTicketValidationAuthorizer")
+        final ServiceTicketValidationAuthorizer authenticationPolicyAwareServiceTicketValidationAuthorizer) {
+        return plan -> plan.registerAuthorizer(authenticationPolicyAwareServiceTicketValidationAuthorizer);
     }
 }

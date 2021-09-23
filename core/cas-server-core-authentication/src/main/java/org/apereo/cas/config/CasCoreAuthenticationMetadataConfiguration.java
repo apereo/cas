@@ -17,6 +17,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -30,7 +31,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
-@Configuration("casCoreAuthenticationMetadataConfiguration")
+@Configuration(value = "casCoreAuthenticationMetadataConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreAuthenticationMetadataConfiguration {
@@ -91,20 +92,35 @@ public class CasCoreAuthenticationMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "casCoreAuthenticationMetadataAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer casCoreAuthenticationMetadataAuthenticationEventExecutionPlanConfigurer() {
+    @Autowired
+    public AuthenticationEventExecutionPlanConfigurer casCoreAuthenticationMetadataAuthenticationEventExecutionPlanConfigurer(
+        @Qualifier("authenticationCredentialTypeMetaDataPopulator")
+        final AuthenticationMetaDataPopulator authenticationCredentialTypeMetaDataPopulator,
+        @Qualifier("credentialCustomFieldsAttributeMetaDataPopulator")
+        final AuthenticationMetaDataPopulator credentialCustomFieldsAttributeMetaDataPopulator,
+        @Qualifier("authenticationDateMetaDataPopulator")
+        final AuthenticationMetaDataPopulator authenticationDateMetaDataPopulator,
+        @Qualifier("clientInfoAuthenticationMetaDataPopulator")
+        final AuthenticationMetaDataPopulator clientInfoAuthenticationMetaDataPopulator,
+        @Qualifier("rememberMeAuthenticationMetaDataPopulator")
+        final AuthenticationMetaDataPopulator rememberMeAuthenticationMetaDataPopulator,
+        @Qualifier("successfulHandlerMetaDataPopulator")
+        final AuthenticationMetaDataPopulator successfulHandlerMetaDataPopulator,
+        @Qualifier("cacheCredentialsCipherExecutor")
+        final CipherExecutor cacheCredentialsCipherExecutor) {
         return plan -> {
-            plan.registerAuthenticationMetadataPopulator(successfulHandlerMetaDataPopulator());
-            plan.registerAuthenticationMetadataPopulator(rememberMeAuthenticationMetaDataPopulator());
-            plan.registerAuthenticationMetadataPopulator(authenticationCredentialTypeMetaDataPopulator());
-            plan.registerAuthenticationMetadataPopulator(authenticationDateMetaDataPopulator());
-            plan.registerAuthenticationMetadataPopulator(credentialCustomFieldsAttributeMetaDataPopulator());
-            plan.registerAuthenticationMetadataPopulator(clientInfoAuthenticationMetaDataPopulator());
+            plan.registerAuthenticationMetadataPopulator(successfulHandlerMetaDataPopulator);
+            plan.registerAuthenticationMetadataPopulator(rememberMeAuthenticationMetaDataPopulator);
+            plan.registerAuthenticationMetadataPopulator(authenticationCredentialTypeMetaDataPopulator);
+            plan.registerAuthenticationMetadataPopulator(authenticationDateMetaDataPopulator);
+            plan.registerAuthenticationMetadataPopulator(credentialCustomFieldsAttributeMetaDataPopulator);
+            plan.registerAuthenticationMetadataPopulator(clientInfoAuthenticationMetaDataPopulator);
 
             val cp = casProperties.getClearpass();
             if (cp.isCacheCredential()) {
                 LOGGER.warn("CAS is configured to capture and cache credentials via Clearpass. Sharing the user credential with other applications "
                     + "is generally NOT recommended, may lead to security vulnerabilities and MUST only be used as a last resort .");
-                plan.registerAuthenticationMetadataPopulator(new CacheCredentialsMetaDataPopulator(cacheCredentialsCipherExecutor()));
+                plan.registerAuthenticationMetadataPopulator(new CacheCredentialsMetaDataPopulator(cacheCredentialsCipherExecutor));
             }
         };
     }

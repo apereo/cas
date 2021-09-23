@@ -23,6 +23,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
@@ -43,6 +44,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * This is {@link CasServiceRegistryInitializationConfiguration}.
@@ -61,11 +63,8 @@ import java.util.Collection;
 @Slf4j
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableAsync
+@AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasServiceRegistryInitializationConfiguration {
-
-    @Autowired
-    @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -73,23 +72,17 @@ public class CasServiceRegistryInitializationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("serviceRegistry")
-    private ObjectProvider<ChainingServiceRegistry> serviceRegistry;
-
-    @Lazy(false)
     @Bean
     @Autowired
     public ServiceRegistryInitializer serviceRegistryInitializer(
-        @Qualifier("embeddedJsonServiceRegistry") final ServiceRegistry embeddedJsonServiceRegistry) throws Exception {
-        val serviceRegistryInstance = serviceRegistry.getObject();
-        val initializer = new ServiceRegistryInitializer(embeddedJsonServiceRegistry,
-            serviceRegistryInstance, servicesManager.getObject());
-        LOGGER.info("Attempting to initialize the service registry [{}]", serviceRegistryInstance.getName());
+        @Qualifier("embeddedJsonServiceRegistry")
+        final ServiceRegistry embeddedJsonServiceRegistry,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        @Qualifier("serviceRegistry")
+        final ChainingServiceRegistry serviceRegistry) throws Exception {
+        val initializer = new ServiceRegistryInitializer(embeddedJsonServiceRegistry, serviceRegistry, servicesManager);
+        LOGGER.info("Attempting to initialize the service registry [{}]", serviceRegistry.getName());
         initializer.initServiceRegistryIfNecessary();
         return initializer;
     }
@@ -97,14 +90,17 @@ public class CasServiceRegistryInitializationConfiguration {
     @Bean
     @Autowired
     public ServiceRegistryInitializerEventListener serviceRegistryInitializerConfigurationEventListener(
-        @Qualifier("serviceRegistryInitializer") final ServiceRegistryInitializer serviceRegistryInitializer) {
+        @Qualifier("serviceRegistryInitializer")
+        final ServiceRegistryInitializer serviceRegistryInitializer) {
         return new ServiceRegistryInitializerEventListener(serviceRegistryInitializer);
     }
 
     @RefreshScope
     @Bean
-    @Lazy(false)
-    public ServiceRegistry embeddedJsonServiceRegistry() throws Exception {
+    @Autowired
+    public ServiceRegistry embeddedJsonServiceRegistry(
+        @Qualifier("serviceRegistryListeners")
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners) throws Exception {
         val location = getServiceRegistryInitializerServicesDirectoryResource();
         val registry = new EmbeddedResourceBasedServiceRegistry(applicationContext, location,
             serviceRegistryListeners.getObject(), WatcherService.noOp());
@@ -118,7 +114,8 @@ public class CasServiceRegistryInitializationConfiguration {
     @Autowired
     @ConditionalOnMissingBean(name = "embeddedJsonServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer embeddedJsonServiceRegistryExecutionPlanConfigurer(
-        @Qualifier("embeddedJsonServiceRegistry") final ServiceRegistry embeddedJsonServiceRegistry) {
+        @Qualifier("embeddedJsonServiceRegistry")
+        final ServiceRegistry embeddedJsonServiceRegistry) {
         return plan -> plan.registerServiceRegistry(embeddedJsonServiceRegistry);
     }
 

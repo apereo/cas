@@ -38,7 +38,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casCoreAuthenticationPrincipalConfiguration")
+@Configuration(value = "casCoreAuthenticationPrincipalConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreAuthenticationPrincipalConfiguration {
@@ -67,9 +67,12 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @ConditionalOnMissingBean(name = "defaultPrincipalElectionStrategyConfigurer")
     @Bean
     @RefreshScope
-    public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer() {
+    @Autowired
+    public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer(
+        @Qualifier("principalFactory")
+        final PrincipalFactory principalFactory) {
         return chain -> {
-            val strategy = new DefaultPrincipalElectionStrategy(principalFactory(),
+            val strategy = new DefaultPrincipalElectionStrategy(principalFactory,
                 CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(casProperties.getPersonDirectory()));
             val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
             strategy.setAttributeMerger(merger);
@@ -96,13 +99,14 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         }
         return new CachingPrincipalAttributesRepository(props.getExpirationTimeUnit().toUpperCase(), cacheTime);
     }
-    
+
     @Bean
     @ConditionalOnMissingBean(name = "defaultPrincipalResolver")
     @RefreshScope
     @Autowired
     public PrincipalResolver defaultPrincipalResolver(final List<PrincipalResolutionExecutionPlanConfigurer> configurers,
-                                                      @Qualifier("principalElectionStrategy") final PrincipalElectionStrategy principalElectionStrategy) {
+                                                      @Qualifier("principalElectionStrategy")
+                                                      final PrincipalElectionStrategy principalElectionStrategy) {
         val plan = new DefaultPrincipalResolutionExecutionPlan();
         val sortedConfigurers = new ArrayList<>(configurers);
         AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
