@@ -94,6 +94,8 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
     /**
      * Query all result.
      *
+     * @param <T>   the type parameter
+     * @param clazz the clazz
      * @return the query result
      */
     public <T extends Serializable> List<T> query(final Class<T> clazz) {
