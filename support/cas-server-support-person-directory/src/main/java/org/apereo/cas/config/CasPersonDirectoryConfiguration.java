@@ -13,6 +13,7 @@ import org.apereo.cas.persondir.DefaultPersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryCustomizer;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import org.apereo.services.persondir.support.AbstractAggregatingDefaultQueryPers
 import org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl;
 import org.apereo.services.persondir.support.CascadingPersonAttributeDao;
 import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -150,7 +152,6 @@ public class CasPersonDirectoryConfiguration {
         val stub = casProperties.getAuthn().getAttributeRepository().getStub();
         val attrs = stub.getAttributes();
         if (!attrs.isEmpty()) {
-            LOGGER.info("Found and added static attributes [{}] to the list of candidate attribute repositories", attrs.keySet());
             val dao = Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository());
             list.add(dao);
         }
@@ -217,5 +218,19 @@ public class CasPersonDirectoryConfiguration {
         LOGGER.trace("Configured attribute repository to recover from exceptions: [{}]", recoverExceptions);
 
         return aggregate;
+    }
+
+    @Bean
+    @Autowired
+    public InitializingBean casPersonDirectoryInitializer(final CasConfigurationProperties casProperties) {
+        return () -> {
+            FunctionUtils.doIf(LOGGER.isInfoEnabled(), value -> {
+                val stub = casProperties.getAuthn().getAttributeRepository().getStub();
+                val attrs = stub.getAttributes();
+                if (!attrs.isEmpty()) {
+                    LOGGER.info("Found and added static attributes [{}] to the list of candidate attribute repositories", attrs.keySet());
+                }
+            }).accept(null);
+        };
     }
 }

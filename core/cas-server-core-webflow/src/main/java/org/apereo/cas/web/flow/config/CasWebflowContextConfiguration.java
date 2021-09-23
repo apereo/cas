@@ -21,6 +21,7 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
 
 import lombok.val;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -371,8 +372,15 @@ public class CasWebflowContextConfiguration {
         public CasWebflowExecutionPlan casWebflowExecutionPlan(final List<CasWebflowExecutionPlanConfigurer> configurers) {
             val plan = new DefaultCasWebflowExecutionPlan();
             configurers.forEach(c -> c.configureWebflowExecutionPlan(plan));
-            plan.execute();
             return plan;
+        }
+
+        @Bean
+        @Autowired
+        public InitializingBean casWebflowExecutionPlanInitializer(
+            @Qualifier(CasWebflowExecutionPlan.BEAN_NAME)
+            final CasWebflowExecutionPlan webflowExecutionPlan) {
+            return webflowExecutionPlan::execute;
         }
     }
 }

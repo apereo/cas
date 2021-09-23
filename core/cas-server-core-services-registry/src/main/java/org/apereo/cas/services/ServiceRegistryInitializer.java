@@ -29,6 +29,8 @@ public class ServiceRegistryInitializer {
      * Init service registry if necessary.
      */
     public void initServiceRegistryIfNecessary() {
+        LOGGER.info("Attempting to initialize the service registry [{}]", serviceRegistry.getName());
+        
         LOGGER.debug("Total count of service registries is [{}] which contain [{}] service definition(s)",
             serviceRegistry.countServiceRegistries(), serviceRegistry.size());
 

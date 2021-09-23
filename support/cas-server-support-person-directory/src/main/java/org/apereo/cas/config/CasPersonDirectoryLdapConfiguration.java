@@ -38,13 +38,11 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasPersonDirectoryLdapConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @ConditionalOnMissingBean(name = "ldapAttributeRepositories")
     @Bean
     @RefreshScope
-    public List<IPersonAttributeDao> ldapAttributeRepositories() {
+    @Autowired
+    public List<IPersonAttributeDao> ldapAttributeRepositories(final CasConfigurationProperties casProperties) {
         val list = new ArrayList<IPersonAttributeDao>();
         val attrs = casProperties.getAuthn().getAttributeRepository();
         attrs.getLdap()

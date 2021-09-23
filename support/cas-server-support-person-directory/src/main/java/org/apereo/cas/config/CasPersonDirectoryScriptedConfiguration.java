@@ -37,13 +37,11 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasPersonDirectoryScriptedConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @ConditionalOnMissingBean(name = "scriptedAttributeRepositories")
     @Bean
     @RefreshScope
-    public List<IPersonAttributeDao> scriptedAttributeRepositories() {
+    @Autowired
+    public List<IPersonAttributeDao> scriptedAttributeRepositories(final CasConfigurationProperties casProperties) {
         val list = new ArrayList<IPersonAttributeDao>();
         casProperties.getAuthn().getAttributeRepository().getScript()
             .forEach(Unchecked.consumer(script -> {
@@ -64,7 +62,8 @@ public class CasPersonDirectoryScriptedConfiguration {
     @Bean
     @Autowired
     public PersonDirectoryAttributeRepositoryPlanConfigurer scriptedPersonDirectoryAttributeRepositoryPlanConfigurer(
-        @Qualifier("scriptedAttributeRepositories") final List<IPersonAttributeDao> scriptedAttributeRepositories) {
+        @Qualifier("scriptedAttributeRepositories")
+        final List<IPersonAttributeDao> scriptedAttributeRepositories) {
         return plan -> plan.registerAttributeRepositories(scriptedAttributeRepositories);
     }
 

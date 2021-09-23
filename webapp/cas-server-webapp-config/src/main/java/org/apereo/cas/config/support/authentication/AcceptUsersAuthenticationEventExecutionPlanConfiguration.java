@@ -9,6 +9,7 @@ import org.apereo.cas.util.AsciiArtUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,13 +42,23 @@ public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
         return plan -> {
             val accept = casProperties.getAuthn().getAccept();
             if (accept.isEnabled() && StringUtils.isNotBlank(accept.getUsers())) {
+                plan.registerAuthenticationHandlerWithPrincipalResolver(acceptUsersAuthenticationHandler, defaultPrincipalResolver);
+            }
+        };
+    }
+
+    @Bean
+    @Autowired
+    public InitializingBean acceptUsersAuthenticationInitializingBean(final CasConfigurationProperties casProperties) {
+        return () -> {
+            val accept = casProperties.getAuthn().getAccept();
+            if (accept.isEnabled() && StringUtils.isNotBlank(accept.getUsers())) {
                 val header =
                     "\nCAS is configured to accept a static list of credentials for authentication. "
                         + "While this is generally useful for demo purposes, it is STRONGLY recommended "
                         + "that you DISABLE this authentication method by setting 'cas.authn.accept.enabled=false' "
                         + "and switch to a mode that is more suitable for production.";
                 AsciiArtUtils.printAsciiArtWarning(LOGGER, header);
-                plan.registerAuthenticationHandlerWithPrincipalResolver(acceptUsersAuthenticationHandler, defaultPrincipalResolver);
             }
         };
     }

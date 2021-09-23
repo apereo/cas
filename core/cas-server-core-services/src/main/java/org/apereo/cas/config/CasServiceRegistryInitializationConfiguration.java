@@ -20,6 +20,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -94,10 +95,7 @@ public class CasServiceRegistryInitializationConfiguration {
         final ServicesManager servicesManager,
         @Qualifier("serviceRegistry")
         final ChainingServiceRegistry serviceRegistry) {
-        val initializer = new ServiceRegistryInitializer(embeddedJsonServiceRegistry, serviceRegistry, servicesManager);
-        LOGGER.info("Attempting to initialize the service registry [{}]", serviceRegistry.getName());
-        initializer.initServiceRegistryIfNecessary();
-        return initializer;
+        return new ServiceRegistryInitializer(embeddedJsonServiceRegistry, serviceRegistry, servicesManager);
     }
 
     @Bean
@@ -132,6 +130,12 @@ public class CasServiceRegistryInitializationConfiguration {
         @Qualifier("embeddedJsonServiceRegistry")
         final ServiceRegistry embeddedJsonServiceRegistry) {
         return plan -> plan.registerServiceRegistry(embeddedJsonServiceRegistry);
+    }
+
+    @Bean
+    @Autowired
+    public InitializingBean casServiceRegistryInitializingBean(final ServiceRegistryInitializer initializer) {
+        return initializer::initServiceRegistryIfNecessary;
     }
 
     /**
