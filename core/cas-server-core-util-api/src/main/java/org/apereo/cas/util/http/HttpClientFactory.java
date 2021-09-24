@@ -7,6 +7,7 @@ import org.springframework.beans.factory.FactoryBean;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 
 /**
  * Define the factory that creates an HTTP client.
@@ -49,4 +50,11 @@ public interface HttpClientFactory extends FactoryBean, DisposableBean {
      * @return the ssl context
      */
     SSLContext getSslContext();
+
+    /**
+     * Get trust managers trust managers [].
+     *
+     * @return the trust manager []
+     */
+    TrustManager[] getTrustManagers();
 }

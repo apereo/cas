@@ -37,6 +37,7 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -134,6 +135,11 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
      * The CAS SSL context used to create ssl socket factories, etc.
      */
     private SSLContext sslContext;
+
+    /**
+     * X509 trust managers.
+     */
+    private TrustManager[] trustManagers;
 
     /**
      * The credentials provider for endpoints that require authentication.

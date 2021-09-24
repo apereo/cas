@@ -57,7 +57,7 @@ public class CasCoreHttpConfiguration {
         c.setSslSocketFactory(trustStoreSslSocketFactory);
         c.setHostnameVerifier(hostnameVerifier);
         c.setSslContext(casSslContext.getSslContext());
-
+        c.setTrustManagers(casSslContext.getTrustManagers());
         val defaultHeaders = new ArrayList<Header>();
         httpClient.getDefaultHeaders().forEach((name, value) -> defaultHeaders.add(new BasicHeader(name, value)));
         c.setDefaultHeaders(defaultHeaders);
