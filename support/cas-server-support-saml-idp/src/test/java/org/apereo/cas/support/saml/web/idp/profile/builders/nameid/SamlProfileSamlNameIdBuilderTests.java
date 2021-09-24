@@ -24,6 +24,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -35,6 +36,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("SAML")
+@SuppressWarnings("JavaUtilDate")
 public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlProfileSamlNameIdBuilder")
@@ -56,7 +58,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
         service.setNameIdQualifier("https://qualifier.example.org");
         service.setServiceProviderNameIdQualifier("https://sp-qualifier.example.org");
         service.setRequiredNameIdFormat(NameID.UNSPECIFIED);
-        
+
         val facade = mock(SamlRegisteredServiceServiceProviderMetadataFacade.class);
         when(facade.getEntityId()).thenReturn(service.getServiceId());
         val assertion = mock(Assertion.class);
@@ -95,6 +97,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
         assertNull(result);
     }
 
+
     @Test
     public void verifyNameId() {
         verifyNameIdByFormat(NameID.EMAIL);
@@ -105,6 +108,52 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
         verifyNameIdByFormat(NameID.WIN_DOMAIN_QUALIFIED);
         verifyNameIdByFormat(NameID.KERBEROS);
     }
+
+    @Test
+    public void verifyPersistedNameIdFormat() {
+        val service = getSamlRegisteredServiceForTestShib();
+        service.setRequiredNameIdFormat(NameID.PERSISTENT);
+
+        val authnRequest = getAuthnRequestFor(service);
+
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+            service, service.getServiceId()).get();
+
+        val assertion = mock(Assertion.class);
+        when(assertion.getPrincipal()).thenReturn(new AttributePrincipalImpl("casuser"));
+        when(assertion.getValidFromDate()).thenReturn(new Date());
+
+        val subject = samlProfileSamlSubjectBuilder.build(authnRequest, new MockHttpServletRequest(), new MockHttpServletResponse(),
+            assertion, service, adaptor, SAMLConstants.SAML2_POST_BINDING_URI, new MessageContext());
+        assertNotNull(subject.getNameID());
+        assertEquals(NameID.PERSISTENT, subject.getNameID().getFormat());
+        assertEquals(adaptor.getEntityId(), subject.getNameID().getSPNameQualifier());
+        assertEquals("https://cas.example.org/idp", subject.getNameID().getNameQualifier());
+    }
+
+    @Test
+    public void verifyPersistedNameIdFormatWithServiceEntityIdOverride() {
+        val service = getSamlRegisteredServiceForTestShib();
+        service.setRequiredNameIdFormat(NameID.PERSISTENT);
+        service.setIssuerEntityId(UUID.randomUUID().toString());
+
+        val authnRequest = getAuthnRequestFor(service);
+
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+            service, service.getServiceId()).get();
+
+        val assertion = mock(Assertion.class);
+        when(assertion.getPrincipal()).thenReturn(new AttributePrincipalImpl("casuser"));
+        when(assertion.getValidFromDate()).thenReturn(new Date());
+
+        val subject = samlProfileSamlSubjectBuilder.build(authnRequest, new MockHttpServletRequest(), new MockHttpServletResponse(),
+            assertion, service, adaptor, SAMLConstants.SAML2_POST_BINDING_URI, new MessageContext());
+        assertNotNull(subject.getNameID());
+        assertEquals(NameID.PERSISTENT, subject.getNameID().getFormat());
+        assertEquals(adaptor.getEntityId(), subject.getNameID().getSPNameQualifier());
+        assertEquals(service.getIssuerEntityId(), subject.getNameID().getNameQualifier());
+    }
+
 
     @Test
     @SuppressWarnings("JavaUtilDate")

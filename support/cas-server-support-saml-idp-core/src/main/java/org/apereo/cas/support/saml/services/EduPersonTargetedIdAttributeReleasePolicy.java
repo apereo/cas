@@ -54,6 +54,9 @@ public class EduPersonTargetedIdAttributeReleasePolicy extends BaseSamlRegistere
     @ExpressionLanguageCapable
     private String attribute;
 
+    @JsonProperty
+    private boolean useUniformResourceName;
+    
     @Override
     protected Map<String, List<Object>> getAttributesForSamlRegisteredService(final Map<String, List<Object>> attributes,
                                                                               final SamlRegisteredService service,
@@ -75,8 +78,9 @@ public class EduPersonTargetedIdAttributeReleasePolicy extends BaseSamlRegistere
         LOGGER.debug("Selected principal id [{}] to generate [{}] for service [{}]",
             principalId, ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID, selectedService);
         val result = persistentIdGenerator.generate(principalId, selectedService);
-        releaseAttributes.put(ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID, CollectionUtils.wrapList(result));
-        LOGGER.debug("Calculated [{}] attribute as [{}]", ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID, result);
+        val attrName = this.useUniformResourceName ? "urn:oid:1.3.6.1.4.1.5923.1.1.1.10" : ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID;
+        releaseAttributes.put(attrName, CollectionUtils.wrapList(result));
+        LOGGER.debug("Calculated [{}] attribute as [{}]", attrName, result);
         return releaseAttributes;
     }
 }
