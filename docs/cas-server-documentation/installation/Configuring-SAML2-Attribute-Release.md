@@ -211,7 +211,8 @@ you can let CAS calculate the `eduPersonTargetedID` attribute dynamically at rel
   "attributeReleasePolicy": {
     "@class": "org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicy",
     "salt": "OqmG80fEKBQt",
-    "attribute": ""
+    "attribute": "",
+    "useUniformResourceName": false
   }
 }
 ```
