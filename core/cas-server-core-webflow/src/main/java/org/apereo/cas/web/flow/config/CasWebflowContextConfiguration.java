@@ -270,8 +270,6 @@ public class CasWebflowContextConfiguration {
     @Configuration(value = "CasWebflowDefinitionsConfiguration", proxyBeanMethods = false)
     @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
     public static class CasWebflowDefinitionsConfiguration {
-
-
         @Bean
         public FlowBuilder flowBuilder() {
             return new FlowModelFlowBuilder(new DefaultFlowModelHolder(new DynamicFlowModelBuilder()));

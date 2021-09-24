@@ -18,12 +18,12 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link CasCoreRestConfiguration}.
@@ -35,11 +35,10 @@ import java.util.ArrayList;
 @Slf4j
 public class CasCoreRestConfiguration {
 
-
-
     @Bean
     @ConditionalOnMissingBean(name = "restAuthenticationService")
     @Autowired
+    @RefreshScope
     public RestAuthenticationService restAuthenticationService(
         @Qualifier("restHttpRequestCredentialFactory")
         final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory,
@@ -62,11 +61,11 @@ public class CasCoreRestConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "restHttpRequestCredentialFactory")
     @Autowired
+    @RefreshScope
     public RestHttpRequestCredentialFactory restHttpRequestCredentialFactory(
-        final ConfigurableApplicationContext applicationContext) {
-        val configurers = new ArrayList<>(applicationContext.getBeansOfType(RestHttpRequestCredentialFactoryConfigurer.class).values());
+        final List<RestHttpRequestCredentialFactoryConfigurer> configurers) {
+        
         LOGGER.trace("building REST credential factory from [{}]", configurers);
-
         val factory = new ChainingRestHttpRequestCredentialFactory();
         AnnotationAwareOrderComparator.sortIfNecessary(configurers);
 
@@ -79,6 +78,7 @@ public class CasCoreRestConfiguration {
 
     @ConditionalOnMissingBean(name = "restHttpRequestCredentialFactoryConfigurer")
     @Bean
+    @RefreshScope
     public RestHttpRequestCredentialFactoryConfigurer restHttpRequestCredentialFactoryConfigurer() {
         return factory -> factory.registerCredentialFactory(new UsernamePasswordRestHttpRequestCredentialFactory());
     }

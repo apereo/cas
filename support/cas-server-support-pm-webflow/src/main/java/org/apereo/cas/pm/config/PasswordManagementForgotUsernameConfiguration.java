@@ -23,7 +23,6 @@ import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.SpringWebflowActionExecutionAuditablePrincipalResolver;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -50,55 +49,47 @@ import org.springframework.webflow.execution.RequestContext;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class PasswordManagementForgotUsernameConfiguration {
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("returnValueResourceResolver")
-    private ObjectProvider<AuditResourceResolver> returnValueResourceResolver;
-
-    @Autowired
-    @Qualifier("communicationsManager")
-    private ObjectProvider<CommunicationsManager> communicationsManager;
-
-    @Autowired
-    @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-    private ObjectProvider<PasswordManagementService> passwordManagementService;
-
-    @Autowired
-    @Qualifier("defaultPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
-
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS_ACTION)
     @Bean
     @RefreshScope
-    public Action sendForgotUsernameInstructionsAction() {
-        return new SendForgotUsernameInstructionsAction(casProperties, communicationsManager.getObject(),
-            passwordManagementService.getObject(), defaultPrincipalResolver.getObject());
+    @Autowired
+    public Action sendForgotUsernameInstructionsAction(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("communicationsManager")
+        final CommunicationsManager communicationsManager,
+        @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
+        final PasswordManagementService passwordManagementService,
+        @Qualifier("defaultPrincipalResolver")
+        final PrincipalResolver defaultPrincipalResolver) {
+        return new SendForgotUsernameInstructionsAction(casProperties, communicationsManager,
+            passwordManagementService, defaultPrincipalResolver);
     }
 
     @ConditionalOnMissingBean(name = "forgotUsernameWebflowConfigurer")
     @Bean
     @Autowired
     public CasWebflowConfigurer forgotUsernameWebflowConfigurer(
-        @Qualifier("loginFlowRegistry") final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-        @Qualifier("flowBuilderServices") final FlowBuilderServices flowBuilderServices) {
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("loginFlowRegistry")
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier("flowBuilderServices")
+        final FlowBuilderServices flowBuilderServices) {
         return new ForgotUsernameWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry,
-            applicationContext, casProperties);
+            loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "forgotUsernameAuditTrailRecordResolutionPlanConfigurer")
-    public AuditTrailRecordResolutionPlanConfigurer forgotUsernameAuditTrailRecordResolutionPlanConfigurer() {
+    public AuditTrailRecordResolutionPlanConfigurer forgotUsernameAuditTrailRecordResolutionPlanConfigurer(
+        @Qualifier("returnValueResourceResolver")
+        final AuditResourceResolver returnValueResourceResolver) {
         return plan -> {
             plan.registerAuditActionResolver(AuditActionResolvers.REQUEST_FORGOT_USERNAME_ACTION_RESOLVER,
                 new DefaultAuditActionResolver());
             plan.registerAuditResourceResolver(AuditResourceResolvers.REQUEST_FORGOT_USERNAME_RESOURCE_RESOLVER,
-                returnValueResourceResolver.getObject());
+                returnValueResourceResolver);
             plan.registerAuditPrincipalResolver(AuditPrincipalResolvers.REQUEST_FORGOT_USERNAME_PRINCIPAL_RESOLVER,
                 new SpringWebflowActionExecutionAuditablePrincipalResolver(SendForgotUsernameInstructionsAction.REQUEST_PARAMETER_EMAIL));
         };
@@ -108,25 +99,28 @@ public class PasswordManagementForgotUsernameConfiguration {
     @Autowired
     @ConditionalOnMissingBean(name = "forgotUsernameCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer forgotUsernameCasWebflowExecutionPlanConfigurer(
-        @Qualifier("forgotUsernameWebflowConfigurer") final CasWebflowConfigurer forgotUsernameWebflowConfigurer) {
+        @Qualifier("forgotUsernameWebflowConfigurer")
+        final CasWebflowConfigurer forgotUsernameWebflowConfigurer) {
         return plan -> plan.registerWebflowConfigurer(forgotUsernameWebflowConfigurer);
     }
 
     @ConditionalOnProperty(prefix = "cas.authn.pm.forgot-username.google-recaptcha", name = "enabled", havingValue = "true")
     @Configuration(value = "forgotUsernameCaptchaConfiguration", proxyBeanMethods = false)
     @DependsOn("passwordManagementWebflowConfigurer")
-    public class ForgotUsernameCaptchaConfiguration {
+    public static class ForgotUsernameCaptchaConfiguration {
 
         @ConditionalOnMissingBean(name = "forgotUsernameCaptchaWebflowConfigurer")
         @RefreshScope
         @Bean
         @Autowired
         public CasWebflowConfigurer forgotUsernameCaptchaWebflowConfigurer(
-            @Qualifier("loginFlowRegistry") final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-            @Qualifier("flowBuilderServices") final FlowBuilderServices flowBuilderServices) {
-            val configurer = new ForgotUsernameCaptchaWebflowConfigurer(
-                flowBuilderServices,
-                loginFlowDefinitionRegistry,
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("loginFlowRegistry")
+            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier("flowBuilderServices")
+            final FlowBuilderServices flowBuilderServices) {
+            val configurer = new ForgotUsernameCaptchaWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
                 applicationContext, casProperties);
             configurer.setOrder(casProperties.getAuthn().getPm().getWebflow().getOrder() + 2);
             return configurer;
@@ -135,7 +129,8 @@ public class PasswordManagementForgotUsernameConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FORGOT_USERNAME_VALIDATE_CAPTCHA)
         @RefreshScope
         @Bean
-        public Action forgotUsernameValidateCaptchaAction() {
+        @Autowired
+        public Action forgotUsernameValidateCaptchaAction(final CasConfigurationProperties casProperties) {
             val recaptcha = casProperties.getAuthn().getPm().getForgotUsername().getGoogleRecaptcha();
             return new ValidateCaptchaAction(CaptchaValidator.getInstance(recaptcha));
         }
@@ -143,7 +138,8 @@ public class PasswordManagementForgotUsernameConfiguration {
         @RefreshScope
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA)
-        public Action forgotUsernameInitializeCaptchaAction() {
+        @Autowired
+        public Action forgotUsernameInitializeCaptchaAction(final CasConfigurationProperties casProperties) {
             val recaptcha = casProperties.getAuthn().getPm().getForgotUsername().getGoogleRecaptcha();
             return new InitializeCaptchaAction(recaptcha) {
                 @Override
@@ -158,7 +154,8 @@ public class PasswordManagementForgotUsernameConfiguration {
         @Autowired
         @ConditionalOnMissingBean(name = "forgotUsernameCaptchaWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer forgotUsernameCaptchaWebflowExecutionPlanConfigurer(
-            @Qualifier("forgotUsernameCaptchaWebflowConfigurer") final CasWebflowConfigurer cfg) {
+            @Qualifier("forgotUsernameCaptchaWebflowConfigurer")
+            final CasWebflowConfigurer cfg) {
             return plan -> plan.registerWebflowConfigurer(cfg);
         }
     }

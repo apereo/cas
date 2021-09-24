@@ -15,6 +15,7 @@ import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnable
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.metrics.MetricsEndpoint;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -62,16 +63,21 @@ public class CasCoreMonitorConfiguration {
         return () -> Health.up().build();
     }
 
-    @ConditionalOnMissingBean(name = "systemHealthIndicator")
-    @Bean
-    @ConditionalOnEnabledHealthIndicator("systemHealthIndicator")
-    @ConditionalOnAvailableEndpoint(endpoint = MetricsEndpoint.class)
-    @Autowired
-    public HealthIndicator systemHealthIndicator(
-        @Qualifier("metricsEndpoint")
-        final MetricsEndpoint metricsEndpoint,
-        final CasConfigurationProperties casProperties) {
-        val warnLoad = casProperties.getMonitor().getLoad().getWarn();
-        return new SystemMonitorHealthIndicator(metricsEndpoint, warnLoad.getThreshold());
+    @ConditionalOnBean(name = "metricsEndpoint")
+    @Configuration(value = "SystemHealthIndicatorConfiguration", proxyBeanMethods = false)
+    public static class SystemHealthIndicatorConfiguration {
+        @ConditionalOnMissingBean(name = "systemHealthIndicator")
+        @Bean
+        @ConditionalOnEnabledHealthIndicator("systemHealthIndicator")
+        @ConditionalOnAvailableEndpoint(endpoint = MetricsEndpoint.class)
+        @Autowired
+        public HealthIndicator systemHealthIndicator(
+            @Qualifier("metricsEndpoint")
+            final MetricsEndpoint metricsEndpoint,
+            final CasConfigurationProperties casProperties) {
+            val warnLoad = casProperties.getMonitor().getLoad().getWarn();
+            return new SystemMonitorHealthIndicator(metricsEndpoint, warnLoad.getThreshold());
+        }
     }
+
 }
