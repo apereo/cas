@@ -390,7 +390,6 @@ subprojects {
         }
     }
 
-    ext.buildDate = null
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
 
     [compileTestJava, compileJava].each {
@@ -419,15 +418,6 @@ subprojects {
             casCompilerArgs.add("-XDcompilePolicy=byfile")
         }
         it.options.compilerArgs += casCompilerArgs
-    }
-
-    def currentTime = java.time.ZonedDateTime.now(ZoneId.systemDefault())
-    compileJava.doLast {
-        buildDate = currentTime
-    }
-
-    tasks.jar.onlyIf {
-        project.buildDate != null || !project.buildJarFile.exists()
     }
 
     if (projectRequiresLombok(project)) {
