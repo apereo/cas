@@ -75,8 +75,7 @@ public class CasInterruptWebflowConfiguration {
     
     @ConditionalOnMissingBean(name = "interruptWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer interruptWebflowConfigurer() {
+        public CasWebflowConfigurer interruptWebflowConfigurer() {
         return new InterruptWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }

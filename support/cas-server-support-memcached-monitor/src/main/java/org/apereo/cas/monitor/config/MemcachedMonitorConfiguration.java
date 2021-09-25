@@ -46,11 +46,13 @@ public class MemcachedMonitorConfiguration {
     @ConditionalOnEnabledHealthIndicator("memcachedHealthIndicator")
     @ConditionalOnMissingBean(name = "memcachedHealthIndicator")
     @Autowired
-    public HealthIndicator memcachedHealthIndicator(final CasConfigurationProperties casProperties) {
+    public HealthIndicator memcachedHealthIndicator(
+        @Qualifier("memcachedHealthClientPool")
+        final ObjectPool<MemcachedClientIF> memcachedHealthClientPool,
+        final CasConfigurationProperties casProperties) {
         val warn = casProperties.getMonitor().getWarn();
-        return new MemcachedHealthIndicator(memcachedHealthClientPool(),
-            warn.getEvictionThreshold(),
-            warn.getThreshold());
+        return new MemcachedHealthIndicator(memcachedHealthClientPool,
+            warn.getEvictionThreshold(), warn.getThreshold());
     }
 
     @Bean

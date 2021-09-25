@@ -66,8 +66,7 @@ public class TokenAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "tokenWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer tokenWebflowConfigurer() {
+        public CasWebflowConfigurer tokenWebflowConfigurer() {
         return new TokenWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }

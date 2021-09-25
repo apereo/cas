@@ -7,7 +7,6 @@ import org.apereo.cas.web.flow.SpnegoCasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.SpnegoWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -16,7 +15,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
@@ -26,28 +24,21 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("spnegoWebflowConfiguration")
+@Configuration(value = "spnegoWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SpnegoWebflowConfiguration {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
-
-    @Autowired
-    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-
     @ConditionalOnMissingBean(name = "spnegoWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer spnegoWebflowConfigurer() {
-        return new SpnegoWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(),
+    @Autowired
+    public CasWebflowConfigurer spnegoWebflowConfigurer(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("loginFlowRegistry")
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier("flowBuilderServices")
+        final FlowBuilderServices flowBuilderServices) {
+        return new SpnegoWebflowConfigurer(flowBuilderServices,
+            loginFlowDefinitionRegistry,
             applicationContext, casProperties);
     }
 
@@ -61,7 +52,10 @@ public class SpnegoWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "spnegoCasWebflowExecutionPlanConfigurer")
     @RefreshScope
-    public CasWebflowExecutionPlanConfigurer spnegoCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(spnegoWebflowConfigurer());
+    @Autowired
+    public CasWebflowExecutionPlanConfigurer spnegoCasWebflowExecutionPlanConfigurer(
+        @Qualifier("spnegoWebflowConfigurer")
+        final CasWebflowConfigurer spnegoWebflowConfigurer) {
+        return plan -> plan.registerWebflowConfigurer(spnegoWebflowConfigurer);
     }
 }

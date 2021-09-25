@@ -55,7 +55,7 @@ public class X509AuthenticationWebflowConfiguration {
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext) {
         return new X509WebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, applicationContext, casProperties);
+            loginFlowRegistry, applicationContext, casProperties);
     }
 
     @Bean

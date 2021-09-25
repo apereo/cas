@@ -56,8 +56,7 @@ public class SurrogateAuthenticationWebflowConfiguration implements Initializing
 
     @ConditionalOnMissingBean(name = "surrogateWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
-    @Autowired
+        @Autowired
     public CasWebflowConfigurer surrogateWebflowConfigurer(
         @Qualifier("flowBuilderServices")
         final FlowBuilderServices flowBuilderServices,

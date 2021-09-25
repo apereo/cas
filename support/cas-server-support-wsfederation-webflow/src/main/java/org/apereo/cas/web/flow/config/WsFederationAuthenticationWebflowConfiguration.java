@@ -84,8 +84,7 @@ public class WsFederationAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "wsFederationWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer wsFederationWebflowConfigurer() {
+        public CasWebflowConfigurer wsFederationWebflowConfigurer() {
         return new WsFederationWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }

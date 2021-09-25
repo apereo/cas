@@ -167,8 +167,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "passwordlessAuthenticationWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer passwordlessAuthenticationWebflowConfigurer() {
+        public CasWebflowConfigurer passwordlessAuthenticationWebflowConfigurer() {
         return new PasswordlessAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }

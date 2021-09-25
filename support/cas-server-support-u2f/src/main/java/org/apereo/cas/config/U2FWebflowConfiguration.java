@@ -96,8 +96,7 @@ public class U2FWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "u2fMultifactorWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer u2fMultifactorWebflowConfigurer() {
+        public CasWebflowConfigurer u2fMultifactorWebflowConfigurer() {
         val cfg = new U2FMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), u2fFlowRegistry(),
             applicationContext, casProperties,

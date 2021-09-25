@@ -9,7 +9,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import org.springframework.webflow.execution.Action;
 
 /**
  * This is {@link SamlMetadataUIWebflowConfigurer}.
@@ -18,14 +17,11 @@ import org.springframework.webflow.execution.Action;
  * @since 5.0.0
  */
 public class SamlMetadataUIWebflowConfigurer extends AbstractCasWebflowConfigurer {
-    private final Action samlMetadataUIParserAction;
-
-    public SamlMetadataUIWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                           final Action samlMetadataUIParserAction,
+    public SamlMetadataUIWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                           final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                            final ConfigurableApplicationContext applicationContext,
                                            final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
-        this.samlMetadataUIParserAction = samlMetadataUIParserAction;
     }
 
     @Override
@@ -33,7 +29,7 @@ public class SamlMetadataUIWebflowConfigurer extends AbstractCasWebflowConfigure
         val flow = getLoginFlow();
         if (flow != null) {
             val state = getTransitionableState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
-            state.getEntryActionList().add(this.samlMetadataUIParserAction);
+            state.getEntryActionList().add(createEvaluateAction("samlMetadataUIParserAction"));
         }
     }
 }
