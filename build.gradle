@@ -439,7 +439,6 @@ subprojects {
                     "Implementation-Vendor": project.group,
                     "Created-By": project.group)
             if (generateTimestamps) {
-                // Only generate timestamps when enabled, as they cause every build to update the JAR.
                 attributes("Implementation-Date": java.time.ZonedDateTime.now(ZoneId.systemDefault()))
             }
             attributes(
