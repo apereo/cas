@@ -8,7 +8,6 @@ import org.apereo.cas.throttle.ThrottledRequestFilter;
 
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -26,7 +25,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "oidcThrottleConfiguration", proxyBeanMethods = true)
+@Configuration(value = "oidcThrottleConfiguration", proxyBeanMethods = false)
 @AutoConfigureBefore(OidcConfiguration.class)
 public class OidcThrottleConfiguration {
     private static final List<String> THROTTLED_ENDPOINTS = List.of(
@@ -39,21 +38,16 @@ public class OidcThrottleConfiguration {
         OidcConstants.REVOCATION_URL,
         OidcConstants.INTROSPECTION_URL);
 
-    @Autowired
-    @Qualifier("authenticationThrottlingExecutionPlan")
-    private ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan;
-
-    @Autowired
-    @Qualifier("oidcRequestSupport")
-    private ObjectProvider<OidcRequestSupport> oidcRequestSupport;
-
     @Bean
     @ConditionalOnMissingBean(name = "oidcThrottleWebMvcConfigurer")
-    public WebMvcConfigurer oidcThrottleWebMvcConfigurer() {
+    @Autowired
+    public WebMvcConfigurer oidcThrottleWebMvcConfigurer(
+        @Qualifier("authenticationThrottlingExecutionPlan")
+        final AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan) {
         return new WebMvcConfigurer() {
             @Override
             public void addInterceptors(final InterceptorRegistry registry) {
-                val interceptors = authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors();
+                val interceptors = authenticationThrottlingExecutionPlan.getAuthenticationThrottleInterceptors();
                 interceptors.forEach(handler -> registry.addInterceptor(handler)
                     .order(0)
                     .addPathPatterns('/' + OidcConstants.BASE_OIDC_URL + "/**"));
@@ -63,18 +57,24 @@ public class OidcThrottleConfiguration {
 
     @ConditionalOnMissingBean(name = "oidcAuthenticationThrottlingExecutionPlanConfigurer")
     @Bean
-    public AuthenticationThrottlingExecutionPlanConfigurer oidcAuthenticationThrottlingExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationThrottleFilter(oidcThrottledRequestFilter());
+    @Autowired
+    public AuthenticationThrottlingExecutionPlanConfigurer oidcAuthenticationThrottlingExecutionPlanConfigurer(
+        @Qualifier("oidcThrottledRequestFilter")
+        final ThrottledRequestFilter oidcThrottledRequestFilter) {
+        return plan -> plan.registerAuthenticationThrottleFilter(oidcThrottledRequestFilter);
     }
 
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "oidcThrottledRequestFilter")
-    public ThrottledRequestFilter oidcThrottledRequestFilter() {
+    public ThrottledRequestFilter oidcThrottledRequestFilter(
+        @Qualifier("oidcRequestSupport")
+        final OidcRequestSupport oidcRequestSupport) {
         return (request, response) -> {
             val webContext = new JEEContext(request, response);
             return THROTTLED_ENDPOINTS
                 .stream()
-                .anyMatch(endpoint -> oidcRequestSupport.getObject().isValidIssuerForEndpoint(webContext, endpoint));
+                .anyMatch(endpoint -> oidcRequestSupport.isValidIssuerForEndpoint(webContext, endpoint));
         };
     }
 }

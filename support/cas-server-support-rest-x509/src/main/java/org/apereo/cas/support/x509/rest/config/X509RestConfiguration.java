@@ -10,7 +10,6 @@ import org.apereo.cas.support.x509.rest.X509RestTlsClientCertCredentialFactory;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -19,28 +18,20 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 
 /**
  * X509 Rest configuration class.
- * 
+ *
  * @author Dmytro Fedonin
  * @since 5.1.0
  */
-@Configuration("x509RestConfiguration")
+@Configuration(value = "x509RestConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class X509RestConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("x509CertificateExtractor")
-    @Lazy
-    private ObjectProvider<X509CertificateExtractor> x509CertificateExtractor;
-
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "x509RestMultipartBody")
     public RestHttpRequestCredentialFactory x509RestMultipartBody() {
         return new X509RestMultipartBodyCredentialFactory();
@@ -48,8 +39,12 @@ public class X509RestConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "x509RestRequestHeader")
-    public RestHttpRequestCredentialFactory x509RestRequestHeader() {
-        return new X509RestHttpRequestHeaderCredentialFactory(x509CertificateExtractor.getObject());
+    @Autowired
+    @RefreshScope
+    public RestHttpRequestCredentialFactory x509RestRequestHeader(
+        @Qualifier("x509CertificateExtractor")
+        final X509CertificateExtractor x509CertificateExtractor) {
+        return new X509RestHttpRequestHeaderCredentialFactory(x509CertificateExtractor);
     }
 
     @ConditionalOnProperty(prefix = "cas.rest.x509", name = "tls-client-auth", havingValue = "true")
@@ -61,16 +56,23 @@ public class X509RestConfiguration {
 
     @Bean
     @RefreshScope
+    @Autowired
     @ConditionalOnMissingBean(name = "x509RestHttpRequestCredentialFactoryConfigurer")
-    public RestHttpRequestCredentialFactoryConfigurer x509RestHttpRequestCredentialFactoryConfigurer() {
+    public RestHttpRequestCredentialFactoryConfigurer x509RestHttpRequestCredentialFactoryConfigurer(
+        @Qualifier("x509RestTlsClientCert")
+        final RestHttpRequestCredentialFactory x509RestTlsClientCert,
+        @Qualifier("x509RestMultipartBody")
+        final RestHttpRequestCredentialFactory x509RestMultipartBody,
+        @Qualifier("x509RestRequestHeader")
+        final RestHttpRequestCredentialFactory x509RestRequestHeader,
+        @Qualifier("x509CertificateExtractor")
+        final X509CertificateExtractor x509CertificateExtractor,
+        final CasConfigurationProperties casProperties) {
         return factory -> {
             val restProperties = casProperties.getRest().getX509();
-            val extractor = x509CertificateExtractor.getObject();
             val headerAuth = restProperties.isHeaderAuth();
             val bodyAuth = restProperties.isBodyAuth();
             val tlsClientAuth = restProperties.isTlsClientAuth();
-            LOGGER.trace("Is certificate extractor available? = [{}], headerAuth = [{}], bodyAuth = [{}], tlsClientAuth = [{}]",
-                extractor, headerAuth, bodyAuth, tlsClientAuth);
 
             if (tlsClientAuth && (headerAuth || bodyAuth)) {
                 LOGGER.warn("The X.509 feature over REST using \"headerAuth\" or \"bodyAuth\" provides a tremendously "
@@ -82,13 +84,13 @@ public class X509RestConfiguration {
             }
 
             if (headerAuth) {
-                factory.registerCredentialFactory(x509RestRequestHeader());
+                factory.registerCredentialFactory(x509RestRequestHeader);
             }
             if (bodyAuth) {
-                factory.registerCredentialFactory(x509RestMultipartBody());
+                factory.registerCredentialFactory(x509RestMultipartBody);
             }
             if (tlsClientAuth) {
-                factory.registerCredentialFactory(x509RestTlsClientCert());
+                factory.registerCredentialFactory(x509RestTlsClientCert);
             }
         };
     }
