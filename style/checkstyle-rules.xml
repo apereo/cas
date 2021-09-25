@@ -220,6 +220,7 @@
             <property name="max" value="180"/>
         </module>
         <module name="ParameterNumber">
+            <property name="id" value="parameterNumberForMethods"/>
             <property name="max" value="20"/>
             <property name="severity" value="error"/>
             <property name="tokens" value="METHOD_DEF"/>

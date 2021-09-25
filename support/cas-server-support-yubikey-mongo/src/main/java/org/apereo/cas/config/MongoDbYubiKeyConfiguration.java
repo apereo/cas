@@ -8,7 +8,6 @@ import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,21 +29,6 @@ import javax.net.ssl.SSLContext;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbYubiKeyConfiguration {
 
-    @Autowired
-    @Qualifier("yubiKeyAccountValidator")
-    private ObjectProvider<YubiKeyAccountValidator> yubiKeyAccountValidator;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("yubikeyAccountCipherExecutor")
-    private ObjectProvider<CipherExecutor> yubikeyAccountCipherExecutor;
-
-    @Autowired
-    @Qualifier("sslContext")
-    private ObjectProvider<SSLContext> sslContext;
-
     @RefreshScope
     @Bean
     public PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcessor() {
@@ -53,9 +37,13 @@ public class MongoDbYubiKeyConfiguration {
 
     @RefreshScope
     @Bean
-    public MongoTemplate mongoYubiKeyTemplate() {
+    @Autowired
+    public MongoTemplate mongoYubiKeyTemplate(
+        @Qualifier("sslContext")
+        final SSLContext sslContext,
+        final CasConfigurationProperties casProperties) {
         val mongo = casProperties.getAuthn().getMfa().getYubikey().getMongo();
-        val factory = new MongoDbConnectionFactory(sslContext.getObject());
+        val factory = new MongoDbConnectionFactory(sslContext);
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
@@ -63,12 +51,20 @@ public class MongoDbYubiKeyConfiguration {
 
     @RefreshScope
     @Bean
-    public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
+    @Autowired
+    public YubiKeyAccountRegistry yubiKeyAccountRegistry(
+        @Qualifier("yubiKeyAccountValidator")
+        final YubiKeyAccountValidator yubiKeyAccountValidator,
+        @Qualifier("yubikeyAccountCipherExecutor")
+        final CipherExecutor yubikeyAccountCipherExecutor,
+        @Qualifier("mongoYubiKeyTemplate")
+        final MongoTemplate mongoYubiKeyTemplate,
+        final CasConfigurationProperties casProperties) {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
-        val registry = new MongoDbYubiKeyAccountRegistry(yubiKeyAccountValidator.getObject(),
-            mongoYubiKeyTemplate(),
+        val registry = new MongoDbYubiKeyAccountRegistry(yubiKeyAccountValidator,
+            mongoYubiKeyTemplate,
             yubi.getMongo().getCollection());
-        registry.setCipherExecutor(yubikeyAccountCipherExecutor.getObject());
+        registry.setCipherExecutor(yubikeyAccountCipherExecutor);
         return registry;
     }
 }

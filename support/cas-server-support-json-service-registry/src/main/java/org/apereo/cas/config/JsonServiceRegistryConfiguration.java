@@ -24,7 +24,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link JsonServiceRegistryConfiguration}.
@@ -32,40 +34,30 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("jsonServiceRegistryConfiguration")
+@Configuration(value = "jsonServiceRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 1)
 public class JsonServiceRegistryConfiguration {
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("registeredServiceReplicationStrategy")
-    private ObjectProvider<RegisteredServiceReplicationStrategy> registeredServiceReplicationStrategy;
-
-    @Autowired
-    @Qualifier("registeredServiceResourceNamingStrategy")
-    private ObjectProvider<RegisteredServiceResourceNamingStrategy> resourceNamingStrategy;
-
-    @Autowired
-    @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
-
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "jsonServiceRegistry")
-    public ServiceRegistry jsonServiceRegistry() throws Exception {
+    @Autowired
+    public ServiceRegistry jsonServiceRegistry(
+        @Qualifier("registeredServiceResourceNamingStrategy")
+        final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("registeredServiceReplicationStrategy")
+        final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners) throws Exception {
+
         val registry = casProperties.getServiceRegistry();
         val json = new JsonServiceRegistry(registry.getJson().getLocation(),
             WatcherService.noOp(),
             applicationContext,
-            registeredServiceReplicationStrategy.getObject(),
-            resourceNamingStrategy.getObject(),
-            serviceRegistryListeners.getObject());
+            registeredServiceReplicationStrategy,
+            resourceNamingStrategy,
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
         if (registry.getJson().isWatcherEnabled()) {
             json.enableDefaultWatcherService();
         }
@@ -74,10 +66,14 @@ public class JsonServiceRegistryConfiguration {
 
     @Bean
     @RefreshScope
+    @Autowired
     @ConditionalOnMissingBean(name = "jsonServiceRegistryExecutionPlanConfigurer")
-    public ServiceRegistryExecutionPlanConfigurer jsonServiceRegistryExecutionPlanConfigurer() {
+    public ServiceRegistryExecutionPlanConfigurer jsonServiceRegistryExecutionPlanConfigurer(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("jsonServiceRegistry")
+        final ServiceRegistry jsonServiceRegistry) {
         val registry = casProperties.getServiceRegistry().getJson();
         return plan -> FunctionUtils.doIfNotNull(registry.getLocation(),
-            Unchecked.consumer(input -> plan.registerServiceRegistry(jsonServiceRegistry())));
+            Unchecked.consumer(input -> plan.registerServiceRegistry(jsonServiceRegistry)));
     }
 }

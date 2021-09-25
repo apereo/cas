@@ -12,7 +12,6 @@ import org.apereo.cas.web.flow.login.SessionStoreTicketGrantingTicketAction;
 
 import lombok.val;
 import org.pac4j.core.context.session.SessionStore;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -20,7 +19,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.web.servlet.View;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -32,89 +30,88 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casOAuth20WebflowConfiguration")
+@Configuration(value = "casOAuth20WebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasOAuth20WebflowConfiguration {
-    @Autowired
-    @Qualifier("casProtocolViewFactory")
-    private ObjectProvider<CasProtocolViewFactory> casProtocolViewFactory;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
-
-    @Autowired
-    @Qualifier("logoutFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> logoutFlowDefinitionRegistry;
-
-    @Autowired
-    @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
-    private ObjectProvider<AuthenticationServiceSelectionStrategy> oauth20AuthenticationServiceSelectionStrategy;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-
-    @Autowired
-    @Qualifier("oauthDistributedSessionStore")
-    private ObjectProvider<SessionStore> oauthDistributedSessionStore;
-    
     @ConditionalOnMissingBean(name = "oauth20LogoutWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer oauth20LogoutWebflowConfigurer() {
-        val c = new OAuth20WebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(),
-            applicationContext, casProperties);
-        c.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry.getObject());
+    @Autowired
+    public CasWebflowConfigurer oauth20LogoutWebflowConfigurer(
+        @Qualifier("logoutFlowRegistry")
+        final FlowDefinitionRegistry logoutFlowDefinitionRegistry,
+        @Qualifier("flowBuilderServices")
+        final FlowBuilderServices flowBuilderServices,
+        @Qualifier("loginFlowRegistry")
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext) {
+        val c = new OAuth20WebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        c.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
         return c;
     }
 
     @ConditionalOnMissingBean(name = "oauth20RegisteredServiceUIAction")
     @Bean
-    public Action oauth20RegisteredServiceUIAction() {
-        return new OAuth20RegisteredServiceUIAction(servicesManager.getObject(),
-            oauth20AuthenticationServiceSelectionStrategy.getObject());
+    @Autowired
+    public Action oauth20RegisteredServiceUIAction(
+        @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
+        final AuthenticationServiceSelectionStrategy oauth20AuthenticationServiceSelectionStrategy,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager) {
+        return new OAuth20RegisteredServiceUIAction(servicesManager, oauth20AuthenticationServiceSelectionStrategy);
     }
 
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "oauth20SessionStoreTicketGrantingTicketAction")
-    public Action oauth20SessionStoreTicketGrantingTicketAction() {
-        return new SessionStoreTicketGrantingTicketAction(oauthDistributedSessionStore.getObject());
-    }
-    
-    @Bean
-    public View oauthConfirmView() {
-        return casProtocolViewFactory.getObject().create(applicationContext, "protocol/oauth/confirm");
+    public Action oauth20SessionStoreTicketGrantingTicketAction(
+        @Qualifier("oauthDistributedSessionStore")
+        final SessionStore oauthDistributedSessionStore) {
+        return new SessionStoreTicketGrantingTicketAction(oauthDistributedSessionStore);
     }
 
     @Bean
-    public View oauthDeviceCodeApprovalView() {
-        return casProtocolViewFactory.getObject().create(applicationContext, "protocol/oauth/deviceCodeApproval");
+    @Autowired
+    public View oauthConfirmView(
+        @Qualifier("casProtocolViewFactory")
+        final CasProtocolViewFactory casProtocolViewFactory,
+        final ConfigurableApplicationContext applicationContext) {
+        return casProtocolViewFactory.create(applicationContext, "protocol/oauth/confirm");
     }
 
     @Bean
-    public View oauthDeviceCodeApprovedView() {
-        return casProtocolViewFactory.getObject().create(applicationContext, "protocol/oauth/deviceCodeApproved");
+    @Autowired
+    public View oauthDeviceCodeApprovalView(
+        @Qualifier("casProtocolViewFactory")
+        final CasProtocolViewFactory casProtocolViewFactory,
+        final ConfigurableApplicationContext applicationContext) {
+        return casProtocolViewFactory.create(applicationContext, "protocol/oauth/deviceCodeApproval");
     }
 
     @Bean
-    public View oauthSessionStaleMismatchErrorView() {
-        return casProtocolViewFactory.getObject().create(applicationContext, "protocol/oauth/sessionStaleMismatchError");
+    @Autowired
+    public View oauthDeviceCodeApprovedView(
+        @Qualifier("casProtocolViewFactory")
+        final CasProtocolViewFactory casProtocolViewFactory,
+        final ConfigurableApplicationContext applicationContext) {
+        return casProtocolViewFactory.create(applicationContext, "protocol/oauth/deviceCodeApproved");
     }
 
     @Bean
+    @Autowired
+    public View oauthSessionStaleMismatchErrorView(
+        @Qualifier("casProtocolViewFactory")
+        final CasProtocolViewFactory casProtocolViewFactory,
+        final ConfigurableApplicationContext applicationContext) {
+        return casProtocolViewFactory.create(applicationContext, "protocol/oauth/sessionStaleMismatchError");
+    }
+
+    @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "oauth20CasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer oauth20CasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(oauth20LogoutWebflowConfigurer());
+    public CasWebflowExecutionPlanConfigurer oauth20CasWebflowExecutionPlanConfigurer(
+        @Qualifier("oauth20LogoutWebflowConfigurer")
+        final CasWebflowConfigurer oauth20LogoutWebflowConfigurer) {
+        return plan -> plan.registerWebflowConfigurer(oauth20LogoutWebflowConfigurer);
     }
 }

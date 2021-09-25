@@ -22,7 +22,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link YamlServiceRegistryConfiguration}.
@@ -30,38 +32,29 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("yamlServiceRegistryConfiguration")
+@Configuration(value = "yamlServiceRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class YamlServiceRegistryConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("registeredServiceReplicationStrategy")
-    private ObjectProvider<RegisteredServiceReplicationStrategy> registeredServiceReplicationStrategy;
-
-    @Autowired
-    @Qualifier("registeredServiceResourceNamingStrategy")
-    private ObjectProvider<RegisteredServiceResourceNamingStrategy> resourceNamingStrategy;
-
-    @Autowired
-    @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
-
     @Bean
     @RefreshScope
+    @Autowired
     @ConditionalOnMissingBean(name = "yamlServiceRegistry")
-    public ServiceRegistry yamlServiceRegistry() throws Exception {
+    public ServiceRegistry yamlServiceRegistry(
+        @Qualifier("registeredServiceResourceNamingStrategy")
+        final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("registeredServiceReplicationStrategy")
+        final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners) throws Exception {
+
         val registry = casProperties.getServiceRegistry();
         val yaml = new YamlServiceRegistry(registry.getYaml().getLocation(),
             WatcherService.noOp(),
             applicationContext,
-            registeredServiceReplicationStrategy.getObject(),
-            resourceNamingStrategy.getObject(),
-            serviceRegistryListeners.getObject());
+            registeredServiceReplicationStrategy,
+            resourceNamingStrategy,
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
         if (registry.getYaml().isWatcherEnabled()) {
             yaml.enableDefaultWatcherService();
         }
@@ -71,9 +64,13 @@ public class YamlServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "yamlServiceRegistryExecutionPlanConfigurer")
     @RefreshScope
-    public ServiceRegistryExecutionPlanConfigurer yamlServiceRegistryExecutionPlanConfigurer() {
+    @Autowired
+    public ServiceRegistryExecutionPlanConfigurer yamlServiceRegistryExecutionPlanConfigurer(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("yamlServiceRegistry")
+        final ServiceRegistry yamlServiceRegistry) {
         val registry = casProperties.getServiceRegistry().getYaml();
         return plan -> FunctionUtils.doIfNotNull(registry.getLocation(),
-            Unchecked.consumer(input -> plan.registerServiceRegistry(yamlServiceRegistry())));
+            Unchecked.consumer(input -> plan.registerServiceRegistry(yamlServiceRegistry)));
     }
 }

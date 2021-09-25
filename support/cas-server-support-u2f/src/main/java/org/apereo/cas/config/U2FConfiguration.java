@@ -38,13 +38,10 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "u2fConfiguration", proxyBeanMethods = true)
+@Configuration(value = "u2fConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class U2FConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @ConditionalOnMissingBean(name = "transactionManagerU2f")
     @Bean
     public PlatformTransactionManager transactionManagerU2f() {
@@ -56,7 +53,8 @@ public class U2FConfiguration {
     @Autowired
     @ConditionalOnProperty(prefix = "authn.mfa.u2f.cleaner", name = "enabled", havingValue = "true", matchIfMissing = true)
     public Runnable u2fDeviceRepositoryCleanerScheduler(
-        @Qualifier("u2fDeviceRepository") final U2FDeviceRepository storage) {
+        @Qualifier("u2fDeviceRepository")
+        final U2FDeviceRepository storage) {
         return new U2FDeviceRepositoryCleanerScheduler(storage);
     }
 
@@ -69,7 +67,11 @@ public class U2FConfiguration {
     @ConditionalOnMissingBean(name = "u2fDeviceRepository")
     @Bean
     @RefreshScope
-    public U2FDeviceRepository u2fDeviceRepository() {
+    @Autowired
+    public U2FDeviceRepository u2fDeviceRepository(
+        @Qualifier("CipherExecutor u2fRegistrationRecordCipherExecutor")
+        final CipherExecutor u2fRegistrationRecordCipherExecutor,
+        final CasConfigurationProperties casProperties) {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
 
         val requestStorage = Caffeine.newBuilder()
@@ -80,32 +82,33 @@ public class U2FConfiguration {
             return new U2FJsonResourceDeviceRepository(requestStorage,
                 u2f.getJson().getLocation(),
                 u2f.getCore().getExpireDevices(),
-                u2f.getCore().getExpireDevicesTimeUnit(), u2fRegistrationRecordCipherExecutor());
+                u2f.getCore().getExpireDevicesTimeUnit(), u2fRegistrationRecordCipherExecutor);
         }
 
         if (u2f.getGroovy().getLocation() != null) {
             return new U2FGroovyResourceDeviceRepository(requestStorage,
                 u2f.getGroovy().getLocation(),
                 u2f.getCore().getExpireDevices(),
-                u2f.getCore().getExpireDevicesTimeUnit(), u2fRegistrationRecordCipherExecutor());
+                u2f.getCore().getExpireDevicesTimeUnit(), u2fRegistrationRecordCipherExecutor);
         }
 
         if (StringUtils.isNotBlank(u2f.getRest().getUrl())) {
             return new U2FRestResourceDeviceRepository(requestStorage,
                 u2f.getCore().getExpireDevices(), u2f.getCore().getExpireDevicesTimeUnit(),
-                u2f.getRest(), u2fRegistrationRecordCipherExecutor());
+                u2f.getRest(), u2fRegistrationRecordCipherExecutor);
         }
 
         val userStorage = Caffeine.newBuilder()
-                .expireAfterWrite(u2f.getCore().getExpireDevices(), u2f.getCore().getExpireDevicesTimeUnit())
-                .<String, List<U2FDeviceRegistration>>build(key -> new ArrayList<>(0));
-        return new U2FInMemoryDeviceRepository(userStorage, requestStorage, u2fRegistrationRecordCipherExecutor());
+            .expireAfterWrite(u2f.getCore().getExpireDevices(), u2f.getCore().getExpireDevicesTimeUnit())
+            .<String, List<U2FDeviceRegistration>>build(key -> new ArrayList<>(0));
+        return new U2FInMemoryDeviceRepository(userStorage, requestStorage, u2fRegistrationRecordCipherExecutor);
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "u2fRegistrationRecordCipherExecutor")
-    public CipherExecutor u2fRegistrationRecordCipherExecutor() {
+    @Autowired
+    public CipherExecutor u2fRegistrationRecordCipherExecutor(final CasConfigurationProperties casProperties) {
         val crypto = casProperties.getAuthn().getMfa().getU2f().getCrypto();
         if (crypto.isEnabled()) {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, U2FAuthenticationRegistrationRecordCipherExecutor.class);
@@ -125,7 +128,7 @@ public class U2FConfiguration {
         private final U2FDeviceRepository repository;
 
         @Scheduled(initialDelayString = "${cas.authn.mfa.u2f.cleaner.schedule.start-delay:PT20S}",
-            fixedDelayString = "${cas.authn.mfa.u2f.cleaner.schedule.repeat-interval:PT5M}")
+                   fixedDelayString = "${cas.authn.mfa.u2f.cleaner.schedule.repeat-interval:PT5M}")
         @Override
         public void run() {
             LOGGER.debug("Starting to clean expired U2F devices from repository");
