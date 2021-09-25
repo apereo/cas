@@ -214,22 +214,19 @@ public class CasReportsConfiguration {
      * @since 6.0.0
      * @deprecated since 6.2.0
      */
-    @Configuration("statusEndpointConfiguration")
+    @Configuration(value = "statusEndpointConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Slf4j
     @Deprecated(since = "6.2.0")
     public static class StatusEndpointConfiguration {
-        @Autowired
-        private CasConfigurationProperties casProperties;
-
-        @Autowired
-        private ObjectProvider<HealthEndpoint> healthEndpoint;
-
         @Bean
         @ConditionalOnAvailableEndpoint
-        public StatusEndpoint statusEndpoint() {
+        @Autowired
+        public StatusEndpoint statusEndpoint(
+            final ObjectProvider<HealthEndpoint> healthEndpoint,
+            final CasConfigurationProperties casProperties) {
             LOGGER.warn("The status actuator endpoint is deprecated and is scheduled to be removed from CAS in the future. "
-                + "To obtain status and health inforation, please configure and use the health endpoint instead.");
+                + "To obtain status and health information, please configure and use the health endpoint instead.");
             return new StatusEndpoint(casProperties, healthEndpoint.getIfAvailable());
         }
     }
