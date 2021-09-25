@@ -25,7 +25,6 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         buildInfo {
             properties {
                 if (!rootProject.generateTimestamps) {
-                    // Only generate timestamps when enabled, as they cause every build to update JARs/WARs.
                     time = null
                 }
             }
@@ -47,7 +46,6 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
                         "Implementation-Vendor": project.group,
                         "Created-By": project.group)
                 if (rootProject.generateTimestamps) {
-                    // Only generate timestamps when enabled, as they cause every build to update the WAR.
                     attributes("Implementation-Date": java.time.ZonedDateTime.now())
                 }
                 attributes(
