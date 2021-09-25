@@ -28,22 +28,19 @@ import java.security.KeyStore;
  * @author Jerome LELEU
  * @since 6.4.0
  */
-@Configuration("inweboConfiguration")
+@Configuration(value = "inweboConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 public class InweboServiceConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("casSslContext")
-    private ObjectProvider<CasSSLContext> casSslContext;
-
     @Bean
     @ConditionalOnMissingBean(name = "inweboConsoleAdmin")
     @RefreshScope
-    public InweboConsoleAdmin inweboConsoleAdmin() throws Exception {
+    @Autowired
+    public InweboConsoleAdmin inweboConsoleAdmin(
+        @Qualifier("casSslContext")
+        final ObjectProvider<CasSSLContext> casSslContext,
+        final CasConfigurationProperties casProperties) throws Exception {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
 
         val marshaller = new Jaxb2Marshaller();
@@ -71,9 +68,13 @@ public class InweboServiceConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "inweboService")
     @RefreshScope
-    public InweboService inweboService() throws Exception {
+    @Autowired
+    public InweboService inweboService(
+        @Qualifier("inweboConsoleAdmin")
+        final InweboConsoleAdmin inweboConsoleAdmin,
+        final CasConfigurationProperties casProperties) throws Exception {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
         val sslContext = SSLUtils.buildSSLContext(inwebo.getClientCertificate());
-        return new InweboService(casProperties, inweboConsoleAdmin(), sslContext);
+        return new InweboService(casProperties, inweboConsoleAdmin, sslContext);
     }
 }

@@ -10,7 +10,6 @@ import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,7 +26,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
 import java.util.Set;
 
 /**
@@ -36,14 +34,10 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casConsentJdbcConfiguration")
+@Configuration(value = "casConsentJdbcConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
 public class CasConsentJdbcConfiguration {
-    @Autowired
-    @Qualifier("jpaBeanFactory")
-    private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
-
     @Bean
     public ConsentRepository consentRepository() {
         return new JpaConsentRepository();
@@ -51,14 +45,19 @@ public class CasConsentJdbcConfiguration {
 
     @RefreshScope
     @Bean
-    public JpaVendorAdapter jpaConsentVendorAdapter() {
-        return jpaBeanFactory.getObject().newJpaVendorAdapter(casProperties.getJdbc());
+    @Autowired
+    public JpaVendorAdapter jpaConsentVendorAdapter(
+        @Qualifier("jpaBeanFactory")
+        final JpaBeanFactory jpaBeanFactory,
+        final CasConfigurationProperties casProperties) {
+        return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "dataSourceConsent")
     @RefreshScope
-    public DataSource dataSourceConsent() {
+    @Autowired
+    public DataSource dataSourceConsent(final CasConfigurationProperties casProperties) {
         return JpaBeans.newDataSource(casProperties.getConsent().getJpa());
     }
 
@@ -69,21 +68,31 @@ public class CasConsentJdbcConfiguration {
 
     @Lazy
     @Bean
-    public LocalContainerEntityManagerFactoryBean consentEntityManagerFactory() {
-        val factory = jpaBeanFactory.getObject();
+    @Autowired
+    public LocalContainerEntityManagerFactoryBean consentEntityManagerFactory(
+        @Qualifier("jpaConsentVendorAdapter")
+        final JpaVendorAdapter jpaConsentVendorAdapter,
+        @Qualifier("dataSourceConsent")
+        final DataSource dataSourceConsent,
+        @Qualifier("Set<String> jpaConsentPackagesToScan")
+        final Set<String> jpaConsentPackagesToScan,
+        @Qualifier("jpaBeanFactory")
+        final JpaBeanFactory jpaBeanFactory,
+        final CasConfigurationProperties casProperties) {
         val ctx = JpaConfigurationContext.builder()
-            .jpaVendorAdapter(jpaConsentVendorAdapter())
+            .jpaVendorAdapter(jpaConsentVendorAdapter)
             .persistenceUnitName("jpaConsentContext")
-            .dataSource(dataSourceConsent())
-            .packagesToScan(jpaConsentPackagesToScan())
+            .dataSource(dataSourceConsent)
+            .packagesToScan(jpaConsentPackagesToScan)
             .build();
-        return factory.newEntityManagerFactoryBean(ctx, casProperties.getConsent().getJpa());
+        return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getConsent().getJpa());
     }
 
     @Autowired
     @Bean
     public PlatformTransactionManager transactionManagerConsent(
-        @Qualifier("consentEntityManagerFactory") final EntityManagerFactory emf) {
+        @Qualifier("consentEntityManagerFactory")
+        final EntityManagerFactory emf) {
         val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;

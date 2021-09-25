@@ -19,7 +19,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import jcifs.spnego.Authentication;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -40,24 +39,9 @@ import java.util.stream.Collectors;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Configuration("spnegoConfiguration")
+@Configuration(value = "spnegoConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SpnegoConfiguration {
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-    private ObjectProvider<IPersonAttributeDao> attributeRepository;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-    final CasConfigurationProperties casProperties
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     @RefreshScope
     @Bean
@@ -73,7 +57,7 @@ public class SpnegoConfiguration {
             val kerbConf = applicationContext.getResource(spnegoSystem.getKerberosConf());
             FunctionUtils.doAndIgnore(o -> JcifsConfig.SystemSettings.setKerberosConf(kerbConf.getFile().getCanonicalPath()));
         }
-        
+
         JcifsConfig.SystemSettings.setKerberosDebug(spnegoSystem.getKerberosDebug());
         JcifsConfig.SystemSettings.setKerberosKdc(spnegoSystem.getKerberosKdc());
         JcifsConfig.SystemSettings.setKerberosRealm(spnegoSystem.getKerberosRealm());
@@ -98,19 +82,22 @@ public class SpnegoConfiguration {
             .collect(Collectors.toList());
     }
 
-
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "spnegoHandler")
     @Autowired
-    public AuthenticationHandler spnegoHandler(final CasConfigurationProperties casProperties) {
+    public AuthenticationHandler spnegoHandler(
+        @Qualifier("List<Authentication> spnegoAuthentications")
+        final List<Authentication> spnegoAuthentications,
+        @Qualifier("spnegoPrincipalFactory")
+        final PrincipalFactory spnegoPrincipalFactory,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        final CasConfigurationProperties casProperties) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         return new JcifsSpnegoAuthenticationHandler(spnegoProperties.getName(),
-            servicesManager.getObject(),
-            spnegoPrincipalFactory(),
-            spnegoAuthentications(),
-            spnegoProperties.isPrincipalWithDomainName(),
-            spnegoProperties.isNtlmAllowed(),
+            servicesManager, spnegoPrincipalFactory, spnegoAuthentications,
+            spnegoProperties.isPrincipalWithDomainName(), spnegoProperties.isNtlmAllowed(),
             spnegoProperties.getOrder());
     }
 
@@ -118,14 +105,17 @@ public class SpnegoConfiguration {
     @RefreshScope
     @ConditionalOnProperty(prefix = "cas.authn.ntlm", name = "enabled", havingValue = "true")
     @Autowired
-    public AuthenticationHandler ntlmAuthenticationHandler(final CasConfigurationProperties casProperties) {
+    public AuthenticationHandler ntlmAuthenticationHandler(
+        @Qualifier("ntlmPrincipalFactory")
+        final PrincipalFactory ntlmPrincipalFactory,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        final CasConfigurationProperties casProperties) {
         val ntlmProperties = casProperties.getAuthn().getNtlm();
         return new NtlmAuthenticationHandler(ntlmProperties.getName(),
-            servicesManager.getObject(), ntlmPrincipalFactory(),
-            ntlmProperties.isLoadBalance(),
-            ntlmProperties.getDomainController(),
-            ntlmProperties.getIncludePattern(),
-            ntlmProperties.getOrder());
+            servicesManager, ntlmPrincipalFactory,
+            ntlmProperties.isLoadBalance(), ntlmProperties.getDomainController(),
+            ntlmProperties.getIncludePattern(), ntlmProperties.getOrder());
     }
 
     @ConditionalOnMissingBean(name = "ntlmPrincipalFactory")
@@ -138,15 +128,18 @@ public class SpnegoConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "spnegoPrincipalResolver")
     @Autowired
-    public PrincipalResolver spnegoPrincipalResolver(final CasConfigurationProperties casProperties) {
+    public PrincipalResolver spnegoPrincipalResolver(
+        @Qualifier("spnegoPrincipalFactory")
+        final PrincipalFactory spnegoPrincipalFactory,
+        @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
+        final IPersonAttributeDao attributeRepository,
+        final CasConfigurationProperties casProperties) {
         val personDirectory = casProperties.getPersonDirectory();
         val spnegoPrincipal = casProperties.getAuthn().getSpnego().getPrincipal();
-
-        return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(spnegoPrincipalFactory(),
-            attributeRepository.getObject(),
-            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            SpnegoPrincipalResolver.class,
-            spnegoPrincipal, personDirectory);
+        val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(
+            casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
+        return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(spnegoPrincipalFactory,
+            attributeRepository, attributeMerger, SpnegoPrincipalResolver.class, spnegoPrincipal, personDirectory);
     }
 
     @ConditionalOnMissingBean(name = "spnegoPrincipalFactory")
@@ -157,11 +150,19 @@ public class SpnegoConfiguration {
 
     @ConditionalOnMissingBean(name = "spnegoAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer spnegoAuthenticationEventExecutionPlanConfigurer() {
+    @Autowired
+    public AuthenticationEventExecutionPlanConfigurer spnegoAuthenticationEventExecutionPlanConfigurer(
+        @Qualifier("ntlmAuthenticationHandler")
+        final AuthenticationHandler ntlmAuthenticationHandler,
+        @Qualifier("spnegoPrincipalResolver")
+        final PrincipalResolver spnegoPrincipalResolver,
+        @Qualifier("spnegoHandler")
+        final AuthenticationHandler spnegoHandler,
+        final CasConfigurationProperties casProperties) {
         return plan -> {
-            plan.registerAuthenticationHandlerWithPrincipalResolver(spnegoHandler(), spnegoPrincipalResolver());
+            plan.registerAuthenticationHandlerWithPrincipalResolver(spnegoHandler, spnegoPrincipalResolver);
             if (casProperties.getAuthn().getNtlm().isEnabled()) {
-                plan.registerAuthenticationHandler(ntlmAuthenticationHandler());
+                plan.registerAuthenticationHandler(ntlmAuthenticationHandler);
             }
         };
     }
