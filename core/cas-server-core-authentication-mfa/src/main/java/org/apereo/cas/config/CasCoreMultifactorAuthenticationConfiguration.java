@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.DefaultRequestedAuthenticationContextValida
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
