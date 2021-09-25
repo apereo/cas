@@ -66,6 +66,8 @@ public class JpaWebAuthnConfiguration {
     @Autowired
     @ConditionalOnMissingBean(name = "webAuthnEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean webAuthnEntityManagerFactory(
+        @Qualifier("jpaWebAuthnVendorAdapter")
+        final JpaVendorAdapter jpaWebAuthnVendorAdapter,
         @Qualifier("dataSourceWebAuthn")
         final DataSource dataSourceWebAuthn,
         final Set<String> jpaWebAuthnPackagesToScan,

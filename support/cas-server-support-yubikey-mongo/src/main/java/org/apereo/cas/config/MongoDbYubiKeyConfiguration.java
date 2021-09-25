@@ -25,7 +25,7 @@ import javax.net.ssl.SSLContext;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("mongoDbYubiKeyConfiguration")
+@Configuration(value = "mongoDbYubiKeyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbYubiKeyConfiguration {
 

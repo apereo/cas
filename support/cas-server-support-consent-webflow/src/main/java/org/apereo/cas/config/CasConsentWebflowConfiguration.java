@@ -92,8 +92,7 @@ public class CasConsentWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "consentWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer consentWebflowConfigurer() {
+        public CasWebflowConfigurer consentWebflowConfigurer() {
         return new ConsentWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),
             applicationContext, casProperties);

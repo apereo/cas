@@ -111,8 +111,7 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "acceptableUsagePolicyWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer() {
+        public CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer() {
         return new AcceptableUsagePolicyWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }

@@ -109,8 +109,7 @@ public class CasAccountManagementWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "accountMgmtWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer accountMgmtWebflowConfigurer() {
+        public CasWebflowConfigurer accountMgmtWebflowConfigurer() {
         return new AccountManagementWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
     }

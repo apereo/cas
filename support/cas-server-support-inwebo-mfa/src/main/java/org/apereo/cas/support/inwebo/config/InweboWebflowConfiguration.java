@@ -19,7 +19,6 @@ import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurat
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -29,7 +28,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -43,53 +41,41 @@ import org.springframework.webflow.execution.Action;
  * @author Jerome LELEU
  * @since 6.4.0
  */
-@Configuration("inweboWebflowConfiguration")
+@Configuration(value = "inweboWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 public class InweboWebflowConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
-
-    @Autowired
-    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-
-    @Autowired
-    @Qualifier("inweboService")
-    private ObjectProvider<InweboService> inweboService;
-
-    @Autowired
-    @Qualifier("flowBuilder")
-    private ObjectProvider<FlowBuilder> flowBuilder;
-
-    @Autowired
-    @Qualifier("casWebflowConfigurationContext")
-    private ObjectProvider<CasWebflowEventResolutionConfigurationContext> casWebflowConfigurationContext;
-
-
     @Bean
-    public FlowDefinitionRegistry inweboFlowRegistry() {
-        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices.getObject());
-        builder.addFlowBuilder(flowBuilder.getObject(), InweboMultifactorWebflowConfigurer.MFA_INWEBO_EVENT_ID);
+    @Autowired
+    public FlowDefinitionRegistry inweboFlowRegistry(
+        @Qualifier("flowBuilder")
+        final FlowBuilder flowBuilder,
+        @Qualifier("flowBuilderServices")
+        final FlowBuilderServices flowBuilderServices,
+        final ConfigurableApplicationContext applicationContext) {
+        val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
+        builder.addFlowBuilder(flowBuilder, InweboMultifactorWebflowConfigurer.MFA_INWEBO_EVENT_ID);
         return builder.build();
     }
 
     @ConditionalOnMissingBean(name = "inweboMultifactorWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
     @RefreshScope
-    public CasWebflowConfigurer inweboMultifactorWebflowConfigurer() {
-        val cfg = new InweboMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(),
-            inweboFlowRegistry(),
+    @Autowired
+    public CasWebflowConfigurer inweboMultifactorWebflowConfigurer(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("loginFlowRegistry")
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier("inweboFlowRegistry")
+        final FlowDefinitionRegistry inweboFlowRegistry,
+        @Qualifier("flowBuilderServices")
+        final FlowBuilderServices flowBuilderServices) {
+        val cfg = new InweboMultifactorWebflowConfigurer(flowBuilderServices,
+            loginFlowDefinitionRegistry,
+            inweboFlowRegistry,
             applicationContext,
             casProperties,
             MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
@@ -99,29 +85,42 @@ public class InweboWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer inweboCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(inweboMultifactorWebflowConfigurer());
+    @Autowired
+    public CasWebflowExecutionPlanConfigurer inweboCasWebflowExecutionPlanConfigurer(
+        @Qualifier("inweboMultifactorWebflowConfigurer")
+        final CasWebflowConfigurer inweboMultifactorWebflowConfigurer) {
+        return plan -> plan.registerWebflowConfigurer(inweboMultifactorWebflowConfigurer);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboMultifactorAuthenticationWebflowEventResolver")
     @RefreshScope
-    public CasWebflowEventResolver inweboMultifactorAuthenticationWebflowEventResolver() {
-        return new InweboMultifactorAuthenticationWebflowEventResolver(casWebflowConfigurationContext.getObject());
+    @Autowired
+    public CasWebflowEventResolver inweboMultifactorAuthenticationWebflowEventResolver(
+        @Qualifier("casWebflowConfigurationContext")
+        final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
+        return new InweboMultifactorAuthenticationWebflowEventResolver(casWebflowConfigurationContext);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboPushAuthenticateAction")
     @RefreshScope
-    public Action inweboPushAuthenticateAction() {
-        return new InweboPushAuthenticateAction(inweboService.getObject());
+    @Autowired
+    public Action inweboPushAuthenticateAction(
+        @Qualifier("inweboService")
+        final InweboService inweboService) {
+        return new InweboPushAuthenticateAction(inweboService);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboCheckUserAction")
     @RefreshScope
-    public Action inweboCheckUserAction() {
-        return new InweboCheckUserAction(inweboService.getObject(), casProperties);
+    @Autowired
+    public Action inweboCheckUserAction(
+        @Qualifier("inweboService")
+        final InweboService inweboService,
+        final CasConfigurationProperties casProperties) {
+        return new InweboCheckUserAction(inweboService, casProperties);
     }
 
     @Bean
@@ -134,8 +133,14 @@ public class InweboWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "inweboCheckAuthenticationAction")
     @RefreshScope
-    public Action inweboCheckAuthenticationAction() {
-        return new InweboCheckAuthenticationAction(inweboService.getObject(), inweboMultifactorAuthenticationWebflowEventResolver());
+    @Autowired
+    public Action inweboCheckAuthenticationAction(
+        @Qualifier("inweboMultifactorAuthenticationWebflowEventResolver")
+        final CasWebflowEventResolver inweboMultifactorAuthenticationWebflowEventResolver,
+        @Qualifier("inweboService")
+        final InweboService inweboService) {
+        return new InweboCheckAuthenticationAction(inweboService,
+            inweboMultifactorAuthenticationWebflowEventResolver);
     }
 
     @Bean
@@ -150,17 +155,25 @@ public class InweboWebflowConfiguration {
      */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.inwebo")
-    @Configuration("inweboMultifactorTrustConfiguration")
-    public class InweboMultifactorTrustConfiguration {
+    @Configuration(value = "inweboMultifactorTrustConfiguration", proxyBeanMethods = false)
+    public static class InweboMultifactorTrustConfiguration {
 
         @ConditionalOnMissingBean(name = "inweboMultifactorTrustWebflowConfigurer")
         @Bean
-        @DependsOn({"defaultWebflowConfigurer", "inweboMultifactorWebflowConfigurer"})
         @RefreshScope
-        public CasWebflowConfigurer inweboMultifactorTrustWebflowConfigurer() {
-            val cfg = new InweboMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
-                loginFlowDefinitionRegistry.getObject(),
-                inweboFlowRegistry(),
+        @Autowired
+        public CasWebflowConfigurer inweboMultifactorTrustWebflowConfigurer(
+            @Qualifier("inweboFlowRegistry")
+            final FlowDefinitionRegistry inweboFlowRegistry,
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("loginFlowRegistry")
+            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier("flowBuilderServices")
+            final FlowBuilderServices flowBuilderServices) {
+            val cfg = new InweboMultifactorTrustWebflowConfigurer(flowBuilderServices,
+                loginFlowDefinitionRegistry,
+                inweboFlowRegistry,
                 applicationContext,
                 casProperties,
                 MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
@@ -169,8 +182,11 @@ public class InweboWebflowConfiguration {
         }
 
         @Bean
-        public CasWebflowExecutionPlanConfigurer inweboMultifactorTrustCasWebflowExecutionPlanConfigurer() {
-            return plan -> plan.registerWebflowConfigurer(inweboMultifactorTrustWebflowConfigurer());
+        @Autowired
+        public CasWebflowExecutionPlanConfigurer inweboMultifactorTrustCasWebflowExecutionPlanConfigurer(
+            @Qualifier("inweboMultifactorTrustWebflowConfigurer")
+            final CasWebflowConfigurer inweboMultifactorTrustWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(inweboMultifactorTrustWebflowConfigurer);
         }
     }
 }

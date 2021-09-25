@@ -108,8 +108,7 @@ public class SamlIdPWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "samlIdPWebConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer samlIdPWebConfigurer() {
+        public CasWebflowConfigurer samlIdPWebConfigurer() {
         return new SamlIdPWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),
             applicationContext,
