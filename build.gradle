@@ -21,6 +21,8 @@ buildscript {
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
         classpath "com.github.ben-manes:gradle-versions-plugin:$gradleDependencyVersionsVersion"
 
+        classpath "org.openrewrite:plugin:5.10.0"
+        
         classpath "net.ltgt.gradle:gradle-errorprone-plugin:$gradleErrorProneVersion"
         classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
         classpath "gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
