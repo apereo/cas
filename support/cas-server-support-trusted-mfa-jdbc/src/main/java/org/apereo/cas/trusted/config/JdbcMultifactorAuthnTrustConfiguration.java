@@ -40,7 +40,7 @@ import java.util.Set;
  */
 @Configuration("jdbcMultifactorAuthnTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 public class JdbcMultifactorAuthnTrustConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

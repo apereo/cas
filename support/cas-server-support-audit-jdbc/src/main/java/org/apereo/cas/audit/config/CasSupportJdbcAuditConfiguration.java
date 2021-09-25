@@ -42,9 +42,9 @@ import javax.sql.DataSource;
  * @since 5.0.0
  */
 @Configuration(value = "casJdbcAuditConfiguration", proxyBeanMethods = false)
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableAspectJAutoProxy
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 public class CasSupportJdbcAuditConfiguration {
     @Autowired
     @Qualifier("jpaBeanFactory")

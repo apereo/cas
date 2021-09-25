@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.config;
 
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
@@ -27,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -72,7 +73,7 @@ import java.util.List;
  */
 @Configuration(value = "casWebflowContextConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
+@AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasWebflowContextConfiguration {
 
     private static final int LOGOUT_FLOW_HANDLER_ORDER = 3;
@@ -268,7 +269,7 @@ public class CasWebflowContextConfiguration {
     }
 
     @Configuration(value = "CasWebflowDefinitionsConfiguration", proxyBeanMethods = false)
-    @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
+    @AutoConfigureAfter(CasCoreServicesConfiguration.class)
     public static class CasWebflowDefinitionsConfiguration {
         @Bean
         public FlowBuilder flowBuilder() {
@@ -349,6 +350,7 @@ public class CasWebflowContextConfiguration {
         }
     }
 
+    @AutoConfigureAfter(CasCoreServicesConfiguration.class)
     @Configuration(value = "CasWebflowExecutionConfiguration", proxyBeanMethods = false)
     public static class CasWebflowExecutionConfiguration {
         @Bean

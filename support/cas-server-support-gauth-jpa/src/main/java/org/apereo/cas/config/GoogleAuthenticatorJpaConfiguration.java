@@ -43,7 +43,7 @@ import java.util.Set;
  */
 @Configuration("googleAuthentiacatorJpaConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @EnableScheduling
 public class GoogleAuthenticatorJpaConfiguration {
 

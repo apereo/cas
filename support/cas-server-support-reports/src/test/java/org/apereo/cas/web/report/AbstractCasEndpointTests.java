@@ -62,7 +62,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @SpringBootTest(classes = AbstractCasEndpointTests.SharedTestConfiguration.class,
     properties = "management.endpoints.web.exposure.include=*")
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableAspectJAutoProxy
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class AbstractCasEndpointTests {

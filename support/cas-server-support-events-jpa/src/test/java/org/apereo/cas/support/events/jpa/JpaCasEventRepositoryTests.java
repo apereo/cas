@@ -27,8 +27,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class
 }, properties = "cas.jdbc.show-sql=true")
-@EnableTransactionManagement(proxyTargetClass = true)
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableTransactionManagement
+@EnableAspectJAutoProxy
 @Getter
 @Tag("JDBC")
 public class JpaCasEventRepositoryTests extends AbstractCasEventRepositoryTests {

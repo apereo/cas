@@ -10,10 +10,11 @@ import lombok.val;
 import org.pac4j.core.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -26,7 +27,7 @@ import java.util.List;
  * @since 6.1.0
  */
 @Configuration(value = "oidcThrottleConfiguration", proxyBeanMethods = false)
-@AutoConfigureBefore(OidcConfiguration.class)
+@AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
 public class OidcThrottleConfiguration {
     private static final List<String> THROTTLED_ENDPOINTS = List.of(
         OidcConstants.ACCESS_TOKEN_URL,

@@ -45,7 +45,7 @@ import java.util.Set;
  */
 @Configuration("jpaServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 public class JpaServiceRegistryConfiguration {
 
     @Autowired

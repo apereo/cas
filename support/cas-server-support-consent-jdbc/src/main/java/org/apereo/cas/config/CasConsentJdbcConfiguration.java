@@ -38,7 +38,7 @@ import java.util.Set;
  */
 @Configuration("casConsentJdbcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 public class CasConsentJdbcConfiguration {
     @Autowired
     @Qualifier("jpaBeanFactory")

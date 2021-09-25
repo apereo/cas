@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Configuration("googleAuthenticatorRedisConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @EnableScheduling
 @ConditionalOnProperty(prefix = "cas.authn.mfa.gauth.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class GoogleAuthenticatorRedisConfiguration {

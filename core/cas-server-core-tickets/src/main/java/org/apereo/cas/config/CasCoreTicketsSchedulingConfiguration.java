@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @EnableAsync
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @AutoConfigureAfter(CasCoreTicketsConfiguration.class)
 @Slf4j
 public class CasCoreTicketsSchedulingConfiguration {

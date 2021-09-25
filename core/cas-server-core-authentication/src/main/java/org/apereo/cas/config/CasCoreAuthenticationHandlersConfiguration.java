@@ -158,20 +158,21 @@ public class CasCoreAuthenticationHandlersConfiguration {
     public PasswordPolicyContext acceptPasswordPolicyConfiguration() {
         return new PasswordPolicyContext();
     }
-
-    @ConditionalOnMissingBean(name = "jaasPasswordPolicyConfiguration")
-    @Bean
-    @RefreshScope
-    public PasswordPolicyContext jaasPasswordPolicyConfiguration() {
-        return new PasswordPolicyContext();
-    }
-
+    
     /**
      * The JAAS authentication configuration.
      */
     @Configuration(value = "jaasAuthenticationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JaasAuthenticationConfiguration {
+
+        @ConditionalOnMissingBean(name = "jaasPasswordPolicyConfiguration")
+        @Bean
+        @RefreshScope
+        public PasswordPolicyContext jaasPasswordPolicyConfiguration() {
+            return new PasswordPolicyContext();
+        }
+
         @ConditionalOnMissingBean(name = "jaasPrincipalFactory")
         @Bean
         @RefreshScope

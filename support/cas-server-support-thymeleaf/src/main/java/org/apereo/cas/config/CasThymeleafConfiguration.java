@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -71,6 +72,7 @@ import java.util.Set;
 @ConditionalOnClass(value = SpringTemplateEngine.class)
 @ImportAutoConfiguration(ThymeleafAutoConfiguration.class)
 @Slf4j
+@AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasThymeleafConfiguration {
     private static final int THYMELEAF_VIEW_RESOLVER_ORDER = Ordered.LOWEST_PRECEDENCE - 5;
     

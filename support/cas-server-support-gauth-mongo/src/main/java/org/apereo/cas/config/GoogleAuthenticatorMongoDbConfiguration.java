@@ -32,7 +32,7 @@ import javax.net.ssl.SSLContext;
  */
 @Configuration("googleAuthenticatorMongoDbConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @EnableScheduling
 public class GoogleAuthenticatorMongoDbConfiguration {
 

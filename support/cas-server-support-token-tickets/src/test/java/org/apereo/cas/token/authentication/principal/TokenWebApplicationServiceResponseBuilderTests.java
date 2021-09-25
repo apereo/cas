@@ -93,7 +93,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     CasCoreAuthenticationConfiguration.class
 })
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableAspectJAutoProxy
 @EnableScheduling
 @Tag("Authentication")
 public class TokenWebApplicationServiceResponseBuilderTests {

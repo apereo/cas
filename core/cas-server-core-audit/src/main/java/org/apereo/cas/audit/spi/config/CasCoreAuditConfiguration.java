@@ -18,6 +18,7 @@ import org.apereo.cas.audit.spi.resource.ServiceAccessEnforcementAuditResourceRe
 import org.apereo.cas.audit.spi.resource.ServiceAuditResourceResolver;
 import org.apereo.cas.audit.spi.resource.TicketAsFirstParameterResourceResolver;
 import org.apereo.cas.audit.spi.resource.TicketValidationResourceResolver;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.MessageSanitizationUtils;
@@ -44,6 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.audit.AuditEventRepository;
 import org.springframework.boot.actuate.audit.InMemoryAuditEventRepository;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -68,9 +70,10 @@ import java.util.List;
  * @since 5.0.0
  */
 @Configuration(value = "casCoreAuditConfiguration", proxyBeanMethods = false)
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableAspectJAutoProxy
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasCoreAuditConfiguration {
     @Bean
     @ConditionalOnProperty(prefix = "cas.audit.engine", name = "enabled", havingValue = "true", matchIfMissing = true)

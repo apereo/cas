@@ -32,7 +32,7 @@ import javax.sql.DataSource;
  * @since 5.2.0
  */
 @Configuration("jdbcPasswordManagementConfiguration")
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class JdbcPasswordManagementConfiguration {
     @Autowired

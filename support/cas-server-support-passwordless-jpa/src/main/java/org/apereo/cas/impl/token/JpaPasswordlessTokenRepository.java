@@ -20,7 +20,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @Transactional(transactionManager = "passwordlessTransactionManager")
 @Slf4j
 public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenRepository {

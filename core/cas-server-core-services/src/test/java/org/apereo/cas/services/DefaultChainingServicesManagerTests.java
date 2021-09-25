@@ -16,13 +16,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link ChainingServicesManagerTests}.
+ * This is {@link DefaultChainingServicesManagerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Tag("RegisteredService")
-public class ChainingServicesManagerTests extends AbstractServicesManagerTests<ChainingServicesManager> {
+public class DefaultChainingServicesManagerTests extends AbstractServicesManagerTests<DefaultChainingServicesManager> {
     @Test
     public void verifyOperation() {
         val servicesManager = mock(ServicesManager.class);
@@ -88,7 +88,7 @@ public class ChainingServicesManagerTests extends AbstractServicesManagerTests<C
 
     @Override
     protected ServicesManager getServicesManagerInstance() {
-        val chain = new ChainingServicesManager();
+        val chain = new DefaultChainingServicesManager();
         chain.registerServiceManager(super.getServicesManagerInstance());
         return chain;
     }

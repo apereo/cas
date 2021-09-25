@@ -9,11 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 
 import java.util.List;
 
@@ -24,16 +22,14 @@ import java.util.List;
  * @since 5.2.0
  */
 @Configuration(value = "casCoreUtilSerializationConfiguration", proxyBeanMethods = false)
-@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
 public class CasCoreUtilSerializationConfiguration {
 
-    @Autowired
-    private ObjectProvider<List<ComponentSerializationPlanConfigurer>> configurers;
-
     @ConditionalOnMissingBean(name = "componentSerializationPlan")
     @Bean
-    public ComponentSerializationPlan componentSerializationPlan() {
+    @Autowired
+    public ComponentSerializationPlan componentSerializationPlan(
+        final ObjectProvider<List<ComponentSerializationPlanConfigurer>> configurers) {
         val plan = new DefaultComponentSerializationPlan();
         plan.registerSerializableClass(TriStateBoolean.class);
 

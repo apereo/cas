@@ -40,7 +40,7 @@ import java.util.Set;
  */
 @Configuration("jpaEventsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 public class JpaEventsConfiguration {
     @Autowired
     @Qualifier("jpaBeanFactory")
