@@ -271,6 +271,5 @@ public interface ServicesManager extends Ordered {
      * @return list of services
      */
     Collection<RegisteredService> getServicesForDomain(String domain);
-
-
+    
 }

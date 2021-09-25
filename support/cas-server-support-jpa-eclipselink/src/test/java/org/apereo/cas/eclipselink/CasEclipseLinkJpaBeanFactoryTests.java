@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class
 }, properties = "cas.jdbc.show-sql=false")
 @Tag("JDBC")
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 public class CasEclipseLinkJpaBeanFactoryTests {
     @Autowired
     private CasConfigurationProperties casProperties;

@@ -25,11 +25,10 @@ import java.util.Map;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreTicketIdGeneratorsConfiguration {
 
-    @Autowired
-    private ObjectProvider<List<UniqueTicketIdGeneratorConfigurer>> configurers;
-
     @Bean
-    public Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap() {
+    @Autowired
+    public Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap(
+        final ObjectProvider<List<UniqueTicketIdGeneratorConfigurer>> configurers) {
         val map = new HashMap<String, UniqueTicketIdGenerator>();
         configurers.ifAvailable(cfgs -> cfgs.forEach(c -> {
             val pair = c.buildUniqueTicketIdGenerators();

@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @Transactional(transactionManager = "ticketTransactionManager")
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter

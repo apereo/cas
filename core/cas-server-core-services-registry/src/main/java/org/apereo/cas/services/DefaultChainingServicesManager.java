@@ -22,21 +22,17 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * This is {@link ChainingServicesManager}.
+ * This is {@link DefaultChainingServicesManager}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Getter
-public class ChainingServicesManager implements ServicesManager {
+public class DefaultChainingServicesManager implements ChainingServicesManager {
 
     private final List<ServicesManager> serviceManagers = new ArrayList<>();
 
-    /**
-     * Adds a services manager to the chain.
-     *
-     * @param manager - a services manager
-     */
+    @Override
     public void registerServiceManager(final ServicesManager manager) {
         this.serviceManagers.add(manager);
         AnnotationAwareOrderComparator.sortIfNecessary(serviceManagers);

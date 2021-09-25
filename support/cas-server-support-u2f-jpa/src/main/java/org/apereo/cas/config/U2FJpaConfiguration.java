@@ -41,7 +41,7 @@ import java.util.Set;
  */
 @Configuration("u2fJpaConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 public class U2FJpaConfiguration {
 
     @Autowired

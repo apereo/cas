@@ -40,7 +40,7 @@ import java.util.Set;
  */
 @Configuration("samlIdPJpaRegisteredServiceMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
 
     @Autowired

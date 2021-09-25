@@ -42,9 +42,11 @@ import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link CasServiceRegistryInitializationConfiguration}.
@@ -61,7 +63,7 @@ import java.util.List;
 @ConditionalOnBean(ServicesManager.class)
 @ConditionalOnProperty(prefix = "cas.service-registry.core", name = "init-from-json", havingValue = "true")
 @Slf4j
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableAspectJAutoProxy
 @EnableAsync
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasServiceRegistryInitializationConfiguration {
@@ -112,11 +114,10 @@ public class CasServiceRegistryInitializationConfiguration {
     public ServiceRegistry embeddedJsonServiceRegistry(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("serviceRegistryListeners")
         final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners) throws Exception {
         val location = getServiceRegistryInitializerServicesDirectoryResource(casProperties, applicationContext);
         val registry = new EmbeddedResourceBasedServiceRegistry(applicationContext, location,
-            serviceRegistryListeners.getObject(), WatcherService.noOp());
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new), WatcherService.noOp());
         if (!(location instanceof ClassPathResource)) {
             registry.enableDefaultWatcherService();
         }

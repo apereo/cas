@@ -10,7 +10,7 @@ import org.apereo.cas.config.CasServiceRegistryInitializationConfigurationTests;
 import org.apereo.cas.config.DomainServicesManagerConfigurationTests;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProviderTests;
 import org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicyTests;
-import org.apereo.cas.services.ChainingServicesManagerTests;
+import org.apereo.cas.services.DefaultChainingServicesManagerTests;
 import org.apereo.cas.services.DefaultDomainAwareServicesManagerTests;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicyTests;
@@ -125,7 +125,7 @@ import org.junit.platform.suite.api.Suite;
     RegisteredServiceMutantRegexAttributeFilterTests.class,
     RegisteredServiceScriptedAttributeFilterTests.class,
     GroovyRegisteredServiceAccessStrategyTests.class,
-    ChainingServicesManagerTests.class,
+    DefaultChainingServicesManagerTests.class,
     DomainServicesManagerConfigurationTests.class,
     RegisteredServiceJsonSerializerTests.class
 })

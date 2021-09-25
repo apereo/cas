@@ -47,7 +47,7 @@ import java.util.Set;
  */
 @Configuration("jpaTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @AutoConfigureBefore(CasCoreTicketsConfiguration.class)
 public class JpaTicketRegistryConfiguration {
 

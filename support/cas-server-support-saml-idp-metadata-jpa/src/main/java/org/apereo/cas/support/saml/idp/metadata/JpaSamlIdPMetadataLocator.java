@@ -27,7 +27,7 @@ import java.util.Optional;
  * @since 6.0.0
  */
 
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @Transactional(transactionManager = "transactionManagerSamlMetadataIdP")
 @Slf4j
 @Getter

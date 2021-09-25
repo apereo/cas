@@ -34,8 +34,8 @@ import java.time.Instant;
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class, proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync
-@EnableAspectJAutoProxy(proxyTargetClass = true)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableAspectJAutoProxy
+@EnableTransactionManagement
 @EnableScheduling
 @NoArgsConstructor
 @Slf4j

@@ -22,7 +22,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @Transactional(transactionManager = "transactionManagerConsent")
 @Slf4j
 @ToString

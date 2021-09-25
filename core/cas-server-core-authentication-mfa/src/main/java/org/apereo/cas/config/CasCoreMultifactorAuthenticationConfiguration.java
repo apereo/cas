@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.DefaultRequestedAuthenticationContextValida
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
@@ -13,6 +14,7 @@ import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -28,6 +30,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "casCoreMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasCoreMultifactorAuthenticationConfiguration {
     @Autowired
     @RefreshScope

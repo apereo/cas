@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @Transactional(transactionManager = "transactionManagerU2f", propagation = Propagation.REQUIRED)
 @Slf4j
 public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {

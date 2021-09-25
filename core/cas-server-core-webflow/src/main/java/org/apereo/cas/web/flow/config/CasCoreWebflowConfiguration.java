@@ -17,6 +17,7 @@ import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.exceptions.UniquePrincipalRequiredException;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -55,6 +56,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -83,6 +85,7 @@ import java.util.Set;
 @Configuration(value = "casCoreWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasCoreWebflowConfiguration {
     @ConditionalOnMissingBean(name = "serviceTicketRequestWebflowEventResolver")
     @Bean

@@ -24,7 +24,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @Transactional(transactionManager = "transactionManagerYubiKey")
 @Slf4j
 public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {

@@ -49,7 +49,7 @@ import java.util.Set;
  */
 @Configuration("samlIdPJpaIdPMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @Slf4j
 @ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.jpa", name = "idp-metadata-enabled", havingValue = "true")
 public class SamlIdPJpaIdPMetadataConfiguration {

@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationManager;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
@@ -22,6 +23,7 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -45,6 +47,7 @@ import java.util.List;
 @Configuration(value = "casCoreAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasCoreAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "authenticationResultBuilderFactory")
     @Bean

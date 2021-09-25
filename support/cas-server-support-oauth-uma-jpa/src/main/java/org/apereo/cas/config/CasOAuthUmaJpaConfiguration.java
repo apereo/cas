@@ -41,7 +41,7 @@ import java.util.Set;
 @Configuration("casOAuthUmaJpaConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureBefore(CasOAuthUmaConfiguration.class)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @ConditionalOnProperty(name = "cas.authn.oauth.uma.resource-set.jpa.url")
 public class CasOAuthUmaJpaConfiguration {
     @Autowired

@@ -129,7 +129,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreMultifactorAuthenticationConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableAspectJAutoProxy
 public abstract class BaseCasWebflowSessionContextConfigurationTests {
     @Test
     public void verifyExecutorsAreBeans() {

@@ -25,6 +25,7 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -40,6 +41,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "casCoreAuthenticationSupportConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasCoreAuthenticationSupportConfiguration {
 
     @RefreshScope

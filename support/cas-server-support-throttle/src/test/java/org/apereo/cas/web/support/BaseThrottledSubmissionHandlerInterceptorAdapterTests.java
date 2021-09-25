@@ -69,11 +69,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class,
     properties = {
-        "spring.aop.proxy-target-class=true",
         "cas.authn.throttle.failure.rangeSeconds=1",
         "cas.authn.throttle.failure.threshold=2"
     })
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableAspectJAutoProxy
 @EnableScheduling
 @Slf4j
 public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {

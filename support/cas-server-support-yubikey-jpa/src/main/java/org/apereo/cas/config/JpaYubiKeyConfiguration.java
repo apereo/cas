@@ -41,7 +41,7 @@ import java.util.Set;
  */
 @Configuration("jpaYubiKeyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 public class JpaYubiKeyConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

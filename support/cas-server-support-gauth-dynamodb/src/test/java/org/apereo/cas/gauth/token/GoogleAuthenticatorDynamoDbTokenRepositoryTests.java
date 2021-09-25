@@ -97,8 +97,8 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.gauth.dynamo-db.local-instance=true",
         "cas.authn.mfa.gauth.dynamo-db.region=us-east-1"
     })
-@EnableTransactionManagement(proxyTargetClass = true)
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableTransactionManagement
+@EnableAspectJAutoProxy
 @EnableScheduling
 @Getter
 @EnabledIfPortOpen(port = 8000)

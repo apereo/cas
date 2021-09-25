@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.saml-idp.metadata.couch-db.password=password"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @EnabledIfPortOpen(port = 5984)
 public class CouchDbSamlRegisteredServiceMetadataResolverTests {
     @Autowired

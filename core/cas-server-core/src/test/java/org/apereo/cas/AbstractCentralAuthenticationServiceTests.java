@@ -23,7 +23,6 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(properties = {
     "cas.authn.policy.any.try-all=true",
-    "spring.aop.proxy-target-class=true",
     "cas.ticket.st.time-to-kill-in-seconds=30"
 })
 @Setter

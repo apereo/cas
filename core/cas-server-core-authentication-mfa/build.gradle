@@ -3,6 +3,8 @@ dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-mfa")
 
+    compileOnlyApi project(":core:cas-server-core-services")
+    
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")
