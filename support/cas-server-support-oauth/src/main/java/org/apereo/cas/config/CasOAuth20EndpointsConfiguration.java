@@ -17,15 +17,16 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 import java.util.List;
 
@@ -37,29 +38,16 @@ import java.util.List;
  */
 @Configuration(value = "casOAuth20EndpointsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
 public class CasOAuth20EndpointsConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("accessTokenJwtBuilder")
-    private ObjectProvider<JwtBuilder> accessTokenJwtBuilder;
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("accessTokenGrantAuditableRequestExtractor")
-    private ObjectProvider<AuditableExecution> accessTokenGrantAuditableRequestExtractor;
 
     @Bean
     @ConditionalOnMissingBean(name = "callbackAuthorizeController")
     @RefreshScope
     @Autowired
     public OAuth20CallbackAuthorizeEndpointController callbackAuthorizeController(
-        @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
+        @Qualifier("oauth20ConfigurationContext")
+        final OAuth20ConfigurationContext context) {
         return new OAuth20CallbackAuthorizeEndpointController(context);
     }
 
@@ -67,7 +55,8 @@ public class CasOAuth20EndpointsConfiguration {
     @Bean
     @Autowired
     public OAuth20IntrospectionEndpointController<OAuth20ConfigurationContext> introspectionEndpointController(
-        @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
+        @Qualifier("oauth20ConfigurationContext")
+        final OAuth20ConfigurationContext context) {
         return new OAuth20IntrospectionEndpointController<>(context);
     }
 
@@ -75,8 +64,11 @@ public class CasOAuth20EndpointsConfiguration {
     @Bean
     @Autowired
     public OAuth20AccessTokenEndpointController accessTokenController(
-        @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
-        return new OAuth20AccessTokenEndpointController(context, accessTokenGrantAuditableRequestExtractor.getObject());
+        @Qualifier("accessTokenGrantAuditableRequestExtractor")
+        final AuditableExecution accessTokenGrantAuditableRequestExtractor,
+        @Qualifier("oauth20ConfigurationContext")
+        final OAuth20ConfigurationContext context) {
+        return new OAuth20AccessTokenEndpointController(context, accessTokenGrantAuditableRequestExtractor);
     }
 
 
@@ -84,16 +76,17 @@ public class CasOAuth20EndpointsConfiguration {
     @Bean
     @Autowired
     public OAuth20DeviceUserCodeApprovalEndpointController deviceUserCodeApprovalEndpointController(
-        @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
+        @Qualifier("oauth20ConfigurationContext")
+        final OAuth20ConfigurationContext context) {
         return new OAuth20DeviceUserCodeApprovalEndpointController(context);
     }
-
 
     @ConditionalOnMissingBean(name = "oauthProfileController")
     @Bean
     @Autowired
     public OAuth20UserProfileEndpointController oauthProfileController(
-        @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
+        @Qualifier("oauth20ConfigurationContext")
+        final OAuth20ConfigurationContext context) {
         return new OAuth20UserProfileEndpointController(context);
     }
 
@@ -101,24 +94,31 @@ public class CasOAuth20EndpointsConfiguration {
     @Bean
     @Autowired
     public OAuth20RevocationEndpointController oauthRevocationController(
-        @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
+        @Qualifier("oauth20ConfigurationContext")
+        final OAuth20ConfigurationContext context) {
         return new OAuth20RevocationEndpointController(context);
     }
-
 
     @ConditionalOnMissingBean(name = "authorizeController")
     @Bean
     @RefreshScope
     public OAuth20AuthorizeEndpointController authorizeController(
-        @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
+        @Qualifier("oauth20ConfigurationContext")
+        final OAuth20ConfigurationContext context) {
         return new OAuth20AuthorizeEndpointController(context);
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public OAuth20TokenManagementEndpoint oauth20TokenManagementEndpoint() {
+    @Autowired
+    public OAuth20TokenManagementEndpoint oauth20TokenManagementEndpoint(
+        @Qualifier("accessTokenJwtBuilder")
+        final JwtBuilder accessTokenJwtBuilder,
+        @Qualifier("centralAuthenticationService")
+        final CentralAuthenticationService centralAuthenticationService,
+        final CasConfigurationProperties casProperties) {
         return new OAuth20TokenManagementEndpoint(casProperties,
-            centralAuthenticationService.getObject(), accessTokenJwtBuilder.getObject());
+            centralAuthenticationService, accessTokenJwtBuilder);
     }
 
     @Bean
