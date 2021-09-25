@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
+import org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnJpaMultifactorProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.util.CollectionUtils;
@@ -11,7 +12,6 @@ import org.apereo.cas.webauthn.JpaWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -35,30 +35,24 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Configuration("JpaWebAuthnConfiguration")
+@Configuration(value = "JpaWebAuthnConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class JpaWebAuthnConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("jpaBeanFactory")
-    private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
-
-    @Autowired
-    @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
-    private ObjectProvider<CipherExecutor> webAuthnCredentialRegistrationCipherExecutor;
-
     @RefreshScope
     @Bean
-    public JpaVendorAdapter jpaWebAuthnVendorAdapter() {
-        return jpaBeanFactory.getObject().newJpaVendorAdapter(casProperties.getJdbc());
+    @Autowired
+    public JpaVendorAdapter jpaWebAuthnVendorAdapter(
+        @Qualifier("jpaBeanFactory")
+        final JpaBeanFactory jpaBeanFactory,
+        final CasConfigurationProperties casProperties) {
+        return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "dataSourceWebAuthn")
     @RefreshScope
-    public DataSource dataSourceWebAuthn() {
+    @Autowired
+    public DataSource dataSourceWebAuthn(final CasConfigurationProperties casProperties) {
         return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getWebAuthn().getJpa());
     }
 
@@ -69,16 +63,23 @@ public class JpaWebAuthnConfiguration {
 
     @Lazy
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "webAuthnEntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean webAuthnEntityManagerFactory() {
-        val factory = jpaBeanFactory.getObject();
+    public LocalContainerEntityManagerFactoryBean webAuthnEntityManagerFactory(
+        @Qualifier("dataSourceWebAuthn")
+        final DataSource dataSourceWebAuthn,
+        final Set<String> jpaWebAuthnPackagesToScan,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("jpaBeanFactory")
+        final JpaBeanFactory jpaBeanFactory) {
         val ctx = JpaConfigurationContext.builder()
-            .dataSource(dataSourceWebAuthn())
-            .packagesToScan(jpaWebAuthnPackagesToScan())
+            .dataSource(dataSourceWebAuthn)
+            .packagesToScan(jpaWebAuthnPackagesToScan)
             .persistenceUnitName("jpaWebAuthnRegistryContext")
-            .jpaVendorAdapter(jpaWebAuthnVendorAdapter())
+            .jpaVendorAdapter(jpaWebAuthnVendorAdapter)
             .build();
-        return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getWebAuthn().getJpa());
+        val jpa = casProperties.getAuthn().getMfa().getWebAuthn().getJpa();
+        return jpaBeanFactory.newEntityManagerFactoryBean(ctx, jpa);
     }
 
     @Autowired
@@ -90,14 +91,17 @@ public class JpaWebAuthnConfiguration {
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }
-
-
+    
     @RefreshScope
     @Bean
+    @Autowired
     public WebAuthnCredentialRepository webAuthnCredentialRepository(
+        @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
+        final CipherExecutor webAuthnCredentialRegistrationCipherExecutor,
+        final CasConfigurationProperties casProperties,
         @Qualifier("transactionManagerWebAuthn")
         final PlatformTransactionManager transactionManager) {
         return new JpaWebAuthnCredentialRepository(casProperties,
-            webAuthnCredentialRegistrationCipherExecutor.getObject(), transactionManager);
+            webAuthnCredentialRegistrationCipherExecutor, transactionManager);
     }
 }
