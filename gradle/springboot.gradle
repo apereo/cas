@@ -22,7 +22,13 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
 
     springBoot {
         mainClassName = project.ext.mainClassName
-        buildInfo()
+        buildInfo {
+            properties {
+                if (!rootProject.generateTimestamps) {
+                    time = null
+                }
+            }
+        }
     }
 
     if (plugins.hasPlugin("war")) {
@@ -38,8 +44,11 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
                         "Automatic-Module-Name": project.name,
                         "Implementation-Title": project.name,
                         "Implementation-Vendor": project.group,
-                        "Created-By": project.group,
-                        "Implementation-Date": java.time.ZonedDateTime.now(),
+                        "Created-By": project.group)
+                if (rootProject.generateTimestamps) {
+                    attributes("Implementation-Date": java.time.ZonedDateTime.now())
+                }
+                attributes(
                         "Specification-Version": "${-> project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'}",
                         "Implementation-Version": project.version)
             }
