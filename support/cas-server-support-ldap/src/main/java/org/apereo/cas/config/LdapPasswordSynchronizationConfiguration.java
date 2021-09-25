@@ -27,13 +27,10 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "ldapPasswordSynchronizationConfiguration", proxyBeanMethods = true)
+@Configuration(value = "ldapPasswordSynchronizationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.authn.password-sync", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class LdapPasswordSynchronizationConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
 
     @Bean
     public ListFactoryBean ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean() {
@@ -41,8 +38,8 @@ public class LdapPasswordSynchronizationConfiguration {
             @Override
             protected void destroyInstance(final List list) {
                 Objects.requireNonNull(list).forEach(Unchecked.consumer(postProcessor ->
-                        ((DisposableBean) postProcessor).destroy()
-                                                                       ));
+                    ((DisposableBean) postProcessor).destroy()
+                ));
             }
         };
         bean.setSourceList(new ArrayList<>());
@@ -53,6 +50,7 @@ public class LdapPasswordSynchronizationConfiguration {
     @Bean
     @Autowired
     public AuthenticationEventExecutionPlanConfigurer ldapPasswordSynchronizationAuthenticationEventExecutionPlanConfigurer(
+        final CasConfigurationProperties casProperties,
         @Qualifier("ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean")
         final ListFactoryBean ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean) throws Exception {
         val postProcessorList = Objects.requireNonNull(ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean.getObject());

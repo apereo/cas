@@ -9,6 +9,7 @@
     <suppress id="stackTraceConsoleLogs" files="(.*Tests*|Mock.*|Test.*)\.java" />
     <suppress id="objectProvider" files="(.*Tests*|Mock.*|Test.*)\.java" />
     <suppress id="forbiddenAnnotations" files="(.*Tests*|Mock.*|Test.*|.*TestConfiguration.*)\.java" />
+    <suppress id="parameterNumberForMethods" files=".*Configuration\.java" />
     <suppress id="collectionsUnmodifiable" files="(.*Tests*|Mock.*|Test.*)\.java" />
     <suppress id="collectionsEmpty" files="(.*Tests*|Mock.*|Test.*)\.java" />
     <suppress id="methodLength" files="(.*Tests*|Mock.*|Test.*)\.java" />

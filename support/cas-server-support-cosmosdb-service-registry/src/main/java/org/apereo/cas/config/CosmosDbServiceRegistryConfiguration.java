@@ -19,7 +19,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link CosmosDbServiceRegistryConfiguration}.
@@ -27,40 +29,37 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "cosmosDbServiceRegistryConfiguration", proxyBeanMethods = true)
+@Configuration(value = "cosmosDbServiceRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CosmosDbServiceRegistryConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("casSslContext")
-    private ObjectProvider<CasSSLContext> casSslContext;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
 
     @ConditionalOnMissingBean(name = "cosmosDbObjectFactory")
     @Bean
-    public CosmosDbObjectFactory cosmosDbObjectFactory() {
-        return new CosmosDbObjectFactory(casProperties.getServiceRegistry().getCosmosDb(), casSslContext.getObject());
+    @Autowired
+    public CosmosDbObjectFactory cosmosDbObjectFactory(
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext,
+        final CasConfigurationProperties casProperties) {
+        return new CosmosDbObjectFactory(casProperties.getServiceRegistry().getCosmosDb(), casSslContext);
     }
 
     @Bean
     @RefreshScope
-    public ServiceRegistry cosmosDbServiceRegistry() {
+    @Autowired
+    public ServiceRegistry cosmosDbServiceRegistry(
+        @Qualifier("cosmosDbObjectFactory")
+        final CosmosDbObjectFactory cosmosDbObjectFactory,
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties) {
         val cosmosDb = casProperties.getServiceRegistry().getCosmosDb();
-        val factory = cosmosDbObjectFactory();
-        factory.createDatabaseIfNecessary();
+        cosmosDbObjectFactory.createDatabaseIfNecessary();
         if (cosmosDb.isCreateContainer()) {
-            factory.createContainer(cosmosDb.getContainer(), CosmosDbServiceRegistry.PARTITION_KEY);
+            cosmosDbObjectFactory.createContainer(cosmosDb.getContainer(), CosmosDbServiceRegistry.PARTITION_KEY);
         }
-        val container = factory.getContainer(cosmosDb.getContainer());
-        return new CosmosDbServiceRegistry(container, applicationContext, serviceRegistryListeners.getObject());
+        val container = cosmosDbObjectFactory.getContainer(cosmosDb.getContainer());
+        return new CosmosDbServiceRegistry(container, applicationContext,
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
     }
 
     @Bean
@@ -68,7 +67,8 @@ public class CosmosDbServiceRegistryConfiguration {
     @RefreshScope
     @Autowired
     public ServiceRegistryExecutionPlanConfigurer cosmosDbServiceRegistryExecutionPlanConfigurer(
-        @Qualifier("cosmosDbServiceRegistry") final ServiceRegistry cosmosDbServiceRegistry) {
+        @Qualifier("cosmosDbServiceRegistry")
+        final ServiceRegistry cosmosDbServiceRegistry) {
         return plan -> plan.registerServiceRegistry(cosmosDbServiceRegistry);
     }
 }

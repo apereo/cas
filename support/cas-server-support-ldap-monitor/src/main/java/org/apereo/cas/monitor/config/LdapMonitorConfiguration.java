@@ -33,12 +33,9 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "ldapMonitorConfiguration", proxyBeanMethods = true)
+@Configuration(value = "ldapMonitorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapMonitorConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
     public ListFactoryBean pooledLdapConnectionFactoryHealthIndicatorListFactoryBean() {
         val list = new ListFactoryBean() {
@@ -57,10 +54,11 @@ public class LdapMonitorConfiguration {
     @Autowired
     @ConditionalOnEnabledHealthIndicator("pooledLdapConnectionFactoryHealthIndicator")
     public CompositeHealthContributor pooledLdapConnectionFactoryHealthIndicator(
-            @Qualifier("pooledLdapConnectionFactoryHealthIndicatorListFactoryBean")
-            final ListFactoryBean pooledLdapConnectionFactoryHealthIndicatorListFactoryBean) throws Exception {
+        final CasConfigurationProperties casProperties,
+        @Qualifier("pooledLdapConnectionFactoryHealthIndicatorListFactoryBean")
+        final ListFactoryBean pooledLdapConnectionFactoryHealthIndicatorListFactoryBean) throws Exception {
         val ldaps = casProperties.getMonitor().getLdap();
-        val connectionFactoryList = pooledLdapConnectionFactoryHealthIndicatorListFactoryBean.getObject();
+        val connectionFactoryList = Objects.requireNonNull(pooledLdapConnectionFactoryHealthIndicatorListFactoryBean.getObject());
         val contributors = new LinkedHashMap<>();
         ldaps.stream()
             .filter(LdapMonitorProperties::isEnabled)
