@@ -44,9 +44,6 @@ public class CasConsentJdbcConfiguration {
     @Qualifier("jpaBeanFactory")
     private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
     public ConsentRepository consentRepository() {
         return new JpaConsentRepository();

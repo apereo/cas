@@ -54,6 +54,7 @@ public class SpnegoConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+    final CasConfigurationProperties casProperties
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -61,7 +62,9 @@ public class SpnegoConfiguration {
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "spnegoAuthentications")
-    public List<Authentication> spnegoAuthentications() {
+    @Autowired
+    public List<Authentication> spnegoAuthentications(final CasConfigurationProperties casProperties,
+                                                      final ConfigurableApplicationContext applicationContext) {
         val spnegoSystem = casProperties.getAuthn().getSpnego().getSystem();
 
         JcifsConfig.SystemSettings.initialize(applicationContext, spnegoSystem.getLoginConf());
@@ -99,7 +102,8 @@ public class SpnegoConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "spnegoHandler")
-    public AuthenticationHandler spnegoHandler() {
+    @Autowired
+    public AuthenticationHandler spnegoHandler(final CasConfigurationProperties casProperties) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         return new JcifsSpnegoAuthenticationHandler(spnegoProperties.getName(),
             servicesManager.getObject(),
@@ -113,7 +117,8 @@ public class SpnegoConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnProperty(prefix = "cas.authn.ntlm", name = "enabled", havingValue = "true")
-    public AuthenticationHandler ntlmAuthenticationHandler() {
+    @Autowired
+    public AuthenticationHandler ntlmAuthenticationHandler(final CasConfigurationProperties casProperties) {
         val ntlmProperties = casProperties.getAuthn().getNtlm();
         return new NtlmAuthenticationHandler(ntlmProperties.getName(),
             servicesManager.getObject(), ntlmPrincipalFactory(),
@@ -132,7 +137,8 @@ public class SpnegoConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "spnegoPrincipalResolver")
-    public PrincipalResolver spnegoPrincipalResolver() {
+    @Autowired
+    public PrincipalResolver spnegoPrincipalResolver(final CasConfigurationProperties casProperties) {
         val personDirectory = casProperties.getPersonDirectory();
         val spnegoPrincipal = casProperties.getAuthn().getSpnego().getPrincipal();
 
