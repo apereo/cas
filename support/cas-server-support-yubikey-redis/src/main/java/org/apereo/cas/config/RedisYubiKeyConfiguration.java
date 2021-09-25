@@ -8,7 +8,6 @@ import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -26,42 +25,42 @@ import org.springframework.data.redis.core.RedisTemplate;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration("redisYubiKeyConfiguration")
+@Configuration(value = "redisYubiKeyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.authn.mfa.yubikey.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class RedisYubiKeyConfiguration {
 
-    @Autowired
-    @Qualifier("yubiKeyAccountValidator")
-    private ObjectProvider<YubiKeyAccountValidator> yubiKeyAccountValidator;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("yubikeyAccountCipherExecutor")
-    private ObjectProvider<CipherExecutor> yubikeyAccountCipherExecutor;
-
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "redisYubiKeyTemplate")
-    public RedisTemplate redisYubiKeyTemplate() {
-        return RedisObjectFactory.newRedisTemplate(redisYubiKeyConnectionFactory());
+    @Autowired
+    public RedisTemplate redisYubiKeyTemplate(
+        @Qualifier("redisYubiKeyConnectionFactory")
+        final RedisConnectionFactory redisYubiKeyConnectionFactory) {
+        return RedisObjectFactory.newRedisTemplate(redisYubiKeyConnectionFactory);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "redisYubiKeyConnectionFactory")
     @RefreshScope
-    public RedisConnectionFactory redisYubiKeyConnectionFactory() {
+    @Autowired
+    public RedisConnectionFactory redisYubiKeyConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getMfa().getYubikey().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
     }
 
     @RefreshScope
     @Bean
-    public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
-        val registry = new RedisYubiKeyAccountRegistry(yubiKeyAccountValidator.getObject(), redisYubiKeyTemplate());
-        registry.setCipherExecutor(yubikeyAccountCipherExecutor.getObject());
+    @Autowired
+    public YubiKeyAccountRegistry yubiKeyAccountRegistry(
+        @Qualifier("redisYubiKeyTemplate")
+        final RedisTemplate redisYubiKeyTemplate,
+        @Qualifier("yubiKeyAccountValidator")
+        final YubiKeyAccountValidator yubiKeyAccountValidator,
+        @Qualifier("yubikeyAccountCipherExecutor")
+        final CipherExecutor yubikeyAccountCipherExecutor) {
+        val registry = new RedisYubiKeyAccountRegistry(yubiKeyAccountValidator, redisYubiKeyTemplate);
+        registry.setCipherExecutor(yubikeyAccountCipherExecutor);
         return registry;
     }
 }
