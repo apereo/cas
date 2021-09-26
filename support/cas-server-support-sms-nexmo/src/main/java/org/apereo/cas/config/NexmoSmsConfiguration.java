@@ -19,11 +19,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "nexmoSmsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class NexmoSmsConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Bean
-    public SmsSender smsSender() {
+    @Autowired
+    public SmsSender smsSender(final CasConfigurationProperties casProperties) {
         val nexmo = casProperties.getSmsProvider().getNexmo();
         return new NexmoSmsSender(nexmo);
     }

@@ -10,8 +10,8 @@ import org.apereo.cas.trusted.authentication.storage.JpaMultifactorAuthenticatio
 import org.apereo.cas.trusted.authentication.storage.JpaMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -25,10 +25,10 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Set;
-import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * This is {@link JdbcMultifactorAuthnTrustConfiguration}.
@@ -45,7 +45,9 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "jpaMfaTrustedAuthnVendorAdapter")
     @Autowired
-    public JpaVendorAdapter jpaMfaTrustedAuthnVendorAdapter(final CasConfigurationProperties casProperties, @Qualifier("jpaBeanFactory") final JpaBeanFactory jpaBeanFactory) {
+    public JpaVendorAdapter jpaMfaTrustedAuthnVendorAdapter(final CasConfigurationProperties casProperties,
+                                                            @Qualifier("jpaBeanFactory")
+                                                            final JpaBeanFactory jpaBeanFactory) {
         return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
     }
 
@@ -69,15 +71,26 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     @Lazy
     @Bean
     @Autowired
-    public LocalContainerEntityManagerFactoryBean mfaTrustedAuthnEntityManagerFactory(final CasConfigurationProperties casProperties, @Qualifier("dataSourceMfaTrustedAuthn") final DataSource dataSourceMfaTrustedAuthn, @Qualifier("jpaMfaTrustedAuthnPackagesToScan") final Set<String> jpaMfaTrustedAuthnPackagesToScan, @Qualifier("jpaMfaTrustedAuthnVendorAdapter") final JpaVendorAdapter jpaMfaTrustedAuthnVendorAdapter, @Qualifier("jpaBeanFactory") final JpaBeanFactory jpaBeanFactory) {
+    public LocalContainerEntityManagerFactoryBean mfaTrustedAuthnEntityManagerFactory(final CasConfigurationProperties casProperties,
+                                                                                      @Qualifier("dataSourceMfaTrustedAuthn")
+                                                                                      final DataSource dataSourceMfaTrustedAuthn,
+                                                                                      @Qualifier("jpaMfaTrustedAuthnPackagesToScan")
+                                                                                      final Set<String> jpaMfaTrustedAuthnPackagesToScan,
+                                                                                      @Qualifier("jpaMfaTrustedAuthnVendorAdapter")
+                                                                                      final JpaVendorAdapter jpaMfaTrustedAuthnVendorAdapter,
+                                                                                      @Qualifier("jpaBeanFactory")
+                                                                                      final JpaBeanFactory jpaBeanFactory) {
         val factory = jpaBeanFactory;
-        val ctx = JpaConfigurationContext.builder().dataSource(dataSourceMfaTrustedAuthn).packagesToScan(jpaMfaTrustedAuthnPackagesToScan).persistenceUnitName("jpaMfaTrustedAuthnContext").jpaVendorAdapter(jpaMfaTrustedAuthnVendorAdapter).build();
+        val ctx = JpaConfigurationContext.builder().dataSource(dataSourceMfaTrustedAuthn).packagesToScan(jpaMfaTrustedAuthnPackagesToScan).persistenceUnitName("jpaMfaTrustedAuthnContext")
+            .jpaVendorAdapter(jpaMfaTrustedAuthnVendorAdapter).build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getTrusted().getJpa());
     }
 
     @Autowired
     @Bean
-    public PlatformTransactionManager transactionManagerMfaAuthnTrust(@Qualifier("mfaTrustedAuthnEntityManagerFactory") final EntityManagerFactory emf) {
+    public PlatformTransactionManager transactionManagerMfaAuthnTrust(
+        @Qualifier("mfaTrustedAuthnEntityManagerFactory")
+        final EntityManagerFactory emf) {
         val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
@@ -85,7 +98,11 @@ public class JdbcMultifactorAuthnTrustConfiguration {
 
     @Bean
     @Autowired
-    public MultifactorAuthenticationTrustStorage mfaTrustEngine(final CasConfigurationProperties casProperties, @Qualifier("mfaTrustCipherExecutor") final CipherExecutor mfaTrustCipherExecutor, @Qualifier("keyGenerationStrategy") final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy) {
+    public MultifactorAuthenticationTrustStorage mfaTrustEngine(final CasConfigurationProperties casProperties,
+                                                                @Qualifier("mfaTrustCipherExecutor")
+                                                                final CipherExecutor mfaTrustCipherExecutor,
+                                                                @Qualifier("keyGenerationStrategy")
+                                                                final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy) {
         return new JpaMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(), mfaTrustCipherExecutor, keyGenerationStrategy);
     }
 }

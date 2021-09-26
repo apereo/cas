@@ -50,7 +50,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -79,52 +78,40 @@ import java.util.LinkedHashSet;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration("webAuthnConfiguration")
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnWebAuthnEnabled
+@Configuration(value = "webAuthnConfiguration", proxyBeanMethods = false)
 public class WebAuthnConfiguration {
-    private static final int CACHE_MAX_SIZE = 10_000;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
+    private static final int CACHE_MAX_SIZE = 10_000;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("failureModeEvaluator")
-    private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
-
-    @Autowired
-    @Qualifier("webAuthnBypassEvaluator")
-    private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> webAuthnBypassEvaluator;
-
     private static <K, V> Cache<K, V> newCache() {
-        return CacheBuilder.newBuilder()
-            .maximumSize(CACHE_MAX_SIZE)
-            .expireAfterAccess(Duration.ofMinutes(5))
-            .build();
+        return CacheBuilder.newBuilder().maximumSize(CACHE_MAX_SIZE).expireAfterAccess(Duration.ofMinutes(5)).build();
     }
 
     @ConditionalOnMissingBean(name = "webAuthnController")
     @Bean
-    public WebAuthnController webAuthnController() throws Exception {
-        return new WebAuthnController(webAuthnServer());
+    public WebAuthnController webAuthnController(
+        @Qualifier("webAuthnServer")
+        final WebAuthnServer webAuthnServer) throws Exception {
+        return new WebAuthnController(webAuthnServer);
     }
 
     @ConditionalOnMissingBean(name = "webAuthnCredentialRepository")
     @Bean
     @RefreshScope
-    public WebAuthnCredentialRepository webAuthnCredentialRepository() {
+    @Autowired
+    public WebAuthnCredentialRepository webAuthnCredentialRepository(final CasConfigurationProperties casProperties,
+                                                                     @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
+                                                                     final CipherExecutor webAuthnCredentialRegistrationCipherExecutor) {
         val webauthn = casProperties.getAuthn().getMfa().getWebAuthn();
         val location = webauthn.getJson().getLocation();
         if (location != null) {
-            return new JsonResourceWebAuthnCredentialRepository(casProperties, location, webAuthnCredentialRegistrationCipherExecutor());
+            return new JsonResourceWebAuthnCredentialRepository(casProperties, location, webAuthnCredentialRegistrationCipherExecutor);
         }
         return WebAuthnCredentialRepository.inMemory();
     }
@@ -132,12 +119,17 @@ public class WebAuthnConfiguration {
     @ConditionalOnMissingBean(name = "webAuthnMultifactorAuthenticationProvider")
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider() {
+    @Autowired
+    public MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider(final CasConfigurationProperties casProperties,
+                                                                                       @Qualifier("failureModeEvaluator")
+                                                                                       final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator,
+                                                                                       @Qualifier("webAuthnBypassEvaluator")
+                                                                                       final MultifactorAuthenticationProviderBypassEvaluator webAuthnBypassEvaluator) {
         val webauthn = casProperties.getAuthn().getMfa().getWebAuthn();
         val p = new WebAuthnMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(webAuthnBypassEvaluator.getObject());
+        p.setBypassEvaluator(webAuthnBypassEvaluator);
         p.setFailureMode(webauthn.getFailureMode());
-        p.setFailureModeEvaluator(failureModeEvaluator.getObject());
+        p.setFailureModeEvaluator(failureModeEvaluator);
         p.setOrder(webauthn.getRank());
         p.setId(webauthn.getId());
         return p;
@@ -151,18 +143,16 @@ public class WebAuthnConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "webAuthnMetadataService")
-    public MetadataService webAuthnMetadataService() throws Exception {
+    @Autowired
+    public MetadataService webAuthnMetadataService(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext) throws Exception {
         val foundTrustResolvers = applicationContext.getBeansOfType(TrustResolver.class, false, true);
         val trustResolvers = new ArrayList<TrustResolver>();
         trustResolvers.add(StandardMetadataService.createDefaultTrustResolver());
-
         trustResolvers.addAll(foundTrustResolvers.values());
         val trustResolver = new CompositeTrustResolver(trustResolvers);
-
         val foundAttestations = applicationContext.getBeansOfType(AttestationResolver.class, false, true);
         val attestationResolvers = new ArrayList<AttestationResolver>();
         attestationResolvers.add(StandardMetadataService.createDefaultAttestationResolver(trustResolver));
-
         val resource = casProperties.getAuthn().getMfa().getWebAuthn().getCore().getTrustedDeviceMetadata().getLocation();
         if (resource != null) {
             val metadata = WebAuthnUtils.getObjectMapper().readValue(resource.getInputStream(), MetadataObject.class);
@@ -170,7 +160,6 @@ public class WebAuthnConfiguration {
         }
         attestationResolvers.addAll(foundAttestations.values());
         val attestationResolver = new CompositeAttestationResolver(attestationResolvers);
-
         return new StandardMetadataService(attestationResolver);
     }
 
@@ -182,39 +171,31 @@ public class WebAuthnConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "webAuthnServer")
-    public WebAuthnServer webAuthnServer() throws Exception {
+    @Autowired
+    public WebAuthnServer webAuthnServer(final CasConfigurationProperties casProperties,
+                                         @Qualifier("webAuthnCredentialRepository")
+                                         final WebAuthnCredentialRepository webAuthnCredentialRepository,
+                                         @Qualifier("webAuthnMetadataService")
+                                         final MetadataService webAuthnMetadataService,
+                                         @Qualifier("webAuthnSessionManager")
+                                         final SessionManager webAuthnSessionManager) throws Exception {
         val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn().getCore();
         val serverName = casProperties.getServer().getName();
         val appId = new AppId(StringUtils.defaultString(webAuthn.getApplicationId(), serverName));
-
-        val defaultRelyingPartyId = RelyingPartyIdentity
-            .builder()
-            .id(StringUtils.defaultString(webAuthn.getRelyingPartyId(), new URL(serverName).getHost()))
-            .name(StringUtils.defaultString(webAuthn.getRelyingPartyName(), "CAS"))
-            .build();
-
+        val defaultRelyingPartyId = RelyingPartyIdentity.builder().id(StringUtils.defaultString(webAuthn.getRelyingPartyId(), new URL(serverName).getHost()))
+            .name(StringUtils.defaultString(webAuthn.getRelyingPartyName(), "CAS")).build();
         val origins = new LinkedHashSet<String>();
         if (StringUtils.isNotBlank(webAuthn.getAllowedOrigins())) {
             origins.addAll(org.springframework.util.StringUtils.commaDelimitedListToSet(webAuthn.getAllowedOrigins()));
         } else {
             origins.add(serverName);
         }
-
         val conveyance = AttestationConveyancePreference.valueOf(webAuthn.getAttestationConveyancePreference().toUpperCase());
-        val relyingParty = RelyingParty.builder()
-            .identity(defaultRelyingPartyId)
-            .credentialRepository(webAuthnCredentialRepository())
-            .origins(origins)
-            .attestationConveyancePreference(conveyance)
-            .metadataService(webAuthnMetadataService())
-            .allowUnrequestedExtensions(webAuthn.isAllowUnrequestedExtensions())
-            .allowUntrustedAttestation(webAuthn.isAllowUntrustedAttestation())
-            .validateSignatureCounter(webAuthn.isValidateSignatureCounter())
-            .appId(appId)
-            .build();
-
-        return new WebAuthnServer(webAuthnCredentialRepository(),
-            newCache(), newCache(), relyingParty, webAuthnSessionManager());
+        val relyingParty =
+            RelyingParty.builder().identity(defaultRelyingPartyId).credentialRepository(webAuthnCredentialRepository).origins(origins).attestationConveyancePreference(conveyance)
+                .metadataService(webAuthnMetadataService).allowUnrequestedExtensions(webAuthn.isAllowUnrequestedExtensions())
+                .allowUntrustedAttestation(webAuthn.isAllowUntrustedAttestation()).validateSignatureCounter(webAuthn.isValidateSignatureCounter()).appId(appId).build();
+        return new WebAuthnServer(webAuthnCredentialRepository, newCache(), newCache(), relyingParty, webAuthnSessionManager);
     }
 
     @ConditionalOnMissingBean(name = "webAuthnPrincipalFactory")
@@ -227,7 +208,8 @@ public class WebAuthnConfiguration {
     @ConditionalOnMissingBean(name = "webAuthnCredentialRegistrationCipherExecutor")
     @Bean
     @RefreshScope
-    public CipherExecutor webAuthnCredentialRegistrationCipherExecutor() {
+    @Autowired
+    public CipherExecutor webAuthnCredentialRegistrationCipherExecutor(final CasConfigurationProperties casProperties) {
         val crypto = casProperties.getAuthn().getMfa().getWebAuthn().getCrypto();
         if (crypto.isEnabled()) {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, WebAuthnCredentialRegistrationCipherExecutor.class);
@@ -239,47 +221,63 @@ public class WebAuthnConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "webAuthnAuthenticationHandler")
-    public AuthenticationHandler webAuthnAuthenticationHandler() {
+    @Autowired
+    public AuthenticationHandler webAuthnAuthenticationHandler(final CasConfigurationProperties casProperties,
+                                                               @Qualifier("webAuthnPrincipalFactory")
+                                                               final PrincipalFactory webAuthnPrincipalFactory,
+                                                               @Qualifier("webAuthnCredentialRepository")
+                                                               final WebAuthnCredentialRepository webAuthnCredentialRepository,
+                                                               @Qualifier("webAuthnSessionManager")
+                                                               final SessionManager webAuthnSessionManager,
+                                                               @Qualifier("servicesManager")
+                                                               final ServicesManager servicesManager) {
         val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn();
-        return new WebAuthnAuthenticationHandler(webAuthn.getName(),
-            servicesManager.getObject(), webAuthnPrincipalFactory(),
-            webAuthnCredentialRepository(), webAuthnSessionManager(),
-            webAuthn.getOrder());
+        return new WebAuthnAuthenticationHandler(webAuthn.getName(), servicesManager, webAuthnPrincipalFactory, webAuthnCredentialRepository, webAuthnSessionManager, webAuthn.getOrder());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "webAuthnAuthenticationMetaDataPopulator")
-    public AuthenticationMetaDataPopulator webAuthnAuthenticationMetaDataPopulator() {
+    @Autowired
+    public AuthenticationMetaDataPopulator webAuthnAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,
+                                                                                   @Qualifier("webAuthnAuthenticationHandler")
+                                                                                   final AuthenticationHandler webAuthnAuthenticationHandler,
+                                                                                   @Qualifier("webAuthnMultifactorAuthenticationProvider")
+                                                                                   final MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider) {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
-        return new AuthenticationContextAttributeMetaDataPopulator(
-            authenticationContextAttribute,
-            webAuthnAuthenticationHandler(),
-            webAuthnMultifactorAuthenticationProvider().getId()
-        );
+        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute, webAuthnAuthenticationHandler, webAuthnMultifactorAuthenticationProvider.getId());
     }
 
     @ConditionalOnMissingBean(name = "webAuthnAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer webAuthnAuthenticationEventExecutionPlanConfigurer() {
+    public AuthenticationEventExecutionPlanConfigurer webAuthnAuthenticationEventExecutionPlanConfigurer(
+        @Qualifier("webAuthnAuthenticationHandler")
+        final AuthenticationHandler webAuthnAuthenticationHandler,
+        @Qualifier("webAuthnAuthenticationMetaDataPopulator")
+        final AuthenticationMetaDataPopulator webAuthnAuthenticationMetaDataPopulator) {
         return plan -> {
-            plan.registerAuthenticationHandler(webAuthnAuthenticationHandler());
-            plan.registerAuthenticationMetadataPopulator(webAuthnAuthenticationMetaDataPopulator());
+            plan.registerAuthenticationHandler(webAuthnAuthenticationHandler);
+            plan.registerAuthenticationMetadataPopulator(webAuthnAuthenticationMetaDataPopulator);
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(WebAuthnCredential.class));
         };
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public WebAuthnRegisteredDevicesEndpoint webAuthnRegisteredDevicesEndpoint() {
-        return new WebAuthnRegisteredDevicesEndpoint(casProperties, webAuthnCredentialRepository());
+    @Autowired
+    public WebAuthnRegisteredDevicesEndpoint webAuthnRegisteredDevicesEndpoint(final CasConfigurationProperties casProperties,
+                                                                               @Qualifier("webAuthnCredentialRepository")
+                                                                               final WebAuthnCredentialRepository webAuthnCredentialRepository) {
+        return new WebAuthnRegisteredDevicesEndpoint(casProperties, webAuthnCredentialRepository);
     }
 
     @ConditionalOnMissingBean(name = "webAuthnDeviceRepositoryCleanerScheduler")
     @Bean
     @ConditionalOnProperty(prefix = "authn.mfa.web-authn.cleaner", name = "enabled", havingValue = "true", matchIfMissing = true)
-    public Runnable webAuthnDeviceRepositoryCleanerScheduler() {
-        return new WebAuthnDeviceRepositoryCleanerScheduler(webAuthnCredentialRepository());
+    public Runnable webAuthnDeviceRepositoryCleanerScheduler(
+        @Qualifier("webAuthnCredentialRepository")
+        final WebAuthnCredentialRepository webAuthnCredentialRepository) {
+        return new WebAuthnDeviceRepositoryCleanerScheduler(webAuthnCredentialRepository);
     }
 
     /**
@@ -287,6 +285,7 @@ public class WebAuthnConfiguration {
      */
     @RequiredArgsConstructor
     public static class WebAuthnDeviceRepositoryCleanerScheduler implements Runnable {
+
         private final WebAuthnCredentialRepository repository;
 
         @Scheduled(initialDelayString = "${cas.authn.mfa.web-authn.cleaner.schedule.start-delay:PT20S}",
@@ -311,14 +310,13 @@ public class WebAuthnConfiguration {
         @Bean
         public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> webAuthnProtocolEndpointConfigurer() {
             return new ProtocolEndpointWebSecurityConfigurer<>() {
+
                 @Override
                 @SneakyThrows
                 public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) {
                     http.csrf(customizer -> {
                         val pattern = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
-                        customizer
-                            .requireCsrfProtectionMatcher(pattern)
-                            .csrfTokenRepository(webAuthnCsrfTokenRepository());
+                        customizer.requireCsrfProtectionMatcher(pattern).csrfTokenRepository(webAuthnCsrfTokenRepository());
                     });
                     return this;
                 }

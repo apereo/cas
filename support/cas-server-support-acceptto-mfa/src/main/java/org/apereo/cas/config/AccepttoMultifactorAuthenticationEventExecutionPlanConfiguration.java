@@ -17,7 +17,6 @@ import org.apereo.cas.mfa.accepto.AccepttoMultifactorTokenCredential;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,45 +31,37 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration("accepttoMultifactorAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "accepttoMultifactorAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("casAccepttoMultifactorBypassEvaluator")
-    private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> casAccepttoMultifactorBypassEvaluator;
-
-    @Autowired
-    @Qualifier("failureModeEvaluator")
-    private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
 
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorAuthenticationHandler")
     @Bean
     @RefreshScope
-    public AuthenticationHandler casAccepttoMultifactorAuthenticationHandler() {
+    @Autowired
+    public AuthenticationHandler casAccepttoMultifactorAuthenticationHandler(final CasConfigurationProperties casProperties,
+                                                                             @Qualifier("casAccepttoMultifactorPrincipalFactory")
+                                                                             final PrincipalFactory casAccepttoMultifactorPrincipalFactory,
+                                                                             @Qualifier("servicesManager")
+                                                                             final ServicesManager servicesManager) {
         val props = casProperties.getAuthn().getMfa().getAcceptto();
-        return new AccepttoMultifactorAuthenticationHandler(
-            servicesManager.getObject(),
-            casAccepttoMultifactorPrincipalFactory(),
-            props);
+        return new AccepttoMultifactorAuthenticationHandler(servicesManager, casAccepttoMultifactorPrincipalFactory, props);
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorAuthenticationProvider")
-    public MultifactorAuthenticationProvider casAccepttoMultifactorAuthenticationProvider() {
+    @Autowired
+    public MultifactorAuthenticationProvider casAccepttoMultifactorAuthenticationProvider(final CasConfigurationProperties casProperties,
+                                                                                          @Qualifier("casAccepttoMultifactorBypassEvaluator")
+                                                                                          final MultifactorAuthenticationProviderBypassEvaluator casAccepttoMultifactorBypassEvaluator,
+                                                                                          @Qualifier("failureModeEvaluator")
+                                                                                          final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
         val simple = casProperties.getAuthn().getMfa().getAcceptto();
         val p = new AccepttoMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(casAccepttoMultifactorBypassEvaluator.getObject());
+        p.setBypassEvaluator(casAccepttoMultifactorBypassEvaluator);
         p.setFailureMode(simple.getFailureMode());
-        p.setFailureModeEvaluator(failureModeEvaluator.getObject());
+        p.setFailureModeEvaluator(failureModeEvaluator);
         p.setOrder(simple.getRank());
         p.setId(simple.getId());
         return p;
@@ -79,12 +70,14 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorAuthenticationMetaDataPopulator")
-    public AuthenticationMetaDataPopulator casAccepttoMultifactorAuthenticationMetaDataPopulator() {
-        return new AuthenticationContextAttributeMetaDataPopulator(
-            casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
-            casAccepttoMultifactorAuthenticationHandler(),
-            casAccepttoMultifactorAuthenticationProvider().getId()
-        );
+    @Autowired
+    public AuthenticationMetaDataPopulator casAccepttoMultifactorAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,
+                                                                                                 @Qualifier("casAccepttoMultifactorAuthenticationHandler")
+                                                                                                 final AuthenticationHandler casAccepttoMultifactorAuthenticationHandler,
+                                                                                                 @Qualifier("casAccepttoMultifactorAuthenticationProvider")
+                                                                                                 final MultifactorAuthenticationProvider casAccepttoMultifactorAuthenticationProvider) {
+        return new AuthenticationContextAttributeMetaDataPopulator(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
+            casAccepttoMultifactorAuthenticationHandler, casAccepttoMultifactorAuthenticationProvider.getId());
     }
 
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorPrincipalFactory")
@@ -95,13 +88,15 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer casAccepttoMultifactorAuthenticationEventExecutionPlanConfigurer() {
+    public AuthenticationEventExecutionPlanConfigurer casAccepttoMultifactorAuthenticationEventExecutionPlanConfigurer(
+        @Qualifier("casAccepttoMultifactorAuthenticationHandler")
+        final AuthenticationHandler casAccepttoMultifactorAuthenticationHandler,
+        @Qualifier("casAccepttoMultifactorAuthenticationMetaDataPopulator")
+        final AuthenticationMetaDataPopulator casAccepttoMultifactorAuthenticationMetaDataPopulator) {
         return plan -> {
-            plan.registerAuthenticationHandler(casAccepttoMultifactorAuthenticationHandler());
-            plan.registerAuthenticationMetadataPopulator(casAccepttoMultifactorAuthenticationMetaDataPopulator());
-            plan.registerAuthenticationHandlerResolver(
-                new ByCredentialTypeAuthenticationHandlerResolver(AccepttoMultifactorTokenCredential.class));
+            plan.registerAuthenticationHandler(casAccepttoMultifactorAuthenticationHandler);
+            plan.registerAuthenticationMetadataPopulator(casAccepttoMultifactorAuthenticationMetaDataPopulator);
+            plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(AccepttoMultifactorTokenCredential.class));
         };
     }
-
 }

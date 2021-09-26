@@ -11,8 +11,8 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.services.ServicesManager;
+
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -21,6 +21,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import javax.net.ssl.SSLContext;
 
 /**
@@ -47,7 +48,13 @@ public class CasMongoAuthenticationConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "mongoAuthenticationHandler")
     @Autowired
-    public AuthenticationHandler mongoAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext, @Qualifier("mongoPrincipalFactory") final PrincipalFactory mongoPrincipalFactory, @Qualifier("servicesManager") final ServicesManager servicesManager, @Qualifier("sslContext") final SSLContext sslContext) {
+    public AuthenticationHandler mongoAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+                                                            @Qualifier("mongoPrincipalFactory")
+                                                            final PrincipalFactory mongoPrincipalFactory,
+                                                            @Qualifier("servicesManager")
+                                                            final ServicesManager servicesManager,
+                                                            @Qualifier("sslContext")
+                                                            final SSLContext sslContext) {
         val mongo = casProperties.getAuthn().getMongo();
         val factory = new MongoDbConnectionFactory(sslContext);
         val mongoTemplate = factory.buildMongoTemplate(mongo);
@@ -60,7 +67,11 @@ public class CasMongoAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "mongoAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @RefreshScope
-    public AuthenticationEventExecutionPlanConfigurer mongoAuthenticationEventExecutionPlanConfigurer(@Qualifier("mongoAuthenticationHandler") final AuthenticationHandler mongoAuthenticationHandler, @Qualifier("defaultPrincipalResolver") final PrincipalResolver defaultPrincipalResolver) {
+    public AuthenticationEventExecutionPlanConfigurer mongoAuthenticationEventExecutionPlanConfigurer(
+        @Qualifier("mongoAuthenticationHandler")
+        final AuthenticationHandler mongoAuthenticationHandler,
+        @Qualifier("defaultPrincipalResolver")
+        final PrincipalResolver defaultPrincipalResolver) {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(mongoAuthenticationHandler, defaultPrincipalResolver);
     }
 }

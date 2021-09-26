@@ -12,6 +12,7 @@ import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -26,8 +27,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import java.util.Optional;
-import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * This is {@link CouchDbSamlIdPMetadataConfiguration}.
@@ -48,14 +49,18 @@ public class CouchDbSamlIdPMetadataConfiguration {
     @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbInstance")
     @RefreshScope
     @Bean
-    public CouchDbInstance samlIdPMetadataCouchDbInstance(@Qualifier("samlMetadataCouchDbFactory") final CouchDbConnectorFactory samlMetadataCouchDbFactory) {
+    public CouchDbInstance samlIdPMetadataCouchDbInstance(
+        @Qualifier("samlMetadataCouchDbFactory")
+        final CouchDbConnectorFactory samlMetadataCouchDbFactory) {
         return samlMetadataCouchDbFactory.getCouchDbInstance();
     }
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbConnector")
     @RefreshScope
     @Bean
-    public CouchDbConnector samlIdPMetadataCouchDbConnector(@Qualifier("samlMetadataCouchDbFactory") final CouchDbConnectorFactory samlMetadataCouchDbFactory) {
+    public CouchDbConnector samlIdPMetadataCouchDbConnector(
+        @Qualifier("samlMetadataCouchDbFactory")
+        final CouchDbConnectorFactory samlMetadataCouchDbFactory) {
         return samlMetadataCouchDbFactory.getCouchDbConnector();
     }
 
@@ -63,8 +68,11 @@ public class CouchDbSamlIdPMetadataConfiguration {
     @Bean
     @RefreshScope
     @Autowired
-    public SamlIdPMetadataCouchDbRepository samlIdPMetadataCouchDbRepository(final CasConfigurationProperties casProperties, @Qualifier("samlMetadataCouchDbFactory") final CouchDbConnectorFactory samlMetadataCouchDbFactory) {
-        val repository = new SamlIdPMetadataCouchDbRepository(samlMetadataCouchDbFactory.getCouchDbConnector(), casProperties.getAuthn().getSamlIdp().getMetadata().getCouchDb().isCreateIfNotExists());
+    public SamlIdPMetadataCouchDbRepository samlIdPMetadataCouchDbRepository(final CasConfigurationProperties casProperties,
+                                                                             @Qualifier("samlMetadataCouchDbFactory")
+                                                                             final CouchDbConnectorFactory samlMetadataCouchDbFactory) {
+        val repository =
+            new SamlIdPMetadataCouchDbRepository(samlMetadataCouchDbFactory.getCouchDbConnector(), casProperties.getAuthn().getSamlIdp().getMetadata().getCouchDb().isCreateIfNotExists());
         repository.initStandardDesignDocument();
         return repository;
     }
@@ -78,14 +86,19 @@ public class CouchDbSamlIdPMetadataConfiguration {
         if (crypto.isEnabled()) {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, CouchDbSamlIdPMetadataCipherExecutor.class);
         }
-        LOGGER.info("CouchDb SAML IdP metadata encryption/signing is turned off and " + "MAY NOT be safe in a production environment. " + "Consider using other choices to handle encryption, signing and verification of metadata artifacts");
+        LOGGER.info("CouchDb SAML IdP metadata encryption/signing is turned off and " + "MAY NOT be safe in a production environment. " +
+            "Consider using other choices to handle encryption, signing and verification of metadata artifacts");
         return CipherExecutor.noOp();
     }
 
     @ConditionalOnMissingBean(name = "couchDbSamlIdPMetadataGenerator")
     @Bean
     @RefreshScope
-    public SamlIdPMetadataGenerator samlIdPMetadataGenerator(@Qualifier("samlIdPMetadataGeneratorConfigurationContext") final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext, @Qualifier("samlIdPMetadataRepository") final SamlIdPMetadataCouchDbRepository samlIdPMetadataRepository) {
+    public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
+        @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
+        final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext,
+        @Qualifier("samlIdPMetadataRepository")
+        final SamlIdPMetadataCouchDbRepository samlIdPMetadataRepository) {
         val generator = new CouchDbSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext, samlIdPMetadataRepository);
         generator.generate(Optional.empty());
         return generator;
@@ -94,7 +107,11 @@ public class CouchDbSamlIdPMetadataConfiguration {
     @ConditionalOnMissingBean(name = "couchDbSamlIdPMetadataLocator")
     @Bean
     @RefreshScope
-    public SamlIdPMetadataLocator samlIdPMetadataLocator(@Qualifier("samlIdPMetadataGeneratorCipherExecutor") final CipherExecutor samlIdPMetadataGeneratorCipherExecutor, @Qualifier("samlIdPMetadataRepository") final SamlIdPMetadataCouchDbRepository samlIdPMetadataRepository) {
+    public SamlIdPMetadataLocator samlIdPMetadataLocator(
+        @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
+        final CipherExecutor samlIdPMetadataGeneratorCipherExecutor,
+        @Qualifier("samlIdPMetadataRepository")
+        final SamlIdPMetadataCouchDbRepository samlIdPMetadataRepository) {
         return new CouchDbSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor, samlIdPMetadataCache.getObject(), samlIdPMetadataRepository);
     }
 }
