@@ -9,7 +9,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -29,38 +28,33 @@ import org.springframework.web.client.RestTemplate;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class RestPasswordManagementConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
-    @Autowired
-    @Qualifier("passwordManagementCipherExecutor")
-    private ObjectProvider<CipherExecutor> passwordManagementCipherExecutor;
-
-    @Autowired
-    @Qualifier("passwordHistoryService")
-    private ObjectProvider<PasswordHistoryService> passwordHistoryService;
-
-    @RefreshScope
-    @Bean
-    @Autowired
-    public PasswordManagementService passwordChangeService(final RestTemplateBuilder restTemplateBuilder) {
-        var pm = casProperties.getAuthn().getPm();
-        return new RestPasswordManagementService(passwordManagementCipherExecutor.getObject(),
-            casProperties.getServer().getPrefix(),
-            buildRestTemplateBuilder(restTemplateBuilder),
-            pm, passwordHistoryService.getObject());
-    }
-
-    private RestTemplate buildRestTemplateBuilder(final RestTemplateBuilder restTemplateBuilder) {
+    private static RestTemplate buildRestTemplateBuilder(final RestTemplateBuilder restTemplateBuilder,
+                                                         final CasConfigurationProperties casProperties) {
         val pmRest = casProperties.getAuthn().getPm().getRest();
         val username = pmRest.getEndpointUsername();
         val password = pmRest.getEndpointPassword();
-
         if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
             LOGGER.debug("Configuring basic authentication for password management via REST for [{}]", username);
             return restTemplateBuilder.basicAuthentication(username, password).build();
         }
         LOGGER.warn("Basic authentication for password management via REST is turned off");
         return restTemplateBuilder.build();
+    }
+
+    @RefreshScope
+    @Bean
+    @Autowired
+    public PasswordManagementService passwordChangeService(final RestTemplateBuilder restTemplateBuilder,
+                                                           final CasConfigurationProperties casProperties,
+                                                           @Qualifier("passwordManagementCipherExecutor")
+                                                           final CipherExecutor passwordManagementCipherExecutor,
+                                                           @Qualifier("passwordHistoryService")
+                                                           final PasswordHistoryService passwordHistoryService) {
+        var pm = casProperties.getAuthn().getPm();
+        return new RestPasswordManagementService(passwordManagementCipherExecutor,
+            casProperties.getServer().getPrefix(),
+            buildRestTemplateBuilder(restTemplateBuilder, casProperties), pm,
+            passwordHistoryService);
     }
 }

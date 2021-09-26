@@ -28,11 +28,9 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("dynamoDbServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "dynamoDbServiceRegistryConfiguration", proxyBeanMethods = false)
 public class DynamoDbServiceRegistryConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -43,29 +41,38 @@ public class DynamoDbServiceRegistryConfiguration {
 
     @RefreshScope
     @Bean
-    public DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator() {
+    @Autowired
+    public DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator(final CasConfigurationProperties casProperties,
+                                                                                 @Qualifier("amazonDynamoDbServiceRegistryClient")
+                                                                                 final DynamoDbClient amazonDynamoDbServiceRegistryClient) {
         val db = casProperties.getServiceRegistry().getDynamoDb();
-        return new DynamoDbServiceRegistryFacilitator(db, amazonDynamoDbServiceRegistryClient());
+        return new DynamoDbServiceRegistryFacilitator(db, amazonDynamoDbServiceRegistryClient);
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "dynamoDbServiceRegistry")
-    public ServiceRegistry dynamoDbServiceRegistry() {
-        return new DynamoDbServiceRegistry(applicationContext, dynamoDbServiceRegistryFacilitator(), serviceRegistryListeners.getObject());
+    @Autowired
+    public ServiceRegistry dynamoDbServiceRegistry(final ConfigurableApplicationContext applicationContext,
+                                                   @Qualifier("dynamoDbServiceRegistryFacilitator")
+                                                   final DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator) {
+        return new DynamoDbServiceRegistry(applicationContext, dynamoDbServiceRegistryFacilitator, serviceRegistryListeners.getObject());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbServiceRegistryExecutionPlanConfigurer")
     @RefreshScope
-    public ServiceRegistryExecutionPlanConfigurer dynamoDbServiceRegistryExecutionPlanConfigurer() {
-        return plan -> plan.registerServiceRegistry(dynamoDbServiceRegistry());
+    public ServiceRegistryExecutionPlanConfigurer dynamoDbServiceRegistryExecutionPlanConfigurer(
+        @Qualifier("dynamoDbServiceRegistry")
+        final ServiceRegistry dynamoDbServiceRegistry) {
+        return plan -> plan.registerServiceRegistry(dynamoDbServiceRegistry);
     }
 
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "amazonDynamoDbServiceRegistryClient")
-    public DynamoDbClient amazonDynamoDbServiceRegistryClient() {
+    @Autowired
+    public DynamoDbClient amazonDynamoDbServiceRegistryClient(final CasConfigurationProperties casProperties) {
         val dynamoDbProperties = casProperties.getServiceRegistry().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();
         return factory.createAmazonDynamoDb(dynamoDbProperties);
