@@ -19,7 +19,6 @@ import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -42,26 +41,17 @@ import java.util.concurrent.ConcurrentMap;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casThrottlingConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(CasCoreUtilConfiguration.class)
 @Slf4j
+@Configuration(value = "casThrottlingConfiguration", proxyBeanMethods = false)
 public class CasThrottlingConfiguration {
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("auditTrailExecutionPlan")
-    private ObjectProvider<AuditTrailExecutionPlan> auditTrailExecutionPlan;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "throttledRequestResponseHandler")
-    public ThrottledRequestResponseHandler throttledRequestResponseHandler() {
+    @Autowired
+    public ThrottledRequestResponseHandler throttledRequestResponseHandler(final CasConfigurationProperties casProperties) {
         val throttle = casProperties.getAuthn().getThrottle();
         return new DefaultThrottledRequestResponseHandler(throttle.getCore().getUsernameParameter());
     }
@@ -83,45 +73,58 @@ public class CasThrottlingConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "authenticationThrottle")
     @Bean
-    public ThrottledSubmissionHandlerInterceptor authenticationThrottle() {
+    @Autowired
+    public ThrottledSubmissionHandlerInterceptor authenticationThrottle(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("authenticationThrottlingConfigurationContext")
+        final ThrottledSubmissionHandlerConfigurationContext authenticationThrottlingConfigurationContext,
+        @Qualifier("throttleSubmissionMap")
+        final ConcurrentMap throttleSubmissionMap) {
         val throttle = casProperties.getAuthn().getThrottle();
-
         if (throttle.getFailure().getRangeSeconds() <= 0 && throttle.getFailure().getThreshold() <= 0) {
             LOGGER.trace("Authentication throttling is disabled since no range-seconds or failure-threshold is defined");
             return ThrottledSubmissionHandlerInterceptor.noOp();
         }
-
         if (StringUtils.isNotBlank(throttle.getCore().getUsernameParameter())) {
             LOGGER.trace("Activating authentication throttling based on IP address and username...");
-            return new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(
-                authenticationThrottlingConfigurationContext(), throttleSubmissionMap());
+            return new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(authenticationThrottlingConfigurationContext, throttleSubmissionMap);
         }
         LOGGER.trace("Activating authentication throttling based on IP address...");
-        return new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter(
-            authenticationThrottlingConfigurationContext(), throttleSubmissionMap());
+        return new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter(authenticationThrottlingConfigurationContext, throttleSubmissionMap);
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "authenticationThrottlingConfigurationContext")
-    public ThrottledSubmissionHandlerConfigurationContext authenticationThrottlingConfigurationContext() {
+    @Autowired
+    public ThrottledSubmissionHandlerConfigurationContext authenticationThrottlingConfigurationContext(
+        @Qualifier("auditTrailExecutionPlan")
+        final AuditTrailExecutionPlan auditTrailExecutionPlan,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("throttledRequestResponseHandler")
+        final ThrottledRequestResponseHandler throttledRequestResponseHandler,
+        @Qualifier("throttledRequestExecutor")
+        final ThrottledRequestExecutor throttledRequestExecutor,
+        @Qualifier("authenticationThrottlingExecutionPlan")
+        final AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan) {
         val throttle = casProperties.getAuthn().getThrottle();
         return ThrottledSubmissionHandlerConfigurationContext.builder()
             .failureThreshold(throttle.getFailure().getThreshold())
             .failureRangeInSeconds(throttle.getFailure().getRangeSeconds())
             .usernameParameter(throttle.getCore().getUsernameParameter())
             .authenticationFailureCode(throttle.getFailure().getCode())
-            .auditTrailExecutionPlan(auditTrailExecutionPlan.getObject())
+            .auditTrailExecutionPlan(auditTrailExecutionPlan)
             .applicationCode(throttle.getCore().getAppCode())
-            .throttledRequestResponseHandler(throttledRequestResponseHandler())
-            .throttledRequestExecutor(throttledRequestExecutor())
-            .authenticationThrottlingExecutionPlan(authenticationThrottlingExecutionPlan())
+            .throttledRequestResponseHandler(throttledRequestResponseHandler)
+            .throttledRequestExecutor(throttledRequestExecutor)
+            .authenticationThrottlingExecutionPlan(authenticationThrottlingExecutionPlan)
             .build();
     }
 
     @ConditionalOnMissingBean(name = "authenticationThrottlingExecutionPlan")
     @Bean
-    public AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan() {
+    @Autowired
+    public AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan(final ConfigurableApplicationContext applicationContext) {
         val configurers = applicationContext.getBeansOfType(AuthenticationThrottlingExecutionPlanConfigurer.class, false, true).values();
         val plan = new DefaultAuthenticationThrottlingExecutionPlan();
         configurers.forEach(c -> {
@@ -134,7 +137,8 @@ public class CasThrottlingConfiguration {
     @Bean
     @Autowired
     public Runnable throttleSubmissionCleaner(
-        @Qualifier("authenticationThrottlingExecutionPlan") final AuthenticationThrottlingExecutionPlan plan) {
+        @Qualifier("authenticationThrottlingExecutionPlan")
+        final AuthenticationThrottlingExecutionPlan plan) {
         return new InMemoryThrottledSubmissionCleaner(plan);
     }
 
@@ -147,17 +151,23 @@ public class CasThrottlingConfiguration {
     @ConditionalOnMissingBean(name = "authenticationThrottlingExecutionPlanConfigurer")
     @Bean
     @Order(0)
-    public AuthenticationThrottlingExecutionPlanConfigurer authenticationThrottlingExecutionPlanConfigurer() {
+    public AuthenticationThrottlingExecutionPlanConfigurer authenticationThrottlingExecutionPlanConfigurer(
+        @Qualifier("httpPostMethodThrottlingRequestFilter")
+        final ThrottledRequestFilter httpPostMethodThrottlingRequestFilter,
+        @Qualifier("authenticationThrottle")
+        final ThrottledSubmissionHandlerInterceptor authenticationThrottle) {
         return plan -> {
-            plan.registerAuthenticationThrottleFilter(httpPostMethodThrottlingRequestFilter());
-            plan.registerAuthenticationThrottleInterceptor(authenticationThrottle());
+            plan.registerAuthenticationThrottleFilter(httpPostMethodThrottlingRequestFilter);
+            plan.registerAuthenticationThrottleInterceptor(authenticationThrottle);
         };
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
+    @Autowired
     public ThrottledSubmissionHandlerEndpoint throttledSubmissionHandlerEndpoint(
-        @Qualifier("authenticationThrottlingExecutionPlan") final AuthenticationThrottlingExecutionPlan plan) {
+        @Qualifier("authenticationThrottlingExecutionPlan")
+        final AuthenticationThrottlingExecutionPlan plan, final CasConfigurationProperties casProperties) {
         return new ThrottledSubmissionHandlerEndpoint(casProperties, plan);
     }
 }

@@ -12,7 +12,6 @@ import org.apereo.cas.web.flow.PrincipalScimProvisionerAction;
 import org.apereo.cas.web.flow.ScimWebflowConfigurer;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -33,29 +32,24 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casScimConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @ConditionalOnProperty(prefix = "cas.scim", name = "enabled", havingValue = "true", matchIfMissing = true)
+@Configuration(value = "casScimConfiguration", proxyBeanMethods = false)
 public class CasScimConfiguration {
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
-
-    @Autowired
-    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @ConditionalOnMissingBean(name = "scimWebflowConfigurer")
     @Bean
-    public CasWebflowConfigurer scimWebflowConfigurer() {
-        return new ScimWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
+    @Autowired
+    public CasWebflowConfigurer scimWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+                                                      @Qualifier("loginFlowDefinitionRegistry")
+                                                      final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                      @Qualifier("flowBuilderServices")
+                                                      final FlowBuilderServices flowBuilderServices) {
+        return new ScimWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @RefreshScope
@@ -75,24 +69,33 @@ public class CasScimConfiguration {
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "scimProvisioner")
-    public PrincipalProvisioner scimProvisioner() {
+    @Autowired
+    public PrincipalProvisioner scimProvisioner(final CasConfigurationProperties casProperties,
+                                                @Qualifier("scim1PrincipalAttributeMapper")
+                                                final ScimV1PrincipalAttributeMapper scim1PrincipalAttributeMapper,
+                                                @Qualifier("scim2PrincipalAttributeMapper")
+                                                final ScimV2PrincipalAttributeMapper scim2PrincipalAttributeMapper) {
         val scim = casProperties.getScim();
         if (scim.getVersion() == 1) {
-            return new ScimV1PrincipalProvisioner(scim, scim1PrincipalAttributeMapper());
+            return new ScimV1PrincipalProvisioner(scim, scim1PrincipalAttributeMapper);
         }
-        return new ScimV2PrincipalProvisioner(scim, scim2PrincipalAttributeMapper());
+        return new ScimV2PrincipalProvisioner(scim, scim2PrincipalAttributeMapper);
     }
 
     @ConditionalOnMissingBean(name = "principalScimProvisionerAction")
     @Bean
     @RefreshScope
-    public Action principalScimProvisionerAction() {
-        return new PrincipalScimProvisionerAction(scimProvisioner());
+    public Action principalScimProvisionerAction(
+        @Qualifier("scimProvisioner")
+        final PrincipalProvisioner scimProvisioner) {
+        return new PrincipalScimProvisionerAction(scimProvisioner);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "scimCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer scimCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(scimWebflowConfigurer());
+    public CasWebflowExecutionPlanConfigurer scimCasWebflowExecutionPlanConfigurer(
+        @Qualifier("scimWebflowConfigurer")
+        final CasWebflowConfigurer scimWebflowConfigurer) {
+        return plan -> plan.registerWebflowConfigurer(scimWebflowConfigurer);
     }
 }

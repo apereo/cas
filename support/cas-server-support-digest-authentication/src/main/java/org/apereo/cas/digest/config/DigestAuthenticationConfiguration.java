@@ -12,7 +12,6 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,66 +30,51 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("digestAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "digestAuthenticationConfiguration", proxyBeanMethods = false)
 public class DigestAuthenticationConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
-
-    @Autowired
-    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-
-    @Autowired
-    @Qualifier("adaptiveAuthenticationPolicy")
-    private ObjectProvider<AdaptiveAuthenticationPolicy> adaptiveAuthenticationPolicy;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("serviceTicketRequestWebflowEventResolver")
-    private ObjectProvider<CasWebflowEventResolver> serviceTicketRequestWebflowEventResolver;
-
-    @Autowired
-    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
 
     @ConditionalOnMissingBean(name = "digestAuthenticationWebflowConfigurer")
     @Bean
-    public CasWebflowConfigurer digestAuthenticationWebflowConfigurer() {
-        return new DigestAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
+    @Autowired
+    public CasWebflowConfigurer digestAuthenticationWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+                                                                      @Qualifier("loginFlowDefinitionRegistry")
+                                                                      final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                                      @Qualifier("flowBuilderServices")
+                                                                      final FlowBuilderServices flowBuilderServices) {
+        return new DigestAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "digestAuthenticationAction")
-    public Action digestAuthenticationAction(@Qualifier("defaultDigestCredentialRetriever")
-                                             final DigestHashedCredentialRetriever defaultDigestCredentialRetriever) {
-        return new DigestAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
-            serviceTicketRequestWebflowEventResolver.getObject(),
-            adaptiveAuthenticationPolicy.getObject(),
-            casProperties.getAuthn().getDigest().getRealm(),
-            casProperties.getAuthn().getDigest().getAuthenticationMethod(),
-            defaultDigestCredentialRetriever);
+    public Action digestAuthenticationAction(
+        @Qualifier("defaultDigestCredentialRetriever")
+        final DigestHashedCredentialRetriever defaultDigestCredentialRetriever, final CasConfigurationProperties casProperties,
+        @Qualifier("adaptiveAuthenticationPolicy")
+        final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
+        @Qualifier("serviceTicketRequestWebflowEventResolver")
+        final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
+        @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+        final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
+        return new DigestAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy,
+            casProperties.getAuthn().getDigest().getRealm(), casProperties.getAuthn().getDigest().getAuthenticationMethod(), defaultDigestCredentialRetriever);
     }
 
     @ConditionalOnMissingBean(name = "defaultDigestCredentialRetriever")
     @Bean
     @RefreshScope
-    public DigestHashedCredentialRetriever defaultDigestCredentialRetriever() {
+    @Autowired
+    public DigestHashedCredentialRetriever defaultDigestCredentialRetriever(final CasConfigurationProperties casProperties) {
         val digest = casProperties.getAuthn().getDigest();
         return new DefaultDigestHashedCredentialRetriever(digest.getUsers());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "digestAuthenticationCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer digestAuthenticationCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(digestAuthenticationWebflowConfigurer());
+    public CasWebflowExecutionPlanConfigurer digestAuthenticationCasWebflowExecutionPlanConfigurer(
+        @Qualifier("digestAuthenticationWebflowConfigurer")
+        final CasWebflowConfigurer digestAuthenticationWebflowConfigurer) {
+        return plan -> plan.registerWebflowConfigurer(digestAuthenticationWebflowConfigurer);
     }
 }

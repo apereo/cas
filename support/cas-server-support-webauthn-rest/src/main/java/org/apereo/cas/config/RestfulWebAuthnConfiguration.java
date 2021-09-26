@@ -24,16 +24,13 @@ import org.springframework.context.annotation.Configuration;
 public class RestfulWebAuthnConfiguration {
 
     @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
     @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
     private ObjectProvider<CipherExecutor<String, String>> webAuthnCredentialRegistrationCipherExecutor;
 
     @RefreshScope
     @Bean
-    public WebAuthnCredentialRepository webAuthnCredentialRepository() {
-        return new RestfulWebAuthnCredentialRepository(
-            casProperties, webAuthnCredentialRegistrationCipherExecutor.getObject());
+    @Autowired
+    public WebAuthnCredentialRepository webAuthnCredentialRepository(final CasConfigurationProperties casProperties) {
+        return new RestfulWebAuthnCredentialRepository(casProperties, webAuthnCredentialRegistrationCipherExecutor.getObject());
     }
 }

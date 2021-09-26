@@ -19,7 +19,6 @@ import org.apereo.cas.support.inwebo.authentication.InweboCredential;
 import org.apereo.cas.support.inwebo.service.InweboService;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -36,38 +35,24 @@ import java.util.Arrays;
  * @author Jerome LELEU
  * @since 6.4.0
  */
-@Configuration("inweboAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "inweboAuthenticationConfiguration", proxyBeanMethods = false)
 public class InweboAuthenticationConfiguration {
-
-    @Autowired
-    @Qualifier("inweboBypassEvaluator")
-    private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> inweboBypassEvaluator;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("failureModeEvaluator")
-    private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("inweboService")
-    private ObjectProvider<InweboService> inweboService;
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboMultifactorAuthenticationProvider")
     @RefreshScope
-    public MultifactorAuthenticationProvider inweboMultifactorAuthenticationProvider() {
+    @Autowired
+    public MultifactorAuthenticationProvider inweboMultifactorAuthenticationProvider(final CasConfigurationProperties casProperties,
+                                                                                     @Qualifier("inweboBypassEvaluator")
+                                                                                     final MultifactorAuthenticationProviderBypassEvaluator inweboBypassEvaluator,
+                                                                                     @Qualifier("failureModeEvaluator")
+                                                                                     final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
         val p = new InweboMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(inweboBypassEvaluator.getObject());
+        p.setBypassEvaluator(inweboBypassEvaluator);
         p.setFailureMode(inwebo.getFailureMode());
-        p.setFailureModeEvaluator(failureModeEvaluator.getObject());
+        p.setFailureModeEvaluator(failureModeEvaluator);
         p.setOrder(inwebo.getRank());
         p.setId(inwebo.getId());
         return p;
@@ -82,20 +67,28 @@ public class InweboAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "inweboAuthenticationHandler")
     @Bean
     @RefreshScope
-    public AuthenticationHandler inweboAuthenticationHandler() {
-        return new InweboAuthenticationHandler(servicesManager.getObject(), inweboPrincipalFactory(),
-                casProperties.getAuthn().getMfa().getInwebo(), inweboService.getObject());
+    @Autowired
+    public AuthenticationHandler inweboAuthenticationHandler(final CasConfigurationProperties casProperties,
+                                                             @Qualifier("inweboPrincipalFactory")
+                                                             final PrincipalFactory inweboPrincipalFactory,
+                                                             @Qualifier("servicesManager")
+                                                             final ServicesManager servicesManager,
+                                                             @Qualifier("inweboService")
+                                                             final InweboService inweboService) {
+        return new InweboAuthenticationHandler(servicesManager, inweboPrincipalFactory, casProperties.getAuthn().getMfa().getInwebo(), inweboService);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboAuthenticationMetaDataPopulator")
     @RefreshScope
-    public AuthenticationMetaDataPopulator inweboAuthenticationMetaDataPopulator() {
-        return new AuthenticationContextAttributeMetaDataPopulator(
-                casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
-                inweboAuthenticationHandler(),
-                inweboMultifactorAuthenticationProvider().getId()
-        );
+    @Autowired
+    public AuthenticationMetaDataPopulator inweboAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,
+                                                                                 @Qualifier("inweboAuthenticationHandler")
+                                                                                 final AuthenticationHandler inweboAuthenticationHandler,
+                                                                                 @Qualifier("inweboMultifactorAuthenticationProvider")
+                                                                                 final MultifactorAuthenticationProvider inweboMultifactorAuthenticationProvider) {
+        return new AuthenticationContextAttributeMetaDataPopulator(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(), inweboAuthenticationHandler,
+            inweboMultifactorAuthenticationProvider.getId());
     }
 
     @Bean
@@ -106,13 +99,17 @@ public class InweboAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "inweboAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer inweboAuthenticationEventExecutionPlanConfigurer() {
+    public AuthenticationEventExecutionPlanConfigurer inweboAuthenticationEventExecutionPlanConfigurer(
+        @Qualifier("inweboAuthenticationHandler")
+        final AuthenticationHandler inweboAuthenticationHandler,
+        @Qualifier("inweboAuthenticationMetaDataPopulator")
+        final AuthenticationMetaDataPopulator inweboAuthenticationMetaDataPopulator,
+        @Qualifier("inweboAuthenticationDeviceMetadataPopulator")
+        final AuthenticationMetaDataPopulator inweboAuthenticationDeviceMetadataPopulator) {
         return plan -> {
-            plan.registerAuthenticationHandler(inweboAuthenticationHandler());
-            plan.registerAuthenticationMetadataPopulators(Arrays.asList(inweboAuthenticationMetaDataPopulator(),
-                    inweboAuthenticationDeviceMetadataPopulator()));
-            plan.registerAuthenticationHandlerResolver(
-                    new ByCredentialTypeAuthenticationHandlerResolver(InweboCredential.class));
+            plan.registerAuthenticationHandler(inweboAuthenticationHandler);
+            plan.registerAuthenticationMetadataPopulators(Arrays.asList(inweboAuthenticationMetaDataPopulator, inweboAuthenticationDeviceMetadataPopulator));
+            plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(InweboCredential.class));
         };
     }
 }
