@@ -240,7 +240,7 @@ public class WebAuthnConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "webAuthnAuthenticationHandler")
     public AuthenticationHandler webAuthnAuthenticationHandler() {
-        val webAuthn = this.casProperties.getAuthn().getMfa().getWebAuthn();
+        val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn();
         return new WebAuthnAuthenticationHandler(webAuthn.getName(),
             servicesManager.getObject(), webAuthnPrincipalFactory(),
             webAuthnCredentialRepository(), webAuthnSessionManager(),
@@ -290,7 +290,7 @@ public class WebAuthnConfiguration {
         private final WebAuthnCredentialRepository repository;
 
         @Scheduled(initialDelayString = "${cas.authn.mfa.web-authn.cleaner.schedule.start-delay:PT20S}",
-            fixedDelayString = "${cas.authn.mfa.web-authn.cleaner.schedule.repeat-interval:PT5M}")
+                   fixedDelayString = "${cas.authn.mfa.web-authn.cleaner.schedule.repeat-interval:PT5M}")
         @Override
         public void run() {
             LOGGER.debug("Starting to clean expired devices from repository");

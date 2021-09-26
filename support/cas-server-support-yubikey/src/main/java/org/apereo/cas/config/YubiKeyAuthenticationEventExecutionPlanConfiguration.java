@@ -107,7 +107,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "yubicoClient")
     public YubicoClient yubicoClient() {
-        val yubi = this.casProperties.getAuthn().getMfa().getYubikey();
+        val yubi = casProperties.getAuthn().getMfa().getYubikey();
 
         if (StringUtils.isBlank(yubi.getSecretKey())) {
             throw new IllegalArgumentException("Yubikey secret key cannot be blank");
@@ -128,7 +128,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "yubikeyAuthenticationHandler")
     public AuthenticationHandler yubikeyAuthenticationHandler() {
-        val yubi = this.casProperties.getAuthn().getMfa().getYubikey();
+        val yubi = casProperties.getAuthn().getMfa().getYubikey();
         return new YubiKeyAuthenticationHandler(yubi.getName(),
             servicesManager.getObject(), yubikeyPrincipalFactory(),
             yubicoClient(), yubiKeyAccountRegistry(),

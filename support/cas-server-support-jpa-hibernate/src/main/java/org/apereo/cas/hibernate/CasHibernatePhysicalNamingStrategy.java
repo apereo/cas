@@ -42,7 +42,7 @@ public class CasHibernatePhysicalNamingStrategy extends SpringPhysicalNamingStra
             val physicalName = tableNames.get(tableName);
             if (ScriptingUtils.isExternalGroovyScript(physicalName)) {
                 LOGGER.trace("Executing script [{}] to determine physical table name for [{}]", physicalName, tableName);
-                val scriptResource = this.applicationContext.getResource(physicalName);
+                val scriptResource = applicationContext.getResource(physicalName);
                 val args = new Object[]{name, jdbcEnvironment, this.applicationContext, LOGGER};
                 val identifier = ScriptingUtils.executeGroovyScript(scriptResource, args, Identifier.class, true);
                 LOGGER.trace("Determine table physical name from script [{}] to be [{}]", scriptResource, identifier);
@@ -55,6 +55,11 @@ public class CasHibernatePhysicalNamingStrategy extends SpringPhysicalNamingStra
     }
 
     @Override
+    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    @Override
     protected boolean isCaseInsensitive(final JdbcEnvironment jdbcEnvironment) {
         val propsResult = ApplicationContextProvider.getCasConfigurationProperties();
         if (propsResult.isEmpty()) {
@@ -63,10 +68,5 @@ public class CasHibernatePhysicalNamingStrategy extends SpringPhysicalNamingStra
         }
         val casProperties = propsResult.get();
         return casProperties.getJdbc().isCaseInsensitive();
-    }
-
-    @Override
-    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
     }
 }

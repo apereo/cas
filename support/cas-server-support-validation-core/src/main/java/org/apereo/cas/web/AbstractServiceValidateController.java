@@ -361,7 +361,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     }
 
     private String getTicketValidationErrorDescription(final String code, final Object[] args, final HttpServletRequest request) {
-        return this.applicationContext.getMessage(code, args, code, request.getLocale());
+        return applicationContext.getMessage(code, args, code, request.getLocale());
     }
 
     /**

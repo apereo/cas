@@ -7,7 +7,6 @@ import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -25,38 +24,38 @@ import org.springframework.data.redis.core.RedisTemplate;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("casAcceptableUsagePolicyRedisConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnExpression(value = "${cas.acceptable-usage-policy.core.enabled:true} and ${cas.acceptable-usage-policy.redis.enabled:true}")
+@Configuration(value = "casAcceptableUsagePolicyRedisConfiguration", proxyBeanMethods = false)
 public class CasAcceptableUsagePolicyRedisConfiguration {
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "redisAcceptableUsagePolicyTemplate")
-    public RedisTemplate redisAcceptableUsagePolicyTemplate() {
-        return RedisObjectFactory.newRedisTemplate(redisAcceptableUsagePolicyConnectionFactory());
+    public RedisTemplate redisAcceptableUsagePolicyTemplate(
+        @Qualifier("redisAcceptableUsagePolicyConnectionFactory")
+        final RedisConnectionFactory redisAcceptableUsagePolicyConnectionFactory) {
+        return RedisObjectFactory.newRedisTemplate(redisAcceptableUsagePolicyConnectionFactory);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "redisAcceptableUsagePolicyConnectionFactory")
     @RefreshScope
-    public RedisConnectionFactory redisAcceptableUsagePolicyConnectionFactory() {
+    @Autowired
+    public RedisConnectionFactory redisAcceptableUsagePolicyConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAcceptableUsagePolicy().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
     }
 
     @RefreshScope
     @Bean
-    public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
-        return new RedisAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(),
-            casProperties.getAcceptableUsagePolicy(),
-            redisAcceptableUsagePolicyTemplate());
+    @Autowired
+    public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(final CasConfigurationProperties casProperties,
+                                                                           @Qualifier("redisAcceptableUsagePolicyTemplate")
+                                                                           final RedisTemplate redisAcceptableUsagePolicyTemplate,
+                                                                           @Qualifier("ticketRegistrySupport")
+                                                                           final TicketRegistrySupport ticketRegistrySupport) {
+        return new RedisAcceptableUsagePolicyRepository(ticketRegistrySupport,
+            casProperties.getAcceptableUsagePolicy(), redisAcceptableUsagePolicyTemplate);
     }
 }

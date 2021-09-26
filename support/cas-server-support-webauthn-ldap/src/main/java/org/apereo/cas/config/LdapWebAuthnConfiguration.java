@@ -7,7 +7,6 @@ import org.apereo.cas.webauthn.LdapWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,26 +25,20 @@ import org.springframework.dao.annotation.PersistenceExceptionTranslationPostPro
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapWebAuthnConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
-    private ObjectProvider<CipherExecutor> webAuthnCredentialRegistrationCipherExecutor;
-
     @RefreshScope
     @Bean
     public PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcessor() {
         return new PersistenceExceptionTranslationPostProcessor();
     }
 
-
     @RefreshScope
     @Bean
-    public WebAuthnCredentialRepository webAuthnCredentialRepository() {
+    @Autowired
+    public WebAuthnCredentialRepository webAuthnCredentialRepository(final CasConfigurationProperties casProperties,
+                                                                     @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
+                                                                     final CipherExecutor webAuthnCredentialRegistrationCipherExecutor) {
         val ldap = casProperties.getAuthn().getMfa().getWebAuthn().getLdap();
         val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
-        return new LdapWebAuthnCredentialRepository(connectionFactory,
-            casProperties, webAuthnCredentialRegistrationCipherExecutor.getObject());
+        return new LdapWebAuthnCredentialRepository(connectionFactory, casProperties, webAuthnCredentialRegistrationCipherExecutor);
     }
 }

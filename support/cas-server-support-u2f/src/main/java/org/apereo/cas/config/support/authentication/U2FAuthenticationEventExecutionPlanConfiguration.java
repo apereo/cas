@@ -83,7 +83,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler u2fAuthenticationHandler() {
-        val u2f = this.casProperties.getAuthn().getMfa().getU2f();
+        val u2f = casProperties.getAuthn().getMfa().getU2f();
         return new U2FAuthenticationHandler(u2f.getName(), servicesManager.getObject(),
             u2fPrincipalFactory(), u2fDeviceRepository.getObject(), u2fService.getObject(),
             u2f.getOrder());

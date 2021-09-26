@@ -8,7 +8,6 @@ import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -26,24 +25,25 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "couchDbConsentConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasConsentCouchDbConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("defaultObjectMapperFactory")
-    private ObjectProvider<ObjectMapperFactory> objectMapperFactory;
 
     @ConditionalOnMissingBean(name = "consentCouchDbFactory")
     @RefreshScope
     @Bean
-    public CouchDbConnectorFactory consentCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getConsent().getCouchDb(), objectMapperFactory.getObject());
+    @Autowired
+    public CouchDbConnectorFactory consentCouchDbFactory(final CasConfigurationProperties casProperties,
+                                                         @Qualifier("objectMapperFactory")
+                                                         final ObjectMapperFactory objectMapperFactory) {
+        return new CouchDbConnectorFactory(casProperties.getConsent().getCouchDb(),
+            objectMapperFactory);
     }
 
     @ConditionalOnMissingBean(name = "consentCouchDbRepository")
     @Bean
     @RefreshScope
-    public ConsentDecisionCouchDbRepository consentCouchDbRepository(@Qualifier("consentCouchDbFactory") final CouchDbConnectorFactory consentCouchDbFactory) {
+    @Autowired
+    public ConsentDecisionCouchDbRepository consentCouchDbRepository(
+        @Qualifier("consentCouchDbFactory")
+        final CouchDbConnectorFactory consentCouchDbFactory, final CasConfigurationProperties casProperties) {
         val repository = new ConsentDecisionCouchDbRepository(consentCouchDbFactory.getCouchDbConnector(),
             casProperties.getConsent().getCouchDb().isCreateIfNotExists());
         repository.initStandardDesignDocument();
@@ -53,7 +53,9 @@ public class CasConsentCouchDbConfiguration {
     @ConditionalOnMissingBean(name = "couchDbConsentRepository")
     @RefreshScope
     @Bean
-    public ConsentRepository consentRepository(@Qualifier("consentCouchDbRepository") final ConsentDecisionCouchDbRepository consentCouchDbRepository) {
+    public ConsentRepository consentRepository(
+        @Qualifier("consentCouchDbRepository")
+        final ConsentDecisionCouchDbRepository consentCouchDbRepository) {
         return new CouchDbConsentRepository(consentCouchDbRepository);
     }
 }
