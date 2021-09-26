@@ -6,7 +6,6 @@ import org.apereo.cas.consent.MongoDbConsentRepository;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,17 +24,13 @@ import javax.net.ssl.SSLContext;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasConsentMongoDbConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("sslContext")
-    private ObjectProvider<SSLContext> sslContext;
-
     @Bean
-    public ConsentRepository consentRepository() {
+    @Autowired
+    public ConsentRepository consentRepository(final CasConfigurationProperties casProperties,
+                                               @Qualifier("sslContext")
+                                               final SSLContext sslContext) {
         val mongo = casProperties.getConsent().getMongo();
-        val factory = new MongoDbConnectionFactory(sslContext.getObject());
+        val factory = new MongoDbConnectionFactory(sslContext);
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return new MongoDbConsentRepository(mongoTemplate, mongo.getCollection());

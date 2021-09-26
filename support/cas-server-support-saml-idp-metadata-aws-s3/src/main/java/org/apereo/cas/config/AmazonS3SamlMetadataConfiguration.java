@@ -22,18 +22,14 @@ import software.amazon.awssdk.services.s3.S3Client;
 @Configuration(value = "amazonS3SamlMetadataConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class AmazonS3SamlMetadataConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @ConditionalOnMissingBean(name = "amazonS3Client")
     @Bean
     @RefreshScope
-    public S3Client amazonS3Client() {
+    @Autowired
+    public S3Client amazonS3Client(final CasConfigurationProperties casProperties) {
         val amz = casProperties.getAuthn().getSamlIdp().getMetadata().getAmazonS3();
-        val credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(),
-            amz.getCredentialSecretKey(),
-            amz.getProfilePath(),
-            amz.getProfileName());
+        val credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(), amz.getCredentialSecretKey(), amz.getProfilePath(), amz.getProfileName());
         val builder = S3Client.builder();
         AmazonClientConfigurationBuilder.prepareClientBuilder(builder, credentials, amz);
         return builder.build();

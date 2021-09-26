@@ -36,9 +36,6 @@ import java.util.List;
 public class RedisServiceRegistryConfiguration {
 
     @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
@@ -48,7 +45,8 @@ public class RedisServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "redisServiceConnectionFactory")
     @RefreshScope
-    public RedisConnectionFactory redisServiceConnectionFactory() {
+    @Autowired
+    public RedisConnectionFactory redisServiceConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getServiceRegistry().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
     }
@@ -56,7 +54,9 @@ public class RedisServiceRegistryConfiguration {
     @Bean
     @Autowired
     @ConditionalOnMissingBean(name = "registeredServiceRedisTemplate")
-    public RedisTemplate<String, RegisteredService> registeredServiceRedisTemplate(@Qualifier("redisServiceConnectionFactory") final RedisConnectionFactory redisServiceConnectionFactory) {
+    public RedisTemplate<String, RegisteredService> registeredServiceRedisTemplate(
+        @Qualifier("redisServiceConnectionFactory")
+        final RedisConnectionFactory redisServiceConnectionFactory) {
         return RedisObjectFactory.newRedisTemplate(redisServiceConnectionFactory);
     }
 
@@ -64,7 +64,9 @@ public class RedisServiceRegistryConfiguration {
     @RefreshScope
     @Autowired
     @ConditionalOnMissingBean(name = "redisServiceRegistry")
-    public ServiceRegistry redisServiceRegistry(@Qualifier("registeredServiceRedisTemplate") final RedisTemplate<String, RegisteredService> registeredServiceRedisTemplate) {
+    public ServiceRegistry redisServiceRegistry(
+        @Qualifier("registeredServiceRedisTemplate")
+        final RedisTemplate<String, RegisteredService> registeredServiceRedisTemplate, final ConfigurableApplicationContext applicationContext) {
         return new RedisServiceRegistry(applicationContext, registeredServiceRedisTemplate, serviceRegistryListeners.getObject());
     }
 
@@ -73,8 +75,8 @@ public class RedisServiceRegistryConfiguration {
     @RefreshScope
     @Autowired
     public ServiceRegistryExecutionPlanConfigurer redisServiceRegistryExecutionPlanConfigurer(
-        @Qualifier("redisServiceRegistry") final ServiceRegistry redisServiceRegistry) {
+        @Qualifier("redisServiceRegistry")
+        final ServiceRegistry redisServiceRegistry) {
         return plan -> plan.registerServiceRegistry(redisServiceRegistry);
     }
-
 }

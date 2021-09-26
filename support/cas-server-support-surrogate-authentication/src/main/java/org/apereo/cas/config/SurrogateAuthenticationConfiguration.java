@@ -59,9 +59,6 @@ import java.util.List;
 @Slf4j
 public class SurrogateAuthenticationConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @RefreshScope
     @ConditionalOnMissingBean(name = "surrogateAuthenticationService")
     @Bean

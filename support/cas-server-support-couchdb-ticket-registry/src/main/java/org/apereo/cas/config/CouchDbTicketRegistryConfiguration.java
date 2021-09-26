@@ -11,7 +11,6 @@ import org.apereo.cas.util.CoreTicketUtils;
 
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -26,29 +25,29 @@ import org.springframework.context.annotation.Configuration;
  * @author Timur Duehr
  * @since 5.3.0
  */
-@Configuration("couchDbTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "couchDbTicketRegistryConfiguration", proxyBeanMethods = false)
 public class CouchDbTicketRegistryConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("defaultObjectMapperFactory")
-    private ObjectProvider<ObjectMapperFactory> objectMapperFactory;
 
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "ticketRegistryCouchDbFactory")
-    public CouchDbConnectorFactory ticketRegistryCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getTicket().getRegistry().getCouchDb(), objectMapperFactory.getObject());
+    @Autowired
+    public CouchDbConnectorFactory ticketRegistryCouchDbFactory(final CasConfigurationProperties casProperties,
+                                                                @Qualifier("objectMapperFactory")
+                                                                final ObjectMapperFactory objectMapperFactory) {
+        return new CouchDbConnectorFactory(casProperties.getTicket().getRegistry().getCouchDb(), objectMapperFactory);
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "ticketRegistryCouchDbRepository")
-    public TicketRepository ticketRegistryCouchDbRepository() {
+    @Autowired
+    public TicketRepository ticketRegistryCouchDbRepository(final CasConfigurationProperties casProperties,
+                                                            @Qualifier("ticketRegistryCouchDbFactory")
+                                                            final CouchDbConnectorFactory ticketRegistryCouchDbFactory) {
         val couchDbProperties = casProperties.getTicket().getRegistry().getCouchDb();
-        val ticketRepository = new TicketRepository(ticketRegistryCouchDbFactory().getCouchDbConnector(), couchDbProperties.isCreateIfNotExists());
+        val ticketRepository = new TicketRepository(ticketRegistryCouchDbFactory.getCouchDbConnector(), couchDbProperties.isCreateIfNotExists());
         ticketRepository.initStandardDesignDocument();
         return ticketRepository;
     }
@@ -56,9 +55,12 @@ public class CouchDbTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "couchDbTicketRegistry")
-    public TicketRegistry ticketRegistry() {
+    @Autowired
+    public TicketRegistry ticketRegistry(final CasConfigurationProperties casProperties,
+                                         @Qualifier("ticketRegistryCouchDbRepository")
+                                         final TicketRepository ticketRegistryCouchDbRepository) {
         val couchDb = casProperties.getTicket().getRegistry().getCouchDb();
-        val c = new CouchDbTicketRegistry(ticketRegistryCouchDbRepository(), couchDb.getRetries());
+        val c = new CouchDbTicketRegistry(ticketRegistryCouchDbRepository, couchDb.getRetries());
         c.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(couchDb.getCrypto(), "couch-db"));
         return c;
     }

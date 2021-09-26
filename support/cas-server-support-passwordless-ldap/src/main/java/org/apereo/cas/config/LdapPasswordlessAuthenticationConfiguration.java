@@ -22,12 +22,10 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapPasswordlessAuthenticationConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
     @RefreshScope
-    public PasswordlessUserAccountStore passwordlessUserAccountStore() {
+    @Autowired
+    public PasswordlessUserAccountStore passwordlessUserAccountStore(final CasConfigurationProperties casProperties) {
         val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
         val ldap = accounts.getLdap();
         val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
