@@ -61,6 +61,46 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
         this.applicationContext = applicationContext;
     }
 
+    private static String convertActionToString(final Action action) {
+        if (action instanceof EvaluateAction) {
+            return convertEvaluateActionToString(action);
+        }
+        if (action instanceof AnnotatedAction) {
+            val eval = (AnnotatedAction) action;
+            if (eval.getTargetAction() instanceof EvaluateAction) {
+                return convertEvaluateActionToString(eval.getTargetAction());
+            }
+            return eval.getTargetAction().toString();
+        }
+        if (action instanceof SetAction) {
+            val expF = ReflectionUtils.findField(action.getClass(), "nameExpression");
+            val resultExpF = ReflectionUtils.findField(action.getClass(), "valueExpression");
+            return "set " + stringifyActionField(action, expF) + " = " + stringifyActionField(action, resultExpF);
+        }
+        return action.toString();
+    }
+
+    private static String convertEvaluateActionToString(final Action action) {
+        val eval = (EvaluateAction) action;
+        val expF = ReflectionUtils.findField(eval.getClass(), "expression");
+        val resultExpF = ReflectionUtils.findField(eval.getClass(), "resultExpression");
+        return stringifyActionField(action, expF, resultExpF);
+    }
+
+    private static String stringifyActionField(final Action eval, final Field... fields) {
+        return Arrays.stream(fields)
+            .map(f -> {
+                ReflectionUtils.makeAccessible(f);
+                val exp = ReflectionUtils.getField(f, eval);
+                if (exp != null) {
+                    return StringUtils.defaultString(exp.toString());
+                }
+                return null;
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.joining(", "));
+    }
+
     /**
      * Get SWF report.
      *
@@ -69,14 +109,16 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
      */
     @ReadOperation
     @Operation(summary = "Get Spring webflow report using an optional flow id", parameters = {@Parameter(name = "flowId")})
-    public Map<?, ?> getReport(@Nullable final String flowId) {
+    public Map<?, ?> getReport(
+        @Nullable
+        final String flowId) {
         val jsonMap = new LinkedHashMap<String, Object>();
-        val map = this.applicationContext.getBeansOfType(FlowDefinitionRegistry.class, false, true);
+        val map = applicationContext.getBeansOfType(FlowDefinitionRegistry.class, false, true);
 
         map.forEach((k, value) -> Arrays.stream(value.getFlowDefinitionIds())
             .filter(currentId -> StringUtils.isBlank(flowId) || flowId.equalsIgnoreCase(currentId))
             .forEach(id -> {
-                val flowDefinition = Flow.class.cast(value.getFlowDefinition(id));
+                val flowDefinition = (Flow) value.getFlowDefinition(id);
 
                 val flowDetails = new LinkedHashMap<String, Object>();
                 flowDetails.put("startState", flowDefinition.getStartState().getId());
@@ -110,7 +152,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
                     }
 
                     if (state instanceof ActionState) {
-                        acts = StreamSupport.stream(ActionState.class.cast(state).getActionList().spliterator(), false)
+                        acts = StreamSupport.stream(((ActionState) state).getActionList().spliterator(), false)
                             .map(SpringWebflowEndpoint::convertActionToString)
                             .collect(Collectors.toList());
                         if (!acts.isEmpty()) {
@@ -122,7 +164,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
                         stateMap.put("isEndState", Boolean.TRUE);
                     }
                     if (state.isViewState()) {
-                        val viewState = ViewState.class.cast(state);
+                        val viewState = (ViewState) state;
 
                         stateMap.put("isViewState", state.isViewState());
                         stateMap.put("isRedirect", viewState.getRedirect());
@@ -167,7 +209,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
                     }
 
                     if (state instanceof TransitionableState) {
-                        val stDef = TransitionableState.class.cast(state);
+                        val stDef = (TransitionableState) state;
 
                         acts = StreamSupport.stream(stDef.getExitActionList().spliterator(), false)
                             .map(Object::toString)
@@ -224,45 +266,5 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
             }));
 
         return jsonMap;
-    }
-
-    private static String convertActionToString(final Action action) {
-        if (action instanceof EvaluateAction) {
-            return convertEvaluateActionToString(action);
-        }
-        if (action instanceof AnnotatedAction) {
-            val eval = AnnotatedAction.class.cast(action);
-            if (eval.getTargetAction() instanceof EvaluateAction) {
-                return convertEvaluateActionToString(eval.getTargetAction());
-            }
-            return eval.getTargetAction().toString();
-        }
-        if (action instanceof SetAction) {
-            val expF = ReflectionUtils.findField(action.getClass(), "nameExpression");
-            val resultExpF = ReflectionUtils.findField(action.getClass(), "valueExpression");
-            return "set " + stringifyActionField(action, expF) + " = " + stringifyActionField(action, resultExpF);
-        }
-        return action.toString();
-    }
-
-    private static String convertEvaluateActionToString(final Action action) {
-        val eval = EvaluateAction.class.cast(action);
-        val expF = ReflectionUtils.findField(eval.getClass(), "expression");
-        val resultExpF = ReflectionUtils.findField(eval.getClass(), "resultExpression");
-        return stringifyActionField(action, expF, resultExpF);
-    }
-
-    private static String stringifyActionField(final Action eval, final Field... fields) {
-        return Arrays.stream(fields)
-            .map(f -> {
-                ReflectionUtils.makeAccessible(f);
-                val exp = ReflectionUtils.getField(f, eval);
-                if (exp != null) {
-                    return StringUtils.defaultString(exp.toString());
-                }
-                return null;
-            })
-            .filter(Objects::nonNull)
-            .collect(Collectors.joining(", "));
     }
 }

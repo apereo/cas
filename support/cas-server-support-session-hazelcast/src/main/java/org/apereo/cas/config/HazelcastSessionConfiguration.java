@@ -23,9 +23,6 @@ import org.springframework.session.hazelcast.config.annotation.web.http.EnableHa
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class HazelcastSessionConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     /**
      * Hazelcast instance that is used by the spring session
      * repository to broadcast session events. The name
@@ -35,14 +32,13 @@ public class HazelcastSessionConfiguration {
      * @throws Exception the exception
      */
     @Bean(destroyMethod = "shutdown")
-    public HazelcastInstance hazelcastInstance() throws Exception {
+    @Autowired
+    public HazelcastInstance hazelcastInstance(final CasConfigurationProperties casProperties) throws Exception {
         val hzConfigResource = casProperties.getWebflow().getSession().getHzLocation();
         val configUrl = hzConfigResource.getURL();
         val config = new XmlConfigBuilder(hzConfigResource.getInputStream()).build();
         config.setConfigurationUrl(configUrl);
-        config.setInstanceName(this.getClass().getSimpleName())
-            .setProperty("hazelcast.logging.type", "slf4j")
-            .setProperty("hazelcast.max.no.heartbeat.seconds", "300");
+        config.setInstanceName(getClass().getSimpleName()).setProperty("hazelcast.logging.type", "slf4j").setProperty("hazelcast.max.no.heartbeat.seconds", "300");
         return Hazelcast.newHazelcastInstance(config);
     }
 

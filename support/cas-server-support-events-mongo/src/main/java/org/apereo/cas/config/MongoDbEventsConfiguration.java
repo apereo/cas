@@ -7,7 +7,6 @@ import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.mongo.MongoDbCasEventRepository;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,16 +26,9 @@ import javax.net.ssl.SSLContext;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("mongoDbEventsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "mongoDbEventsConfiguration", proxyBeanMethods = false)
 public class MongoDbEventsConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("sslContext")
-    private ObjectProvider<SSLContext> sslContext;
 
     @RefreshScope
     @Bean
@@ -47,11 +39,14 @@ public class MongoDbEventsConfiguration {
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "mongoEventsTemplate")
-    public MongoTemplate mongoEventsTemplate() {
+    @Autowired
+    public MongoTemplate mongoEventsTemplate(final CasConfigurationProperties casProperties,
+                                             @Qualifier("sslContext")
+                                             final SSLContext sslContext) {
         val mongo = casProperties.getEvents().getMongo();
-        val factory = new MongoDbConnectionFactory(sslContext.getObject());
+        val factory = new MongoDbConnectionFactory(sslContext);
         val mongoTemplate = factory.buildMongoTemplate(mongo);
-        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
 
@@ -62,11 +57,13 @@ public class MongoDbEventsConfiguration {
     }
 
     @Bean
-    public CasEventRepository casEventRepository() {
+    @Autowired
+    public CasEventRepository casEventRepository(final CasConfigurationProperties casProperties,
+                                                 @Qualifier("mongoEventRepositoryFilter")
+                                                 final CasEventRepositoryFilter mongoEventRepositoryFilter,
+                                                 @Qualifier("mongoEventsTemplate")
+                                                 final MongoTemplate mongoEventsTemplate) {
         val mongo = casProperties.getEvents().getMongo();
-        return new MongoDbCasEventRepository(
-            mongoEventRepositoryFilter(),
-            mongoEventsTemplate(),
-            mongo.getCollection());
+        return new MongoDbCasEventRepository(mongoEventRepositoryFilter, mongoEventsTemplate, mongo.getCollection());
     }
 }

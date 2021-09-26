@@ -10,7 +10,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,41 +27,41 @@ import org.springframework.data.redis.core.RedisTemplate;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("u2fRedisConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.authn.mfa.u2f.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
+@Configuration(value = "u2fRedisConfiguration", proxyBeanMethods = false)
 public class U2FRedisConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("u2fRegistrationRecordCipherExecutor")
-    private ObjectProvider<CipherExecutor> u2fRegistrationRecordCipherExecutor;
 
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "u2fRedisTemplate")
-    public RedisTemplate u2fRedisTemplate() {
-        return RedisObjectFactory.newRedisTemplate(u2fRedisConnectionFactory());
+    public RedisTemplate u2fRedisTemplate(
+        @Qualifier("u2fRedisConnectionFactory")
+        final RedisConnectionFactory u2fRedisConnectionFactory) {
+        return RedisObjectFactory.newRedisTemplate(u2fRedisConnectionFactory);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "u2fRedisConnectionFactory")
     @RefreshScope
-    public RedisConnectionFactory u2fRedisConnectionFactory() {
+    @Autowired
+    public RedisConnectionFactory u2fRedisConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getMfa().getU2f().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
     }
 
     @Bean
     @RefreshScope
-    public U2FDeviceRepository u2fDeviceRepository() {
+    @Autowired
+    public U2FDeviceRepository u2fDeviceRepository(final CasConfigurationProperties casProperties,
+                                                   @Qualifier("u2fRedisTemplate")
+                                                   final RedisTemplate u2fRedisTemplate,
+                                                   @Qualifier("u2fRegistrationRecordCipherExecutor")
+                                                   final CipherExecutor u2fRegistrationRecordCipherExecutor) {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
-        final LoadingCache<String, String> requestStorage = Caffeine.newBuilder()
-            .expireAfterWrite(u2f.getCore().getExpireRegistrations(), u2f.getCore().getExpireRegistrationsTimeUnit())
-            .build(key -> StringUtils.EMPTY);
-        return new U2FRedisDeviceRepository(requestStorage, u2fRedisTemplate(), u2f.getCore().getExpireDevices(),
-            u2f.getCore().getExpireDevicesTimeUnit(), u2fRegistrationRecordCipherExecutor.getObject());
+        final LoadingCache<String, String> requestStorage =
+            Caffeine.newBuilder().expireAfterWrite(u2f.getCore().getExpireRegistrations(), u2f.getCore().getExpireRegistrationsTimeUnit()).build(key -> StringUtils.EMPTY);
+        return new U2FRedisDeviceRepository(requestStorage, u2fRedisTemplate, u2f.getCore().getExpireDevices(), u2f.getCore().getExpireDevicesTimeUnit(),
+            u2fRegistrationRecordCipherExecutor);
     }
 }

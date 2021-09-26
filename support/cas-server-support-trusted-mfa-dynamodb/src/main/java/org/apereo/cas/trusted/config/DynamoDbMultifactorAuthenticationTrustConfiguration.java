@@ -9,7 +9,6 @@ import org.apereo.cas.trusted.authentication.storage.DynamoDbMultifactorTrustEng
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -25,24 +24,15 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration("dynamoDbMultifactorAuthenticationTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "dynamoDbMultifactorAuthenticationTrustConfiguration", proxyBeanMethods = false)
 public class DynamoDbMultifactorAuthenticationTrustConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("mfaTrustRecordKeyGenerator")
-    private ObjectProvider<MultifactorAuthenticationTrustRecordKeyGenerator> keyGenerationStrategy;
-
-    @Autowired
-    @Qualifier("mfaTrustCipherExecutor")
-    private ObjectProvider<CipherExecutor> mfaTrustCipherExecutor;
 
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "amazonDynamoDbMultifactorTrustEngineClient")
-    public DynamoDbClient amazonDynamoDbMultifactorTrustEngineClient() {
+    @Autowired
+    public DynamoDbClient amazonDynamoDbMultifactorTrustEngineClient(final CasConfigurationProperties casProperties) {
         val db = casProperties.getAuthn().getMfa().getTrusted().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();
         return factory.createAmazonDynamoDb(db);
@@ -51,9 +41,12 @@ public class DynamoDbMultifactorAuthenticationTrustConfiguration {
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbMultifactorTrustEngineFacilitator")
-    public DynamoDbMultifactorTrustEngineFacilitator dynamoDbMultifactorTrustEngineFacilitator() {
+    @Autowired
+    public DynamoDbMultifactorTrustEngineFacilitator dynamoDbMultifactorTrustEngineFacilitator(final CasConfigurationProperties casProperties,
+                                                                                               @Qualifier("amazonDynamoDbMultifactorTrustEngineClient")
+                                                                                               final DynamoDbClient amazonDynamoDbMultifactorTrustEngineClient) {
         val db = casProperties.getAuthn().getMfa().getTrusted().getDynamoDb();
-        val f = new DynamoDbMultifactorTrustEngineFacilitator(db, amazonDynamoDbMultifactorTrustEngineClient());
+        val f = new DynamoDbMultifactorTrustEngineFacilitator(db, amazonDynamoDbMultifactorTrustEngineClient);
         if (!db.isPreventTableCreationOnStartup()) {
             f.createTable(db.isDropTablesOnStartup());
         }
@@ -62,8 +55,15 @@ public class DynamoDbMultifactorAuthenticationTrustConfiguration {
 
     @RefreshScope
     @Bean
-    public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
-        return new DynamoDbMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
-            mfaTrustCipherExecutor.getObject(), dynamoDbMultifactorTrustEngineFacilitator(), keyGenerationStrategy.getObject());
+    @Autowired
+    public MultifactorAuthenticationTrustStorage mfaTrustEngine(final CasConfigurationProperties casProperties,
+                                                                @Qualifier("dynamoDbMultifactorTrustEngineFacilitator")
+                                                                final DynamoDbMultifactorTrustEngineFacilitator dynamoDbMultifactorTrustEngineFacilitator,
+                                                                @Qualifier("keyGenerationStrategy")
+                                                                final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy,
+                                                                @Qualifier("mfaTrustCipherExecutor")
+                                                                final CipherExecutor mfaTrustCipherExecutor) {
+        return new DynamoDbMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(), mfaTrustCipherExecutor, dynamoDbMultifactorTrustEngineFacilitator,
+            keyGenerationStrategy);
     }
 }

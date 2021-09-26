@@ -10,7 +10,6 @@ import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.MongoDbTicketRegistryFacilitator;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,40 +27,37 @@ import javax.net.ssl.SSLContext;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("mongoTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "mongoTicketRegistryConfiguration", proxyBeanMethods = false)
 public class MongoDbTicketRegistryConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("ticketSerializationManager")
-    private ObjectProvider<TicketSerializationManager> ticketSerializationManager;
-
-    @Autowired
-    @Qualifier("sslContext")
-    private ObjectProvider<SSLContext> sslContext;
 
     @RefreshScope
     @Bean
     @Autowired
-    public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
+    public TicketRegistry ticketRegistry(
+        @Qualifier("ticketCatalog")
+        final TicketCatalog ticketCatalog, final CasConfigurationProperties casProperties,
+        @Qualifier("mongoDbTicketRegistryTemplate")
+        final MongoTemplate mongoDbTicketRegistryTemplate,
+        @Qualifier("ticketSerializationManager")
+        final TicketSerializationManager ticketSerializationManager) {
         val mongo = casProperties.getTicket().getRegistry().getMongo();
-        val mongoTemplate = mongoDbTicketRegistryTemplate();
-        val registry = new MongoDbTicketRegistry(ticketCatalog, mongoTemplate, ticketSerializationManager.getObject());
+        val mongoTemplate = mongoDbTicketRegistryTemplate;
+        val registry = new MongoDbTicketRegistry(ticketCatalog, mongoTemplate, ticketSerializationManager);
         registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(mongo.getCrypto(), "mongo"));
-        new MongoDbTicketRegistryFacilitator(ticketCatalog, mongoTemplate, mongo.isDropCollection())
-            .createTicketCollections();
+        new MongoDbTicketRegistryFacilitator(ticketCatalog, mongoTemplate, mongo.isDropCollection()).createTicketCollections();
         return registry;
     }
 
     @ConditionalOnMissingBean(name = "mongoDbTicketRegistryTemplate")
     @Bean
     @RefreshScope
-    public MongoTemplate mongoDbTicketRegistryTemplate() {
-        val factory = new MongoDbConnectionFactory(sslContext.getObject());
+    @Autowired
+    public MongoTemplate mongoDbTicketRegistryTemplate(final CasConfigurationProperties casProperties,
+                                                       @Qualifier("sslContext")
+                                                       final SSLContext sslContext) {
+        val factory = new MongoDbConnectionFactory(sslContext);
         val mongo = casProperties.getTicket().getRegistry().getMongo();
         return factory.buildMongoTemplate(mongo);
     }
-
 }
