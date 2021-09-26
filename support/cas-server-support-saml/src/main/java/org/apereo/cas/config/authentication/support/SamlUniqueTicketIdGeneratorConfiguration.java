@@ -10,6 +10,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,23 +21,22 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("samlUniqueTicketIdGeneratorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "samlUniqueTicketIdGeneratorConfiguration", proxyBeanMethods = false)
 public class SamlUniqueTicketIdGeneratorConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Bean
-    public UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator() {
+    @Autowired
+    public UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator(final CasConfigurationProperties casProperties) {
         val gen = new SamlCompliantUniqueTicketIdGenerator(casProperties.getServer().getName());
         gen.setSaml2compliant(casProperties.getSamlCore().isTicketidSaml2());
         return gen;
     }
 
     @Bean
-    public UniqueTicketIdGeneratorConfigurer samlServiceTicketUniqueTicketIdGeneratorConfigurer() {
-        return () -> CollectionUtils.wrap(
-            Pair.of(SamlService.class.getCanonicalName(), samlServiceTicketUniqueIdGenerator()));
+    public UniqueTicketIdGeneratorConfigurer samlServiceTicketUniqueTicketIdGeneratorConfigurer(
+        @Qualifier("samlServiceTicketUniqueIdGenerator")
+        final UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator) {
+        return () -> CollectionUtils.wrap(Pair.of(SamlService.class.getCanonicalName(), samlServiceTicketUniqueIdGenerator));
     }
-
 }

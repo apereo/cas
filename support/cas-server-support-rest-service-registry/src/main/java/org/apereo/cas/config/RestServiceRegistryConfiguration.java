@@ -28,13 +28,11 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("restServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(name = "cas.service-registry.rest.url")
 @Slf4j
+@Configuration(value = "restServiceRegistryConfiguration", proxyBeanMethods = false)
 public class RestServiceRegistryConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -46,23 +44,25 @@ public class RestServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "restfulServiceRegistry")
-    public ServiceRegistry restfulServiceRegistry() {
+    @Autowired
+    public ServiceRegistry restfulServiceRegistry(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext) {
         val registry = casProperties.getServiceRegistry().getRest();
         LOGGER.debug("Creating REST-based service registry using endpoint [{}]", registry.getUrl());
-        return new RestfulServiceRegistry(applicationContext,
-            serviceRegistryListeners.getObject(), registry);
+        return new RestfulServiceRegistry(applicationContext, serviceRegistryListeners.getObject(), registry);
     }
-    
+
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "restfulServiceRegistryExecutionPlanConfigurer")
-    public ServiceRegistryExecutionPlanConfigurer restfulServiceRegistryExecutionPlanConfigurer() {
+    @Autowired
+    public ServiceRegistryExecutionPlanConfigurer restfulServiceRegistryExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
+                                                                                                @Qualifier("restfulServiceRegistry")
+                                                                                                final ServiceRegistry restfulServiceRegistry) {
         return plan -> {
             val registry = casProperties.getServiceRegistry().getRest();
             if (StringUtils.isNotBlank(registry.getUrl())) {
-                plan.registerServiceRegistry(restfulServiceRegistry());
+                plan.registerServiceRegistry(restfulServiceRegistry);
             }
         };
     }
-
 }

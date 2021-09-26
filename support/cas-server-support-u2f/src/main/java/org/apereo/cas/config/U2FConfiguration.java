@@ -69,7 +69,7 @@ public class U2FConfiguration {
     @RefreshScope
     @Autowired
     public U2FDeviceRepository u2fDeviceRepository(
-        @Qualifier("CipherExecutor u2fRegistrationRecordCipherExecutor")
+        @Qualifier("u2fRegistrationRecordCipherExecutor")
         final CipherExecutor u2fRegistrationRecordCipherExecutor,
         final CasConfigurationProperties casProperties) {
         val u2f = casProperties.getAuthn().getMfa().getU2f();

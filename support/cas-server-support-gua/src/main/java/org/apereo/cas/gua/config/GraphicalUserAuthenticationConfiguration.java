@@ -19,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,55 +40,37 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("graphicalUserAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "graphicalUserAuthenticationConfiguration", proxyBeanMethods = false)
 public class GraphicalUserAuthenticationConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @ConditionalOnMissingBean(name = "graphicalUserAuthenticationWebflowConfigurer")
     @Bean
-    public CasWebflowConfigurer graphicalUserAuthenticationWebflowConfigurer() {
-        return new GraphicalUserAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
+    @Autowired
+    public CasWebflowConfigurer graphicalUserAuthenticationWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+                                                                             @Qualifier("loginFlowDefinitionRegistry")
+                                                                             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                                             @Qualifier("flowBuilderServices")
+                                                                             final FlowBuilderServices flowBuilderServices) {
+        return new GraphicalUserAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "userGraphicalAuthenticationRepository")
-    public UserGraphicalAuthenticationRepository userGraphicalAuthenticationRepository() {
+    @Autowired
+    public UserGraphicalAuthenticationRepository userGraphicalAuthenticationRepository(final CasConfigurationProperties casProperties) {
         val gua = casProperties.getAuthn().getGua();
         if (!gua.getSimple().isEmpty()) {
-            val accounts = gua.getSimple().entrySet()
-                .stream()
-                .map(Unchecked.function(entry -> {
-                    val res = ResourceUtils.getResourceFrom(entry.getValue());
-                    return Pair.of(entry.getKey(), (Resource) res);
-                }))
-                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+            val accounts = gua.getSimple().entrySet().stream().map(Unchecked.function(entry -> {
+                val res = ResourceUtils.getResourceFrom(entry.getValue());
+                return Pair.of(entry.getKey(), (Resource) res);
+            })).collect(Collectors.toMap(Pair::getKey, Pair::getValue));
             return new StaticUserGraphicalAuthenticationRepository(accounts);
         }
-
         val ldap = gua.getLdap();
-        if (StringUtils.isNotBlank(ldap.getLdapUrl())
-            && StringUtils.isNotBlank(ldap.getSearchFilter())
-            && StringUtils.isNotBlank(ldap.getBaseDn())
-            && StringUtils.isNotBlank(ldap.getImageAttribute())) {
+        if (StringUtils.isNotBlank(ldap.getLdapUrl()) && StringUtils.isNotBlank(ldap.getSearchFilter())
+            && StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getImageAttribute())) {
             val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(gua.getLdap());
             return new LdapUserGraphicalAuthenticationRepository(casProperties, connectionFactory);
         }
@@ -106,19 +87,26 @@ public class GraphicalUserAuthenticationConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "displayUserGraphicsBeforeAuthenticationAction")
-    public Action displayUserGraphicsBeforeAuthenticationAction() {
-        return new DisplayUserGraphicsBeforeAuthenticationAction(userGraphicalAuthenticationRepository());
+    public Action displayUserGraphicsBeforeAuthenticationAction(
+        @Qualifier("userGraphicalAuthenticationRepository")
+        final UserGraphicalAuthenticationRepository userGraphicalAuthenticationRepository) {
+        return new DisplayUserGraphicsBeforeAuthenticationAction(userGraphicalAuthenticationRepository);
     }
 
     @Bean
     @RefreshScope
-    public Action initializeLoginAction() {
-        return new PrepareForGraphicalAuthenticationAction(servicesManager.getObject(), casProperties);
+    @Autowired
+    public Action initializeLoginAction(final CasConfigurationProperties casProperties,
+                                        @Qualifier("servicesManager")
+                                        final ServicesManager servicesManager) {
+        return new PrepareForGraphicalAuthenticationAction(servicesManager, casProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "graphicalUserAuthenticationCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer graphicalUserAuthenticationCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(graphicalUserAuthenticationWebflowConfigurer());
+    public CasWebflowExecutionPlanConfigurer graphicalUserAuthenticationCasWebflowExecutionPlanConfigurer(
+        @Qualifier("graphicalUserAuthenticationWebflowConfigurer")
+        final CasWebflowConfigurer graphicalUserAuthenticationWebflowConfigurer) {
+        return plan -> plan.registerWebflowConfigurer(graphicalUserAuthenticationWebflowConfigurer);
     }
 }
