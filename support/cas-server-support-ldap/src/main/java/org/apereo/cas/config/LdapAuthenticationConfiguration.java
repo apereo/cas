@@ -12,7 +12,6 @@ import org.apereo.cas.util.LdapUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.SetFactoryBean;
@@ -34,24 +33,13 @@ import java.util.HashSet;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Configuration("ldapAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@Configuration(value = "ldapAuthenticationConfiguration", proxyBeanMethods = false)
 public class LdapAuthenticationConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("defaultPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
 
     @ConditionalOnMissingBean(name = "ldapPrincipalFactory")
     @Bean
@@ -67,41 +55,44 @@ public class LdapAuthenticationConfiguration {
 
     @Bean
     @RefreshScope
+    @Autowired
     public Collection<AuthenticationHandler> ldapAuthenticationHandlers(
-        @Qualifier("ldapAuthenticationHandlerSetFactoryBean") final SetFactoryBean ldapAuthenticationHandlerSetFactoryBean)
-        throws Exception {
+        @Qualifier("ldapAuthenticationHandlerSetFactoryBean")
+        final SetFactoryBean ldapAuthenticationHandlerSetFactoryBean, final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+        @Qualifier("ldapPrincipalFactory")
+        final PrincipalFactory ldapPrincipalFactory,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager) throws Exception {
         val handlers = new HashSet<AuthenticationHandler>();
-
-        casProperties.getAuthn().getLdap()
-            .stream()
-            .filter(l -> {
-                if (l.getType() == null || StringUtils.isBlank(l.getLdapUrl())) {
-                    LOGGER.warn("Skipping LDAP authentication entry since no type or LDAP url is defined");
-                    return false;
-                }
-                return true;
-            })
-            .forEach(l -> {
-                val handler = LdapUtils.createLdapAuthenticationHandler(l, applicationContext,
-                    servicesManager.getObject(), ldapPrincipalFactory());
-                handler.setState(l.getState());
-                handlers.add(handler);
-            });
+        casProperties.getAuthn().getLdap().stream().filter(l -> {
+            if (l.getType() == null || StringUtils.isBlank(l.getLdapUrl())) {
+                LOGGER.warn("Skipping LDAP authentication entry since no type or LDAP url is defined");
+                return false;
+            }
+            return true;
+        }).forEach(l -> {
+            val handler = LdapUtils.createLdapAuthenticationHandler(l, applicationContext, servicesManager, ldapPrincipalFactory);
+            handler.setState(l.getState());
+            handlers.add(handler);
+        });
         ldapAuthenticationHandlerSetFactoryBean.getObject().addAll(handlers);
         return handlers;
     }
-
 
     @ConditionalOnMissingBean(name = "ldapAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @Autowired
     @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer ldapAuthenticationEventExecutionPlanConfigurer(
-        @Qualifier("ldapAuthenticationHandlerSetFactoryBean") final SetFactoryBean ldapAuthenticationHandlerSetFactoryBean)
-        throws Exception {
-        return plan -> ldapAuthenticationHandlers(ldapAuthenticationHandlerSetFactoryBean).forEach(handler -> {
+        @Qualifier("ldapAuthenticationHandlerSetFactoryBean")
+        final SetFactoryBean ldapAuthenticationHandlerSetFactoryBean,
+        @Qualifier("ldapAuthenticationHandlers")
+        final Collection<AuthenticationHandler> ldapAuthenticationHandlers,
+        @Qualifier("defaultPrincipalResolver")
+        final PrincipalResolver defaultPrincipalResolver) throws Exception {
+        return plan -> ldapAuthenticationHandlers.forEach(handler -> {
             LOGGER.info("Registering LDAP authentication for [{}]", handler.getName());
-            plan.registerAuthenticationHandlerWithPrincipalResolver(handler, defaultPrincipalResolver.getObject());
+            plan.registerAuthenticationHandlerWithPrincipalResolver(handler, defaultPrincipalResolver);
         });
     }
 }

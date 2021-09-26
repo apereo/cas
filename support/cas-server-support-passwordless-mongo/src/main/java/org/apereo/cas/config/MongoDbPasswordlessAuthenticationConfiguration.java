@@ -6,7 +6,6 @@ import org.apereo.cas.impl.account.MongoDbPasswordlessUserAccountStore;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,19 +26,16 @@ import javax.net.ssl.SSLContext;
 @Configuration(value = "mongoDbPasswordlessAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbPasswordlessAuthenticationConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("sslContext")
-    private ObjectProvider<SSLContext> sslContext;
 
     @ConditionalOnMissingBean(name = "mongoDbPasswordlessAuthenticationTemplate")
     @Bean
     @RefreshScope
-    public MongoTemplate mongoDbPasswordlessAuthenticationTemplate() {
+    @Autowired
+    public MongoTemplate mongoDbPasswordlessAuthenticationTemplate(final CasConfigurationProperties casProperties,
+                                                                   @Qualifier("sslContext")
+                                                                   final SSLContext sslContext) {
         val mongo = casProperties.getAuthn().getPasswordless().getAccounts().getMongo();
-        val factory = new MongoDbConnectionFactory(sslContext.getObject());
+        val factory = new MongoDbConnectionFactory(sslContext);
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
@@ -48,8 +44,9 @@ public class MongoDbPasswordlessAuthenticationConfiguration {
     @Bean
     @RefreshScope
     @Autowired
-    public PasswordlessUserAccountStore passwordlessUserAccountStore(@Qualifier("mongoDbPasswordlessAuthenticationTemplate")
-                                                                     final MongoTemplate mongoDbPasswordlessAuthenticationTemplate) {
+    public PasswordlessUserAccountStore passwordlessUserAccountStore(
+        @Qualifier("mongoDbPasswordlessAuthenticationTemplate")
+        final MongoTemplate mongoDbPasswordlessAuthenticationTemplate, final CasConfigurationProperties casProperties) {
         val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
         return new MongoDbPasswordlessUserAccountStore(mongoDbPasswordlessAuthenticationTemplate, accounts.getMongo());
     }

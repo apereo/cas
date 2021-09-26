@@ -26,23 +26,17 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 public class GoogleAuthenticatorLdapConfiguration {
-    
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
-        @Qualifier("googleAuthenticatorInstance") final IGoogleAuthenticator googleAuthenticatorInstance,
-        @Qualifier("googleAuthenticatorAccountCipherExecutor") final CipherExecutor cipherExecutor) {
-
+        @Qualifier("googleAuthenticatorInstance")
+        final IGoogleAuthenticator googleAuthenticatorInstance,
+        @Qualifier("googleAuthenticatorAccountCipherExecutor")
+        final CipherExecutor cipherExecutor, final CasConfigurationProperties casProperties) {
         val ldap = casProperties.getAuthn().getMfa().getGauth().getLdap();
         val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
-        return new LdapGoogleAuthenticatorTokenCredentialRepository(
-            cipherExecutor,
-            googleAuthenticatorInstance,
-            connectionFactory, ldap);
+        return new LdapGoogleAuthenticatorTokenCredentialRepository(cipherExecutor, googleAuthenticatorInstance, connectionFactory, ldap);
     }
-
 }

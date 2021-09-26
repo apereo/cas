@@ -10,7 +10,6 @@ import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,29 +27,23 @@ import javax.net.ssl.SSLContext;
  * @author doomviking
  * @since 6.1.0
  */
-@Configuration("cassandraTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "cassandraTicketRegistryConfiguration", proxyBeanMethods = false)
 public class CassandraTicketRegistryConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("ticketSerializationManager")
-    private ObjectProvider<TicketSerializationManager> ticketSerializationManager;
-
-    @Autowired
-    @Qualifier("sslContext")
-    private ObjectProvider<SSLContext> sslContext;
 
     @Autowired
     @Bean
     @RefreshScope
-    public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
+    public TicketRegistry ticketRegistry(
+        @Qualifier("ticketCatalog")
+        final TicketCatalog ticketCatalog, final CasConfigurationProperties casProperties,
+        @Qualifier("cassandraTicketRegistrySessionFactory")
+        final CassandraSessionFactory cassandraTicketRegistrySessionFactory,
+        @Qualifier("ticketSerializationManager")
+        final TicketSerializationManager ticketSerializationManager) {
         val cassandra = casProperties.getTicket().getRegistry().getCassandra();
-        val sessionFactory = cassandraTicketRegistrySessionFactory();
-        val registry = new CassandraTicketRegistry(ticketCatalog, sessionFactory,
-            cassandra, ticketSerializationManager.getObject());
+        val sessionFactory = cassandraTicketRegistrySessionFactory;
+        val registry = new CassandraTicketRegistry(ticketCatalog, sessionFactory, cassandra, ticketSerializationManager);
         registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(cassandra.getCrypto(), "cassandra"));
         return registry;
     }
@@ -58,8 +51,11 @@ public class CassandraTicketRegistryConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "cassandraTicketRegistrySessionFactory")
-    public CassandraSessionFactory cassandraTicketRegistrySessionFactory() {
+    @Autowired
+    public CassandraSessionFactory cassandraTicketRegistrySessionFactory(final CasConfigurationProperties casProperties,
+                                                                         @Qualifier("sslContext")
+                                                                         final SSLContext sslContext) {
         val cassandra = casProperties.getTicket().getRegistry().getCassandra();
-        return new DefaultCassandraSessionFactory(cassandra, sslContext.getObject());
+        return new DefaultCassandraSessionFactory(cassandra, sslContext);
     }
 }

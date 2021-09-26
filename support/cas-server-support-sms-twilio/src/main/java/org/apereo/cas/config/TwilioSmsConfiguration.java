@@ -22,12 +22,10 @@ import org.springframework.util.Assert;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class TwilioSmsConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
     @RefreshScope
-    public SmsSender smsSender() {
+    @Autowired
+    public SmsSender smsSender(final CasConfigurationProperties casProperties) {
         val twilio = casProperties.getSmsProvider().getTwilio();
         Assert.notNull(twilio.getAccountId(), "Twilio account id cannot be blank");
         Assert.notNull(twilio.getToken(), "Twilio token cannot be blank");

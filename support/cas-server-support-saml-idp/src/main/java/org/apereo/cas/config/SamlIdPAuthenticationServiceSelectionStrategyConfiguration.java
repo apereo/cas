@@ -10,7 +10,6 @@ import org.apereo.cas.support.saml.authentication.SamlIdPServiceFactory;
 import org.apereo.cas.support.saml.services.SamlIdPEntityIdAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.util.CollectionUtils;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,29 +23,26 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("samlIdPAuthenticationServiceSelectionStrategyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "samlIdPAuthenticationServiceSelectionStrategyConfiguration", proxyBeanMethods = false)
 public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
 
     @ConditionalOnMissingBean(name = "samlIdPEntityIdValidationServiceSelectionStrategy")
     @Bean
-    public AuthenticationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy() {
-        return new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(
-            servicesManager.getObject(),
-            samlIdPServiceFactory(),
-            casProperties.getServer().getPrefix());
+    @Autowired
+    public AuthenticationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy(final CasConfigurationProperties casProperties,
+                                                                                                    @Qualifier("samlIdPServiceFactory")
+                                                                                                    final ServiceFactory samlIdPServiceFactory,
+                                                                                                    @Qualifier("servicesManager")
+                                                                                                    final ServicesManager servicesManager) {
+        return new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(servicesManager, samlIdPServiceFactory, casProperties.getServer().getPrefix());
     }
 
     @Bean
-    public AuthenticationServiceSelectionStrategyConfigurer samlIdPAuthenticationServiceSelectionStrategyConfigurer() {
-        return plan -> plan.registerStrategy(samlIdPEntityIdValidationServiceSelectionStrategy());
+    public AuthenticationServiceSelectionStrategyConfigurer samlIdPAuthenticationServiceSelectionStrategyConfigurer(
+        @Qualifier("samlIdPEntityIdValidationServiceSelectionStrategy")
+        final AuthenticationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy) {
+        return plan -> plan.registerStrategy(samlIdPEntityIdValidationServiceSelectionStrategy);
     }
 
     @Bean
@@ -55,7 +51,9 @@ public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
     }
 
     @Bean
-    public ServiceFactoryConfigurer samlIdPServiceFactoryConfigurer() {
-        return () -> CollectionUtils.wrap(samlIdPServiceFactory());
+    public ServiceFactoryConfigurer samlIdPServiceFactoryConfigurer(
+        @Qualifier("samlIdPServiceFactory")
+        final ServiceFactory samlIdPServiceFactory) {
+        return () -> CollectionUtils.wrap(samlIdPServiceFactory);
     }
 }

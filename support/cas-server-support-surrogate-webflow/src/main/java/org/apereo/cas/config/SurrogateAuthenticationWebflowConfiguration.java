@@ -47,12 +47,6 @@ public class SurrogateAuthenticationWebflowConfiguration implements Initializing
     @Qualifier("handledAuthenticationExceptions")
     private Set<Class<? extends Throwable>> handledAuthenticationExceptions;
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @ConditionalOnMissingBean(name = "surrogateWebflowConfigurer")
     @Bean
     @Autowired
@@ -60,7 +54,7 @@ public class SurrogateAuthenticationWebflowConfiguration implements Initializing
         @Qualifier("flowBuilderServices")
         final FlowBuilderServices flowBuilderServices,
         @Qualifier("loginFlowRegistry")
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry, final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext) {
         return new SurrogateWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
@@ -82,9 +76,8 @@ public class SurrogateAuthenticationWebflowConfiguration implements Initializing
         @Qualifier("adaptiveAuthenticationPolicy")
         final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
         @Qualifier("serviceTicketRequestWebflowEventResolver")
-        final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver) {
-        return new SurrogateInitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
-            serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy,
+        final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver, final CasConfigurationProperties casProperties) {
+        return new SurrogateInitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy,
             casProperties.getAuthn().getSurrogate().getSeparator());
     }
 

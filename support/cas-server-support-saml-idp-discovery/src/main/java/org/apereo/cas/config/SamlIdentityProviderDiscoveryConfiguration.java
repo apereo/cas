@@ -16,7 +16,6 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.Clients;
 import org.pac4j.saml.client.SAML2Client;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,86 +40,60 @@ import java.util.function.Supplier;
 @Configuration(value = "samlIdentityProviderDiscoveryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SamlIdentityProviderDiscoveryConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("builtClients")
-    private ObjectProvider<Clients> builtClients;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
-    private ObjectProvider<AuditableExecution> registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer;
-
-    @Autowired
-    @Qualifier("argumentExtractor")
-    private ObjectProvider<ArgumentExtractor> argumentExtractor;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
-
-    @Autowired
-    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @ConditionalOnMissingBean(name = "identityProviderDiscoveryWebflowConfigurer")
     @RefreshScope
     @Bean
-    public CasWebflowConfigurer identityProviderDiscoveryWebflowConfigurer() {
-        return new SamlIdentityProviderDiscoveryWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(),
-            applicationContext, casProperties);
+    @Autowired
+    public CasWebflowConfigurer identityProviderDiscoveryWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+                                                                           @Qualifier("loginFlowDefinitionRegistry")
+                                                                           final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                                           @Qualifier("flowBuilderServices")
+                                                                           final FlowBuilderServices flowBuilderServices) {
+        return new SamlIdentityProviderDiscoveryWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
     @Autowired
     @ConditionalOnMissingBean(name = "identityProviderDiscoveryCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer identityProviderDiscoveryCasWebflowExecutionPlanConfigurer(
-        @Qualifier("identityProviderDiscoveryWebflowConfigurer") final CasWebflowConfigurer identityProviderDiscoveryWebflowConfigurer) {
+        @Qualifier("identityProviderDiscoveryWebflowConfigurer")
+        final CasWebflowConfigurer identityProviderDiscoveryWebflowConfigurer) {
         return plan -> plan.registerWebflowConfigurer(identityProviderDiscoveryWebflowConfigurer);
     }
 
     @Bean
     @Autowired
     public SamlIdentityProviderDiscoveryFeedController identityProviderDiscoveryFeedController(
-        @Qualifier("samlIdentityProviderEntityParser") final Supplier<List<SamlIdentityProviderEntityParser>> samlIdentityProviderEntityParser) {
-        return new SamlIdentityProviderDiscoveryFeedController(casProperties,
-            samlIdentityProviderEntityParser.get(),
-            builtClients.getObject(),
-            new DelegatedAuthenticationAccessStrategyHelper(servicesManager.getObject(),
-                registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer.getObject()),
-            argumentExtractor.getObject()
-        );
+        @Qualifier("samlIdentityProviderEntityParser")
+        final Supplier<List<SamlIdentityProviderEntityParser>> samlIdentityProviderEntityParser, final CasConfigurationProperties casProperties,
+        @Qualifier("builtClients")
+        final Clients builtClients,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
+        final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
+        @Qualifier("argumentExtractor")
+        final ArgumentExtractor argumentExtractor) {
+        return new SamlIdentityProviderDiscoveryFeedController(casProperties, samlIdentityProviderEntityParser.get(), builtClients,
+            new DelegatedAuthenticationAccessStrategyHelper(servicesManager, registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer), argumentExtractor);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "samlIdentityProviderEntityParser")
-    public Supplier<List<SamlIdentityProviderEntityParser>> samlIdentityProviderEntityParser() {
+    @Autowired
+    public Supplier<List<SamlIdentityProviderEntityParser>> samlIdentityProviderEntityParser(final CasConfigurationProperties casProperties,
+                                                                                             @Qualifier("builtClients")
+                                                                                             final Clients builtClients) {
         val parsers = new ArrayList<SamlIdentityProviderEntityParser>();
-
         val resource = casProperties.getAuthn().getPac4j().getSamlDiscovery().getResource();
-        resource
-            .stream()
-            .filter(res -> res.getLocation() != null)
-            .forEach(Unchecked.consumer(res -> parsers.add(new SamlIdentityProviderEntityParser(res.getLocation()))));
-
-        builtClients.getObject().findAllClients()
-            .stream()
-            .filter(c -> c instanceof SAML2Client)
-            .map(SAML2Client.class::cast)
-            .forEach(c -> {
-                c.init();
-                val entity = new SamlIdentityProviderEntity();
-                entity.setEntityID(c.getIdentityProviderResolvedEntityId());
-                parsers.add(new SamlIdentityProviderEntityParser(entity));
-            });
+        resource.stream().filter(res -> res.getLocation() != null).forEach(Unchecked.consumer(res -> parsers.add(new SamlIdentityProviderEntityParser(res.getLocation()))));
+        builtClients.findAllClients().stream().filter(c -> c instanceof SAML2Client).map(SAML2Client.class::cast).forEach(c -> {
+            c.init();
+            val entity = new SamlIdentityProviderEntity();
+            entity.setEntityID(c.getIdentityProviderResolvedEntityId());
+            parsers.add(new SamlIdentityProviderEntityParser(entity));
+        });
         return () -> parsers;
     }
 }
