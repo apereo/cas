@@ -55,7 +55,7 @@ public class CoreSamlConfiguration {
     @ConditionalOnMissingBean(name = "velocityEngineFactoryBean")
     @Autowired
     public VelocityEngine velocityEngineFactoryBean(
-        @Qualifier("parserPool")
+        @Qualifier("shibboleth.parserPool")
         final BasicParserPool parserPool) {
         val properties = new Properties();
         properties.put(RuntimeConstants.INPUT_ENCODING, StandardCharsets.UTF_8.name());
@@ -72,7 +72,7 @@ public class CoreSamlConfiguration {
     @Bean(name = OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     @Autowired
     public OpenSamlConfigBean openSamlConfigBean(
-        @Qualifier("parserPool")
+        @Qualifier("shibboleth.parserPool")
         final BasicParserPool parserPool) throws Exception {
         return new OpenSamlConfigBean(parserPool);
     }

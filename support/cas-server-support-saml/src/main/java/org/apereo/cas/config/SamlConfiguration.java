@@ -57,152 +57,133 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("samlConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "samlConfiguration", proxyBeanMethods = false)
 public class SamlConfiguration {
-    @Autowired
-    @Qualifier("serviceValidationViewFactory")
-    private ObjectProvider<ServiceValidationViewFactory> serviceValidationViewFactory;
-
-    @Autowired
-    @Qualifier("argumentExtractor")
-    private ObjectProvider<ArgumentExtractor> argumentExtractor;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
     private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
 
-    @Autowired
-    @Qualifier("casAttributeEncoder")
-    private ObjectProvider<ProtocolAttributeEncoder> protocolAttributeEncoder;
-
-    @Autowired
-    @Qualifier("authenticationServiceSelectionPlan")
-    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
-
-    @Autowired
-    @Qualifier("proxy20Handler")
-    private ObjectProvider<ProxyHandler> proxy20Handler;
-
-    @Autowired
-    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("authenticationAttributeReleasePolicy")
-    private ObjectProvider<AuthenticationAttributeReleasePolicy> authenticationAttributeReleasePolicy;
-
-    @Autowired
-    @Qualifier("urlValidator")
-    private ObjectProvider<UrlValidator> urlValidator;
-    
-    @Autowired
-    @Qualifier("requestedContextValidator")
-    private ObjectProvider<RequestedAuthenticationContextValidator> requestedContextValidator;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
-
-    @Autowired
-    @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
-    private ObjectProvider<CasProtocolValidationSpecification> cas20WithoutProxyProtocolValidationSpecification;
-
-    @Autowired
-    @Qualifier("serviceValidationAuthorizers")
-    private ObjectProvider<ServiceTicketValidationAuthorizersExecutionPlan> validationAuthorizers;
-
-    @Autowired
-    @Qualifier("registeredServiceAccessStrategyEnforcer")
-    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
-
     @ConditionalOnMissingBean(name = "samlResponseBuilder")
     @RefreshScope
     @Bean
-    public SamlResponseBuilder samlResponseBuilder() {
+    @Autowired
+    public SamlResponseBuilder samlResponseBuilder(
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("saml10ObjectBuilder")
+        final Saml10ObjectBuilder saml10ObjectBuilder,
+        @Qualifier("protocolAttributeEncoder")
+        final ProtocolAttributeEncoder protocolAttributeEncoder) {
         val samlCore = casProperties.getSamlCore();
-        return new SamlResponseBuilder(saml10ObjectBuilder(),
-            samlCore.getIssuer(),
-            samlCore.getAttributeNamespace(),
-            samlCore.getIssueLength(),
-            samlCore.getSkewAllowance(),
-            protocolAttributeEncoder.getObject(),
-            this.servicesManager.getObject());
+        return new SamlResponseBuilder(saml10ObjectBuilder, samlCore.getIssuer(),
+            samlCore.getAttributeNamespace(), samlCore.getIssueLength(), samlCore.getSkewAllowance(),
+            protocolAttributeEncoder, servicesManager);
     }
 
     @ConditionalOnMissingBean(name = "casSamlServiceSuccessView")
     @RefreshScope
     @Bean
-    public View casSamlServiceSuccessView() {
-        return new Saml10SuccessResponseView(protocolAttributeEncoder.getObject(),
-            servicesManager.getObject(),
-            argumentExtractor.getObject(),
-            StandardCharsets.UTF_8.name(),
-            authenticationAttributeReleasePolicy.getObject(),
-            authenticationServiceSelectionPlan.getObject(),
-            NoOpProtocolAttributesRenderer.INSTANCE,
-            samlResponseBuilder());
+    public View casSamlServiceSuccessView(
+        @Qualifier("samlResponseBuilder")
+        final SamlResponseBuilder samlResponseBuilder,
+        @Qualifier("argumentExtractor")
+        final ArgumentExtractor argumentExtractor,
+        @Qualifier("protocolAttributeEncoder")
+        final ProtocolAttributeEncoder protocolAttributeEncoder,
+        @Qualifier("authenticationServiceSelectionPlan")
+        final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        @Qualifier("authenticationAttributeReleasePolicy")
+        final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
+        return new Saml10SuccessResponseView(protocolAttributeEncoder, servicesManager,
+            argumentExtractor, StandardCharsets.UTF_8.name(), authenticationAttributeReleasePolicy,
+            authenticationServiceSelectionPlan, NoOpProtocolAttributesRenderer.INSTANCE, samlResponseBuilder);
     }
 
     @ConditionalOnMissingBean(name = "casSamlServiceFailureView")
     @RefreshScope
     @Bean
-    public View casSamlServiceFailureView() {
-        return new Saml10FailureResponseView(protocolAttributeEncoder.getObject(),
-            servicesManager.getObject(),
-            argumentExtractor.getObject(),
-            StandardCharsets.UTF_8.name(),
-            authenticationAttributeReleasePolicy.getObject(),
-            authenticationServiceSelectionPlan.getObject(),
-            NoOpProtocolAttributesRenderer.INSTANCE,
-            samlResponseBuilder());
+    public View casSamlServiceFailureView(
+        @Qualifier("samlResponseBuilder")
+        final SamlResponseBuilder samlResponseBuilder,
+        @Qualifier("argumentExtractor")
+        final ArgumentExtractor argumentExtractor,
+        @Qualifier("protocolAttributeEncoder")
+        final ProtocolAttributeEncoder protocolAttributeEncoder,
+        @Qualifier("authenticationServiceSelectionPlan")
+        final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        @Qualifier("authenticationAttributeReleasePolicy")
+        final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
+        return new Saml10FailureResponseView(protocolAttributeEncoder, servicesManager,
+            argumentExtractor, StandardCharsets.UTF_8.name(), authenticationAttributeReleasePolicy,
+            authenticationServiceSelectionPlan, NoOpProtocolAttributesRenderer.INSTANCE, samlResponseBuilder);
     }
 
     @ConditionalOnMissingBean(name = "samlServiceResponseBuilder")
     @Bean
-    public ResponseBuilder samlServiceResponseBuilder() {
-        return new SamlServiceResponseBuilder(servicesManager.getObject(), urlValidator.getObject());
+    public ResponseBuilder samlServiceResponseBuilder(
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        @Qualifier("urlValidator")
+        final UrlValidator urlValidator) {
+        return new SamlServiceResponseBuilder(servicesManager, urlValidator);
     }
 
     @ConditionalOnMissingBean(name = "saml10ObjectBuilder")
     @Bean
-    public Saml10ObjectBuilder saml10ObjectBuilder() {
-        return new Saml10ObjectBuilder(this.openSamlConfigBean.getObject());
+    @Autowired
+    public Saml10ObjectBuilder saml10ObjectBuilder(
+        @Qualifier("openSamlConfigBean")
+        final OpenSamlConfigBean openSamlConfigBean) {
+        return new Saml10ObjectBuilder(openSamlConfigBean);
     }
 
     @Bean
-    public SamlValidateController samlValidateController() {
+    @Autowired
+    public SamlValidateController samlValidateController(final CasConfigurationProperties casProperties,
+                                                         @Qualifier("serviceValidationViewFactory")
+                                                         final ServiceValidationViewFactory serviceValidationViewFactory,
+                                                         @Qualifier("argumentExtractor")
+                                                         final ArgumentExtractor argumentExtractor,
+                                                         @Qualifier("proxy20Handler")
+                                                         final ProxyHandler proxy20Handler,
+                                                         @Qualifier("servicesManager")
+                                                         final ServicesManager servicesManager,
+                                                         @Qualifier("centralAuthenticationService")
+                                                         final CentralAuthenticationService centralAuthenticationService,
+                                                         @Qualifier("requestedContextValidator")
+                                                         final RequestedAuthenticationContextValidator requestedContextValidator,
+                                                         @Qualifier("authenticationSystemSupport")
+                                                         final AuthenticationSystemSupport authenticationSystemSupport,
+                                                         @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
+                                                         final CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification,
+                                                         @Qualifier("validationAuthorizers")
+                                                         final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
         val context = ServiceValidateConfigurationContext.builder()
-            .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification.getObject()))
-            .authenticationSystemSupport(authenticationSystemSupport.getObject())
-            .servicesManager(servicesManager.getObject())
-            .centralAuthenticationService(centralAuthenticationService.getObject())
-            .argumentExtractor(argumentExtractor.getObject())
-            .proxyHandler(proxy20Handler.getObject())
-            .requestedContextValidator(requestedContextValidator.getObject())
+            .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification))
+            .authenticationSystemSupport(authenticationSystemSupport)
+            .servicesManager(servicesManager)
+            .centralAuthenticationService(centralAuthenticationService)
+            .argumentExtractor(argumentExtractor)
+            .proxyHandler(proxy20Handler)
+            .requestedContextValidator(requestedContextValidator)
             .authnContextAttribute(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute())
-            .validationAuthorizers(validationAuthorizers.getObject())
+            .validationAuthorizers(validationAuthorizers)
             .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
-            .validationViewFactory(serviceValidationViewFactory.getObject())
-            .build();
-
+            .validationViewFactory(serviceValidationViewFactory).build();
         return new SamlValidateController(context);
     }
 
     @Bean
     public ProtocolEndpointWebSecurityConfigurer<Void> samlProtocolEndpointConfigurer() {
         return new ProtocolEndpointWebSecurityConfigurer<>() {
+
             @Override
             public List<String> getIgnoredEndpoints() {
                 return List.of(StringUtils.prependIfMissing(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE, "/"));
@@ -211,21 +192,30 @@ public class SamlConfiguration {
     }
 
     @Bean
-    public ServiceValidationViewFactoryConfigurer samlServiceValidationViewFactoryConfigurer() {
-        return factory ->
-            factory.registerView(SamlValidateController.class,
-                Pair.of(casSamlServiceSuccessView(), casSamlServiceFailureView()));
+    public ServiceValidationViewFactoryConfigurer samlServiceValidationViewFactoryConfigurer(
+        @Qualifier("casSamlServiceSuccessView")
+        final View casSamlServiceSuccessView,
+        @Qualifier("casSamlServiceFailureView")
+        final View casSamlServiceFailureView) {
+        return factory -> factory.registerView(SamlValidateController.class, Pair.of(casSamlServiceSuccessView, casSamlServiceFailureView));
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public SamlValidateEndpoint samlValidateEndpoint() {
-        return new SamlValidateEndpoint(casProperties, servicesManager.getObject(),
-            authenticationSystemSupport.getObject(),
-            webApplicationServiceFactory.getObject(),
-            PrincipalFactoryUtils.newPrincipalFactory(),
-            samlResponseBuilder(),
-            openSamlConfigBean.getObject(),
-            registeredServiceAccessStrategyEnforcer.getObject());
+    @Autowired
+    public SamlValidateEndpoint samlValidateEndpoint(final CasConfigurationProperties casProperties,
+                                                     @Qualifier("samlResponseBuilder")
+                                                     final SamlResponseBuilder samlResponseBuilder,
+                                                     @Qualifier("openSamlConfigBean")
+                                                     final OpenSamlConfigBean openSamlConfigBean,
+                                                     @Qualifier("servicesManager")
+                                                     final ServicesManager servicesManager,
+                                                     @Qualifier("authenticationSystemSupport")
+                                                     final AuthenticationSystemSupport authenticationSystemSupport,
+                                                     @Qualifier("registeredServiceAccessStrategyEnforcer")
+                                                     final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+        return new SamlValidateEndpoint(casProperties, servicesManager,
+            authenticationSystemSupport, webApplicationServiceFactory.getObject(), PrincipalFactoryUtils.newPrincipalFactory(),
+            samlResponseBuilder, openSamlConfigBean, registeredServiceAccessStrategyEnforcer);
     }
 }

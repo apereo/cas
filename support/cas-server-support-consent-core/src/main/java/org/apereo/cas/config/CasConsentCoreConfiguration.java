@@ -47,6 +47,13 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasConsentCoreConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean(name = "defaultConsentableAttributeBuilder")
+    public ConsentableAttributeBuilder defaultConsentableAttributeBuilder() {
+        return ConsentableAttributeBuilder.noOp();
+    }
+
     @ConditionalOnMissingBean(name = "consentEngine")
     @Bean
     @RefreshScope
