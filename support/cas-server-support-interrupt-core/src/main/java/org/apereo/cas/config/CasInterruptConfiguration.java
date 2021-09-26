@@ -34,8 +34,6 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasInterruptConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Autowired
     @Bean
@@ -54,7 +52,8 @@ public class CasInterruptConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "jsonInterruptInquiryExecutionPlanConfigurer")
     @ConditionalOnProperty(name = "cas.interrupt.json.location")
-    public InterruptInquiryExecutionPlanConfigurer jsonInterruptInquiryExecutionPlanConfigurer() {
+    @Autowired
+    public InterruptInquiryExecutionPlanConfigurer jsonInterruptInquiryExecutionPlanConfigurer(final CasConfigurationProperties casProperties) {
         return plan -> plan.registerInterruptInquirer(new JsonResourceInterruptInquirer(casProperties.getInterrupt().getJson().getLocation()));
     }
 
@@ -62,7 +61,8 @@ public class CasInterruptConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "groovyInterruptInquiryExecutionPlanConfigurer")
     @ConditionalOnProperty(name = "cas.interrupt.groovy.location")
-    public InterruptInquiryExecutionPlanConfigurer groovyInterruptInquiryExecutionPlanConfigurer() {
+    @Autowired
+    public InterruptInquiryExecutionPlanConfigurer groovyInterruptInquiryExecutionPlanConfigurer(final CasConfigurationProperties casProperties) {
         return plan -> plan.registerInterruptInquirer(new GroovyScriptInterruptInquirer(casProperties.getInterrupt().getGroovy().getLocation()));
     }
 
@@ -70,7 +70,8 @@ public class CasInterruptConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "regexInterruptInquiryExecutionPlanConfigurer")
     @ConditionalOnProperty(name = {"cas.interrupt.regex.attribute-name", "cas.interrupt.regex.attribute-value"})
-    public InterruptInquiryExecutionPlanConfigurer regexInterruptInquiryExecutionPlanConfigurer() {
+    @Autowired
+    public InterruptInquiryExecutionPlanConfigurer regexInterruptInquiryExecutionPlanConfigurer(final CasConfigurationProperties casProperties) {
         return plan -> {
             val regex = casProperties.getInterrupt().getRegex();
             plan.registerInterruptInquirer(new RegexAttributeInterruptInquirer(regex.getAttributeName(), regex.getAttributeValue()));
@@ -81,14 +82,16 @@ public class CasInterruptConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "restInterruptInquiryExecutionPlanConfigurer")
     @ConditionalOnProperty(name = "cas.interrupt.rest.url")
-    public InterruptInquiryExecutionPlanConfigurer restInterruptInquiryExecutionPlanConfigurer() {
+    @Autowired
+    public InterruptInquiryExecutionPlanConfigurer restInterruptInquiryExecutionPlanConfigurer(final CasConfigurationProperties casProperties) {
         return plan -> plan.registerInterruptInquirer(new RestEndpointInterruptInquirer(casProperties.getInterrupt().getRest()));
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "interruptCookieGenerator")
-    public CasCookieBuilder interruptCookieGenerator() {
+    @Autowired
+    public CasCookieBuilder interruptCookieGenerator(final CasConfigurationProperties casProperties) {
         val props = casProperties.getInterrupt().getCookie();
         return new InterruptCookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
     }

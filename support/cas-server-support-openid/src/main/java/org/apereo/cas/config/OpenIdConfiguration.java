@@ -51,78 +51,29 @@ import java.util.Properties;
  * @since 5.0.0
  * @deprecated 6.2
  */
-@Configuration("openidConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @Deprecated(since = "6.2.0")
+@Configuration(value = "openidConfiguration", proxyBeanMethods = false)
 public class OpenIdConfiguration {
-    @Autowired
-    @Qualifier("serviceValidationViewFactory")
-    private ObjectProvider<ServiceValidationViewFactory> serviceValidationViewFactory;
-
-    @Autowired
-    @Qualifier("casOpenIdServiceSuccessView")
-    private ObjectProvider<View> casOpenIdServiceSuccessView;
-
-    @Autowired
-    @Qualifier("casOpenIdServiceFailureView")
-    private ObjectProvider<View> casOpenIdServiceFailureView;
-
-    @Autowired
-    @Qualifier("casOpenIdAssociationSuccessView")
-    private ObjectProvider<View> casOpenIdAssociationSuccessView;
-
-    @Autowired
-    @Qualifier("proxy20Handler")
-    private ObjectProvider<ProxyHandler> proxy20Handler;
-
-    @Autowired
-    @Qualifier("argumentExtractor")
-    private ObjectProvider<ArgumentExtractor> argumentExtractor;
-
-    @Autowired
-    @Qualifier("urlValidator")
-    private ObjectProvider<UrlValidator> urlValidator;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("requestedContextValidator")
-    private ObjectProvider<RequestedAuthenticationContextValidator> requestedContextValidator;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
-
-    @Autowired
-    @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
-    private ObjectProvider<CasProtocolValidationSpecification> cas20WithoutProxyProtocolValidationSpecification;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("serviceValidationAuthorizers")
-    private ObjectProvider<ServiceTicketValidationAuthorizersExecutionPlan> validationAuthorizers;
-
     @Bean
-    public SmartOpenIdController smartOpenIdAssociationController() {
-        return new SmartOpenIdController(serverManager(), casOpenIdAssociationSuccessView.getObject());
+    public SmartOpenIdController smartOpenIdAssociationController(
+        @Qualifier("serverManager")
+        final ServerManager serverManager,
+        @Qualifier("casOpenIdAssociationSuccessView")
+        final View casOpenIdAssociationSuccessView) {
+        return new SmartOpenIdController(serverManager, casOpenIdAssociationSuccessView);
     }
 
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "serverManager")
-    public ServerManager serverManager() {
+    @Autowired
+    public ServerManager serverManager(final CasConfigurationProperties casProperties) {
         val manager = new ServerManager();
         manager.setOPEndpointUrl(casProperties.getServer().getLoginUrl());
         manager.setEnforceRpId(casProperties.getAuthn().getOpenid().isEnforceRpId());
@@ -133,11 +84,18 @@ public class OpenIdConfiguration {
 
     @ConditionalOnMissingBean(name = "openIdServiceResponseBuilder")
     @Bean
-    public ResponseBuilder openIdServiceResponseBuilder() {
+    @Autowired
+    public ResponseBuilder openIdServiceResponseBuilder(final CasConfigurationProperties casProperties,
+                                                        @Qualifier("serverManager")
+                                                        final ServerManager serverManager,
+                                                        @Qualifier("urlValidator")
+                                                        final UrlValidator urlValidator,
+                                                        @Qualifier("centralAuthenticationService")
+                                                        final CentralAuthenticationService centralAuthenticationService,
+                                                        @Qualifier("servicesManager")
+                                                        final ServicesManager servicesManager) {
         val openIdPrefixUrl = casProperties.getServer().getPrefix().concat("/openid");
-        return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject(), urlValidator.getObject());
+        return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager, centralAuthenticationService, servicesManager, urlValidator);
     }
 
     @Bean
@@ -154,29 +112,52 @@ public class OpenIdConfiguration {
     }
 
     @Bean
-    public OpenIdValidateController openIdValidateController() {
+    @Autowired
+    public OpenIdValidateController openIdValidateController(final CasConfigurationProperties casProperties,
+                                                             @Qualifier("serverManager")
+                                                             final ServerManager serverManager,
+                                                             @Qualifier("serviceValidationViewFactory")
+                                                             final ServiceValidationViewFactory serviceValidationViewFactory,
+                                                             @Qualifier("proxy20Handler")
+                                                             final ProxyHandler proxy20Handler,
+                                                             @Qualifier("argumentExtractor")
+                                                             final ArgumentExtractor argumentExtractor,
+                                                             @Qualifier("centralAuthenticationService")
+                                                             final CentralAuthenticationService centralAuthenticationService,
+                                                             @Qualifier("requestedContextValidator")
+                                                             final RequestedAuthenticationContextValidator requestedContextValidator,
+                                                             @Qualifier("authenticationSystemSupport")
+                                                             final AuthenticationSystemSupport authenticationSystemSupport,
+                                                             @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
+                                                             final CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification,
+                                                             @Qualifier("servicesManager")
+                                                             final ServicesManager servicesManager,
+                                                             @Qualifier("validationAuthorizers")
+                                                             final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
         val context = ServiceValidateConfigurationContext.builder()
-            .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification.getObject()))
-            .authenticationSystemSupport(authenticationSystemSupport.getObject())
-            .servicesManager(servicesManager.getObject())
-            .centralAuthenticationService(centralAuthenticationService.getObject())
-            .argumentExtractor(argumentExtractor.getObject())
-            .proxyHandler(proxy20Handler.getObject())
-            .requestedContextValidator(requestedContextValidator.getObject())
+            .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification))
+            .authenticationSystemSupport(authenticationSystemSupport)
+            .servicesManager(servicesManager)
+            .centralAuthenticationService(centralAuthenticationService)
+            .argumentExtractor(argumentExtractor)
+            .proxyHandler(proxy20Handler)
+            .requestedContextValidator(requestedContextValidator)
             .authnContextAttribute(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute())
-            .validationAuthorizers(validationAuthorizers.getObject())
+            .validationAuthorizers(validationAuthorizers)
             .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
-            .validationViewFactory(serviceValidationViewFactory.getObject())
+            .validationViewFactory(serviceValidationViewFactory)
             .build();
-
-        return new OpenIdValidateController(context, serverManager());
+        return new OpenIdValidateController(context, serverManager);
     }
 
     @Bean
-    public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping() {
+    public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping(
+        @Qualifier("smartOpenIdAssociationController")
+        final SmartOpenIdController smartOpenIdAssociationController,
+        @Qualifier("openIdValidateController")
+        final OpenIdValidateController openIdValidateController) {
         val controller = new DelegatingController();
-        controller.setDelegates(CollectionUtils.wrapList(smartOpenIdAssociationController(), openIdValidateController()));
-
+        controller.setDelegates(CollectionUtils.wrapList(smartOpenIdAssociationController, openIdValidateController));
         val m = new OpenIdPostUrlHandlerMapping();
         m.setOrder(1);
         val mappings = new Properties();
@@ -186,12 +167,13 @@ public class OpenIdConfiguration {
     }
 
     @Bean
-    public ServiceValidationViewFactoryConfigurer openIdServiceValidationViewFactoryConfigurer() {
-        return factory ->
-            factory.registerView(OpenIdValidateController.class,
-                Pair.of(casOpenIdServiceSuccessView.getObject(), casOpenIdServiceFailureView.getObject()));
+    public ServiceValidationViewFactoryConfigurer openIdServiceValidationViewFactoryConfigurer(
+        @Qualifier("casOpenIdServiceSuccessView")
+        final View casOpenIdServiceSuccessView,
+        @Qualifier("casOpenIdServiceFailureView")
+        final View casOpenIdServiceFailureView) {
+        return factory -> factory.registerView(OpenIdValidateController.class, Pair.of(casOpenIdServiceSuccessView, casOpenIdServiceFailureView));
     }
-
 
     /**
      * The openid protocol views.
@@ -226,6 +208,5 @@ public class OpenIdConfiguration {
         public View openIdProviderView() {
             return casProtocolViewFactory.getObject().create(applicationContext, "protocol/openid/user");
         }
-
     }
 }

@@ -27,21 +27,18 @@ import java.io.IOException;
 @Configuration(value = "casGeoLocationMaxmindConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasGeoLocationMaxmindConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     private static DatabaseReader readDatabase(final Resource maxmindDatabase) throws IOException {
         if (ResourceUtils.doesResourceExist(maxmindDatabase)) {
-            return new DatabaseReader.Builder(maxmindDatabase.getFile())
-                .fileMode(Reader.FileMode.MEMORY)
-                .withCache(new CHMCache()).build();
+            return new DatabaseReader.Builder(maxmindDatabase.getFile()).fileMode(Reader.FileMode.MEMORY).withCache(new CHMCache()).build();
         }
         return null;
     }
 
     @Bean
     @RefreshScope
-    public GeoLocationService geoLocationService() throws Exception {
+    @Autowired
+    public GeoLocationService geoLocationService(final CasConfigurationProperties casProperties) throws Exception {
         val properties = casProperties.getMaxmind();
         val cityDatabase = readDatabase(properties.getCityDatabase());
         val countryDatabase = readDatabase(properties.getCountryDatabase());

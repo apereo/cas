@@ -58,12 +58,9 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SurrogateAuthenticationConfiguration {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
 
     @RefreshScope
     @ConditionalOnMissingBean(name = "surrogateAuthenticationService")
@@ -71,7 +68,7 @@ public class SurrogateAuthenticationConfiguration {
     @Autowired
     public SurrogateAuthenticationService surrogateAuthenticationService(
         @Qualifier("servicesManager")
-        final ServicesManager servicesManager) throws Exception {
+        final ServicesManager servicesManager, final CasConfigurationProperties casProperties) throws Exception {
         val su = casProperties.getAuthn().getSurrogate();
         if (su.getJson().getLocation() != null) {
             LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getLocation());
@@ -95,12 +92,8 @@ public class SurrogateAuthenticationConfiguration {
         @Qualifier("registeredServiceAccessStrategyEnforcer")
         final AuditableExecution registeredServiceAccessStrategyEnforcer,
         @Qualifier("surrogateEligibilityAuditableExecution")
-        final AuditableExecution surrogateEligibilityAuditableExecution) throws Exception {
-        return new SurrogateAuthenticationPostProcessor(
-            surrogateAuthenticationService,
-            servicesManager,
-            applicationContext,
-            registeredServiceAccessStrategyEnforcer,
+        final AuditableExecution surrogateEligibilityAuditableExecution, final ConfigurableApplicationContext applicationContext) throws Exception {
+        return new SurrogateAuthenticationPostProcessor(surrogateAuthenticationService, servicesManager, applicationContext, registeredServiceAccessStrategyEnforcer,
             surrogateEligibilityAuditableExecution);
     }
 
@@ -114,7 +107,8 @@ public class SurrogateAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "surrogatePrincipalElectionStrategyConfigurer")
     @Bean
     @RefreshScope
-    public PrincipalElectionStrategyConfigurer surrogatePrincipalElectionStrategyConfigurer() {
+    @Autowired
+    public PrincipalElectionStrategyConfigurer surrogatePrincipalElectionStrategyConfigurer(final CasConfigurationProperties casProperties) {
         return chain -> {
             val strategy = new SurrogatePrincipalElectionStrategy();
             val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
@@ -140,18 +134,18 @@ public class SurrogateAuthenticationConfiguration {
 
     @Bean
     @RefreshScope
-    public ExpirationPolicyBuilder grantingTicketExpirationPolicy() {
+    @Autowired
+    public ExpirationPolicyBuilder grantingTicketExpirationPolicy(final CasConfigurationProperties casProperties) {
         val grantingTicketExpirationPolicy = new TicketGrantingTicketExpirationPolicyBuilder(casProperties);
         return new SurrogateAuthenticationExpirationPolicyBuilder(grantingTicketExpirationPolicy, casProperties);
     }
-
 
     @ConditionalOnMissingBean(name = "surrogateAuthenticationEventListener")
     @Bean
     @Autowired
     public SurrogateAuthenticationEventListener surrogateAuthenticationEventListener(
         @Qualifier("communicationsManager")
-        final CommunicationsManager communicationsManager) {
+        final CommunicationsManager communicationsManager, final CasConfigurationProperties casProperties) {
         return new SurrogateAuthenticationEventListener(communicationsManager, casProperties);
     }
 
@@ -162,7 +156,7 @@ public class SurrogateAuthenticationConfiguration {
 
         @Autowired
         private CasConfigurationProperties casProperties;
-        
+
         @ConditionalOnMissingBean(name = "surrogatePrincipalBuilder")
         @Bean
         @RefreshScope
@@ -174,8 +168,7 @@ public class SurrogateAuthenticationConfiguration {
             final PrincipalFactory surrogatePrincipalFactory,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
             final IPersonAttributeDao attributeRepository) throws Exception {
-            return new SurrogatePrincipalBuilder(surrogatePrincipalFactory,
-                attributeRepository, surrogateAuthenticationService);
+            return new SurrogatePrincipalBuilder(surrogatePrincipalFactory, attributeRepository, surrogateAuthenticationService);
         }
 
         @ConditionalOnMissingBean(name = "surrogatePrincipalResolver")
@@ -191,10 +184,10 @@ public class SurrogateAuthenticationConfiguration {
             final IPersonAttributeDao attributeRepository) {
             val principal = casProperties.getAuthn().getSurrogate().getPrincipal();
             val personDirectory = casProperties.getPersonDirectory();
-            var attributeMerger = CoreAuthenticationUtils.getAttributeMerger(
-                casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
-            val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(surrogatePrincipalFactory,
-                attributeRepository, attributeMerger, SurrogatePrincipalResolver.class, principal, personDirectory);
+            var attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
+            val resolver =
+                CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(surrogatePrincipalFactory, attributeRepository, attributeMerger, SurrogatePrincipalResolver.class, principal,
+                    personDirectory);
             resolver.setSurrogatePrincipalBuilder(surrogatePrincipalBuilder);
             return resolver;
         }
@@ -206,7 +199,6 @@ public class SurrogateAuthenticationConfiguration {
             return PrincipalFactoryUtils.newPrincipalFactory();
         }
 
-        
         @ConditionalOnMissingBean(name = "surrogatePrincipalResolutionExecutionPlanConfigurer")
         @Bean
         @Autowired

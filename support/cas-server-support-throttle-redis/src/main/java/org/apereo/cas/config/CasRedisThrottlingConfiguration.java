@@ -7,7 +7,6 @@ import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -25,35 +24,35 @@ import org.springframework.data.redis.core.RedisTemplate;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration("casRedisThrottlingConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.audit.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
+@Configuration(value = "casRedisThrottlingConfiguration", proxyBeanMethods = false)
 public class CasRedisThrottlingConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-    
-    @Autowired
-    @Qualifier("authenticationThrottlingConfigurationContext")
-    private ObjectProvider<ThrottledSubmissionHandlerConfigurationContext> authenticationThrottlingConfigurationContext;
 
     @Bean
     @ConditionalOnMissingBean(name = "redisThrottleConnectionFactory")
-    public RedisConnectionFactory redisThrottleConnectionFactory() {
+    @Autowired
+    public RedisConnectionFactory redisThrottleConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAudit().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "throttleRedisTemplate")
-    public RedisTemplate throttleRedisTemplate() {
-        return RedisObjectFactory.newRedisTemplate(redisThrottleConnectionFactory());
+    public RedisTemplate throttleRedisTemplate(
+        @Qualifier("redisThrottleConnectionFactory")
+        final RedisConnectionFactory redisThrottleConnectionFactory) {
+        return RedisObjectFactory.newRedisTemplate(redisThrottleConnectionFactory);
     }
 
     @Autowired
     @Bean
     @RefreshScope
-    public ThrottledSubmissionHandlerInterceptor authenticationThrottle() {
-        return new RedisThrottledSubmissionHandlerInterceptorAdapter(
-            authenticationThrottlingConfigurationContext.getObject(), throttleRedisTemplate());
+    public ThrottledSubmissionHandlerInterceptor authenticationThrottle(
+        @Qualifier("throttleRedisTemplate")
+        final RedisTemplate throttleRedisTemplate,
+        @Qualifier("authenticationThrottlingConfigurationContext")
+        final ThrottledSubmissionHandlerConfigurationContext authenticationThrottlingConfigurationContext) {
+        return new RedisThrottledSubmissionHandlerInterceptorAdapter(authenticationThrottlingConfigurationContext, throttleRedisTemplate);
     }
 }

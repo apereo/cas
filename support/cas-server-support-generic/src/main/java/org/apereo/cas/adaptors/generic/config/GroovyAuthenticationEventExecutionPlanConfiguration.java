@@ -11,7 +11,6 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,20 +26,10 @@ import org.springframework.context.annotation.Configuration;
  * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
-@Configuration("groovyAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@Configuration(value = "groovyAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class GroovyAuthenticationEventExecutionPlanConfiguration {
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("defaultPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @ConditionalOnMissingBean(name = "groovyPrincipalFactory")
     @Bean
@@ -50,24 +39,31 @@ public class GroovyAuthenticationEventExecutionPlanConfiguration {
 
     @RefreshScope
     @Bean
-    public AuthenticationHandler groovyResourceAuthenticationHandler() {
+    @Autowired
+    public AuthenticationHandler groovyResourceAuthenticationHandler(final CasConfigurationProperties casProperties,
+                                                                     @Qualifier("groovyPrincipalFactory")
+                                                                     final PrincipalFactory groovyPrincipalFactory,
+                                                                     @Qualifier("servicesManager")
+                                                                     final ServicesManager servicesManager) {
         val groovy = casProperties.getAuthn().getGroovy();
-        val handler = new GroovyAuthenticationHandler(groovy.getName(),
-            servicesManager.getObject(), groovyPrincipalFactory(),
-            groovy.getLocation(), groovy.getOrder());
+        val handler = new GroovyAuthenticationHandler(groovy.getName(), servicesManager, groovyPrincipalFactory, groovy.getLocation(), groovy.getOrder());
         handler.setState(groovy.getState());
         return handler;
     }
 
     @ConditionalOnMissingBean(name = "groovyResourceAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer groovyResourceAuthenticationEventExecutionPlanConfigurer() {
+    @Autowired
+    public AuthenticationEventExecutionPlanConfigurer groovyResourceAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
+                                                                                                               @Qualifier("groovyResourceAuthenticationHandler")
+                                                                                                               final AuthenticationHandler groovyResourceAuthenticationHandler,
+                                                                                                               @Qualifier("defaultPrincipalResolver")
+                                                                                                               final PrincipalResolver defaultPrincipalResolver) {
         return plan -> {
             val file = casProperties.getAuthn().getGroovy().getLocation();
             if (file != null) {
                 LOGGER.debug("Activating Groovy authentication handler via [{}]", file);
-                plan.registerAuthenticationHandlerWithPrincipalResolver(groovyResourceAuthenticationHandler(),
-                    defaultPrincipalResolver.getObject());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(groovyResourceAuthenticationHandler, defaultPrincipalResolver);
             }
         };
     }

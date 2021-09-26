@@ -22,29 +22,28 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Configuration("DelegatedAuthenticationDynamicDiscoverySelectionConfiguration")
 @ConditionalOnProperty(prefix = "cas.authn.pac4j.core.discovery-selection", name = "selection-type", havingValue = "DYNAMIC")
+@Configuration(value = "DelegatedAuthenticationDynamicDiscoverySelectionConfiguration", proxyBeanMethods = false)
 public class DelegatedAuthenticationDynamicDiscoverySelectionConfiguration {
+
     @Autowired
     @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
     private DelegatedClientAuthenticationConfigurationContext configContext;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "delegatedAuthenticationDynamicDiscoveryProviderLocator")
-    public DelegatedAuthenticationDynamicDiscoveryProviderLocator delegatedAuthenticationDynamicDiscoveryProviderLocator() {
-        return new DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator(
-            configContext.getDelegatedClientIdentityProvidersProducer(), configContext.getClients(), casProperties);
+    @Autowired
+    public DelegatedAuthenticationDynamicDiscoveryProviderLocator delegatedAuthenticationDynamicDiscoveryProviderLocator(final CasConfigurationProperties casProperties) {
+        return new DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator(configContext.getDelegatedClientIdentityProvidersProducer(), configContext.getClients(), casProperties);
     }
 
     @RefreshScope
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_DYNAMIC_DISCOVERY_EXECUTION)
     @Bean
-    public Action delegatedAuthenticationProviderDynamicDiscoveryExecutionAction() {
-        return new DelegatedClientAuthenticationDynamicDiscoveryExecutionAction(configContext,
-            delegatedAuthenticationDynamicDiscoveryProviderLocator());
+    public Action delegatedAuthenticationProviderDynamicDiscoveryExecutionAction(
+        @Qualifier("delegatedAuthenticationDynamicDiscoveryProviderLocator")
+        final DelegatedAuthenticationDynamicDiscoveryProviderLocator delegatedAuthenticationDynamicDiscoveryProviderLocator) {
+        return new DelegatedClientAuthenticationDynamicDiscoveryExecutionAction(configContext, delegatedAuthenticationDynamicDiscoveryProviderLocator);
     }
 }

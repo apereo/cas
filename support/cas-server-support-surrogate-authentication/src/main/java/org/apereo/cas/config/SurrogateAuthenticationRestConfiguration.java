@@ -22,9 +22,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnClass(value = RestHttpRequestCredentialFactoryConfigurer.class)
 public class SurrogateAuthenticationRestConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-    
+
     /**
      * Override the core bean definition
      * that handles username+password to
@@ -36,9 +34,8 @@ public class SurrogateAuthenticationRestConfiguration {
     @Autowired
     public RestHttpRequestCredentialFactoryConfigurer restHttpRequestCredentialFactoryConfigurer(
         @Qualifier("surrogateAuthenticationService")
-        final SurrogateAuthenticationService surrogateAuthenticationService) {
+        final SurrogateAuthenticationService surrogateAuthenticationService, final CasConfigurationProperties casProperties) {
         return factory -> factory.registerCredentialFactory(
-            new SurrogateAuthenticationRestHttpRequestCredentialFactory(
-                surrogateAuthenticationService, casProperties.getAuthn().getSurrogate()));
+            new SurrogateAuthenticationRestHttpRequestCredentialFactory(surrogateAuthenticationService, casProperties.getAuthn().getSurrogate()));
     }
 }

@@ -23,15 +23,11 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Deprecated(since = "6.2.0")
 public class OpenIdUniqueTicketIdGeneratorConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Bean
-    public UniqueTicketIdGeneratorConfigurer openIdUniqueTicketIdGeneratorConfigurer() {
-        return () -> CollectionUtils.wrap(Pair.of(OpenIdService.class.getCanonicalName(),
-            new ServiceTicketIdGenerator(
-                casProperties.getTicket().getSt().getMaxLength(),
-                casProperties.getHost().getName())));
+    @Autowired
+    public UniqueTicketIdGeneratorConfigurer openIdUniqueTicketIdGeneratorConfigurer(final CasConfigurationProperties casProperties) {
+        return () -> CollectionUtils.wrap(
+            Pair.of(OpenIdService.class.getCanonicalName(), new ServiceTicketIdGenerator(casProperties.getTicket().getSt().getMaxLength(), casProperties.getHost().getName())));
     }
-
 }

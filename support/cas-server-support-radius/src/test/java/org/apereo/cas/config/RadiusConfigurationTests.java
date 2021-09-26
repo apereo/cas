@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.adaptors.radius.RadiusServer;
+import org.apereo.cas.adaptors.radius.server.AbstractRadiusServer;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -36,6 +38,7 @@ import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -67,11 +70,11 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCookieConfiguration.class,
     RefreshAutoConfiguration.class
 },
-    properties = {
-        "cas.authn.radius.client.shared-secret=NoSecret",
-        "cas.authn.radius.client.inet-address=localhost,localguest",
-        "cas.authn.mfa.radius.id=" + TestMultifactorAuthenticationProvider.ID
-    })
+                properties = {
+                    "cas.authn.radius.client.shared-secret=NoSecret",
+                    "cas.authn.radius.client.inet-address=localhost,localguest",
+                    "cas.authn.mfa.radius.id=" + TestMultifactorAuthenticationProvider.ID
+                })
 @Tag("Radius")
 public class RadiusConfigurationTests {
     @Autowired
@@ -87,6 +90,14 @@ public class RadiusConfigurationTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("radiusServers")
+    private List<RadiusServer> radiusServers;
+
+    @Autowired
+    @Qualifier("radiusServer")
+    private AbstractRadiusServer radiusServer;
 
     @Test
     public void emptyAddress() {
@@ -108,15 +119,14 @@ public class RadiusConfigurationTests {
 
     @Test
     public void radiusServer() {
-        assertNotNull(radiusConfiguration.getObject().radiusServer());
+        assertNotNull(this.radiusServer);
     }
 
     @Test
     public void radiusServers() {
         assertEquals("localhost,localguest", casProperties.getAuthn().getRadius().getClient().getInetAddress());
-        val servers = radiusConfiguration.getObject().radiusServers();
-        assertNotNull(servers);
-        assertEquals(2, servers.size());
+        assertNotNull(radiusServers);
+        assertEquals(2, radiusServers.size());
     }
 
     @Test
