@@ -21,7 +21,6 @@ import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import com.yubico.u2f.U2F;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -32,7 +31,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowBuilder;
@@ -45,61 +43,46 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("u2FWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "u2FWebflowConfiguration", proxyBeanMethods = false)
 public class U2FWebflowConfiguration {
+
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
-
-    @Autowired
-    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-
-    @Autowired
-    @Qualifier("u2fDeviceRepository")
-    private ObjectProvider<U2FDeviceRepository> u2fDeviceRepository;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("u2fService")
-    private ObjectProvider<U2F> u2fService;
-
-    @Autowired
-    @Qualifier("flowBuilder")
-    private ObjectProvider<FlowBuilder> flowBuilder;
-
-    @Autowired
-    @Qualifier("casWebflowConfigurationContext")
-    private ObjectProvider<CasWebflowEventResolutionConfigurationContext> casWebflowConfigurationContext;
-    
     @Bean
     @ConditionalOnMissingBean(name = "u2fFlowRegistry")
-    public FlowDefinitionRegistry u2fFlowRegistry() {
-        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices.getObject());
-        builder.addFlowBuilder(flowBuilder.getObject(), U2FMultifactorWebflowConfigurer.MFA_U2F_EVENT_ID);
+    @Autowired
+    public FlowDefinitionRegistry u2fFlowRegistry(final ConfigurableApplicationContext applicationContext,
+                                                  @Qualifier("flowBuilderServices")
+                                                  final FlowBuilderServices flowBuilderServices,
+                                                  @Qualifier("flowBuilder")
+                                                  final FlowBuilder flowBuilder) {
+        val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
+        builder.addFlowBuilder(flowBuilder, U2FMultifactorWebflowConfigurer.MFA_U2F_EVENT_ID);
         return builder.build();
     }
 
     @ConditionalOnMissingBean(name = "u2fAuthenticationWebflowAction")
     @Bean
     @RefreshScope
-    public Action u2fAuthenticationWebflowAction() {
-        return new U2FAuthenticationWebflowAction(u2fAuthenticationWebflowEventResolver());
+    public Action u2fAuthenticationWebflowAction(
+        @Qualifier("u2fAuthenticationWebflowEventResolver")
+        final CasWebflowEventResolver u2fAuthenticationWebflowEventResolver) {
+        return new U2FAuthenticationWebflowAction(u2fAuthenticationWebflowEventResolver);
     }
 
     @ConditionalOnMissingBean(name = "u2fMultifactorWebflowConfigurer")
     @Bean
-        public CasWebflowConfigurer u2fMultifactorWebflowConfigurer() {
-        val cfg = new U2FMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(), u2fFlowRegistry(),
-            applicationContext, casProperties,
+    @Autowired
+    public CasWebflowConfigurer u2fMultifactorWebflowConfigurer(final CasConfigurationProperties casProperties,
+                                                                final ConfigurableApplicationContext applicationContext,
+                                                                @Qualifier("u2fFlowRegistry")
+                                                                final FlowDefinitionRegistry u2fFlowRegistry,
+                                                                @Qualifier("loginFlowDefinitionRegistry")
+                                                                final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                                @Qualifier("flowBuilderServices")
+                                                                final FlowBuilderServices flowBuilderServices) {
+        val cfg = new U2FMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, u2fFlowRegistry, applicationContext, casProperties,
             MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
         cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
         return cfg;
@@ -108,51 +91,71 @@ public class U2FWebflowConfiguration {
     @ConditionalOnMissingBean(name = "u2fStartAuthenticationAction")
     @Bean
     @RefreshScope
-    public Action u2fStartAuthenticationAction() {
-        return new U2FStartAuthenticationAction(u2fService.getObject(),
-            casProperties.getServer().getName(),
-            u2fDeviceRepository.getObject());
+    @Autowired
+    public Action u2fStartAuthenticationAction(final CasConfigurationProperties casProperties,
+                                               @Qualifier("u2fDeviceRepository")
+                                               final U2FDeviceRepository u2fDeviceRepository,
+                                               @Qualifier("u2fService")
+                                               final U2F u2fService) {
+        return new U2FStartAuthenticationAction(u2fService, casProperties.getServer().getName(), u2fDeviceRepository);
     }
 
     @ConditionalOnMissingBean(name = "u2fStartRegistrationAction")
     @Bean
     @RefreshScope
-    public Action u2fStartRegistrationAction() {
-        return new U2FStartRegistrationAction(u2fService.getObject(),
-            casProperties.getServer().getName(), u2fDeviceRepository.getObject());
+    @Autowired
+    public Action u2fStartRegistrationAction(final CasConfigurationProperties casProperties,
+                                             @Qualifier("u2fDeviceRepository")
+                                             final U2FDeviceRepository u2fDeviceRepository,
+                                             @Qualifier("u2fService")
+                                             final U2F u2fService) {
+        return new U2FStartRegistrationAction(u2fService, casProperties.getServer().getName(), u2fDeviceRepository);
     }
 
     @ConditionalOnMissingBean(name = "u2fCheckAccountRegistrationAction")
     @Bean
     @RefreshScope
-    public Action u2fCheckAccountRegistrationAction() {
-        return new U2FAccountCheckRegistrationAction(u2fDeviceRepository.getObject());
+    public Action u2fCheckAccountRegistrationAction(
+        @Qualifier("u2fDeviceRepository")
+        final U2FDeviceRepository u2fDeviceRepository) {
+        return new U2FAccountCheckRegistrationAction(u2fDeviceRepository);
     }
 
     @ConditionalOnMissingBean(name = "u2fSaveAccountRegistrationAction")
     @Bean
     @RefreshScope
-    public Action u2fSaveAccountRegistrationAction() {
-        return new U2FAccountSaveRegistrationAction(u2fService.getObject(), u2fDeviceRepository.getObject());
+    public Action u2fSaveAccountRegistrationAction(
+        @Qualifier("u2fDeviceRepository")
+        final U2FDeviceRepository u2fDeviceRepository,
+        @Qualifier("u2fService")
+        final U2F u2fService) {
+        return new U2FAccountSaveRegistrationAction(u2fService, u2fDeviceRepository);
     }
 
     @ConditionalOnMissingBean(name = "u2fAuthenticationWebflowEventResolver")
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver u2fAuthenticationWebflowEventResolver() {
-        return new U2FAuthenticationWebflowEventResolver(casWebflowConfigurationContext.getObject());
+    public CasWebflowEventResolver u2fAuthenticationWebflowEventResolver(
+        @Qualifier("casWebflowConfigurationContext")
+        final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
+        return new U2FAuthenticationWebflowEventResolver(casWebflowConfigurationContext);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "u2fCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer u2fCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(u2fMultifactorWebflowConfigurer());
+    public CasWebflowExecutionPlanConfigurer u2fCasWebflowExecutionPlanConfigurer(
+        @Qualifier("u2fMultifactorWebflowConfigurer")
+        final CasWebflowConfigurer u2fMultifactorWebflowConfigurer) {
+        return plan -> plan.registerWebflowConfigurer(u2fMultifactorWebflowConfigurer);
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public U2FRegisteredDevicesEndpoint u2fRegisteredDevicesEndpoint() {
-        return new U2FRegisteredDevicesEndpoint(casProperties, u2fDeviceRepository.getObject());
+    @Autowired
+    public U2FRegisteredDevicesEndpoint u2fRegisteredDevicesEndpoint(final CasConfigurationProperties casProperties,
+                                                                     @Qualifier("u2fDeviceRepository")
+                                                                     final U2FDeviceRepository u2fDeviceRepository) {
+        return new U2FRegisteredDevicesEndpoint(casProperties, u2fDeviceRepository);
     }
 
     /**
@@ -160,26 +163,35 @@ public class U2FWebflowConfiguration {
      */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.u2f")
-    @Configuration("u2fMultifactorTrustConfiguration")
-    public class U2FMultifactorTrustConfiguration {
+    @Configuration(value = "u2fMultifactorTrustConfiguration", proxyBeanMethods = false)
+    public static class U2FMultifactorTrustConfiguration {
 
         @ConditionalOnMissingBean(name = "u2fMultifactorTrustWebflowConfigurer")
         @Bean
-        @DependsOn({"defaultWebflowConfigurer", "u2fMultifactorWebflowConfigurer"})
-        public CasWebflowConfigurer u2fMultifactorTrustWebflowConfigurer() {
-            val cfg = new U2FMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices.getObject(),
-                loginFlowDefinitionRegistry.getObject(),
-                u2fFlowRegistry(),
-                applicationContext,
-                casProperties,
-                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+        @Autowired
+        public CasWebflowConfigurer u2fMultifactorTrustWebflowConfigurer(
+            @Qualifier("u2fFlowRegistry")
+            final FlowDefinitionRegistry u2fFlowRegistry,
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("loginFlowRegistry")
+            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier("logoutFlowRegistry")
+            final FlowDefinitionRegistry logoutFlowRegistry,
+            @Qualifier("flowBuilderServices")
+            final FlowBuilderServices flowBuilderServices) {
+            val cfg = new U2FMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, u2fFlowRegistry,
+                applicationContext, casProperties, MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
             cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
             return cfg;
         }
 
         @Bean
-        public CasWebflowExecutionPlanConfigurer u2fMultifactorTrustCasWebflowExecutionPlanConfigurer() {
-            return plan -> plan.registerWebflowConfigurer(u2fMultifactorTrustWebflowConfigurer());
+        @Autowired
+        public CasWebflowExecutionPlanConfigurer u2fMultifactorTrustCasWebflowExecutionPlanConfigurer(
+            @Qualifier("u2fMultifactorTrustWebflowConfigurer")
+            final CasWebflowConfigurer u2fMultifactorTrustWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(u2fMultifactorTrustWebflowConfigurer);
         }
     }
 }

@@ -29,62 +29,49 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("wsFederationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "wsFederationConfiguration", proxyBeanMethods = false)
 public class WsFederationAuthenticationConfiguration {
-
-    @Autowired
-    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-    private ObjectProvider<OpenSamlConfigBean> configBean;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("wsFederationConfigurations")
     private Collection<WsFederationConfiguration> wsFederationConfigurations;
 
     @Autowired
-    @Qualifier("authenticationServiceSelectionPlan")
-    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
-
-    @Autowired
     @Qualifier("webApplicationServiceFactory")
     private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-
-    @Autowired
-    @Qualifier("argumentExtractor")
-    private ObjectProvider<ArgumentExtractor> argumentExtractor;
-    
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "wsFederationHelper")
-    public WsFederationHelper wsFederationHelper() {
-        return new WsFederationHelper(configBean.getObject(), servicesManager.getObject());
+    public WsFederationHelper wsFederationHelper(
+        @Qualifier("configBean")
+        final OpenSamlConfigBean configBean,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager) {
+        return new WsFederationHelper(configBean, servicesManager);
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "wsFederationCookieManager")
-    public WsFederationCookieManager wsFederationCookieManager() {
-        return new WsFederationCookieManager(wsFederationConfigurations,
-            casProperties.getTheme().getParamName(), casProperties.getLocale().getParamName());
+    @Autowired
+    public WsFederationCookieManager wsFederationCookieManager(final CasConfigurationProperties casProperties) {
+        return new WsFederationCookieManager(wsFederationConfigurations, casProperties.getTheme().getParamName(), casProperties.getLocale().getParamName());
     }
 
     @Bean
-    public WsFederationNavigationController wsFederationNavigationController() {
-        return new WsFederationNavigationController(
-            wsFederationCookieManager(),
-            wsFederationHelper(),
-            wsFederationConfigurations,
-            authenticationRequestServiceSelectionStrategies.getObject(),
-            webApplicationServiceFactory.getObject(),
-            casProperties.getServer().getLoginUrl(),
-            argumentExtractor.getObject());
+    @Autowired
+    public WsFederationNavigationController wsFederationNavigationController(final CasConfigurationProperties casProperties,
+                                                                             @Qualifier("wsFederationCookieManager")
+                                                                             final WsFederationCookieManager wsFederationCookieManager,
+                                                                             @Qualifier("wsFederationHelper")
+                                                                             final WsFederationHelper wsFederationHelper,
+                                                                             @Qualifier("authenticationRequestServiceSelectionStrategies")
+                                                                             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+                                                                             @Qualifier("argumentExtractor")
+                                                                             final ArgumentExtractor argumentExtractor) {
+        return new WsFederationNavigationController(wsFederationCookieManager, wsFederationHelper, wsFederationConfigurations, authenticationRequestServiceSelectionStrategies,
+            webApplicationServiceFactory.getObject(), casProperties.getServer().getLoginUrl(), argumentExtractor);
     }
 }

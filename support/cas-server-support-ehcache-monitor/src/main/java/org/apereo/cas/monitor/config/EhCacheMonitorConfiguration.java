@@ -5,7 +5,6 @@ import org.apereo.cas.monitor.EhCacheHealthIndicator;
 
 import lombok.val;
 import net.sf.ehcache.CacheManager;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
@@ -26,20 +25,13 @@ import org.springframework.context.annotation.Configuration;
 @Deprecated(since = "6.2.0")
 public class EhCacheMonitorConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("ehcacheTicketCacheManager")
-    private ObjectProvider<CacheManager> ehcacheTicketCacheManager;
-
     @ConditionalOnEnabledHealthIndicator("ehcacheHealthIndicator")
     @Autowired
     @Bean
-    public HealthIndicator ehcacheHealthIndicator() {
+    public HealthIndicator ehcacheHealthIndicator(final CasConfigurationProperties casProperties,
+                                                  @Qualifier("ehcacheTicketCacheManager")
+                                                  final CacheManager ehcacheTicketCacheManager) {
         val warn = casProperties.getMonitor().getWarn();
-        return new EhCacheHealthIndicator(ehcacheTicketCacheManager.getObject(),
-            warn.getEvictionThreshold(),
-            warn.getThreshold());
+        return new EhCacheHealthIndicator(ehcacheTicketCacheManager, warn.getEvictionThreshold(), warn.getThreshold());
     }
 }

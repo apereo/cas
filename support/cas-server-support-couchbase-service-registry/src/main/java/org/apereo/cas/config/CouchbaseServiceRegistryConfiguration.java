@@ -33,9 +33,6 @@ import java.util.List;
 public class CouchbaseServiceRegistryConfiguration {
 
     @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
     @Qualifier("serviceRegistryListeners")
     private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
 

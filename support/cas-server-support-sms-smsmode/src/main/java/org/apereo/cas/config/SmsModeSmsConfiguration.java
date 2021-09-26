@@ -20,11 +20,9 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SmsModeSmsConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
-    public SmsSender smsSender() {
+    @Autowired
+    public SmsSender smsSender(final CasConfigurationProperties casProperties) {
         val smsMode = casProperties.getSmsProvider().getSmsMode();
         return new SmsModeSmsSender(smsMode);
     }

@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentableAttributeBuilder;
-import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -30,7 +29,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.XSURI;
 import org.pac4j.core.context.session.SessionStore;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -53,143 +51,122 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("samlIdPWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "samlIdPWebflowConfiguration", proxyBeanMethods = false)
 public class SamlIdPWebflowConfiguration {
-    @Autowired
-    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
-
-    @Autowired
-    @Qualifier("casWebflowConfigurationContext")
-    private ObjectProvider<CasWebflowEventResolutionConfigurationContext> casWebflowConfigurationContext;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
-
-    @Autowired
-    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
-
-    @Autowired
-    @Qualifier("authenticationServiceSelectionPlan")
-    private ObjectProvider<AuthenticationServiceSelectionPlan> selectionStrategies;
-
-    @Autowired
-    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
-
-    @Autowired
-    @Qualifier(DistributedJEESessionStore.DEFAULT_BEAN_NAME)
-    private ObjectProvider<SessionStore> samlIdPDistributedSessionStore;
-    
-    @Autowired
-    @Qualifier(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
-    private ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> defaultSamlRegisteredServiceCachingMetadataResolver;
-
-    @Autowired
-    @Qualifier(AttributeDefinitionStore.BEAN_NAME)
-    private ObjectProvider<AttributeDefinitionStore> attributeDefinitionStore;
 
     @ConditionalOnMissingBean(name = "samlIdPWebConfigurer")
     @Bean
-        public CasWebflowConfigurer samlIdPWebConfigurer() {
-        return new SamlIdPWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(),
-            applicationContext,
-            casProperties);
+    @Autowired
+    public CasWebflowConfigurer samlIdPWebConfigurer(final CasConfigurationProperties casProperties,
+                                                     final ConfigurableApplicationContext applicationContext,
+                                                     @Qualifier("loginFlowDefinitionRegistry")
+                                                     final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                     @Qualifier("flowBuilderServices")
+                                                     final FlowBuilderServices flowBuilderServices) {
+        return new SamlIdPWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "samlIdPSessionStoreTicketGrantingTicketAction")
-    public Action samlIdPSessionStoreTicketGrantingTicketAction() {
-        return new SessionStoreTicketGrantingTicketAction(samlIdPDistributedSessionStore.getObject());
+    public Action samlIdPSessionStoreTicketGrantingTicketAction(
+        @Qualifier("samlIdPDistributedSessionStore")
+        final SessionStore samlIdPDistributedSessionStore) {
+        return new SessionStoreTicketGrantingTicketAction(samlIdPDistributedSessionStore);
     }
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataUIParserAction")
     @Bean
     @RefreshScope
-    public Action samlIdPMetadataUIParserAction() {
-        return new SamlIdPMetadataUIAction(servicesManager.getObject(),
-            defaultSamlRegisteredServiceCachingMetadataResolver.getObject(),
-            selectionStrategies.getObject());
+    public Action samlIdPMetadataUIParserAction(
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        @Qualifier("selectionStrategies")
+        final AuthenticationServiceSelectionPlan selectionStrategies,
+        @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+        final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver) {
+        return new SamlIdPMetadataUIAction(servicesManager, defaultSamlRegisteredServiceCachingMetadataResolver, selectionStrategies);
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "samlIdPCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer samlIdPCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(samlIdPWebConfigurer());
+    public CasWebflowExecutionPlanConfigurer samlIdPCasWebflowExecutionPlanConfigurer(
+        @Qualifier("samlIdPWebConfigurer")
+        final CasWebflowConfigurer samlIdPWebConfigurer) {
+        return plan -> plan.registerWebflowConfigurer(samlIdPWebConfigurer);
     }
-
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "samlIdPSingleSignOnParticipationStrategy")
-    public SingleSignOnParticipationStrategy samlIdPSingleSignOnParticipationStrategy() {
-        return new SamlIdPSingleSignOnParticipationStrategy(servicesManager.getObject(),
-            ticketRegistrySupport.getObject(), selectionStrategies.getObject());
+    public SingleSignOnParticipationStrategy samlIdPSingleSignOnParticipationStrategy(
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        @Qualifier("ticketRegistrySupport")
+        final TicketRegistrySupport ticketRegistrySupport,
+        @Qualifier("selectionStrategies")
+        final AuthenticationServiceSelectionPlan selectionStrategies) {
+        return new SamlIdPSingleSignOnParticipationStrategy(servicesManager, ticketRegistrySupport, selectionStrategies);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "samlIdPSingleSignOnParticipationStrategyConfigurer")
     @RefreshScope
-    public SingleSignOnParticipationStrategyConfigurer samlIdPSingleSignOnParticipationStrategyConfigurer() {
-        return chain -> chain.addStrategy(samlIdPSingleSignOnParticipationStrategy());
+    public SingleSignOnParticipationStrategyConfigurer samlIdPSingleSignOnParticipationStrategyConfigurer(
+        @Qualifier("samlIdPSingleSignOnParticipationStrategy")
+        final SingleSignOnParticipationStrategy samlIdPSingleSignOnParticipationStrategy) {
+        return chain -> chain.addStrategy(samlIdPSingleSignOnParticipationStrategy);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "samlIdPMultifactorAuthenticationTrigger")
-    public MultifactorAuthenticationTrigger samlIdPMultifactorAuthenticationTrigger() {
-        return new SamlIdPMultifactorAuthenticationTrigger(openSamlConfigBean.getObject(),
-            samlIdPDistributedSessionStore.getObject(), applicationContext, casProperties);
+    @Autowired
+    public MultifactorAuthenticationTrigger samlIdPMultifactorAuthenticationTrigger(final CasConfigurationProperties casProperties,
+                                                                                    final ConfigurableApplicationContext applicationContext,
+                                                                                    @Qualifier("openSamlConfigBean")
+                                                                                    final OpenSamlConfigBean openSamlConfigBean,
+                                                                                    @Qualifier("samlIdPDistributedSessionStore")
+                                                                                    final SessionStore samlIdPDistributedSessionStore) {
+        return new SamlIdPMultifactorAuthenticationTrigger(openSamlConfigBean, samlIdPDistributedSessionStore, applicationContext, casProperties);
     }
 
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "samlIdPAuthenticationContextWebflowEventResolver")
-    public CasWebflowEventResolver samlIdPAuthenticationContextWebflowEventResolver() {
-        val r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(
-            casWebflowConfigurationContext.getObject(), samlIdPMultifactorAuthenticationTrigger());
-        Objects.requireNonNull(initialAuthenticationAttemptWebflowEventResolver.getObject()).addDelegate(r);
+    public CasWebflowEventResolver samlIdPAuthenticationContextWebflowEventResolver(
+        @Qualifier("samlIdPMultifactorAuthenticationTrigger")
+        final MultifactorAuthenticationTrigger samlIdPMultifactorAuthenticationTrigger,
+        @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+        final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+        @Qualifier("casWebflowConfigurationContext")
+        final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
+        val r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(casWebflowConfigurationContext, samlIdPMultifactorAuthenticationTrigger);
+        Objects.requireNonNull(initialAuthenticationAttemptWebflowEventResolver).addDelegate(r);
         return r;
     }
 
     @Configuration(value = "SamlIdPConsentWebflowConfiguration", proxyBeanMethods = false)
     @ConditionalOnClass(value = ConsentableAttributeBuilder.class)
-    public class SamlIdPConsentWebflowConfiguration {
+    public static class SamlIdPConsentWebflowConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPConsentableAttributeBuilder")
         @RefreshScope
-        public ConsentableAttributeBuilder samlIdPConsentableAttributeBuilder() {
+        @Autowired
+        public ConsentableAttributeBuilder samlIdPConsentableAttributeBuilder(
+            @Qualifier("attributeDefinitionStore")
+            final AttributeDefinitionStore attributeDefinitionStore) {
             return attribute -> {
-                val result = attributeDefinitionStore.getObject()
-                    .locateAttributeDefinition(defn -> {
-                        if (defn instanceof SamlIdPAttributeDefinition) {
-                            val samlAttr = SamlIdPAttributeDefinition.class.cast(defn);
-                            return samlAttr.getName().equalsIgnoreCase(attribute.getName())
-                                && StringUtils.isNotBlank(samlAttr.getFriendlyName());
-                        }
-                        return false;
-                    });
-
+                val result = attributeDefinitionStore.locateAttributeDefinition(defn -> {
+                    if (defn instanceof SamlIdPAttributeDefinition) {
+                        val samlAttr = (SamlIdPAttributeDefinition) defn;
+                        return samlAttr.getName().equalsIgnoreCase(attribute.getName()) && StringUtils.isNotBlank(samlAttr.getFriendlyName());
+                    }
+                    return false;
+                });
                 if (result.isPresent()) {
-                    val samlAttr = SamlIdPAttributeDefinition.class.cast(result.get());
+                    val samlAttr = (SamlIdPAttributeDefinition) result.get();
                     attribute.setFriendlyName(samlAttr.getFriendlyName());
                 }
                 attribute.getValues().replaceAll(o -> {

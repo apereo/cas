@@ -34,9 +34,6 @@ import org.springframework.webflow.execution.RequestContext;
 @Configuration(value = "casCaptchaConfiguration", proxyBeanMethods = false)
 public class CasCaptchaConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @ConditionalOnMissingBean(name = "captchaWebflowConfigurer")
     @Bean
     @Autowired
