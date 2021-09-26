@@ -29,9 +29,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class YubiKeyConfiguration {
 
     @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "transactionManagerYubiKey")
     public PlatformTransactionManager transactionManagerYubiKey() {
@@ -41,15 +38,14 @@ public class YubiKeyConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "yubikeyAccountCipherExecutor")
-    public CipherExecutor yubikeyAccountCipherExecutor() {
+    @Autowired
+    public CipherExecutor yubikeyAccountCipherExecutor(final CasConfigurationProperties casProperties) {
         val crypto = casProperties.getAuthn().getMfa().getYubikey().getCrypto();
         if (crypto.isEnabled()) {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, YubikeyAccountCipherExecutor.class);
         }
-        LOGGER.info("YubiKey account encryption/signing is turned off and "
-            + "MAY NOT be safe in a production environment. "
-            + "Consider using other choices to handle encryption, signing and verification of "
-            + "YubiKey accounts for MFA");
+        LOGGER.info("YubiKey account encryption/signing is turned off and " + "MAY NOT be safe in a production environment. " +
+            "Consider using other choices to handle encryption, signing and verification of " + "YubiKey accounts for MFA");
         return CipherExecutor.noOp();
     }
 }

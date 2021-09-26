@@ -8,7 +8,6 @@ import org.apereo.cas.util.LdapUtils;
 
 import lombok.val;
 import org.ldaptive.ConnectionFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -30,22 +29,15 @@ import java.util.concurrent.ConcurrentHashMap;
 @ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasAcceptableUsagePolicyLdapConfiguration {
 
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @RefreshScope
     @Bean
-    public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
+    @Autowired
+    public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(final CasConfigurationProperties casProperties,
+                                                                           @Qualifier("ticketRegistrySupport")
+                                                                           final TicketRegistrySupport ticketRegistrySupport) {
         val connectionFactoryList = new ConcurrentHashMap<String, ConnectionFactory>();
         val aupProperties = casProperties.getAcceptableUsagePolicy();
-        aupProperties.getLdap().forEach(ldap ->
-            connectionFactoryList.put(ldap.getLdapUrl(), LdapUtils.newLdaptiveConnectionFactory(ldap))
-        );
-        return new LdapAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(),
-            aupProperties, connectionFactoryList);
+        aupProperties.getLdap().forEach(ldap -> connectionFactoryList.put(ldap.getLdapUrl(), LdapUtils.newLdaptiveConnectionFactory(ldap)));
+        return new LdapAcceptableUsagePolicyRepository(ticketRegistrySupport, aupProperties, connectionFactoryList);
     }
 }

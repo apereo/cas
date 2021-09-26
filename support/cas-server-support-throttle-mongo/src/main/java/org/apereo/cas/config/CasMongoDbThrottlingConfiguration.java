@@ -7,7 +7,6 @@ import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -28,26 +27,17 @@ import javax.net.ssl.SSLContext;
 public class CasMongoDbThrottlingConfiguration {
 
     @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("authenticationThrottlingConfigurationContext")
-    private ObjectProvider<ThrottledSubmissionHandlerConfigurationContext> authenticationThrottlingConfigurationContext;
-
-    @Autowired
-    @Qualifier("sslContext")
-    private ObjectProvider<SSLContext> sslContext;
-
-    @Autowired
     @Bean
     @RefreshScope
-    public ThrottledSubmissionHandlerInterceptor authenticationThrottle() {
+    public ThrottledSubmissionHandlerInterceptor authenticationThrottle(final CasConfigurationProperties casProperties,
+                                                                        @Qualifier("authenticationThrottlingConfigurationContext")
+                                                                        final ThrottledSubmissionHandlerConfigurationContext authenticationThrottlingConfigurationContext,
+                                                                        @Qualifier("sslContext")
+                                                                        final SSLContext sslContext) {
         val mongo = casProperties.getAudit().getMongo();
-        val factory = new MongoDbConnectionFactory(sslContext.getObject());
+        val factory = new MongoDbConnectionFactory(sslContext);
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
-
-        return new MongoDbThrottledSubmissionHandlerInterceptorAdapter(
-            authenticationThrottlingConfigurationContext.getObject(), mongoTemplate, mongo.getCollection());
+        return new MongoDbThrottledSubmissionHandlerInterceptorAdapter(authenticationThrottlingConfigurationContext, mongoTemplate, mongo.getCollection());
     }
 }

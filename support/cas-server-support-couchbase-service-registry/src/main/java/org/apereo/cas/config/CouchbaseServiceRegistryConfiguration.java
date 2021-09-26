@@ -28,12 +28,9 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("couchbaseServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "couchbaseServiceRegistryConfiguration", proxyBeanMethods = false)
 public class CouchbaseServiceRegistryConfiguration {
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -45,7 +42,8 @@ public class CouchbaseServiceRegistryConfiguration {
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "serviceRegistryCouchbaseClientFactory")
-    public CouchbaseClientFactory serviceRegistryCouchbaseClientFactory() {
+    @Autowired
+    public CouchbaseClientFactory serviceRegistryCouchbaseClientFactory(final CasConfigurationProperties casProperties) {
         val couchbase = casProperties.getServiceRegistry().getCouchbase();
         return new CouchbaseClientFactory(couchbase);
     }
@@ -53,16 +51,20 @@ public class CouchbaseServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "couchbaseServiceRegistry")
-    public ServiceRegistry couchbaseServiceRegistry() {
-        return new CouchbaseServiceRegistry(applicationContext, serviceRegistryCouchbaseClientFactory(),
-            new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter()),
+    @Autowired
+    public ServiceRegistry couchbaseServiceRegistry(final ConfigurableApplicationContext applicationContext,
+                                                    @Qualifier("serviceRegistryCouchbaseClientFactory")
+                                                    final CouchbaseClientFactory serviceRegistryCouchbaseClientFactory) {
+        return new CouchbaseServiceRegistry(applicationContext, serviceRegistryCouchbaseClientFactory, new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter()),
             serviceRegistryListeners.getObject());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "couchbaseServiceRegistryExecutionPlanConfigurer")
-    public ServiceRegistryExecutionPlanConfigurer couchbaseServiceRegistryExecutionPlanConfigurer() {
-        return plan -> plan.registerServiceRegistry(couchbaseServiceRegistry());
+    public ServiceRegistryExecutionPlanConfigurer couchbaseServiceRegistryExecutionPlanConfigurer(
+        @Qualifier("couchbaseServiceRegistry")
+        final ServiceRegistry couchbaseServiceRegistry) {
+        return plan -> plan.registerServiceRegistry(couchbaseServiceRegistry);
     }
 }

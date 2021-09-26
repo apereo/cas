@@ -9,7 +9,6 @@ import org.apereo.cas.pm.jdbc.JdbcPasswordManagementService;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,57 +30,56 @@ import javax.sql.DataSource;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("jdbcPasswordManagementConfiguration")
 @EnableTransactionManagement
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "jdbcPasswordManagementConfiguration", proxyBeanMethods = false)
 public class JdbcPasswordManagementConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-    
-    @Autowired
-    @Qualifier("passwordManagementCipherExecutor")
-    private ObjectProvider<CipherExecutor> passwordManagementCipherExecutor;
-
-    @Autowired
-    @Qualifier("passwordHistoryService")
-    private ObjectProvider<PasswordHistoryService> passwordHistoryService;
 
     @Bean
     @ConditionalOnMissingBean(name = "jdbcPasswordManagementDataSource")
     @RefreshScope
-    public DataSource jdbcPasswordManagementDataSource() {
+    @Autowired
+    public DataSource jdbcPasswordManagementDataSource(final CasConfigurationProperties casProperties) {
         return JpaBeans.newDataSource(casProperties.getAuthn().getPm().getJdbc());
     }
 
     @Bean
-    public PlatformTransactionManager jdbcPasswordManagementTransactionManager() {
-        return new DataSourceTransactionManager(jdbcPasswordManagementDataSource());
+    public PlatformTransactionManager jdbcPasswordManagementTransactionManager(
+        @Qualifier("jdbcPasswordManagementDataSource")
+        final DataSource jdbcPasswordManagementDataSource) {
+        return new DataSourceTransactionManager(jdbcPasswordManagementDataSource);
     }
 
     @ConditionalOnMissingBean(name = "jdbcPasswordManagementTransactionTemplate")
     @Bean
-    public TransactionTemplate jdbcPasswordManagementTransactionTemplate() {
-        val t = new TransactionTemplate(jdbcPasswordManagementTransactionManager());
+    @Autowired
+    public TransactionTemplate jdbcPasswordManagementTransactionTemplate(final CasConfigurationProperties casProperties,
+                                                                         @Qualifier("jdbcPasswordManagementTransactionManager")
+                                                                         final PlatformTransactionManager jdbcPasswordManagementTransactionManager) {
+        val t = new TransactionTemplate(jdbcPasswordManagementTransactionManager);
         t.setIsolationLevelName(casProperties.getAuthn().getPm().getJdbc().getIsolationLevelName());
         t.setPropagationBehaviorName(casProperties.getAuthn().getPm().getJdbc().getPropagationBehaviorName());
         return t;
     }
-    
+
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "jdbcPasswordChangeService")
-    public PasswordManagementService passwordChangeService() {
+    @Autowired
+    public PasswordManagementService passwordChangeService(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+                                                           @Qualifier("jdbcPasswordManagementDataSource")
+                                                           final DataSource jdbcPasswordManagementDataSource,
+                                                           @Qualifier("jdbcPasswordManagementTransactionTemplate")
+                                                           final TransactionTemplate jdbcPasswordManagementTransactionTemplate,
+                                                           @Qualifier("passwordManagementCipherExecutor")
+                                                           final CipherExecutor passwordManagementCipherExecutor,
+                                                           @Qualifier("passwordHistoryService")
+                                                           final PasswordHistoryService passwordHistoryService) {
         val encoder = PasswordEncoderUtils.newPasswordEncoder(casProperties.getAuthn().getPm().getJdbc().getPasswordEncoder(), applicationContext);
-        return new JdbcPasswordManagementService(
-            passwordManagementCipherExecutor.getObject(),
-            casProperties.getServer().getPrefix(),
-            casProperties.getAuthn().getPm(),
-            jdbcPasswordManagementDataSource(),
-            jdbcPasswordManagementTransactionTemplate(),
-            passwordHistoryService.getObject(),
-            encoder);
+        return new JdbcPasswordManagementService(passwordManagementCipherExecutor, casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm(), jdbcPasswordManagementDataSource,
+            jdbcPasswordManagementTransactionTemplate, passwordHistoryService, encoder);
     }
 }
