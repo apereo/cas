@@ -34,6 +34,7 @@ import org.apereo.cas.web.report.StatusEndpoint;
 import org.apereo.cas.web.report.TicketExpirationPoliciesEndpoint;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -60,135 +61,135 @@ import java.util.List;
 @Configuration(value = "casReportsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasReportsConfiguration {
-    @Autowired
-    @Qualifier("defaultSingleLogoutRequestExecutor")
-    private ObjectProvider<SingleLogoutRequestExecutor> defaultSingleLogoutRequestExecutor;
-
-    @Autowired
-    @Qualifier("casRuntimeModuleLoader")
-    private ObjectProvider<CasRuntimeModuleLoader> casRuntimeModuleLoader;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
-
-    @Autowired
-    @Qualifier("ticketGrantingTicketCookieGenerator")
-    private ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator;
-
-    @Autowired
-    @Qualifier("auditTrailExecutionPlan")
-    private ObjectProvider<AuditTrailExecutionPlan> auditTrailExecutionPlan;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
-
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
-
-    @Autowired
-    @Qualifier("defaultPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("principalFactory")
-    private ObjectProvider<PrincipalFactory> principalFactory;
-
-    @Autowired
-    @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
-    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
 
     @Bean
+    @Autowired
     @ConditionalOnAvailableEndpoint
-    public SpringWebflowEndpoint springWebflowEndpoint() {
+    public SpringWebflowEndpoint springWebflowEndpoint(final CasConfigurationProperties casProperties,
+                                                       final ConfigurableApplicationContext applicationContext) {
         return new SpringWebflowEndpoint(casProperties, applicationContext);
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public AuditLogEndpoint auditLogEndpoint() {
-        return new AuditLogEndpoint(auditTrailExecutionPlan.getObject(), casProperties);
+    @Autowired
+    public AuditLogEndpoint auditLogEndpoint(
+        @Qualifier("auditTrailExecutionPlan")
+        final AuditTrailExecutionPlan auditTrailExecutionPlan,
+        final CasConfigurationProperties casProperties) {
+        return new AuditLogEndpoint(auditTrailExecutionPlan, casProperties);
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public CasRuntimeModulesEndpoint casRuntimeModulesEndpoint() {
-        return new CasRuntimeModulesEndpoint(casProperties, casRuntimeModuleLoader.getObject());
+    @Autowired
+    public CasRuntimeModulesEndpoint casRuntimeModulesEndpoint(
+        @Qualifier("casRuntimeModuleLoader")
+        final CasRuntimeModuleLoader casRuntimeModuleLoader,
+        final CasConfigurationProperties casProperties) {
+        return new CasRuntimeModulesEndpoint(casProperties, casRuntimeModuleLoader);
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public RegisteredServicesEndpoint registeredServicesReportEndpoint() {
-        return new RegisteredServicesEndpoint(casProperties, servicesManager.getObject(),
-            webApplicationServiceFactory.getObject(),
+    @Autowired
+    public RegisteredServicesEndpoint registeredServicesReportEndpoint(
+        @Qualifier("webApplicationServiceFactory")
+        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        final CasConfigurationProperties casProperties) {
+        return new RegisteredServicesEndpoint(casProperties, servicesManager,
+            webApplicationServiceFactory,
             CollectionUtils.wrapList(new RegisteredServiceYamlSerializer(), new RegisteredServiceJsonSerializer()));
     }
 
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public RegisteredAuthenticationHandlersEndpoint registeredAuthenticationHandlersEndpoint() {
-        return new RegisteredAuthenticationHandlersEndpoint(casProperties, authenticationEventExecutionPlan.getObject());
+    @Autowired
+    public RegisteredAuthenticationHandlersEndpoint registeredAuthenticationHandlersEndpoint(
+        @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
+        final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
+        final CasConfigurationProperties casProperties) {
+        return new RegisteredAuthenticationHandlersEndpoint(casProperties, authenticationEventExecutionPlan);
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public RegisteredAuthenticationPoliciesEndpoint registeredAuthenticationPoliciesEndpoint() {
-        return new RegisteredAuthenticationPoliciesEndpoint(casProperties, authenticationEventExecutionPlan.getObject());
+    @Autowired
+    public RegisteredAuthenticationPoliciesEndpoint registeredAuthenticationPoliciesEndpoint(
+        @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
+        final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
+        final CasConfigurationProperties casProperties) {
+        return new RegisteredAuthenticationPoliciesEndpoint(casProperties, authenticationEventExecutionPlan);
     }
 
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "casInfoEndpointContributor")
-    public CasInfoEndpointContributor casInfoEndpointContributor() {
-        return new CasInfoEndpointContributor(casRuntimeModuleLoader.getObject());
+    public CasInfoEndpointContributor casInfoEndpointContributor(
+        @Qualifier("casRuntimeModuleLoader")
+        final CasRuntimeModuleLoader casRuntimeModuleLoader) {
+        return new CasInfoEndpointContributor(casRuntimeModuleLoader);
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint() {
-        return new SingleSignOnSessionsEndpoint(centralAuthenticationService.getObject(),
-            casProperties, defaultSingleLogoutRequestExecutor.getObject());
+    @Autowired
+    public SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint(
+        @Qualifier("centralAuthenticationService")
+        final CentralAuthenticationService centralAuthenticationService,
+        @Qualifier("defaultSingleLogoutRequestExecutor")
+        final SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor,
+        final CasConfigurationProperties casProperties) {
+        return new SingleSignOnSessionsEndpoint(centralAuthenticationService,
+            casProperties, defaultSingleLogoutRequestExecutor);
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public SingleSignOnSessionStatusEndpoint singleSignOnSessionStatusEndpoint() {
-        return new SingleSignOnSessionStatusEndpoint(ticketGrantingTicketCookieGenerator.getObject(), ticketRegistrySupport.getObject());
+    @Autowired
+    public SingleSignOnSessionStatusEndpoint singleSignOnSessionStatusEndpoint(
+        @Qualifier("ticketGrantingTicketCookieGenerator")
+        final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+        @Qualifier("defaultTicketRegistrySupport")
+        final TicketRegistrySupport ticketRegistrySupport) {
+        return new SingleSignOnSessionStatusEndpoint(ticketGrantingTicketCookieGenerator, ticketRegistrySupport);
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public StatisticsEndpoint statisticsReportEndpoint() {
-        return new StatisticsEndpoint(centralAuthenticationService.getObject(), casProperties);
+    @Autowired
+    public StatisticsEndpoint statisticsReportEndpoint(
+        @Qualifier("centralAuthenticationService")
+        final CentralAuthenticationService centralAuthenticationService,
+        final CasConfigurationProperties casProperties) {
+        return new StatisticsEndpoint(centralAuthenticationService, casProperties);
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public CasResolveAttributesReportEndpoint resolveAttributesReportEndpoint() {
-        return new CasResolveAttributesReportEndpoint(casProperties, defaultPrincipalResolver.getObject());
+    @Autowired
+    public CasResolveAttributesReportEndpoint resolveAttributesReportEndpoint(
+        @Qualifier("defaultPrincipalResolver")
+        final PrincipalResolver defaultPrincipalResolver,
+        final CasConfigurationProperties casProperties) {
+        return new CasResolveAttributesReportEndpoint(casProperties, defaultPrincipalResolver);
     }
 
     @Autowired
     @Bean
     @ConditionalOnAvailableEndpoint
-    public TicketExpirationPoliciesEndpoint ticketExpirationPoliciesEndpoint(final List<ExpirationPolicyBuilder> builders) {
-        return new TicketExpirationPoliciesEndpoint(casProperties, builders, servicesManager.getObject(), webApplicationServiceFactory.getObject());
+    public TicketExpirationPoliciesEndpoint ticketExpirationPoliciesEndpoint(
+        @Qualifier("webApplicationServiceFactory")
+        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        final CasConfigurationProperties casProperties,
+        final List<ExpirationPolicyBuilder> builders) {
+        return new TicketExpirationPoliciesEndpoint(casProperties, builders,
+            servicesManager, webApplicationServiceFactory);
     }
 
     @Bean
@@ -199,12 +200,20 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public CasReleaseAttributesReportEndpoint releaseAttributesReportEndpoint() {
+    @Autowired
+    public CasReleaseAttributesReportEndpoint releaseAttributesReportEndpoint(
+        @Qualifier("webApplicationServiceFactory")
+        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+        @Qualifier("defaultAuthenticationSystemSupport")
+        final AuthenticationSystemSupport authenticationSystemSupport,
+        @Qualifier("principalFactory")
+        final PrincipalFactory principalFactory,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        final CasConfigurationProperties casProperties) {
         return new CasReleaseAttributesReportEndpoint(casProperties,
-            servicesManager.getObject(),
-            authenticationSystemSupport.getObject(),
-            webApplicationServiceFactory.getObject(),
-            principalFactory.getObject());
+            servicesManager, authenticationSystemSupport,
+            webApplicationServiceFactory, principalFactory);
     }
 
     /**
@@ -225,9 +234,15 @@ public class CasReportsConfiguration {
         public StatusEndpoint statusEndpoint(
             final ObjectProvider<HealthEndpoint> healthEndpoint,
             final CasConfigurationProperties casProperties) {
-            LOGGER.warn("The status actuator endpoint is deprecated and is scheduled to be removed from CAS in the future. "
-                + "To obtain status and health information, please configure and use the health endpoint instead.");
             return new StatusEndpoint(casProperties, healthEndpoint.getIfAvailable());
+        }
+
+        @Bean
+        @ConditionalOnAvailableEndpoint(endpoint = StatusEndpoint.class)
+        public InitializingBean statusEndpointInitializer() {
+            return () ->
+                LOGGER.warn("The status actuator endpoint is deprecated and is scheduled to be removed from CAS in the future. "
+                    + "To obtain status and health information, please configure and use the health endpoint instead.");
         }
     }
 }

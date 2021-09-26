@@ -25,7 +25,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowBuilder;
@@ -91,7 +90,6 @@ public class RadiusMultifactorConfiguration {
 
     @ConditionalOnMissingBean(name = "radiusMultifactorWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer radiusMultifactorWebflowConfigurer() {
         val cfg = new RadiusMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),
@@ -119,7 +117,6 @@ public class RadiusMultifactorConfiguration {
 
         @ConditionalOnMissingBean(name = "radiusMultifactorTrustConfigurer")
         @Bean
-        @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer radiusMultifactorTrustConfigurer() {
             val cfg = new RadiusMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(),

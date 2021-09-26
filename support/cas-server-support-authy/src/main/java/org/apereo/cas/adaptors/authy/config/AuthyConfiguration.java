@@ -14,7 +14,6 @@ import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurat
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -24,7 +23,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowBuilder;
@@ -37,52 +35,48 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("authyConfiguration")
+@Configuration(value = "authyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class AuthyConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
-
-    @Autowired
-    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-    
-    @Autowired
-    @Qualifier("casWebflowConfigurationContext")
-    private ObjectProvider<CasWebflowEventResolutionConfigurationContext> casWebflowConfigurationContext;
-    
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("flowBuilder")
-    private ObjectProvider<FlowBuilder> flowBuilder;
-
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "authyAuthenticatorFlowRegistry")
-    public FlowDefinitionRegistry authyAuthenticatorFlowRegistry() {
-        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices.getObject());
-        builder.addFlowBuilder(flowBuilder.getObject(), AuthyMultifactorWebflowConfigurer.MFA_AUTHY_EVENT_ID);
+    public FlowDefinitionRegistry authyAuthenticatorFlowRegistry(
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier("flowBuilderServices")
+        final FlowBuilderServices flowBuilderServices,
+        @Qualifier("flowBuilder")
+        final FlowBuilder flowBuilder) {
+        val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
+        builder.addFlowBuilder(flowBuilder, AuthyMultifactorWebflowConfigurer.MFA_AUTHY_EVENT_ID);
         return builder.build();
     }
 
     @RefreshScope
     @Bean
-    public CasWebflowEventResolver authyAuthenticationWebflowEventResolver() {
-        return new AuthyAuthenticationWebflowEventResolver(casWebflowConfigurationContext.getObject());
+    @Autowired
+    public CasWebflowEventResolver authyAuthenticationWebflowEventResolver(
+        @Qualifier("casWebflowConfigurationContext")
+        final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
+        return new AuthyAuthenticationWebflowEventResolver(casWebflowConfigurationContext);
     }
 
     @ConditionalOnMissingBean(name = "authyMultifactorWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer authyMultifactorWebflowConfigurer() {
-        val cfg = new AuthyMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(), authyAuthenticatorFlowRegistry(),
+    @Autowired
+    public CasWebflowConfigurer authyMultifactorWebflowConfigurer(
+        @Qualifier("authyAuthenticatorFlowRegistry")
+        final FlowDefinitionRegistry authyAuthenticatorFlowRegistry,
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("loginFlowRegistry")
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier("flowBuilderServices")
+        final FlowBuilderServices flowBuilderServices) {
+        val cfg = new AuthyMultifactorWebflowConfigurer(flowBuilderServices,
+            loginFlowDefinitionRegistry, authyAuthenticatorFlowRegistry,
             applicationContext, casProperties,
             MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
         cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
@@ -91,14 +85,20 @@ public class AuthyConfiguration {
 
     @RefreshScope
     @Bean
-    public Action authyAuthenticationWebflowAction() {
-        return new AuthyAuthenticationWebflowAction(authyAuthenticationWebflowEventResolver());
+    @Autowired
+    public Action authyAuthenticationWebflowAction(
+        @Qualifier("authyAuthenticationWebflowEventResolver")
+        final CasWebflowEventResolver authyAuthenticationWebflowEventResolver) {
+        return new AuthyAuthenticationWebflowAction(authyAuthenticationWebflowEventResolver);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "authyCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer authyCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(authyMultifactorWebflowConfigurer());
+    @Autowired
+    public CasWebflowExecutionPlanConfigurer authyCasWebflowExecutionPlanConfigurer(
+        @Qualifier("authyMultifactorWebflowConfigurer")
+        final CasWebflowConfigurer authyMultifactorWebflowConfigurer) {
+        return plan -> plan.registerWebflowConfigurer(authyMultifactorWebflowConfigurer);
     }
 
     /**
@@ -107,15 +107,23 @@ public class AuthyConfiguration {
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.authy")
     @Configuration("authyMultifactorTrustConfiguration")
-    public class AuthyMultifactorTrustConfiguration {
+    public static class AuthyMultifactorTrustConfiguration {
 
         @ConditionalOnMissingBean(name = "authyMultifactorTrustWebflowConfigurer")
         @Bean
-        @DependsOn("defaultWebflowConfigurer")
-        public CasWebflowConfigurer authyMultifactorTrustWebflowConfigurer() {
-            val cfg = new AuthyMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices.getObject(),
-                loginFlowDefinitionRegistry.getObject(),
-                authyAuthenticatorFlowRegistry(),
+        @Autowired
+        public CasWebflowConfigurer authyMultifactorTrustWebflowConfigurer(
+            @Qualifier("authyAuthenticatorFlowRegistry")
+            final FlowDefinitionRegistry authyAuthenticatorFlowRegistry,
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("loginFlowRegistry")
+            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier("flowBuilderServices")
+            final FlowBuilderServices flowBuilderServices) {
+            val cfg = new AuthyMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices,
+                loginFlowDefinitionRegistry,
+                authyAuthenticatorFlowRegistry,
                 applicationContext,
                 casProperties,
                 MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
@@ -125,8 +133,11 @@ public class AuthyConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "authyMultifactorTrustCasWebflowExecutionPlanConfigurer")
-        public CasWebflowExecutionPlanConfigurer authyMultifactorTrustCasWebflowExecutionPlanConfigurer() {
-            return plan -> plan.registerWebflowConfigurer(authyMultifactorTrustWebflowConfigurer());
+        @Autowired
+        public CasWebflowExecutionPlanConfigurer authyMultifactorTrustCasWebflowExecutionPlanConfigurer(
+            @Qualifier("authyMultifactorTrustWebflowConfigurer")
+            final CasWebflowConfigurer authyMultifactorTrustWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(authyMultifactorTrustWebflowConfigurer);
         }
     }
 }

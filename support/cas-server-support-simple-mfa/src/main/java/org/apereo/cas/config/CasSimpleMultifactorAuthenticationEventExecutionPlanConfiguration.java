@@ -18,7 +18,6 @@ import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -33,47 +32,41 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration("casSimpleMultifactorAuthenticationEventExecutionPlanConfiguration")
+@Configuration(value = "casSimpleMultifactorAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("casSimpleMultifactorBypassEvaluator")
-    private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> casSimpleMultifactorBypassEvaluator;
-
-    @Autowired
-    @Qualifier("failureModeEvaluator")
-    private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationHandler")
     @Bean
     @RefreshScope
-    public AuthenticationHandler casSimpleMultifactorAuthenticationHandler() {
+    @Autowired
+    public AuthenticationHandler casSimpleMultifactorAuthenticationHandler(
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        @Qualifier("centralAuthenticationService")
+        final CentralAuthenticationService centralAuthenticationService,
+        final CasConfigurationProperties casProperties) {
         val props = casProperties.getAuthn().getMfa().getSimple();
         return new CasSimpleMultifactorAuthenticationHandler(props.getName(),
-            servicesManager.getObject(), casSimpleMultifactorPrincipalFactory(),
-            centralAuthenticationService.getObject(), props.getOrder());
+            servicesManager, casSimpleMultifactorPrincipalFactory(),
+            centralAuthenticationService, props.getOrder());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationProvider")
-    public MultifactorAuthenticationProvider casSimpleMultifactorAuthenticationProvider() {
+    @Autowired
+    public MultifactorAuthenticationProvider casSimpleMultifactorAuthenticationProvider(
+        @Qualifier("casSimpleMultifactorBypassEvaluator")
+        final MultifactorAuthenticationProviderBypassEvaluator casSimpleMultifactorBypassEvaluator,
+        @Qualifier("failureModeEvaluator")
+        final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator,
+        final CasConfigurationProperties casProperties) {
         val simple = casProperties.getAuthn().getMfa().getSimple();
         val p = new CasSimpleMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(casSimpleMultifactorBypassEvaluator.getObject());
+        p.setBypassEvaluator(casSimpleMultifactorBypassEvaluator);
         p.setFailureMode(simple.getFailureMode());
-        p.setFailureModeEvaluator(failureModeEvaluator.getObject());
+        p.setFailureModeEvaluator(failureModeEvaluator);
         p.setOrder(simple.getRank());
         p.setId(simple.getId());
         return p;
@@ -82,11 +75,17 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationMetaDataPopulator")
-    public AuthenticationMetaDataPopulator casSimpleMultifactorAuthenticationMetaDataPopulator() {
+    @Autowired
+    public AuthenticationMetaDataPopulator casSimpleMultifactorAuthenticationMetaDataPopulator(
+        @Qualifier("casSimpleMultifactorAuthenticationProvider")
+        final MultifactorAuthenticationProvider casSimpleMultifactorAuthenticationProvider,
+        @Qualifier("casSimpleMultifactorAuthenticationHandler")
+        final AuthenticationHandler casSimpleMultifactorAuthenticationHandler,
+        final CasConfigurationProperties casProperties) {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
-            casSimpleMultifactorAuthenticationHandler(),
-            casSimpleMultifactorAuthenticationProvider().getId()
+            casSimpleMultifactorAuthenticationHandler,
+            casSimpleMultifactorAuthenticationProvider.getId()
         );
     }
 
@@ -99,10 +98,15 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @RefreshScope
-    public AuthenticationEventExecutionPlanConfigurer casSimpleMultifactorAuthenticationEventExecutionPlanConfigurer() {
+    @Autowired
+    public AuthenticationEventExecutionPlanConfigurer casSimpleMultifactorAuthenticationEventExecutionPlanConfigurer(
+        @Qualifier("casSimpleMultifactorAuthenticationHandler")
+        final AuthenticationHandler casSimpleMultifactorAuthenticationHandler,
+        @Qualifier("casSimpleMultifactorAuthenticationMetaDataPopulator")
+        final AuthenticationMetaDataPopulator casSimpleMultifactorAuthenticationMetaDataPopulator) {
         return plan -> {
-            plan.registerAuthenticationHandler(casSimpleMultifactorAuthenticationHandler());
-            plan.registerAuthenticationMetadataPopulator(casSimpleMultifactorAuthenticationMetaDataPopulator());
+            plan.registerAuthenticationHandler(casSimpleMultifactorAuthenticationHandler);
+            plan.registerAuthenticationMetadataPopulator(casSimpleMultifactorAuthenticationMetaDataPopulator);
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(CasSimpleMultifactorTokenCredential.class));
         };
     }

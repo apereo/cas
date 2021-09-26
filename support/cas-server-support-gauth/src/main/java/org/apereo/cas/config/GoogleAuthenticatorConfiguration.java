@@ -65,7 +65,6 @@ public class GoogleAuthenticatorConfiguration {
 
     @ConditionalOnMissingBean(name = "googleAuthenticatorMultifactorWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer googleAuthenticatorMultifactorWebflowConfigurer() {
         val cfg = new GoogleAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),

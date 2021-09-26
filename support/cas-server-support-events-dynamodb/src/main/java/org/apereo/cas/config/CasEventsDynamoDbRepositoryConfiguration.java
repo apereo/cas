@@ -9,6 +9,7 @@ import org.apereo.cas.support.events.DynamoDbCasEventsFacilitator;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -22,16 +23,17 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Configuration("CasEventsInfluxDbRepositoryConfiguration")
+@Configuration(value = "CasEventsInfluxDbRepositoryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasEventsDynamoDbRepositoryConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
-    public CasEventRepository casEventRepository() {
-        return new DynamoDbCasEventRepository(dynamoDbEventRepositoryFilter(), dynamoDbCasEventsFacilitator());
+    public CasEventRepository casEventRepository(
+        @Qualifier("dynamoDbEventRepositoryFilter")
+        final CasEventRepositoryFilter dynamoDbEventRepositoryFilter,
+        @Qualifier("dynamoDbCasEventsFacilitator")
+        final DynamoDbCasEventsFacilitator dynamoDbCasEventsFacilitator) {
+        return new DynamoDbCasEventRepository(dynamoDbEventRepositoryFilter, dynamoDbCasEventsFacilitator);
     }
 
     @ConditionalOnMissingBean(name = "dynamoDbEventRepositoryFilter")
@@ -42,9 +44,13 @@ public class CasEventsDynamoDbRepositoryConfiguration {
 
     @RefreshScope
     @Bean
-    public DynamoDbCasEventsFacilitator dynamoDbCasEventsFacilitator() {
+    @Autowired
+    public DynamoDbCasEventsFacilitator dynamoDbCasEventsFacilitator(
+        @Qualifier("dynamoDbEventRepositoryClient")
+        final DynamoDbClient dynamoDbEventRepositoryClient,
+        final CasConfigurationProperties casProperties) {
         val db = casProperties.getEvents().getDynamoDb();
-        val f = new DynamoDbCasEventsFacilitator(db, dynamoDbEventRepositoryClient());
+        val f = new DynamoDbCasEventsFacilitator(db, dynamoDbEventRepositoryClient);
         if (!db.isPreventTableCreationOnStartup()) {
             f.createTable(db.isDropTablesOnStartup());
         }
@@ -54,7 +60,8 @@ public class CasEventsDynamoDbRepositoryConfiguration {
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbEventRepositoryClient")
-    public DynamoDbClient dynamoDbEventRepositoryClient() {
+    @Autowired
+    public DynamoDbClient dynamoDbEventRepositoryClient(final CasConfigurationProperties casProperties) {
         val dynamoDbProperties = casProperties.getEvents().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();
         return factory.createAmazonDynamoDb(dynamoDbProperties);
