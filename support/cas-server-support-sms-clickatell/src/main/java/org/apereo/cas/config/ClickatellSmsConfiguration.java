@@ -20,11 +20,9 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class ClickatellSmsConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
-    public SmsSender smsSender() {
+    @Autowired
+    public SmsSender smsSender(final CasConfigurationProperties casProperties) {
         val clickatell = casProperties.getSmsProvider().getClickatell();
         return new ClickatellSmsSender(clickatell.getToken(), clickatell.getServerUrl());
     }

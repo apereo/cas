@@ -25,24 +25,25 @@ import org.springframework.core.Ordered;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SamlIdPTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Override
-    public void configureTicketCatalog(final TicketCatalog plan,
-                                       final CasConfigurationProperties casProperties) {
+    public void configureTicketCatalog(final TicketCatalog plan, final CasConfigurationProperties casProperties) {
         LOGGER.debug("Registering SAML2 protocol ticket definitions...");
-        buildAndRegisterSamlArtifactDefinition(plan, buildTicketDefinition(plan, SamlArtifactTicket.PREFIX, SamlArtifactTicketImpl.class, Ordered.HIGHEST_PRECEDENCE));
-        buildAndRegisterSamlAttributeQueryDefinition(plan, buildTicketDefinition(plan, SamlAttributeQueryTicket.PREFIX, SamlAttributeQueryTicketImpl.class, Ordered.HIGHEST_PRECEDENCE));
+        buildAndRegisterSamlArtifactDefinition(plan,
+            buildTicketDefinition(plan, SamlArtifactTicket.PREFIX, SamlArtifactTicketImpl.class, Ordered.HIGHEST_PRECEDENCE), casProperties);
+        buildAndRegisterSamlAttributeQueryDefinition(plan,
+            buildTicketDefinition(plan, SamlAttributeQueryTicket.PREFIX, SamlAttributeQueryTicketImpl.class, Ordered.HIGHEST_PRECEDENCE), casProperties);
     }
 
-    protected void buildAndRegisterSamlArtifactDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
+    @Autowired
+    protected void buildAndRegisterSamlArtifactDefinition(final TicketCatalog plan, final TicketDefinition metadata, final CasConfigurationProperties casProperties) {
         metadata.getProperties().setStorageName(casProperties.getAuthn().getSamlIdp().getTicket().getSamlArtifactsCacheStorageName());
         metadata.getProperties().setStorageTimeout(casProperties.getTicket().getSt().getTimeToKillInSeconds());
         registerTicketDefinition(plan, metadata);
     }
 
-    protected void buildAndRegisterSamlAttributeQueryDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
+    @Autowired
+    protected void buildAndRegisterSamlAttributeQueryDefinition(final TicketCatalog plan, final TicketDefinition metadata, final CasConfigurationProperties casProperties) {
         metadata.getProperties().setStorageName(casProperties.getAuthn().getSamlIdp().getTicket().getSamlAttributeQueryCacheStorageName());
         metadata.getProperties().setStorageTimeout(casProperties.getTicket().getSt().getTimeToKillInSeconds());
         registerTicketDefinition(plan, metadata);

@@ -11,7 +11,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.CheckConsentRequiredAction;
 import org.apereo.cas.web.flow.ConfirmConsentAction;
 import org.apereo.cas.web.flow.ConsentWebflowConfigurer;
-import org.springframework.beans.factory.ObjectProvider;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -40,27 +40,52 @@ public class CasConsentWebflowConfiguration {
     @ConditionalOnMissingBean(name = "checkConsentRequiredAction")
     @Bean
     @Autowired
-    public Action checkConsentRequiredAction(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext, @Qualifier("attributeDefinitionStore") final AttributeDefinitionStore attributeDefinitionStore, @Qualifier("authenticationRequestServiceSelectionStrategies") final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies, @Qualifier("consentEngine") final ConsentEngine consentEngine, @Qualifier("servicesManager") final ServicesManager servicesManager, @Qualifier("consentActivationStrategy") final ConsentActivationStrategy consentActivationStrategy) {
-        return new CheckConsentRequiredAction(servicesManager, authenticationRequestServiceSelectionStrategies, consentEngine, casProperties, attributeDefinitionStore, applicationContext, consentActivationStrategy);
+    public Action checkConsentRequiredAction(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+                                             @Qualifier("attributeDefinitionStore")
+                                             final AttributeDefinitionStore attributeDefinitionStore,
+                                             @Qualifier("authenticationRequestServiceSelectionStrategies")
+                                             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+                                             @Qualifier("consentEngine")
+                                             final ConsentEngine consentEngine,
+                                             @Qualifier("servicesManager")
+                                             final ServicesManager servicesManager,
+                                             @Qualifier("consentActivationStrategy")
+                                             final ConsentActivationStrategy consentActivationStrategy) {
+        return new CheckConsentRequiredAction(servicesManager, authenticationRequestServiceSelectionStrategies, consentEngine, casProperties, attributeDefinitionStore, applicationContext,
+            consentActivationStrategy);
     }
 
     @ConditionalOnMissingBean(name = "confirmConsentAction")
     @Bean
     @Autowired
-    public Action confirmConsentAction(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext, @Qualifier("attributeDefinitionStore") final AttributeDefinitionStore attributeDefinitionStore, @Qualifier("authenticationRequestServiceSelectionStrategies") final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies, @Qualifier("consentEngine") final ConsentEngine consentEngine, @Qualifier("servicesManager") final ServicesManager servicesManager) {
+    public Action confirmConsentAction(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+                                       @Qualifier("attributeDefinitionStore")
+                                       final AttributeDefinitionStore attributeDefinitionStore,
+                                       @Qualifier("authenticationRequestServiceSelectionStrategies")
+                                       final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+                                       @Qualifier("consentEngine")
+                                       final ConsentEngine consentEngine,
+                                       @Qualifier("servicesManager")
+                                       final ServicesManager servicesManager) {
         return new ConfirmConsentAction(servicesManager, authenticationRequestServiceSelectionStrategies, consentEngine, casProperties, attributeDefinitionStore, applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "consentWebflowConfigurer")
     @Bean
     @Autowired
-    public CasWebflowConfigurer consentWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext, @Qualifier("loginFlowDefinitionRegistry") final FlowDefinitionRegistry loginFlowDefinitionRegistry, @Qualifier("flowBuilderServices") final FlowBuilderServices flowBuilderServices) {
+    public CasWebflowConfigurer consentWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+                                                         @Qualifier("loginFlowDefinitionRegistry")
+                                                         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                         @Qualifier("flowBuilderServices")
+                                                         final FlowBuilderServices flowBuilderServices) {
         return new ConsentWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "consentCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer consentCasWebflowExecutionPlanConfigurer(@Qualifier("consentWebflowConfigurer") final CasWebflowConfigurer consentWebflowConfigurer) {
+    public CasWebflowExecutionPlanConfigurer consentCasWebflowExecutionPlanConfigurer(
+        @Qualifier("consentWebflowConfigurer")
+        final CasWebflowConfigurer consentWebflowConfigurer) {
         return plan -> plan.registerWebflowConfigurer(consentWebflowConfigurer);
     }
 }

@@ -30,23 +30,12 @@ import java.util.List;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-couchdb-service-registry")
-@Configuration("couchDbServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "couchDbServiceRegistryConfiguration", proxyBeanMethods = false)
 public class CouchDbServiceRegistryConfiguration {
 
     @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
     private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("serviceRegistryCouchDbFactory")
-    private ObjectProvider<CouchDbConnectorFactory> couchDbFactory;
-
-    @Autowired
-    @Qualifier("defaultObjectMapperFactory")
-    private ObjectProvider<ObjectMapperFactory> objectMapperFactory;
 
     @Autowired
     @Qualifier("serviceRegistryListeners")
@@ -55,17 +44,22 @@ public class CouchDbServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "serviceRegistryCouchDbFactory")
-    public CouchDbConnectorFactory serviceRegistryCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getServiceRegistry().getCouchDb(), objectMapperFactory.getObject());
+    @Autowired
+    public CouchDbConnectorFactory serviceRegistryCouchDbFactory(final CasConfigurationProperties casProperties,
+                                                                 @Qualifier("objectMapperFactory")
+                                                                 final ObjectMapperFactory objectMapperFactory) {
+        return new CouchDbConnectorFactory(casProperties.getServiceRegistry().getCouchDb(), objectMapperFactory);
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "serviceRegistryCouchDbRepository")
-    public RegisteredServiceCouchDbRepository serviceRegistryCouchDbRepository() {
+    @Autowired
+    public RegisteredServiceCouchDbRepository serviceRegistryCouchDbRepository(final CasConfigurationProperties casProperties,
+                                                                               @Qualifier("couchDbFactory")
+                                                                               final CouchDbConnectorFactory couchDbFactory) {
         val couchDbProperties = casProperties.getServiceRegistry().getCouchDb();
-
-        val serviceRepository = new RegisteredServiceCouchDbRepository(couchDbFactory.getObject().getCouchDbConnector(), couchDbProperties.isCreateIfNotExists());
+        val serviceRepository = new RegisteredServiceCouchDbRepository(couchDbFactory.getCouchDbConnector(), couchDbProperties.isCreateIfNotExists());
         serviceRepository.initStandardDesignDocument();
         return serviceRepository;
     }
@@ -73,15 +67,19 @@ public class CouchDbServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "couchDbServiceRegistry")
-    public ServiceRegistry couchDbServiceRegistry() {
-        return new CouchDbServiceRegistry(applicationContext, serviceRegistryCouchDbRepository(), serviceRegistryListeners.getObject());
+    @Autowired
+    public ServiceRegistry couchDbServiceRegistry(final ConfigurableApplicationContext applicationContext,
+                                                  @Qualifier("serviceRegistryCouchDbRepository")
+                                                  final RegisteredServiceCouchDbRepository serviceRegistryCouchDbRepository) {
+        return new CouchDbServiceRegistry(applicationContext, serviceRegistryCouchDbRepository, serviceRegistryListeners.getObject());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "couchDbServiceRegistryExecutionPlanConfigurer")
     @RefreshScope
-    public ServiceRegistryExecutionPlanConfigurer couchDbServiceRegistryExecutionPlanConfigurer() {
-        return plan -> plan.registerServiceRegistry(couchDbServiceRegistry());
+    public ServiceRegistryExecutionPlanConfigurer couchDbServiceRegistryExecutionPlanConfigurer(
+        @Qualifier("couchDbServiceRegistry")
+        final ServiceRegistry couchDbServiceRegistry) {
+        return plan -> plan.registerServiceRegistry(couchDbServiceRegistry);
     }
-
 }

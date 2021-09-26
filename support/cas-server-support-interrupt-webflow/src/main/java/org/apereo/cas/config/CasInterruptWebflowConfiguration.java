@@ -16,7 +16,6 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -35,56 +34,31 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("casInterruptWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "casInterruptWebflowConfiguration", proxyBeanMethods = false)
 public class CasInterruptWebflowConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
-    @Autowired
-    @Qualifier("interruptCookieGenerator")
-    private ObjectProvider<CasCookieBuilder> interruptCookieGenerator;
-
-    @Autowired
-    @Qualifier("interruptInquirer")
-    private ObjectProvider<InterruptInquiryExecutionPlan> interruptInquirer;
-
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
-
-    @Autowired
-    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
-    
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("authenticationServiceSelectionPlan")
-    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    
     @ConditionalOnMissingBean(name = "interruptWebflowConfigurer")
     @Bean
-        public CasWebflowConfigurer interruptWebflowConfigurer() {
-        return new InterruptWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
+    @Autowired
+    public CasWebflowConfigurer interruptWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+                                                           @Qualifier("loginFlowDefinitionRegistry")
+                                                           final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                           @Qualifier("flowBuilderServices")
+                                                           final FlowBuilderServices flowBuilderServices) {
+        return new InterruptWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "inquireInterruptAction")
     @Bean
     @RefreshScope
-    public Action inquireInterruptAction() {
-        return new InquireInterruptAction(interruptInquirer.getObject().getInterruptInquirers(),
-            casProperties, interruptCookieGenerator.getObject());
+    @Autowired
+    public Action inquireInterruptAction(final CasConfigurationProperties casProperties,
+                                         @Qualifier("interruptCookieGenerator")
+                                         final CasCookieBuilder interruptCookieGenerator,
+                                         @Qualifier("interruptInquirer")
+                                         final InterruptInquiryExecutionPlan interruptInquirer) {
+        return new InquireInterruptAction(interruptInquirer.getInterruptInquirers(), casProperties, interruptCookieGenerator);
     }
 
     @ConditionalOnMissingBean(name = "prepareInterruptViewAction")
@@ -97,29 +71,39 @@ public class CasInterruptWebflowConfiguration {
     @ConditionalOnMissingBean(name = "finalizeInterruptFlowAction")
     @Bean
     @RefreshScope
-    public Action finalizeInterruptFlowAction() {
-        return new FinalizeInterruptFlowAction(interruptCookieGenerator.getObject());
+    public Action finalizeInterruptFlowAction(
+        @Qualifier("interruptCookieGenerator")
+        final CasCookieBuilder interruptCookieGenerator) {
+        return new FinalizeInterruptFlowAction(interruptCookieGenerator);
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "interruptSingleSignOnParticipationStrategy")
-    public SingleSignOnParticipationStrategy interruptSingleSignOnParticipationStrategy() {
-        return new InterruptSingleSignOnParticipationStrategy(servicesManager.getObject(),
-            ticketRegistrySupport.getObject(),
-            authenticationServiceSelectionPlan.getObject());
+    public SingleSignOnParticipationStrategy interruptSingleSignOnParticipationStrategy(
+        @Qualifier("ticketRegistrySupport")
+        final TicketRegistrySupport ticketRegistrySupport,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        @Qualifier("authenticationServiceSelectionPlan")
+        final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
+        return new InterruptSingleSignOnParticipationStrategy(servicesManager, ticketRegistrySupport, authenticationServiceSelectionPlan);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "interruptSingleSignOnParticipationStrategyConfigurer")
     @RefreshScope
-    public SingleSignOnParticipationStrategyConfigurer interruptSingleSignOnParticipationStrategyConfigurer() {
-        return chain -> chain.addStrategy(interruptSingleSignOnParticipationStrategy());
+    public SingleSignOnParticipationStrategyConfigurer interruptSingleSignOnParticipationStrategyConfigurer(
+        @Qualifier("interruptSingleSignOnParticipationStrategy")
+        final SingleSignOnParticipationStrategy interruptSingleSignOnParticipationStrategy) {
+        return chain -> chain.addStrategy(interruptSingleSignOnParticipationStrategy);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "interruptCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer interruptCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(interruptWebflowConfigurer());
+    public CasWebflowExecutionPlanConfigurer interruptCasWebflowExecutionPlanConfigurer(
+        @Qualifier("interruptWebflowConfigurer")
+        final CasWebflowConfigurer interruptWebflowConfigurer) {
+        return plan -> plan.registerWebflowConfigurer(interruptWebflowConfigurer);
     }
 }

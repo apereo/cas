@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.rest.RegisteredServiceResource;
+
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
@@ -40,11 +41,16 @@ public class RestServicesConfiguration {
 
     @Bean
     @Autowired
-    public RegisteredServiceResource registeredServiceResourceRestController(final CasConfigurationProperties casProperties, @Qualifier("servicesManager") final ServicesManager servicesManager, @Qualifier("authenticationSystemSupport") final AuthenticationSystemSupport authenticationSystemSupport) {
+    public RegisteredServiceResource registeredServiceResourceRestController(final CasConfigurationProperties casProperties,
+                                                                             @Qualifier("servicesManager")
+                                                                             final ServicesManager servicesManager,
+                                                                             @Qualifier("authenticationSystemSupport")
+                                                                             final AuthenticationSystemSupport authenticationSystemSupport) {
         val rest = casProperties.getRest()
-                                .getServices();
+            .getServices();
         if (StringUtils.isBlank(rest.getAttributeName()) || StringUtils.isBlank(rest.getAttributeValue())) {
-            throw new BeanCreationException("No attribute name or value is defined to enforce authorization when adding services via CAS REST APIs. " + "This is likely due to misconfiguration in CAS settings where the attribute name/value definition is absent");
+            throw new BeanCreationException("No attribute name or value is defined to enforce authorization when adding services via CAS REST APIs. " +
+                "This is likely due to misconfiguration in CAS settings where the attribute name/value definition is absent");
         }
         return new RegisteredServiceResource(authenticationSystemSupport, webApplicationServiceFactory.getObject(), servicesManager, rest.getAttributeName(), rest.getAttributeValue());
     }
