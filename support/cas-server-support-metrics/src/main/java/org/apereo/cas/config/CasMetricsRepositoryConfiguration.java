@@ -3,10 +3,8 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-
 
 /**
  * This is {@link CasMetricsRepositoryConfiguration}.
@@ -18,7 +16,4 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Getter
 public class CasMetricsRepositoryConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
 }
