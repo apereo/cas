@@ -8,7 +8,6 @@ import org.apereo.cas.webauthn.DynamoDbWebAuthnFacilitator;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,20 +23,15 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Configuration("DynamoDbWebAuthnConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "DynamoDbWebAuthnConfiguration", proxyBeanMethods = false)
 public class DynamoDbWebAuthnConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
-    private ObjectProvider<CipherExecutor> webAuthnCredentialRegistrationCipherExecutor;
 
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "amazonDynamoDbWebAuthnClient")
-    public DynamoDbClient amazonDynamoDbWebAuthnClient() {
+    @Autowired
+    public DynamoDbClient amazonDynamoDbWebAuthnClient(final CasConfigurationProperties casProperties) {
         val db = casProperties.getAuthn().getMfa().getWebAuthn().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();
         return factory.createAmazonDynamoDb(db);
@@ -46,9 +40,12 @@ public class DynamoDbWebAuthnConfiguration {
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbWebAuthnFacilitator")
-    public DynamoDbWebAuthnFacilitator dynamoDbWebAuthnFacilitator() {
+    @Autowired
+    public DynamoDbWebAuthnFacilitator dynamoDbWebAuthnFacilitator(final CasConfigurationProperties casProperties,
+                                                                   @Qualifier("amazonDynamoDbWebAuthnClient")
+                                                                   final DynamoDbClient amazonDynamoDbWebAuthnClient) {
         val db = casProperties.getAuthn().getMfa().getWebAuthn().getDynamoDb();
-        val f = new DynamoDbWebAuthnFacilitator(db, amazonDynamoDbWebAuthnClient());
+        val f = new DynamoDbWebAuthnFacilitator(db, amazonDynamoDbWebAuthnClient);
         if (!db.isPreventTableCreationOnStartup()) {
             f.createTable(db.isDropTablesOnStartup());
         }
@@ -57,9 +54,12 @@ public class DynamoDbWebAuthnConfiguration {
 
     @RefreshScope
     @Bean
-    public WebAuthnCredentialRepository webAuthnCredentialRepository() {
-        return new DynamoDbWebAuthnCredentialRepository(casProperties,
-            webAuthnCredentialRegistrationCipherExecutor.getObject(),
-            dynamoDbWebAuthnFacilitator());
+    @Autowired
+    public WebAuthnCredentialRepository webAuthnCredentialRepository(final CasConfigurationProperties casProperties,
+                                                                     @Qualifier("dynamoDbWebAuthnFacilitator")
+                                                                     final DynamoDbWebAuthnFacilitator dynamoDbWebAuthnFacilitator,
+                                                                     @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
+                                                                     final CipherExecutor webAuthnCredentialRegistrationCipherExecutor) {
+        return new DynamoDbWebAuthnCredentialRepository(casProperties, webAuthnCredentialRegistrationCipherExecutor, dynamoDbWebAuthnFacilitator);
     }
 }

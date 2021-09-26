@@ -9,6 +9,7 @@ import org.apereo.cas.util.CoreTicketUtils;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,18 +25,16 @@ import org.springframework.data.redis.core.RedisTemplate;
  * @author serv
  * @since 5.0.0
  */
-@Configuration("redisTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.ticket.registry.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
+@Configuration(value = "redisTicketRegistryConfiguration", proxyBeanMethods = false)
 public class RedisTicketRegistryConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @ConditionalOnMissingBean(name = "redisTicketConnectionFactory")
     @Bean
     @RefreshScope
-    public RedisConnectionFactory redisTicketConnectionFactory() {
+    @Autowired
+    public RedisConnectionFactory redisTicketConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getTicket().getRegistry().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
     }
@@ -43,15 +42,20 @@ public class RedisTicketRegistryConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "ticketRedisTemplate")
-    public RedisTemplate<String, Ticket> ticketRedisTemplate() {
-        return RedisObjectFactory.newRedisTemplate(redisTicketConnectionFactory());
+    public RedisTemplate<String, Ticket> ticketRedisTemplate(
+        @Qualifier("redisTicketConnectionFactory")
+        final RedisConnectionFactory redisTicketConnectionFactory) {
+        return RedisObjectFactory.newRedisTemplate(redisTicketConnectionFactory);
     }
 
     @Bean
     @RefreshScope
-    public TicketRegistry ticketRegistry() {
+    @Autowired
+    public TicketRegistry ticketRegistry(final CasConfigurationProperties casProperties,
+                                         @Qualifier("ticketRedisTemplate")
+                                         final RedisTemplate<String, Ticket> ticketRedisTemplate) {
         val redis = casProperties.getTicket().getRegistry().getRedis();
-        val r = new RedisTicketRegistry(ticketRedisTemplate());
+        val r = new RedisTicketRegistry(ticketRedisTemplate);
         r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(redis.getCrypto(), "redis"));
         return r;
     }

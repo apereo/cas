@@ -6,7 +6,6 @@ import org.apereo.cas.monitor.HazelcastHealthIndicator;
 import com.hazelcast.core.HazelcastInstance;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
@@ -24,33 +23,25 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "hazelcastMonitorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class HazelcastMonitorConfiguration implements DisposableBean {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("casTicketRegistryHazelcastInstance")
-    private ObjectProvider<HazelcastInstance> casTicketRegistryHazelcastInstance;
+public class HazelcastMonitorConfiguration {
 
     @Bean
     @RefreshScope
     @ConditionalOnEnabledHealthIndicator("hazelcastHealthIndicator")
-    public HealthIndicator hazelcastHealthIndicator() {
-        val hazelcastInstance = casTicketRegistryHazelcastInstance.getObject();
+    @Autowired
+    public HealthIndicator hazelcastHealthIndicator(final CasConfigurationProperties casProperties,
+                                                    @Qualifier("casTicketRegistryHazelcastInstance")
+                                                    final HazelcastInstance casTicketRegistryHazelcastInstance) {
         val warn = casProperties.getMonitor().getWarn();
-        return new HazelcastHealthIndicator(
-            warn.getEvictionThreshold(),
-            warn.getThreshold(),
-            hazelcastInstance
-        );
+        return new HazelcastHealthIndicator(warn.getEvictionThreshold(),
+            warn.getThreshold(), casTicketRegistryHazelcastInstance);
     }
 
-    @Override
-    public void destroy() {
-        val hazelcastInstance = casTicketRegistryHazelcastInstance.getObject();
-        if (hazelcastInstance != null) {
-            hazelcastInstance.shutdown();
-        }
+    @Bean
+    @Autowired
+    public DisposableBean hazlcastMonitorDisposableBean(
+        @Qualifier("casTicketRegistryHazelcastInstance")
+        final HazelcastInstance casTicketRegistryHazelcastInstance) {
+        return casTicketRegistryHazelcastInstance::shutdown;
     }
 }
