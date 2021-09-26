@@ -48,9 +48,6 @@ import org.springframework.webflow.execution.Action;
 @Configuration(value = "casAcceptableUsagePolicyWebflowConfiguration", proxyBeanMethods = false)
 public class CasAcceptableUsagePolicyWebflowConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "acceptableUsagePolicySubmitAction")

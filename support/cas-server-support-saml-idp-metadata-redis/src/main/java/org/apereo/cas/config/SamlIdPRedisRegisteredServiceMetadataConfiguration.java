@@ -9,7 +9,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegi
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,29 +26,27 @@ import org.springframework.data.redis.core.RedisTemplate;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Configuration("SamlIdPRedisRegisteredServiceMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
+@Configuration(value = "SamlIdPRedisRegisteredServiceMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPRedisRegisteredServiceMetadataConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Bean
     @RefreshScope
-    public SamlRegisteredServiceMetadataResolver redisSamlRegisteredServiceMetadataResolver() {
+    @Autowired
+    public SamlRegisteredServiceMetadataResolver redisSamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
+                                                                                            @Qualifier("redisSamlRegisteredServiceMetadataResolverTemplate")
+                                                                                            final RedisTemplate<String, SamlMetadataDocument> redisSamlRegisteredServiceMetadataResolverTemplate,
+                                                                                            @Qualifier("openSamlConfigBean")
+                                                                                            final OpenSamlConfigBean openSamlConfigBean) {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new RedisSamlRegisteredServiceMetadataResolver(idp,
-            openSamlConfigBean.getObject(), redisSamlRegisteredServiceMetadataResolverTemplate());
+        return new RedisSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean, redisSamlRegisteredServiceMetadataResolverTemplate);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "redisSamlRegisteredServiceMetadataConnectionFactory")
-    public RedisConnectionFactory redisSamlRegisteredServiceMetadataConnectionFactory() {
+    @Autowired
+    public RedisConnectionFactory redisSamlRegisteredServiceMetadataConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getSamlIdp().getMetadata().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
     }
@@ -57,14 +54,18 @@ public class SamlIdPRedisRegisteredServiceMetadataConfiguration {
     @ConditionalOnMissingBean(name = "redisSamlRegisteredServiceMetadataResolverTemplate")
     @Bean
     @RefreshScope
-    public RedisTemplate<String, SamlMetadataDocument> redisSamlRegisteredServiceMetadataResolverTemplate() {
-        return RedisObjectFactory.newRedisTemplate(redisSamlRegisteredServiceMetadataConnectionFactory());
+    public RedisTemplate<String, SamlMetadataDocument> redisSamlRegisteredServiceMetadataResolverTemplate(
+        @Qualifier("redisSamlRegisteredServiceMetadataConnectionFactory")
+        final RedisConnectionFactory redisSamlRegisteredServiceMetadataConnectionFactory) {
+        return RedisObjectFactory.newRedisTemplate(redisSamlRegisteredServiceMetadataConnectionFactory);
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "redisSamlRegisteredServiceMetadataResolutionPlanConfigurer")
-    public SamlRegisteredServiceMetadataResolutionPlanConfigurer redisSamlRegisteredServiceMetadataResolutionPlanConfigurer() {
-        return plan -> plan.registerMetadataResolver(redisSamlRegisteredServiceMetadataResolver());
+    public SamlRegisteredServiceMetadataResolutionPlanConfigurer redisSamlRegisteredServiceMetadataResolutionPlanConfigurer(
+        @Qualifier("redisSamlRegisteredServiceMetadataResolver")
+        final SamlRegisteredServiceMetadataResolver redisSamlRegisteredServiceMetadataResolver) {
+        return plan -> plan.registerMetadataResolver(redisSamlRegisteredServiceMetadataResolver);
     }
 }

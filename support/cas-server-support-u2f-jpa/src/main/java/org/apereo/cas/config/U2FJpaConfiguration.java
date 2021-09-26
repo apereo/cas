@@ -14,7 +14,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -39,32 +38,25 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("u2fJpaConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
+@Configuration(value = "u2fJpaConfiguration", proxyBeanMethods = false)
 public class U2FJpaConfiguration {
-
-    @Autowired
-    @Qualifier("jpaBeanFactory")
-    private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("u2fRegistrationRecordCipherExecutor")
-    private ObjectProvider<CipherExecutor> u2fRegistrationRecordCipherExecutor;
 
     @RefreshScope
     @Bean
-    public JpaVendorAdapter jpaU2fVendorAdapter() {
-        return jpaBeanFactory.getObject().newJpaVendorAdapter(casProperties.getJdbc());
+    @Autowired
+    public JpaVendorAdapter jpaU2fVendorAdapter(final CasConfigurationProperties casProperties,
+                                                @Qualifier("jpaBeanFactory")
+                                                final JpaBeanFactory jpaBeanFactory) {
+        return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "dataSourceU2f")
     @RefreshScope
-    public DataSource dataSourceU2f() {
+    @Autowired
+    public DataSource dataSourceU2f(final CasConfigurationProperties casProperties) {
         return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getU2f().getJpa());
     }
 
@@ -76,20 +68,27 @@ public class U2FJpaConfiguration {
     @Lazy
     @Bean
     @ConditionalOnMissingBean(name = "u2fEntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean u2fEntityManagerFactory() {
-        val factory = jpaBeanFactory.getObject();
-        val ctx = JpaConfigurationContext.builder()
-            .dataSource(dataSourceU2f())
-            .packagesToScan(jpaU2fPackagesToScan())
-            .persistenceUnitName("jpaU2fRegistryContext")
-            .jpaVendorAdapter(jpaU2fVendorAdapter())
-            .build();
+    @Autowired
+    public LocalContainerEntityManagerFactoryBean u2fEntityManagerFactory(final CasConfigurationProperties casProperties,
+                                                                          @Qualifier("dataSourceU2f")
+                                                                          final DataSource dataSourceU2f,
+                                                                          @Qualifier("jpaU2fPackagesToScan")
+                                                                          final Set<String> jpaU2fPackagesToScan,
+                                                                          @Qualifier("jpaU2fVendorAdapter")
+                                                                          final JpaVendorAdapter jpaU2fVendorAdapter,
+                                                                          @Qualifier("jpaBeanFactory")
+                                                                          final JpaBeanFactory jpaBeanFactory) {
+        val factory = jpaBeanFactory;
+        val ctx = JpaConfigurationContext.builder().dataSource(dataSourceU2f).packagesToScan(jpaU2fPackagesToScan).persistenceUnitName("jpaU2fRegistryContext")
+            .jpaVendorAdapter(jpaU2fVendorAdapter).build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getU2f().getJpa());
     }
 
     @Autowired
     @Bean
-    public PlatformTransactionManager transactionManagerU2f(@Qualifier("u2fEntityManagerFactory") final EntityManagerFactory emf) {
+    public PlatformTransactionManager transactionManagerU2f(
+        @Qualifier("u2fEntityManagerFactory")
+        final EntityManagerFactory emf) {
         val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
@@ -97,16 +96,15 @@ public class U2FJpaConfiguration {
 
     @Bean
     @RefreshScope
-    public U2FDeviceRepository u2fDeviceRepository(@Qualifier("transactionManagerU2f") final PlatformTransactionManager mgr) {
+    @Autowired
+    public U2FDeviceRepository u2fDeviceRepository(
+        @Qualifier("transactionManagerU2f")
+        final PlatformTransactionManager mgr, final CasConfigurationProperties casProperties,
+        @Qualifier("u2fRegistrationRecordCipherExecutor")
+        final CipherExecutor u2fRegistrationRecordCipherExecutor) {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
         final LoadingCache<String, String> requestStorage =
-            Caffeine.newBuilder()
-                .expireAfterWrite(u2f.getCore().getExpireRegistrations(), u2f.getCore().getExpireRegistrationsTimeUnit())
-                .build(key -> StringUtils.EMPTY);
-        return new U2FJpaDeviceRepository(requestStorage,
-            u2f.getCore().getExpireDevices(),
-            u2f.getCore().getExpireDevicesTimeUnit(),
-            u2fRegistrationRecordCipherExecutor.getObject());
+            Caffeine.newBuilder().expireAfterWrite(u2f.getCore().getExpireRegistrations(), u2f.getCore().getExpireRegistrationsTimeUnit()).build(key -> StringUtils.EMPTY);
+        return new U2FJpaDeviceRepository(requestStorage, u2f.getCore().getExpireDevices(), u2f.getCore().getExpireDevicesTimeUnit(), u2fRegistrationRecordCipherExecutor);
     }
-
 }

@@ -11,7 +11,6 @@ import org.apereo.cas.web.flow.RemoveGoogleAnalyticsCookieAction;
 import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,31 +30,15 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration("casGoogleAnalyticsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "casGoogleAnalyticsConfiguration", proxyBeanMethods = false)
 public class CasGoogleAnalyticsConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
-
-    @Autowired
-    @Qualifier("logoutFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> logoutFlowDefinitionRegistry;
-
-    @Autowired
-    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     @ConditionalOnMissingBean(name = "casGoogleAnalyticsCookieGenerator")
     @Bean
     @RefreshScope
-    public CasCookieBuilder casGoogleAnalyticsCookieGenerator() {
+    @Autowired
+    public CasCookieBuilder casGoogleAnalyticsCookieGenerator(final CasConfigurationProperties casProperties) {
         val props = casProperties.getGoogleAnalytics().getCookie();
         return new CasGoogleAnalyticsCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
     }
@@ -63,32 +46,44 @@ public class CasGoogleAnalyticsConfiguration {
     @ConditionalOnMissingBean(name = "casGoogleAnalyticsWebflowConfigurer")
     @Bean
     @DependsOn({"defaultWebflowConfigurer", "defaultLogoutWebflowConfigurer"})
-    public CasWebflowConfigurer casGoogleAnalyticsWebflowConfigurer() {
-        val cfg = new CasGoogleAnalyticsWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(),
-            applicationContext, casProperties);
-        cfg.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry.getObject());
+    @Autowired
+    public CasWebflowConfigurer casGoogleAnalyticsWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+                                                                    @Qualifier("loginFlowDefinitionRegistry")
+                                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                                    @Qualifier("logoutFlowDefinitionRegistry")
+                                                                    final FlowDefinitionRegistry logoutFlowDefinitionRegistry,
+                                                                    @Qualifier("flowBuilderServices")
+                                                                    final FlowBuilderServices flowBuilderServices) {
+        val cfg = new CasGoogleAnalyticsWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        cfg.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
         return cfg;
     }
 
     @ConditionalOnMissingBean(name = "createGoogleAnalyticsCookieAction")
     @Bean
     @RefreshScope
-    public Action createGoogleAnalyticsCookieAction() {
-        return new CreateGoogleAnalyticsCookieAction(casProperties, casGoogleAnalyticsCookieGenerator());
+    @Autowired
+    public Action createGoogleAnalyticsCookieAction(final CasConfigurationProperties casProperties,
+                                                    @Qualifier("casGoogleAnalyticsCookieGenerator")
+                                                    final CasCookieBuilder casGoogleAnalyticsCookieGenerator) {
+        return new CreateGoogleAnalyticsCookieAction(casProperties, casGoogleAnalyticsCookieGenerator);
     }
 
     @ConditionalOnMissingBean(name = "removeGoogleAnalyticsCookieAction")
     @Bean
     @RefreshScope
-    public Action removeGoogleAnalyticsCookieAction() {
-        return new RemoveGoogleAnalyticsCookieAction(casGoogleAnalyticsCookieGenerator());
+    public Action removeGoogleAnalyticsCookieAction(
+        @Qualifier("casGoogleAnalyticsCookieGenerator")
+        final CasCookieBuilder casGoogleAnalyticsCookieGenerator) {
+        return new RemoveGoogleAnalyticsCookieAction(casGoogleAnalyticsCookieGenerator);
     }
 
     @ConditionalOnMissingBean(name = "casGoogleAnalyticsWebflowExecutionPlanConfigurer")
     @Bean
     @RefreshScope
-    public CasWebflowExecutionPlanConfigurer casGoogleAnalyticsWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(casGoogleAnalyticsWebflowConfigurer());
+    public CasWebflowExecutionPlanConfigurer casGoogleAnalyticsWebflowExecutionPlanConfigurer(
+        @Qualifier("casGoogleAnalyticsWebflowConfigurer")
+        final CasWebflowConfigurer casGoogleAnalyticsWebflowConfigurer) {
+        return plan -> plan.registerWebflowConfigurer(casGoogleAnalyticsWebflowConfigurer);
     }
 }

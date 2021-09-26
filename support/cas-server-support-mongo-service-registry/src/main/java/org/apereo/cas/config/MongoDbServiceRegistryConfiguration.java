@@ -32,8 +32,6 @@ import java.util.List;
 @Configuration(value = "mongoDbServiceRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbServiceRegistryConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -42,41 +40,30 @@ public class MongoDbServiceRegistryConfiguration {
     @Qualifier("serviceRegistryListeners")
     private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
 
-    @Autowired
-    @Qualifier("sslContext")
-    private ObjectProvider<SSLContext> sslContext;
-
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryTemplate")
     @Bean
-    public MongoTemplate mongoDbServiceRegistryTemplate() {
+    @Autowired
+    public MongoTemplate mongoDbServiceRegistryTemplate(final CasConfigurationProperties casProperties,
+                                                        @Qualifier("sslContext")
+                                                        final SSLContext sslContext) {
         val mongo = casProperties.getServiceRegistry().getMongo();
-        val factory = new MongoDbConnectionFactory(sslContext.getObject());
-
+        val factory = new MongoDbConnectionFactory(sslContext);
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
-
         val collection = mongoTemplate.getCollection(mongo.getCollection());
-        val columnsIndex = new TextIndexDefinition.TextIndexDefinitionBuilder()
-            .onField("id")
-            .onField("serviceId")
-            .onField("name")
-            .build();
+        val columnsIndex = new TextIndexDefinition.TextIndexDefinitionBuilder().onField("id").onField("serviceId").onField("name").build();
         MongoDbConnectionFactory.createOrUpdateIndexes(mongoTemplate, collection, List.of(columnsIndex));
-
         return mongoTemplate;
     }
 
     @Bean
     @Autowired
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistry")
-    public ServiceRegistry mongoDbServiceRegistry(@Qualifier("mongoDbServiceRegistryTemplate")
-                                                  final MongoTemplate mongoDbServiceRegistryTemplate) {
+    public ServiceRegistry mongoDbServiceRegistry(
+        @Qualifier("mongoDbServiceRegistryTemplate")
+        final MongoTemplate mongoDbServiceRegistryTemplate, final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext) {
         val mongo = casProperties.getServiceRegistry().getMongo();
-        return new MongoDbServiceRegistry(
-            applicationContext,
-            mongoDbServiceRegistryTemplate,
-            mongo.getCollection(),
-            serviceRegistryListeners.getObject());
+        return new MongoDbServiceRegistry(applicationContext, mongoDbServiceRegistryTemplate, mongo.getCollection(), serviceRegistryListeners.getObject());
     }
 
     @Bean

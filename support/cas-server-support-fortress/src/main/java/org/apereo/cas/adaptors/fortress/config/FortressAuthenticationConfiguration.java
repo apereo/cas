@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.directory.fortress.core.AccessMgr;
 import org.apache.directory.fortress.core.rest.AccessMgrRestImpl;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,17 +26,10 @@ import org.springframework.context.annotation.Configuration;
  * @author yudhi.k.surtan
  * @since 5.2.0
  */
-@Configuration("fortressAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@Configuration(value = "fortressAuthenticationConfiguration", proxyBeanMethods = false)
 public class FortressAuthenticationConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
 
     @ConditionalOnMissingBean(name = "fortressPrincipalFactory")
     @Bean
@@ -49,7 +41,8 @@ public class FortressAuthenticationConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "fortressAccessManager")
-    public AccessMgr fortressAccessManager() {
+    @Autowired
+    public AccessMgr fortressAccessManager(final CasConfigurationProperties casProperties) {
         val rbacContext = casProperties.getAuthn().getFortress().getRbaccontext();
         LOGGER.trace("Registering fortress access manager with context: [{}]", rbacContext);
         val accessMgrRestImpl = new AccessMgrRestImpl();
@@ -60,18 +53,25 @@ public class FortressAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "fortressAuthenticationHandler")
     @Bean
     @RefreshScope
-    public AuthenticationHandler fortressAuthenticationHandler() {
-        return new FortressAuthenticationHandler(fortressAccessManager(), null,
-            servicesManager.getObject(), fortressPrincipalFactory(), null);
+    public AuthenticationHandler fortressAuthenticationHandler(
+        @Qualifier("fortressAccessManager")
+        final AccessMgr fortressAccessManager,
+        @Qualifier("fortressPrincipalFactory")
+        final PrincipalFactory fortressPrincipalFactory,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager) {
+        return new FortressAuthenticationHandler(fortressAccessManager, null, servicesManager, fortressPrincipalFactory, null);
     }
 
     @ConditionalOnMissingBean(name = "fortressAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @RefreshScope
-    public AuthenticationEventExecutionPlanConfigurer fortressAuthenticationEventExecutionPlanConfigurer() {
+    public AuthenticationEventExecutionPlanConfigurer fortressAuthenticationEventExecutionPlanConfigurer(
+        @Qualifier("fortressAuthenticationHandler")
+        final AuthenticationHandler fortressAuthenticationHandler) {
         return plan -> {
             LOGGER.debug("Registering fortress authentication event execution plan");
-            plan.registerAuthenticationHandler(fortressAuthenticationHandler());
+            plan.registerAuthenticationHandler(fortressAuthenticationHandler);
         };
     }
 }

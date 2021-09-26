@@ -8,7 +8,6 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.InitializeCaptchaAction;
 import org.apereo.cas.web.flow.ValidateCaptchaAction;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -30,51 +29,49 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casCaptchaConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.google-recaptcha", name = "enabled", havingValue = "true", matchIfMissing = true)
+@Configuration(value = "casCaptchaConfiguration", proxyBeanMethods = false)
 public class CasCaptchaConfiguration {
-
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
-
-    @Autowired
-    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @ConditionalOnMissingBean(name = "captchaWebflowConfigurer")
     @Bean
-    public CasWebflowConfigurer captchaWebflowConfigurer() {
-        return new CasCaptchaWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(),
-            applicationContext, casProperties);
+    @Autowired
+    public CasWebflowConfigurer captchaWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+                                                         @Qualifier("loginFlowDefinitionRegistry")
+                                                         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                         @Qualifier("flowBuilderServices")
+                                                         final FlowBuilderServices flowBuilderServices) {
+        return new CasCaptchaWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "captchaValidator")
-    public CaptchaValidator captchaValidator() {
+    @Autowired
+    public CaptchaValidator captchaValidator(final CasConfigurationProperties casProperties) {
         return CaptchaValidator.getInstance(casProperties.getGoogleRecaptcha());
     }
 
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "validateCaptchaAction")
-    public Action validateCaptchaAction() {
-        return new ValidateCaptchaAction(captchaValidator());
+    public Action validateCaptchaAction(
+        @Qualifier("captchaValidator")
+        final CaptchaValidator captchaValidator) {
+        return new ValidateCaptchaAction(captchaValidator);
     }
 
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "initializeCaptchaAction")
-    public Action initializeCaptchaAction() {
+    @Autowired
+    public Action initializeCaptchaAction(final CasConfigurationProperties casProperties) {
         return new InitializeCaptchaAction(casProperties.getGoogleRecaptcha()) {
+
             @Override
             protected Event doExecute(final RequestContext requestContext) {
                 requestContext.getFlowScope().put("recaptchaLoginEnabled", googleRecaptchaProperties.isEnabled());
@@ -85,7 +82,9 @@ public class CasCaptchaConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "captchaCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer captchaCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(captchaWebflowConfigurer());
+    public CasWebflowExecutionPlanConfigurer captchaCasWebflowExecutionPlanConfigurer(
+        @Qualifier("captchaWebflowConfigurer")
+        final CasWebflowConfigurer captchaWebflowConfigurer) {
+        return plan -> plan.registerWebflowConfigurer(captchaWebflowConfigurer);
     }
 }

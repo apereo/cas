@@ -12,7 +12,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServ
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -29,7 +28,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
 import java.util.Set;
 
 /**
@@ -38,39 +36,35 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("samlIdPJpaRegisteredServiceMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
+@Configuration(value = "samlIdPJpaRegisteredServiceMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
 
-    @Autowired
-    @Qualifier("jpaBeanFactory")
-    private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
-    
     @Bean
     @ConditionalOnMissingBean(name = "jpaSamlRegisteredServiceMetadataResolver")
-    public SamlRegisteredServiceMetadataResolver jpaSamlRegisteredServiceMetadataResolver() {
+    @Autowired
+    public SamlRegisteredServiceMetadataResolver jpaSamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
+                                                                                          @Qualifier("openSamlConfigBean")
+                                                                                          final OpenSamlConfigBean openSamlConfigBean) {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new JpaSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getObject());
+        return new JpaSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean);
     }
 
     @RefreshScope
     @Bean
-    public JpaVendorAdapter jpaSamlMetadataVendorAdapter() {
-        return jpaBeanFactory.getObject().newJpaVendorAdapter(casProperties.getJdbc());
+    @Autowired
+    public JpaVendorAdapter jpaSamlMetadataVendorAdapter(final CasConfigurationProperties casProperties,
+                                                         @Qualifier("jpaBeanFactory")
+                                                         final JpaBeanFactory jpaBeanFactory) {
+        return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "dataSourceSamlMetadata")
     @RefreshScope
-    public DataSource dataSourceSamlMetadata() {
+    @Autowired
+    public DataSource dataSourceSamlMetadata(final CasConfigurationProperties casProperties) {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
         return JpaBeans.newDataSource(idp.getJpa());
     }
@@ -83,23 +77,28 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
 
     @Lazy
     @Bean
-    public LocalContainerEntityManagerFactoryBean samlMetadataEntityManagerFactory() {
+    @Autowired
+    public LocalContainerEntityManagerFactoryBean samlMetadataEntityManagerFactory(final CasConfigurationProperties casProperties,
+                                                                                   @Qualifier("jpaSamlMetadataVendorAdapter")
+                                                                                   final JpaVendorAdapter jpaSamlMetadataVendorAdapter,
+                                                                                   @Qualifier("dataSourceSamlMetadata")
+                                                                                   final DataSource dataSourceSamlMetadata,
+                                                                                   @Qualifier("jpaSamlMetadataPackagesToScan")
+                                                                                   final Set<String> jpaSamlMetadataPackagesToScan,
+                                                                                   @Qualifier("jpaBeanFactory")
+                                                                                   final JpaBeanFactory jpaBeanFactory) {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
-
-        val factory = jpaBeanFactory.getObject();
-        val ctx = JpaConfigurationContext.builder()
-            .jpaVendorAdapter(jpaSamlMetadataVendorAdapter())
-            .persistenceUnitName("jpaSamlMetadataContext")
-            .dataSource(dataSourceSamlMetadata())
-            .packagesToScan(jpaSamlMetadataPackagesToScan())
-            .build();
+        val factory = jpaBeanFactory;
+        val ctx = JpaConfigurationContext.builder().jpaVendorAdapter(jpaSamlMetadataVendorAdapter).persistenceUnitName("jpaSamlMetadataContext").dataSource(dataSourceSamlMetadata)
+            .packagesToScan(jpaSamlMetadataPackagesToScan).build();
         return factory.newEntityManagerFactoryBean(ctx, idp.getJpa());
     }
 
     @Autowired
     @Bean
     public PlatformTransactionManager transactionManagerSamlMetadata(
-        @Qualifier("samlMetadataEntityManagerFactory") final EntityManagerFactory emf) {
+        @Qualifier("samlMetadataEntityManagerFactory")
+        final EntityManagerFactory emf) {
         val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
@@ -108,8 +107,9 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "jpaSamlRegisteredServiceMetadataResolutionPlanConfigurer")
-    public SamlRegisteredServiceMetadataResolutionPlanConfigurer jpaSamlRegisteredServiceMetadataResolutionPlanConfigurer() {
-        return plan -> plan.registerMetadataResolver(jpaSamlRegisteredServiceMetadataResolver());
+    public SamlRegisteredServiceMetadataResolutionPlanConfigurer jpaSamlRegisteredServiceMetadataResolutionPlanConfigurer(
+        @Qualifier("jpaSamlRegisteredServiceMetadataResolver")
+        final SamlRegisteredServiceMetadataResolver jpaSamlRegisteredServiceMetadataResolver) {
+        return plan -> plan.registerMetadataResolver(jpaSamlRegisteredServiceMetadataResolver);
     }
-
 }

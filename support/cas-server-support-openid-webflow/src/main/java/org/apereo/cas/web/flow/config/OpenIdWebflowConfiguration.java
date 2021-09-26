@@ -38,9 +38,6 @@ import org.springframework.webflow.execution.Action;
 @Configuration(value = "openIdWebflowConfiguration", proxyBeanMethods = false)
 public class OpenIdWebflowConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
     public OpenIdUserNameExtractor defaultOpenIdUserNameExtractor() {
         return new DefaultOpenIdUserNameExtractor();
