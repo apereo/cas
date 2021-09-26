@@ -400,11 +400,13 @@ public class CasCoreTicketsConfiguration {
     @ConditionalOnMissingBean(name = "ticketCatalog")
     @Autowired
     @Bean
-    public TicketCatalog ticketCatalog(final List<TicketCatalogConfigurer> configurers) {
+    public TicketCatalog ticketCatalog(
+        final CasConfigurationProperties casProperties,
+        final List<TicketCatalogConfigurer> configurers) {
         val plan = new DefaultTicketCatalog();
         configurers.forEach(c -> {
             LOGGER.trace("Configuring ticket metadata registration plan [{}]", c.getName());
-            c.configureTicketCatalog(plan);
+            c.configureTicketCatalog(plan, casProperties);
         });
         return plan;
     }

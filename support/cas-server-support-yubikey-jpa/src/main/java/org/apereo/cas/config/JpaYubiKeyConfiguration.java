@@ -10,7 +10,6 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +25,8 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
 import java.util.Set;
 
 /**
@@ -39,35 +36,23 @@ import java.util.Set;
  * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
-@Configuration("jpaYubiKeyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
+@Configuration(value = "jpaYubiKeyConfiguration", proxyBeanMethods = false)
 public class JpaYubiKeyConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("yubiKeyAccountValidator")
-    private ObjectProvider<YubiKeyAccountValidator> yubiKeyAccountValidator;
-    
-    @Autowired
-    @Qualifier("yubikeyAccountCipherExecutor")
-    private ObjectProvider<CipherExecutor> yubikeyAccountCipherExecutor;
-
-    @Autowired
-    @Qualifier("jpaBeanFactory")
-    private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
 
     @RefreshScope
     @Bean
-    public JpaVendorAdapter jpaYubiKeyVendorAdapter() {
-        return jpaBeanFactory.getObject().newJpaVendorAdapter(casProperties.getJdbc());
+    @Autowired
+    public JpaVendorAdapter jpaYubiKeyVendorAdapter(final CasConfigurationProperties casProperties, @Qualifier("jpaBeanFactory") final JpaBeanFactory jpaBeanFactory) {
+        return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "dataSourceYubiKey")
     @RefreshScope
-    public DataSource dataSourceYubiKey() {
+    @Autowired
+    public DataSource dataSourceYubiKey(final CasConfigurationProperties casProperties) {
         return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getYubikey().getJpa());
     }
 
@@ -86,21 +71,22 @@ public class JpaYubiKeyConfiguration {
 
     @Lazy
     @Bean
-    public LocalContainerEntityManagerFactoryBean yubiKeyEntityManagerFactory() {
-        val factory = jpaBeanFactory.getObject();
+    @Autowired
+    public LocalContainerEntityManagerFactoryBean yubiKeyEntityManagerFactory(final CasConfigurationProperties casProperties, @Qualifier("dataSourceYubiKey") final DataSource dataSourceYubiKey, @Qualifier("jpaYubiKeyPackagesToScan") final Set<String> jpaYubiKeyPackagesToScan, @Qualifier("jpaYubiKeyVendorAdapter") final JpaVendorAdapter jpaYubiKeyVendorAdapter, @Qualifier("jpaBeanFactory") final JpaBeanFactory jpaBeanFactory) {
+        val factory = jpaBeanFactory;
         val ctx = JpaConfigurationContext.builder()
-            .dataSource(dataSourceYubiKey())
-            .packagesToScan(jpaYubiKeyPackagesToScan())
-            .persistenceUnitName("jpaYubiKeyRegistryContext")
-            .jpaVendorAdapter(jpaYubiKeyVendorAdapter())
-            .build();
+                                         .dataSource(dataSourceYubiKey)
+                                         .packagesToScan(jpaYubiKeyPackagesToScan)
+                                         .persistenceUnitName("jpaYubiKeyRegistryContext")
+                                         .jpaVendorAdapter(jpaYubiKeyVendorAdapter)
+                                         .build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getYubikey().getJpa());
     }
 
     @Bean
-    public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
-        val registry = new JpaYubiKeyAccountRegistry(yubiKeyAccountValidator.getObject());
-        registry.setCipherExecutor(yubikeyAccountCipherExecutor.getObject());
+    public YubiKeyAccountRegistry yubiKeyAccountRegistry(@Qualifier("yubiKeyAccountValidator") final YubiKeyAccountValidator yubiKeyAccountValidator, @Qualifier("yubikeyAccountCipherExecutor") final CipherExecutor yubikeyAccountCipherExecutor) {
+        val registry = new JpaYubiKeyAccountRegistry(yubiKeyAccountValidator);
+        registry.setCipherExecutor(yubikeyAccountCipherExecutor);
         return registry;
     }
 }

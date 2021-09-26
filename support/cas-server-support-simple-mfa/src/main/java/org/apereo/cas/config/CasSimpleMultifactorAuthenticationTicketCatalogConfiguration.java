@@ -31,7 +31,8 @@ public class CasSimpleMultifactorAuthenticationTicketCatalogConfiguration extend
     private ObjectProvider<ExpirationPolicyBuilder> casSimpleMultifactorAuthenticationTicketExpirationPolicy;
 
     @Override
-    public void configureTicketCatalog(final TicketCatalog plan) {
+    public void configureTicketCatalog(final TicketCatalog plan,
+                                       final CasConfigurationProperties casProperties) {
         LOGGER.trace("Registering ticket definitions...");
         val definition = buildTicketDefinition(plan, CasSimpleMultifactorAuthenticationTicket.PREFIX,
             CasSimpleMultifactorAuthenticationTicketImpl.class, Ordered.HIGHEST_PRECEDENCE);
