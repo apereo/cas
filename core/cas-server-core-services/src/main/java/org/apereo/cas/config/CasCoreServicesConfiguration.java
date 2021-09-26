@@ -148,13 +148,21 @@ public class CasCoreServicesConfiguration {
         @RefreshScope
         @Autowired
         public ServiceRegistryExecutionPlan serviceRegistryExecutionPlan(
-            final List<ServiceRegistryExecutionPlanConfigurer> serviceRegistryExecutionPlanConfigurers) {
+            final ObjectProvider<List<ServiceRegistryExecutionPlanConfigurer>> provider) {
             val plan = new DefaultServiceRegistryExecutionPlan();
-            serviceRegistryExecutionPlanConfigurers.forEach(Unchecked.consumer(c -> {
-                LOGGER.trace("Configuring service registry [{}]", c.getName());
-                c.configureServiceRegistry(plan);
-            }));
+            provider.ifAvailable(configurers -> {
+                configurers.forEach(Unchecked.consumer(c -> {
+                    LOGGER.trace("Configuring service registry [{}]", c.getName());
+                    c.configureServiceRegistry(plan);
+                }));
+            });
             return plan;
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "defaultServiceRegistryListener")
+        public ServiceRegistryListener defaultServiceRegistryListener() {
+            return ServiceRegistryListener.noOp();
         }
 
         @ConditionalOnMissingBean(name = "serviceRegistry")

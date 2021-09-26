@@ -35,7 +35,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.Order;
@@ -222,7 +221,6 @@ public class CasWebflowContextConfiguration {
 
     @ConditionalOnMissingBean(name = "groovyWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
     @RefreshScope
     @Autowired
     public CasWebflowConfigurer groovyWebflowConfigurer(

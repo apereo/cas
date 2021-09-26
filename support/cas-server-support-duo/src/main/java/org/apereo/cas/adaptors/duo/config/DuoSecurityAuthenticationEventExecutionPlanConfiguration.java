@@ -45,7 +45,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -148,7 +147,6 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "duoMultifactorWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer duoMultifactorWebflowConfigurer() {
         return new DuoSecurityMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),

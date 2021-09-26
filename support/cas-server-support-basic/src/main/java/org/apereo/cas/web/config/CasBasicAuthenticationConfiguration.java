@@ -22,7 +22,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -72,7 +71,6 @@ public class CasBasicAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "basicAuthenticationWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer basicAuthenticationWebflowConfigurer() {
         return new BasicAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);

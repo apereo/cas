@@ -17,9 +17,7 @@ import static org.mockito.Mockito.*;
 public class ServiceRegistryListenerTests {
     @Test
     public void verifyOperation() {
-        val listener = new ServiceRegistryListener() {
-            private static final long serialVersionUID = 1763161051872848530L;
-        };
+        val listener = ServiceRegistryListener.noOp();
         assertNotNull(listener.postLoad(mock(RegisteredService.class)));
         assertNotNull(listener.preSave(mock(RegisteredService.class)));
         assertEquals(0, listener.getOrder());
