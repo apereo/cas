@@ -33,9 +33,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "syncopeAuthenticationConfiguration", proxyBeanMethods = false)
 public class SyncopeAuthenticationConfiguration {
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @ConditionalOnMissingBean(name = "syncopePrincipalFactory")
     @Bean
     @RefreshScope

@@ -37,10 +37,7 @@ import org.springframework.webflow.execution.Action;
 @ConditionalOnProperty(prefix = "cas.scim", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Configuration(value = "casScimConfiguration", proxyBeanMethods = false)
 public class CasScimConfiguration {
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
+    
     @ConditionalOnMissingBean(name = "scimWebflowConfigurer")
     @Bean
     @Autowired

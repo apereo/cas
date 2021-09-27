@@ -48,8 +48,10 @@ public class SamlIdPRestfulIdPMetadataConfiguration {
         if (crypto.isEnabled()) {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, RestfulSamlIdPMetadataCipherExecutor.class);
         }
-        LOGGER.info("Restful SAML IdP metadata encryption/signing is turned off and " + "MAY NOT be safe in a production environment. " +
-            "Consider using other choices to handle encryption, signing and verification of " + "metadata artifacts");
+        LOGGER.info("Restful SAML IdP metadata encryption/signing is turned off and "
+                    + "MAY NOT be safe in a production environment. "
+                    + "Consider using other choices to handle encryption, signing and verification of "
+                    + "metadata artifacts");
         return CipherExecutor.noOp();
     }
 

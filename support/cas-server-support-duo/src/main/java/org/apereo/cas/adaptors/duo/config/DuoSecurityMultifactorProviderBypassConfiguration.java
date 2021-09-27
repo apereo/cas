@@ -185,8 +185,8 @@ public class DuoSecurityMultifactorProviderBypassConfiguration {
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider();
         duoProps.stream().filter(duo -> {
             val props = duo.getBypass();
-            return StringUtils.isNotBlank(props.getAuthenticationAttributeName()) || StringUtils.isNotBlank(props.getAuthenticationHandlerName()) ||
-                StringUtils.isNotBlank(props.getAuthenticationMethodName());
+            return StringUtils.isNotBlank(props.getAuthenticationAttributeName()) || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
+                || StringUtils.isNotBlank(props.getAuthenticationMethodName());
         }).forEach(duo -> bypass.addMultifactorAuthenticationProviderBypassEvaluator(new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(duo.getBypass(), duo.getId())));
         if (bypass.isEmpty()) {
             return NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance();

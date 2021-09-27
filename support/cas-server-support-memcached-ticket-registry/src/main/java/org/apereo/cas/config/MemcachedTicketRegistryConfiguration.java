@@ -9,6 +9,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
+
 import lombok.val;
 import net.spy.memcached.transcoders.Transcoder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +34,13 @@ public class MemcachedTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     @Autowired
-    public Transcoder memcachedTicketRegistryTranscoder(final CasConfigurationProperties casProperties, @Qualifier("componentSerializationPlan") final ComponentSerializationPlan componentSerializationPlan) {
+    public Transcoder memcachedTicketRegistryTranscoder(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("componentSerializationPlan")
+        final ComponentSerializationPlan componentSerializationPlan) {
         val memcached = casProperties.getTicket()
-                                     .getRegistry()
-                                     .getMemcached();
+            .getRegistry()
+            .getMemcached();
         return MemcachedUtils.newTranscoder(memcached, componentSerializationPlan.getRegisteredClasses());
     }
 
@@ -44,20 +48,24 @@ public class MemcachedTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     @Autowired
-    public MemcachedPooledClientConnectionFactory memcachedPooledClientConnectionFactory(final CasConfigurationProperties casProperties, @Qualifier("memcachedTicketRegistryTranscoder") final Transcoder memcachedTicketRegistryTranscoder) {
+    public MemcachedPooledClientConnectionFactory memcachedPooledClientConnectionFactory(final CasConfigurationProperties casProperties,
+                                                                                         @Qualifier("memcachedTicketRegistryTranscoder")
+                                                                                         final Transcoder memcachedTicketRegistryTranscoder) {
         val memcached = casProperties.getTicket()
-                                     .getRegistry()
-                                     .getMemcached();
+            .getRegistry()
+            .getMemcached();
         return new MemcachedPooledClientConnectionFactory(memcached, memcachedTicketRegistryTranscoder);
     }
 
     @Bean
     @RefreshScope
     @Autowired
-    public TicketRegistry ticketRegistry(final CasConfigurationProperties casProperties, @Qualifier("memcachedTicketRegistryTranscoder") final Transcoder memcachedTicketRegistryTranscoder) {
+    public TicketRegistry ticketRegistry(final CasConfigurationProperties casProperties,
+                                         @Qualifier("memcachedTicketRegistryTranscoder")
+                                         final Transcoder memcachedTicketRegistryTranscoder) {
         val memcached = casProperties.getTicket()
-                                     .getRegistry()
-                                     .getMemcached();
+            .getRegistry()
+            .getMemcached();
         val factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedTicketRegistryTranscoder);
         val registry = new MemcachedTicketRegistry(factory.getObjectPool());
         val cipherExecutor = CoreTicketUtils.newTicketRegistryCipherExecutor(memcached.getCrypto(), "memcached");

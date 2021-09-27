@@ -80,9 +80,9 @@ public class SamlGoogleAppsConfiguration implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        AsciiArtUtils.printAsciiArtWarning(LOGGER, "CAS integration with Google Apps is now deprecated and scheduled to be removed in the future. " +
-            "The functionality is now redundant and unnecessary with CAS able to provide SAML2 identity provider features." +
-            "To handle the integration, you should configure CAS to act as a SAML2 identity provider and remove " +
-            "this integration from your deployment to protected against future removals and surprises.");
+        AsciiArtUtils.printAsciiArtWarning(LOGGER, "CAS integration with Google Apps is now deprecated and scheduled to be removed in the future. "
+            + "The functionality is now redundant and unnecessary with CAS able to provide SAML2 identity provider features."
+            + "To handle the integration, you should configure CAS to act as a SAML2 identity provider and remove "
+            + "this integration from your deployment to protected against future removals and surprises.");
     }
 }

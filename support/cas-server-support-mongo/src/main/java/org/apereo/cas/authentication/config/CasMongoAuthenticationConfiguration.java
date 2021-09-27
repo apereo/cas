@@ -35,9 +35,6 @@ import javax.net.ssl.SSLContext;
 @Configuration(value = "casMongoAuthenticationConfiguration", proxyBeanMethods = false)
 public class CasMongoAuthenticationConfiguration {
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @ConditionalOnMissingBean(name = "mongoPrincipalFactory")
     @Bean
     public PrincipalFactory mongoPrincipalFactory() {

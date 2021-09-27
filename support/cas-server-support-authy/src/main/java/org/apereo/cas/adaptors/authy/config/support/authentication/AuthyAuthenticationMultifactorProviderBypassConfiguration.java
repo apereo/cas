@@ -36,23 +36,24 @@ public class AuthyAuthenticationMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope
     @Autowired
-    public MultifactorAuthenticationProviderBypassEvaluator authyBypassEvaluator(final CasConfigurationProperties casProperties,
-                                                                                 @Qualifier("authyPrincipalMultifactorAuthenticationProviderBypass")
-                                                                                 final MultifactorAuthenticationProviderBypassEvaluator authyPrincipalMultifactorAuthenticationProviderBypass,
-                                                                                 @Qualifier("authyRegisteredServiceMultifactorAuthenticationProviderBypass")
-                                                                                 final MultifactorAuthenticationProviderBypassEvaluator authyRegisteredServiceMultifactorAuthenticationProviderBypass,
-                                                                                 @Qualifier("authyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
-                                                                                 final MultifactorAuthenticationProviderBypassEvaluator authyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator,
-                                                                                 @Qualifier("authyAuthenticationMultifactorAuthenticationProviderBypass")
-                                                                                 final MultifactorAuthenticationProviderBypassEvaluator authyAuthenticationMultifactorAuthenticationProviderBypass,
-                                                                                 @Qualifier("authyCredentialMultifactorAuthenticationProviderBypass")
-                                                                                 final MultifactorAuthenticationProviderBypassEvaluator authyCredentialMultifactorAuthenticationProviderBypass,
-                                                                                 @Qualifier("authyHttpRequestMultifactorAuthenticationProviderBypass")
-                                                                                 final MultifactorAuthenticationProviderBypassEvaluator authyHttpRequestMultifactorAuthenticationProviderBypass,
-                                                                                 @Qualifier("authyGroovyMultifactorAuthenticationProviderBypass")
-                                                                                 final MultifactorAuthenticationProviderBypassEvaluator authyGroovyMultifactorAuthenticationProviderBypass,
-                                                                                 @Qualifier("authyRestMultifactorAuthenticationProviderBypass")
-                                                                                 final MultifactorAuthenticationProviderBypassEvaluator authyRestMultifactorAuthenticationProviderBypass) {
+    public MultifactorAuthenticationProviderBypassEvaluator authyBypassEvaluator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("authyPrincipalMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator authyPrincipalMultifactorAuthenticationProviderBypass,
+        @Qualifier("authyRegisteredServiceMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator authyRegisteredServiceMultifactorAuthenticationProviderBypass,
+        @Qualifier("authyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
+        final MultifactorAuthenticationProviderBypassEvaluator authyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator,
+        @Qualifier("authyAuthenticationMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator authyAuthenticationMultifactorAuthenticationProviderBypass,
+        @Qualifier("authyCredentialMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator authyCredentialMultifactorAuthenticationProviderBypass,
+        @Qualifier("authyHttpRequestMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator authyHttpRequestMultifactorAuthenticationProviderBypass,
+        @Qualifier("authyGroovyMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator authyGroovyMultifactorAuthenticationProviderBypass,
+        @Qualifier("authyRestMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator authyRestMultifactorAuthenticationProviderBypass) {
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider();
         val props = casProperties.getAuthn().getMfa().getAuthy().getBypass();
         if (StringUtils.isNotBlank(props.getPrincipalAttributeName())) {
@@ -60,17 +61,20 @@ public class AuthyAuthenticationMultifactorProviderBypassConfiguration {
         }
         bypass.addMultifactorAuthenticationProviderBypassEvaluator(authyRegisteredServiceMultifactorAuthenticationProviderBypass);
         bypass.addMultifactorAuthenticationProviderBypassEvaluator(authyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator);
-        if (StringUtils.isNotBlank(props.getAuthenticationAttributeName()) || StringUtils.isNotBlank(props.getAuthenticationHandlerName()) ||
-            StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
+        if (StringUtils.isNotBlank(props.getAuthenticationAttributeName())
+            || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
+            || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(authyAuthenticationMultifactorAuthenticationProviderBypass);
         }
         if (StringUtils.isNotBlank(props.getCredentialClassType())) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(authyCredentialMultifactorAuthenticationProviderBypass);
         }
-        if (StringUtils.isNotBlank(props.getHttpRequestHeaders()) || StringUtils.isNotBlank(props.getHttpRequestRemoteAddress())) {
+        if (StringUtils.isNotBlank(props.getHttpRequestHeaders())
+            || StringUtils.isNotBlank(props.getHttpRequestRemoteAddress())) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(authyHttpRequestMultifactorAuthenticationProviderBypass);
         }
-        if (props.getGroovy().getLocation() != null) {
+        if (props.getGroovy().getLocation()
+            !=null) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(authyGroovyMultifactorAuthenticationProviderBypass);
         }
         if (StringUtils.isNotBlank(props.getRest().getUrl())) {

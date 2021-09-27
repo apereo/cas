@@ -36,23 +36,24 @@ public class U2FAuthenticationMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope
     @Autowired
-    public MultifactorAuthenticationProviderBypassEvaluator u2fBypassEvaluator(final CasConfigurationProperties casProperties,
-                                                                               @Qualifier("u2fPrincipalMultifactorAuthenticationProviderBypass")
-                                                                               final MultifactorAuthenticationProviderBypassEvaluator u2fPrincipalMultifactorAuthenticationProviderBypass,
-                                                                               @Qualifier("u2fRegisteredServiceMultifactorAuthenticationProviderBypass")
-                                                                               final MultifactorAuthenticationProviderBypassEvaluator u2fRegisteredServiceMultifactorAuthenticationProviderBypass,
-                                                                               @Qualifier("u2fRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
-                                                                               final MultifactorAuthenticationProviderBypassEvaluator u2fRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator,
-                                                                               @Qualifier("u2fAuthenticationMultifactorAuthenticationProviderBypass")
-                                                                               final MultifactorAuthenticationProviderBypassEvaluator u2fAuthenticationMultifactorAuthenticationProviderBypass,
-                                                                               @Qualifier("u2fCredentialMultifactorAuthenticationProviderBypass")
-                                                                               final MultifactorAuthenticationProviderBypassEvaluator u2fCredentialMultifactorAuthenticationProviderBypass,
-                                                                               @Qualifier("u2fHttpRequestMultifactorAuthenticationProviderBypass")
-                                                                               final MultifactorAuthenticationProviderBypassEvaluator u2fHttpRequestMultifactorAuthenticationProviderBypass,
-                                                                               @Qualifier("u2fGroovyMultifactorAuthenticationProviderBypass")
-                                                                               final MultifactorAuthenticationProviderBypassEvaluator u2fGroovyMultifactorAuthenticationProviderBypass,
-                                                                               @Qualifier("u2fRestMultifactorAuthenticationProviderBypass")
-                                                                               final MultifactorAuthenticationProviderBypassEvaluator u2fRestMultifactorAuthenticationProviderBypass) {
+    public MultifactorAuthenticationProviderBypassEvaluator u2fBypassEvaluator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("u2fPrincipalMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator u2fPrincipalMultifactorAuthenticationProviderBypass,
+        @Qualifier("u2fRegisteredServiceMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator u2fRegisteredServiceMultifactorAuthenticationProviderBypass,
+        @Qualifier("u2fRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
+        final MultifactorAuthenticationProviderBypassEvaluator u2fRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator,
+        @Qualifier("u2fAuthenticationMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator u2fAuthenticationMultifactorAuthenticationProviderBypass,
+        @Qualifier("u2fCredentialMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator u2fCredentialMultifactorAuthenticationProviderBypass,
+        @Qualifier("u2fHttpRequestMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator u2fHttpRequestMultifactorAuthenticationProviderBypass,
+        @Qualifier("u2fGroovyMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator u2fGroovyMultifactorAuthenticationProviderBypass,
+        @Qualifier("u2fRestMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator u2fRestMultifactorAuthenticationProviderBypass) {
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider();
         val props = casProperties.getAuthn().getMfa().getU2f().getBypass();
         if (StringUtils.isNotBlank(props.getPrincipalAttributeName())) {
@@ -60,8 +61,8 @@ public class U2FAuthenticationMultifactorProviderBypassConfiguration {
         }
         bypass.addMultifactorAuthenticationProviderBypassEvaluator(u2fRegisteredServiceMultifactorAuthenticationProviderBypass);
         bypass.addMultifactorAuthenticationProviderBypassEvaluator(u2fRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator);
-        if (StringUtils.isNotBlank(props.getAuthenticationAttributeName()) || StringUtils.isNotBlank(props.getAuthenticationHandlerName()) ||
-            StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
+        if (StringUtils.isNotBlank(props.getAuthenticationAttributeName()) || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
+            || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(u2fAuthenticationMultifactorAuthenticationProviderBypass);
         }
         if (StringUtils.isNotBlank(props.getCredentialClassType())) {
@@ -70,7 +71,7 @@ public class U2FAuthenticationMultifactorProviderBypassConfiguration {
         if (StringUtils.isNotBlank(props.getHttpRequestHeaders()) || StringUtils.isNotBlank(props.getHttpRequestRemoteAddress())) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(u2fHttpRequestMultifactorAuthenticationProviderBypass);
         }
-        if (props.getGroovy().getLocation() != null) {
+        if (props.getGroovy().getLocation()!=null) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(u2fGroovyMultifactorAuthenticationProviderBypass);
         }
         if (StringUtils.isNotBlank(props.getRest().getUrl())) {

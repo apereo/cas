@@ -72,8 +72,9 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         if (crypto.isEnabled()) {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, WsFederationCookieCipherExecutor.class);
         }
-        LOGGER.info("WsFederation delegated authentication cookie encryption/signing is turned off and " + "MAY NOT be safe in a production environment. " +
-            "Consider using other choices to handle encryption, signing and verification of " + "delegated authentication cookie.");
+        LOGGER.info("WsFederation delegated authentication cookie encryption/signing is turned off and "
+                    + "MAY NOT be safe in a production environment. "
+                    + "Consider using other choices to handle encryption, signing and verification of delegated authentication cookie.");
         return CipherExecutor.noOp();
     }
 

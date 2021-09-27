@@ -43,10 +43,7 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty(prefix = "cas.authn.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Configuration(value = "redisAuthenticationConfiguration", proxyBeanMethods = false)
 public class RedisAuthenticationConfiguration {
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
+    
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "redisPrincipalFactory")

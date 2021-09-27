@@ -37,23 +37,24 @@ public class WebAuthnMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope
     @Autowired
-    public MultifactorAuthenticationProviderBypassEvaluator webAuthnBypassEvaluator(final CasConfigurationProperties casProperties,
-                                                                                    @Qualifier("webAuthnPrincipalMultifactorAuthenticationProviderBypass")
-                                                                                    final MultifactorAuthenticationProviderBypassEvaluator webAuthnPrincipalMultifactorAuthenticationProviderBypass,
-                                                                                    @Qualifier("webAuthnRegisteredServiceMultifactorAuthenticationProviderBypass")
-                                                                                    final MultifactorAuthenticationProviderBypassEvaluator webAuthnRegisteredServiceMultifactorAuthenticationProviderBypass,
-                                                                                    @Qualifier("webAuthnRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
-                                                                                    final MultifactorAuthenticationProviderBypassEvaluator webAuthnRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator,
-                                                                                    @Qualifier("webAuthnAuthenticationMultifactorAuthenticationProviderBypass")
-                                                                                    final MultifactorAuthenticationProviderBypassEvaluator webAuthnAuthenticationMultifactorAuthenticationProviderBypass,
-                                                                                    @Qualifier("webAuthnCredentialMultifactorAuthenticationProviderBypass")
-                                                                                    final MultifactorAuthenticationProviderBypassEvaluator webAuthnCredentialMultifactorAuthenticationProviderBypass,
-                                                                                    @Qualifier("webAuthnHttpRequestMultifactorAuthenticationProviderBypass")
-                                                                                    final MultifactorAuthenticationProviderBypassEvaluator webAuthnHttpRequestMultifactorAuthenticationProviderBypass,
-                                                                                    @Qualifier("webAuthnGroovyMultifactorAuthenticationProviderBypass")
-                                                                                    final MultifactorAuthenticationProviderBypassEvaluator webAuthnGroovyMultifactorAuthenticationProviderBypass,
-                                                                                    @Qualifier("webAuthnRestMultifactorAuthenticationProviderBypass")
-                                                                                    final MultifactorAuthenticationProviderBypassEvaluator webAuthnRestMultifactorAuthenticationProviderBypass) {
+    public MultifactorAuthenticationProviderBypassEvaluator webAuthnBypassEvaluator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("webAuthnPrincipalMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator webAuthnPrincipalMultifactorAuthenticationProviderBypass,
+        @Qualifier("webAuthnRegisteredServiceMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator webAuthnRegisteredServiceMultifactorAuthenticationProviderBypass,
+        @Qualifier("webAuthnRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
+        final MultifactorAuthenticationProviderBypassEvaluator webAuthnRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator,
+        @Qualifier("webAuthnAuthenticationMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator webAuthnAuthenticationMultifactorAuthenticationProviderBypass,
+        @Qualifier("webAuthnCredentialMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator webAuthnCredentialMultifactorAuthenticationProviderBypass,
+        @Qualifier("webAuthnHttpRequestMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator webAuthnHttpRequestMultifactorAuthenticationProviderBypass,
+        @Qualifier("webAuthnGroovyMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator webAuthnGroovyMultifactorAuthenticationProviderBypass,
+        @Qualifier("webAuthnRestMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator webAuthnRestMultifactorAuthenticationProviderBypass) {
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider();
         val props = casProperties.getAuthn().getMfa().getWebAuthn().getBypass();
         if (StringUtils.isNotBlank(props.getPrincipalAttributeName())) {
@@ -61,8 +62,8 @@ public class WebAuthnMultifactorProviderBypassConfiguration {
         }
         bypass.addMultifactorAuthenticationProviderBypassEvaluator(webAuthnRegisteredServiceMultifactorAuthenticationProviderBypass);
         bypass.addMultifactorAuthenticationProviderBypassEvaluator(webAuthnRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator);
-        if (StringUtils.isNotBlank(props.getAuthenticationAttributeName()) || StringUtils.isNotBlank(props.getAuthenticationHandlerName()) ||
-            StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
+        if (StringUtils.isNotBlank(props.getAuthenticationAttributeName()) || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
+            || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(webAuthnAuthenticationMultifactorAuthenticationProviderBypass);
         }
         if (StringUtils.isNotBlank(props.getCredentialClassType())) {
@@ -71,7 +72,7 @@ public class WebAuthnMultifactorProviderBypassConfiguration {
         if (StringUtils.isNotBlank(props.getHttpRequestHeaders()) || StringUtils.isNotBlank(props.getHttpRequestRemoteAddress())) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(webAuthnHttpRequestMultifactorAuthenticationProviderBypass);
         }
-        if (props.getGroovy().getLocation() != null) {
+        if (props.getGroovy().getLocation()!=null) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(webAuthnGroovyMultifactorAuthenticationProviderBypass);
         }
         if (StringUtils.isNotBlank(props.getRest().getUrl())) {

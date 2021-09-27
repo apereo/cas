@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,9 +44,15 @@ public class ShiroAuthenticationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "shiroAuthenticationHandler")
     @Autowired
-    public AuthenticationHandler shiroAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext, @Qualifier("shiroPrincipalFactory") final PrincipalFactory shiroPrincipalFactory, @Qualifier("shiroPasswordPolicyConfiguration") final PasswordPolicyContext shiroPasswordPolicyConfiguration, @Qualifier("servicesManager") final ServicesManager servicesManager) {
-        val shiro = casProperties.getAuthn()
-                                 .getShiro();
+    public AuthenticationHandler shiroAuthenticationHandler(
+        final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+        @Qualifier("shiroPrincipalFactory")
+        final PrincipalFactory shiroPrincipalFactory,
+        @Qualifier("shiroPasswordPolicyConfiguration")
+        final PasswordPolicyContext shiroPasswordPolicyConfiguration,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager) {
+        val shiro = casProperties.getAuthn().getShiro();
         val h = new ShiroAuthenticationHandler(shiro.getName(), servicesManager, shiroPrincipalFactory, shiro.getRequiredRoles(), shiro.getRequiredPermissions());
         h.loadShiroConfiguration(shiro.getLocation());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(shiro.getPasswordEncoder(), applicationContext));
@@ -57,12 +64,17 @@ public class ShiroAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "shiroAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @Autowired
-    public AuthenticationEventExecutionPlanConfigurer shiroAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties, @Qualifier("shiroAuthenticationHandler") final AuthenticationHandler shiroAuthenticationHandler, @Qualifier("defaultPrincipalResolver") final PrincipalResolver defaultPrincipalResolver) {
+    public AuthenticationEventExecutionPlanConfigurer shiroAuthenticationEventExecutionPlanConfigurer(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("shiroAuthenticationHandler")
+        final AuthenticationHandler shiroAuthenticationHandler,
+        @Qualifier("defaultPrincipalResolver")
+        final PrincipalResolver defaultPrincipalResolver) {
         return plan -> {
             val shiroConfigFile = casProperties.getAuthn()
-                                               .getShiro()
-                                               .getLocation();
-            if (shiroConfigFile != null) {
+                .getShiro()
+                .getLocation();
+            if (shiroConfigFile!=null) {
                 LOGGER.debug("Injecting shiro authentication handler configured at [{}]", shiroConfigFile.getDescription());
                 plan.registerAuthenticationHandlerWithPrincipalResolver(shiroAuthenticationHandler, defaultPrincipalResolver);
             }

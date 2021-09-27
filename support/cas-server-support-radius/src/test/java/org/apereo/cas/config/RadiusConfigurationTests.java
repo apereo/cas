@@ -79,11 +79,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RadiusConfigurationTests {
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("radiusConfiguration")
-    private ObjectProvider<RadiusConfiguration> radiusConfiguration;
-
+    
     @Autowired
     @Qualifier("radiusAccessChallengedAuthenticationWebflowEventResolver")
     private ObjectProvider<CasWebflowEventResolver> radiusAccessChallengedAuthenticationWebflowEventResolver;

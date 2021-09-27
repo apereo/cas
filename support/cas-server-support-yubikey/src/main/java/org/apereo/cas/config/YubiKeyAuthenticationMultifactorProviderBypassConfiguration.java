@@ -36,23 +36,24 @@ public class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope
     @Autowired
-    public MultifactorAuthenticationProviderBypassEvaluator yubikeyBypassEvaluator(final CasConfigurationProperties casProperties,
-                                                                                   @Qualifier("yubikeyPrincipalMultifactorAuthenticationProviderBypass")
-                                                                                   final MultifactorAuthenticationProviderBypassEvaluator yubikeyPrincipalMultifactorAuthenticationProviderBypass,
-                                                                                   @Qualifier("yubikeyRegisteredServiceMultifactorAuthenticationProviderBypass")
-                                                                                   final MultifactorAuthenticationProviderBypassEvaluator yubikeyRegisteredServiceMultifactorAuthenticationProviderBypass,
-                                                                                   @Qualifier("yubikeyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
-                                                                                   final MultifactorAuthenticationProviderBypassEvaluator yubikeyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator,
-                                                                                   @Qualifier("yubikeyAuthenticationMultifactorAuthenticationProviderBypass")
-                                                                                   final MultifactorAuthenticationProviderBypassEvaluator yubikeyAuthenticationMultifactorAuthenticationProviderBypass,
-                                                                                   @Qualifier("yubikeyCredentialMultifactorAuthenticationProviderBypass")
-                                                                                   final MultifactorAuthenticationProviderBypassEvaluator yubikeyCredentialMultifactorAuthenticationProviderBypass,
-                                                                                   @Qualifier("yubikeyHttpRequestMultifactorAuthenticationProviderBypass")
-                                                                                   final MultifactorAuthenticationProviderBypassEvaluator yubikeyHttpRequestMultifactorAuthenticationProviderBypass,
-                                                                                   @Qualifier("yubikeyGroovyMultifactorAuthenticationProviderBypass")
-                                                                                   final MultifactorAuthenticationProviderBypassEvaluator yubikeyGroovyMultifactorAuthenticationProviderBypass,
-                                                                                   @Qualifier("yubikeyRestMultifactorAuthenticationProviderBypass")
-                                                                                   final MultifactorAuthenticationProviderBypassEvaluator yubikeyRestMultifactorAuthenticationProviderBypass) {
+    public MultifactorAuthenticationProviderBypassEvaluator yubikeyBypassEvaluator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("yubikeyPrincipalMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator yubikeyPrincipalMultifactorAuthenticationProviderBypass,
+        @Qualifier("yubikeyRegisteredServiceMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator yubikeyRegisteredServiceMultifactorAuthenticationProviderBypass,
+        @Qualifier("yubikeyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
+        final MultifactorAuthenticationProviderBypassEvaluator yubikeyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator,
+        @Qualifier("yubikeyAuthenticationMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator yubikeyAuthenticationMultifactorAuthenticationProviderBypass,
+        @Qualifier("yubikeyCredentialMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator yubikeyCredentialMultifactorAuthenticationProviderBypass,
+        @Qualifier("yubikeyHttpRequestMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator yubikeyHttpRequestMultifactorAuthenticationProviderBypass,
+        @Qualifier("yubikeyGroovyMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator yubikeyGroovyMultifactorAuthenticationProviderBypass,
+        @Qualifier("yubikeyRestMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator yubikeyRestMultifactorAuthenticationProviderBypass) {
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider();
         val props = casProperties.getAuthn().getMfa().getYubikey().getBypass();
         if (StringUtils.isNotBlank(props.getPrincipalAttributeName())) {
@@ -60,8 +61,8 @@ public class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
         }
         bypass.addMultifactorAuthenticationProviderBypassEvaluator(yubikeyRegisteredServiceMultifactorAuthenticationProviderBypass);
         bypass.addMultifactorAuthenticationProviderBypassEvaluator(yubikeyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator);
-        if (StringUtils.isNotBlank(props.getAuthenticationAttributeName()) || StringUtils.isNotBlank(props.getAuthenticationHandlerName()) ||
-            StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
+        if (StringUtils.isNotBlank(props.getAuthenticationAttributeName()) || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
+            || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(yubikeyAuthenticationMultifactorAuthenticationProviderBypass);
         }
         if (StringUtils.isNotBlank(props.getCredentialClassType())) {

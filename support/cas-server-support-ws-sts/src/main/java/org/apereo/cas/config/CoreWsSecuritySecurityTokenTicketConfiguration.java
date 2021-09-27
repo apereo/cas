@@ -44,7 +44,7 @@ public class CoreWsSecuritySecurityTokenTicketConfiguration {
     @Autowired
     public TicketFactoryExecutionPlanConfigurer securityTokenTicketFactoryConfigurer(
         @Qualifier("securityTokenTicketFactory")
-        final SecurityTokenTicketFactory securityTokenTicketFactory    ) {
+        final SecurityTokenTicketFactory securityTokenTicketFactory) {
         return () -> securityTokenTicketFactory;
     }
 
