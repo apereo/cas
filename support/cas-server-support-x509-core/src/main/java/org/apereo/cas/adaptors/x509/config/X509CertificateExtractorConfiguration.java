@@ -23,13 +23,11 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class X509CertificateExtractorConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @ConditionalOnMissingBean(name = "x509CertificateExtractor")
     @Bean
     @RefreshScope
-    public X509CertificateExtractor x509CertificateExtractor() {
+    @Autowired
+    public X509CertificateExtractor x509CertificateExtractor(final CasConfigurationProperties casProperties) {
         val sslHeaderName = casProperties.getAuthn().getX509().getSslHeaderName();
         return new RequestHeaderX509CertificateExtractor(sslHeaderName);
     }

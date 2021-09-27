@@ -32,7 +32,6 @@ import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -56,26 +55,15 @@ import java.time.temporal.ChronoUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("multifactorAuthnTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(CasCoreUtilConfiguration.class)
 @Slf4j
+@Configuration(value = "multifactorAuthnTrustConfiguration", proxyBeanMethods = false)
 public class MultifactorAuthnTrustConfiguration {
 
     private static final int INITIAL_CACHE_SIZE = 50;
 
     private static final long MAX_CACHE_SIZE = 1_000_000;
-
-    @Autowired
-    @Qualifier("ticketCreationActionResolver")
-    private ObjectProvider<AuditActionResolver> ticketCreationActionResolver;
-
-    @Autowired
-    @Qualifier("returnValueResourceResolver")
-    private ObjectProvider<AuditResourceResolver> returnValueResourceResolver;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @ConditionalOnMissingBean(name = "mfaTrustDeviceNamingStrategy")
     @Bean
@@ -87,28 +75,25 @@ public class MultifactorAuthnTrustConfiguration {
     @ConditionalOnMissingBean(name = "mfaTrustEngine")
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
+    @Autowired
+    public MultifactorAuthenticationTrustStorage mfaTrustEngine(final CasConfigurationProperties casProperties,
+                                                                @Qualifier("mfaTrustCipherExecutor")
+                                                                final CipherExecutor mfaTrustCipherExecutor,
+                                                                @Qualifier("mfaTrustRecordKeyGenerator")
+                                                                final MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator) {
         val trusted = casProperties.getAuthn().getMfa().getTrusted();
-        val storage = Caffeine.newBuilder()
-            .initialCapacity(INITIAL_CACHE_SIZE)
-            .maximumSize(MAX_CACHE_SIZE)
-            .expireAfter(new MultifactorAuthenticationTrustRecordExpiry())
-            .build(s -> {
-                LOGGER.error("Load operation of the cache is not supported.");
-                return null;
-            });
-
-        return FunctionUtils.doIf(trusted.getJson().getLocation() != null,
-            () -> {
-                LOGGER.debug("Storing trusted device records inside the JSON resource [{}]", trusted.getJson().getLocation());
-                return new JsonMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
-                    mfaTrustCipherExecutor(), trusted.getJson().getLocation(), mfaTrustRecordKeyGenerator());
-            },
-            () -> {
-                LOGGER.warn("Storing trusted device records in runtime memory. Changes and records will be lost upon CAS restarts");
-                return new InMemoryMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
-                    mfaTrustCipherExecutor(), storage, mfaTrustRecordKeyGenerator());
-            }).get();
+        val storage = Caffeine.newBuilder().initialCapacity(INITIAL_CACHE_SIZE).maximumSize(MAX_CACHE_SIZE).expireAfter(new MultifactorAuthenticationTrustRecordExpiry()).build(s -> {
+            LOGGER.error("Load operation of the cache is not supported.");
+            return null;
+        });
+        return FunctionUtils.doIf(trusted.getJson().getLocation() != null, () -> {
+            LOGGER.debug("Storing trusted device records inside the JSON resource [{}]", trusted.getJson().getLocation());
+            return new JsonMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(), mfaTrustCipherExecutor, trusted.getJson().getLocation(),
+                mfaTrustRecordKeyGenerator);
+        }, () -> {
+            LOGGER.warn("Storing trusted device records in runtime memory. Changes and records will be lost upon CAS restarts");
+            return new InMemoryMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(), mfaTrustCipherExecutor, storage, mfaTrustRecordKeyGenerator);
+        }).get();
     }
 
     @ConditionalOnMissingBean(name = "transactionManagerMfaAuthnTrust")
@@ -120,7 +105,8 @@ public class MultifactorAuthnTrustConfiguration {
     @ConditionalOnMissingBean(name = "mfaTrustRecordKeyGenerator")
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator() {
+    @Autowired
+    public MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator(final CasConfigurationProperties casProperties) {
         val type = casProperties.getAuthn().getMfa().getTrusted().getCore().getKeyGeneratorType();
         if (type == TrustedDevicesMultifactorCoreProperties.TrustedDevicesKeyGeneratorTypes.DEFAULT) {
             return new DefaultMultifactorAuthenticationTrustRecordKeyGenerator();
@@ -131,15 +117,14 @@ public class MultifactorAuthnTrustConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "mfaTrustCipherExecutor")
-    public CipherExecutor mfaTrustCipherExecutor() {
+    @Autowired
+    public CipherExecutor mfaTrustCipherExecutor(final CasConfigurationProperties casProperties) {
         val crypto = casProperties.getAuthn().getMfa().getTrusted().getCrypto();
         if (crypto.isEnabled()) {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, MultifactorAuthenticationTrustCipherExecutor.class);
         }
-        LOGGER.info("Multifactor trusted authentication record encryption/signing is turned off and "
-            + "MAY NOT be safe in a production environment. "
-            + "Consider using other choices to handle encryption, signing and verification of "
-            + "trusted authentication records for MFA");
+        LOGGER.info("Multifactor trusted authentication record encryption/signing is turned off and " + "MAY NOT be safe in a production environment. " +
+            "Consider using other choices to handle encryption, signing and verification of " + "trusted authentication records for MFA");
         return CipherExecutor.noOp();
     }
 
@@ -147,32 +132,42 @@ public class MultifactorAuthnTrustConfiguration {
     @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
     @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
     @Bean
-    public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner() {
-        return new MultifactorAuthenticationTrustStorageCleaner(mfaTrustEngine());
+    public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner(
+        @Qualifier("mfaTrustEngine")
+        final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
+        return new MultifactorAuthenticationTrustStorageCleaner(mfaTrustEngine);
     }
 
     @Bean
-    public AuditTrailRecordResolutionPlanConfigurer casMfaTrustAuditTrailRecordResolutionPlanConfigurer() {
+    public AuditTrailRecordResolutionPlanConfigurer casMfaTrustAuditTrailRecordResolutionPlanConfigurer(
+        @Qualifier("ticketCreationActionResolver")
+        final AuditActionResolver ticketCreationActionResolver,
+        @Qualifier("returnValueResourceResolver")
+        final AuditResourceResolver returnValueResourceResolver) {
         return plan -> {
-            plan.registerAuditResourceResolver(AuditResourceResolvers.TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER,
-                returnValueResourceResolver.getObject());
-            plan.registerAuditActionResolver(AuditActionResolvers.TRUSTED_AUTHENTICATION_ACTION_RESOLVER,
-                ticketCreationActionResolver.getObject());
+            plan.registerAuditResourceResolver(AuditResourceResolvers.TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER, returnValueResourceResolver);
+            plan.registerAuditActionResolver(AuditActionResolvers.TRUSTED_AUTHENTICATION_ACTION_RESOLVER, ticketCreationActionResolver);
         };
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public MultifactorAuthenticationTrustReportEndpoint mfaTrustedDevicesReportEndpoint() {
-        return new MultifactorAuthenticationTrustReportEndpoint(casProperties, mfaTrustEngine());
+    @Autowired
+    public MultifactorAuthenticationTrustReportEndpoint mfaTrustedDevicesReportEndpoint(final CasConfigurationProperties casProperties,
+                                                                                        @Qualifier("mfaTrustEngine")
+                                                                                        final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
+        return new MultifactorAuthenticationTrustReportEndpoint(casProperties, mfaTrustEngine);
     }
 
     @Slf4j
     private static class MultifactorAuthenticationTrustRecordExpiry implements Expiry<String, MultifactorAuthenticationTrustRecord> {
+
         @Override
-        public long expireAfterCreate(@NonNull final String key,
-                                      @NonNull final MultifactorAuthenticationTrustRecord value,
-                                      final long currentTime) {
+        public long expireAfterCreate(
+            @NonNull
+            final String key,
+            @NonNull
+            final MultifactorAuthenticationTrustRecord value, final long currentTime) {
             if (value.getExpirationDate() == null) {
                 LOGGER.trace("Multifactor trust record [{}] will never expire", value);
                 return Long.MAX_VALUE;
@@ -195,14 +190,24 @@ public class MultifactorAuthnTrustConfiguration {
         }
 
         @Override
-        public long expireAfterUpdate(@NonNull final String key, @NonNull final MultifactorAuthenticationTrustRecord value,
-                                      final long currentTime, @NonNegative final long currentDuration) {
+        public long expireAfterUpdate(
+            @NonNull
+            final String key,
+            @NonNull
+            final MultifactorAuthenticationTrustRecord value, final long currentTime,
+            @NonNegative
+            final long currentDuration) {
             return expireAfterCreate(key, value, currentTime);
         }
 
         @Override
-        public long expireAfterRead(@NonNull final String key, @NonNull final MultifactorAuthenticationTrustRecord value,
-                                    final long currentTime, @NonNegative final long currentDuration) {
+        public long expireAfterRead(
+            @NonNull
+            final String key,
+            @NonNull
+            final MultifactorAuthenticationTrustRecord value, final long currentTime,
+            @NonNegative
+            final long currentDuration) {
             return expireAfterCreate(key, value, currentTime);
         }
     }

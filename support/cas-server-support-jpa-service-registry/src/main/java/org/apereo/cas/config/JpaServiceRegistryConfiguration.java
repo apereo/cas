@@ -43,35 +43,31 @@ import java.util.Set;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Configuration("jpaServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
+@Configuration(value = "jpaServiceRegistryConfiguration", proxyBeanMethods = false)
 public class JpaServiceRegistryConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("jpaBeanFactory")
-    private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
 
     @Autowired
     @Qualifier("serviceRegistryListeners")
     private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @RefreshScope
     @Bean
-    public JpaVendorAdapter jpaServiceVendorAdapter() {
-        return jpaBeanFactory.getObject().newJpaVendorAdapter(casProperties.getJdbc());
+    @Autowired
+    public JpaVendorAdapter jpaServiceVendorAdapter(final CasConfigurationProperties casProperties,
+                                                    @Qualifier("jpaBeanFactory")
+                                                    final JpaBeanFactory jpaBeanFactory) {
+        return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
     }
 
     @RefreshScope
     @Bean
-    public PersistenceProvider jpaServicePersistenceProvider() {
-        return jpaBeanFactory.getObject().newPersistenceProvider(casProperties.getServiceRegistry().getJpa());
+    @Autowired
+    public PersistenceProvider jpaServicePersistenceProvider(final CasConfigurationProperties casProperties,
+                                                             @Qualifier("jpaBeanFactory")
+                                                             final JpaBeanFactory jpaBeanFactory) {
+        return jpaBeanFactory.newPersistenceProvider(casProperties.getServiceRegistry().getJpa());
     }
 
     @Bean
@@ -82,21 +78,34 @@ public class JpaServiceRegistryConfiguration {
 
     @Lazy
     @Bean
-    public LocalContainerEntityManagerFactoryBean serviceEntityManagerFactory() {
-        val factory = jpaBeanFactory.getObject();
+    @Autowired
+    public LocalContainerEntityManagerFactoryBean serviceEntityManagerFactory(final CasConfigurationProperties casProperties,
+                                                                              @Qualifier("dataSourceService")
+                                                                              final DataSource dataSourceService,
+                                                                              @Qualifier("jpaServiceVendorAdapter")
+                                                                              final JpaVendorAdapter jpaServiceVendorAdapter,
+                                                                              @Qualifier("jpaServicePersistenceProvider")
+                                                                              final PersistenceProvider jpaServicePersistenceProvider,
+                                                                              @Qualifier("jpaServicePackagesToScan")
+                                                                              final Set<String> jpaServicePackagesToScan,
+                                                                              @Qualifier("jpaBeanFactory")
+                                                                              final JpaBeanFactory jpaBeanFactory) {
+        val factory = jpaBeanFactory;
         val ctx = JpaConfigurationContext.builder()
-            .dataSource(dataSourceService())
+            .dataSource(dataSourceService)
             .persistenceUnitName("jpaServiceRegistryContext")
-            .jpaVendorAdapter(jpaServiceVendorAdapter())
-            .persistenceProvider(jpaServicePersistenceProvider())
-            .packagesToScan(jpaServicePackagesToScan())
+            .jpaVendorAdapter(jpaServiceVendorAdapter)
+            .persistenceProvider(jpaServicePersistenceProvider)
+            .packagesToScan(jpaServicePackagesToScan)
             .build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getServiceRegistry().getJpa());
     }
 
     @Autowired
     @Bean
-    public PlatformTransactionManager transactionManagerServiceReg(@Qualifier("serviceEntityManagerFactory") final EntityManagerFactory emf) {
+    public PlatformTransactionManager transactionManagerServiceReg(
+        @Qualifier("serviceEntityManagerFactory")
+        final EntityManagerFactory emf) {
         val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
@@ -105,22 +114,25 @@ public class JpaServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "dataSourceService")
     @RefreshScope
-    public DataSource dataSourceService() {
+    @Autowired
+    public DataSource dataSourceService(final CasConfigurationProperties casProperties) {
         return JpaBeans.newDataSource(casProperties.getServiceRegistry().getJpa());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "jpaServiceRegistry")
-    public ServiceRegistry jpaServiceRegistry() {
-        return new JpaServiceRegistry(applicationContext,
-            serviceRegistryListeners.getObject(),
-            jdbcServiceRegistryTransactionTemplate());
+    @Autowired
+    public ServiceRegistry jpaServiceRegistry(final ConfigurableApplicationContext applicationContext,
+                                              @Qualifier("jdbcServiceRegistryTransactionTemplate")
+                                              final TransactionTemplate jdbcServiceRegistryTransactionTemplate) {
+        return new JpaServiceRegistry(applicationContext, serviceRegistryListeners.getObject(), jdbcServiceRegistryTransactionTemplate);
     }
 
     @ConditionalOnMissingBean(name = "jdbcServiceRegistryTransactionTemplate")
     @Bean
-    public TransactionTemplate jdbcServiceRegistryTransactionTemplate() {
+    @Autowired
+    public TransactionTemplate jdbcServiceRegistryTransactionTemplate(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext) {
         val t = new TransactionTemplate(applicationContext.getBean(JpaServiceRegistry.BEAN_NAME_TRANSACTION_MANAGER, PlatformTransactionManager.class));
         t.setIsolationLevelName(casProperties.getServiceRegistry().getJpa().getIsolationLevelName());
         t.setPropagationBehaviorName(casProperties.getServiceRegistry().getJpa().getPropagationBehaviorName());
@@ -130,8 +142,10 @@ public class JpaServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "jpaServiceRegistryExecutionPlanConfigurer")
     @RefreshScope
-    public ServiceRegistryExecutionPlanConfigurer jpaServiceRegistryExecutionPlanConfigurer() {
-        return plan -> plan.registerServiceRegistry(jpaServiceRegistry());
+    public ServiceRegistryExecutionPlanConfigurer jpaServiceRegistryExecutionPlanConfigurer(
+        @Qualifier("jpaServiceRegistry")
+        final ServiceRegistry jpaServiceRegistry) {
+        return plan -> plan.registerServiceRegistry(jpaServiceRegistry);
     }
 
     @Bean

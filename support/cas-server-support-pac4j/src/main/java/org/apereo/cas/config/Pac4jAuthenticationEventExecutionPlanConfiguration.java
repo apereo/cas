@@ -41,7 +41,6 @@ import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.context.session.SessionStore;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -59,62 +58,44 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
  * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
-@Configuration("pac4jAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@Configuration(value = "pac4jAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class Pac4jAuthenticationEventExecutionPlanConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("defaultPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
-
-    @Autowired
-    @Qualifier("authenticationActionResolver")
-    private ObjectProvider<AuditActionResolver> authenticationActionResolver;
-
-    @Autowired
-    @Qualifier("defaultTicketFactory")
-    private ObjectProvider<TicketFactory> ticketFactory;
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("casSslContext")
-    private ObjectProvider<CasSSLContext> casSslContext;
-
     @Bean
     @ConditionalOnMissingBean(name = "pac4jDelegatedClientFactory")
     @RefreshScope
-    public DelegatedClientFactory pac4jDelegatedClientFactory() {
+    @Autowired
+    public DelegatedClientFactory pac4jDelegatedClientFactory(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+                                                              @Qualifier("casSslContext")
+                                                              final CasSSLContext casSslContext) {
         val rest = casProperties.getAuthn().getPac4j().getRest();
         if (StringUtils.isNotBlank(rest.getUrl())) {
             return new RestfulDelegatedClientFactory(casProperties);
         }
         val customizers = applicationContext.getBeansOfType(DelegatedClientFactoryCustomizer.class, false, true).values();
         AnnotationAwareOrderComparator.sortIfNecessary(customizers);
-        return new DefaultDelegatedClientFactory(casProperties, customizers, casSslContext.getObject(), applicationContext);
+        return new DefaultDelegatedClientFactory(casProperties, customizers, casSslContext, applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionStore")
     @Bean
     @RefreshScope
-    public SessionStore delegatedClientDistributedSessionStore() {
+    @Autowired
+    public SessionStore delegatedClientDistributedSessionStore(final CasConfigurationProperties casProperties,
+                                                               @Qualifier("delegatedClientDistributedSessionCookieGenerator")
+                                                               final CasCookieBuilder delegatedClientDistributedSessionCookieGenerator,
+                                                               @Qualifier("ticketFactory")
+                                                               final TicketFactory ticketFactory,
+                                                               @Qualifier("centralAuthenticationService")
+                                                               final CentralAuthenticationService centralAuthenticationService) {
         val replicate = casProperties.getAuthn().getPac4j().getCore().isReplicateSessions();
         if (replicate) {
-            return new DistributedJEESessionStore(centralAuthenticationService.getObject(),
-                ticketFactory.getObject(), delegatedClientDistributedSessionCookieGenerator());
+            return new DistributedJEESessionStore(centralAuthenticationService, ticketFactory, delegatedClientDistributedSessionCookieGenerator);
         }
         return JEESessionStore.INSTANCE;
     }
@@ -122,7 +103,8 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionCookieGenerator")
     @Bean
     @RefreshScope
-    public CasCookieBuilder delegatedClientDistributedSessionCookieGenerator() {
+    @Autowired
+    public CasCookieBuilder delegatedClientDistributedSessionCookieGenerator(final CasConfigurationProperties casProperties) {
         val cookie = casProperties.getSessionReplication().getCookie();
         return CookieUtils.buildCookieRetrievingGenerator(cookie);
     }
@@ -130,8 +112,11 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "builtClients")
-    public Clients builtClients() {
-        return new RefreshableDelegatedClients(casProperties.getServer().getLoginUrl(), pac4jDelegatedClientFactory());
+    @Autowired
+    public Clients builtClients(final CasConfigurationProperties casProperties,
+                                @Qualifier("pac4jDelegatedClientFactory")
+                                final DelegatedClientFactory pac4jDelegatedClientFactory) {
+        return new RefreshableDelegatedClients(casProperties.getServer().getLoginUrl(), pac4jDelegatedClientFactory);
     }
 
     @ConditionalOnMissingBean(name = "clientPrincipalFactory")
@@ -151,15 +136,21 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "clientAuthenticationHandler")
-    public AuthenticationHandler clientAuthenticationHandler() {
+    @Autowired
+    public AuthenticationHandler clientAuthenticationHandler(final CasConfigurationProperties casProperties,
+                                                             @Qualifier("clientPrincipalFactory")
+                                                             final PrincipalFactory clientPrincipalFactory,
+                                                             @Qualifier("builtClients")
+                                                             final Clients builtClients,
+                                                             @Qualifier("clientUserProfileProvisioner")
+                                                             final DelegatedClientUserProfileProvisioner clientUserProfileProvisioner,
+                                                             @Qualifier("delegatedClientDistributedSessionStore")
+                                                             final SessionStore delegatedClientDistributedSessionStore,
+                                                             @Qualifier("servicesManager")
+                                                             final ServicesManager servicesManager) {
         val pac4j = casProperties.getAuthn().getPac4j().getCore();
-        val h = new DelegatedClientAuthenticationHandler(pac4j.getName(),
-            pac4j.getOrder(),
-            servicesManager.getObject(),
-            clientPrincipalFactory(),
-            builtClients(),
-            clientUserProfileProvisioner(),
-            delegatedClientDistributedSessionStore());
+        val h = new DelegatedClientAuthenticationHandler(pac4j.getName(), pac4j.getOrder(), servicesManager, clientPrincipalFactory, builtClients, clientUserProfileProvisioner,
+            delegatedClientDistributedSessionStore);
         h.setTypedIdUsed(pac4j.isTypedIdUsed());
         h.setPrincipalAttributeId(pac4j.getPrincipalAttributeId());
         return h;
@@ -168,10 +159,10 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "clientUserProfileProvisioner")
-    public DelegatedClientUserProfileProvisioner clientUserProfileProvisioner() {
+    @Autowired
+    public DelegatedClientUserProfileProvisioner clientUserProfileProvisioner(final CasConfigurationProperties casProperties) {
         val provisioning = casProperties.getAuthn().getPac4j().getProvisioning();
         val chain = new ChainingDelegatedClientUserProfileProvisioner();
-
         val script = provisioning.getGroovy().getLocation();
         if (script != null) {
             chain.addProvisioner(new GroovyDelegatedClientUserProfileProvisioner(script));
@@ -179,7 +170,6 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         if (StringUtils.isNotBlank(provisioning.getRest().getUrl())) {
             chain.addProvisioner(new RestfulDelegatedClientUserProfileProvisioner(provisioning.getRest()));
         }
-
         if (chain.isEmpty()) {
             return DelegatedClientUserProfileProvisioner.noOp();
         }
@@ -189,13 +179,20 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "pac4jAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @RefreshScope
-    public AuthenticationEventExecutionPlanConfigurer pac4jAuthenticationEventExecutionPlanConfigurer() {
+    public AuthenticationEventExecutionPlanConfigurer pac4jAuthenticationEventExecutionPlanConfigurer(
+        @Qualifier("builtClients")
+        final Clients builtClients,
+        @Qualifier("clientAuthenticationHandler")
+        final AuthenticationHandler clientAuthenticationHandler,
+        @Qualifier("clientAuthenticationMetaDataPopulator")
+        final AuthenticationMetaDataPopulator clientAuthenticationMetaDataPopulator,
+        @Qualifier("defaultPrincipalResolver")
+        final PrincipalResolver defaultPrincipalResolver) {
         return plan -> {
-            if (!builtClients().findAllClients().isEmpty()) {
+            if (!builtClients.findAllClients().isEmpty()) {
                 LOGGER.info("Registering delegated authentication clients...");
-                plan.registerAuthenticationHandlerWithPrincipalResolver(clientAuthenticationHandler(),
-                    defaultPrincipalResolver.getObject());
-                plan.registerAuthenticationMetadataPopulator(clientAuthenticationMetaDataPopulator());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(clientAuthenticationHandler, defaultPrincipalResolver);
+                plan.registerAuthenticationMetadataPopulator(clientAuthenticationMetaDataPopulator);
             }
         };
     }
@@ -210,19 +207,24 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "delegatedAuthenticationAuditTrailRecordResolutionPlanConfigurer")
     @RefreshScope
-    public AuditTrailRecordResolutionPlanConfigurer delegatedAuthenticationAuditTrailRecordResolutionPlanConfigurer() {
+    public AuditTrailRecordResolutionPlanConfigurer delegatedAuthenticationAuditTrailRecordResolutionPlanConfigurer(
+        @Qualifier("delegatedAuthenticationAuditResourceResolver")
+        final AuditResourceResolver delegatedAuthenticationAuditResourceResolver,
+        @Qualifier("authenticationActionResolver")
+        final AuditActionResolver authenticationActionResolver) {
         return plan -> {
-            plan.registerAuditActionResolver(AuditActionResolvers.DELEGATED_CLIENT_ACTION_RESOLVER,
-                authenticationActionResolver.getObject());
-            plan.registerAuditResourceResolver(AuditResourceResolvers.DELEGATED_CLIENT_RESOURCE_RESOLVER,
-                delegatedAuthenticationAuditResourceResolver());
+            plan.registerAuditActionResolver(AuditActionResolvers.DELEGATED_CLIENT_ACTION_RESOLVER, authenticationActionResolver);
+            plan.registerAuditResourceResolver(AuditResourceResolvers.DELEGATED_CLIENT_RESOURCE_RESOLVER, delegatedAuthenticationAuditResourceResolver);
         };
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "delegatedAuthenticationLogoutExecutionPlanConfigurer")
-    public LogoutExecutionPlanConfigurer delegatedAuthenticationLogoutExecutionPlanConfigurer() {
+    @Autowired
+    public LogoutExecutionPlanConfigurer delegatedAuthenticationLogoutExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
+                                                                                              @Qualifier("delegatedClientDistributedSessionStore")
+                                                                                              final SessionStore delegatedClientDistributedSessionStore) {
         return plan -> {
             val replicate = casProperties.getAuthn().getPac4j().getCore().isReplicateSessions();
             if (replicate) {
@@ -230,7 +232,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                     val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
                     val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
                     if (request != null && response != null) {
-                        val store = delegatedClientDistributedSessionStore();
+                        val store = delegatedClientDistributedSessionStore;
                         store.destroySession(new JEEContext(request, response));
                     }
                 });

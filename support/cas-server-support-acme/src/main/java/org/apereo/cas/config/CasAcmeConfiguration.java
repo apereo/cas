@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -27,20 +28,20 @@ import java.security.Security;
  * @since 6.4.0
  */
 @Slf4j
-@Configuration(value = "CasAcmeConfiguration")
+@Configuration(value = "CasAcmeConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(name = "cas.acme.server-url")
 public class CasAcmeConfiguration {
+
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
-    public AcmeWellKnownChallengeController acmeWellKnownChallengeController() {
-        return new AcmeWellKnownChallengeController(acmeChallengeRepository());
+    public AcmeWellKnownChallengeController acmeWellKnownChallengeController(
+        @Qualifier("acmeChallengeRepository")
+        final AcmeChallengeRepository acmeChallengeRepository) {
+        return new AcmeWellKnownChallengeController(acmeChallengeRepository);
     }
 
     @Bean
@@ -56,23 +57,24 @@ public class CasAcmeConfiguration {
 
     @Bean
     @ConditionalOnProperty(prefix = "cas.acme", name = "terms-of-use-accepted", havingValue = "true")
-    public AcmeCertificateManager acmeCertificateManager() {
-        return new AcmeCertificateManager(acmeChallengeRepository(),
-            casProperties, acmeAuthorizationExecutor());
+    @Autowired
+    public AcmeCertificateManager acmeCertificateManager(final CasConfigurationProperties casProperties,
+                                                         @Qualifier("acmeChallengeRepository")
+                                                         final AcmeChallengeRepository acmeChallengeRepository,
+                                                         @Qualifier("acmeAuthorizationExecutor")
+                                                         final AcmeAuthorizationExecutor acmeAuthorizationExecutor) {
+        return new AcmeCertificateManager(acmeChallengeRepository, casProperties, acmeAuthorizationExecutor);
     }
 
-    /**
-     * Handle application ready event.
-     *
-     * @param event the event
-     * @throws Exception the exception
-     */
+
     @EventListener
     public void handleApplicationReadyEvent(final ApplicationReadyEvent event) throws Exception {
+        val casProperties = event.getApplicationContext().getBean(CasConfigurationProperties.class);
         val domains = casProperties.getAcme().getDomains();
         LOGGER.info("Fetching certificates for domains [{}]", domains);
         if (event.getApplicationContext().containsBean("acmeCertificateManager")) {
-            acmeCertificateManager().fetchCertificate(domains);
+            val acmeCertificateManager = event.getApplicationContext().getBean("acmeCertificateManager", AcmeCertificateManager.class);
+            acmeCertificateManager.fetchCertificate(domains);
         }
     }
 }
