@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,10 +40,6 @@ import java.util.Optional;
 @ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.couch-db", name = "idp-metadata-enabled", havingValue = "true")
 @Configuration(value = "ouchDbSamlIdPMetadataConfiguration", proxyBeanMethods = false)
 public class CouchDbSamlIdPMetadataConfiguration {
-
-    @Autowired
-    @Qualifier("samlIdPMetadataCache")
-    private ObjectProvider<Cache<String, SamlIdPMetadataDocument>> samlIdPMetadataCache;
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbInstance")
     @RefreshScope
@@ -109,10 +104,13 @@ public class CouchDbSamlIdPMetadataConfiguration {
     @Bean
     @RefreshScope
     public SamlIdPMetadataLocator samlIdPMetadataLocator(
+        @Qualifier("samlIdPMetadataCache")
+        final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache,
         @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
         final CipherExecutor samlIdPMetadataGeneratorCipherExecutor,
         @Qualifier("samlIdPMetadataRepository")
         final SamlIdPMetadataCouchDbRepository samlIdPMetadataRepository) {
-        return new CouchDbSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor, samlIdPMetadataCache.getObject(), samlIdPMetadataRepository);
+        return new CouchDbSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor,
+            samlIdPMetadataCache.getObject(), samlIdPMetadataRepository);
     }
 }

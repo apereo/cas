@@ -49,7 +49,6 @@ import lombok.val;
 import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Response;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -76,10 +75,6 @@ import java.net.URL;
 @Slf4j
 @Configuration(value = "samlIdPMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPMetadataConfiguration {
-
-    @Autowired
-    @Qualifier("samlProfileSamlResponseBuilder")
-    private ObjectProvider<SamlProfileObjectBuilder<Response>> samlProfileSamlResponseBuilder;
 
     @Lazy
     @Bean(initMethod = "initialize", destroyMethod = "destroy")
@@ -252,11 +247,13 @@ public class SamlIdPMetadataConfiguration {
         final OpenSamlConfigBean openSamlConfigBean,
         @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
+        @Qualifier("samlProfileSamlResponseBuilder")
+        final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
         @Qualifier("samlIdPServiceFactory")
         final ServiceFactory samlIdPServiceFactory) {
         return new SSOSamlIdPPostProfileHandlerEndpoint(casProperties, servicesManager,
             authenticationSystemSupport, samlIdPServiceFactory, PrincipalFactoryUtils.newPrincipalFactory(),
-            samlProfileSamlResponseBuilder.getObject(),
+            samlProfileSamlResponseBuilder,
             defaultSamlRegisteredServiceCachingMetadataResolver, new NonInflatingSaml20ObjectBuilder(openSamlConfigBean));
     }
 

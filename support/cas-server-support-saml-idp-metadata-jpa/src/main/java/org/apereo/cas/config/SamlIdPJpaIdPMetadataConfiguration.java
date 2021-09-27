@@ -19,7 +19,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -52,10 +51,6 @@ import java.util.Set;
 @ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.jpa", name = "idp-metadata-enabled", havingValue = "true")
 @Configuration(value = "samlIdPJpaIdPMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPJpaIdPMetadataConfiguration {
-
-    @Autowired
-    @Qualifier("samlIdPMetadataCache")
-    private ObjectProvider<Cache<String, SamlIdPMetadataDocument>> samlIdPMetadataCache;
 
     @RefreshScope
     @Bean
@@ -143,8 +138,10 @@ public class SamlIdPJpaIdPMetadataConfiguration {
     @RefreshScope
     @Bean
     public SamlIdPMetadataLocator samlIdPMetadataLocator(
+        @Qualifier("samlIdPMetadataCache")
+        final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache,
         @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
         final CipherExecutor samlIdPMetadataGeneratorCipherExecutor) {
-        return new JpaSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor, samlIdPMetadataCache.getObject());
+        return new JpaSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor, samlIdPMetadataCache);
     }
 }
