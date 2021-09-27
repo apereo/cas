@@ -45,9 +45,6 @@ import java.net.URL;
 @Configuration(value = "amazonCognitoAuthenticationConfiguration", proxyBeanMethods = false)
 public class AmazonCognitoAuthenticationConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @ConditionalOnMissingBean(name = "amazonCognitoIdentityProvider")
     @Bean
     @RefreshScope

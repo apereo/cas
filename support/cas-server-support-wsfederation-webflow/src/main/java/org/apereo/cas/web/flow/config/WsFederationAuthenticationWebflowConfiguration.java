@@ -40,9 +40,6 @@ import java.util.Collection;
 public class WsFederationAuthenticationWebflowConfiguration {
 
     @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
     @Qualifier("wsFederationConfigurations")
     private Collection<WsFederationConfiguration> wsFederationConfigurations;
 
