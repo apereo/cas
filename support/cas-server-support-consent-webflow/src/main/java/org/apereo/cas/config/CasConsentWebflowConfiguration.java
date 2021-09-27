@@ -43,7 +43,7 @@ public class CasConsentWebflowConfiguration {
     public Action checkConsentRequiredAction(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
                                              @Qualifier("attributeDefinitionStore")
                                              final AttributeDefinitionStore attributeDefinitionStore,
-                                             @Qualifier("authenticationRequestServiceSelectionStrategies")
+                                             @Qualifier("authenticationServiceSelectionPlan")
                                              final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
                                              @Qualifier("consentEngine")
                                              final ConsentEngine consentEngine,
@@ -61,7 +61,7 @@ public class CasConsentWebflowConfiguration {
     public Action confirmConsentAction(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
                                        @Qualifier("attributeDefinitionStore")
                                        final AttributeDefinitionStore attributeDefinitionStore,
-                                       @Qualifier("authenticationRequestServiceSelectionStrategies")
+                                       @Qualifier("authenticationServiceSelectionPlan")
                                        final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
                                        @Qualifier("consentEngine")
                                        final ConsentEngine consentEngine,

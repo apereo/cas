@@ -16,12 +16,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -44,12 +46,10 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Configuration(value = "casThemesConfiguration", proxyBeanMethods = false)
-@EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
+@EnableConfigurationProperties({CasConfigurationProperties.class, ThymeleafProperties.class, WebProperties.class})
 @Slf4j
+@AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
 public class CasThemesConfiguration {
-
-    @Autowired
-    private WebProperties webProperties;
 
     @Bean
     public Supplier<Map<String, String>> serviceThemeResolverSupportedBrowsers() {
@@ -66,8 +66,9 @@ public class CasThemesConfiguration {
     @Autowired
     public ThemeResolver themeResolver(
         @Qualifier("serviceThemeResolverSupportedBrowsers")
-        final Supplier<Map<String, String>> serviceThemeResolverSupportedBrowsers, final CasConfigurationProperties casProperties,
-        @Qualifier("authenticationRequestServiceSelectionStrategies")
+        final Supplier<Map<String, String>> serviceThemeResolverSupportedBrowsers,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
         @Qualifier("servicesManager")
         final ServicesManager servicesManager) {
@@ -84,13 +85,16 @@ public class CasThemesConfiguration {
         cookieThemeResolver.setCookieMaxAge(tgc.getMaxAge());
         cookieThemeResolver.setCookiePath(tgc.getPath());
         cookieThemeResolver.setCookieSecure(tgc.isSecure());
-        val serviceThemeResolver = new RegisteredServiceThemeResolver(servicesManager, authenticationRequestServiceSelectionStrategies, casProperties,
+        val serviceThemeResolver = new RegisteredServiceThemeResolver(servicesManager,
+            authenticationRequestServiceSelectionStrategies, casProperties,
             serviceThemeResolverSupportedBrowsers.get().entrySet().stream().collect(Collectors.toMap(entry -> Pattern.compile(entry.getKey()), Map.Entry::getValue)));
         serviceThemeResolver.setDefaultThemeName(defaultThemeName);
         val header = new RequestHeaderThemeResolver(casProperties.getTheme().getParamName());
         header.setDefaultThemeName(defaultThemeName);
         val chainingThemeResolver = new ChainingThemeResolver();
-        chainingThemeResolver.addResolver(cookieThemeResolver).addResolver(sessionThemeResolver).addResolver(header).addResolver(serviceThemeResolver).addResolver(fixedResolver);
+        chainingThemeResolver.addResolver(cookieThemeResolver)
+            .addResolver(sessionThemeResolver).addResolver(header)
+            .addResolver(serviceThemeResolver).addResolver(fixedResolver);
         chainingThemeResolver.setDefaultThemeName(defaultThemeName);
         return chainingThemeResolver;
     }
@@ -99,17 +103,16 @@ public class CasThemesConfiguration {
     @ConditionalOnMissingBean(name = "themesStaticResourcesWebMvcConfigurer")
     @Autowired
     public WebMvcConfigurer themesStaticResourcesWebMvcConfigurer(final CasConfigurationProperties casProperties,
-                                                                  @Qualifier("thymeleafProperties")
+                                                                  final WebProperties webProperties,
                                                                   final ThymeleafProperties thymeleafProperties) {
         return new WebMvcConfigurer() {
-
             @Override
             public void addResourceHandlers(final ResourceHandlerRegistry registry) {
                 val templatePrefixes = casProperties.getView().getTemplatePrefixes();
                 if (!templatePrefixes.isEmpty()) {
                     val registration = registry.addResourceHandler("/**");
-                    val resources =
-                        templatePrefixes.stream().map(prefix -> StringUtils.appendIfMissing(prefix, "/")).map(Unchecked.function(ResourceUtils::getRawResourceFrom)).toArray(Resource[]::new);
+                    val resources = templatePrefixes.stream().map(prefix -> StringUtils.appendIfMissing(prefix, "/"))
+                            .map(Unchecked.function(ResourceUtils::getRawResourceFrom)).toArray(Resource[]::new);
                     LOGGER.debug("Adding resource handler for resources [{}]", (Object[]) resources);
                     registration.addResourceLocations(templatePrefixes.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
                     registration.addResourceLocations(webProperties.getResources().getStaticLocations());

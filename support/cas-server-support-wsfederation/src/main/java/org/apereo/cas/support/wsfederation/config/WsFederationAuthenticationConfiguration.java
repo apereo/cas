@@ -67,7 +67,7 @@ public class WsFederationAuthenticationConfiguration {
                                                                              final WsFederationCookieManager wsFederationCookieManager,
                                                                              @Qualifier("wsFederationHelper")
                                                                              final WsFederationHelper wsFederationHelper,
-                                                                             @Qualifier("authenticationRequestServiceSelectionStrategies")
+                                                                             @Qualifier("authenticationServiceSelectionPlan")
                                                                              final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
                                                                              @Qualifier("argumentExtractor")
                                                                              final ArgumentExtractor argumentExtractor) {
