@@ -154,7 +154,9 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
     }
 
     @Override
-    public List<String> determineRequestedAttributeDefinitions() {
+    public List<String> determineRequestedAttributeDefinitions(final Principal principal,
+                                                               final RegisteredService registeredService,
+                                                               final Service selectedService) {
         return new ArrayList<>(getAllowedAttributes().keySet());
     }
 }

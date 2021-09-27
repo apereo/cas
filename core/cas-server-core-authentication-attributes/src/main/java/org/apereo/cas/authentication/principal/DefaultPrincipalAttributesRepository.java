@@ -33,6 +33,7 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
         val mergeStrategy = determineMergingStrategy();
         val principalAttributes = getPrincipalAttributes(principal);
 
+        LOGGER.trace("Operating principal attributes for processing are [{}]", principalAttributes);
         if (areAttributeRepositoryIdsDefined()) {
             val personDirectoryAttributes = retrievePersonAttributesFromAttributeRepository(principal);
             LOGGER.debug("Merging current principal attributes with that of the repository via strategy [{}]", mergeStrategy);

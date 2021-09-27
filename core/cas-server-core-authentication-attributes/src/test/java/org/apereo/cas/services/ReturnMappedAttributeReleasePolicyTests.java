@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.CoreAttributesTestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
@@ -303,7 +304,11 @@ public class ReturnMappedAttributeReleasePolicyTests {
     public void verifyRequestedDefinitions() {
         val allowed1 = CollectionUtils.<String, Object>wrap("uid", "my-userid");
         val policy = new ReturnMappedAttributeReleasePolicy(allowed1);
-        assertTrue(policy.determineRequestedAttributeDefinitions().containsAll(policy.getAllowedAttributes().keySet()));
+        assertTrue(policy.determineRequestedAttributeDefinitions(
+            CoreAuthenticationTestUtils.getPrincipal(),
+            CoreAuthenticationTestUtils.getRegisteredService(),
+            CoreAuthenticationTestUtils.getService()
+        ).containsAll(policy.getAllowedAttributes().keySet()));
     }
 
     @Test
