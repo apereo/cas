@@ -305,7 +305,10 @@ public class WebAuthnConfiguration {
         }
 
         @Bean
-        public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> webAuthnProtocolEndpointConfigurer() {
+        @Autowired
+        public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> webAuthnProtocolEndpointConfigurer(
+            @Qualifier("webAuthnCsrfTokenRepository")
+            final CsrfTokenRepository webAuthnCsrfTokenRepository) {
             return new ProtocolEndpointWebSecurityConfigurer<>() {
 
                 @Override
@@ -313,7 +316,7 @@ public class WebAuthnConfiguration {
                 public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) {
                     http.csrf(customizer -> {
                         val pattern = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
-                        customizer.requireCsrfProtectionMatcher(pattern).csrfTokenRepository(webAuthnCsrfTokenRepository());
+                        customizer.requireCsrfProtectionMatcher(pattern).csrfTokenRepository(webAuthnCsrfTokenRepository);
                     });
                     return this;
                 }

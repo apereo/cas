@@ -41,6 +41,8 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Autowired
     public AuthenticationHandler casSimpleMultifactorAuthenticationHandler(
+        @Qualifier("casSimpleMultifactorPrincipalFactory")
+        final PrincipalFactory casSimpleMultifactorPrincipalFactory,
         @Qualifier("servicesManager")
         final ServicesManager servicesManager,
         @Qualifier("centralAuthenticationService")
@@ -48,7 +50,7 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
         final CasConfigurationProperties casProperties) {
         val props = casProperties.getAuthn().getMfa().getSimple();
         return new CasSimpleMultifactorAuthenticationHandler(props.getName(),
-            servicesManager, casSimpleMultifactorPrincipalFactory(),
+            servicesManager, casSimpleMultifactorPrincipalFactory,
             centralAuthenticationService, props.getOrder());
     }
 
