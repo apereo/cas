@@ -28,24 +28,20 @@ import java.util.concurrent.TimeUnit;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class GoogleMapsGeoCodingConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @ConditionalOnMissingBean(name = "geoLocationService")
     @Bean
     @RefreshScope
-    public GeoLocationService geoLocationService() {
+    @Autowired
+    public GeoLocationService geoLocationService(final CasConfigurationProperties casProperties) {
         val builder = new GeoApiContext.Builder();
         val properties = casProperties.getGoogleMaps();
         if (properties.isGoogleAppsEngine()) {
             builder.requestHandlerBuilder(new GaeRequestHandler.Builder());
         }
-
         if (StringUtils.isNotBlank(properties.getClientId()) && StringUtils.isNotBlank(properties.getClientSecret())) {
             builder.enterpriseCredentials(properties.getClientId(), properties.getClientSecret());
         }
-        builder.apiKey(properties.getApiKey())
-            .connectTimeout(Beans.newDuration(properties.getConnectTimeout()).toMillis(), TimeUnit.MILLISECONDS);
+        builder.apiKey(properties.getApiKey()).connectTimeout(Beans.newDuration(properties.getConnectTimeout()).toMillis(), TimeUnit.MILLISECONDS);
         return new GoogleMapsGeoLocationService(builder.build());
     }
 }

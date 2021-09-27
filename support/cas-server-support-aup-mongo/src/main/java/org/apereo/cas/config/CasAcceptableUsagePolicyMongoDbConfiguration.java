@@ -7,7 +7,6 @@ import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -25,27 +24,19 @@ import javax.net.ssl.SSLContext;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("casAcceptableUsagePolicyMongoDbConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
+@Configuration(value = "casAcceptableUsagePolicyMongoDbConfiguration", proxyBeanMethods = false)
 public class CasAcceptableUsagePolicyMongoDbConfiguration {
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("sslContext")
-    private ObjectProvider<SSLContext> sslContext;
 
     @RefreshScope
     @Bean
-    public MongoTemplate mongoAcceptableUsagePolicyTemplate() {
+    @Autowired
+    public MongoTemplate mongoAcceptableUsagePolicyTemplate(final CasConfigurationProperties casProperties,
+                                                            @Qualifier("sslContext")
+                                                            final SSLContext sslContext) {
         val mongo = casProperties.getAcceptableUsagePolicy().getMongo();
-        val factory = new MongoDbConnectionFactory(sslContext.getObject());
+        val factory = new MongoDbConnectionFactory(sslContext);
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
@@ -53,9 +44,12 @@ public class CasAcceptableUsagePolicyMongoDbConfiguration {
 
     @RefreshScope
     @Bean
-    public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
-        return new MongoDbAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(),
-            casProperties.getAcceptableUsagePolicy(),
-            mongoAcceptableUsagePolicyTemplate());
+    @Autowired
+    public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(final CasConfigurationProperties casProperties,
+                                                                           @Qualifier("mongoAcceptableUsagePolicyTemplate")
+                                                                           final MongoTemplate mongoAcceptableUsagePolicyTemplate,
+                                                                           @Qualifier("ticketRegistrySupport")
+                                                                           final TicketRegistrySupport ticketRegistrySupport) {
+        return new MongoDbAcceptableUsagePolicyRepository(ticketRegistrySupport, casProperties.getAcceptableUsagePolicy(), mongoAcceptableUsagePolicyTemplate);
     }
 }

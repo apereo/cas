@@ -36,19 +36,13 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration("gitServiceRegistryConfiguration")
 @ConditionalOnProperty(prefix = "cas.service-registry.git", name = "repository-url")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "gitServiceRegistryConfiguration", proxyBeanMethods = false)
 public class GitServiceRegistryConfiguration {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("registeredServiceResourceNamingStrategy")
-    private ObjectProvider<RegisteredServiceResourceNamingStrategy> resourceNamingStrategy;
 
     @Autowired
     @Qualifier("serviceRegistryListeners")
@@ -57,7 +51,8 @@ public class GitServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "gitServiceRegistryRepositoryInstance")
-    public GitRepository gitServiceRegistryRepositoryInstance() {
+    @Autowired
+    public GitRepository gitServiceRegistryRepositoryInstance(final CasConfigurationProperties casProperties) {
         val registry = casProperties.getServiceRegistry().getGit();
         return GitRepositoryBuilder.newInstance(registry).build();
     }
@@ -65,34 +60,29 @@ public class GitServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "gitServiceRegistry")
-    public ServiceRegistry gitServiceRegistry() {
+    @Autowired
+    public ServiceRegistry gitServiceRegistry(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+                                              @Qualifier("gitServiceRegistryRepositoryInstance")
+                                              final GitRepository gitServiceRegistryRepositoryInstance,
+                                              @Qualifier("resourceNamingStrategy")
+                                              final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
         val properties = casProperties.getServiceRegistry().getGit();
-        val gitRepository = gitServiceRegistryRepositoryInstance();
-
+        val gitRepository = gitServiceRegistryRepositoryInstance;
         val locators = new ArrayList<GitRepositoryRegisteredServiceLocator>();
         if (properties.isGroupByType()) {
-            locators.add(new TypeAwareGitRepositoryRegisteredServiceLocator(resourceNamingStrategy.getObject(),
-                gitRepository.getRepositoryDirectory(), properties));
+            locators.add(new TypeAwareGitRepositoryRegisteredServiceLocator(resourceNamingStrategy, gitRepository.getRepositoryDirectory(), properties));
         }
-        locators.add(new DefaultGitRepositoryRegisteredServiceLocator(resourceNamingStrategy.getObject(),
-            gitRepository.getRepositoryDirectory(), properties));
-
-        return new GitServiceRegistry(applicationContext,
-            gitRepository,
-            CollectionUtils.wrapList(
-                new RegisteredServiceJsonSerializer(),
-                new RegisteredServiceYamlSerializer()),
-            properties.isPushChanges(),
-            properties.getRootDirectory(),
-            serviceRegistryListeners.getObject(),
-            locators
-        );
+        locators.add(new DefaultGitRepositoryRegisteredServiceLocator(resourceNamingStrategy, gitRepository.getRepositoryDirectory(), properties));
+        return new GitServiceRegistry(applicationContext, gitRepository, CollectionUtils.wrapList(new RegisteredServiceJsonSerializer(), new RegisteredServiceYamlSerializer()),
+            properties.isPushChanges(), properties.getRootDirectory(), serviceRegistryListeners.getObject(), locators);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "gitServiceRegistryExecutionPlanConfigurer")
     @RefreshScope
-    public ServiceRegistryExecutionPlanConfigurer gitServiceRegistryExecutionPlanConfigurer() {
-        return plan -> plan.registerServiceRegistry(gitServiceRegistry());
+    public ServiceRegistryExecutionPlanConfigurer gitServiceRegistryExecutionPlanConfigurer(
+        @Qualifier("gitServiceRegistry")
+        final ServiceRegistry gitServiceRegistry) {
+        return plan -> plan.registerServiceRegistry(gitServiceRegistry);
     }
 }

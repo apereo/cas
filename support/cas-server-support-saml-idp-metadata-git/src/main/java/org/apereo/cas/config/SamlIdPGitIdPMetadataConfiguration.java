@@ -32,17 +32,11 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("samlIdPGitIdPMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.git", name = { "idp-metadata-enabled", "repository-url" })
+@ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.git", name = {"idp-metadata-enabled", "repository-url"})
+@Configuration(value = "samlIdPGitIdPMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPGitIdPMetadataConfiguration {
-    @Autowired
-    @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
-    private ObjectProvider<SamlIdPMetadataGeneratorConfigurationContext> samlIdPMetadataGeneratorConfigurationContext;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("samlIdPMetadataCache")
@@ -51,38 +45,42 @@ public class SamlIdPGitIdPMetadataConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "gitSamlIdPMetadataCipherExecutor")
     @RefreshScope
-    public CipherExecutor samlIdPMetadataGeneratorCipherExecutor() {
+    @Autowired
+    public CipherExecutor samlIdPMetadataGeneratorCipherExecutor(final CasConfigurationProperties casProperties) {
         val idp = casProperties.getAuthn().getSamlIdp();
         val crypto = idp.getMetadata().getGit().getCrypto();
-
         if (crypto.isEnabled()) {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, GitSamlIdPMetadataCipherExecutor.class);
         }
-        LOGGER.info("Git SAML IdP metadata encryption/signing is turned off and "
-            + "MAY NOT be safe in a production environment. "
-            + "Consider using other choices to handle encryption, signing and verification of "
-            + "metadata artifacts");
+        LOGGER.info("Git SAML IdP metadata encryption/signing is turned off and " + "MAY NOT be safe in a production environment. " +
+            "Consider using other choices to handle encryption, signing and verification of " + "metadata artifacts");
         return CipherExecutor.noOp();
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "gitIdPMetadataRepositoryInstance")
-    public GitRepository gitIdPMetadataRepositoryInstance() {
+    @Autowired
+    public GitRepository gitIdPMetadataRepositoryInstance(final CasConfigurationProperties casProperties) {
         val git = casProperties.getAuthn().getSamlIdp().getMetadata().getGit();
         return GitRepositoryBuilder.newInstance(git).build();
     }
 
     @Bean
     @RefreshScope
-    public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
-        return new GitSamlIdPMetadataGenerator(
-            samlIdPMetadataGeneratorConfigurationContext.getObject(), gitIdPMetadataRepositoryInstance());
+    public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
+        @Qualifier("gitIdPMetadataRepositoryInstance")
+        final GitRepository gitIdPMetadataRepositoryInstance,
+        @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
+        final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext) {
+        return new GitSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext, gitIdPMetadataRepositoryInstance);
     }
 
     @Bean
     @RefreshScope
-    public SamlIdPMetadataLocator samlIdPMetadataLocator() {
-        return new GitSamlIdPMetadataLocator(gitIdPMetadataRepositoryInstance(), samlIdPMetadataCache.getObject());
+    public SamlIdPMetadataLocator samlIdPMetadataLocator(
+        @Qualifier("gitIdPMetadataRepositoryInstance")
+        final GitRepository gitIdPMetadataRepositoryInstance) {
+        return new GitSamlIdPMetadataLocator(gitIdPMetadataRepositoryInstance, samlIdPMetadataCache.getObject());
     }
 }
