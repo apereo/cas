@@ -108,7 +108,7 @@ public class CasSupportActionsConfiguration {
         final CasCookieBuilder ticketGrantingTicketCookieGenerator,
         @Qualifier("centralAuthenticationService")
         final CentralAuthenticationService centralAuthenticationService,
-        @Qualifier("webflowSingleSignOnParticipationStrategy")
+        @Qualifier("singleSignOnParticipationStrategy")
         final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy) {
         return new SendTicketGrantingTicketAction(centralAuthenticationService,
             ticketGrantingTicketCookieGenerator, webflowSingleSignOnParticipationStrategy);
@@ -204,11 +204,11 @@ public class CasSupportActionsConfiguration {
                                          final CasCookieBuilder ticketGrantingTicketCookieGenerator,
                                          @Qualifier("warnCookieGenerator")
                                          final CasCookieBuilder warnCookieGenerator,
-                                         @Qualifier("ticketRegistrySupport")
+                                         @Qualifier("defaultTicketRegistrySupport")
                                          final TicketRegistrySupport ticketRegistrySupport,
                                          @Qualifier("authenticationServiceSelectionPlan")
                                          final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-                                         @Qualifier("webflowSingleSignOnParticipationStrategy")
+                                         @Qualifier("singleSignOnParticipationStrategy")
                                          final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy,
                                          @Qualifier("argumentExtractor")
                                          final ArgumentExtractor argumentExtractor) {
@@ -227,7 +227,7 @@ public class CasSupportActionsConfiguration {
                                               final ServicesManager servicesManager,
                                               @Qualifier("ticketGrantingTicketCookieGenerator")
                                               final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-                                              @Qualifier("ticketRegistrySupport")
+                                              @Qualifier("defaultTicketRegistrySupport")
                                               final TicketRegistrySupport ticketRegistrySupport) {
         return new VerifyRequiredServiceAction(servicesManager, ticketGrantingTicketCookieGenerator, casProperties, ticketRegistrySupport);
     }
@@ -274,9 +274,9 @@ public class CasSupportActionsConfiguration {
         final ServicesManager servicesManager,
         @Qualifier("centralAuthenticationService")
         final CentralAuthenticationService centralAuthenticationService,
-        @Qualifier("authenticationSystemSupport")
+        @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
-        @Qualifier("ticketRegistrySupport")
+        @Qualifier("defaultTicketRegistrySupport")
         final TicketRegistrySupport ticketRegistrySupport,
         @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
@@ -392,9 +392,9 @@ public class CasSupportActionsConfiguration {
         final CasCookieBuilder warnCookieGenerator,
         @Qualifier("centralAuthenticationService")
         final CentralAuthenticationService centralAuthenticationService,
-        @Qualifier("authenticationSystemSupport")
+        @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
-        @Qualifier("ticketRegistrySupport")
+        @Qualifier("defaultTicketRegistrySupport")
         final TicketRegistrySupport ticketRegistrySupport,
         @Qualifier("principalElectionStrategy")
         final PrincipalElectionStrategy principalElectionStrategy) {

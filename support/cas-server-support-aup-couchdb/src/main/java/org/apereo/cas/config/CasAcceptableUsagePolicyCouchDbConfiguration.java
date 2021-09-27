@@ -57,7 +57,7 @@ public class CasAcceptableUsagePolicyCouchDbConfiguration {
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(
         @Qualifier("aupCouchDbRepository")
         final ProfileCouchDbRepository profileCouchDbRepository, final CasConfigurationProperties casProperties,
-        @Qualifier("ticketRegistrySupport")
+        @Qualifier("defaultTicketRegistrySupport")
         final TicketRegistrySupport ticketRegistrySupport) {
         return new CouchDbAcceptableUsagePolicyRepository(ticketRegistrySupport, casProperties.getAcceptableUsagePolicy(), profileCouchDbRepository,
             casProperties.getAcceptableUsagePolicy().getCouchDb().getRetries());

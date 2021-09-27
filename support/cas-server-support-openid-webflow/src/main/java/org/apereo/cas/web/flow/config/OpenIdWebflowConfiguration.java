@@ -64,7 +64,7 @@ public class OpenIdWebflowConfiguration {
         final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
         @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
-        @Qualifier("ticketRegistrySupport")
+        @Qualifier("defaultTicketRegistrySupport")
         final TicketRegistrySupport ticketRegistrySupport) {
         return new OpenIdSingleSignOnAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy,
             defaultOpenIdUserNameExtractor, ticketRegistrySupport);

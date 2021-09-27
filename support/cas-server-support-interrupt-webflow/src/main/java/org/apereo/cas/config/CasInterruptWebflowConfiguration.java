@@ -81,7 +81,7 @@ public class CasInterruptWebflowConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "interruptSingleSignOnParticipationStrategy")
     public SingleSignOnParticipationStrategy interruptSingleSignOnParticipationStrategy(
-        @Qualifier("ticketRegistrySupport")
+        @Qualifier("defaultTicketRegistrySupport")
         final TicketRegistrySupport ticketRegistrySupport,
         @Qualifier("servicesManager")
         final ServicesManager servicesManager,

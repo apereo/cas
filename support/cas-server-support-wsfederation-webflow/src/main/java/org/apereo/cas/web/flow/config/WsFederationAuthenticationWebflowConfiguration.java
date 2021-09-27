@@ -87,7 +87,7 @@ public class WsFederationAuthenticationWebflowConfiguration {
     public WsFederationResponseValidator wsFederationResponseValidator(
         @Qualifier("wsFederationCookieManager")
         final WsFederationCookieManager wsFederationCookieManager,
-        @Qualifier("authenticationSystemSupport")
+        @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("wsFederationHelper")
         final WsFederationHelper wsFederationHelper) {

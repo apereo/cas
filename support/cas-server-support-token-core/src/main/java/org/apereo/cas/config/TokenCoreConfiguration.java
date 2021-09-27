@@ -22,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.validation.TicketValidator;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -45,10 +44,6 @@ import org.springframework.core.Ordered;
 @Slf4j
 @Configuration(value = "tokenCoreConfiguration", proxyBeanMethods = false)
 public class TokenCoreConfiguration {
-
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
 
     @Bean
     @RefreshScope
@@ -75,13 +70,16 @@ public class TokenCoreConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "tokenTicketValidator")
     public TicketValidator tokenTicketValidator(
+        @Qualifier("webApplicationServiceFactory")
+        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
         @Qualifier("authenticationAttributeReleasePolicy")
         final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
         @Qualifier("servicesManager")
         final ServicesManager servicesManager,
         @Qualifier("centralAuthenticationService")
         final CentralAuthenticationService centralAuthenticationService) {
-        return new InternalTicketValidator(centralAuthenticationService, webApplicationServiceFactory.getObject(), authenticationAttributeReleasePolicy, servicesManager);
+        return new InternalTicketValidator(centralAuthenticationService,
+            webApplicationServiceFactory, authenticationAttributeReleasePolicy, servicesManager);
     }
 
     @RefreshScope
@@ -97,7 +95,8 @@ public class TokenCoreConfiguration {
                                                  final ServicesManager servicesManager,
                                                  @Qualifier("grantingTicketExpirationPolicy")
                                                  final ExpirationPolicyBuilder grantingTicketExpirationPolicy) {
-        return new JwtTokenTicketBuilder(tokenTicketValidator, grantingTicketExpirationPolicy, tokenTicketJwtBuilder, servicesManager, casProperties);
+        return new JwtTokenTicketBuilder(tokenTicketValidator,
+            grantingTicketExpirationPolicy, tokenTicketJwtBuilder, servicesManager, casProperties);
     }
 
     @RefreshScope
@@ -114,11 +113,15 @@ public class TokenCoreConfiguration {
     @Bean
     @ConditionalOnAvailableEndpoint
     @Autowired
-    public JwtTokenCipherSigningPublicKeyEndpoint jwtTokenCipherSigningPublicKeyEndpoint(final CasConfigurationProperties casProperties,
-                                                                                         @Qualifier("tokenCipherExecutor")
-                                                                                         final CipherExecutor tokenCipherExecutor,
-                                                                                         @Qualifier("servicesManager")
-                                                                                         final ServicesManager servicesManager) {
-        return new JwtTokenCipherSigningPublicKeyEndpoint(casProperties, tokenCipherExecutor, servicesManager, webApplicationServiceFactory.getObject());
+    public JwtTokenCipherSigningPublicKeyEndpoint jwtTokenCipherSigningPublicKeyEndpoint(
+        @Qualifier("webApplicationServiceFactory")
+        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("tokenCipherExecutor")
+        final CipherExecutor tokenCipherExecutor,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager) {
+        return new JwtTokenCipherSigningPublicKeyEndpoint(casProperties,
+            tokenCipherExecutor, servicesManager, webApplicationServiceFactory);
     }
 }

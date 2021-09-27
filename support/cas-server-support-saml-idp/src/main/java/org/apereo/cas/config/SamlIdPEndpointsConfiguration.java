@@ -167,7 +167,7 @@ public class SamlIdPEndpointsConfiguration {
         final TicketValidator samlIdPTicketValidator,
         @Qualifier("ssoSamlHttpRequestExtractor")
         final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-        @Qualifier("authenticationSystemSupport")
+        @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("samlObjectSignatureValidator")
         final SamlObjectSignatureValidator samlObjectSignatureValidator,
@@ -259,7 +259,7 @@ public class SamlIdPEndpointsConfiguration {
         final TicketValidator samlIdPTicketValidator,
         @Qualifier("ssoSamlHttpRequestExtractor")
         final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-        @Qualifier("authenticationSystemSupport")
+        @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("samlObjectSignatureValidator")
         final SamlObjectSignatureValidator samlObjectSignatureValidator,
@@ -349,7 +349,7 @@ public class SamlIdPEndpointsConfiguration {
         final TicketValidator samlIdPTicketValidator,
         @Qualifier("ssoSamlHttpRequestExtractor")
         final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-        @Qualifier("authenticationSystemSupport")
+        @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("samlObjectSignatureValidator")
         final SamlObjectSignatureValidator samlObjectSignatureValidator,
@@ -437,7 +437,7 @@ public class SamlIdPEndpointsConfiguration {
         final TicketValidator samlIdPTicketValidator,
         @Qualifier("ssoSamlHttpRequestExtractor")
         final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-        @Qualifier("authenticationSystemSupport")
+        @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("samlObjectSignatureValidator")
         final SamlObjectSignatureValidator samlObjectSignatureValidator,
@@ -520,7 +520,7 @@ public class SamlIdPEndpointsConfiguration {
         final TicketValidator samlIdPTicketValidator,
         @Qualifier("ssoSamlHttpRequestExtractor")
         final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-        @Qualifier("authenticationSystemSupport")
+        @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("singleSignOnParticipationStrategy")
         final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
@@ -598,7 +598,7 @@ public class SamlIdPEndpointsConfiguration {
         final TicketValidator samlIdPTicketValidator,
         @Qualifier("ssoSamlHttpRequestExtractor")
         final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-        @Qualifier("authenticationSystemSupport")
+        @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("samlObjectSignatureValidator")
         final SamlObjectSignatureValidator samlObjectSignatureValidator,
@@ -679,7 +679,7 @@ public class SamlIdPEndpointsConfiguration {
         final TicketValidator samlIdPTicketValidator,
         @Qualifier("ssoSamlHttpRequestExtractor")
         final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-        @Qualifier("authenticationSystemSupport")
+        @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("samlObjectSignatureValidator")
         final SamlObjectSignatureValidator samlObjectSignatureValidator,
@@ -762,7 +762,7 @@ public class SamlIdPEndpointsConfiguration {
         final TicketValidator samlIdPTicketValidator,
         @Qualifier("ssoSamlHttpRequestExtractor")
         final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-        @Qualifier("authenticationSystemSupport")
+        @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("samlObjectSignatureValidator")
         final SamlObjectSignatureValidator samlObjectSignatureValidator,
@@ -846,7 +846,7 @@ public class SamlIdPEndpointsConfiguration {
         final TicketValidator samlIdPTicketValidator,
         @Qualifier("ssoSamlHttpRequestExtractor")
         final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-        @Qualifier("authenticationSystemSupport")
+        @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("samlObjectSignatureValidator")
         final SamlObjectSignatureValidator samlObjectSignatureValidator,
@@ -1002,7 +1002,7 @@ public class SamlIdPEndpointsConfiguration {
         final TicketValidator samlIdPTicketValidator,
         @Qualifier("ssoSamlHttpRequestExtractor")
         final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-        @Qualifier("authenticationSystemSupport")
+        @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("samlObjectSignatureValidator")
         final SamlObjectSignatureValidator samlObjectSignatureValidator,
