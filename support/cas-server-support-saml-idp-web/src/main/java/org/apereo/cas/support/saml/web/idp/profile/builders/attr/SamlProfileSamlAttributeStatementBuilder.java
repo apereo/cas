@@ -118,20 +118,27 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
 
         friendlyNames.putAll(samlRegisteredService.getAttributeFriendlyNames());
 
-        for (val e : attributes.entrySet()) {
-            if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
-                LOGGER.info("Skipping attribute [{}] because it does not have any values.", e.getKey());
+        SamlIdPAttributeDefinitionCatalog.load()
+            .filter(defn -> !friendlyNames.containsKey(defn.getKey()))
+            .forEach(defn -> {
+                friendlyNames.put(defn.getKey(), defn.getFriendlyName());
+                urns.put(defn.getKey(), defn.getUrn());
+            });
+
+        for (val entry : attributes.entrySet()) {
+            if (entry.getValue() instanceof Collection<?> && ((Collection<?>) entry.getValue()).isEmpty()) {
+                LOGGER.info("Skipping attribute [{}] because it does not have any values.", entry.getKey());
                 continue;
             }
-            val friendlyName = friendlyNames.getOrDefault(e.getKey(), null);
+            val friendlyName = friendlyNames.getOrDefault(entry.getKey(), null);
 
-            val attributeNames = urns.containsKey(e.getKey())
-                ? List.of(urns.get(e.getKey()))
-                : getMappedAttributeNamesFromAttributeDefinitionStore(e);
+            val attributeNames = urns.containsKey(entry.getKey())
+                ? List.of(urns.get(entry.getKey()))
+                : getMappedAttributeNamesFromAttributeDefinitionStore(entry);
 
             attributeNames.forEach(name -> {
-                LOGGER.trace("Creating SAML attribute [{}] with value [{}], friendlyName [{}]", attributeNames, e.getValue(), friendlyName);
-                val attribute = newAttribute(friendlyName, name, e.getValue(),
+                LOGGER.trace("Creating SAML attribute [{}] with value [{}], friendlyName [{}]", attributeNames, entry.getValue(), friendlyName);
+                val attribute = newAttribute(friendlyName, name, entry.getValue(),
                     nameFormats,
                     resp.getDefaultAttributeNameFormat(),
                     samlRegisteredService.getAttributeValueTypes());

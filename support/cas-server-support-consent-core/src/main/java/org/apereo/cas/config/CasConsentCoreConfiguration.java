@@ -60,7 +60,7 @@ public class CasConsentCoreConfiguration {
     @Bean
     @RefreshScope
     public ConsentEngine consentEngine() {
-        return new DefaultConsentEngine(consentRepository(), consentDecisionBuilder());
+        return new DefaultConsentEngine(consentRepository(), consentDecisionBuilder(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "consentCipherExecutor")

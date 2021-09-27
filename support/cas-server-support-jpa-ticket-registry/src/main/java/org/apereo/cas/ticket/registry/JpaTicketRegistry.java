@@ -6,7 +6,7 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.registry.generic.JpaTicketEntity;
+import org.apereo.cas.ticket.registry.generic.BaseTicketEntity;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -157,7 +157,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         query.setLockMode(LockModeType.NONE);
         return jpaBeanFactory
             .streamQuery(query)
-            .map(JpaTicketEntity.class::cast)
+            .map(BaseTicketEntity.class::cast)
             .map(factory::toTicket)
             .map(this::decodeTicket);
     }

@@ -54,6 +54,8 @@ ext {
             .forUseAtConfigurationTime().getOrElse("false") == "true" ? "y" : "n"
     generateGitProperties = publishFlag
             || providers.systemProperty("generateGitProperties").forUseAtConfigurationTime().present
+    generateTimestamps = publishFlag
+        || providers.systemProperty("generateTimestamps").forUseAtConfigurationTime().present
 
     ci = System.getenv("CI") || providers.systemProperty("CI").forUseAtConfigurationTime().present
 
@@ -390,7 +392,6 @@ subprojects {
         }
     }
 
-    ext.buildDate = null
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
 
     [compileTestJava, compileJava].each {
@@ -421,15 +422,6 @@ subprojects {
         it.options.compilerArgs += casCompilerArgs
     }
 
-    def currentTime = java.time.ZonedDateTime.now(ZoneId.systemDefault())
-    compileJava.doLast {
-        buildDate = currentTime
-    }
-
-    tasks.jar.onlyIf {
-        project.buildDate != null || !project.buildJarFile.exists()
-    }
-
     if (projectRequiresLombok(project)) {
         apply plugin: "io.franzbecker.gradle-lombok"
         lombok {
@@ -445,8 +437,12 @@ subprojects {
                     "Automatic-Module-Name": project.name,
                     "Implementation-Title": project.name,
                     "Implementation-Vendor": project.group,
-                    "Created-By": project.group,
-                    "Implementation-Date": java.time.ZonedDateTime.now(ZoneId.systemDefault()),
+                    "Created-By": project.group)
+            if (generateTimestamps) {
+                // Only generate timestamps when enabled, as they cause every build to update the JAR.
+                attributes("Implementation-Date": java.time.ZonedDateTime.now(ZoneId.systemDefault()))
+            }
+            attributes(
                     "Specification-Version": "${-> project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'}",
                     "Implementation-Version": project.version)
         }

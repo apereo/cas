@@ -1,5 +1,6 @@
 package org.apereo.cas.acct;
 
+import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -45,7 +46,8 @@ public class DefaultAccountRegistrationServiceTests {
         this.accountRegistrationService = new DefaultAccountRegistrationService(
             mock(AccountRegistrationPropertyLoader.class),
             casProperties, CipherExecutor.noOpOfSerializableToString(),
-            AccountRegistrationUsernameBuilder.asDefault());
+            AccountRegistrationUsernameBuilder.asDefault(),
+            mock(AccountRegistrationProvisioner.class));
 
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("1.2.3.4");

@@ -1,5 +1,6 @@
 package org.apereo.cas.acct.webflow;
 
+import org.apereo.cas.acct.AccountRegistrationUtils;
 import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -60,6 +61,6 @@ public class AccountManagementWebflowConfigurerTests extends BaseWebflowConfigur
         completeState.enter(context);
 
         assertNotNull(WebUtils.getPasswordPolicyPattern(context));
-        assertEquals(2, WebUtils.getAccountManagementRegistrationSecurityQuestionsCount(context));
+        assertEquals(2, AccountRegistrationUtils.getAccountRegistrationSecurityQuestionsCount(context));
     }
 }
