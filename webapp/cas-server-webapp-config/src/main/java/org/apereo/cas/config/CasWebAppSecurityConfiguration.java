@@ -8,6 +8,7 @@ import org.apereo.cas.web.security.CasWebSecurityJdbcConfigurerAdapter;
 import org.apereo.cas.web.security.flow.PopulateSpringSecurityContextAction;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
@@ -45,29 +46,6 @@ public class CasWebAppSecurityConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "casWebSecurityConfigurerAdapter")
-    @Autowired
-    public WebSecurityConfigurerAdapter casWebSecurityConfigurerAdapter(
-        final PathMappedEndpoints pathMappedEndpoints,
-        final SecurityProperties securityProperties,
-        final CasConfigurationProperties casProperties,
-        @Qualifier("casWebSecurityExpressionHandler")
-        final SecurityExpressionHandler<FilterInvocation> casWebSecurityExpressionHandler) {
-        return new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
-            casWebSecurityExpressionHandler, pathMappedEndpoints);
-    }
-
-    @ConditionalOnProperty(name = "cas.monitor.endpoints.jdbc.query")
-    @Bean
-    @ConditionalOnMissingBean(name = "casWebSecurityConfigurerJdbcAdapter")
-    @Autowired
-    public CasWebSecurityJdbcConfigurerAdapter casWebSecurityConfigurerJdbcAdapter(
-        final CasConfigurationProperties casProperties,
-        final ConfigurableApplicationContext applicationContext) {
-        return new CasWebSecurityJdbcConfigurerAdapter(casProperties, applicationContext);
-    }
-
-    @Bean
     public InitializingBean securityContextHolderInitialization() {
         return () -> SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_GLOBAL);
     }
@@ -78,15 +56,42 @@ public class CasWebAppSecurityConfiguration {
         return new PopulateSpringSecurityContextAction();
     }
 
-    @Bean
-    public WebMvcConfigurer casWebAppSecurityWebMvcConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addViewControllers(final ViewControllerRegistry registry) {
-                registry.addViewController(CasWebSecurityConfigurerAdapter.ENDPOINT_URL_ADMIN_FORM_LOGIN)
-                    .setViewName(CasWebflowConstants.VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW);
-                registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
-            }
-        };
+    @Configuration(value = "CasWebappCoreSecurityConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasWebappCoreSecurityConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "casWebSecurityConfigurerAdapter")
+        @Autowired
+        public WebSecurityConfigurerAdapter casWebSecurityConfigurerAdapter(
+            final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
+            final SecurityProperties securityProperties,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("casWebSecurityExpressionHandler")
+            final SecurityExpressionHandler<FilterInvocation> casWebSecurityExpressionHandler) {
+            return new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
+                casWebSecurityExpressionHandler, pathMappedEndpoints);
+        }
+
+        @ConditionalOnProperty(name = "cas.monitor.endpoints.jdbc.query")
+        @Bean
+        @ConditionalOnMissingBean(name = "casWebSecurityConfigurerJdbcAdapter")
+        @Autowired
+        public CasWebSecurityJdbcConfigurerAdapter casWebSecurityConfigurerJdbcAdapter(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
+            return new CasWebSecurityJdbcConfigurerAdapter(casProperties, applicationContext);
+        }
+
+        @Bean
+        public WebMvcConfigurer casWebAppSecurityWebMvcConfigurer() {
+            return new WebMvcConfigurer() {
+                @Override
+                public void addViewControllers(final ViewControllerRegistry registry) {
+                    registry.addViewController(CasWebSecurityConfigurerAdapter.ENDPOINT_URL_ADMIN_FORM_LOGIN)
+                        .setViewName(CasWebflowConstants.VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW);
+                    registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+                }
+            };
+        }
     }
 }
