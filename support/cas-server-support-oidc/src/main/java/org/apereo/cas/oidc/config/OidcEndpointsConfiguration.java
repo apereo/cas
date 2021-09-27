@@ -57,6 +57,7 @@ import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.springframework.web.SecurityInterceptor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -193,20 +194,19 @@ public class OidcEndpointsConfiguration {
             @Qualifier("oidcIssuerService")
             final OidcIssuerService oidcIssuerService,
             @Qualifier("oauthInterceptor")
-            final HandlerInterceptor oauthInterceptor,
+            final ObjectProvider<HandlerInterceptor> oauthInterceptor,
             final CasConfigurationProperties casProperties) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(final InterceptorRegistry registry) {
                     val baseEndpoint = getOidcBaseEndpoint(oidcIssuerService, casProperties);
-                    registry.addInterceptor(oauthInterceptor)
+                    registry.addInterceptor(oauthInterceptor.getObject())
                         .order(100)
                         .addPathPatterns(baseEndpoint.concat("/*"));
                 }
             };
         }
 
-        
         @Bean
         @ConditionalOnMissingBean(name = "oidcProtocolEndpointConfigurer")
         @RefreshScope
@@ -238,7 +238,7 @@ public class OidcEndpointsConfiguration {
             interceptor.setParamName(OidcConstants.UI_LOCALES);
             return interceptor;
         }
-        
+
         @Bean
         @ConditionalOnMissingBean(name = "oidcConfirmView")
         @Autowired
@@ -426,7 +426,7 @@ public class OidcEndpointsConfiguration {
                 plan.registerWebflowLoginContextProvider(oidcCasWebflowLoginContextProvider);
             };
         }
-        
+
         @Bean
         @ConditionalOnMissingBean(name = "oidcCasWebflowLoginContextProvider")
         @RefreshScope
