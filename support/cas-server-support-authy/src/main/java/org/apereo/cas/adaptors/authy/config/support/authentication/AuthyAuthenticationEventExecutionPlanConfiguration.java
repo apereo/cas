@@ -20,7 +20,6 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -38,29 +37,15 @@ import org.springframework.webflow.execution.Action;
  * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
-@Configuration("authyAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix="cas.authn.mfa.authy", name="api-key")
+@ConditionalOnProperty(prefix = "cas.authn.mfa.authy", name = "api-key")
+@Configuration(value = "authyAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class AuthyAuthenticationEventExecutionPlanConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("authyBypassEvaluator")
-    private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> authyBypassEvaluator;
-
-    @Autowired
-    @Qualifier("failureModeEvaluator")
-    private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
 
     @RefreshScope
     @Bean
-    public AuthyClientInstance authyClientInstance() {
+    @Autowired
+    public AuthyClientInstance authyClientInstance(final CasConfigurationProperties casProperties) {
         val authy = casProperties.getAuthn().getMfa().getAuthy();
         if (StringUtils.isBlank(authy.getApiKey())) {
             throw new IllegalArgumentException("Authy API key must be defined");
@@ -71,11 +56,17 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "authyAuthenticationHandler")
     @RefreshScope
     @Bean
-    public AuthenticationHandler authyAuthenticationHandler() {
+    @Autowired
+    public AuthenticationHandler authyAuthenticationHandler(final CasConfigurationProperties casProperties,
+                                                            @Qualifier("authyPrincipalFactory")
+                                                            final PrincipalFactory authyPrincipalFactory,
+                                                            @Qualifier("authyClientInstance")
+                                                            final AuthyClientInstance authyClientInstance,
+                                                            @Qualifier("servicesManager")
+                                                            final ServicesManager servicesManager) {
         val authy = casProperties.getAuthn().getMfa().getAuthy();
         val forceVerification = authy.isForceVerification();
-        return new AuthyAuthenticationHandler(authy.getName(), servicesManager.getObject(),
-            authyPrincipalFactory(), authyClientInstance(), forceVerification, authy.getOrder());
+        return new AuthyAuthenticationHandler(authy.getName(), servicesManager, authyPrincipalFactory, authyClientInstance, forceVerification, authy.getOrder());
     }
 
     @ConditionalOnMissingBean(name = "authyPrincipalFactory")
@@ -86,12 +77,17 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProvider authyAuthenticatorMultifactorAuthenticationProvider() {
+    @Autowired
+    public MultifactorAuthenticationProvider authyAuthenticatorMultifactorAuthenticationProvider(final CasConfigurationProperties casProperties,
+                                                                                                 @Qualifier("authyBypassEvaluator")
+                                                                                                 final MultifactorAuthenticationProviderBypassEvaluator authyBypassEvaluator,
+                                                                                                 @Qualifier("failureModeEvaluator")
+                                                                                                 final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
         val p = new AuthyMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(authyBypassEvaluator.getObject());
+        p.setBypassEvaluator(authyBypassEvaluator);
         val authy = casProperties.getAuthn().getMfa().getAuthy();
         p.setFailureMode(authy.getFailureMode());
-        p.setFailureModeEvaluator(failureModeEvaluator.getObject());
+        p.setFailureModeEvaluator(failureModeEvaluator);
         p.setOrder(authy.getRank());
         p.setId(authy.getId());
         return p;
@@ -99,26 +95,34 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
-    public AuthenticationMetaDataPopulator authyAuthenticationMetaDataPopulator() {
-        return new AuthenticationContextAttributeMetaDataPopulator(
-            casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
-            authyAuthenticationHandler(),
-            authyAuthenticatorMultifactorAuthenticationProvider().getId()
-        );
+    @Autowired
+    public AuthenticationMetaDataPopulator authyAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,
+                                                                                @Qualifier("authyAuthenticationHandler")
+                                                                                final AuthenticationHandler authyAuthenticationHandler,
+                                                                                @Qualifier("authyAuthenticatorMultifactorAuthenticationProvider")
+                                                                                final MultifactorAuthenticationProvider authyAuthenticatorMultifactorAuthenticationProvider) {
+        return new AuthenticationContextAttributeMetaDataPopulator(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(), authyAuthenticationHandler,
+            authyAuthenticatorMultifactorAuthenticationProvider.getId());
     }
 
     @RefreshScope
     @Bean
-    public Action authyAuthenticationRegistrationWebflowAction() {
-        return new AuthyAuthenticationRegistrationWebflowAction(authyClientInstance());
+    public Action authyAuthenticationRegistrationWebflowAction(
+        @Qualifier("authyClientInstance")
+        final AuthyClientInstance authyClientInstance) {
+        return new AuthyAuthenticationRegistrationWebflowAction(authyClientInstance);
     }
 
     @ConditionalOnMissingBean(name = "authyAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer authyAuthenticationEventExecutionPlanConfigurer() {
+    public AuthenticationEventExecutionPlanConfigurer authyAuthenticationEventExecutionPlanConfigurer(
+        @Qualifier("authyAuthenticationHandler")
+        final AuthenticationHandler authyAuthenticationHandler,
+        @Qualifier("authyAuthenticationMetaDataPopulator")
+        final AuthenticationMetaDataPopulator authyAuthenticationMetaDataPopulator) {
         return plan -> {
-            plan.registerAuthenticationHandler(authyAuthenticationHandler());
-            plan.registerAuthenticationMetadataPopulator(authyAuthenticationMetaDataPopulator());
+            plan.registerAuthenticationHandler(authyAuthenticationHandler);
+            plan.registerAuthenticationMetadataPopulator(authyAuthenticationMetaDataPopulator);
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(AuthyTokenCredential.class));
         };
     }

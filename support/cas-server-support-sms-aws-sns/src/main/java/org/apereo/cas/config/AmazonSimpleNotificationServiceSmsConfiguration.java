@@ -23,17 +23,15 @@ import software.amazon.awssdk.services.sns.SnsClient;
 @Configuration(value = "amazonSimpleNotificationServiceSmsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class AmazonSimpleNotificationServiceSmsConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @RefreshScope
     @Bean
-    public SmsSender smsSender() {
+    @Autowired
+    public SmsSender smsSender(final CasConfigurationProperties casProperties) {
         val sns = casProperties.getSmsProvider().getSns();
         val clientBuilder = SnsClient.builder();
         AmazonClientConfigurationBuilder.prepareClientBuilder(clientBuilder,
-            ChainingAWSCredentialsProvider.getInstance(sns.getCredentialAccessKey(),
-                sns.getCredentialSecretKey(), sns.getProfilePath(), sns.getProfileName()), sns);
+            ChainingAWSCredentialsProvider.getInstance(sns.getCredentialAccessKey(), sns.getCredentialSecretKey(), sns.getProfilePath(), sns.getProfileName()), sns);
         return new AmazonSimpleNotificationServiceSmsSender(clientBuilder.build(), sns);
     }
 }

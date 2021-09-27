@@ -15,7 +15,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.val;
 import org.ldaptive.SearchOperation;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -38,35 +37,25 @@ import java.util.stream.Stream;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SpnegoWebflowActionsConfiguration {
 
-    @Autowired
-    @Qualifier("adaptiveAuthenticationPolicy")
-    private ObjectProvider<AdaptiveAuthenticationPolicy> adaptiveAuthenticationPolicy;
-
-    @Autowired
-    @Qualifier("serviceTicketRequestWebflowEventResolver")
-    private ObjectProvider<CasWebflowEventResolver> serviceTicketRequestWebflowEventResolver;
-
-    @Autowired
-    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
     @RefreshScope
-    public Action spnego() {
+    @Autowired
+    public Action spnego(final CasConfigurationProperties casProperties,
+                         @Qualifier("adaptiveAuthenticationPolicy")
+                         final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
+                         @Qualifier("serviceTicketRequestWebflowEventResolver")
+                         final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
+                         @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+                         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
-        return new SpnegoCredentialsAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
-            serviceTicketRequestWebflowEventResolver.getObject(),
-            adaptiveAuthenticationPolicy.getObject(),
-            spnegoProperties.isNtlm(),
-            spnegoProperties.isSend401OnAuthenticationFailure());
+        return new SpnegoCredentialsAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy,
+            spnegoProperties.isNtlm(), spnegoProperties.isSend401OnAuthenticationFailure());
     }
 
     @Bean
     @RefreshScope
-    public Action negociateSpnego() {
+    @Autowired
+    public Action negociateSpnego(final CasConfigurationProperties casProperties) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         val supportedBrowsers = Stream.of(spnegoProperties.getSupportedBrowsers().split(",")).collect(Collectors.toList());
         return new SpnegoNegotiateCredentialsAction(supportedBrowsers, spnegoProperties.isNtlm(), spnegoProperties.isMixedModeAuthentication());
@@ -74,39 +63,34 @@ public class SpnegoWebflowActionsConfiguration {
 
     @Bean
     @RefreshScope
-    public Action baseSpnegoClientAction() {
+    @Autowired
+    public Action baseSpnegoClientAction(final CasConfigurationProperties casProperties) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
-        return new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(spnegoProperties.getIpsToCheckPattern()),
-            spnegoProperties.getAlternativeRemoteHostAttribute(),
+        return new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(spnegoProperties.getIpsToCheckPattern()), spnegoProperties.getAlternativeRemoteHostAttribute(),
             Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis());
     }
 
     @Bean
     @RefreshScope
-    public Action hostnameSpnegoClientAction() {
+    @Autowired
+    public Action hostnameSpnegoClientAction(final CasConfigurationProperties casProperties) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
-        return new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(spnegoProperties.getIpsToCheckPattern()),
-            spnegoProperties.getAlternativeRemoteHostAttribute(),
-            Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis(),
-            spnegoProperties.getHostNamePatternString());
+        return new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(spnegoProperties.getIpsToCheckPattern()), spnegoProperties.getAlternativeRemoteHostAttribute(),
+            Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis(), spnegoProperties.getHostNamePatternString());
     }
 
     @Lazy
     @Bean
     @RefreshScope
-    public Action ldapSpnegoClientAction() {
+    @Autowired
+    public Action ldapSpnegoClientAction(final CasConfigurationProperties casProperties) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(spnegoProperties.getLdap());
         val filter = LdapUtils.newLdaptiveSearchFilter(spnegoProperties.getLdap().getSearchFilter());
-
         val searchRequest = LdapUtils.newLdaptiveSearchRequest(spnegoProperties.getLdap().getBaseDn(), filter);
         val searchOperation = new SearchOperation(connectionFactory, searchRequest);
         searchOperation.setTemplate(filter);
-
-        return new LdapSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(spnegoProperties.getIpsToCheckPattern()),
-            spnegoProperties.getAlternativeRemoteHostAttribute(),
-            Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis(),
-            searchOperation,
-            spnegoProperties.getSpnegoAttributeName());
+        return new LdapSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(spnegoProperties.getIpsToCheckPattern()), spnegoProperties.getAlternativeRemoteHostAttribute(),
+            Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis(), searchOperation, spnegoProperties.getSpnegoAttributeName());
     }
 }

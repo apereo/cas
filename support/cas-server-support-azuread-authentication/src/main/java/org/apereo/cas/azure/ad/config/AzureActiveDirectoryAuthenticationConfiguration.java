@@ -18,7 +18,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.MicrosoftGraphPersonAttributeDao;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,48 +40,38 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class AzureActiveDirectoryAuthenticationConfiguration {
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("defaultPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @ConditionalOnMissingBean(name = "microsoftAzureActiveDirectoryAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @RefreshScope
     @Autowired
     public AuthenticationEventExecutionPlanConfigurer microsoftAzureActiveDirectoryAuthenticationEventExecutionPlanConfigurer(
-        @Qualifier("microsoftAzureActiveDirectoryAuthenticationHandler") final AuthenticationHandler handler) {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(
-            handler, defaultPrincipalResolver.getObject());
+        @Qualifier("microsoftAzureActiveDirectoryAuthenticationHandler")
+        final AuthenticationHandler handler,
+        @Qualifier("defaultPrincipalResolver")
+        final PrincipalResolver defaultPrincipalResolver) {
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(handler, defaultPrincipalResolver);
     }
 
     @ConditionalOnMissingBean(name = "microsoftAzureActiveDirectoryAttributeRepositoryPlanConfigurer")
     @Bean
     @Autowired
     public PersonDirectoryAttributeRepositoryPlanConfigurer microsoftAzureActiveDirectoryAttributeRepositoryPlanConfigurer(
-        @Qualifier("microsoftAzureActiveDirectoryAttributeRepositories") final List<IPersonAttributeDao> repositories) {
+        @Qualifier("microsoftAzureActiveDirectoryAttributeRepositories")
+        final List<IPersonAttributeDao> repositories) {
         return plan -> repositories.forEach(plan::registerAttributeRepository);
     }
 
     @Configuration(value = "AzureActiveDirectoryAuthenticationInternalConfiguration", proxyBeanMethods = false)
-    public class AzureActiveDirectoryAuthenticationInternalConfiguration {
+    public static class AzureActiveDirectoryAuthenticationInternalConfiguration {
+
         @ConditionalOnMissingBean(name = "microsoftAzureActiveDirectoryAttributeRepositories")
         @Bean
         @RefreshScope
-        public List<IPersonAttributeDao> microsoftAzureActiveDirectoryAttributeRepositories() {
+        @Autowired
+        public List<IPersonAttributeDao> microsoftAzureActiveDirectoryAttributeRepositories(final CasConfigurationProperties casProperties) {
             val list = new ArrayList<IPersonAttributeDao>();
             val attrs = casProperties.getAuthn().getAttributeRepository();
-            attrs.getAzureActiveDirectory()
-                .stream()
+            attrs.getAzureActiveDirectory().stream()
                 .filter(msft -> StringUtils.isNotBlank(msft.getClientId()) && StringUtils.isNotBlank(msft.getClientSecret()))
                 .forEach(msft -> {
                     val dao = new MicrosoftGraphPersonAttributeDao();
@@ -96,10 +85,8 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
                     FunctionUtils.doIfNotNull(msft.getResource(), dao::setResource);
                     FunctionUtils.doIfNotNull(msft.getScope(), dao::setScope);
                     FunctionUtils.doIfNotNull(msft.getTenant(), dao::setTenant);
-
                     dao.setClientSecret(msft.getClientSecret());
                     dao.setClientId(msft.getClientId());
-
                     dao.setOrder(msft.getOrder());
                     list.add(dao);
                 });
@@ -117,14 +104,15 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
         @RefreshScope
         @Autowired
         public AuthenticationHandler microsoftAzureActiveDirectoryAuthenticationHandler(
-            @Qualifier("microsoftAzureActiveDirectoryPrincipalFactory") final PrincipalFactory factory) {
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("servicesManager")
+            final ServicesManager servicesManager,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("microsoftAzureActiveDirectoryPrincipalFactory")
+            final PrincipalFactory factory) {
             val azure = casProperties.getAuthn().getAzureActiveDirectory();
             val handler = new AzureActiveDirectoryAuthenticationHandler(azure.getName(),
-                servicesManager.getObject(),
-                factory,
-                azure.getOrder(),
-                azure.getClientId(),
-                azure.getLoginUrl(),
+                servicesManager, factory, azure.getOrder(), azure.getClientId(), azure.getLoginUrl(),
                 azure.getResource());
             handler.setState(azure.getState());
             handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(azure.getPrincipalTransformation()));
@@ -132,6 +120,5 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
             handler.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(azure.getCredentialCriteria()));
             return handler;
         }
-
     }
 }

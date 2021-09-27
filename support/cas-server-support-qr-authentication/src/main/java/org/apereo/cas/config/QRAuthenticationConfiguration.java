@@ -26,7 +26,6 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -52,55 +51,38 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Configuration("QRAuthenticationConfiguration")
 @EnableWebSocketMessageBroker
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class QRAuthenticationConfiguration implements WebSocketMessageBrokerConfigurer {
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("tokenTicketJwtBuilder")
-    private ObjectProvider<JwtBuilder> jwtBuilder;
-
-    @Autowired
-    @Qualifier("flowBuilderServices")
-    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
+@Configuration(value = "QRAuthenticationConfiguration", proxyBeanMethods = false)
+public class QRAuthenticationConfiguration {
 
     @Autowired
     @Bean
     public QRAuthenticationChannelController qrAuthenticationChannelController(
-        @Qualifier("brokerMessagingTemplate") final SimpMessagingTemplate template) {
-        return new QRAuthenticationChannelController(template, qrAuthenticationTokenValidatorService());
+        @Qualifier("brokerMessagingTemplate")
+        final SimpMessagingTemplate template,
+        @Qualifier("qrAuthenticationTokenValidatorService")
+        final QRAuthenticationTokenValidatorService qrAuthenticationTokenValidatorService) {
+        return new QRAuthenticationChannelController(template, qrAuthenticationTokenValidatorService);
     }
 
     @ConditionalOnMissingBean(name = "qrAuthenticationWebflowConfigurer")
     @Bean
-    public CasWebflowConfigurer qrAuthenticationWebflowConfigurer() {
-        return new QRAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(),
-            applicationContext, casProperties);
+    @Autowired
+    public CasWebflowConfigurer qrAuthenticationWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+                                                                  @Qualifier("loginFlowDefinitionRegistry")
+                                                                  final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                                  @Qualifier("flowBuilderServices")
+                                                                  final FlowBuilderServices flowBuilderServices) {
+        return new QRAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "qrAuthenticationCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer qrAuthenticationCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(qrAuthenticationWebflowConfigurer());
+    public CasWebflowExecutionPlanConfigurer qrAuthenticationCasWebflowExecutionPlanConfigurer(
+        @Qualifier("qrAuthenticationWebflowConfigurer")
+        final CasWebflowConfigurer qrAuthenticationWebflowConfigurer) {
+        return plan -> plan.registerWebflowConfigurer(qrAuthenticationWebflowConfigurer);
     }
 
     @Bean
@@ -120,15 +102,22 @@ public class QRAuthenticationConfiguration implements WebSocketMessageBrokerConf
     @Bean
     @ConditionalOnMissingBean(name = "qrAuthenticationTokenValidatorService")
     @RefreshScope
-    public QRAuthenticationTokenValidatorService qrAuthenticationTokenValidatorService() {
-        return new DefaultQRAuthenticationTokenValidatorService(jwtBuilder.getObject(),
-            centralAuthenticationService.getObject(), casProperties, qrAuthenticationDeviceRepository());
+    @Autowired
+    public QRAuthenticationTokenValidatorService qrAuthenticationTokenValidatorService(final CasConfigurationProperties casProperties,
+                                                                                       @Qualifier("qrAuthenticationDeviceRepository")
+                                                                                       final QRAuthenticationDeviceRepository qrAuthenticationDeviceRepository,
+                                                                                       @Qualifier("jwtBuilder")
+                                                                                       final JwtBuilder jwtBuilder,
+                                                                                       @Qualifier("centralAuthenticationService")
+                                                                                       final CentralAuthenticationService centralAuthenticationService) {
+        return new DefaultQRAuthenticationTokenValidatorService(jwtBuilder, centralAuthenticationService, casProperties, qrAuthenticationDeviceRepository);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "qrAuthenticationDeviceRepository")
     @RefreshScope
-    public QRAuthenticationDeviceRepository qrAuthenticationDeviceRepository() {
+    @Autowired
+    public QRAuthenticationDeviceRepository qrAuthenticationDeviceRepository(final CasConfigurationProperties casProperties) {
         val qr = casProperties.getAuthn().getQr();
         if (qr.getJson().getLocation() != null) {
             return new JsonResourceQRAuthenticationDeviceRepository(qr.getJson().getLocation());
@@ -145,43 +134,53 @@ public class QRAuthenticationConfiguration implements WebSocketMessageBrokerConf
     @ConditionalOnMissingBean(name = "qrAuthenticationTokenAuthenticationHandler")
     @Bean
     @RefreshScope
-    public AuthenticationHandler qrAuthenticationTokenAuthenticationHandler() {
-        return new QRAuthenticationTokenAuthenticationHandler(
-            servicesManager.getObject(),
-            qrAuthenticationPrincipalFactory(),
-            qrAuthenticationTokenValidatorService());
+    public AuthenticationHandler qrAuthenticationTokenAuthenticationHandler(
+        @Qualifier("qrAuthenticationPrincipalFactory")
+        final PrincipalFactory qrAuthenticationPrincipalFactory,
+        @Qualifier("qrAuthenticationTokenValidatorService")
+        final QRAuthenticationTokenValidatorService qrAuthenticationTokenValidatorService,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager) {
+        return new QRAuthenticationTokenAuthenticationHandler(servicesManager, qrAuthenticationPrincipalFactory, qrAuthenticationTokenValidatorService);
     }
 
     @ConditionalOnMissingBean(name = "casAccepttoAuthenticationQRCodeEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer casAccepttoAuthenticationQRCodeEventExecutionPlanConfigurer() {
+    public AuthenticationEventExecutionPlanConfigurer casAccepttoAuthenticationQRCodeEventExecutionPlanConfigurer(
+        @Qualifier("qrAuthenticationTokenAuthenticationHandler")
+        final AuthenticationHandler qrAuthenticationTokenAuthenticationHandler) {
         return plan -> {
-            plan.registerAuthenticationHandler(qrAuthenticationTokenAuthenticationHandler());
-            plan.registerAuthenticationHandlerResolver(
-                new ByCredentialTypeAuthenticationHandlerResolver(QRAuthenticationTokenCredential.class));
+            plan.registerAuthenticationHandler(qrAuthenticationTokenAuthenticationHandler);
+            plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(QRAuthenticationTokenCredential.class));
         };
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public QRAuthenticationDeviceRepositoryEndpoint qrAuthenticationDeviceRepositoryEndpoint() {
-        return new QRAuthenticationDeviceRepositoryEndpoint(casProperties, qrAuthenticationDeviceRepository());
+    @Autowired
+    public QRAuthenticationDeviceRepositoryEndpoint qrAuthenticationDeviceRepositoryEndpoint(final CasConfigurationProperties casProperties,
+                                                                                             @Qualifier("qrAuthenticationDeviceRepository")
+                                                                                             final QRAuthenticationDeviceRepository qrAuthenticationDeviceRepository) {
+        return new QRAuthenticationDeviceRepositoryEndpoint(casProperties, qrAuthenticationDeviceRepository);
     }
 
-    @Override
-    public void registerStompEndpoints(final StompEndpointRegistry registry) {
-        registry.addEndpoint("/qr-websocket")
-            .setAllowedOrigins(casProperties.getAuthn().getQr().getAllowedOrigins().toArray(ArrayUtils.EMPTY_STRING_ARRAY))
-            .addInterceptors(new HttpSessionHandshakeInterceptor())
-            .withSockJS();
-    }
+    @Bean
+    public WebSocketMessageBrokerConfigurer qrAuthenticationWebSocketMessageBrokerConfigurer(
+        final CasConfigurationProperties casProperties) {
+        return new WebSocketMessageBrokerConfigurer() {
+            @Override
+            public void registerStompEndpoints(final StompEndpointRegistry registry) {
+                registry.addEndpoint("/qr-websocket")
+                    .setAllowedOrigins(casProperties.getAuthn().getQr().getAllowedOrigins().toArray(ArrayUtils.EMPTY_STRING_ARRAY))
+                    .addInterceptors(new HttpSessionHandshakeInterceptor())
+                    .withSockJS();
+            }
 
-    @Override
-    public void configureMessageBroker(final MessageBrokerRegistry config) {
-        config.enableSimpleBroker(QRAuthenticationConstants.QR_SIMPLE_BROKER_DESTINATION_PREFIX);
-        config.setApplicationDestinationPrefixes("/qr");
+            @Override
+            public void configureMessageBroker(final MessageBrokerRegistry config) {
+                config.enableSimpleBroker(QRAuthenticationConstants.QR_SIMPLE_BROKER_DESTINATION_PREFIX);
+                config.setApplicationDestinationPrefixes("/qr");
+            }
+        };
     }
 }
-
-
-

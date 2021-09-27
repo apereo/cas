@@ -28,11 +28,9 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration("cassandraServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "cassandraServiceRegistryConfiguration", proxyBeanMethods = false)
 public class CassandraServiceRegistryConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -41,31 +39,34 @@ public class CassandraServiceRegistryConfiguration {
     @Qualifier("serviceRegistryListeners")
     private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
 
-    @Autowired
-    @Qualifier("sslContext")
-    private ObjectProvider<SSLContext> sslContext;
-
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "cassandraServiceRegistry")
-    public ServiceRegistry cassandraServiceRegistry() {
+    @Autowired
+    public ServiceRegistry cassandraServiceRegistry(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+                                                    @Qualifier("cassandraServiceRegistrySessionFactory")
+                                                    final CassandraSessionFactory cassandraServiceRegistrySessionFactory) {
         val cassandra = casProperties.getServiceRegistry().getCassandra();
-        return new CassandraServiceRegistry(cassandraServiceRegistrySessionFactory(), cassandra,
-            applicationContext, serviceRegistryListeners.getObject());
+        return new CassandraServiceRegistry(cassandraServiceRegistrySessionFactory, cassandra, applicationContext, serviceRegistryListeners.getObject());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "cassandraServiceRegistrySessionFactory")
-    public CassandraSessionFactory cassandraServiceRegistrySessionFactory() {
+    @Autowired
+    public CassandraSessionFactory cassandraServiceRegistrySessionFactory(final CasConfigurationProperties casProperties,
+                                                                          @Qualifier("sslContext")
+                                                                          final SSLContext sslContext) {
         val cassandra = casProperties.getServiceRegistry().getCassandra();
-        return new DefaultCassandraSessionFactory(cassandra, sslContext.getObject());
+        return new DefaultCassandraSessionFactory(cassandra, sslContext);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "cassandraServiceRegistryExecutionPlanConfigurer")
     @RefreshScope
-    public ServiceRegistryExecutionPlanConfigurer cassandraServiceRegistryExecutionPlanConfigurer() {
-        return plan -> plan.registerServiceRegistry(cassandraServiceRegistry());
+    public ServiceRegistryExecutionPlanConfigurer cassandraServiceRegistryExecutionPlanConfigurer(
+        @Qualifier("cassandraServiceRegistry")
+        final ServiceRegistry cassandraServiceRegistry) {
+        return plan -> plan.registerServiceRegistry(cassandraServiceRegistry);
     }
 }
