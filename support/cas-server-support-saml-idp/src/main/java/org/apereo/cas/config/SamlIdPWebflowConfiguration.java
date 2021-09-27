@@ -103,7 +103,7 @@ public class SamlIdPWebflowConfiguration {
     public SingleSignOnParticipationStrategy samlIdPSingleSignOnParticipationStrategy(
         @Qualifier("servicesManager")
         final ServicesManager servicesManager,
-        @Qualifier("ticketRegistrySupport")
+        @Qualifier("defaultTicketRegistrySupport")
         final TicketRegistrySupport ticketRegistrySupport,
         @Qualifier("selectionStrategies")
         final AuthenticationServiceSelectionPlan selectionStrategies) {

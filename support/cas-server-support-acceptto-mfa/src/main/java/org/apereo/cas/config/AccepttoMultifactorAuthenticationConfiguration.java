@@ -138,7 +138,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     public Action mfaAccepttoMultifactorValidateChannelAction(
         @Qualifier("mfaAccepttoDistributedSessionStore")
         final SessionStore mfaAccepttoDistributedSessionStore,
-        @Qualifier("authenticationSystemSupport")
+        @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport) {
         return new AccepttoMultifactorValidateChannelAction(mfaAccepttoDistributedSessionStore, authenticationSystemSupport);
     }

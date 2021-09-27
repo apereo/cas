@@ -124,7 +124,7 @@ public class OpenIdConfiguration {
         final CentralAuthenticationService centralAuthenticationService,
         @Qualifier("requestedContextValidator")
         final RequestedAuthenticationContextValidator requestedContextValidator,
-        @Qualifier("authenticationSystemSupport")
+        @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
         final CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification,

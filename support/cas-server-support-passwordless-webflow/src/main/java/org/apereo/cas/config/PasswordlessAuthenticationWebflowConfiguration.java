@@ -65,7 +65,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     public Action determineMultifactorPasswordlessAuthenticationAction(final CasConfigurationProperties casProperties,
                                                                        @Qualifier("passwordlessPrincipalFactory")
                                                                        final PrincipalFactory passwordlessPrincipalFactory,
-                                                                       @Qualifier("authenticationSystemSupport")
+                                                                       @Qualifier("defaultAuthenticationSystemSupport")
                                                                        final AuthenticationSystemSupport authenticationSystemSupport,
                                                                        @Qualifier("multifactorTriggerSelectionStrategy")
                                                                        final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy) {
@@ -96,7 +96,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
         final PasswordlessTokenRepository passwordlessTokenRepository,
         @Qualifier("adaptiveAuthenticationPolicy")
         final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-        @Qualifier("authenticationSystemSupport")
+        @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("serviceTicketRequestWebflowEventResolver")
         final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,

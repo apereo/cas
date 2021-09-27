@@ -37,7 +37,6 @@ import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -60,10 +59,6 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "samlConfiguration", proxyBeanMethods = false)
 public class SamlConfiguration {
-
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
 
     @ConditionalOnMissingBean(name = "samlResponseBuilder")
     @RefreshScope
@@ -159,7 +154,7 @@ public class SamlConfiguration {
                                                          final CentralAuthenticationService centralAuthenticationService,
                                                          @Qualifier("requestedContextValidator")
                                                          final RequestedAuthenticationContextValidator requestedContextValidator,
-                                                         @Qualifier("authenticationSystemSupport")
+                                                         @Qualifier("defaultAuthenticationSystemSupport")
                                                          final AuthenticationSystemSupport authenticationSystemSupport,
                                                          @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
                                                          final CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification,
@@ -206,16 +201,18 @@ public class SamlConfiguration {
     public SamlValidateEndpoint samlValidateEndpoint(final CasConfigurationProperties casProperties,
                                                      @Qualifier("samlResponseBuilder")
                                                      final SamlResponseBuilder samlResponseBuilder,
+                                                     @Qualifier("webApplicationServiceFactory")
+                                                     final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
                                                      @Qualifier("openSamlConfigBean")
                                                      final OpenSamlConfigBean openSamlConfigBean,
                                                      @Qualifier("servicesManager")
                                                      final ServicesManager servicesManager,
-                                                     @Qualifier("authenticationSystemSupport")
+                                                     @Qualifier("defaultAuthenticationSystemSupport")
                                                      final AuthenticationSystemSupport authenticationSystemSupport,
                                                      @Qualifier("registeredServiceAccessStrategyEnforcer")
                                                      final AuditableExecution registeredServiceAccessStrategyEnforcer) {
         return new SamlValidateEndpoint(casProperties, servicesManager,
-            authenticationSystemSupport, webApplicationServiceFactory.getObject(), PrincipalFactoryUtils.newPrincipalFactory(),
+            authenticationSystemSupport, webApplicationServiceFactory, PrincipalFactoryUtils.newPrincipalFactory(),
             samlResponseBuilder, openSamlConfigBean, registeredServiceAccessStrategyEnforcer);
     }
 }

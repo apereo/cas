@@ -48,7 +48,7 @@ public class CasAcceptableUsagePolicyMongoDbConfiguration {
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(final CasConfigurationProperties casProperties,
                                                                            @Qualifier("mongoAcceptableUsagePolicyTemplate")
                                                                            final MongoTemplate mongoAcceptableUsagePolicyTemplate,
-                                                                           @Qualifier("ticketRegistrySupport")
+                                                                           @Qualifier("defaultTicketRegistrySupport")
                                                                            final TicketRegistrySupport ticketRegistrySupport) {
         return new MongoDbAcceptableUsagePolicyRepository(ticketRegistrySupport, casProperties.getAcceptableUsagePolicy(), mongoAcceptableUsagePolicyTemplate);
     }

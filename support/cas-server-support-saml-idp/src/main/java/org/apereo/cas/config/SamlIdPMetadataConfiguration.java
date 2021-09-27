@@ -78,10 +78,6 @@ import java.net.URL;
 public class SamlIdPMetadataConfiguration {
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
-
-    @Autowired
     @Qualifier("samlProfileSamlResponseBuilder")
     private ObjectProvider<SamlProfileObjectBuilder<Response>> samlProfileSamlResponseBuilder;
 
@@ -89,13 +85,14 @@ public class SamlIdPMetadataConfiguration {
     @Bean(initMethod = "initialize", destroyMethod = "destroy")
     @DependsOn("samlIdPMetadataGenerator")
     @Autowired
-    public MetadataResolver casSamlIdPMetadataResolver(final CasConfigurationProperties casProperties,
-                                                       @Qualifier("samlIdPMetadataLocator")
-                                                       final SamlIdPMetadataLocator samlIdPMetadataLocator,
-                                                       @Qualifier("samlIdPMetadataGenerator")
-                                                       final SamlIdPMetadataGenerator samlIdPMetadataGenerator,
-                                                       @Qualifier("openSamlConfigBean")
-                                                       final OpenSamlConfigBean openSamlConfigBean) throws Exception {
+    public MetadataResolver casSamlIdPMetadataResolver(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("samlIdPMetadataLocator")
+        final SamlIdPMetadataLocator samlIdPMetadataLocator,
+        @Qualifier("samlIdPMetadataGenerator")
+        final SamlIdPMetadataGenerator samlIdPMetadataGenerator,
+        @Qualifier("openSamlConfigBean")
+        final OpenSamlConfigBean openSamlConfigBean) throws Exception {
         val idp = casProperties.getAuthn().getSamlIdp();
         val resolver = new SamlIdPMetadataResolver(samlIdPMetadataLocator, samlIdPMetadataGenerator, openSamlConfigBean, casProperties);
         resolver.setFailFastInitialization(idp.getMetadata().getCore().isFailFast());
@@ -108,13 +105,15 @@ public class SamlIdPMetadataConfiguration {
     @Bean
     @RefreshScope
     public SamlIdPMetadataController samlIdPMetadataController(
+        @Qualifier("webApplicationServiceFactory")
+        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
         @Qualifier("samlIdPMetadataGenerator")
         final SamlIdPMetadataGenerator samlIdPMetadataGenerator,
         @Qualifier("samlIdPMetadataLocator")
         final SamlIdPMetadataLocator samlIdPMetadataLocator,
         @Qualifier("servicesManager")
         final ServicesManager servicesManager) throws Exception {
-        return new SamlIdPMetadataController(samlIdPMetadataGenerator, samlIdPMetadataLocator, servicesManager, webApplicationServiceFactory.getObject());
+        return new SamlIdPMetadataController(samlIdPMetadataGenerator, samlIdPMetadataLocator, servicesManager, webApplicationServiceFactory);
     }
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataGenerator")
@@ -251,7 +250,7 @@ public class SamlIdPMetadataConfiguration {
         final ServicesManager servicesManager,
         @Qualifier("openSamlConfigBean")
         final OpenSamlConfigBean openSamlConfigBean,
-        @Qualifier("authenticationSystemSupport")
+        @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("samlIdPServiceFactory")
         final ServiceFactory samlIdPServiceFactory) {
