@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlUtils;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
@@ -16,16 +17,23 @@ import org.apereo.cas.support.saml.util.Saml20AttributeBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.validation.Assertion;
+import org.jooq.lambda.Unchecked;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
+import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +41,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This is {@link SamlProfileSamlAttributeStatementBuilder}.
@@ -54,18 +63,22 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
 
     private final SamlProfileObjectBuilder<NameID> samlNameIdBuilder;
 
+    private final MetadataResolver samlIdPMetadataResolver;
+
     public SamlProfileSamlAttributeStatementBuilder(final OpenSamlConfigBean configBean,
                                                     final SamlIdPProperties samlIdPProperties,
                                                     final SamlIdPObjectEncrypter samlObjectEncrypter,
                                                     final AttributeDefinitionStore attributeDefinitionStore,
                                                     final ServiceFactory<WebApplicationService> serviceFactory,
-                                                    final SamlProfileObjectBuilder<NameID> samlNameIdBuilder) {
+                                                    final SamlProfileObjectBuilder<NameID> samlNameIdBuilder,
+                                                    final MetadataResolver samlIdPMetadataResolver) {
         super(configBean);
         this.samlIdPProperties = samlIdPProperties;
         this.samlObjectEncrypter = samlObjectEncrypter;
         this.attributeDefinitionStore = attributeDefinitionStore;
         this.serviceFactory = serviceFactory;
         this.samlNameIdBuilder = samlNameIdBuilder;
+        this.samlIdPMetadataResolver = samlIdPMetadataResolver;
     }
 
     @Override
@@ -164,12 +177,45 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
             for (val name : attributeNames) {
                 LOGGER.trace("Processing SAML attribute [{}] with value [{}], friendlyName [{}]", name, attributeValue, friendlyName);
                 val valueType = samlRegisteredService.getAttributeValueTypes().get(name);
-                if (StringUtils.isNotBlank(valueType) && NameIDType.class.getSimpleName().equalsIgnoreCase(valueType)) {
-                    val nameID = newSamlObject(NameID.class);
+
+                if (NameIDType.class.getSimpleName().equalsIgnoreCase(valueType)) {
+                    val nameId = samlNameIdBuilder.build(authnRequest, request, response, casAssertion,
+                        samlRegisteredService, adaptor, binding, messageContext);
+                    val nameID = nameIDBuilder.buildObject();
                     nameID.setFormat(nameId.getFormat());
                     nameID.setNameQualifier(nameId.getNameQualifier());
                     nameID.setSPNameQualifier(nameId.getSPNameQualifier());
                     nameID.setValue(nameId.getValue());
+                    attributeValue = nameID;
+                }
+                if (NameID.PERSISTENT.equalsIgnoreCase(valueType)) {
+                    val nameID = nameIDBuilder.buildObject();
+                    nameID.setFormat(NameID.PERSISTENT);
+
+                    if (StringUtils.isNotBlank(samlRegisteredService.getNameIdQualifier())) {
+                        nameID.setNameQualifier(samlRegisteredService.getNameIdQualifier());
+                    } else {
+                        val nameQualifier = FunctionUtils.doIf(StringUtils.isNotBlank(samlRegisteredService.getIssuerEntityId()),
+                                samlRegisteredService::getIssuerEntityId,
+                                Unchecked.supplier(() -> {
+                                    val criteriaSet = new CriteriaSet(
+                                        new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME),
+                                        new SamlIdPSamlRegisteredServiceCriterion(samlRegisteredService));
+                                    LOGGER.trace("Resolving entity id from SAML2 IdP metadata to determine issuer for [{}]", samlRegisteredService.getName());
+                                    val entityDescriptor = Objects.requireNonNull(samlIdPMetadataResolver.resolveSingle(criteriaSet));
+                                    return entityDescriptor.getEntityID();
+                                }))
+                            .get();
+                        LOGGER.debug("Using name qualifier [{}] for the Name ID", nameQualifier);
+                        nameID.setNameQualifier(nameQualifier);
+                    }
+
+                    if (StringUtils.isNotBlank(samlRegisteredService.getServiceProviderNameIdQualifier())) {
+                        nameID.setSPNameQualifier(samlRegisteredService.getServiceProviderNameIdQualifier());
+                    } else {
+                        nameID.setSPNameQualifier(adaptor.getEntityId());
+                    }
+                    CollectionUtils.firstElement(attributeValue).ifPresent(value -> nameID.setValue(value.toString()));
                     attributeValue = nameID;
                 }
 

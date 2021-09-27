@@ -14,7 +14,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -38,10 +37,6 @@ import java.util.Optional;
 @Slf4j
 @Configuration(value = "amazonS3SamlIdPMetadataConfiguration", proxyBeanMethods = false)
 public class AmazonS3SamlIdPMetadataConfiguration {
-
-    @Autowired
-    @Qualifier("samlIdPMetadataCache")
-    private ObjectProvider<Cache<String, SamlIdPMetadataDocument>> samlIdPMetadataCache;
 
     @Bean
     @RefreshScope
@@ -75,13 +70,17 @@ public class AmazonS3SamlIdPMetadataConfiguration {
     @Bean
     @RefreshScope
     @Autowired
-    public SamlIdPMetadataLocator samlIdPMetadataLocator(final CasConfigurationProperties casProperties,
-                                                         @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
-                                                         final CipherExecutor samlIdPMetadataGeneratorCipherExecutor,
-                                                         @Qualifier("amazonS3Client")
-                                                         final S3Client amazonS3Client) {
+    public SamlIdPMetadataLocator samlIdPMetadataLocator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("samlIdPMetadataCache")
+        final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache,
+        @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
+        final CipherExecutor samlIdPMetadataGeneratorCipherExecutor,
+        @Qualifier("amazonS3Client")
+        final S3Client amazonS3Client) {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new AmazonS3SamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor, samlIdPMetadataCache.getObject(), idp.getMetadata().getAmazonS3().getIdpMetadataBucketName(),
+        return new AmazonS3SamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor,
+            samlIdPMetadataCache, idp.getMetadata().getAmazonS3().getIdpMetadataBucketName(),
             amazonS3Client);
     }
 }

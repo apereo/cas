@@ -14,7 +14,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -34,10 +33,6 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @Configuration(value = "SamlIdPRestfulIdPMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPRestfulIdPMetadataConfiguration {
-
-    @Autowired
-    @Qualifier("samlIdPMetadataCache")
-    private ObjectProvider<Cache<String, SamlIdPMetadataDocument>> samlIdPMetadataCache;
 
     @Bean
     @RefreshScope
@@ -66,10 +61,14 @@ public class SamlIdPRestfulIdPMetadataConfiguration {
     @Bean
     @RefreshScope
     @Autowired
-    public SamlIdPMetadataLocator samlIdPMetadataLocator(final CasConfigurationProperties casProperties,
-                                                         @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
-                                                         final CipherExecutor samlIdPMetadataGeneratorCipherExecutor) {
+    public SamlIdPMetadataLocator samlIdPMetadataLocator(
+        @Qualifier("samlIdPMetadataCache")
+        final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
+        final CipherExecutor samlIdPMetadataGeneratorCipherExecutor) {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new RestfulSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor, samlIdPMetadataCache.getObject(), idp.getMetadata().getRest());
+        return new RestfulSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor,
+            samlIdPMetadataCache, idp.getMetadata().getRest());
     }
 }

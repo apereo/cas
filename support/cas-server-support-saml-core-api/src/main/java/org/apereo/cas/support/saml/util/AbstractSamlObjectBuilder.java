@@ -254,7 +254,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     protected XMLObject newAttributeValue(final Object value, final String valueType, final QName elementName) {
         LOGGER.trace("Creating new attribute value XMLObject for value: [{}], value type: [{}], QName: [{}]", value, valueType, elementName);
 
-        if (NameIDType.class.getSimpleName().equalsIgnoreCase(valueType) && value instanceof NameIDType) {
+        if (value instanceof NameIDType) {
             LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, value);
             ((NameIDType) value).detach();
             return (NameIDType) value;

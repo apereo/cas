@@ -15,7 +15,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -38,10 +37,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 @Slf4j
 @Configuration(value = "SamlIdPRedisIdPMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPRedisIdPMetadataConfiguration {
-
-    @Autowired
-    @Qualifier("samlIdPMetadataCache")
-    private ObjectProvider<Cache<String, SamlIdPMetadataDocument>> samlIdPMetadataCache;
 
     @Bean
     @RefreshScope
@@ -88,10 +83,13 @@ public class SamlIdPRedisIdPMetadataConfiguration {
     @Bean
     @RefreshScope
     public SamlIdPMetadataLocator samlIdPMetadataLocator(
+        @Qualifier("samlIdPMetadataCache")
+        final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache,
         @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
         final CipherExecutor samlIdPMetadataGeneratorCipherExecutor,
         @Qualifier("redisSamlIdPMetadataTemplate")
         final RedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate) {
-        return new RedisSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor, samlIdPMetadataCache.getObject(), redisSamlIdPMetadataTemplate);
+        return new RedisSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor,
+            samlIdPMetadataCache, redisSamlIdPMetadataTemplate);
     }
 }

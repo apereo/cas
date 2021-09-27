@@ -16,7 +16,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -37,10 +36,6 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.git", name = {"idp-metadata-enabled", "repository-url"})
 @Configuration(value = "samlIdPGitIdPMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPGitIdPMetadataConfiguration {
-
-    @Autowired
-    @Qualifier("samlIdPMetadataCache")
-    private ObjectProvider<Cache<String, SamlIdPMetadataDocument>> samlIdPMetadataCache;
 
     @Bean
     @ConditionalOnMissingBean(name = "gitSamlIdPMetadataCipherExecutor")
@@ -79,8 +74,10 @@ public class SamlIdPGitIdPMetadataConfiguration {
     @Bean
     @RefreshScope
     public SamlIdPMetadataLocator samlIdPMetadataLocator(
+        @Qualifier("samlIdPMetadataCache")
+        final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache,
         @Qualifier("gitIdPMetadataRepositoryInstance")
         final GitRepository gitIdPMetadataRepositoryInstance) {
-        return new GitSamlIdPMetadataLocator(gitIdPMetadataRepositoryInstance, samlIdPMetadataCache.getObject());
+        return new GitSamlIdPMetadataLocator(gitIdPMetadataRepositoryInstance, samlIdPMetadataCache);
     }
 }

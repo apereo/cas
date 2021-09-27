@@ -5,7 +5,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.webauthn.RestfulWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,14 +22,13 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RestfulWebAuthnConfiguration {
 
-    @Autowired
-    @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
-    private ObjectProvider<CipherExecutor<String, String>> webAuthnCredentialRegistrationCipherExecutor;
-
     @RefreshScope
     @Bean
     @Autowired
-    public WebAuthnCredentialRepository webAuthnCredentialRepository(final CasConfigurationProperties casProperties) {
-        return new RestfulWebAuthnCredentialRepository(casProperties, webAuthnCredentialRegistrationCipherExecutor.getObject());
+    public WebAuthnCredentialRepository webAuthnCredentialRepository(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
+        final CipherExecutor<String, String> webAuthnCredentialRegistrationCipherExecutor) {
+        return new RestfulWebAuthnCredentialRepository(casProperties, webAuthnCredentialRegistrationCipherExecutor);
     }
 }

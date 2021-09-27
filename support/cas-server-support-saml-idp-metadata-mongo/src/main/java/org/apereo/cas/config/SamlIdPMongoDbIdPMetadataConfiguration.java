@@ -15,7 +15,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -39,10 +38,6 @@ import javax.net.ssl.SSLContext;
 @Slf4j
 @Configuration(value = "samlIdPMongoDbIdPMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPMongoDbIdPMetadataConfiguration {
-
-    @Autowired
-    @Qualifier("samlIdPMetadataCache")
-    private ObjectProvider<Cache<String, SamlIdPMetadataDocument>> samlIdPMetadataCache;
 
     @Bean
     @RefreshScope
@@ -90,12 +85,15 @@ public class SamlIdPMongoDbIdPMetadataConfiguration {
     @RefreshScope
     @Autowired
     public SamlIdPMetadataLocator samlIdPMetadataLocator(final CasConfigurationProperties casProperties,
+                                                         @Qualifier("samlIdPMetadataCache")
+                                                         final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache,
                                                          @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
                                                          final CipherExecutor samlIdPMetadataGeneratorCipherExecutor,
                                                          @Qualifier("mongoDbSamlIdPMetadataTemplate")
                                                          final MongoTemplate mongoDbSamlIdPMetadataTemplate) {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new MongoDbSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor, samlIdPMetadataCache.getObject(), mongoDbSamlIdPMetadataTemplate,
+        return new MongoDbSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor,
+            samlIdPMetadataCache, mongoDbSamlIdPMetadataTemplate,
             idp.getMetadata().getMongo().getIdpMetadataCollection());
     }
 }
