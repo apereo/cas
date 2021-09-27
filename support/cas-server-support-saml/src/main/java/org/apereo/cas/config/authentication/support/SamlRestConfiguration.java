@@ -6,7 +6,6 @@ import org.apereo.cas.rest.plan.ServiceTicketResourceEntityResponseFactoryConfig
 import org.apereo.cas.support.saml.authentication.SamlRestServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -21,25 +20,27 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Configuration("samlRestConfiguration")
+@Configuration(value = "samlRestConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnClass(value = ServiceTicketResourceEntityResponseFactoryConfigurer.class)
 public class SamlRestConfiguration {
 
-    @Autowired
-    @Qualifier("samlServiceTicketUniqueIdGenerator")
-    private ObjectProvider<UniqueTicketIdGenerator> samlServiceTicketUniqueIdGenerator;
-
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "samlRestServiceTicketResourceEntityResponseFactory")
-    public ServiceTicketResourceEntityResponseFactory samlRestServiceTicketResourceEntityResponseFactory() {
-        return new SamlRestServiceTicketResourceEntityResponseFactory(samlServiceTicketUniqueIdGenerator.getObject());
+    public ServiceTicketResourceEntityResponseFactory samlRestServiceTicketResourceEntityResponseFactory(
+        @Qualifier("samlServiceTicketUniqueIdGenerator")
+        final UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator) {
+        return new SamlRestServiceTicketResourceEntityResponseFactory(samlServiceTicketUniqueIdGenerator);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "samlRestServiceTicketResourceEntityResponseFactoryConfigurer")
-    public ServiceTicketResourceEntityResponseFactoryConfigurer samlRestServiceTicketResourceEntityResponseFactoryConfigurer() {
-        return plan -> plan.registerFactory(samlRestServiceTicketResourceEntityResponseFactory());
+    @Autowired
+    public ServiceTicketResourceEntityResponseFactoryConfigurer samlRestServiceTicketResourceEntityResponseFactoryConfigurer(
+        @Qualifier("samlRestServiceTicketResourceEntityResponseFactory")
+        final ServiceTicketResourceEntityResponseFactory samlRestServiceTicketResourceEntityResponseFactory) {
+        return plan -> plan.registerFactory(samlRestServiceTicketResourceEntityResponseFactory);
     }
 
 }

@@ -20,7 +20,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link RestServiceRegistryConfiguration}.
@@ -48,7 +50,8 @@ public class RestServiceRegistryConfiguration {
     public ServiceRegistry restfulServiceRegistry(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext) {
         val registry = casProperties.getServiceRegistry().getRest();
         LOGGER.debug("Creating REST-based service registry using endpoint [{}]", registry.getUrl());
-        return new RestfulServiceRegistry(applicationContext, serviceRegistryListeners.getObject(), registry);
+        return new RestfulServiceRegistry(applicationContext,
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new), registry);
     }
 
     @RefreshScope

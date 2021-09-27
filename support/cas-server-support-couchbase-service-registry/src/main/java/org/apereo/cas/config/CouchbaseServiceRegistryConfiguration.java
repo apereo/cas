@@ -20,7 +20,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link CouchbaseServiceRegistryConfiguration}.
@@ -31,10 +33,6 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "couchbaseServiceRegistryConfiguration", proxyBeanMethods = false)
 public class CouchbaseServiceRegistryConfiguration {
-
-    @Autowired
-    @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
 
     @RefreshScope
     @Bean
@@ -50,10 +48,12 @@ public class CouchbaseServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "couchbaseServiceRegistry")
     @Autowired
     public ServiceRegistry couchbaseServiceRegistry(final ConfigurableApplicationContext applicationContext,
+                                                    final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
                                                     @Qualifier("serviceRegistryCouchbaseClientFactory")
                                                     final CouchbaseClientFactory serviceRegistryCouchbaseClientFactory) {
-        return new CouchbaseServiceRegistry(applicationContext, serviceRegistryCouchbaseClientFactory, new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter()),
-            serviceRegistryListeners.getObject());
+        return new CouchbaseServiceRegistry(applicationContext, serviceRegistryCouchbaseClientFactory,
+            new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter()),
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
     }
 
     @Bean

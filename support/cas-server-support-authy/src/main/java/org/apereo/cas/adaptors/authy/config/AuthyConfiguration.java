@@ -106,7 +106,7 @@ public class AuthyConfiguration {
      */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.authy")
-    @Configuration("authyMultifactorTrustConfiguration")
+    @Configuration(value = "authyMultifactorTrustConfiguration", proxyBeanMethods = false)
     public static class AuthyMultifactorTrustConfiguration {
 
         @ConditionalOnMissingBean(name = "authyMultifactorTrustWebflowConfigurer")

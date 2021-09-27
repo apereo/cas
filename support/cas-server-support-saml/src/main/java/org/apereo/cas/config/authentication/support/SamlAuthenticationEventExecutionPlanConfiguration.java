@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
-@Configuration("samlAuthenticationEventExecutionPlanConfiguration")
+@Configuration(value = "samlAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SamlAuthenticationEventExecutionPlanConfiguration {
 
@@ -29,7 +31,10 @@ public class SamlAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "samlAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer samlAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationMetadataPopulator(samlAuthenticationMetaDataPopulator());
+    @Autowired
+    public AuthenticationEventExecutionPlanConfigurer samlAuthenticationEventExecutionPlanConfigurer(
+        @Qualifier("samlAuthenticationMetaDataPopulator")
+        final AuthenticationMetaDataPopulator samlAuthenticationMetaDataPopulator) {
+        return plan -> plan.registerAuthenticationMetadataPopulator(samlAuthenticationMetaDataPopulator);
     }
 }

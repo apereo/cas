@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
 public class DelegatedAuthenticationSAMLConfiguration {
 
     @ConditionalOnClass(value = HazelcastInstance.class)
-    @Configuration("DelegatedAuthenticationSAMLHazelcastConfiguration")
+    @Configuration(value = "DelegatedAuthenticationSAMLHazelcastConfiguration", proxyBeanMethods = false)
     public static class DelegatedAuthenticationSAMLHazelcastConfiguration {
         @Autowired
         @Bean

@@ -20,7 +20,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link DynamoDbServiceRegistryConfiguration}.
@@ -31,13 +33,6 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "dynamoDbServiceRegistryConfiguration", proxyBeanMethods = false)
 public class DynamoDbServiceRegistryConfiguration {
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
 
     @RefreshScope
     @Bean
@@ -54,9 +49,11 @@ public class DynamoDbServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "dynamoDbServiceRegistry")
     @Autowired
     public ServiceRegistry dynamoDbServiceRegistry(final ConfigurableApplicationContext applicationContext,
+                                                   final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
                                                    @Qualifier("dynamoDbServiceRegistryFacilitator")
                                                    final DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator) {
-        return new DynamoDbServiceRegistry(applicationContext, dynamoDbServiceRegistryFacilitator, serviceRegistryListeners.getObject());
+        return new DynamoDbServiceRegistry(applicationContext, dynamoDbServiceRegistryFacilitator,
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
     }
 
     @Bean

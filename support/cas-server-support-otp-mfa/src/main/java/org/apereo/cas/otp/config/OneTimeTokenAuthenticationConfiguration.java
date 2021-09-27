@@ -12,7 +12,6 @@ import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurat
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,7 +31,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("oneTimeTokenAuthenticationConfiguration")
+@Configuration(value = "oneTimeTokenAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 public class OneTimeTokenAuthenticationConfiguration {
@@ -41,24 +40,26 @@ public class OneTimeTokenAuthenticationConfiguration {
     private static final int INITIAL_CACHE_SIZE = 50;
 
     private static final long MAX_CACHE_SIZE = 1_000_000;
-    
-    @Autowired
-    @Qualifier("casWebflowConfigurationContext")
-    private ObjectProvider<CasWebflowEventResolutionConfigurationContext> casWebflowConfigurationContext;
-    
+
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver oneTimeTokenAuthenticationWebflowEventResolver() {
-        return new OneTimeTokenAuthenticationWebflowEventResolver(casWebflowConfigurationContext.getObject());
+    @Autowired
+    public CasWebflowEventResolver oneTimeTokenAuthenticationWebflowEventResolver(
+        @Qualifier("casWebflowConfigurationContext")
+        final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
+        return new OneTimeTokenAuthenticationWebflowEventResolver(casWebflowConfigurationContext);
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_OTP_AUTHENTICATION_ACTION)
-    public Action oneTimeTokenAuthenticationWebflowAction() {
-        return new OneTimeTokenAuthenticationWebflowAction(oneTimeTokenAuthenticationWebflowEventResolver());
+    @Autowired
+    public Action oneTimeTokenAuthenticationWebflowAction(
+        @Qualifier("oneTimeTokenAuthenticationWebflowEventResolver")
+        final CasWebflowEventResolver oneTimeTokenAuthenticationWebflowEventResolver) {
+        return new OneTimeTokenAuthenticationWebflowAction(oneTimeTokenAuthenticationWebflowEventResolver);
     }
-    
+
     @ConditionalOnMissingBean(name = "oneTimeTokenAuthenticatorTokenRepository")
     @Bean
     @RefreshScope

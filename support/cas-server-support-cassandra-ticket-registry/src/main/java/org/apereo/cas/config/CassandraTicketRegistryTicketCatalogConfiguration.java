@@ -26,38 +26,34 @@ public class CassandraTicketRegistryTicketCatalogConfiguration extends BaseTicke
         super(casProperties, configProvider);
     }
 
-    @Configuration("cassandraTicketCatalogConfigValuesProviderConfiguration")
-    static class Config {
+    @ConditionalOnMissingBean(name = "cassandraTicketCatalogConfigurationValuesProvider")
+    @Bean
+    public CasTicketCatalogConfigurationValuesProvider cassandraTicketCatalogConfigurationValuesProvider() {
+        return new CasTicketCatalogConfigurationValuesProvider() {
+            @Override
+            public Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
+                return p -> "serviceTicketsTable";
+            }
 
-        @ConditionalOnMissingBean
-        @Bean
-        public CasTicketCatalogConfigurationValuesProvider cassandraTicketCatalogConfigurationValuesProvider() {
-            return new CasTicketCatalogConfigurationValuesProvider() {
-                @Override
-                public Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
-                    return p -> "serviceTicketsTable";
-                }
+            @Override
+            public Function<CasConfigurationProperties, String> getProxyTicketStorageName() {
+                return p -> "proxyTicketsTable";
+            }
 
-                @Override
-                public Function<CasConfigurationProperties, String> getProxyTicketStorageName() {
-                    return p -> "proxyTicketsTable";
-                }
+            @Override
+            public Function<CasConfigurationProperties, String> getTicketGrantingTicketStorageName() {
+                return p -> "ticketGrantingTicketsTable";
+            }
 
-                @Override
-                public Function<CasConfigurationProperties, String> getTicketGrantingTicketStorageName() {
-                    return p -> "ticketGrantingTicketsTable";
-                }
+            @Override
+            public Function<CasConfigurationProperties, String> getProxyGrantingTicketStorageName() {
+                return p -> "proxyGrantingTicketsTable";
+            }
 
-                @Override
-                public Function<CasConfigurationProperties, String> getProxyGrantingTicketStorageName() {
-                    return p -> "proxyGrantingTicketsTable";
-                }
-
-                @Override
-                public Function<CasConfigurationProperties, String> getTransientSessionStorageName() {
-                    return p -> "transientSessionTicketsTable";
-                }
-            };
-        }
+            @Override
+            public Function<CasConfigurationProperties, String> getTransientSessionStorageName() {
+                return p -> "transientSessionTicketsTable";
+            }
+        };
     }
 }

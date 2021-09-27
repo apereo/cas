@@ -157,7 +157,7 @@ import java.util.Set;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Configuration("casOAuth20Configuration")
+@Configuration(value = "casOAuth20Configuration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasOAuth20Configuration {

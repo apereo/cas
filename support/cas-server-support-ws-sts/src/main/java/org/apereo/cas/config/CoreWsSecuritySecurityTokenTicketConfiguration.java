@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -23,26 +22,30 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Configuration("coreWsSecuritySecurityTokenTicketConfiguration")
+@Configuration(value = "coreWsSecuritySecurityTokenTicketConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CoreWsSecuritySecurityTokenTicketConfiguration {
-
-    @Autowired
-    @Qualifier("grantingTicketExpirationPolicy")
-    private ObjectProvider<ExpirationPolicyBuilder> grantingTicketExpirationPolicy;
 
     @ConditionalOnMissingBean(name = "securityTokenTicketFactory")
     @Bean
     @RefreshScope
-    public SecurityTokenTicketFactory securityTokenTicketFactory() {
-        return new DefaultSecurityTokenTicketFactory(securityTokenTicketIdGenerator(), grantingTicketExpirationPolicy.getObject());
+    @Autowired
+    public SecurityTokenTicketFactory securityTokenTicketFactory(
+        @Qualifier("securityTokenTicketIdGenerator")
+        final UniqueTicketIdGenerator securityTokenTicketIdGenerator,
+        @Qualifier("grantingTicketExpirationPolicy")
+        final ExpirationPolicyBuilder grantingTicketExpirationPolicy) {
+        return new DefaultSecurityTokenTicketFactory(securityTokenTicketIdGenerator, grantingTicketExpirationPolicy);
     }
 
     @ConditionalOnMissingBean(name = "securityTokenTicketFactoryConfigurer")
     @Bean
     @RefreshScope
-    public TicketFactoryExecutionPlanConfigurer securityTokenTicketFactoryConfigurer() {
-        return this::securityTokenTicketFactory;
+    @Autowired
+    public TicketFactoryExecutionPlanConfigurer securityTokenTicketFactoryConfigurer(
+        @Qualifier("securityTokenTicketFactory")
+        final SecurityTokenTicketFactory securityTokenTicketFactory    ) {
+        return () -> securityTokenTicketFactory;
     }
 
     @ConditionalOnMissingBean(name = "securityTokenTicketIdGenerator")

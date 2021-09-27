@@ -1,9 +1,6 @@
 package org.apereo.cas.ticket;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;

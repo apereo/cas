@@ -33,7 +33,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -47,10 +49,6 @@ import java.util.Set;
 @EnableTransactionManagement
 @Configuration(value = "jpaServiceRegistryConfiguration", proxyBeanMethods = false)
 public class JpaServiceRegistryConfiguration {
-
-    @Autowired
-    @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
 
     @RefreshScope
     @Bean
@@ -124,9 +122,11 @@ public class JpaServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "jpaServiceRegistry")
     @Autowired
     public ServiceRegistry jpaServiceRegistry(final ConfigurableApplicationContext applicationContext,
+                                              final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
                                               @Qualifier("jdbcServiceRegistryTransactionTemplate")
                                               final TransactionTemplate jdbcServiceRegistryTransactionTemplate) {
-        return new JpaServiceRegistry(applicationContext, serviceRegistryListeners.getObject(), jdbcServiceRegistryTransactionTemplate);
+        return new JpaServiceRegistry(applicationContext,
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new), jdbcServiceRegistryTransactionTemplate);
     }
 
     @ConditionalOnMissingBean(name = "jdbcServiceRegistryTransactionTemplate")
