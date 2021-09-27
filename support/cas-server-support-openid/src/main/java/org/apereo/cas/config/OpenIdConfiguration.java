@@ -29,7 +29,6 @@ import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openid4java.server.InMemoryServerAssociationStore;
 import org.openid4java.server.ServerManager;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -95,7 +94,8 @@ public class OpenIdConfiguration {
                                                         @Qualifier("servicesManager")
                                                         final ServicesManager servicesManager) {
         val openIdPrefixUrl = casProperties.getServer().getPrefix().concat("/openid");
-        return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager, centralAuthenticationService, servicesManager, urlValidator);
+        return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager,
+            centralAuthenticationService, servicesManager, urlValidator);
     }
 
     @Bean
@@ -113,27 +113,28 @@ public class OpenIdConfiguration {
 
     @Bean
     @Autowired
-    public OpenIdValidateController openIdValidateController(final CasConfigurationProperties casProperties,
-                                                             @Qualifier("serverManager")
-                                                             final ServerManager serverManager,
-                                                             @Qualifier("serviceValidationViewFactory")
-                                                             final ServiceValidationViewFactory serviceValidationViewFactory,
-                                                             @Qualifier("proxy20Handler")
-                                                             final ProxyHandler proxy20Handler,
-                                                             @Qualifier("argumentExtractor")
-                                                             final ArgumentExtractor argumentExtractor,
-                                                             @Qualifier("centralAuthenticationService")
-                                                             final CentralAuthenticationService centralAuthenticationService,
-                                                             @Qualifier("requestedContextValidator")
-                                                             final RequestedAuthenticationContextValidator requestedContextValidator,
-                                                             @Qualifier("authenticationSystemSupport")
-                                                             final AuthenticationSystemSupport authenticationSystemSupport,
-                                                             @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
-                                                             final CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification,
-                                                             @Qualifier("servicesManager")
-                                                             final ServicesManager servicesManager,
-                                                             @Qualifier("validationAuthorizers")
-                                                             final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
+    public OpenIdValidateController openIdValidateController(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("serverManager")
+        final ServerManager serverManager,
+        @Qualifier("serviceValidationViewFactory")
+        final ServiceValidationViewFactory serviceValidationViewFactory,
+        @Qualifier("proxy20Handler")
+        final ProxyHandler proxy20Handler,
+        @Qualifier("argumentExtractor")
+        final ArgumentExtractor argumentExtractor,
+        @Qualifier("centralAuthenticationService")
+        final CentralAuthenticationService centralAuthenticationService,
+        @Qualifier("requestedContextValidator")
+        final RequestedAuthenticationContextValidator requestedContextValidator,
+        @Qualifier("authenticationSystemSupport")
+        final AuthenticationSystemSupport authenticationSystemSupport,
+        @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
+        final CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        @Qualifier("validationAuthorizers")
+        final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
         val context = ServiceValidateConfigurationContext.builder()
             .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification))
             .authenticationSystemSupport(authenticationSystemSupport)
@@ -178,35 +179,46 @@ public class OpenIdConfiguration {
     /**
      * The openid protocol views.
      */
-    @Configuration("OpenIdProtocolViews")
-    public class OpenIdProtocolViews {
+    @Configuration(value = "OpenIdProtocolViews", proxyBeanMethods = false)
+    public static class OpenIdProtocolViews {
 
+        @Bean
         @Autowired
-        @Qualifier("casProtocolViewFactory")
-        private ObjectProvider<CasProtocolViewFactory> casProtocolViewFactory;
+        @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        public View casOpenIdServiceFailureView(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("casProtocolViewFactory")
+            final CasProtocolViewFactory casProtocolViewFactory) {
+            return casProtocolViewFactory.create(applicationContext, "protocol/openid/casOpenIdServiceFailureView");
+        }
 
         @Bean
+        @Autowired
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-        public View casOpenIdServiceFailureView() {
-            return casProtocolViewFactory.getObject().create(applicationContext, "protocol/openid/casOpenIdServiceFailureView");
+        public View casOpenIdServiceSuccessView(final ConfigurableApplicationContext applicationContext,
+                                                @Qualifier("casProtocolViewFactory")
+                                                final CasProtocolViewFactory casProtocolViewFactory) {
+            return casProtocolViewFactory.create(applicationContext, "protocol/openid/casOpenIdServiceSuccessView");
         }
 
         @Bean
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-        public View casOpenIdServiceSuccessView() {
-            return casProtocolViewFactory.getObject().create(applicationContext, "protocol/openid/casOpenIdServiceSuccessView");
+        @Autowired
+        public View casOpenIdAssociationSuccessView(
+            @Qualifier("casProtocolViewFactory")
+            final CasProtocolViewFactory casProtocolViewFactory,
+            final ConfigurableApplicationContext applicationContext) {
+            return casProtocolViewFactory.create(applicationContext, "protocol/openid/casOpenIdAssociationSuccessView");
         }
 
         @Bean
+        @Autowired
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-        public View casOpenIdAssociationSuccessView() {
-            return casProtocolViewFactory.getObject().create(applicationContext, "protocol/openid/casOpenIdAssociationSuccessView");
-        }
-
-        @Bean
-        @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-        public View openIdProviderView() {
-            return casProtocolViewFactory.getObject().create(applicationContext, "protocol/openid/user");
+        public View openIdProviderView(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("casProtocolViewFactory")
+            final CasProtocolViewFactory casProtocolViewFactory) {
+            return casProtocolViewFactory.create(applicationContext, "protocol/openid/user");
         }
     }
 }

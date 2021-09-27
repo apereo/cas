@@ -21,7 +21,9 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.TextIndexDefinition;
 
 import javax.net.ssl.SSLContext;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link MongoDbServiceRegistryConfiguration}.
@@ -32,13 +34,6 @@ import java.util.List;
 @Configuration(value = "mongoDbServiceRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbServiceRegistryConfiguration {
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
 
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryTemplate")
     @Bean
@@ -61,9 +56,13 @@ public class MongoDbServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistry")
     public ServiceRegistry mongoDbServiceRegistry(
         @Qualifier("mongoDbServiceRegistryTemplate")
-        final MongoTemplate mongoDbServiceRegistryTemplate, final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext) {
+        final MongoTemplate mongoDbServiceRegistryTemplate,
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext) {
         val mongo = casProperties.getServiceRegistry().getMongo();
-        return new MongoDbServiceRegistry(applicationContext, mongoDbServiceRegistryTemplate, mongo.getCollection(), serviceRegistryListeners.getObject());
+        return new MongoDbServiceRegistry(applicationContext, mongoDbServiceRegistryTemplate, mongo.getCollection(),
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
     }
 
     @Bean

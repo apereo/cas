@@ -20,7 +20,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.net.ssl.SSLContext;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link CassandraServiceRegistryConfiguration}.
@@ -32,22 +34,18 @@ import java.util.List;
 @Configuration(value = "cassandraServiceRegistryConfiguration", proxyBeanMethods = false)
 public class CassandraServiceRegistryConfiguration {
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
-
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "cassandraServiceRegistry")
     @Autowired
-    public ServiceRegistry cassandraServiceRegistry(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+    public ServiceRegistry cassandraServiceRegistry(final CasConfigurationProperties casProperties,
+                                                    final ConfigurableApplicationContext applicationContext,
+                                                    final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
                                                     @Qualifier("cassandraServiceRegistrySessionFactory")
                                                     final CassandraSessionFactory cassandraServiceRegistrySessionFactory) {
         val cassandra = casProperties.getServiceRegistry().getCassandra();
-        return new CassandraServiceRegistry(cassandraServiceRegistrySessionFactory, cassandra, applicationContext, serviceRegistryListeners.getObject());
+        return new CassandraServiceRegistry(cassandraServiceRegistrySessionFactory, cassandra, applicationContext,
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
     }
 
     @Bean

@@ -37,10 +37,7 @@ import java.util.HashSet;
 @Slf4j
 @Configuration(value = "ldapAuthenticationConfiguration", proxyBeanMethods = false)
 public class LdapAuthenticationConfiguration {
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
+    
     @ConditionalOnMissingBean(name = "ldapPrincipalFactory")
     @Bean
     @RefreshScope
@@ -84,8 +81,6 @@ public class LdapAuthenticationConfiguration {
     @Autowired
     @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer ldapAuthenticationEventExecutionPlanConfigurer(
-        @Qualifier("ldapAuthenticationHandlerSetFactoryBean")
-        final SetFactoryBean ldapAuthenticationHandlerSetFactoryBean,
         @Qualifier("ldapAuthenticationHandlers")
         final Collection<AuthenticationHandler> ldapAuthenticationHandlers,
         @Qualifier("defaultPrincipalResolver")

@@ -40,9 +40,6 @@ public class CasRestAuthenticationConfiguration {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder().defaultTypingEnabled(false).singleValueAsArray(true).build().toObjectMapper();
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @Bean
     @RefreshScope
     @Autowired

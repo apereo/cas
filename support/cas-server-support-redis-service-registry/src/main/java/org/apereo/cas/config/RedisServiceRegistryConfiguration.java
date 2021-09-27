@@ -22,7 +22,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link RedisServiceRegistryConfiguration}.
@@ -34,13 +36,6 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.service-registry.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class RedisServiceRegistryConfiguration {
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Bean
     @ConditionalOnMissingBean(name = "redisServiceConnectionFactory")
@@ -65,9 +60,11 @@ public class RedisServiceRegistryConfiguration {
     @Autowired
     @ConditionalOnMissingBean(name = "redisServiceRegistry")
     public ServiceRegistry redisServiceRegistry(
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
         @Qualifier("registeredServiceRedisTemplate")
         final RedisTemplate<String, RegisteredService> registeredServiceRedisTemplate, final ConfigurableApplicationContext applicationContext) {
-        return new RedisServiceRegistry(applicationContext, registeredServiceRedisTemplate, serviceRegistryListeners.getObject());
+        return new RedisServiceRegistry(applicationContext, registeredServiceRedisTemplate,
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
     }
 
     @Bean

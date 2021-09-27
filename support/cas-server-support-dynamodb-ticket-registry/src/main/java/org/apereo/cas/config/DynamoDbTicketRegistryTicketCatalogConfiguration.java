@@ -26,38 +26,35 @@ public class DynamoDbTicketRegistryTicketCatalogConfiguration extends BaseTicket
         super(casProperties, configProvider);
     }
 
-    @Configuration("dynamoDbTicketCatalogConfigValuesProviderConfiguration")
-    static class Config {
+    @ConditionalOnMissingBean(name = "dynamoDbTicketCatalogConfigurationValuesProvider")
+    @Bean
+    public CasTicketCatalogConfigurationValuesProvider dynamoDbTicketCatalogConfigurationValuesProvider() {
+        return new CasTicketCatalogConfigurationValuesProvider() {
+            @Override
+            public Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
+                return p -> p.getTicket().getRegistry().getDynamoDb().getServiceTicketsTableName();
+            }
 
-        @ConditionalOnMissingBean
-        @Bean
-        public CasTicketCatalogConfigurationValuesProvider dynamoDbTicketCatalogConfigurationValuesProvider() {
-            return new CasTicketCatalogConfigurationValuesProvider() {
-                @Override
-                public Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
-                    return p -> p.getTicket().getRegistry().getDynamoDb().getServiceTicketsTableName();
-                }
+            @Override
+            public Function<CasConfigurationProperties, String> getProxyTicketStorageName() {
+                return p -> p.getTicket().getRegistry().getDynamoDb().getProxyTicketsTableName();
+            }
 
-                @Override
-                public Function<CasConfigurationProperties, String> getProxyTicketStorageName() {
-                    return p -> p.getTicket().getRegistry().getDynamoDb().getProxyTicketsTableName();
-                }
+            @Override
+            public Function<CasConfigurationProperties, String> getTicketGrantingTicketStorageName() {
+                return p -> p.getTicket().getRegistry().getDynamoDb().getTicketGrantingTicketsTableName();
+            }
 
-                @Override
-                public Function<CasConfigurationProperties, String> getTicketGrantingTicketStorageName() {
-                    return p -> p.getTicket().getRegistry().getDynamoDb().getTicketGrantingTicketsTableName();
-                }
+            @Override
+            public Function<CasConfigurationProperties, String> getProxyGrantingTicketStorageName() {
+                return p -> p.getTicket().getRegistry().getDynamoDb().getProxyGrantingTicketsTableName();
+            }
 
-                @Override
-                public Function<CasConfigurationProperties, String> getProxyGrantingTicketStorageName() {
-                    return p -> p.getTicket().getRegistry().getDynamoDb().getProxyGrantingTicketsTableName();
-                }
-
-                @Override
-                public Function<CasConfigurationProperties, String> getTransientSessionStorageName() {
-                    return p -> p.getTicket().getRegistry().getDynamoDb().getTransientSessionTicketsTableName();
-                }
-            };
-        }
+            @Override
+            public Function<CasConfigurationProperties, String> getTransientSessionStorageName() {
+                return p -> p.getTicket().getRegistry().getDynamoDb().getTransientSessionTicketsTableName();
+            }
+        };
     }
+
 }

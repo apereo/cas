@@ -90,7 +90,8 @@ public class SurrogateAuthenticationConfiguration {
         final AuditableExecution registeredServiceAccessStrategyEnforcer,
         @Qualifier("surrogateEligibilityAuditableExecution")
         final AuditableExecution surrogateEligibilityAuditableExecution, final ConfigurableApplicationContext applicationContext) throws Exception {
-        return new SurrogateAuthenticationPostProcessor(surrogateAuthenticationService, servicesManager, applicationContext, registeredServiceAccessStrategyEnforcer,
+        return new SurrogateAuthenticationPostProcessor(surrogateAuthenticationService,
+            servicesManager, applicationContext, registeredServiceAccessStrategyEnforcer,
             surrogateEligibilityAuditableExecution);
     }
 
@@ -142,7 +143,8 @@ public class SurrogateAuthenticationConfiguration {
     @Autowired
     public SurrogateAuthenticationEventListener surrogateAuthenticationEventListener(
         @Qualifier("communicationsManager")
-        final CommunicationsManager communicationsManager, final CasConfigurationProperties casProperties) {
+        final CommunicationsManager communicationsManager,
+        final CasConfigurationProperties casProperties) {
         return new SurrogateAuthenticationEventListener(communicationsManager, casProperties);
     }
 
@@ -150,9 +152,6 @@ public class SurrogateAuthenticationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @DependsOn(value = PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     public static class SurrogateAuthenticationPrincipalResolutionConfiguration {
-
-        @Autowired
-        private CasConfigurationProperties casProperties;
 
         @ConditionalOnMissingBean(name = "surrogatePrincipalBuilder")
         @Bean
@@ -173,6 +172,7 @@ public class SurrogateAuthenticationConfiguration {
         @RefreshScope
         @Autowired
         public PrincipalResolver surrogatePrincipalResolver(
+            final CasConfigurationProperties casProperties,
             @Qualifier("surrogatePrincipalFactory")
             final PrincipalFactory surrogatePrincipalFactory,
             @Qualifier("surrogatePrincipalBuilder")
@@ -182,8 +182,8 @@ public class SurrogateAuthenticationConfiguration {
             val principal = casProperties.getAuthn().getSurrogate().getPrincipal();
             val personDirectory = casProperties.getPersonDirectory();
             var attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
-            val resolver =
-                CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(surrogatePrincipalFactory, attributeRepository, attributeMerger, SurrogatePrincipalResolver.class, principal,
+            val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(surrogatePrincipalFactory,
+                    attributeRepository, attributeMerger, SurrogatePrincipalResolver.class, principal,
                     personDirectory);
             resolver.setSurrogatePrincipalBuilder(surrogatePrincipalBuilder);
             return resolver;

@@ -21,7 +21,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link CouchDbServiceRegistryConfiguration}.
@@ -33,13 +35,6 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "couchDbServiceRegistryConfiguration", proxyBeanMethods = false)
 public class CouchDbServiceRegistryConfiguration {
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Bean
     @RefreshScope
@@ -69,9 +64,11 @@ public class CouchDbServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "couchDbServiceRegistry")
     @Autowired
     public ServiceRegistry couchDbServiceRegistry(final ConfigurableApplicationContext applicationContext,
+                                                  final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
                                                   @Qualifier("serviceRegistryCouchDbRepository")
                                                   final RegisteredServiceCouchDbRepository serviceRegistryCouchDbRepository) {
-        return new CouchDbServiceRegistry(applicationContext, serviceRegistryCouchDbRepository, serviceRegistryListeners.getObject());
+        return new CouchDbServiceRegistry(applicationContext, serviceRegistryCouchDbRepository,
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
     }
 
     @Bean

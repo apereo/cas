@@ -19,7 +19,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.services.s3.S3Client;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link AmazonS3ServiceRegistryConfiguration}.
@@ -30,20 +32,14 @@ import java.util.List;
 @Configuration(value = "AmazonS3ServiceRegistryConfiguration", proxyBeanMethods = false)
 public class AmazonS3ServiceRegistryConfiguration {
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
-
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "amazonS3ServiceRegistryClient")
     @Autowired
     public S3Client amazonS3ServiceRegistryClient(final CasConfigurationProperties casProperties) {
         val amz = casProperties.getServiceRegistry().getAmazonS3();
-        val credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(), amz.getCredentialSecretKey(), amz.getProfilePath(), amz.getProfileName());
+        val credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(),
+            amz.getCredentialSecretKey(), amz.getProfilePath(), amz.getProfileName());
         val builder = S3Client.builder();
         AmazonClientConfigurationBuilder.prepareClientBuilder(builder, credentials, amz);
         return builder.build();
@@ -54,9 +50,11 @@ public class AmazonS3ServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "amazonS3ServiceRegistry")
     @Autowired
     public ServiceRegistry amazonS3ServiceRegistry(
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
         @Qualifier("amazonS3ServiceRegistryClient")
         final S3Client amazonS3ServiceRegistryClient, final ConfigurableApplicationContext applicationContext) {
-        return new AmazonS3ServiceRegistry(applicationContext, serviceRegistryListeners.getObject(), amazonS3ServiceRegistryClient);
+        return new AmazonS3ServiceRegistry(applicationContext,
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new), amazonS3ServiceRegistryClient);
     }
 
     @Bean

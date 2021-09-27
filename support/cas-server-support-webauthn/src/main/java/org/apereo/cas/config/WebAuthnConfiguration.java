@@ -297,7 +297,7 @@ public class WebAuthnConfiguration {
         }
     }
 
-    @Configuration("WebAuthnSecurityConfiguration")
+    @Configuration(value = "WebAuthnSecurityConfiguration", proxyBeanMethods = false)
     @Order(CasWebSecurityConstants.SECURITY_CONFIGURATION_ORDER - 1)
     public static class WebAuthnSecurityConfiguration {
 

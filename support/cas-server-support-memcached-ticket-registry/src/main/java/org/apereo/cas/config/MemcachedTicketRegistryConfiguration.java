@@ -11,7 +11,6 @@ import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import lombok.val;
 import net.spy.memcached.transcoders.Transcoder;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
