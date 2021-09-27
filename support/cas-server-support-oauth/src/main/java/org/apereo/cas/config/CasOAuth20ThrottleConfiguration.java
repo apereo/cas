@@ -96,21 +96,21 @@ public class CasOAuth20ThrottleConfiguration {
             oauthAuthorizationRequestValidators);
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "oauthThrottleWebMvcConfigurer")
-    @Autowired
-    public WebMvcConfigurer oauthThrottleWebMvcConfigurer(
-        @Qualifier("oauthHandlerInterceptorAdapter")
-        final HandlerInterceptor oauthHandlerInterceptorAdapter,
-        @Qualifier("authenticationThrottlingExecutionPlan")
-        final AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan) {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addInterceptors(final InterceptorRegistry registry) {
-                authenticationThrottlingExecutionPlan.getAuthenticationThrottleInterceptors()
-                    .forEach(handler -> registry.addInterceptor(handler).order(0).addPathPatterns(BASE_OAUTH20_URL.concat("/*")));
-                registry.addInterceptor(oauthHandlerInterceptorAdapter).order(1).addPathPatterns(BASE_OAUTH20_URL.concat("/*"));
-            }
-        };
-    }
+//    @Bean
+//    @ConditionalOnMissingBean(name = "oauthThrottleWebMvcConfigurer")
+//    @Autowired
+//    public WebMvcConfigurer oauthThrottleWebMvcConfigurer(
+//        @Qualifier("oauthHandlerInterceptorAdapter")
+//        final HandlerInterceptor oauthHandlerInterceptorAdapter,
+//        @Qualifier("authenticationThrottlingExecutionPlan")
+//        final AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan) {
+//        return new WebMvcConfigurer() {
+//            @Override
+//            public void addInterceptors(final InterceptorRegistry registry) {
+//                authenticationThrottlingExecutionPlan.getAuthenticationThrottleInterceptors()
+//                    .forEach(handler -> registry.addInterceptor(handler).order(0).addPathPatterns(BASE_OAUTH20_URL.concat("/*")));
+//                registry.addInterceptor(oauthHandlerInterceptorAdapter).order(1).addPathPatterns(BASE_OAUTH20_URL.concat("/*"));
+//            }
+//        };
+//    }
 }

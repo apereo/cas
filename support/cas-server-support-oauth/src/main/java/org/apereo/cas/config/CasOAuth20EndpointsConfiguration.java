@@ -41,6 +41,7 @@ import java.util.List;
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
 public class CasOAuth20EndpointsConfiguration {
 
+    /*
     @Bean
     @ConditionalOnMissingBean(name = "callbackAuthorizeController")
     @RefreshScope
@@ -108,6 +109,8 @@ public class CasOAuth20EndpointsConfiguration {
         return new OAuth20AuthorizeEndpointController(context);
     }
 
+     */
+    
     @Bean
     @ConditionalOnAvailableEndpoint
     @Autowired
@@ -121,13 +124,17 @@ public class CasOAuth20EndpointsConfiguration {
             centralAuthenticationService, accessTokenJwtBuilder);
     }
 
-    @Bean
-    public ProtocolEndpointWebSecurityConfigurer<Void> oauth20ProtocolEndpointConfigurer() {
-        return new ProtocolEndpointWebSecurityConfigurer<>() {
-            @Override
-            public List<String> getIgnoredEndpoints() {
-                return List.of(StringUtils.prependIfMissing(OAuth20Constants.BASE_OAUTH20_URL, "/"));
-            }
-        };
+    @Configuration(value = "CasOAuth20EndpointSecurityConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasOAuth20EndpointSecurityConfiguration {
+        @Bean
+        public ProtocolEndpointWebSecurityConfigurer<Void> oauth20ProtocolEndpointConfigurer() {
+            return new ProtocolEndpointWebSecurityConfigurer<>() {
+                @Override
+                public List<String> getIgnoredEndpoints() {
+                    return List.of(StringUtils.prependIfMissing(OAuth20Constants.BASE_OAUTH20_URL, "/"));
+                }
+            };
+        }
     }
 }
