@@ -9,7 +9,6 @@ import org.apereo.cas.trusted.authentication.storage.CouchDbMultifactorAuthentic
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import org.ektorp.impl.ObjectMapperFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,43 +27,37 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchDbMultifactorAuthenticationTrustConfiguration {
 
-    @Autowired
-    @Qualifier("mfaTrustRecordKeyGenerator")
-    private ObjectProvider<MultifactorAuthenticationTrustRecordKeyGenerator> keyGenerationStrategy;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("mfaTrustCipherExecutor")
-    private ObjectProvider<CipherExecutor> mfaTrustCipherExecutor;
-
-    @Autowired
-    @Qualifier("defaultObjectMapperFactory")
-    private ObjectProvider<ObjectMapperFactory> objectMapperFactory;
-
     @ConditionalOnMissingBean(name = "mfaTrustCouchDbFactory")
     @Bean
     @RefreshScope
-    public CouchDbConnectorFactory mfaTrustCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getTrusted().getCouchDb(), objectMapperFactory.getObject());
+    @Autowired
+    public CouchDbConnectorFactory mfaTrustCouchDbFactory(final CasConfigurationProperties casProperties,
+                                                          @Qualifier("objectMapperFactory")
+                                                          final ObjectMapperFactory objectMapperFactory) {
+        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getTrusted().getCouchDb(), objectMapperFactory);
     }
 
     @ConditionalOnMissingBean(name = "couchDbTrustRecordRepository")
     @Bean
     @RefreshScope
+    @Autowired
     public MultifactorAuthenticationTrustRecordCouchDbRepository couchDbTrustRecordRepository(
-        @Qualifier("mfaTrustCouchDbFactory") final CouchDbConnectorFactory mfaTrustCouchDbFactory) {
+        @Qualifier("mfaTrustCouchDbFactory")
+        final CouchDbConnectorFactory mfaTrustCouchDbFactory, final CasConfigurationProperties casProperties) {
         return new MultifactorAuthenticationTrustRecordCouchDbRepository(mfaTrustCouchDbFactory.getCouchDbConnector(),
             casProperties.getAuthn().getMfa().getTrusted().getCouchDb().isCreateIfNotExists());
     }
-    
+
     @Bean
     @RefreshScope
+    @Autowired
     public MultifactorAuthenticationTrustStorage mfaTrustEngine(
-        @Qualifier("couchDbTrustRecordRepository") final MultifactorAuthenticationTrustRecordCouchDbRepository couchDbTrustRecordRepository) {
-        return new CouchDbMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
-            mfaTrustCipherExecutor.getObject(),
-            couchDbTrustRecordRepository, keyGenerationStrategy.getObject());
+        @Qualifier("couchDbTrustRecordRepository")
+        final MultifactorAuthenticationTrustRecordCouchDbRepository couchDbTrustRecordRepository, final CasConfigurationProperties casProperties,
+        @Qualifier("keyGenerationStrategy")
+        final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy,
+        @Qualifier("mfaTrustCipherExecutor")
+        final CipherExecutor mfaTrustCipherExecutor) {
+        return new CouchDbMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(), mfaTrustCipherExecutor, couchDbTrustRecordRepository, keyGenerationStrategy);
     }
 }

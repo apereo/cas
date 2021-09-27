@@ -24,7 +24,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -42,20 +41,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Configuration("passwordlessAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "passwordlessAuthenticationConfiguration", proxyBeanMethods = false)
 public class PasswordlessAuthenticationConfiguration {
-
-    @Autowired
-    @Qualifier("defaultPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
 
     @Bean
     public PrincipalFactory passwordlessPrincipalFactory() {
@@ -65,49 +53,50 @@ public class PasswordlessAuthenticationConfiguration {
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "passwordlessTokenAuthenticationHandler")
-    public AuthenticationHandler passwordlessTokenAuthenticationHandler() {
-        return new PasswordlessTokenAuthenticationHandler(null, servicesManager.getObject(),
-            passwordlessPrincipalFactory(), null, passwordlessTokenRepository());
+    public AuthenticationHandler passwordlessTokenAuthenticationHandler(
+        @Qualifier("passwordlessPrincipalFactory")
+        final PrincipalFactory passwordlessPrincipalFactory,
+        @Qualifier("passwordlessTokenRepository")
+        final PasswordlessTokenRepository passwordlessTokenRepository,
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager) {
+        return new PasswordlessTokenAuthenticationHandler(null, servicesManager, passwordlessPrincipalFactory, null, passwordlessTokenRepository);
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "passwordlessUserAccountStore")
-    public PasswordlessUserAccountStore passwordlessUserAccountStore() {
+    @Autowired
+    public PasswordlessUserAccountStore passwordlessUserAccountStore(final CasConfigurationProperties casProperties) {
         val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
-
         if (accounts.getJson().getLocation() != null) {
             return new JsonPasswordlessUserAccountStore(accounts.getJson().getLocation());
         }
         if (accounts.getGroovy().getLocation() != null) {
             return new GroovyPasswordlessUserAccountStore(accounts.getGroovy().getLocation());
         }
-
         if (StringUtils.isNotBlank(accounts.getRest().getUrl())) {
             return new RestfulPasswordlessUserAccountStore(accounts.getRest());
         }
-
-        var simple = accounts.getSimple()
-            .entrySet()
-            .stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-                val account = new PasswordlessUserAccount();
-                account.setUsername(entry.getKey());
-                account.setName(entry.getKey());
-                if (EmailValidator.getInstance().isValid(entry.getValue())) {
-                    account.setEmail(entry.getValue());
-                } else {
-                    account.setPhone(entry.getValue());
-                }
-                return account;
-            }));
-        return new SimplePasswordlessUserAccountStore((Map) simple);
+        var simple = accounts.getSimple().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+            val account = new PasswordlessUserAccount();
+            account.setUsername(entry.getKey());
+            account.setName(entry.getKey());
+            if (EmailValidator.getInstance().isValid(entry.getValue())) {
+                account.setEmail(entry.getValue());
+            } else {
+                account.setPhone(entry.getValue());
+            }
+            return account;
+        }));
+        return new SimplePasswordlessUserAccountStore(simple);
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "passwordlessCipherExecutor")
-    public CipherExecutor passwordlessCipherExecutor() {
+    @Autowired
+    public CipherExecutor passwordlessCipherExecutor(final CasConfigurationProperties casProperties) {
         val tokens = casProperties.getAuthn().getPasswordless().getTokens();
         val crypto = tokens.getCrypto();
         if (crypto.isEnabled()) {
@@ -119,19 +108,24 @@ public class PasswordlessAuthenticationConfiguration {
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "passwordlessTokenRepository")
-    public PasswordlessTokenRepository passwordlessTokenRepository() {
+    @Autowired
+    public PasswordlessTokenRepository passwordlessTokenRepository(final CasConfigurationProperties casProperties,
+                                                                   @Qualifier("passwordlessCipherExecutor")
+                                                                   final CipherExecutor passwordlessCipherExecutor) {
         val tokens = casProperties.getAuthn().getPasswordless().getTokens();
         if (StringUtils.isNotBlank(tokens.getRest().getUrl())) {
-            return new RestfulPasswordlessTokenRepository(tokens.getExpireInSeconds(), tokens.getRest(), passwordlessCipherExecutor());
+            return new RestfulPasswordlessTokenRepository(tokens.getExpireInSeconds(), tokens.getRest(), passwordlessCipherExecutor);
         }
         return new InMemoryPasswordlessTokenRepository(tokens.getExpireInSeconds());
     }
 
     @ConditionalOnMissingBean(name = "passwordlessAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer passwordlessAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(
-            passwordlessTokenAuthenticationHandler(), defaultPrincipalResolver.getObject());
+    public AuthenticationEventExecutionPlanConfigurer passwordlessAuthenticationEventExecutionPlanConfigurer(
+        @Qualifier("passwordlessTokenAuthenticationHandler")
+        final AuthenticationHandler passwordlessTokenAuthenticationHandler,
+        @Qualifier("defaultPrincipalResolver")
+        final PrincipalResolver defaultPrincipalResolver) {
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(passwordlessTokenAuthenticationHandler, defaultPrincipalResolver);
     }
-
 }

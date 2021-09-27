@@ -6,7 +6,6 @@ import org.apereo.cas.support.sms.TextMagicSmsSender;
 import org.apereo.cas.util.http.HttpClient;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,17 +24,14 @@ import java.util.Optional;
 @Configuration(value = "textMagicSmsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class TextMagicSmsConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("noRedirectHttpClient")
-    private ObjectProvider<HttpClient> httpClient;
 
     @Bean
     @RefreshScope
-    public SmsSender smsSender() {
+    @Autowired
+    public SmsSender smsSender(final CasConfigurationProperties casProperties,
+                               @Qualifier("httpClient")
+                               final HttpClient httpClient) {
         val textMagic = casProperties.getSmsProvider().getTextMagic();
-        return new TextMagicSmsSender(textMagic, Optional.of(httpClient.getObject()));
+        return new TextMagicSmsSender(textMagic, Optional.of(httpClient));
     }
 }
