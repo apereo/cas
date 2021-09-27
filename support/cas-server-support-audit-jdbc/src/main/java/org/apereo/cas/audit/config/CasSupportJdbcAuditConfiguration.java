@@ -16,7 +16,6 @@ import org.apereo.inspektr.audit.support.JdbcAuditTrailManager;
 import org.apereo.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria;
 import org.apereo.inspektr.audit.support.WhereClauseMatchCriteria;
 import org.apereo.inspektr.common.Cleanable;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -46,9 +45,6 @@ import javax.sql.DataSource;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
 public class CasSupportJdbcAuditConfiguration {
-    @Autowired
-    @Qualifier("jpaBeanFactory")
-    private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
 
     private static String getAuditTableNameFrom(final AuditJdbcProperties jdbc) {
         var tableName = AuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
@@ -70,8 +66,7 @@ public class CasSupportJdbcAuditConfiguration {
         @Qualifier("inspektrAuditTransactionTemplate")
         final TransactionTemplate inspektrAuditTransactionTemplate,
         @Qualifier("inspektrAuditTrailDataSource")
-        final DataSource inspektrAuditTrailDataSource,
-        final CasConfigurationProperties casProperties) {
+        final DataSource inspektrAuditTrailDataSource, final CasConfigurationProperties casProperties) {
         val jdbc = casProperties.getAudit().getJdbc();
         val t = new JdbcAuditTrailManager(inspektrAuditTransactionTemplate);
         t.setCleanupCriteria(auditCleanupCriteria);
@@ -102,9 +97,10 @@ public class CasSupportJdbcAuditConfiguration {
     @Autowired
     public LocalContainerEntityManagerFactoryBean inspektrAuditEntityManagerFactory(
         @Qualifier("inspektrAuditTrailDataSource")
-        final DataSource inspektrAuditTrailDataSource,
-        final CasConfigurationProperties casProperties) {
-        val factory = jpaBeanFactory.getObject();
+        final DataSource inspektrAuditTrailDataSource, final CasConfigurationProperties casProperties,
+        @Qualifier("jpaBeanFactory")
+        final JpaBeanFactory jpaBeanFactory) {
+        val factory = jpaBeanFactory;
         val ctx = JpaConfigurationContext.builder()
             .jpaVendorAdapter(factory.newJpaVendorAdapter(casProperties.getJdbc()))
             .persistenceUnitName("jpaInspektrAuditContext")
@@ -144,8 +140,7 @@ public class CasSupportJdbcAuditConfiguration {
     @Autowired
     public TransactionTemplate inspektrAuditTransactionTemplate(
         @Qualifier("inspektrAuditTransactionManager")
-        final PlatformTransactionManager inspektrAuditTransactionManager,
-        final CasConfigurationProperties casProperties) {
+        final PlatformTransactionManager inspektrAuditTransactionManager, final CasConfigurationProperties casProperties) {
         val t = new TransactionTemplate(inspektrAuditTransactionManager);
         val jdbc = casProperties.getAudit().getJdbc();
         t.setIsolationLevelName(jdbc.getIsolationLevelName());
@@ -161,10 +156,8 @@ public class CasSupportJdbcAuditConfiguration {
         @Qualifier("jdbcAuditTrailManager")
         final AuditTrailManager jdbcAuditTrailManager) {
         return new Cleanable() {
-            @Scheduled(
-                initialDelayString = "${cas.audit.jdbc.schedule.start-delay:10000}",
-                fixedDelayString = "${cas.audit.jdbc.schedule.repeat-interval:30000}"
-            )
+
+            @Scheduled(initialDelayString = "${cas.audit.jdbc.schedule.start-delay:10000}", fixedDelayString = "${cas.audit.jdbc.schedule.repeat-interval:30000}")
             @Override
             public void clean() {
                 jdbcAuditTrailManager.clean();
