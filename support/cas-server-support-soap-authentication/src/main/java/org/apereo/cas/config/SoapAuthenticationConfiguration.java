@@ -41,9 +41,6 @@ import java.util.HashMap;
 @Configuration(value = "soapAuthenticationConfiguration", proxyBeanMethods = false)
 public class SoapAuthenticationConfiguration {
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @ConditionalOnMissingBean(name = "soapAuthenticationPrincipalFactory")
     @Bean
     public PrincipalFactory soapAuthenticationPrincipalFactory() {

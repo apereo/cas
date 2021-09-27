@@ -86,8 +86,9 @@ public class CouchDbSamlIdPMetadataConfiguration {
         if (crypto.isEnabled()) {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, CouchDbSamlIdPMetadataCipherExecutor.class);
         }
-        LOGGER.info("CouchDb SAML IdP metadata encryption/signing is turned off and " + "MAY NOT be safe in a production environment. " +
-            "Consider using other choices to handle encryption, signing and verification of metadata artifacts");
+        LOGGER.info("CouchDb SAML IdP metadata encryption/signing is turned off and "
+                    + "MAY NOT be safe in a production environment. "
+                    + "Consider using other choices to handle encryption, signing and verification of metadata artifacts");
         return CipherExecutor.noOp();
     }
 

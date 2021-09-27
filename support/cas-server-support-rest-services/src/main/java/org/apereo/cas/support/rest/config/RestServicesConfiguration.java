@@ -49,8 +49,8 @@ public class RestServicesConfiguration {
         val rest = casProperties.getRest()
             .getServices();
         if (StringUtils.isBlank(rest.getAttributeName()) || StringUtils.isBlank(rest.getAttributeValue())) {
-            throw new BeanCreationException("No attribute name or value is defined to enforce authorization when adding services via CAS REST APIs. " +
-                "This is likely due to misconfiguration in CAS settings where the attribute name/value definition is absent");
+            throw new BeanCreationException("No attribute name or value is defined to enforce authorization when adding services via CAS REST APIs. "
+                                            + "This is likely due to misconfiguration in CAS settings where the attribute name/value definition is absent");
         }
         return new RegisteredServiceResource(authenticationSystemSupport, webApplicationServiceFactory.getObject(), servicesManager, rest.getAttributeName(), rest.getAttributeValue());
     }

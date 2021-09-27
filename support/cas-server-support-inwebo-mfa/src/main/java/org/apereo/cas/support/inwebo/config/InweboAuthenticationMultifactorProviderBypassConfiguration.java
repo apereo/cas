@@ -36,23 +36,24 @@ public class InweboAuthenticationMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope
     @Autowired
-    public MultifactorAuthenticationProviderBypassEvaluator inweboBypassEvaluator(final CasConfigurationProperties casProperties,
-                                                                                  @Qualifier("inweboPrincipalMultifactorAuthenticationProviderBypass")
-                                                                                  final MultifactorAuthenticationProviderBypassEvaluator inweboPrincipalMultifactorAuthenticationProviderBypass,
-                                                                                  @Qualifier("inweboRegisteredServiceMultifactorAuthenticationProviderBypass")
-                                                                                  final MultifactorAuthenticationProviderBypassEvaluator inweboRegisteredServiceMultifactorAuthenticationProviderBypass,
-                                                                                  @Qualifier("inweboRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
-                                                                                  final MultifactorAuthenticationProviderBypassEvaluator inweboRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator,
-                                                                                  @Qualifier("inweboAuthenticationMultifactorAuthenticationProviderBypass")
-                                                                                  final MultifactorAuthenticationProviderBypassEvaluator inweboAuthenticationMultifactorAuthenticationProviderBypass,
-                                                                                  @Qualifier("inweboCredentialMultifactorAuthenticationProviderBypass")
-                                                                                  final MultifactorAuthenticationProviderBypassEvaluator inweboCredentialMultifactorAuthenticationProviderBypass,
-                                                                                  @Qualifier("inweboHttpRequestMultifactorAuthenticationProviderBypass")
-                                                                                  final MultifactorAuthenticationProviderBypassEvaluator inweboHttpRequestMultifactorAuthenticationProviderBypass,
-                                                                                  @Qualifier("inweboGroovyMultifactorAuthenticationProviderBypass")
-                                                                                  final MultifactorAuthenticationProviderBypassEvaluator inweboGroovyMultifactorAuthenticationProviderBypass,
-                                                                                  @Qualifier("inweboRestMultifactorAuthenticationProviderBypass")
-                                                                                  final MultifactorAuthenticationProviderBypassEvaluator inweboRestMultifactorAuthenticationProviderBypass) {
+    public MultifactorAuthenticationProviderBypassEvaluator inweboBypassEvaluator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("inweboPrincipalMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator inweboPrincipalMultifactorAuthenticationProviderBypass,
+        @Qualifier("inweboRegisteredServiceMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator inweboRegisteredServiceMultifactorAuthenticationProviderBypass,
+        @Qualifier("inweboRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
+        final MultifactorAuthenticationProviderBypassEvaluator inweboRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator,
+        @Qualifier("inweboAuthenticationMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator inweboAuthenticationMultifactorAuthenticationProviderBypass,
+        @Qualifier("inweboCredentialMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator inweboCredentialMultifactorAuthenticationProviderBypass,
+        @Qualifier("inweboHttpRequestMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator inweboHttpRequestMultifactorAuthenticationProviderBypass,
+        @Qualifier("inweboGroovyMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator inweboGroovyMultifactorAuthenticationProviderBypass,
+        @Qualifier("inweboRestMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator inweboRestMultifactorAuthenticationProviderBypass) {
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider();
         val props = casProperties.getAuthn().getMfa().getInwebo().getBypass();
         if (StringUtils.isNotBlank(props.getPrincipalAttributeName())) {
@@ -60,8 +61,8 @@ public class InweboAuthenticationMultifactorProviderBypassConfiguration {
         }
         bypass.addMultifactorAuthenticationProviderBypassEvaluator(inweboRegisteredServiceMultifactorAuthenticationProviderBypass);
         bypass.addMultifactorAuthenticationProviderBypassEvaluator(inweboRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator);
-        if (StringUtils.isNotBlank(props.getAuthenticationAttributeName()) || StringUtils.isNotBlank(props.getAuthenticationHandlerName()) ||
-            StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
+        if (StringUtils.isNotBlank(props.getAuthenticationAttributeName()) || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
+            || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(inweboAuthenticationMultifactorAuthenticationProviderBypass);
         }
         if (StringUtils.isNotBlank(props.getCredentialClassType())) {
@@ -70,7 +71,7 @@ public class InweboAuthenticationMultifactorProviderBypassConfiguration {
         if (StringUtils.isNotBlank(props.getHttpRequestHeaders()) || StringUtils.isNotBlank(props.getHttpRequestRemoteAddress())) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(inweboHttpRequestMultifactorAuthenticationProviderBypass);
         }
-        if (props.getGroovy().getLocation() != null) {
+        if (props.getGroovy().getLocation()!=null) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(inweboGroovyMultifactorAuthenticationProviderBypass);
         }
         if (StringUtils.isNotBlank(props.getRest().getUrl())) {

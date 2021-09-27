@@ -53,8 +53,9 @@ public class SamlIdPMongoDbIdPMetadataConfiguration {
         if (crypto.isEnabled()) {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, MongoDbSamlIdPMetadataCipherExecutor.class);
         }
-        LOGGER.info("MongoDb SAML IdP metadata encryption/signing is turned off and " + "MAY NOT be safe in a production environment. " +
-            "Consider using other choices to handle encryption, signing and verification of " + "metadata artifacts");
+        LOGGER.info("MongoDb SAML IdP metadata encryption/signing is turned off and "
+                    + "MAY NOT be safe in a production environment. "
+                    + "Consider using other choices to handle encryption, signing and verification of metadata artifacts");
         return CipherExecutor.noOp();
     }
 

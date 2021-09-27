@@ -142,8 +142,9 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         val crypto = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie().getCrypto();
         var enabled = crypto.isEnabled();
         if (!enabled && StringUtils.isNotBlank(crypto.getEncryption().getKey()) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
-            LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet " +
-                "signing/encryption keys are defined for operations. CAS will proceed to enable the cookie " + "encryption/signing functionality.");
+            LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet "
+                + "signing/encryption keys are defined for operations. CAS will proceed to enable the cookie "
+                + "encryption/signing functionality.");
             enabled = true;
         }
         if (enabled) {

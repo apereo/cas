@@ -86,9 +86,6 @@ public class WebAuthnConfiguration {
 
     private static final int CACHE_MAX_SIZE = 10_000;
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     private static <K, V> Cache<K, V> newCache() {
         return CacheBuilder.newBuilder().maximumSize(CACHE_MAX_SIZE).expireAfterAccess(Duration.ofMinutes(5)).build();
     }

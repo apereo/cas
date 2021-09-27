@@ -27,9 +27,14 @@ public class RestMultifactorAuthenticationTrustConfiguration {
     @RefreshScope
     @Bean
     @Autowired
-    public MultifactorAuthenticationTrustStorage mfaTrustEngine(final CasConfigurationProperties casProperties, @Qualifier("keyGenerationStrategy") final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy, @Qualifier("mfaTrustCipherExecutor") final CipherExecutor mfaTrustCipherExecutor) {
+    public MultifactorAuthenticationTrustStorage mfaTrustEngine(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("keyGenerationStrategy")
+        final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy,
+        @Qualifier("mfaTrustCipherExecutor")
+        final CipherExecutor mfaTrustCipherExecutor) {
         return new RestMultifactorAuthenticationTrustStorage(casProperties.getAuthn()
-                                                                          .getMfa()
-                                                                          .getTrusted(), mfaTrustCipherExecutor, keyGenerationStrategy, new RestTemplate());
+            .getMfa()
+            .getTrusted(), mfaTrustCipherExecutor, keyGenerationStrategy, new RestTemplate());
     }
 }

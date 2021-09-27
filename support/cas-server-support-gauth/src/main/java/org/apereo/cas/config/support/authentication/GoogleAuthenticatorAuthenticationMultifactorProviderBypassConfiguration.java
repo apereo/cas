@@ -36,24 +36,25 @@ public class GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfigura
     @Bean
     @RefreshScope
     @Autowired
-    public MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorBypassEvaluator(final CasConfigurationProperties casProperties,
-                                                                                               @Qualifier("googleAuthenticatorPrincipalMultifactorAuthenticationProviderBypass")
-                                                                                               final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorPrincipalMultifactorAuthenticationProviderBypass,
-                                                                                               @Qualifier("googleAuthenticatorRegisteredServiceMultifactorAuthenticationProviderBypass")
-                                                                                               final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorRegisteredServiceMultifactorAuthenticationProviderBypass,
-                                                                                               @Qualifier(
-                                                                                                   "googleAuthenticatorRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
-                                                                                               final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator,
-                                                                                               @Qualifier("googleAuthenticatorAuthenticationMultifactorAuthenticationProviderBypass")
-                                                                                               final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorAuthenticationMultifactorAuthenticationProviderBypass,
-                                                                                               @Qualifier("googleAuthenticatorCredentialMultifactorAuthenticationProviderBypass")
-                                                                                               final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorCredentialMultifactorAuthenticationProviderBypass,
-                                                                                               @Qualifier("googleAuthenticatorHttpRequestMultifactorAuthenticationProviderBypass")
-                                                                                               final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorHttpRequestMultifactorAuthenticationProviderBypass,
-                                                                                               @Qualifier("googleAuthenticatorGroovyMultifactorAuthenticationProviderBypass")
-                                                                                               final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorGroovyMultifactorAuthenticationProviderBypass,
-                                                                                               @Qualifier("googleAuthenticatorRestMultifactorAuthenticationProviderBypass")
-                                                                                               final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorRestMultifactorAuthenticationProviderBypass) {
+    public MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorBypassEvaluator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("googleAuthenticatorPrincipalMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorPrincipalMultifactorAuthenticationProviderBypass,
+        @Qualifier("googleAuthenticatorRegisteredServiceMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorRegisteredServiceMultifactorAuthenticationProviderBypass,
+        @Qualifier(
+            "googleAuthenticatorRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
+        final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator,
+        @Qualifier("googleAuthenticatorAuthenticationMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorAuthenticationMultifactorAuthenticationProviderBypass,
+        @Qualifier("googleAuthenticatorCredentialMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorCredentialMultifactorAuthenticationProviderBypass,
+        @Qualifier("googleAuthenticatorHttpRequestMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorHttpRequestMultifactorAuthenticationProviderBypass,
+        @Qualifier("googleAuthenticatorGroovyMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorGroovyMultifactorAuthenticationProviderBypass,
+        @Qualifier("googleAuthenticatorRestMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorRestMultifactorAuthenticationProviderBypass) {
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider();
         val props = casProperties.getAuthn().getMfa().getGauth().getBypass();
         if (StringUtils.isNotBlank(props.getPrincipalAttributeName())) {
@@ -61,8 +62,8 @@ public class GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfigura
         }
         bypass.addMultifactorAuthenticationProviderBypassEvaluator(googleAuthenticatorRegisteredServiceMultifactorAuthenticationProviderBypass);
         bypass.addMultifactorAuthenticationProviderBypassEvaluator(googleAuthenticatorRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator);
-        if (StringUtils.isNotBlank(props.getAuthenticationAttributeName()) || StringUtils.isNotBlank(props.getAuthenticationHandlerName()) ||
-            StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
+        if (StringUtils.isNotBlank(props.getAuthenticationAttributeName()) || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
+            || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(googleAuthenticatorAuthenticationMultifactorAuthenticationProviderBypass);
         }
         if (StringUtils.isNotBlank(props.getCredentialClassType())) {
@@ -71,7 +72,7 @@ public class GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfigura
         if (StringUtils.isNotBlank(props.getHttpRequestHeaders()) || StringUtils.isNotBlank(props.getHttpRequestRemoteAddress())) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(googleAuthenticatorHttpRequestMultifactorAuthenticationProviderBypass);
         }
-        if (props.getGroovy().getLocation() != null) {
+        if (props.getGroovy().getLocation()!=null) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(googleAuthenticatorGroovyMultifactorAuthenticationProviderBypass);
         }
         if (StringUtils.isNotBlank(props.getRest().getUrl())) {

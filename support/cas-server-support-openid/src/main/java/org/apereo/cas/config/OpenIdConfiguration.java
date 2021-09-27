@@ -56,9 +56,6 @@ import java.util.Properties;
 @Configuration(value = "openidConfiguration", proxyBeanMethods = false)
 public class OpenIdConfiguration {
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @Bean
     public SmartOpenIdController smartOpenIdAssociationController(
         @Qualifier("serverManager")

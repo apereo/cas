@@ -86,7 +86,7 @@ public class MultifactorAuthnTrustConfiguration {
             LOGGER.error("Load operation of the cache is not supported.");
             return null;
         });
-        return FunctionUtils.doIf(trusted.getJson().getLocation() != null, () -> {
+        return FunctionUtils.doIf(trusted.getJson().getLocation()!=null, () -> {
             LOGGER.debug("Storing trusted device records inside the JSON resource [{}]", trusted.getJson().getLocation());
             return new JsonMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(), mfaTrustCipherExecutor, trusted.getJson().getLocation(),
                 mfaTrustRecordKeyGenerator);
@@ -108,7 +108,7 @@ public class MultifactorAuthnTrustConfiguration {
     @Autowired
     public MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator(final CasConfigurationProperties casProperties) {
         val type = casProperties.getAuthn().getMfa().getTrusted().getCore().getKeyGeneratorType();
-        if (type == TrustedDevicesMultifactorCoreProperties.TrustedDevicesKeyGeneratorTypes.DEFAULT) {
+        if (type==TrustedDevicesMultifactorCoreProperties.TrustedDevicesKeyGeneratorTypes.DEFAULT) {
             return new DefaultMultifactorAuthenticationTrustRecordKeyGenerator();
         }
         return new LegacyMultifactorAuthenticationTrustRecordKeyGenerator();
@@ -123,8 +123,10 @@ public class MultifactorAuthnTrustConfiguration {
         if (crypto.isEnabled()) {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, MultifactorAuthenticationTrustCipherExecutor.class);
         }
-        LOGGER.info("Multifactor trusted authentication record encryption/signing is turned off and " + "MAY NOT be safe in a production environment. " +
-            "Consider using other choices to handle encryption, signing and verification of " + "trusted authentication records for MFA");
+        LOGGER.info("Multifactor trusted authentication record encryption/signing is turned off and "
+            + "MAY NOT be safe in a production environment. "
+            + "Consider using other choices to handle encryption, signing and verification of "
+            + "trusted authentication records for MFA");
         return CipherExecutor.noOp();
     }
 
@@ -168,7 +170,7 @@ public class MultifactorAuthnTrustConfiguration {
             final String key,
             @NonNull
             final MultifactorAuthenticationTrustRecord value, final long currentTime) {
-            if (value.getExpirationDate() == null) {
+            if (value.getExpirationDate()==null) {
                 LOGGER.trace("Multifactor trust record [{}] will never expire", value);
                 return Long.MAX_VALUE;
             }

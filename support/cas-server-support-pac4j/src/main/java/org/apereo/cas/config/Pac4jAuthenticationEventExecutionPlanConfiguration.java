@@ -63,9 +63,6 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 @Configuration(value = "pac4jAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class Pac4jAuthenticationEventExecutionPlanConfiguration {
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @Bean
     @ConditionalOnMissingBean(name = "pac4jDelegatedClientFactory")
     @RefreshScope

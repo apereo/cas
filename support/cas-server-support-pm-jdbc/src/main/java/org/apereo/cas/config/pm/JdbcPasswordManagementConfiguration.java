@@ -35,9 +35,6 @@ import javax.sql.DataSource;
 @Configuration(value = "jdbcPasswordManagementConfiguration", proxyBeanMethods = false)
 public class JdbcPasswordManagementConfiguration {
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @Bean
     @ConditionalOnMissingBean(name = "jdbcPasswordManagementDataSource")
     @RefreshScope

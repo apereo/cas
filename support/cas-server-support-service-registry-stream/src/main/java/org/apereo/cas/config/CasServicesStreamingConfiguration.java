@@ -44,11 +44,12 @@ public class CasServicesStreamingConfiguration {
     @RefreshScope
     @Bean(destroyMethod = "destroy")
     @Autowired
-    public RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy(final CasConfigurationProperties casProperties,
-                                                                                     @Qualifier("registeredServiceDistributedCacheManager")
-                                                                                     final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier> registeredServiceDistributedCacheManager,
-                                                                                     @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
-                                                                                     final PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier) {
+    public RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("registeredServiceDistributedCacheManager")
+        final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier> registeredServiceDistributedCacheManager,
+        @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
+        final PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier) {
         val stream = casProperties.getServiceRegistry().getStream();
         return new DefaultRegisteredServiceReplicationStrategy(registeredServiceDistributedCacheManager, stream, casRegisteredServiceStreamPublisherIdentifier);
     }

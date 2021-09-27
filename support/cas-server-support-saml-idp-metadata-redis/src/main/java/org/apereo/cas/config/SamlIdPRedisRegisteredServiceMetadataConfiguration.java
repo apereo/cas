@@ -34,11 +34,12 @@ public class SamlIdPRedisRegisteredServiceMetadataConfiguration {
     @Bean
     @RefreshScope
     @Autowired
-    public SamlRegisteredServiceMetadataResolver redisSamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
-                                                                                            @Qualifier("redisSamlRegisteredServiceMetadataResolverTemplate")
-                                                                                            final RedisTemplate<String, SamlMetadataDocument> redisSamlRegisteredServiceMetadataResolverTemplate,
-                                                                                            @Qualifier("openSamlConfigBean")
-                                                                                            final OpenSamlConfigBean openSamlConfigBean) {
+    public SamlRegisteredServiceMetadataResolver redisSamlRegisteredServiceMetadataResolver(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("redisSamlRegisteredServiceMetadataResolverTemplate")
+        final RedisTemplate<String, SamlMetadataDocument> redisSamlRegisteredServiceMetadataResolverTemplate,
+        @Qualifier("openSamlConfigBean")
+        final OpenSamlConfigBean openSamlConfigBean) {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new RedisSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean, redisSamlRegisteredServiceMetadataResolverTemplate);
     }

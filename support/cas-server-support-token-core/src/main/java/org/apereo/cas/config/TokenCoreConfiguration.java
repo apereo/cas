@@ -56,16 +56,19 @@ public class TokenCoreConfiguration {
     @Autowired
     public CipherExecutor tokenCipherExecutor(final CasConfigurationProperties casProperties) {
         val crypto = casProperties.getAuthn().getToken().getCrypto();
-        val enabled = FunctionUtils.doIf(!crypto.isEnabled() && StringUtils.isNotBlank(crypto.getEncryption().getKey()) && StringUtils.isNotBlank(crypto.getSigning().getKey()), () -> {
-            LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys " +
-                "are defined for operations. CAS will proceed to enable the token encryption/signing functionality.");
-            return Boolean.TRUE;
-        }, crypto::isEnabled).get();
+        val enabled = FunctionUtils.doIf(!crypto.isEnabled() && StringUtils.isNotBlank(crypto.getEncryption().getKey())
+                                         && StringUtils.isNotBlank(crypto.getSigning().getKey()),
+            () -> {
+                LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "
+                            + "are defined for operations. CAS will proceed to enable the token encryption/signing functionality.");
+                return Boolean.TRUE;
+            }, crypto::isEnabled).get();
         if (enabled) {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, JwtTicketCipherExecutor.class);
         }
-        LOGGER.info("Token cookie encryption/signing is turned off. This " + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, " +
-            "signing and verification of generated tokens.");
+        LOGGER.info("Token cookie encryption/signing is turned off. This "
+                    + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
+                    + "signing and verification of generated tokens.");
         return CipherExecutor.noOp();
     }
 
