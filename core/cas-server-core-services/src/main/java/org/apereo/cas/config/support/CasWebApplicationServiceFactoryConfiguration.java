@@ -9,10 +9,12 @@ import org.apereo.cas.util.CollectionUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 /**
  * This is {@link CasWebApplicationServiceFactoryConfiguration}.
@@ -22,6 +24,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "webApplicationServiceFactoryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 public class CasWebApplicationServiceFactoryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "webApplicationServiceFactory")

@@ -95,7 +95,7 @@ public class CasSupportActionsConfiguration {
     public Action serviceAuthorizationCheck(
         @Qualifier("servicesManager")
         final ServicesManager servicesManager,
-        @Qualifier("authenticationRequestServiceSelectionStrategies")
+        @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies) {
         return new ServiceAuthorizationCheckAction(servicesManager, authenticationRequestServiceSelectionStrategies);
     }
@@ -206,7 +206,7 @@ public class CasSupportActionsConfiguration {
                                          final CasCookieBuilder warnCookieGenerator,
                                          @Qualifier("ticketRegistrySupport")
                                          final TicketRegistrySupport ticketRegistrySupport,
-                                         @Qualifier("authenticationRequestServiceSelectionStrategies")
+                                         @Qualifier("authenticationServiceSelectionPlan")
                                          final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
                                          @Qualifier("webflowSingleSignOnParticipationStrategy")
                                          final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy,
@@ -278,7 +278,7 @@ public class CasSupportActionsConfiguration {
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("ticketRegistrySupport")
         final TicketRegistrySupport ticketRegistrySupport,
-        @Qualifier("authenticationRequestServiceSelectionStrategies")
+        @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
         @Qualifier("principalElectionStrategy")
         final PrincipalElectionStrategy principalElectionStrategy) {
@@ -294,7 +294,7 @@ public class CasSupportActionsConfiguration {
     public Action gatewayServicesManagementCheck(
         @Qualifier("servicesManager")
         final ServicesManager servicesManager,
-        @Qualifier("authenticationRequestServiceSelectionStrategies")
+        @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies) {
         return new GatewayServicesManagementCheckAction(servicesManager, authenticationRequestServiceSelectionStrategies);
     }
