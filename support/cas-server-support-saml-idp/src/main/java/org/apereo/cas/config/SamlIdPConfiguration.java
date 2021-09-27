@@ -308,7 +308,8 @@ public class SamlIdPConfiguration {
             samlObjectEncrypter(),
             attributeDefinitionStore.getObject(),
             samlIdPServiceFactory.getObject(),
-            samlProfileSamlNameIdBuilder());
+            samlProfileSamlNameIdBuilder(),
+            casSamlIdPMetadataResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlObjectEncrypter")
