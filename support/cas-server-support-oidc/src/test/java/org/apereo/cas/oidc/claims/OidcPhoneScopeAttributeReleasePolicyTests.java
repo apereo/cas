@@ -34,7 +34,11 @@ public class OidcPhoneScopeAttributeReleasePolicyTests extends AbstractOidcTests
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
         assertTrue(policy.getAllowedAttributes().stream().allMatch(attrs::containsKey));
-        assertTrue(policy.determineRequestedAttributeDefinitions().containsAll(policy.getAllowedAttributes()));
+        assertTrue(policy.determineRequestedAttributeDefinitions(
+            principal,
+            CoreAuthenticationTestUtils.getRegisteredService(),
+            CoreAuthenticationTestUtils.getService()
+        ).containsAll(policy.getAllowedAttributes()));
     }
 
     @Test
