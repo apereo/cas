@@ -35,9 +35,6 @@ import org.springframework.webflow.execution.Action;
 @Configuration(value = "casBasicAuthenticationConfiguration", proxyBeanMethods = false)
 public class CasBasicAuthenticationConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
     @ConditionalOnMissingBean(name = "basicAuthenticationAction")
     public Action basicAuthenticationAction(

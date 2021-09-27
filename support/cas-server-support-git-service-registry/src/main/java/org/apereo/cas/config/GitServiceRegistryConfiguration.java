@@ -42,9 +42,6 @@ import java.util.List;
 public class GitServiceRegistryConfiguration {
 
     @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
     @Qualifier("serviceRegistryListeners")
     private ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners;
 
