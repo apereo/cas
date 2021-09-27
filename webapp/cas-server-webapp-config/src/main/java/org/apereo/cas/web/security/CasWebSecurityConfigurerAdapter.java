@@ -17,6 +17,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -55,7 +56,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     private final SecurityExpressionHandler<FilterInvocation> casWebSecurityExpressionHandler;
 
-    private final PathMappedEndpoints pathMappedEndpoints;
+    private final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints;
 
     private EndpointLdapAuthenticationProvider endpointLdapAuthenticationProvider;
 
@@ -151,7 +152,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
                                                           final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests) {
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint().keySet();
         val endpointDefaults = casProperties.getMonitor().getEndpoints().getDefaultEndpointProperties();
-        pathMappedEndpoints.forEach(endpoint -> {
+        pathMappedEndpoints.getObject().forEach(endpoint -> {
             val rootPath = endpoint.getRootPath();
             if (endpoints.contains(rootPath)) {
                 LOGGER.trace("Endpoint security is defined for endpoint [{}]", rootPath);
