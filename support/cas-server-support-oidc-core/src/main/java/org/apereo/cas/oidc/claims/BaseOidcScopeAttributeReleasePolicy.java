@@ -105,7 +105,9 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
     }
 
     @Override
-    public List<String> determineRequestedAttributeDefinitions() {
+    public List<String> determineRequestedAttributeDefinitions(final Principal principal,
+                                                               final RegisteredService registeredService,
+                                                               final Service selectedService) {
         val attributes = getAllowedAttributes();
         return attributes != null ? attributes : new ArrayList<>();
     }

@@ -17,6 +17,7 @@ import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +30,6 @@ import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.context.ApplicationContext;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,8 +45,14 @@ import java.util.Optional;
 public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends ReturnAllowedAttributeReleasePolicy {
     private static final long serialVersionUID = -3301632236702329694L;
 
-    private static String getEntityIdFromRequest(final HttpServletRequest request, final Service selectedService,
-                                                 final SamlRegisteredServiceCachingMetadataResolver resolver) {
+    /**
+     * Gets entity id from request.
+     *
+     * @param selectedService the selected service
+     * @return the entity id from request
+     */
+    protected static String getEntityIdFromRequest(final Service selectedService) {
+        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         if (request == null || selectedService == null) {
             LOGGER.debug("No http request could be identified to locate the entity id");
             return null;
@@ -59,6 +65,9 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
         }
         val samlRequest = selectedService.getAttributes().get(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
         if (samlRequest != null && !samlRequest.isEmpty()) {
+            val applicationContext = ApplicationContextProvider.getApplicationContext();
+            val resolver = applicationContext.getBean(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME,
+                SamlRegisteredServiceCachingMetadataResolver.class);
             val attributeValue = CollectionUtils.firstElement(samlRequest).map(Object::toString).orElseThrow();
             val openSamlConfigBean = resolver.getOpenSamlConfigBean();
             val authnRequest = SamlIdPUtils.retrieveSamlRequest(openSamlConfigBean, RequestAbstractType.class, attributeValue);
@@ -101,12 +110,27 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
         val context = new JEEContext(request, response);
-
         val result = SamlIdPUtils.retrieveSamlRequest(context, sessionStore, openSamlConfigBean, AuthnRequest.class);
         val authnRequest = (AuthnRequest) result
             .orElseThrow(() -> new IllegalArgumentException("SAML request could not be determined from session store"))
             .getLeft();
         return Optional.of(authnRequest);
+    }
+
+    /**
+     * Determine service provider metadata facade.
+     *
+     * @param registeredService the registered service
+     * @param entityId          the entity id
+     * @return the optional
+     */
+    @JsonIgnore
+    protected static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> determineServiceProviderMetadataFacade(
+        final SamlRegisteredService registeredService, final String entityId) {
+        val applicationContext = ApplicationContextProvider.getApplicationContext();
+        val resolver = applicationContext.getBean(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME,
+            SamlRegisteredServiceCachingMetadataResolver.class);
+        return SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, registeredService, entityId);
     }
 
     @Override
@@ -120,9 +144,8 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
             val applicationContext = ApplicationContextProvider.getApplicationContext();
             val resolver = applicationContext.getBean(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME,
                 SamlRegisteredServiceCachingMetadataResolver.class);
-            val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-            val entityId = getEntityIdFromRequest(request, selectedService, resolver);
-            val facade = SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlRegisteredService, entityId);
+            val entityId = getEntityIdFromRequest(selectedService);
+            val facade = determineServiceProviderMetadataFacade(samlRegisteredService, entityId);
 
             if (facade.isEmpty()) {
                 LOGGER.warn("Could not locate metadata for [{}] to process attributes", entityId);

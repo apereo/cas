@@ -36,7 +36,11 @@ public class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTes
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
         assertTrue(policy.getAllowedAttributes().containsAll(attrs.keySet()));
-        assertTrue(policy.determineRequestedAttributeDefinitions().containsAll(policy.getAllowedAttributes()));
+        assertTrue(policy.determineRequestedAttributeDefinitions(
+            principal,
+            CoreAuthenticationTestUtils.getRegisteredService(),
+            CoreAuthenticationTestUtils.getService()
+        ).containsAll(policy.getAllowedAttributes()));
     }
 
     @Test
