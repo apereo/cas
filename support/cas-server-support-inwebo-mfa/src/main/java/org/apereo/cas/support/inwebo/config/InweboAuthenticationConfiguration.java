@@ -71,7 +71,7 @@ public class InweboAuthenticationConfiguration {
     public AuthenticationHandler inweboAuthenticationHandler(final CasConfigurationProperties casProperties,
                                                              @Qualifier("inweboPrincipalFactory")
                                                              final PrincipalFactory inweboPrincipalFactory,
-                                                             @Qualifier("servicesManager")
+                                                             @Qualifier(ServicesManager.BEAN_NAME)
                                                              final ServicesManager servicesManager,
                                                              @Qualifier("inweboService")
                                                              final InweboService inweboService) {

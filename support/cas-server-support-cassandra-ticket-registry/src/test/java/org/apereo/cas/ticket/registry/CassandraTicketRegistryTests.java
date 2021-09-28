@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 public class CassandraTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
 
     @RepeatedTest(1)

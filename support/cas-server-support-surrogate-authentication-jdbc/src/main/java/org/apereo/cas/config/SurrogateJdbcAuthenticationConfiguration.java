@@ -34,7 +34,7 @@ public class SurrogateJdbcAuthenticationConfiguration {
     public SurrogateAuthenticationService surrogateAuthenticationService(final CasConfigurationProperties casProperties,
                                                                          @Qualifier("surrogateAuthenticationJdbcDataSource")
                                                                          final DataSource surrogateAuthenticationJdbcDataSource,
-                                                                         @Qualifier("servicesManager")
+                                                                         @Qualifier(ServicesManager.BEAN_NAME)
                                                                          final ServicesManager servicesManager) {
         val su = casProperties.getAuthn().getSurrogate();
         return new SurrogateJdbcAuthenticationService(su.getJdbc().getSurrogateSearchQuery(), new JdbcTemplate(surrogateAuthenticationJdbcDataSource),

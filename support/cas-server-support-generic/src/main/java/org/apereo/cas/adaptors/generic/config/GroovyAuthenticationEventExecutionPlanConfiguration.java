@@ -43,7 +43,7 @@ public class GroovyAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler groovyResourceAuthenticationHandler(final CasConfigurationProperties casProperties,
                                                                      @Qualifier("groovyPrincipalFactory")
                                                                      final PrincipalFactory groovyPrincipalFactory,
-                                                                     @Qualifier("servicesManager")
+                                                                     @Qualifier(ServicesManager.BEAN_NAME)
                                                                      final ServicesManager servicesManager) {
         val groovy = casProperties.getAuthn().getGroovy();
         val handler = new GroovyAuthenticationHandler(groovy.getName(), servicesManager, groovyPrincipalFactory, groovy.getLocation(), groovy.getOrder());

@@ -223,7 +223,7 @@ public class OidcConfiguration {
     public OAuth20UserProfileDataCreator oidcUserProfileDataCreator(
         @Qualifier("profileScopeToAttributesFilter")
         final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new OidcUserProfileDataCreator(servicesManager, profileScopeToAttributesFilter);
     }
@@ -313,7 +313,7 @@ public class OidcConfiguration {
     public OAuth20AuthenticationClientProvider oidcClientConfigurationAuthenticationClientProvider(
         @Qualifier("accessTokenJwtBuilder")
         final JwtBuilder accessTokenJwtBuilder,
-        @Qualifier("ticketRegistry")
+        @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry) {
         return () -> {
             val accessTokenClient = new HeaderClient();
@@ -330,9 +330,9 @@ public class OidcConfiguration {
     public OAuth20AuthenticationClientProvider oidcPrivateKeyJwtClientProvider(
         @Qualifier("webApplicationServiceFactory")
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-        @Qualifier("ticketRegistry")
+        @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
@@ -359,9 +359,9 @@ public class OidcConfiguration {
     public OAuth20AuthenticationClientProvider oidcClientSecretJwtClientProvider(
         @Qualifier("webApplicationServiceFactory")
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-        @Qualifier("ticketRegistry")
+        @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
@@ -387,9 +387,9 @@ public class OidcConfiguration {
         final OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService,
         @Qualifier("accessTokenJwtBuilder")
         final JwtBuilder accessTokenJwtBuilder,
-        @Qualifier("ticketRegistry")
+        @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) throws Exception {
         return new OidcAccessTokenAuthenticator(ticketRegistry, oidcTokenSigningAndEncryptionService, servicesManager, accessTokenJwtBuilder);
     }
@@ -403,7 +403,7 @@ public class OidcConfiguration {
     public OAuth20UserProfileViewRenderer oidcUserProfileViewRenderer(
         @Qualifier("oidcUserProfileSigningAndEncryptionService")
         final OAuth20TokenSigningAndEncryptionService oidcUserProfileSigningAndEncryptionService,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties) throws Exception {
         return new OidcUserProfileViewRenderer(casProperties.getAuthn().getOauth(),
@@ -419,7 +419,7 @@ public class OidcConfiguration {
         final CipherExecutor<Serializable, String> oidcAccessTokenJwtCipherExecutor,
         @Qualifier("oidcRegisteredServiceJwtAccessTokenCipherExecutor")
         final RegisteredServiceCipherExecutor oidcRegisteredServiceJwtAccessTokenCipherExecutor,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new OAuth20JwtBuilder(oidcAccessTokenJwtCipherExecutor, servicesManager, oidcRegisteredServiceJwtAccessTokenCipherExecutor);
     }
@@ -476,7 +476,7 @@ public class OidcConfiguration {
         final OAuth20DeviceUserCodeFactory defaultDeviceUserCodeFactory,
         @Qualifier("oidcAuthorizationResponseBuilders")
         final Set<OAuth20AuthorizationResponseBuilder> oidcAuthorizationResponseBuilders,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         @Qualifier("oauthDistributedSessionCookieGenerator")
         final CasCookieBuilder oauthDistributedSessionCookieGenerator,
@@ -494,9 +494,9 @@ public class OidcConfiguration {
         final Config oauthSecConfig,
         @Qualifier("oidcAccessTokenResponseGenerator")
         final OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator,
-        @Qualifier("ticketRegistry")
+        @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("oidcPrincipalFactory")
         final PrincipalFactory oidcPrincipalFactory,
@@ -553,7 +553,7 @@ public class OidcConfiguration {
     public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver(
         @Qualifier("oauthAuthorizationModelAndViewBuilder")
         final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new OidcCallbackAuthorizeViewResolver(servicesManager, oauthAuthorizationModelAndViewBuilder);
     }

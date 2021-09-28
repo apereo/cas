@@ -48,7 +48,7 @@ public class CasCoreRestConfiguration {
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
         @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("requestedContextValidator")
         final RequestedAuthenticationContextValidator requestedContextValidator) {

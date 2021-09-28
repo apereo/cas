@@ -170,7 +170,7 @@ public class CasOAuth20Configuration {
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         @Autowired
         public OAuth20ConfigurationContext oauth20ConfigurationContext(
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder,
@@ -180,7 +180,7 @@ public class CasOAuth20Configuration {
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier("defaultDeviceTokenFactory")
             final OAuth20DeviceTokenFactory defaultDeviceTokenFactory,
-            @Qualifier("centralAuthenticationService")
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("ticketGrantingTicketCookieGenerator")
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
@@ -192,7 +192,7 @@ public class CasOAuth20Configuration {
             final OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer,
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -287,7 +287,7 @@ public class CasOAuth20Configuration {
         @RefreshScope
         @Autowired
         public OAuth20UserProfileDataCreator oAuth2UserProfileDataCreator(
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("profileScopeToAttributesFilter")
             final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter) {
@@ -312,7 +312,7 @@ public class CasOAuth20Configuration {
             final OAuth20RefreshTokenFactory defaultRefreshTokenFactory,
             @Qualifier("defaultAccessTokenFactory")
             final OAuth20AccessTokenFactory defaultAccessTokenFactory,
-            @Qualifier("centralAuthenticationService")
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             final CasConfigurationProperties casProperties) {
             return new OAuth20DefaultTokenGenerator(
@@ -342,7 +342,7 @@ public class CasOAuth20Configuration {
             final RegisteredServiceCipherExecutor oauthRegisteredServiceJwtAccessTokenCipherExecutor,
             @Qualifier("oauthAccessTokenJwtCipherExecutor")
             final CipherExecutor oauthAccessTokenJwtCipherExecutor,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new OAuth20JwtBuilder(
                 oauthAccessTokenJwtCipherExecutor,
@@ -373,13 +373,13 @@ public class CasOAuth20Configuration {
             final Authenticator oAuthClientAuthenticator,
             @Qualifier("oAuthProofKeyCodeExchangeAuthenticator")
             final Authenticator oAuthProofKeyCodeExchangeAuthenticator,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("oAuthAccessTokenAuthenticator")
             final Authenticator oAuthAccessTokenAuthenticator,
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier("centralAuthenticationService")
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("authenticationAttributeReleasePolicy")
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
@@ -467,7 +467,7 @@ public class CasOAuth20Configuration {
             final Matcher oauthSecCsrfTokenMatcher,
             @Qualifier("oauthSecConfigClients")
             final List<Client> oauthSecConfigClients,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties) {
             val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), oauthSecConfigClients);
@@ -520,7 +520,7 @@ public class CasOAuth20Configuration {
         public SessionStore oauthDistributedSessionStore(
             @Qualifier("defaultTicketFactory")
             final TicketFactory ticketFactory,
-            @Qualifier("centralAuthenticationService")
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("oauthDistributedSessionCookieGenerator")
             final CasCookieBuilder oauthDistributedSessionCookieGenerator,
@@ -818,7 +818,7 @@ public class CasOAuth20Configuration {
         public OAuth20TokenRequestValidator oauthDeviceCodeResponseTypeRequestValidator(
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new OAuth20DeviceCodeResponseTypeRequestValidator(servicesManager, webApplicationServiceFactory);
         }
@@ -830,7 +830,7 @@ public class CasOAuth20Configuration {
         public OAuth20TokenRequestValidator oauthRevocationRequestValidator(
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new OAuth20RevocationRequestValidator(servicesManager, oauthDistributedSessionStore);
         }
@@ -905,7 +905,7 @@ public class CasOAuth20Configuration {
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(servicesManager,
                 webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
@@ -920,7 +920,7 @@ public class CasOAuth20Configuration {
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator(servicesManager,
                 webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
@@ -935,7 +935,7 @@ public class CasOAuth20Configuration {
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new OAuth20TokenResponseTypeAuthorizationRequestValidator(servicesManager,
                 webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
@@ -950,7 +950,7 @@ public class CasOAuth20Configuration {
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new OAuth20IdTokenResponseTypeAuthorizationRequestValidator(servicesManager,
                 webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
@@ -965,7 +965,7 @@ public class CasOAuth20Configuration {
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidator(servicesManager,
                 webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
@@ -984,7 +984,7 @@ public class CasOAuth20Configuration {
             final UniqueTicketIdGenerator refreshTokenIdGenerator,
             @Qualifier("refreshTokenExpirationPolicy")
             final ExpirationPolicyBuilder refreshTokenExpirationPolicy,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new OAuth20DefaultRefreshTokenFactory(refreshTokenIdGenerator,
                 refreshTokenExpirationPolicy, servicesManager);
@@ -1010,7 +1010,7 @@ public class CasOAuth20Configuration {
             final UniqueTicketIdGenerator accessTokenIdGenerator,
             @Qualifier("accessTokenExpirationPolicy")
             final ExpirationPolicyBuilder accessTokenExpirationPolicy,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder) {
@@ -1036,7 +1036,7 @@ public class CasOAuth20Configuration {
             final ExpirationPolicyBuilder deviceTokenExpirationPolicy,
             @Qualifier("deviceTokenIdGenerator")
             final UniqueTicketIdGenerator deviceTokenIdGenerator,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties) {
             return new OAuth20DefaultDeviceTokenFactory(deviceTokenIdGenerator, deviceTokenExpirationPolicy,
@@ -1062,7 +1062,7 @@ public class CasOAuth20Configuration {
             final ExpirationPolicyBuilder deviceTokenExpirationPolicy,
             @Qualifier("deviceTokenIdGenerator")
             final UniqueTicketIdGenerator deviceTokenIdGenerator,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties) {
             return new OAuth20DefaultDeviceUserCodeFactory(deviceTokenIdGenerator, deviceTokenExpirationPolicy,
@@ -1088,7 +1088,7 @@ public class CasOAuth20Configuration {
             final UniqueTicketIdGenerator oAuthCodeIdGenerator,
             @Qualifier("oAuthCodeExpirationPolicy")
             final ExpirationPolicyBuilder oAuthCodeExpirationPolicy,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new OAuth20DefaultOAuthCodeFactory(oAuthCodeIdGenerator, oAuthCodeExpirationPolicy, servicesManager);
         }
@@ -1135,7 +1135,7 @@ public class CasOAuth20Configuration {
             final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator,
             @Qualifier("oauthAuthorizationModelAndViewBuilder")
             final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties) {
             return new OAuth20ResourceOwnerCredentialsResponseBuilder(servicesManager, casProperties,
@@ -1153,7 +1153,7 @@ public class CasOAuth20Configuration {
             final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
             @Qualifier("oauthTokenGenerator")
             final OAuth20TokenGenerator oauthTokenGenerator,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties) {
             return new OAuth20ClientCredentialsResponseBuilder(servicesManager,
@@ -1171,7 +1171,7 @@ public class CasOAuth20Configuration {
             final OAuth20TokenGenerator oauthTokenGenerator,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties) {
             return new OAuth20TokenAuthorizationResponseBuilder(servicesManager, casProperties,
@@ -1187,9 +1187,9 @@ public class CasOAuth20Configuration {
             final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
             @Qualifier("defaultOAuthCodeFactory")
             final OAuth20CodeFactory defaultOAuthCodeFactory,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties) {
             return new OAuth20AuthorizationCodeAuthorizationResponseBuilder(servicesManager, casProperties,
@@ -1201,7 +1201,7 @@ public class CasOAuth20Configuration {
         @RefreshScope
         @Autowired
         public OAuth20InvalidAuthorizationResponseBuilder oauthInvalidAuthorizationBuilder(
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new OAuth20InvalidAuthorizationResponseBuilder(servicesManager);
         }
@@ -1237,9 +1237,9 @@ public class CasOAuth20Configuration {
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("defaultPrincipalResolver")
             final PrincipalResolver defaultPrincipalResolver,
@@ -1262,9 +1262,9 @@ public class CasOAuth20Configuration {
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("defaultPrincipalResolver")
             final PrincipalResolver defaultPrincipalResolver,
@@ -1287,9 +1287,9 @@ public class CasOAuth20Configuration {
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("defaultPrincipalResolver")
             final PrincipalResolver defaultPrincipalResolver,
@@ -1314,7 +1314,7 @@ public class CasOAuth20Configuration {
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier("defaultAuthenticationSystemSupport")
             final AuthenticationSystemSupport authenticationSystemSupport,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("oauthRegisteredServiceCipherExecutor")
             final CipherExecutor oauthRegisteredServiceCipherExecutor) {
@@ -1333,7 +1333,7 @@ public class CasOAuth20Configuration {
         public Authenticator oAuthAccessTokenAuthenticator(
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry) {
             return new OAuth20AccessTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
         }

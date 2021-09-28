@@ -48,7 +48,7 @@ public class CasCoreMultifactorAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "requestedContextValidator")
     @Autowired
     public RequestedAuthenticationContextValidator requestedContextValidator(
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("defaultMultifactorTriggerSelectionStrategy")
         final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,

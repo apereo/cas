@@ -36,9 +36,9 @@ public class WsFederationAuthenticationConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "wsFederationHelper")
     public WsFederationHelper wsFederationHelper(
-        @Qualifier("configBean")
+        @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
         final OpenSamlConfigBean configBean,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new WsFederationHelper(configBean, servicesManager);
     }

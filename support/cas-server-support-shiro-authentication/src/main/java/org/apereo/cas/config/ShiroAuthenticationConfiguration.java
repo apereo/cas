@@ -50,7 +50,7 @@ public class ShiroAuthenticationConfiguration {
         final PrincipalFactory shiroPrincipalFactory,
         @Qualifier("shiroPasswordPolicyConfiguration")
         final PasswordPolicyContext shiroPasswordPolicyConfiguration,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val shiro = casProperties.getAuthn().getShiro();
         val h = new ShiroAuthenticationHandler(shiro.getName(), servicesManager, shiroPrincipalFactory, shiro.getRequiredRoles(), shiro.getRequiredPermissions());

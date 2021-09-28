@@ -69,7 +69,7 @@ public class SamlIdentityProviderDiscoveryConfiguration {
         final Supplier<List<SamlIdentityProviderEntityParser>> samlIdentityProviderEntityParser, final CasConfigurationProperties casProperties,
         @Qualifier("builtClients")
         final Clients builtClients,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
         final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,

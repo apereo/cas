@@ -12,12 +12,15 @@ import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.Ordered;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -37,53 +40,55 @@ public class GoogleAuthenticatorConfiguration {
 
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
-    @Bean
-    @ConditionalOnMissingBean(name = "googleAuthenticatorFlowRegistry")
-    @Autowired
-    public FlowDefinitionRegistry googleAuthenticatorFlowRegistry(
-        final ConfigurableApplicationContext applicationContext,
-        @Qualifier("flowBuilderServices")
-        final FlowBuilderServices flowBuilderServices,
-        @Qualifier("flowBuilder")
-        final FlowBuilder flowBuilder) {
-        val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
-        builder.addFlowBuilder(flowBuilder, GoogleAuthenticatorMultifactorWebflowConfigurer.MFA_GAUTH_EVENT_ID);
-        return builder.build();
+    @Configuration(value = "GoogleAuthenticatorMultifactorWebflowConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class GoogleAuthenticatorMultifactorWebflowConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "googleAuthenticatorFlowRegistry")
+        @Autowired
+        public FlowDefinitionRegistry googleAuthenticatorFlowRegistry(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("flowBuilderServices")
+            final FlowBuilderServices flowBuilderServices,
+            @Qualifier("flowBuilder")
+            final FlowBuilder flowBuilder) {
+            val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
+            builder.addFlowBuilder(flowBuilder, GoogleAuthenticatorMultifactorWebflowConfigurer.MFA_GAUTH_EVENT_ID);
+            return builder.build();
+        }
+
+        @ConditionalOnMissingBean(name = "googleAuthenticatorMultifactorWebflowConfigurer")
+        @Bean
+        @Autowired
+        public CasWebflowConfigurer googleAuthenticatorMultifactorWebflowConfigurer(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("googleAuthenticatorFlowRegistry")
+            final FlowDefinitionRegistry googleAuthenticatorFlowRegistry,
+            @Qualifier("loginFlowRegistry")
+            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier("flowBuilderServices")
+            final FlowBuilderServices flowBuilderServices) {
+            val cfg = new GoogleAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices,
+                loginFlowDefinitionRegistry, googleAuthenticatorFlowRegistry, applicationContext, casProperties,
+                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+            cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
+            return cfg;
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "googleCasWebflowExecutionPlanConfigurer")
+        public CasWebflowExecutionPlanConfigurer googleCasWebflowExecutionPlanConfigurer(
+            @Qualifier("googleAuthenticatorMultifactorWebflowConfigurer")
+            final CasWebflowConfigurer googleAuthenticatorMultifactorWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(googleAuthenticatorMultifactorWebflowConfigurer);
+        }
     }
 
-    @ConditionalOnMissingBean(name = "googleAuthenticatorMultifactorWebflowConfigurer")
-    @Bean
-    @Autowired
-    public CasWebflowConfigurer googleAuthenticatorMultifactorWebflowConfigurer(
-        final CasConfigurationProperties casProperties,
-        final ConfigurableApplicationContext applicationContext,
-        @Qualifier("googleAuthenticatorFlowRegistry")
-        final FlowDefinitionRegistry googleAuthenticatorFlowRegistry,
-        @Qualifier("loginFlowRegistry")
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-        @Qualifier("flowBuilderServices")
-        final FlowBuilderServices flowBuilderServices) {
-        val cfg = new GoogleAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, googleAuthenticatorFlowRegistry, applicationContext, casProperties,
-            MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
-        cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
-        return cfg;
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "googleCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer googleCasWebflowExecutionPlanConfigurer(
-        @Qualifier("googleAuthenticatorMultifactorWebflowConfigurer")
-        final CasWebflowConfigurer googleAuthenticatorMultifactorWebflowConfigurer) {
-        return plan -> plan.registerWebflowConfigurer(googleAuthenticatorMultifactorWebflowConfigurer);
-    }
-
-    /**
-     * The google authenticator multifactor trust configuration.
-     */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.gauth.core")
     @Configuration(value = "gauthMultifactorTrustConfiguration", proxyBeanMethods = false)
+    @DependsOn("googleAuthenticatorMultifactorWebflowConfigurer")
     public static class GoogleAuthenticatorMultifactorTrustConfiguration {
 
         @ConditionalOnMissingBean(name = "gauthMultifactorTrustWebflowConfigurer")

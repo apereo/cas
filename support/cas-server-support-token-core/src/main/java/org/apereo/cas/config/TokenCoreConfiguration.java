@@ -74,9 +74,9 @@ public class TokenCoreConfiguration {
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
         @Qualifier("authenticationAttributeReleasePolicy")
         final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService) {
         return new InternalTicketValidator(centralAuthenticationService,
             webApplicationServiceFactory, authenticationAttributeReleasePolicy, servicesManager);
@@ -91,7 +91,7 @@ public class TokenCoreConfiguration {
                                                  final TicketValidator tokenTicketValidator,
                                                  @Qualifier("tokenTicketJwtBuilder")
                                                  final JwtBuilder tokenTicketJwtBuilder,
-                                                 @Qualifier("servicesManager")
+                                                 @Qualifier(ServicesManager.BEAN_NAME)
                                                  final ServicesManager servicesManager,
                                                  @Qualifier("grantingTicketExpirationPolicy")
                                                  final ExpirationPolicyBuilder grantingTicketExpirationPolicy) {
@@ -105,7 +105,7 @@ public class TokenCoreConfiguration {
     public JwtBuilder tokenTicketJwtBuilder(
         @Qualifier("tokenCipherExecutor")
         final CipherExecutor tokenCipherExecutor,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new JwtBuilder(tokenCipherExecutor, servicesManager, new RegisteredServiceJwtTicketCipherExecutor());
     }
@@ -119,7 +119,7 @@ public class TokenCoreConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("tokenCipherExecutor")
         final CipherExecutor tokenCipherExecutor,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new JwtTokenCipherSigningPublicKeyEndpoint(casProperties,
             tokenCipherExecutor, servicesManager, webApplicationServiceFactory);

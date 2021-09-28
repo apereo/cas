@@ -72,7 +72,7 @@ public class CassandraAuthenticationConfiguration {
                                                                 final PrincipalFactory cassandraPrincipalFactory,
                                                                 @Qualifier("cassandraRepository")
                                                                 final CassandraRepository cassandraRepository,
-                                                                @Qualifier("servicesManager")
+                                                                @Qualifier(ServicesManager.BEAN_NAME)
                                                                 final ServicesManager servicesManager) {
         val cassandra = casProperties.getAuthn().getCassandra();
         val handler = new CassandraAuthenticationHandler(cassandra.getName(), servicesManager, cassandraPrincipalFactory, cassandra.getOrder(), cassandra, cassandraRepository);

@@ -105,7 +105,7 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
         @Autowired
         public AuthenticationHandler microsoftAzureActiveDirectoryAuthenticationHandler(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             @Qualifier("microsoftAzureActiveDirectoryPrincipalFactory")

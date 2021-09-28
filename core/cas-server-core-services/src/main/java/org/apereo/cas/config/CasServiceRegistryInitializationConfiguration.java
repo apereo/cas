@@ -93,7 +93,7 @@ public class CasServiceRegistryInitializationConfiguration {
     public ServiceRegistryInitializer serviceRegistryInitializer(
         @Qualifier("embeddedJsonServiceRegistry")
         final ServiceRegistry embeddedJsonServiceRegistry,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("serviceRegistry")
         final ChainingServiceRegistry serviceRegistry) {

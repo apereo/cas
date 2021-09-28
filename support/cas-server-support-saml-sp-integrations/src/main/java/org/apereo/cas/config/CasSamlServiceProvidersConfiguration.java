@@ -62,7 +62,7 @@ public class CasSamlServiceProvidersConfiguration {
     @Bean
     @Autowired
     public InitializingBean coreSamlServiceProvidersInitializingBean(
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)

@@ -101,7 +101,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         @Qualifier("mfaSimpleMultifactorTokenCommunicationStrategy")
         final CasSimpleMultifactorTokenCommunicationStrategy mfaSimpleMultifactorTokenCommunicationStrategy,
         final CasConfigurationProperties casProperties,
-        @Qualifier("ticketRegistry")
+        @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
         @Qualifier("communicationsManager")
         final CommunicationsManager communicationsManager) {

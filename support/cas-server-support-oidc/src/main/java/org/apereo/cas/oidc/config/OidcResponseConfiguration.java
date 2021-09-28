@@ -73,7 +73,7 @@ public class OidcResponseConfiguration {
         final OAuth20TokenGenerator oauthTokenGenerator,
         @Qualifier("oauthAuthorizationModelAndViewBuilder")
         final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties) {
         return new OAuth20ClientCredentialsResponseBuilder(
@@ -89,7 +89,7 @@ public class OidcResponseConfiguration {
     @Autowired
     @ConditionalOnMissingBean(name = "oidcTokenResponseBuilder")
     public OAuth20AuthorizationResponseBuilder oidcTokenResponseBuilder(
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("oauthAuthorizationModelAndViewBuilder")
         final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
@@ -117,9 +117,9 @@ public class OidcResponseConfiguration {
         final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
         @Qualifier("defaultOAuthCodeFactory")
         final OAuth20CodeFactory defaultOAuthCodeFactory,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
-        @Qualifier("ticketRegistry")
+        @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry) {
         return new OAuth20AuthorizationCodeAuthorizationResponseBuilder(
             servicesManager,
@@ -158,7 +158,7 @@ public class OidcResponseConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("oauthTokenGenerator")
         final OAuth20TokenGenerator oauthTokenGenerator,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new OidcImplicitIdTokenAuthorizationResponseBuilder(
             oidcIdTokenGenerator,
@@ -186,7 +186,7 @@ public class OidcResponseConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("oidcIdTokenGenerator")
         final IdTokenGeneratorService oidcIdTokenGenerator,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder(
             oidcIdTokenGenerator,
@@ -209,7 +209,7 @@ public class OidcResponseConfiguration {
         final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
         @Qualifier("oauthTokenGenerator")
         final OAuth20TokenGenerator oauthTokenGenerator,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties) {
         return new OAuth20ResourceOwnerCredentialsResponseBuilder(

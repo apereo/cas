@@ -86,9 +86,9 @@ public class OpenIdConfiguration {
                                                         final ServerManager serverManager,
                                                         @Qualifier("urlValidator")
                                                         final UrlValidator urlValidator,
-                                                        @Qualifier("centralAuthenticationService")
+                                                        @Qualifier(CentralAuthenticationService.BEAN_NAME)
                                                         final CentralAuthenticationService centralAuthenticationService,
-                                                        @Qualifier("servicesManager")
+                                                        @Qualifier(ServicesManager.BEAN_NAME)
                                                         final ServicesManager servicesManager) {
         val openIdPrefixUrl = casProperties.getServer().getPrefix().concat("/openid");
         return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager,
@@ -120,7 +120,7 @@ public class OpenIdConfiguration {
         final ProxyHandler proxy20Handler,
         @Qualifier("argumentExtractor")
         final ArgumentExtractor argumentExtractor,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         @Qualifier("requestedContextValidator")
         final RequestedAuthenticationContextValidator requestedContextValidator,
@@ -128,7 +128,7 @@ public class OpenIdConfiguration {
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
         final CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("validationAuthorizers")
         final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {

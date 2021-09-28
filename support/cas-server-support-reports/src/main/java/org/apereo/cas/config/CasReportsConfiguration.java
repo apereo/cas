@@ -96,7 +96,7 @@ public class CasReportsConfiguration {
     public RegisteredServicesEndpoint registeredServicesReportEndpoint(
         @Qualifier("webApplicationServiceFactory")
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties) {
         return new RegisteredServicesEndpoint(casProperties, servicesManager,
@@ -138,7 +138,7 @@ public class CasReportsConfiguration {
     @ConditionalOnAvailableEndpoint
     @Autowired
     public SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint(
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         @Qualifier("defaultSingleLogoutRequestExecutor")
         final SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor,
@@ -162,7 +162,7 @@ public class CasReportsConfiguration {
     @ConditionalOnAvailableEndpoint
     @Autowired
     public StatisticsEndpoint statisticsReportEndpoint(
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         final CasConfigurationProperties casProperties) {
         return new StatisticsEndpoint(centralAuthenticationService, casProperties);
@@ -184,7 +184,7 @@ public class CasReportsConfiguration {
     public TicketExpirationPoliciesEndpoint ticketExpirationPoliciesEndpoint(
         @Qualifier("webApplicationServiceFactory")
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         final List<ExpirationPolicyBuilder> builders) {
@@ -208,7 +208,7 @@ public class CasReportsConfiguration {
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("principalFactory")
         final PrincipalFactory principalFactory,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties) {
         return new CasReleaseAttributesReportEndpoint(casProperties,

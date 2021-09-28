@@ -37,7 +37,7 @@ public class CoreWsSecurityIdentityProviderWebflowConfiguration {
     @Bean
     @RefreshScope
     public Action wsFederationMetadataUIAction(
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
         final AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy) {

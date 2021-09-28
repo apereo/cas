@@ -74,7 +74,7 @@ public class AmazonCognitoAuthenticationConfiguration {
                                                                     final CognitoIdentityProviderClient amazonCognitoIdentityProvider,
                                                                     @Qualifier("amazonCognitoAuthenticationJwtProcessor")
                                                                     final ConfigurableJWTProcessor amazonCognitoAuthenticationJwtProcessor,
-                                                                    @Qualifier("servicesManager")
+                                                                    @Qualifier(ServicesManager.BEAN_NAME)
                                                                     final ServicesManager servicesManager) throws Exception {
         val cognito = casProperties.getAuthn().getCognito();
         val handler = new AmazonCognitoAuthenticationAuthenticationHandler(cognito.getName(), servicesManager, amazonCognitoPrincipalFactory, amazonCognitoIdentityProvider, cognito,

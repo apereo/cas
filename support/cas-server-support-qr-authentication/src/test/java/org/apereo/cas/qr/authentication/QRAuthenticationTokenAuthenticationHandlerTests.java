@@ -44,7 +44,7 @@ public class QRAuthenticationTokenAuthenticationHandlerTests {
     private JwtBuilder jwtBuilder;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Autowired

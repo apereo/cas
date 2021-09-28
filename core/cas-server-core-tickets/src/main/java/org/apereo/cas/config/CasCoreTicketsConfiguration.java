@@ -96,7 +96,7 @@ public class CasCoreTicketsConfiguration {
         final UniqueTicketIdGenerator proxyGrantingTicketUniqueIdGenerator,
         @Qualifier("protocolTicketCipherExecutor")
         final CipherExecutor protocolTicketCipherExecutor,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new DefaultProxyGrantingTicketFactory(
             proxyGrantingTicketUniqueIdGenerator,
@@ -127,7 +127,7 @@ public class CasCoreTicketsConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("uniqueIdGeneratorsMap")
         final Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().getCore().isOnlyTrackMostRecentSession();
         return new DefaultProxyTicketFactory(proxyTicketExpirationPolicy, uniqueIdGeneratorsMap,
@@ -215,7 +215,7 @@ public class CasCoreTicketsConfiguration {
         @Qualifier("serviceTicketExpirationPolicy")
         final ExpirationPolicyBuilder serviceTicketExpirationPolicy,
         final CasConfigurationProperties casProperties,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("uniqueIdGeneratorsMap")
         final Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap) {
@@ -246,7 +246,7 @@ public class CasCoreTicketsConfiguration {
         final CipherExecutor protocolTicketCipherExecutor,
         @Qualifier("ticketGrantingTicketUniqueIdGenerator")
         final UniqueTicketIdGenerator ticketGrantingTicketUniqueIdGenerator,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new DefaultTicketGrantingTicketFactory(ticketGrantingTicketUniqueIdGenerator,
             grantingTicketExpirationPolicy, protocolTicketCipherExecutor, servicesManager);
@@ -295,7 +295,7 @@ public class CasCoreTicketsConfiguration {
         return new Cas20ProxyHandler(httpClient, proxy20TicketUniqueIdGenerator);
     }
 
-    @ConditionalOnMissingBean(name = "ticketRegistry")
+    @ConditionalOnMissingBean(name = TicketRegistry.BEAN_NAME)
     @Bean
     @RefreshScope
     @Autowired
@@ -319,7 +319,7 @@ public class CasCoreTicketsConfiguration {
     @Bean
     @Autowired
     public TicketRegistrySupport defaultTicketRegistrySupport(
-        @Qualifier("ticketRegistry")
+        @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry) {
         return new DefaultTicketRegistrySupport(ticketRegistry);
     }
@@ -416,7 +416,7 @@ public class CasCoreTicketsConfiguration {
     @RefreshScope
     @Autowired
     public AuthenticationEventExecutionPlanConfigurer ticketAuthenticationPolicyExecutionPlanConfigurer(
-        @Qualifier("ticketRegistry")
+        @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
         final CasConfigurationProperties casProperties) {
         return plan -> {

@@ -134,7 +134,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         final Collection<WsFederationConfiguration> wsFederationConfigurations,
         @Qualifier("attributeRepository")
         final IPersonAttributeDao attributeRepository,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val personDirectory = casProperties.getPersonDirectory();
         return plan -> casProperties.getAuthn()

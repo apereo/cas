@@ -47,7 +47,7 @@ public class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIde
     private WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Test

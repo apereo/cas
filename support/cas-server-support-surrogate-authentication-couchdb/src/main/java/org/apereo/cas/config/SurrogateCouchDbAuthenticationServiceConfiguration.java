@@ -90,7 +90,7 @@ public class SurrogateCouchDbAuthenticationServiceConfiguration {
                                                                          final ProfileCouchDbRepository surrogateAuthorizationProfileCouchDbRepository,
                                                                          @Qualifier("surrogateAuthorizationCouchDbRepository")
                                                                          final SurrogateAuthorizationCouchDbRepository surrogateAuthorizationCouchDbRepository,
-                                                                         @Qualifier("servicesManager")
+                                                                         @Qualifier(ServicesManager.BEAN_NAME)
                                                                          final ServicesManager servicesManager) {
         val couchDb = casProperties.getAuthn().getSurrogate().getCouchDb();
         if (couchDb.isProfileBased()) {

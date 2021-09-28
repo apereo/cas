@@ -83,7 +83,7 @@ public class CasInterruptWebflowConfiguration {
     public SingleSignOnParticipationStrategy interruptSingleSignOnParticipationStrategy(
         @Qualifier("defaultTicketRegistrySupport")
         final TicketRegistrySupport ticketRegistrySupport,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {

@@ -69,7 +69,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @RefreshScope
     @Autowired
     public AuthenticationHandler proxyAuthenticationHandler(
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("proxyPrincipalFactory")
         final PrincipalFactory proxyPrincipalFactory,
@@ -104,7 +104,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
     public AuthenticationHandler acceptUsersAuthenticationHandler(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("acceptUsersPrincipalFactory")
         final PrincipalFactory acceptUsersPrincipalFactory,
@@ -210,7 +210,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
         public List<AuthenticationHandler> jaasAuthenticationHandlers(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("jaasPrincipalFactory")
             final PrincipalFactory jaasPrincipalFactory) {

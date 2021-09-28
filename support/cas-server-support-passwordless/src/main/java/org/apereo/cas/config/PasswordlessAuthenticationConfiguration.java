@@ -58,7 +58,7 @@ public class PasswordlessAuthenticationConfiguration {
         final PrincipalFactory passwordlessPrincipalFactory,
         @Qualifier("passwordlessTokenRepository")
         final PasswordlessTokenRepository passwordlessTokenRepository,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new PasswordlessTokenAuthenticationHandler(null, servicesManager, passwordlessPrincipalFactory, null, passwordlessTokenRepository);
     }

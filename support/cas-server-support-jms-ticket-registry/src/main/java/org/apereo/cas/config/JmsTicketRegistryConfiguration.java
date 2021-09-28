@@ -55,7 +55,7 @@ public class JmsTicketRegistryConfiguration {
 
     @Bean
     public JmsTicketRegistryReceiver messageQueueTicketRegistryReceiver(
-        @Qualifier("ticketRegistry")
+        @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
         final CasConfigurationProperties casProperties,
         @Qualifier("messageQueueTicketRegistryIdentifier")

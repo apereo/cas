@@ -96,7 +96,7 @@ public class SamlIdPConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
@@ -108,7 +108,7 @@ public class SamlIdPConfiguration {
             final SamlIdPObjectEncrypter samlObjectEncrypter,
             @Qualifier("ticketGrantingTicketCookieGenerator")
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("samlIdPDistributedSessionStore")
             final SessionStore samlIdPDistributedSessionStore,
@@ -116,7 +116,7 @@ public class SamlIdPConfiguration {
             final SamlArtifactTicketFactory samlArtifactTicketFactory,
             @Qualifier("samlArtifactMap")
             final SAMLArtifactMap samlArtifactMap,
-            @Qualifier("centralAuthenticationService")
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("samlAttributeQueryTicketFactory")
             final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
@@ -149,7 +149,7 @@ public class SamlIdPConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
@@ -161,7 +161,7 @@ public class SamlIdPConfiguration {
             final SamlIdPObjectEncrypter samlObjectEncrypter,
             @Qualifier("ticketGrantingTicketCookieGenerator")
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("samlIdPDistributedSessionStore")
             final SessionStore samlIdPDistributedSessionStore,
@@ -169,7 +169,7 @@ public class SamlIdPConfiguration {
             final SamlArtifactTicketFactory samlArtifactTicketFactory,
             @Qualifier("samlArtifactMap")
             final SAMLArtifactMap samlArtifactMap,
-            @Qualifier("centralAuthenticationService")
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("samlAttributeQueryTicketFactory")
             final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
@@ -206,7 +206,7 @@ public class SamlIdPConfiguration {
             final SamlProfileObjectBuilder<NameID> samlProfileSamlNameIdBuilder,
             @Qualifier("samlObjectEncrypter")
             final SamlIdPObjectEncrypter samlObjectEncrypter,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {
             return new SamlProfileSamlSubjectBuilder(openSamlConfigBean, samlProfileSamlNameIdBuilder, casProperties, samlObjectEncrypter);
         }
@@ -218,7 +218,7 @@ public class SamlIdPConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
@@ -230,7 +230,7 @@ public class SamlIdPConfiguration {
             final SamlIdPObjectEncrypter samlObjectEncrypter,
             @Qualifier("ticketGrantingTicketCookieGenerator")
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("samlIdPDistributedSessionStore")
             final SessionStore samlIdPDistributedSessionStore,
@@ -238,7 +238,7 @@ public class SamlIdPConfiguration {
             final SamlArtifactTicketFactory samlArtifactTicketFactory,
             @Qualifier("samlArtifactMap")
             final SAMLArtifactMap samlArtifactMap,
-            @Qualifier("centralAuthenticationService")
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("samlAttributeQueryTicketFactory")
             final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
@@ -271,7 +271,7 @@ public class SamlIdPConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
@@ -283,7 +283,7 @@ public class SamlIdPConfiguration {
             final SamlIdPObjectEncrypter samlObjectEncrypter,
             @Qualifier("ticketGrantingTicketCookieGenerator")
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("samlIdPDistributedSessionStore")
             final SessionStore samlIdPDistributedSessionStore,
@@ -291,7 +291,7 @@ public class SamlIdPConfiguration {
             final SamlArtifactTicketFactory samlArtifactTicketFactory,
             @Qualifier("samlArtifactMap")
             final SAMLArtifactMap samlArtifactMap,
-            @Qualifier("centralAuthenticationService")
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("samlAttributeQueryTicketFactory")
             final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
@@ -324,7 +324,7 @@ public class SamlIdPConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
@@ -336,7 +336,7 @@ public class SamlIdPConfiguration {
             final SamlIdPObjectEncrypter samlObjectEncrypter,
             @Qualifier("ticketGrantingTicketCookieGenerator")
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("samlIdPDistributedSessionStore")
             final SessionStore samlIdPDistributedSessionStore,
@@ -344,7 +344,7 @@ public class SamlIdPConfiguration {
             final SamlArtifactTicketFactory samlArtifactTicketFactory,
             @Qualifier("samlArtifactMap")
             final SAMLArtifactMap samlArtifactMap,
-            @Qualifier("centralAuthenticationService")
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("samlAttributeQueryTicketFactory")
             final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
@@ -377,7 +377,7 @@ public class SamlIdPConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
@@ -389,7 +389,7 @@ public class SamlIdPConfiguration {
             final SamlIdPObjectEncrypter samlObjectEncrypter,
             @Qualifier("ticketGrantingTicketCookieGenerator")
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("samlIdPDistributedSessionStore")
             final SessionStore samlIdPDistributedSessionStore,
@@ -397,7 +397,7 @@ public class SamlIdPConfiguration {
             final SamlArtifactTicketFactory samlArtifactTicketFactory,
             @Qualifier("samlArtifactMap")
             final SAMLArtifactMap samlArtifactMap,
-            @Qualifier("centralAuthenticationService")
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("samlAttributeQueryTicketFactory")
             final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
@@ -431,7 +431,7 @@ public class SamlIdPConfiguration {
             final MetadataResolver casSamlIdPMetadataResolver,
             @Qualifier("shibbolethCompatiblePersistentIdGenerator")
             final PersistentIdGenerator shibbolethCompatiblePersistentIdGenerator,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {
             return new SamlProfileSamlNameIdBuilder(openSamlConfigBean, shibbolethCompatiblePersistentIdGenerator, casSamlIdPMetadataResolver);
         }
@@ -441,7 +441,7 @@ public class SamlIdPConfiguration {
         @RefreshScope
         @Autowired
         public SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder(final CasConfigurationProperties casProperties,
-                                                                                     @Qualifier("openSamlConfigBean")
+                                                                                     @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
                                                                                      final OpenSamlConfigBean openSamlConfigBean) {
             return new SamlProfileSamlConditionsBuilder(openSamlConfigBean, casProperties);
         }
@@ -470,7 +470,7 @@ public class SamlIdPConfiguration {
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {
             return new SamlProfileSamlAssertionBuilder(openSamlConfigBean, samlProfileSamlAuthNStatementBuilder,
                 samlProfileSamlAttributeStatementBuilder, samlProfileSamlSubjectBuilder,
@@ -484,7 +484,7 @@ public class SamlIdPConfiguration {
         public SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder(final CasConfigurationProperties casProperties,
                                                                                              @Qualifier("defaultAuthnContextClassRefBuilder")
                                                                                              final AuthnContextClassRefBuilder defaultAuthnContextClassRefBuilder,
-                                                                                             @Qualifier("openSamlConfigBean")
+                                                                                             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
                                                                                              final OpenSamlConfigBean openSamlConfigBean) {
             return new SamlProfileSamlAuthNStatementBuilder(openSamlConfigBean, defaultAuthnContextClassRefBuilder, casProperties);
         }
@@ -499,7 +499,7 @@ public class SamlIdPConfiguration {
             final SamlIdPObjectEncrypter samlObjectEncrypter,
             @Qualifier("samlProfileSamlNameIdBuilder")
             final SamlProfileObjectBuilder<NameID> samlProfileSamlNameIdBuilder,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory,
@@ -522,7 +522,7 @@ public class SamlIdPConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
@@ -534,7 +534,7 @@ public class SamlIdPConfiguration {
             final SamlIdPObjectEncrypter samlObjectEncrypter,
             @Qualifier("ticketGrantingTicketCookieGenerator")
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("samlIdPDistributedSessionStore")
             final SessionStore samlIdPDistributedSessionStore,
@@ -542,7 +542,7 @@ public class SamlIdPConfiguration {
             final SamlArtifactTicketFactory samlArtifactTicketFactory,
             @Qualifier("samlArtifactMap")
             final SAMLArtifactMap samlArtifactMap,
-            @Qualifier("centralAuthenticationService")
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("samlAttributeQueryTicketFactory")
             final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
@@ -579,7 +579,7 @@ public class SamlIdPConfiguration {
         public SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory(
             @Qualifier("samlAttributeQueryTicketExpirationPolicy")
             final ExpirationPolicyBuilder samlAttributeQueryTicketExpirationPolicy,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory) {
@@ -612,7 +612,7 @@ public class SamlIdPConfiguration {
         public SamlArtifactTicketFactory samlArtifactTicketFactory(
             @Qualifier("samlArtifactTicketExpirationPolicy")
             final ExpirationPolicyBuilder samlArtifactTicketExpirationPolicy,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory) {
@@ -646,11 +646,11 @@ public class SamlIdPConfiguration {
             final ExpirationPolicyBuilder samlArtifactTicketExpirationPolicy,
             @Qualifier("ticketGrantingTicketCookieGenerator")
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("samlIdPDistributedSessionStore")
             final SessionStore samlIdPDistributedSessionStore,
-            @Qualifier("centralAuthenticationService")
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {
             val map = new CasSamlArtifactMap(ticketRegistry, samlArtifactTicketFactory,
                 ticketGrantingTicketCookieGenerator, samlIdPDistributedSessionStore, centralAuthenticationService);
@@ -671,7 +671,7 @@ public class SamlIdPConfiguration {
         public SingleLogoutServiceLogoutUrlBuilder samlSingleLogoutServiceLogoutUrlBuilder(
             @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("urlValidator")
             final UrlValidator urlValidator) {

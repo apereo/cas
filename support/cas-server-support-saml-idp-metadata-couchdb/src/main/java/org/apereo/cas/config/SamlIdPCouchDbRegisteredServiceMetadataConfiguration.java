@@ -48,7 +48,7 @@ public class SamlIdPCouchDbRegisteredServiceMetadataConfiguration {
     public SamlRegisteredServiceMetadataResolver couchDbSamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
                                                                                               @Qualifier("samlMetadataDocumentCouchDbRepository")
                                                                                               final SamlMetadataDocumentCouchDbRepository samlMetadataDocumentCouchDbRepository,
-                                                                                              @Qualifier("openSamlConfigBean")
+                                                                                              @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
                                                                                               final OpenSamlConfigBean openSamlConfigBean) {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new CouchDbSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean, samlMetadataDocumentCouchDbRepository);

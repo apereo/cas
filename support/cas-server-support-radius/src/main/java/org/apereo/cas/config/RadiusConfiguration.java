@@ -136,7 +136,7 @@ public class RadiusConfiguration {
         final List<RadiusServer> radiusServers,
         @Qualifier("radiusPasswordPolicyConfiguration")
         final PasswordPolicyContext radiusPasswordPolicyConfiguration,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val radius = casProperties.getAuthn().getRadius();
         val h = new RadiusAuthenticationHandler(radius.getName(), servicesManager, radiusPrincipalFactory, radiusServers, radius.isFailoverOnException(),

@@ -41,7 +41,7 @@ public class SurrogateLdapAuthenticationConfiguration {
     @Bean
     @Autowired
     public SurrogateAuthenticationService surrogateAuthenticationService(
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("surrogateLdapConnectionFactory")
         final ConnectionFactory surrogateLdapConnectionFactory,

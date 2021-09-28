@@ -88,7 +88,7 @@ public class CasCoreLogoutConfiguration {
     public SingleLogoutServiceLogoutUrlBuilderConfigurer defaultSingleLogoutServiceLogoutUrlBuilderConfigurer(
         @Qualifier("urlValidator")
         final UrlValidator urlValidator,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return () -> new DefaultSingleLogoutServiceLogoutUrlBuilder(servicesManager, urlValidator);
     }
@@ -100,7 +100,7 @@ public class CasCoreLogoutConfiguration {
     public SingleLogoutServiceMessageHandler defaultSingleLogoutServiceMessageHandler(
         @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("defaultSingleLogoutMessageCreator")
@@ -139,7 +139,7 @@ public class CasCoreLogoutConfiguration {
     @Autowired
     @Bean
     public SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor(
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
         final LogoutManager logoutManager,
@@ -186,7 +186,7 @@ public class CasCoreLogoutConfiguration {
         final SingleLogoutServiceMessageHandler defaultSingleLogoutServiceMessageHandler,
         @Qualifier("defaultLogoutRedirectionStrategy")
         final LogoutRedirectionStrategy defaultLogoutRedirectionStrategy,
-        @Qualifier("ticketRegistry")
+        @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry) {
         return plan -> {
             plan.registerSingleLogoutServiceMessageHandler(defaultSingleLogoutServiceMessageHandler);

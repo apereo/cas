@@ -51,7 +51,7 @@ public class CasCoreTicketsSchedulingConfiguration {
                                                        final LockingStrategy lockingStrategy,
                                                        @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
                                                        final LogoutManager logoutManager,
-                                                       @Qualifier("ticketRegistry")
+                                                       @Qualifier(TicketRegistry.BEAN_NAME)
                                                        final TicketRegistry ticketRegistry) {
         val isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().getSchedule().isEnabled();
         if (isCleanerEnabled) {

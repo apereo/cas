@@ -66,7 +66,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
                                                           final PrincipalFactory u2fPrincipalFactory,
                                                           @Qualifier("u2fService")
                                                           final U2F u2fService,
-                                                          @Qualifier("servicesManager")
+                                                          @Qualifier(ServicesManager.BEAN_NAME)
                                                           final ServicesManager servicesManager,
                                                           @Qualifier("u2fDeviceRepository")
                                                           final U2FDeviceRepository u2fDeviceRepository) {

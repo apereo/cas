@@ -77,7 +77,7 @@ public class CasFiltersConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("argumentExtractor")
         final ArgumentExtractor argumentExtractor,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("registeredServiceAccessStrategyEnforcer")
         final AuditableExecution registeredServiceAccessStrategyEnforcer,
@@ -160,7 +160,7 @@ public class CasFiltersConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("argumentExtractor")
             final ArgumentExtractor argumentExtractor,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new RegisteredServiceCorsConfigurationSource(casProperties, servicesManager, argumentExtractor);
         }

@@ -125,7 +125,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
                                                                   final PrincipalFactory radiusTokenPrincipalFactory,
                                                                   @Qualifier("radiusTokenServers")
                                                                   final List<RadiusServer> radiusTokenServers,
-                                                                  @Qualifier("servicesManager")
+                                                                  @Qualifier(ServicesManager.BEAN_NAME)
                                                                   final ServicesManager servicesManager) {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         return new RadiusTokenAuthenticationHandler(radius.getName(), servicesManager, radiusTokenPrincipalFactory, radiusTokenServers, radius.isFailoverOnException(),

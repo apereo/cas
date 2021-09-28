@@ -47,7 +47,7 @@ public class CasConsentWebflowConfiguration {
                                              final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
                                              @Qualifier("consentEngine")
                                              final ConsentEngine consentEngine,
-                                             @Qualifier("servicesManager")
+                                             @Qualifier(ServicesManager.BEAN_NAME)
                                              final ServicesManager servicesManager,
                                              @Qualifier("consentActivationStrategy")
                                              final ConsentActivationStrategy consentActivationStrategy) {
@@ -65,7 +65,7 @@ public class CasConsentWebflowConfiguration {
                                        final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
                                        @Qualifier("consentEngine")
                                        final ConsentEngine consentEngine,
-                                       @Qualifier("servicesManager")
+                                       @Qualifier(ServicesManager.BEAN_NAME)
                                        final ServicesManager servicesManager) {
         return new ConfirmConsentAction(servicesManager, authenticationRequestServiceSelectionStrategies, consentEngine, casProperties, attributeDefinitionStore, applicationContext);
     }

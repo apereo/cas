@@ -33,7 +33,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
@@ -41,7 +41,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Autowired
@@ -49,7 +49,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired

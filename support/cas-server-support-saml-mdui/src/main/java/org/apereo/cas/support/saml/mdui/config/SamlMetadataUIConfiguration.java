@@ -104,7 +104,7 @@ public class SamlMetadataUIConfiguration {
     @Autowired
     public MetadataResolverAdapter chainingSamlMetadataUIMetadataResolverAdapter(final CasConfigurationProperties casProperties,
                                                                                  final ConfigurableApplicationContext applicationContext,
-                                                                                 @Qualifier("openSamlConfigBean")
+                                                                                 @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
                                                                                  final OpenSamlConfigBean openSamlConfigBean) {
         val staticAdapter = new StaticMetadataResolverAdapter();
         configureAdapter(staticAdapter, applicationContext, casProperties, openSamlConfigBean);

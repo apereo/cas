@@ -70,7 +70,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Webflow")
 public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Autowired
@@ -82,7 +82,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     private SessionStore delegatedClientDistributedSessionStore;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
     
     private JEEContext context;

@@ -110,7 +110,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @Bean
     @Autowired
     public SessionStore mfaAccepttoDistributedSessionStore(final CasConfigurationProperties casProperties,
-                                                           @Qualifier("centralAuthenticationService")
+                                                           @Qualifier(CentralAuthenticationService.BEAN_NAME)
                                                            final CentralAuthenticationService centralAuthenticationService,
                                                            @Qualifier("defaultTicketFactory")
                                                            final TicketFactory ticketFactory) {
@@ -213,7 +213,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     public AuthenticationHandler casAccepttoQRCodeAuthenticationHandler(
         @Qualifier("casAccepttoQRCodePrincipalFactory")
         final PrincipalFactory casAccepttoQRCodePrincipalFactory,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new AccepttoQRCodeAuthenticationHandler(servicesManager, casAccepttoQRCodePrincipalFactory);
     }

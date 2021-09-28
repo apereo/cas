@@ -58,7 +58,7 @@ public class FortressAuthenticationConfiguration {
         final AccessMgr fortressAccessManager,
         @Qualifier("fortressPrincipalFactory")
         final PrincipalFactory fortressPrincipalFactory,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new FortressAuthenticationHandler(fortressAccessManager, null, servicesManager, fortressPrincipalFactory, null);
     }

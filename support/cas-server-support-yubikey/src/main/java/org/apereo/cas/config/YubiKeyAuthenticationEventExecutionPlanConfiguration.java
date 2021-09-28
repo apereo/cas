@@ -112,7 +112,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
                                                               final YubicoClient yubicoClient,
                                                               @Qualifier("yubiKeyAccountRegistry")
                                                               final YubiKeyAccountRegistry yubiKeyAccountRegistry,
-                                                              @Qualifier("servicesManager")
+                                                              @Qualifier(ServicesManager.BEAN_NAME)
                                                               final ServicesManager servicesManager) {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
         return new YubiKeyAuthenticationHandler(yubi.getName(), servicesManager, yubikeyPrincipalFactory, yubicoClient, yubiKeyAccountRegistry, yubi.getOrder());

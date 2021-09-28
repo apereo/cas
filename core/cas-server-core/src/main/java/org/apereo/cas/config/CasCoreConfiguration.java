@@ -65,14 +65,14 @@ public class CasCoreConfiguration {
     @ConditionalOnMissingBean(name = "serviceMatchingStrategy")
     @Autowired
     public ServiceMatchingStrategy serviceMatchingStrategy(
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new DefaultServiceMatchingStrategy(servicesManager);
     }
 
     @Bean
     @Autowired
-    @ConditionalOnMissingBean(name = "centralAuthenticationService")
+    @ConditionalOnMissingBean(name = CentralAuthenticationService.BEAN_NAME)
     public CentralAuthenticationService centralAuthenticationService(
         @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
@@ -80,9 +80,9 @@ public class CasCoreConfiguration {
         final CipherExecutor cipherExecutor,
         @Qualifier("principalFactory")
         final PrincipalFactory principalFactory,
-        @Qualifier("ticketRegistry")
+        @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("defaultTicketFactory")
         final TicketFactory ticketFactory,

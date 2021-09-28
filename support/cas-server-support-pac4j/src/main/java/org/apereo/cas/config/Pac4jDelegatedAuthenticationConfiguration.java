@@ -59,7 +59,7 @@ public class Pac4jDelegatedAuthenticationConfiguration {
     public ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer(
         @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
         final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new DelegatedAuthenticationServiceTicketValidationAuthorizer(servicesManager,
             registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer);
@@ -83,7 +83,7 @@ public class Pac4jDelegatedAuthenticationConfiguration {
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
         @Qualifier("defaultTicketRegistrySupport")
         final TicketRegistrySupport ticketRegistrySupport,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new DelegatedAuthenticationSingleSignOnParticipationStrategy(servicesManager,
             authenticationServiceSelectionPlan, ticketRegistrySupport);

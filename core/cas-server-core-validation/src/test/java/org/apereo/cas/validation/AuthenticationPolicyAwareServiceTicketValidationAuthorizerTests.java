@@ -89,7 +89,7 @@ import static org.mockito.Mockito.*;
 @Tag("AuthenticationPolicy")
 public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired

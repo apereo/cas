@@ -49,7 +49,7 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
         final PasswordPolicyContext filePasswordPolicyConfiguration,
         @Qualifier("filePrincipalFactory")
         final PrincipalFactory filePrincipalFactory,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext) {

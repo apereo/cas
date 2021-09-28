@@ -108,7 +108,7 @@ public class QRAuthenticationConfiguration {
                                                                                        final QRAuthenticationDeviceRepository qrAuthenticationDeviceRepository,
                                                                                        @Qualifier("jwtBuilder")
                                                                                        final JwtBuilder jwtBuilder,
-                                                                                       @Qualifier("centralAuthenticationService")
+                                                                                       @Qualifier(CentralAuthenticationService.BEAN_NAME)
                                                                                        final CentralAuthenticationService centralAuthenticationService) {
         return new DefaultQRAuthenticationTokenValidatorService(jwtBuilder, centralAuthenticationService, casProperties, qrAuthenticationDeviceRepository);
     }
@@ -139,7 +139,7 @@ public class QRAuthenticationConfiguration {
         final PrincipalFactory qrAuthenticationPrincipalFactory,
         @Qualifier("qrAuthenticationTokenValidatorService")
         final QRAuthenticationTokenValidatorService qrAuthenticationTokenValidatorService,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new QRAuthenticationTokenAuthenticationHandler(servicesManager, qrAuthenticationPrincipalFactory, qrAuthenticationTokenValidatorService);
     }

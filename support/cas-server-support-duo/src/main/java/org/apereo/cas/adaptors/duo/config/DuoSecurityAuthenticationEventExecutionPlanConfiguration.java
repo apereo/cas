@@ -129,7 +129,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         final PrincipalFactory duoPrincipalFactory,
         @Qualifier("duoProviderBean")
         final MultifactorAuthenticationProviderBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val resolvers = ApplicationContextProvider.getMultifactorAuthenticationPrincipalResolvers();
         return casProperties.getAuthn()

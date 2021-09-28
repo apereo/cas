@@ -38,9 +38,9 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler openIdCredentialsAuthenticationHandler(final CasConfigurationProperties casProperties,
                                                                         @Qualifier("openidPrincipalFactory")
                                                                         final PrincipalFactory openidPrincipalFactory,
-                                                                        @Qualifier("servicesManager")
+                                                                        @Qualifier(ServicesManager.BEAN_NAME)
                                                                         final ServicesManager servicesManager,
-                                                                        @Qualifier("ticketRegistry")
+                                                                        @Qualifier(TicketRegistry.BEAN_NAME)
                                                                         final TicketRegistry ticketRegistry) {
         val openid = casProperties.getAuthn().getOpenid();
         return new OpenIdCredentialsAuthenticationHandler(openid.getName(), servicesManager, openidPrincipalFactory, ticketRegistry, openid.getOrder());

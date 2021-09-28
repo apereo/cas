@@ -109,7 +109,7 @@ public class CasCoreWebflowConfiguration {
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         @Qualifier("authenticationContextValidator")
         final MultifactorAuthenticationContextValidator authenticationContextValidator,
@@ -117,11 +117,11 @@ public class CasCoreWebflowConfiguration {
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
         @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
         final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("warnCookieGenerator")
         final CasCookieBuilder warnCookieGenerator,
-        @Qualifier("ticketRegistry")
+        @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
         @Qualifier("singleSignOnParticipationStrategy")
         final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy,
@@ -337,7 +337,7 @@ public class CasCoreWebflowConfiguration {
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
         @Qualifier("defaultTicketRegistrySupport")
         final TicketRegistrySupport ticketRegistrySupport,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new DefaultSingleSignOnParticipationStrategy(servicesManager,
             casProperties.getSso(),
@@ -363,7 +363,7 @@ public class CasCoreWebflowConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("defaultTicketRegistrySupport")
         final TicketRegistrySupport ticketRegistrySupport,

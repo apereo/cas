@@ -267,11 +267,11 @@ public abstract class AbstractOAuth20Tests {
     protected OAuth20AuthorizationResponseBuilder oauthResourceOwnerCredentialsResponseBuilder;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Qualifier(CentralAuthenticationService.BEAN_NAME)
     protected CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
@@ -301,7 +301,7 @@ public abstract class AbstractOAuth20Tests {
     protected OAuth20CodeFactory defaultOAuthCodeFactory;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     protected TicketRegistry ticketRegistry;
 
     @Autowired

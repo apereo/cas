@@ -91,7 +91,7 @@ public class SpnegoConfiguration {
         final List<Authentication> spnegoAuthentications,
         @Qualifier("spnegoPrincipalFactory")
         final PrincipalFactory spnegoPrincipalFactory,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
@@ -108,7 +108,7 @@ public class SpnegoConfiguration {
     public AuthenticationHandler ntlmAuthenticationHandler(
         @Qualifier("ntlmPrincipalFactory")
         final PrincipalFactory ntlmPrincipalFactory,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties) {
         val ntlmProperties = casProperties.getAuthn().getNtlm();

@@ -123,7 +123,7 @@ public class CasJdbcAuthenticationConfiguration {
         @Qualifier("queryAndEncodePasswordPolicyConfiguration")
         final PasswordPolicyContext queryAndEncodePasswordPolicyConfiguration,
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("jdbcPrincipalFactory")
         final PrincipalFactory jdbcPrincipalFactory,

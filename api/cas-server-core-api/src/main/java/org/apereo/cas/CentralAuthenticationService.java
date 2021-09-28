@@ -35,6 +35,10 @@ import java.util.function.Predicate;
  * @since 3.0.0
  */
 public interface CentralAuthenticationService {
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "centralAuthenticationService";
 
     /**
      * CAS namespace.

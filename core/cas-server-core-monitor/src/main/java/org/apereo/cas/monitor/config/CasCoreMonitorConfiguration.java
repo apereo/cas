@@ -50,7 +50,7 @@ public class CasCoreMonitorConfiguration {
     @ConditionalOnEnabledHealthIndicator("sessionHealthIndicator")
     @Autowired
     public HealthIndicator sessionHealthIndicator(
-        @Qualifier("ticketRegistry")
+        @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
         final CasConfigurationProperties casProperties) {
         val warnSt = casProperties.getMonitor().getSt().getWarn();

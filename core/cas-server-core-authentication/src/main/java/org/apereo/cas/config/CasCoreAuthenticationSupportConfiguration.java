@@ -68,7 +68,7 @@ public class CasCoreAuthenticationSupportConfiguration {
     @ConditionalOnMissingBean(name = "registeredServiceAuthenticationHandlerResolver")
     public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver(
         final CasConfigurationProperties casProperties,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
@@ -83,7 +83,7 @@ public class CasCoreAuthenticationSupportConfiguration {
     @ConditionalOnMissingBean(name = "registeredServiceAuthenticationPolicyResolver")
     @Autowired
     public AuthenticationPolicyResolver registeredServiceAuthenticationPolicyResolver(
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
@@ -98,7 +98,7 @@ public class CasCoreAuthenticationSupportConfiguration {
     @ConditionalOnProperty(name = "cas.authn.core.groovy-authentication-resolution.location")
     public AuthenticationHandlerResolver groovyAuthenticationHandlerResolver(
         final CasConfigurationProperties casProperties,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val groovy = casProperties.getAuthn().getCore().getGroovyAuthenticationResolution();
         return new GroovyAuthenticationHandlerResolver(groovy.getLocation(), servicesManager, groovy.getOrder());

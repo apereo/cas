@@ -62,7 +62,7 @@ public class DuoSecurityConfiguration {
         final MultifactorAuthenticationProviderBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean,
         @Qualifier("defaultTicketFactory")
         final TicketFactory ticketFactory,
-        @Qualifier("ticketRegistry")
+        @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry) {
         return new DuoSecurityUniversalPromptPrepareLoginAction(ticketRegistry, duoProviderBean, ticketFactory);
     }
@@ -74,7 +74,7 @@ public class DuoSecurityConfiguration {
     public Action duoUniversalPromptValidateLoginAction(
         @Qualifier("duoAuthenticationWebflowEventResolver")
         final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
