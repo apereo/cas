@@ -54,7 +54,7 @@ public class CasConsentCoreConfiguration {
         return ConsentableAttributeBuilder.noOp();
     }
 
-    @ConditionalOnMissingBean(name = "consentEngine")
+    @ConditionalOnMissingBean(name = ConsentEngine.BEAN_NAME)
     @Bean
     @RefreshScope
     @Autowired
@@ -98,7 +98,7 @@ public class CasConsentCoreConfiguration {
     @RefreshScope
     @Autowired
     public ConsentActivationStrategy consentActivationStrategy(
-        @Qualifier("consentEngine")
+        @Qualifier(ConsentEngine.BEAN_NAME)
         final ConsentEngine consentEngine,
         final CasConfigurationProperties casProperties) {
         val location = casProperties.getConsent().getActivationStrategyGroovyScript().getLocation();
@@ -147,7 +147,7 @@ public class CasConsentCoreConfiguration {
     @ConditionalOnAvailableEndpoint
     @Autowired
     public AttributeConsentReportEndpoint attributeConsentReportEndpoint(
-        @Qualifier("consentEngine")
+        @Qualifier(ConsentEngine.BEAN_NAME)
         final ConsentEngine consentEngine,
         @Qualifier("consentRepository")
         final ConsentRepository consentRepository,
