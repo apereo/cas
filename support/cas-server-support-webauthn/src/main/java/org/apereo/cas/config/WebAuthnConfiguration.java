@@ -50,6 +50,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -314,15 +315,15 @@ public class WebAuthnConfiguration {
         @Autowired
         public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> webAuthnProtocolEndpointConfigurer(
             @Qualifier("webAuthnCsrfTokenRepository")
-            final CsrfTokenRepository webAuthnCsrfTokenRepository) {
+            final ObjectProvider<CsrfTokenRepository> webAuthnCsrfTokenRepository) {
             return new ProtocolEndpointWebSecurityConfigurer<>() {
-
                 @Override
                 @SneakyThrows
                 public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) {
                     http.csrf(customizer -> {
                         val pattern = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
-                        customizer.requireCsrfProtectionMatcher(pattern).csrfTokenRepository(webAuthnCsrfTokenRepository);
+                        webAuthnCsrfTokenRepository.ifAvailable(
+                            repository -> customizer.requireCsrfProtectionMatcher(pattern).csrfTokenRepository(repository));
                     });
                     return this;
                 }

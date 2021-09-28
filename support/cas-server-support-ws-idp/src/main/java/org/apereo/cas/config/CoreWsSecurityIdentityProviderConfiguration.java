@@ -64,166 +64,191 @@ import java.util.List;
 @Configuration(value = "coreWsSecurityIdentityProviderConfiguration", proxyBeanMethods = false)
 public class CoreWsSecurityIdentityProviderConfiguration {
 
-    @ConditionalOnMissingBean(name = "federationValidateRequestController")
-    @Bean
-    @Autowired
-    public WSFederationValidateRequestController federationValidateRequestController(
-        @Qualifier("wsFederationConfigurationContext")
-        final WSFederationRequestConfigurationContext wsFederationConfigurationContext) {
-        return new WSFederationValidateRequestController(wsFederationConfigurationContext);
+    @Configuration(value = "CoreWsSecurityIdentityProviderWebConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CoreWsSecurityIdentityProviderWebConfiguration {
+        @Bean
+        public ProtocolEndpointWebSecurityConfigurer<Void> wsFederationProtocolEndpointConfigurer() {
+            return new ProtocolEndpointWebSecurityConfigurer<>() {
+
+                @Override
+                public List<String> getIgnoredEndpoints() {
+                    return List.of(StringUtils.prependIfMissing(WSFederationConstants.BASE_ENDPOINT_IDP, "/"), StringUtils.prependIfMissing(WSFederationConstants.BASE_ENDPOINT_STS, "/"));
+                }
+            };
+        }
     }
 
-    @Autowired
-    @Bean
-    public WSFederationValidateRequestCallbackController federationValidateRequestCallbackController(
-        @Qualifier("wsFederationConfigurationContext")
-        final WSFederationRequestConfigurationContext wsFederationConfigurationContext) {
-        return new WSFederationValidateRequestCallbackController(wsFederationConfigurationContext);
+    @Configuration(value = "CoreWsSecurityIdentityProviderServiceSelectionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CoreWsSecurityIdentityProviderServiceSelectionConfiguration {
+        @Bean
+        @RefreshScope
+        @Autowired
+        @ConditionalOnMissingBean(name = "wsFederationAuthenticationServiceSelectionStrategy")
+        public AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy(
+            @Qualifier("webApplicationServiceFactory")
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return new WSFederationAuthenticationServiceSelectionStrategy(servicesManager, webApplicationServiceFactory);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "wsFederationAuthenticationServiceSelectionStrategyConfigurer")
+        @Autowired
+        public AuthenticationServiceSelectionStrategyConfigurer wsFederationAuthenticationServiceSelectionStrategyConfigurer(
+            @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
+            final AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy) {
+            return plan -> plan.registerStrategy(wsFederationAuthenticationServiceSelectionStrategy);
+        }
     }
 
-    @Bean
-    @Autowired
-    public Service wsFederationCallbackService(
-        @Qualifier("webApplicationServiceFactory")
-        final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
-        return webApplicationServiceFactory
-            .createService(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
+    @Configuration(value = "CoreWsSecurityIdentityProviderServicesConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CoreWsSecurityIdentityProviderServicesConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "wsFederationServicesManagerRegisteredServiceLocator")
+        public ServicesManagerRegisteredServiceLocator wsFederationServicesManagerRegisteredServiceLocator() {
+            return new WsFederationServicesManagerRegisteredServiceLocator();
+        }
+
+        @Bean
+        @Autowired
+        public Service wsFederationCallbackService(
+            @Qualifier("webApplicationServiceFactory")
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
+            return webApplicationServiceFactory
+                .createService(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "wsFederationServiceRegistryExecutionPlanConfigurer")
+        @Autowired
+        public ServiceRegistryExecutionPlanConfigurer wsFederationServiceRegistryExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("wsFederationCallbackService")
+            final Service wsFederationCallbackService) {
+            return plan -> {
+                LOGGER.debug("Initializing WS Federation callback service [{}]", wsFederationCallbackService);
+                val service = new RegexRegisteredService();
+                service.setId(RandomUtils.nextLong());
+                service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
+                service.setName(service.getClass().getSimpleName());
+                service.setDescription("WS-Federation Authentication Request");
+                service.setServiceId(wsFederationCallbackService.getId().concat(".+"));
+                LOGGER.debug("Saving callback service [{}] into the registry", service.getServiceId());
+                plan.registerServiceRegistry(new WSFederationServiceRegistry(applicationContext, service));
+            };
+        }
     }
 
-    @Bean
-    @RefreshScope
-    @Autowired
-    public WSFederationMetadataController wsFederationMetadataController(final CasConfigurationProperties casProperties) {
-        return new WSFederationMetadataController(casProperties);
+    @Configuration(value = "CoreWsSecurityIdentityProviderTicketsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CoreWsSecurityIdentityProviderTicketsConfiguration {
+
+        @Autowired
+        @Bean
+        @RefreshScope
+        @ConditionalOnMissingBean(name = "wsFederationRelyingPartyTokenProducer")
+        public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer(
+            @Qualifier("securityTokenServiceCredentialCipherExecutor")
+            final CipherExecutor securityTokenServiceCredentialCipherExecutor,
+            @Qualifier("securityTokenServiceClientBuilder")
+            final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder,
+            final CasConfigurationProperties casProperties) {
+            return new DefaultRelyingPartyTokenProducer(securityTokenServiceClientBuilder,
+                securityTokenServiceCredentialCipherExecutor, new HashSet<>(casProperties.getAuthn().getWsfedIdp().getSts().getCustomClaims()));
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "wsFederationTicketValidator")
+        public TicketValidator wsFederationTicketValidator(
+            @Qualifier("webApplicationServiceFactory")
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier("authenticationAttributeReleasePolicy")
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return new InternalTicketValidator(centralAuthenticationService,
+                webApplicationServiceFactory, authenticationAttributeReleasePolicy, servicesManager);
+        }
     }
 
-    @Autowired
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "wsFederationRelyingPartyTokenProducer")
-    public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer(
-        @Qualifier("securityTokenServiceCredentialCipherExecutor")
-        final CipherExecutor securityTokenServiceCredentialCipherExecutor,
-        @Qualifier("securityTokenServiceClientBuilder")
-        final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder,
-        final CasConfigurationProperties casProperties) {
-        return new DefaultRelyingPartyTokenProducer(securityTokenServiceClientBuilder, securityTokenServiceCredentialCipherExecutor, new HashSet<>(casProperties.getAuthn()
-            .getWsfedIdp()
-            .getSts()
-            .getCustomClaims()));
+    @Configuration(value = "CoreWsSecurityIdentityProviderContextConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CoreWsSecurityIdentityProviderContextConfiguration {
+        @Bean
+        public WSFederationRequestConfigurationContext wsFederationConfigurationContext(
+            @Qualifier("noRedirectHttpClient")
+            final HttpClient httpClient,
+            @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
+            final AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy,
+            @Qualifier("defaultTicketRegistrySupport")
+            final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier("securityTokenTicketFactory")
+            final SecurityTokenTicketFactory securityTokenTicketFactory,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier("wsFederationCallbackService")
+            final Service wsFederationCallbackService,
+            @Qualifier("securityTokenServiceTokenFetcher")
+            final SecurityTokenServiceTokenFetcher securityTokenServiceTokenFetcher,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier("wsFederationTicketValidator")
+            final TicketValidator wsFederationTicketValidator,
+            @Qualifier("webApplicationServiceFactory")
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            final CasConfigurationProperties casProperties) {
+            return WSFederationRequestConfigurationContext.builder()
+                .servicesManager(servicesManager)
+                .webApplicationServiceFactory(webApplicationServiceFactory)
+                .casProperties(casProperties)
+                .ticketValidator(wsFederationTicketValidator)
+                .securityTokenServiceTokenFetcher(securityTokenServiceTokenFetcher)
+                .serviceSelectionStrategy(wsFederationAuthenticationServiceSelectionStrategy)
+                .httpClient(httpClient)
+                .securityTokenTicketFactory(securityTokenTicketFactory)
+                .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
+                .ticketRegistry(ticketRegistry)
+                .ticketRegistrySupport(ticketRegistrySupport)
+                .callbackService(wsFederationCallbackService)
+                .build();
+        }
+
     }
 
-    @Bean
-    @RefreshScope
-    @Autowired
-    @ConditionalOnMissingBean(name = "wsFederationAuthenticationServiceSelectionStrategy")
-    public AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy(
-        @Qualifier("webApplicationServiceFactory")
-        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager) {
-        return new WSFederationAuthenticationServiceSelectionStrategy(servicesManager, webApplicationServiceFactory);
-    }
+    @Configuration(value = "CoreWsSecurityIdentityProviderControllersConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CoreWsSecurityIdentityProviderControllersConfiguration {
+        @ConditionalOnMissingBean(name = "federationValidateRequestController")
+        @Bean
+        @Autowired
+        public WSFederationValidateRequestController federationValidateRequestController(
+            @Qualifier("wsFederationConfigurationContext")
+            final WSFederationRequestConfigurationContext wsFederationConfigurationContext) {
+            return new WSFederationValidateRequestController(wsFederationConfigurationContext);
+        }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "wsFederationAuthenticationServiceSelectionStrategyConfigurer")
-    @Autowired
-    public AuthenticationServiceSelectionStrategyConfigurer wsFederationAuthenticationServiceSelectionStrategyConfigurer(
-        @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
-        final AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy) {
-        return plan -> plan.registerStrategy(wsFederationAuthenticationServiceSelectionStrategy);
-    }
+        @Autowired
+        @Bean
+        public WSFederationValidateRequestCallbackController federationValidateRequestCallbackController(
+            @Qualifier("wsFederationConfigurationContext")
+            final WSFederationRequestConfigurationContext wsFederationConfigurationContext) {
+            return new WSFederationValidateRequestCallbackController(wsFederationConfigurationContext);
+        }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "wsFederationServiceRegistryExecutionPlanConfigurer")
-    @Autowired
-    public ServiceRegistryExecutionPlanConfigurer wsFederationServiceRegistryExecutionPlanConfigurer(
-        final ConfigurableApplicationContext applicationContext,
-        @Qualifier("wsFederationCallbackService")
-        final Service wsFederationCallbackService) {
-        return plan -> {
-            LOGGER.debug("Initializing WS Federation callback service [{}]", wsFederationCallbackService);
-            val service = new RegexRegisteredService();
-            service.setId(RandomUtils.nextLong());
-            service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
-            service.setName(service.getClass().getSimpleName());
-            service.setDescription("WS-Federation Authentication Request");
-            service.setServiceId(wsFederationCallbackService.getId().concat(".+"));
-            LOGGER.debug("Saving callback service [{}] into the registry", service.getServiceId());
-            plan.registerServiceRegistry(new WSFederationServiceRegistry(applicationContext, service));
-        };
-    }
+        @Bean
+        @RefreshScope
+        @Autowired
+        public WSFederationMetadataController wsFederationMetadataController(final CasConfigurationProperties casProperties) {
+            return new WSFederationMetadataController(casProperties);
+        }
 
-    @Bean
-    public ProtocolEndpointWebSecurityConfigurer<Void> wsFederationProtocolEndpointConfigurer() {
-        return new ProtocolEndpointWebSecurityConfigurer<>() {
-
-            @Override
-            public List<String> getIgnoredEndpoints() {
-                return List.of(StringUtils.prependIfMissing(WSFederationConstants.BASE_ENDPOINT_IDP, "/"), StringUtils.prependIfMissing(WSFederationConstants.BASE_ENDPOINT_STS, "/"));
-            }
-        };
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "wsFederationServicesManagerRegisteredServiceLocator")
-    public ServicesManagerRegisteredServiceLocator wsFederationServicesManagerRegisteredServiceLocator() {
-        return new WsFederationServicesManagerRegisteredServiceLocator();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "wsFederationTicketValidator")
-    public TicketValidator wsFederationTicketValidator(
-        @Qualifier("webApplicationServiceFactory")
-        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-        @Qualifier("authenticationAttributeReleasePolicy")
-        final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
-        @Qualifier(CentralAuthenticationService.BEAN_NAME)
-        final CentralAuthenticationService centralAuthenticationService,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager) {
-        return new InternalTicketValidator(centralAuthenticationService,
-            webApplicationServiceFactory, authenticationAttributeReleasePolicy, servicesManager);
-    }
-
-    @Bean
-    public WSFederationRequestConfigurationContext wsFederationConfigurationContext(
-        @Qualifier("noRedirectHttpClient")
-        final HttpClient httpClient,
-        @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
-        final AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy,
-        @Qualifier("defaultTicketRegistrySupport")
-        final TicketRegistrySupport ticketRegistrySupport,
-        @Qualifier("securityTokenTicketFactory")
-        final SecurityTokenTicketFactory securityTokenTicketFactory,
-        @Qualifier(TicketRegistry.BEAN_NAME)
-        final TicketRegistry ticketRegistry,
-        @Qualifier("wsFederationCallbackService")
-        final Service wsFederationCallbackService,
-        @Qualifier("securityTokenServiceTokenFetcher")
-        final SecurityTokenServiceTokenFetcher securityTokenServiceTokenFetcher,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
-        @Qualifier("ticketGrantingTicketCookieGenerator")
-        final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-        @Qualifier("wsFederationTicketValidator")
-        final TicketValidator wsFederationTicketValidator,
-        @Qualifier("webApplicationServiceFactory")
-        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-        final CasConfigurationProperties casProperties) {
-        return WSFederationRequestConfigurationContext.builder()
-            .servicesManager(servicesManager)
-            .webApplicationServiceFactory(webApplicationServiceFactory)
-            .casProperties(casProperties)
-            .ticketValidator(wsFederationTicketValidator)
-            .securityTokenServiceTokenFetcher(securityTokenServiceTokenFetcher)
-            .serviceSelectionStrategy(wsFederationAuthenticationServiceSelectionStrategy)
-            .httpClient(httpClient)
-            .securityTokenTicketFactory(securityTokenTicketFactory)
-            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
-            .ticketRegistry(ticketRegistry)
-            .ticketRegistrySupport(ticketRegistrySupport)
-            .callbackService(wsFederationCallbackService)
-            .build();
     }
 }

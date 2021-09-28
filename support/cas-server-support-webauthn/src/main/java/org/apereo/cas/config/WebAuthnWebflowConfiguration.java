@@ -31,6 +31,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -181,6 +182,7 @@ public class WebAuthnWebflowConfiguration {
     @ConditionalOnWebAuthnEnabled
     @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.web-authn")
     @Configuration(value = "webAuthnMultifactorTrustConfiguration", proxyBeanMethods = false)
+    @DependsOn("webAuthnMultifactorWebflowConfigurer")
     public static class WebAuthnMultifactorTrustConfiguration {
 
         @ConditionalOnMissingBean(name = "webAuthnMultifactorTrustWebflowConfigurer")

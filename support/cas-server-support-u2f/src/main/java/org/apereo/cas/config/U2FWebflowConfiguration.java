@@ -31,6 +31,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowBuilder;
@@ -74,14 +75,15 @@ public class U2FWebflowConfiguration {
     @ConditionalOnMissingBean(name = "u2fMultifactorWebflowConfigurer")
     @Bean
     @Autowired
-    public CasWebflowConfigurer u2fMultifactorWebflowConfigurer(final CasConfigurationProperties casProperties,
-                                                                final ConfigurableApplicationContext applicationContext,
-                                                                @Qualifier("u2fFlowRegistry")
-                                                                final FlowDefinitionRegistry u2fFlowRegistry,
-                                                                @Qualifier("loginFlowRegistry")
-                                                                final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                                @Qualifier("flowBuilderServices")
-                                                                final FlowBuilderServices flowBuilderServices) {
+    public CasWebflowConfigurer u2fMultifactorWebflowConfigurer(
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier("u2fFlowRegistry")
+        final FlowDefinitionRegistry u2fFlowRegistry,
+        @Qualifier("loginFlowRegistry")
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier("flowBuilderServices")
+        final FlowBuilderServices flowBuilderServices) {
         val cfg = new U2FMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, u2fFlowRegistry, applicationContext, casProperties,
             MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
         cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
@@ -164,6 +166,7 @@ public class U2FWebflowConfiguration {
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.u2f")
     @Configuration(value = "u2fMultifactorTrustConfiguration", proxyBeanMethods = false)
+    @DependsOn("u2fMultifactorWebflowConfigurer")
     public static class U2FMultifactorTrustConfiguration {
 
         @ConditionalOnMissingBean(name = "u2fMultifactorTrustWebflowConfigurer")
