@@ -18,6 +18,11 @@ import java.util.Map;
 public interface ConsentEngine extends Serializable {
 
     /**
+     * Default implementation bean name.
+     */
+    String BEAN_NAME = "consentEngine";
+
+    /**
      * Store consent decision.
      *
      * @param service           the service

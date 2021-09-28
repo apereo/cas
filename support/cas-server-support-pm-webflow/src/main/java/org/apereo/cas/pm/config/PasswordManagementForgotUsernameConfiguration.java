@@ -106,7 +106,6 @@ public class PasswordManagementForgotUsernameConfiguration {
 
     @ConditionalOnProperty(prefix = "cas.authn.pm.forgot-username.google-recaptcha", name = "enabled", havingValue = "true")
     @Configuration(value = "forgotUsernameCaptchaConfiguration", proxyBeanMethods = false)
-    @DependsOn("passwordManagementWebflowConfigurer")
     public static class ForgotUsernameCaptchaConfiguration {
 
         @ConditionalOnMissingBean(name = "forgotUsernameCaptchaWebflowConfigurer")

@@ -142,6 +142,7 @@ import org.junit.platform.suite.api.Suite;
     SamlTemplatesVelocityEngineTests.class,
     SamlIdPDelegatedAuthenticationConfigurationTests.class,
     SamlIdPAuthenticationContextTests.class,
+    SamlIdPConsentableAttributeBuilderTests.class,
     SamlProfileSamlAssertionBuilderTests.class,
     SamlProfileSamlAuthNStatementBuilderTests.class,
     SSOSamlIdPPostProfileHandlerControllerWithTicketRegistryTests.class,
