@@ -51,7 +51,7 @@ public class CoreSamlConfiguration {
     }
 
     @Lazy
-    @Bean(name = {"shibboleth.VelocityEngine", "velocityEngineFactoryBean"})
+    @Bean(name = {"shibboleth.VelocityEngine", "velocityEngineFactoryBean", "velocityEngineFactory"})
     @ConditionalOnMissingBean(name = "velocityEngineFactoryBean")
     @Autowired
     public VelocityEngine velocityEngineFactoryBean() {

@@ -47,7 +47,7 @@ public class WsFederationAuthenticationWebflowConfiguration {
     @Bean
     @Autowired
     public CasWebflowConfigurer wsFederationWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                              @Qualifier("loginFlowDefinitionRegistry")
+                                                              @Qualifier("loginFlowRegistry")
                                                               final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                               @Qualifier("flowBuilderServices")
                                                               final FlowBuilderServices flowBuilderServices) {

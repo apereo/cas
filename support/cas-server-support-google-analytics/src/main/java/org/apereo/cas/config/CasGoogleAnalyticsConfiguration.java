@@ -48,9 +48,9 @@ public class CasGoogleAnalyticsConfiguration {
     @DependsOn({"defaultWebflowConfigurer", "defaultLogoutWebflowConfigurer"})
     @Autowired
     public CasWebflowConfigurer casGoogleAnalyticsWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                                    @Qualifier("loginFlowDefinitionRegistry")
+                                                                    @Qualifier("loginFlowRegistry")
                                                                     final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                                    @Qualifier("logoutFlowDefinitionRegistry")
+                                                                    @Qualifier("logoutFlowRegistry")
                                                                     final FlowDefinitionRegistry logoutFlowDefinitionRegistry,
                                                                     @Qualifier("flowBuilderServices")
                                                                     final FlowBuilderServices flowBuilderServices) {

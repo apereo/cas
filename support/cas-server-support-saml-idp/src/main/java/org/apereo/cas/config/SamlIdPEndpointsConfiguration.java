@@ -97,1051 +97,1087 @@ import java.util.List;
 @Configuration(value = "samlIdPEndpointsConfiguration", proxyBeanMethods = false)
 public class SamlIdPEndpointsConfiguration {
 
-    @ConditionalOnMissingBean(name = "samlIdPObjectSignatureValidator")
-    @Bean
-    @Autowired
-    public SamlObjectSignatureValidator samlIdPObjectSignatureValidator(final CasConfigurationProperties casProperties,
-                                                                        @Qualifier("casSamlIdPMetadataResolver")
-                                                                        final MetadataResolver casSamlIdPMetadataResolver) {
-        val algs = casProperties.getAuthn().getSamlIdp().getAlgs();
-        return new SamlIdPObjectSignatureValidator(algs.getOverrideSignatureReferenceDigestMethods(),
-            algs.getOverrideSignatureAlgorithms(), algs.getOverrideBlockedSignatureSigningAlgorithms(),
-            algs.getOverrideAllowedSignatureSigningAlgorithms(), casSamlIdPMetadataResolver, casProperties);
-    }
+    @Configuration(value = "SamlIdPEndpointCryptoConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPEndpointCryptoConfiguration {
 
-    @ConditionalOnMissingBean(name = "samlObjectSignatureValidator")
-    @Bean
-    @Autowired
-    public SamlObjectSignatureValidator samlObjectSignatureValidator(final CasConfigurationProperties casProperties) {
-        val algs = casProperties.getAuthn().getSamlIdp().getAlgs();
-        return new SamlObjectSignatureValidator(algs.getOverrideSignatureReferenceDigestMethods(),
-            algs.getOverrideSignatureAlgorithms(), algs.getOverrideBlockedSignatureSigningAlgorithms(),
-            algs.getOverrideAllowedSignatureSigningAlgorithms(), casProperties);
-    }
-
-    @ConditionalOnMissingBean(name = "ssoSamlHttpRequestExtractor")
-    @Bean
-    public SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor(
-        @Qualifier("openSamlConfigBean")
-        final OpenSamlConfigBean openSamlConfigBean) {
-        return new DefaultSSOSamlHttpRequestExtractor(openSamlConfigBean.getParserPool());
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "ssoPostProfileHandlerDecoders")
-    @Autowired
-    public HttpServletRequestXMLMessageDecodersMap ssoPostProfileHandlerDecoders(final CasConfigurationProperties casProperties) {
-        val props = casProperties.getAuthn()
-            .getSamlIdp()
-            .getProfile()
-            .getSso();
-        val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
-        decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
-        decoders.put(HttpMethod.POST, new HTTPPostDecoder());
-        return decoders;
-    }
-
-    @Bean
-    @RefreshScope
-    @Autowired
-    public SSOSamlIdPPostProfileHandlerController ssoPostProfileHandlerController(
-        @Qualifier("samlIdPCallbackService")
-        final Service samlIdPCallbackService,
-        @Qualifier("samlObjectSigner")
-        final SamlIdPObjectSigner samlObjectSigner,
-        @Qualifier("defaultTicketRegistrySupport")
-        final TicketRegistrySupport ticketRegistrySupport,
-        @Qualifier("openSamlConfigBean")
-        final OpenSamlConfigBean openSamlConfigBean,
-        @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-        final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
-        @Qualifier("samlIdPServiceFactory")
-        final ServiceFactory samlIdPServiceFactory,
-        @Qualifier("ticketRegistry")
-        final TicketRegistry ticketRegistry,
-        @Qualifier("registeredServiceAccessStrategyEnforcer")
-        final AuditableExecution registeredServiceAccessStrategyEnforcer,
-        @Qualifier("servicesManager")
-        final ServicesManager servicesManager,
-        @Qualifier("samlIdPTicketValidator")
-        final TicketValidator samlIdPTicketValidator,
-        @Qualifier("ssoSamlHttpRequestExtractor")
-        final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-        @Qualifier("defaultAuthenticationSystemSupport")
-        final AuthenticationSystemSupport authenticationSystemSupport,
-        @Qualifier("samlObjectSignatureValidator")
-        final SamlObjectSignatureValidator samlObjectSignatureValidator,
-        @Qualifier("singleSignOnParticipationStrategy")
-        final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
-        @Qualifier("singleLogoutServiceLogoutUrlBuilder")
-        final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
-        @Qualifier("samlIdPLogoutResponseObjectBuilder")
-        final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
-        @Qualifier("samlIdPDistributedSessionCookieGenerator")
-        final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
-        @Qualifier("ticketGrantingTicketCookieGenerator")
-        final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-        @Qualifier("samlArtifactTicketFactory")
-        final SamlArtifactTicketFactory samlArtifactTicketFactory,
-        @Qualifier("samlIdPDistributedSessionStore")
-        final SessionStore samlIdPDistributedSessionStore,
-        @Qualifier("samlAttributeQueryTicketFactory")
-        final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
-        @Qualifier("samlProfileSamlResponseBuilder")
-        final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
-        final CasConfigurationProperties casProperties,
-        @Qualifier("ssoPostProfileHandlerDecoders")
-        final HttpServletRequestXMLMessageDecodersMap ssoPostProfileHandlerDecoders) {
-        val context = SamlProfileHandlerConfigurationContext.builder()
-            .samlObjectSigner(samlObjectSigner)
-            .authenticationSystemSupport(authenticationSystemSupport)
-            .servicesManager(servicesManager)
-            .webApplicationServiceFactory(samlIdPServiceFactory)
-            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
-            .openSamlConfigBean(openSamlConfigBean)
-            .casProperties(casProperties)
-            .ticketRegistrySupport(ticketRegistrySupport)
-            .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
-            .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
-            .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
-            .artifactTicketFactory(samlArtifactTicketFactory)
-            .samlObjectSignatureValidator(samlObjectSignatureValidator)
-            .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
-            .responseBuilder(samlProfileSamlResponseBuilder)
-            .ticketValidator(samlIdPTicketValidator)
-            .ticketRegistry(ticketRegistry)
-            .sessionStore(samlIdPDistributedSessionStore)
-            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
-            .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
-            .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
-            .callbackService(samlIdPCallbackService)
-            .responseBuilder(samlProfileSamlResponseBuilder)
-            .samlMessageDecoders(ssoPostProfileHandlerDecoders)
-            .build();
-        return new SSOSamlIdPPostProfileHandlerController(context);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "ssoPostSimpleSignProfileHandlerDecoders")
-    @Autowired
-    public HttpServletRequestXMLMessageDecodersMap ssoPostSimpleSignProfileHandlerDecoders(final CasConfigurationProperties casProperties) {
-        val props = casProperties.getAuthn().getSamlIdp().getProfile().getSsoPostSimpleSign();
-        val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
-        decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
-        decoders.put(HttpMethod.POST, new HTTPPostSimpleSignDecoder());
-        return decoders;
-    }
-
-    @Bean
-    @RefreshScope
-    @Autowired
-    public SSOSamlIdPPostSimpleSignProfileHandlerController ssoPostSimpleSignProfileHandlerController(
-        @Qualifier("samlIdPCallbackService")
-        final Service samlIdPCallbackService,
-        @Qualifier("samlObjectSigner")
-        final SamlIdPObjectSigner samlObjectSigner,
-        @Qualifier("defaultTicketRegistrySupport")
-        final TicketRegistrySupport ticketRegistrySupport,
-        @Qualifier("openSamlConfigBean")
-        final OpenSamlConfigBean openSamlConfigBean,
-        @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-        final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
-        @Qualifier("samlIdPServiceFactory")
-        final ServiceFactory samlIdPServiceFactory,
-        @Qualifier("ticketRegistry")
-        final TicketRegistry ticketRegistry,
-        @Qualifier("registeredServiceAccessStrategyEnforcer")
-        final AuditableExecution registeredServiceAccessStrategyEnforcer,
-        @Qualifier("servicesManager")
-        final ServicesManager servicesManager,
-        @Qualifier("samlIdPTicketValidator")
-        final TicketValidator samlIdPTicketValidator,
-        @Qualifier("ssoSamlHttpRequestExtractor")
-        final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-        @Qualifier("defaultAuthenticationSystemSupport")
-        final AuthenticationSystemSupport authenticationSystemSupport,
-        @Qualifier("samlObjectSignatureValidator")
-        final SamlObjectSignatureValidator samlObjectSignatureValidator,
-        @Qualifier("singleSignOnParticipationStrategy")
-        final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
-        @Qualifier("singleLogoutServiceLogoutUrlBuilder")
-        final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
-        @Qualifier("samlIdPLogoutResponseObjectBuilder")
-        final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
-        @Qualifier("samlIdPDistributedSessionCookieGenerator")
-        final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
-        @Qualifier("ticketGrantingTicketCookieGenerator")
-        final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-        @Qualifier("samlArtifactTicketFactory")
-        final SamlArtifactTicketFactory samlArtifactTicketFactory,
-        @Qualifier("samlIdPDistributedSessionStore")
-        final SessionStore samlIdPDistributedSessionStore,
-        @Qualifier("samlAttributeQueryTicketFactory")
-        final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
-        @Qualifier("samlProfileSamlResponseBuilder")
-        final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
-        final CasConfigurationProperties casProperties,
-        @Qualifier("ssoPostSimpleSignProfileHandlerDecoders")
-        final HttpServletRequestXMLMessageDecodersMap ssoPostSimpleSignProfileHandlerDecoders) {
-        val context = SamlProfileHandlerConfigurationContext.builder()
-            .samlObjectSigner(samlObjectSigner)
-            .authenticationSystemSupport(authenticationSystemSupport)
-            .servicesManager(servicesManager)
-            .webApplicationServiceFactory(samlIdPServiceFactory)
-            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
-            .openSamlConfigBean(openSamlConfigBean)
-            .casProperties(casProperties)
-            .ticketRegistrySupport(ticketRegistrySupport)
-            .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
-            .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
-            .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
-            .artifactTicketFactory(samlArtifactTicketFactory)
-            .samlObjectSignatureValidator(samlObjectSignatureValidator)
-            .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
-            .responseBuilder(samlProfileSamlResponseBuilder)
-            .ticketValidator(samlIdPTicketValidator)
-            .ticketRegistry(ticketRegistry)
-            .sessionStore(samlIdPDistributedSessionStore)
-            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
-            .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
-            .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
-            .callbackService(samlIdPCallbackService)
-            .samlMessageDecoders(ssoPostSimpleSignProfileHandlerDecoders)
-            .build();
-        return new SSOSamlIdPPostSimpleSignProfileHandlerController(context);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "sloRedirectProfileHandlerDecoders")
-    @Autowired
-    public HttpServletRequestXMLMessageDecodersMap sloRedirectProfileHandlerDecoders(final CasConfigurationProperties casProperties) {
-        val props = casProperties.getAuthn().getSamlIdp().getProfile().getSlo();
-        val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
-        decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
-        return decoders;
-    }
-
-    @Bean
-    @RefreshScope
-    @Autowired
-    public SLOSamlIdPRedirectProfileHandlerController sloRedirectProfileHandlerController(
-        @Qualifier("samlIdPCallbackService")
-        final Service samlIdPCallbackService,
-        @Qualifier("samlObjectSigner")
-        final SamlIdPObjectSigner samlObjectSigner,
-        @Qualifier("defaultTicketRegistrySupport")
-        final TicketRegistrySupport ticketRegistrySupport,
-        @Qualifier("openSamlConfigBean")
-        final OpenSamlConfigBean openSamlConfigBean,
-        @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-        final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
-        @Qualifier("samlIdPServiceFactory")
-        final ServiceFactory samlIdPServiceFactory,
-        @Qualifier("ticketRegistry")
-        final TicketRegistry ticketRegistry,
-        @Qualifier("registeredServiceAccessStrategyEnforcer")
-        final AuditableExecution registeredServiceAccessStrategyEnforcer,
-        @Qualifier("servicesManager")
-        final ServicesManager servicesManager,
-        @Qualifier("samlIdPTicketValidator")
-        final TicketValidator samlIdPTicketValidator,
-        @Qualifier("ssoSamlHttpRequestExtractor")
-        final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-        @Qualifier("defaultAuthenticationSystemSupport")
-        final AuthenticationSystemSupport authenticationSystemSupport,
-        @Qualifier("samlObjectSignatureValidator")
-        final SamlObjectSignatureValidator samlObjectSignatureValidator,
-        @Qualifier("singleSignOnParticipationStrategy")
-        final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
-        @Qualifier("singleLogoutServiceLogoutUrlBuilder")
-        final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
-        @Qualifier("samlIdPLogoutResponseObjectBuilder")
-        final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
-        @Qualifier("samlIdPDistributedSessionCookieGenerator")
-        final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
-        @Qualifier("ticketGrantingTicketCookieGenerator")
-        final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-        @Qualifier("samlArtifactTicketFactory")
-        final SamlArtifactTicketFactory samlArtifactTicketFactory,
-        @Qualifier("samlIdPDistributedSessionStore")
-        final SessionStore samlIdPDistributedSessionStore,
-        @Qualifier("samlAttributeQueryTicketFactory")
-        final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
-        @Qualifier("samlProfileSamlResponseBuilder")
-        final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
-        final CasConfigurationProperties casProperties,
-        @Qualifier("sloRedirectProfileHandlerDecoders")
-        final HttpServletRequestXMLMessageDecodersMap sloRedirectProfileHandlerDecoders) {
-        val context = SamlProfileHandlerConfigurationContext.builder()
-            .samlObjectSigner(samlObjectSigner)
-            .authenticationSystemSupport(authenticationSystemSupport)
-            .servicesManager(servicesManager)
-            .webApplicationServiceFactory(samlIdPServiceFactory)
-            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
-            .openSamlConfigBean(openSamlConfigBean)
-            .casProperties(casProperties)
-            .ticketRegistrySupport(ticketRegistrySupport)
-            .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
-            .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
-            .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
-            .artifactTicketFactory(samlArtifactTicketFactory)
-            .samlObjectSignatureValidator(samlObjectSignatureValidator)
-            .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
-            .responseBuilder(samlProfileSamlResponseBuilder)
-            .ticketValidator(samlIdPTicketValidator)
-            .ticketRegistry(ticketRegistry)
-            .sessionStore(samlIdPDistributedSessionStore)
-            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
-            .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
-            .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
-            .callbackService(samlIdPCallbackService)
-            .samlMessageDecoders(sloRedirectProfileHandlerDecoders)
-            .build();
-        return new SLOSamlIdPRedirectProfileHandlerController(context);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "sloPostProfileHandlerDecoders")
-    public HttpServletRequestXMLMessageDecodersMap sloPostProfileHandlerDecoders() {
-        val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
-        decoders.put(HttpMethod.POST, new HTTPPostDecoder());
-        return decoders;
-    }
-
-    @Bean
-    @RefreshScope
-    @Autowired
-    public SLOSamlIdPPostProfileHandlerController sloPostProfileHandlerController(
-        @Qualifier("samlIdPCallbackService")
-        final Service samlIdPCallbackService,
-        @Qualifier("samlObjectSigner")
-        final SamlIdPObjectSigner samlObjectSigner,
-        @Qualifier("defaultTicketRegistrySupport")
-        final TicketRegistrySupport ticketRegistrySupport,
-        @Qualifier("openSamlConfigBean")
-        final OpenSamlConfigBean openSamlConfigBean,
-        @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-        final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
-        @Qualifier("samlIdPServiceFactory")
-        final ServiceFactory samlIdPServiceFactory,
-        @Qualifier("ticketRegistry")
-        final TicketRegistry ticketRegistry,
-        @Qualifier("registeredServiceAccessStrategyEnforcer")
-        final AuditableExecution registeredServiceAccessStrategyEnforcer,
-        @Qualifier("servicesManager")
-        final ServicesManager servicesManager,
-        @Qualifier("samlIdPTicketValidator")
-        final TicketValidator samlIdPTicketValidator,
-        @Qualifier("ssoSamlHttpRequestExtractor")
-        final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-        @Qualifier("defaultAuthenticationSystemSupport")
-        final AuthenticationSystemSupport authenticationSystemSupport,
-        @Qualifier("samlObjectSignatureValidator")
-        final SamlObjectSignatureValidator samlObjectSignatureValidator,
-        @Qualifier("singleSignOnParticipationStrategy")
-        final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
-        @Qualifier("singleLogoutServiceLogoutUrlBuilder")
-        final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
-        final CasConfigurationProperties casProperties,
-        @Qualifier("samlIdPLogoutResponseObjectBuilder")
-        final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
-        @Qualifier("samlIdPDistributedSessionCookieGenerator")
-        final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
-        @Qualifier("ticketGrantingTicketCookieGenerator")
-        final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-        @Qualifier("samlArtifactTicketFactory")
-        final SamlArtifactTicketFactory samlArtifactTicketFactory,
-        @Qualifier("samlIdPDistributedSessionStore")
-        final SessionStore samlIdPDistributedSessionStore,
-        @Qualifier("samlAttributeQueryTicketFactory")
-        final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
-        @Qualifier("samlProfileSamlResponseBuilder")
-        final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
-        @Qualifier("sloPostProfileHandlerDecoders")
-        final HttpServletRequestXMLMessageDecodersMap sloPostProfileHandlerDecoders) {
-        val context = SamlProfileHandlerConfigurationContext.builder()
-            .samlObjectSigner(samlObjectSigner)
-            .authenticationSystemSupport(authenticationSystemSupport)
-            .servicesManager(servicesManager)
-            .webApplicationServiceFactory(samlIdPServiceFactory)
-            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
-            .openSamlConfigBean(openSamlConfigBean)
-            .casProperties(casProperties)
-            .ticketRegistrySupport(ticketRegistrySupport)
-            .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
-            .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
-            .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
-            .artifactTicketFactory(samlArtifactTicketFactory)
-            .samlObjectSignatureValidator(samlObjectSignatureValidator)
-            .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
-            .responseBuilder(samlProfileSamlResponseBuilder)
-            .ticketValidator(samlIdPTicketValidator)
-            .ticketRegistry(ticketRegistry)
-            .sessionStore(samlIdPDistributedSessionStore)
-            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
-            .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
-            .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
-            .callbackService(samlIdPCallbackService)
-            .samlMessageDecoders(sloPostProfileHandlerDecoders)
-            .build();
-        return new SLOSamlIdPPostProfileHandlerController(context);
-    }
-
-    @Bean
-    @RefreshScope
-    @Autowired
-    public SamlIdPInitiatedProfileHandlerController idpInitiatedSamlProfileHandlerController(
-        @Qualifier("samlIdPObjectSignatureValidator")
-        final SamlObjectSignatureValidator samlIdPObjectSignatureValidator,
-        final CasConfigurationProperties casProperties,
-        @Qualifier("samlIdPCallbackService")
-        final Service samlIdPCallbackService,
-        @Qualifier("samlObjectSigner")
-        final SamlIdPObjectSigner samlObjectSigner,
-        @Qualifier("defaultTicketRegistrySupport")
-        final TicketRegistrySupport ticketRegistrySupport,
-        @Qualifier("openSamlConfigBean")
-        final OpenSamlConfigBean openSamlConfigBean,
-        @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-        final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
-        @Qualifier("samlIdPServiceFactory")
-        final ServiceFactory samlIdPServiceFactory,
-        @Qualifier("ticketRegistry")
-        final TicketRegistry ticketRegistry,
-        @Qualifier("registeredServiceAccessStrategyEnforcer")
-        final AuditableExecution registeredServiceAccessStrategyEnforcer,
-        @Qualifier("servicesManager")
-        final ServicesManager servicesManager,
-        @Qualifier("samlIdPTicketValidator")
-        final TicketValidator samlIdPTicketValidator,
-        @Qualifier("ssoSamlHttpRequestExtractor")
-        final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-        @Qualifier("defaultAuthenticationSystemSupport")
-        final AuthenticationSystemSupport authenticationSystemSupport,
-        @Qualifier("singleSignOnParticipationStrategy")
-        final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
-        @Qualifier("singleLogoutServiceLogoutUrlBuilder")
-        final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
-        @Qualifier("samlIdPLogoutResponseObjectBuilder")
-        final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
-        @Qualifier("samlIdPDistributedSessionCookieGenerator")
-        final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
-        @Qualifier("ticketGrantingTicketCookieGenerator")
-        final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-        @Qualifier("samlArtifactTicketFactory")
-        final SamlArtifactTicketFactory samlArtifactTicketFactory,
-        @Qualifier("samlIdPDistributedSessionStore")
-        final SessionStore samlIdPDistributedSessionStore,
-        @Qualifier("samlAttributeQueryTicketFactory")
-        final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
-        @Qualifier("samlProfileSamlResponseBuilder")
-        final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
-        @Qualifier("samlObjectSignatureValidator")
-        final SamlObjectSignatureValidator samlObjectSignatureValidator) {
-        val context = SamlProfileHandlerConfigurationContext.builder()
-            .samlObjectSigner(samlObjectSigner)
-            .authenticationSystemSupport(authenticationSystemSupport)
-            .servicesManager(servicesManager)
-            .webApplicationServiceFactory(samlIdPServiceFactory)
-            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
-            .openSamlConfigBean(openSamlConfigBean)
-            .casProperties(casProperties)
-            .ticketRegistrySupport(ticketRegistrySupport)
-            .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
-            .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
-            .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
-            .artifactTicketFactory(samlArtifactTicketFactory)
-            .samlObjectSignatureValidator(samlObjectSignatureValidator)
-            .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
-            .responseBuilder(samlProfileSamlResponseBuilder)
-            .ticketValidator(samlIdPTicketValidator)
-            .ticketRegistry(ticketRegistry)
-            .sessionStore(samlIdPDistributedSessionStore)
-            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
-            .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
-            .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
-            .callbackService(samlIdPCallbackService)
-            .samlObjectSignatureValidator(samlIdPObjectSignatureValidator)
-            .build();
-        return new SamlIdPInitiatedProfileHandlerController(context);
-    }
-
-    @Bean
-    @RefreshScope
-    @Autowired
-    public SSOSamlIdPProfileCallbackHandlerController ssoPostProfileCallbackHandlerController(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("samlIdPCallbackService")
-        final Service samlIdPCallbackService,
-        @Qualifier("samlObjectSigner")
-        final SamlIdPObjectSigner samlObjectSigner,
-        @Qualifier("defaultTicketRegistrySupport")
-        final TicketRegistrySupport ticketRegistrySupport,
-        @Qualifier("openSamlConfigBean")
-        final OpenSamlConfigBean openSamlConfigBean,
-        @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-        final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
-        @Qualifier("samlIdPServiceFactory")
-        final ServiceFactory samlIdPServiceFactory,
-        @Qualifier("ticketRegistry")
-        final TicketRegistry ticketRegistry,
-        @Qualifier("registeredServiceAccessStrategyEnforcer")
-        final AuditableExecution registeredServiceAccessStrategyEnforcer,
-        @Qualifier("servicesManager")
-        final ServicesManager servicesManager,
-        @Qualifier("samlIdPTicketValidator")
-        final TicketValidator samlIdPTicketValidator,
-        @Qualifier("ssoSamlHttpRequestExtractor")
-        final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-        @Qualifier("defaultAuthenticationSystemSupport")
-        final AuthenticationSystemSupport authenticationSystemSupport,
-        @Qualifier("samlObjectSignatureValidator")
-        final SamlObjectSignatureValidator samlObjectSignatureValidator,
-        @Qualifier("singleSignOnParticipationStrategy")
-        final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
-        @Qualifier("singleLogoutServiceLogoutUrlBuilder")
-        final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
-        @Qualifier("samlIdPLogoutResponseObjectBuilder")
-        final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
-        @Qualifier("samlIdPDistributedSessionCookieGenerator")
-        final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
-        @Qualifier("ticketGrantingTicketCookieGenerator")
-        final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-        @Qualifier("samlArtifactTicketFactory")
-        final SamlArtifactTicketFactory samlArtifactTicketFactory,
-        @Qualifier("samlIdPDistributedSessionStore")
-        final SessionStore samlIdPDistributedSessionStore,
-        @Qualifier("samlAttributeQueryTicketFactory")
-        final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
-        @Qualifier("samlProfileSamlResponseBuilder")
-        final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
-        val context = SamlProfileHandlerConfigurationContext.builder()
-            .samlObjectSigner(samlObjectSigner)
-            .authenticationSystemSupport(authenticationSystemSupport)
-            .servicesManager(servicesManager)
-            .webApplicationServiceFactory(samlIdPServiceFactory)
-            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
-            .openSamlConfigBean(openSamlConfigBean)
-            .casProperties(casProperties)
-            .ticketRegistrySupport(ticketRegistrySupport)
-            .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
-            .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
-            .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
-            .artifactTicketFactory(samlArtifactTicketFactory)
-            .samlObjectSignatureValidator(samlObjectSignatureValidator)
-            .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
-            .responseBuilder(samlProfileSamlResponseBuilder)
-            .ticketValidator(samlIdPTicketValidator)
-            .ticketRegistry(ticketRegistry)
-            .sessionStore(samlIdPDistributedSessionStore)
-            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
-            .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
-            .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
-            .callbackService(samlIdPCallbackService)
-            .build();
-        return new SSOSamlIdPProfileCallbackHandlerController(context);
-    }
-
-    @Bean
-    @RefreshScope
-    @Autowired
-    public ECPSamlIdPProfileHandlerController ecpProfileHandlerController(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("samlProfileSamlSoap11FaultResponseBuilder")
-        final SamlProfileObjectBuilder<Response> samlProfileSamlSoap11FaultResponseBuilder,
-        @Qualifier("samlProfileSamlSoap11ResponseBuilder")
-        final SamlProfileObjectBuilder<Response> samlProfileSamlSoap11ResponseBuilder,
-        @Qualifier("samlIdPCallbackService")
-        final Service samlIdPCallbackService,
-        @Qualifier("samlObjectSigner")
-        final SamlIdPObjectSigner samlObjectSigner,
-        @Qualifier("defaultTicketRegistrySupport")
-        final TicketRegistrySupport ticketRegistrySupport,
-        @Qualifier("openSamlConfigBean")
-        final OpenSamlConfigBean openSamlConfigBean,
-        @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-        final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
-        @Qualifier("samlIdPServiceFactory")
-        final ServiceFactory samlIdPServiceFactory,
-        @Qualifier("ticketRegistry")
-        final TicketRegistry ticketRegistry,
-        @Qualifier("registeredServiceAccessStrategyEnforcer")
-        final AuditableExecution registeredServiceAccessStrategyEnforcer,
-        @Qualifier("servicesManager")
-        final ServicesManager servicesManager,
-        @Qualifier("samlIdPTicketValidator")
-        final TicketValidator samlIdPTicketValidator,
-        @Qualifier("ssoSamlHttpRequestExtractor")
-        final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-        @Qualifier("defaultAuthenticationSystemSupport")
-        final AuthenticationSystemSupport authenticationSystemSupport,
-        @Qualifier("samlObjectSignatureValidator")
-        final SamlObjectSignatureValidator samlObjectSignatureValidator,
-        @Qualifier("singleSignOnParticipationStrategy")
-        final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
-        @Qualifier("singleLogoutServiceLogoutUrlBuilder")
-        final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
-        @Qualifier("samlIdPLogoutResponseObjectBuilder")
-        final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
-        @Qualifier("samlIdPDistributedSessionCookieGenerator")
-        final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
-        @Qualifier("ticketGrantingTicketCookieGenerator")
-        final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-        @Qualifier("samlArtifactTicketFactory")
-        final SamlArtifactTicketFactory samlArtifactTicketFactory,
-        @Qualifier("samlIdPDistributedSessionStore")
-        final SessionStore samlIdPDistributedSessionStore,
-        @Qualifier("samlAttributeQueryTicketFactory")
-        final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
-        @Qualifier("samlProfileSamlResponseBuilder")
-        final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
-        val context = SamlProfileHandlerConfigurationContext.builder()
-            .samlObjectSigner(samlObjectSigner)
-            .authenticationSystemSupport(authenticationSystemSupport)
-            .servicesManager(servicesManager)
-            .webApplicationServiceFactory(samlIdPServiceFactory)
-            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
-            .openSamlConfigBean(openSamlConfigBean)
-            .casProperties(casProperties)
-            .ticketRegistrySupport(ticketRegistrySupport)
-            .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
-            .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
-            .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
-            .artifactTicketFactory(samlArtifactTicketFactory)
-            .samlObjectSignatureValidator(samlObjectSignatureValidator)
-            .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
-            .responseBuilder(samlProfileSamlResponseBuilder)
-            .ticketValidator(samlIdPTicketValidator)
-            .ticketRegistry(ticketRegistry)
-            .sessionStore(samlIdPDistributedSessionStore)
-            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
-            .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
-            .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
-            .callbackService(samlIdPCallbackService)
-            .responseBuilder(samlProfileSamlSoap11ResponseBuilder)
-            .samlFaultResponseBuilder(samlProfileSamlSoap11FaultResponseBuilder)
-            .build();
-        return new ECPSamlIdPProfileHandlerController(context);
-    }
-
-    @Bean
-    @RefreshScope
-    @Autowired
-    public SamlIdPSaml1ArtifactResolutionProfileHandlerController saml1ArtifactResolutionController(
-        @Qualifier("samlProfileSamlArtifactFaultResponseBuilder")
-        final SamlProfileObjectBuilder<Response> samlProfileSamlArtifactFaultResponseBuilder,
-        final CasConfigurationProperties casProperties,
-        @Qualifier("samlProfileSamlArtifactResponseBuilder")
-        final SamlProfileObjectBuilder<Response> samlProfileSamlArtifactResponseBuilder,
-        @Qualifier("samlIdPCallbackService")
-        final Service samlIdPCallbackService,
-        @Qualifier("samlObjectSigner")
-        final SamlIdPObjectSigner samlObjectSigner,
-        @Qualifier("defaultTicketRegistrySupport")
-        final TicketRegistrySupport ticketRegistrySupport,
-        @Qualifier("openSamlConfigBean")
-        final OpenSamlConfigBean openSamlConfigBean,
-        @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-        final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
-        @Qualifier("samlIdPServiceFactory")
-        final ServiceFactory samlIdPServiceFactory,
-        @Qualifier("ticketRegistry")
-        final TicketRegistry ticketRegistry,
-        @Qualifier("registeredServiceAccessStrategyEnforcer")
-        final AuditableExecution registeredServiceAccessStrategyEnforcer,
-        @Qualifier("servicesManager")
-        final ServicesManager servicesManager,
-        @Qualifier("samlIdPTicketValidator")
-        final TicketValidator samlIdPTicketValidator,
-        @Qualifier("ssoSamlHttpRequestExtractor")
-        final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-        @Qualifier("defaultAuthenticationSystemSupport")
-        final AuthenticationSystemSupport authenticationSystemSupport,
-        @Qualifier("samlObjectSignatureValidator")
-        final SamlObjectSignatureValidator samlObjectSignatureValidator,
-        @Qualifier("singleSignOnParticipationStrategy")
-        final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
-        @Qualifier("singleLogoutServiceLogoutUrlBuilder")
-        final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
-        @Qualifier("samlIdPLogoutResponseObjectBuilder")
-        final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
-        @Qualifier("samlIdPDistributedSessionCookieGenerator")
-        final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
-        @Qualifier("ticketGrantingTicketCookieGenerator")
-        final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-        @Qualifier("samlArtifactTicketFactory")
-        final SamlArtifactTicketFactory samlArtifactTicketFactory,
-        @Qualifier("samlIdPDistributedSessionStore")
-        final SessionStore samlIdPDistributedSessionStore,
-        @Qualifier("samlAttributeQueryTicketFactory")
-        final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
-        @Qualifier("samlProfileSamlResponseBuilder")
-        final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
-        val context = SamlProfileHandlerConfigurationContext.builder()
-            .samlObjectSigner(samlObjectSigner)
-            .authenticationSystemSupport(authenticationSystemSupport)
-            .servicesManager(servicesManager)
-            .webApplicationServiceFactory(samlIdPServiceFactory)
-            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
-            .openSamlConfigBean(openSamlConfigBean)
-            .casProperties(casProperties)
-            .ticketRegistrySupport(ticketRegistrySupport)
-            .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
-            .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
-            .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
-            .artifactTicketFactory(samlArtifactTicketFactory)
-            .samlObjectSignatureValidator(samlObjectSignatureValidator)
-            .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
-            .responseBuilder(samlProfileSamlResponseBuilder)
-            .ticketValidator(samlIdPTicketValidator)
-            .ticketRegistry(ticketRegistry)
-            .sessionStore(samlIdPDistributedSessionStore)
-            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
-            .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
-            .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
-            .callbackService(samlIdPCallbackService)
-            .responseBuilder(samlProfileSamlArtifactResponseBuilder)
-            .samlFaultResponseBuilder(samlProfileSamlArtifactFaultResponseBuilder)
-            .build();
-        return new SamlIdPSaml1ArtifactResolutionProfileHandlerController(context);
-    }
-
-    @ConditionalOnProperty(prefix = "cas.authn.saml-idp.core", name = "attribute-query-profile-enabled", havingValue = "true")
-    @Bean
-    @RefreshScope
-    @Autowired
-    public SamlIdPSaml2AttributeQueryProfileHandlerController saml2AttributeQueryProfileHandlerController(
-        @Qualifier("samlProfileSamlAttributeQueryFaultResponseBuilder")
-        final SamlProfileObjectBuilder<Response> samlProfileSamlAttributeQueryFaultResponseBuilder,
-        final CasConfigurationProperties casProperties,
-        @Qualifier("samlProfileSamlAttributeQueryResponseBuilder")
-        final SamlProfileObjectBuilder<Response> samlProfileSamlAttributeQueryResponseBuilder,
-        @Qualifier("samlIdPCallbackService")
-        final Service samlIdPCallbackService,
-        @Qualifier("samlObjectSigner")
-        final SamlIdPObjectSigner samlObjectSigner,
-        @Qualifier("defaultTicketRegistrySupport")
-        final TicketRegistrySupport ticketRegistrySupport,
-        @Qualifier("openSamlConfigBean")
-        final OpenSamlConfigBean openSamlConfigBean,
-        @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-        final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
-        @Qualifier("samlIdPServiceFactory")
-        final ServiceFactory samlIdPServiceFactory,
-        @Qualifier("ticketRegistry")
-        final TicketRegistry ticketRegistry,
-        @Qualifier("registeredServiceAccessStrategyEnforcer")
-        final AuditableExecution registeredServiceAccessStrategyEnforcer,
-        @Qualifier("servicesManager")
-        final ServicesManager servicesManager,
-        @Qualifier("samlIdPTicketValidator")
-        final TicketValidator samlIdPTicketValidator,
-        @Qualifier("ssoSamlHttpRequestExtractor")
-        final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-        @Qualifier("defaultAuthenticationSystemSupport")
-        final AuthenticationSystemSupport authenticationSystemSupport,
-        @Qualifier("samlObjectSignatureValidator")
-        final SamlObjectSignatureValidator samlObjectSignatureValidator,
-        @Qualifier("singleSignOnParticipationStrategy")
-        final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
-        @Qualifier("singleLogoutServiceLogoutUrlBuilder")
-        final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
-        @Qualifier("samlIdPLogoutResponseObjectBuilder")
-        final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
-        @Qualifier("samlIdPDistributedSessionCookieGenerator")
-        final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
-        @Qualifier("ticketGrantingTicketCookieGenerator")
-        final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-        @Qualifier("samlArtifactTicketFactory")
-        final SamlArtifactTicketFactory samlArtifactTicketFactory,
-        @Qualifier("samlIdPDistributedSessionStore")
-        final SessionStore samlIdPDistributedSessionStore,
-        @Qualifier("samlAttributeQueryTicketFactory")
-        final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
-        @Qualifier("samlProfileSamlResponseBuilder")
-        final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
-        val context = SamlProfileHandlerConfigurationContext.builder()
-            .samlObjectSigner(samlObjectSigner)
-            .authenticationSystemSupport(authenticationSystemSupport)
-            .servicesManager(servicesManager)
-            .webApplicationServiceFactory(samlIdPServiceFactory)
-            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
-            .openSamlConfigBean(openSamlConfigBean)
-            .casProperties(casProperties)
-            .ticketRegistrySupport(ticketRegistrySupport)
-            .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
-            .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
-            .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
-            .artifactTicketFactory(samlArtifactTicketFactory)
-            .samlObjectSignatureValidator(samlObjectSignatureValidator)
-            .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
-            .responseBuilder(samlProfileSamlResponseBuilder)
-            .ticketValidator(samlIdPTicketValidator)
-            .ticketRegistry(ticketRegistry)
-            .sessionStore(samlIdPDistributedSessionStore)
-            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
-            .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
-            .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
-            .callbackService(samlIdPCallbackService)
-            .responseBuilder(samlProfileSamlAttributeQueryResponseBuilder)
-            .samlFaultResponseBuilder(samlProfileSamlAttributeQueryFaultResponseBuilder)
-            .build();
-        return new SamlIdPSaml2AttributeQueryProfileHandlerController(context);
-    }
-
-    @Bean
-    @Autowired
-    public Service samlIdPCallbackService(
-        @Qualifier("samlIdPServiceFactory")
-        final ServiceFactory samlIdPServiceFactory,
-        final CasConfigurationProperties casProperties) {
-        val service = casProperties.getServer()
-            .getPrefix()
-            .concat(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK);
-        return samlIdPServiceFactory.createService(service);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "samlIdPServiceRegistryExecutionPlanConfigurer")
-    @Autowired
-    public ServiceRegistryExecutionPlanConfigurer samlIdPServiceRegistryExecutionPlanConfigurer(final ConfigurableApplicationContext applicationContext,
-                                                                                                @Qualifier("samlIdPCallbackService")
-                                                                                                final Service samlIdPCallbackService) {
-        return plan -> {
-            val callbackService = samlIdPCallbackService.getId()
-                .concat(".*");
-            LOGGER.debug("Initializing SAML IdP callback service [{}]", callbackService);
-            val service = new RegexRegisteredService();
-            service.setId(RandomUtils.nextLong());
-            service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
-            service.setName(service.getClass()
-                .getSimpleName());
-            service.setDescription("SAML Authentication Request Callback");
-            service.setServiceId(callbackService);
-            plan.registerServiceRegistry(new SamlIdPServiceRegistry(applicationContext, service));
-        };
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "samlIdPServicesManagerRegisteredServiceLocator")
-    public ServicesManagerRegisteredServiceLocator samlIdPServicesManagerRegisteredServiceLocator(
-        @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-        final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver) {
-        return new SamlIdPServicesManagerRegisteredServiceLocator(defaultSamlRegisteredServiceCachingMetadataResolver);
-    }
-
-    @ConditionalOnMissingBean(name = "samlIdPDistributedSessionCookieGenerator")
-    @Bean
-    @RefreshScope
-    @Autowired
-    public CasCookieBuilder samlIdPDistributedSessionCookieGenerator(final CasConfigurationProperties casProperties) {
-        val cookie = casProperties.getSessionReplication().getCookie();
-        return CookieUtils.buildCookieRetrievingGenerator(cookie);
-    }
-
-    @ConditionalOnMissingBean(name = DistributedJEESessionStore.DEFAULT_BEAN_NAME)
-    @Bean
-    @RefreshScope
-    @Autowired
-    public SessionStore samlIdPDistributedSessionStore(final CasConfigurationProperties casProperties,
-                                                       @Qualifier("samlIdPDistributedSessionCookieGenerator")
-                                                       final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
-                                                       @Qualifier("webflowCipherExecutor")
-                                                       final CipherExecutor webflowCipherExecutor,
-                                                       @Qualifier("centralAuthenticationService")
-                                                       final CentralAuthenticationService centralAuthenticationService,
-                                                       @Qualifier("ticketFactory")
-                                                       final TicketFactory ticketFactory) {
-        val type = casProperties.getAuthn()
-            .getSamlIdp()
-            .getCore()
-            .getSessionStorageType();
-        if (type == SamlIdPCoreProperties.SessionStorageTypes.TICKET_REGISTRY) {
-            return new DistributedJEESessionStore(centralAuthenticationService, ticketFactory, samlIdPDistributedSessionCookieGenerator);
+        @ConditionalOnMissingBean(name = "samlIdPObjectSignatureValidator")
+        @Bean
+        @Autowired
+        public SamlObjectSignatureValidator samlIdPObjectSignatureValidator(final CasConfigurationProperties casProperties,
+                                                                            @Qualifier("casSamlIdPMetadataResolver")
+                                                                            final MetadataResolver casSamlIdPMetadataResolver) {
+            val algs = casProperties.getAuthn().getSamlIdp().getAlgs();
+            return new SamlIdPObjectSignatureValidator(algs.getOverrideSignatureReferenceDigestMethods(),
+                algs.getOverrideSignatureAlgorithms(), algs.getOverrideBlockedSignatureSigningAlgorithms(),
+                algs.getOverrideAllowedSignatureSigningAlgorithms(), casSamlIdPMetadataResolver, casProperties);
         }
-        if (type == SamlIdPCoreProperties.SessionStorageTypes.BROWSER_SESSION_STORAGE) {
-            return new BrowserWebStorageSessionStore(webflowCipherExecutor);
+
+        @ConditionalOnMissingBean(name = "samlObjectSignatureValidator")
+        @Bean
+        @Autowired
+        public SamlObjectSignatureValidator samlObjectSignatureValidator(final CasConfigurationProperties casProperties) {
+            val algs = casProperties.getAuthn().getSamlIdp().getAlgs();
+            return new SamlObjectSignatureValidator(algs.getOverrideSignatureReferenceDigestMethods(),
+                algs.getOverrideSignatureAlgorithms(), algs.getOverrideBlockedSignatureSigningAlgorithms(),
+                algs.getOverrideAllowedSignatureSigningAlgorithms(), casProperties);
         }
-        return JEESessionStore.INSTANCE;
     }
 
-    @ConditionalOnMissingBean(name = "samlIdPSingleLogoutRedirectionStrategy")
-    @Bean
-    @RefreshScope
-    @Autowired
-    public LogoutRedirectionStrategy samlIdPSingleLogoutRedirectionStrategy(
-        @Qualifier("samlIdPCallbackService")
-        final Service samlIdPCallbackService,
-        @Qualifier("samlObjectSigner")
-        final SamlIdPObjectSigner samlObjectSigner,
-        @Qualifier("defaultTicketRegistrySupport")
-        final TicketRegistrySupport ticketRegistrySupport,
-        @Qualifier("openSamlConfigBean")
-        final OpenSamlConfigBean openSamlConfigBean,
-        @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-        final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
-        @Qualifier("samlIdPServiceFactory")
-        final ServiceFactory samlIdPServiceFactory,
-        @Qualifier("ticketRegistry")
-        final TicketRegistry ticketRegistry,
-        final CasConfigurationProperties casProperties,
-        @Qualifier("registeredServiceAccessStrategyEnforcer")
-        final AuditableExecution registeredServiceAccessStrategyEnforcer,
-        @Qualifier("servicesManager")
-        final ServicesManager servicesManager,
-        @Qualifier("samlIdPTicketValidator")
-        final TicketValidator samlIdPTicketValidator,
-        @Qualifier("ssoSamlHttpRequestExtractor")
-        final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
-        @Qualifier("defaultAuthenticationSystemSupport")
-        final AuthenticationSystemSupport authenticationSystemSupport,
-        @Qualifier("samlObjectSignatureValidator")
-        final SamlObjectSignatureValidator samlObjectSignatureValidator,
-        @Qualifier("singleSignOnParticipationStrategy")
-        final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
-        @Qualifier("singleLogoutServiceLogoutUrlBuilder")
-        final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
-        @Qualifier("samlIdPLogoutResponseObjectBuilder")
-        final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
-        @Qualifier("samlIdPDistributedSessionCookieGenerator")
-        final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
-        @Qualifier("ticketGrantingTicketCookieGenerator")
-        final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-        @Qualifier("samlArtifactTicketFactory")
-        final SamlArtifactTicketFactory samlArtifactTicketFactory,
-        @Qualifier("samlIdPDistributedSessionStore")
-        final SessionStore samlIdPDistributedSessionStore,
-        @Qualifier("samlAttributeQueryTicketFactory")
-        final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
-        @Qualifier("samlProfileSamlResponseBuilder")
-        final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
-        val context = SamlProfileHandlerConfigurationContext.builder()
-            .samlObjectSigner(samlObjectSigner)
-            .authenticationSystemSupport(authenticationSystemSupport)
-            .servicesManager(servicesManager)
-            .webApplicationServiceFactory(samlIdPServiceFactory)
-            .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
-            .openSamlConfigBean(openSamlConfigBean)
-            .casProperties(casProperties)
-            .ticketRegistrySupport(ticketRegistrySupport)
-            .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
-            .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
-            .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
-            .artifactTicketFactory(samlArtifactTicketFactory)
-            .samlObjectSignatureValidator(samlObjectSignatureValidator)
-            .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
-            .responseBuilder(samlProfileSamlResponseBuilder)
-            .ticketValidator(samlIdPTicketValidator)
-            .ticketRegistry(ticketRegistry)
-            .sessionStore(samlIdPDistributedSessionStore)
-            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
-            .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
-            .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
-            .callbackService(samlIdPCallbackService)
-            .build();
-        return new SamlIdPSingleLogoutRedirectionStrategy(context);
+    @Configuration(value = "SamlIdPEndpointControllersConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPEndpointControllersConfiguration {
+
+        @Bean
+        @RefreshScope
+        @Autowired
+        public SSOSamlIdPPostProfileHandlerController ssoPostProfileHandlerController(
+            @Qualifier("samlIdPCallbackService")
+            final Service samlIdPCallbackService,
+            @Qualifier("samlObjectSigner")
+            final SamlIdPObjectSigner samlObjectSigner,
+            @Qualifier("defaultTicketRegistrySupport")
+            final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier("openSamlConfigBean")
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
+            @Qualifier("samlIdPServiceFactory")
+            final ServiceFactory samlIdPServiceFactory,
+            @Qualifier("ticketRegistry")
+            final TicketRegistry ticketRegistry,
+            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier("servicesManager")
+            final ServicesManager servicesManager,
+            @Qualifier("samlIdPTicketValidator")
+            final TicketValidator samlIdPTicketValidator,
+            @Qualifier("ssoSamlHttpRequestExtractor")
+            final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
+            @Qualifier("defaultAuthenticationSystemSupport")
+            final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier("samlObjectSignatureValidator")
+            final SamlObjectSignatureValidator samlObjectSignatureValidator,
+            @Qualifier("singleSignOnParticipationStrategy")
+            final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
+            @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+            final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
+            @Qualifier("samlIdPLogoutResponseObjectBuilder")
+            final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
+            @Qualifier("samlIdPDistributedSessionCookieGenerator")
+            final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier("samlArtifactTicketFactory")
+            final SamlArtifactTicketFactory samlArtifactTicketFactory,
+            @Qualifier("samlIdPDistributedSessionStore")
+            final SessionStore samlIdPDistributedSessionStore,
+            @Qualifier("samlAttributeQueryTicketFactory")
+            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
+            @Qualifier("samlProfileSamlResponseBuilder")
+            final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("ssoPostProfileHandlerDecoders")
+            final HttpServletRequestXMLMessageDecodersMap ssoPostProfileHandlerDecoders) {
+            val context = SamlProfileHandlerConfigurationContext.builder()
+                .samlObjectSigner(samlObjectSigner)
+                .authenticationSystemSupport(authenticationSystemSupport)
+                .servicesManager(servicesManager)
+                .webApplicationServiceFactory(samlIdPServiceFactory)
+                .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
+                .openSamlConfigBean(openSamlConfigBean)
+                .casProperties(casProperties)
+                .ticketRegistrySupport(ticketRegistrySupport)
+                .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
+                .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
+                .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
+                .artifactTicketFactory(samlArtifactTicketFactory)
+                .samlObjectSignatureValidator(samlObjectSignatureValidator)
+                .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
+                .responseBuilder(samlProfileSamlResponseBuilder)
+                .ticketValidator(samlIdPTicketValidator)
+                .ticketRegistry(ticketRegistry)
+                .sessionStore(samlIdPDistributedSessionStore)
+                .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
+                .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
+                .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
+                .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
+                .callbackService(samlIdPCallbackService)
+                .responseBuilder(samlProfileSamlResponseBuilder)
+                .samlMessageDecoders(ssoPostProfileHandlerDecoders)
+                .build();
+            return new SSOSamlIdPPostProfileHandlerController(context);
+        }
+
+        @Bean
+        @RefreshScope
+        @Autowired
+        public SSOSamlIdPPostSimpleSignProfileHandlerController ssoPostSimpleSignProfileHandlerController(
+            @Qualifier("samlIdPCallbackService")
+            final Service samlIdPCallbackService,
+            @Qualifier("samlObjectSigner")
+            final SamlIdPObjectSigner samlObjectSigner,
+            @Qualifier("defaultTicketRegistrySupport")
+            final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier("openSamlConfigBean")
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
+            @Qualifier("samlIdPServiceFactory")
+            final ServiceFactory samlIdPServiceFactory,
+            @Qualifier("ticketRegistry")
+            final TicketRegistry ticketRegistry,
+            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier("servicesManager")
+            final ServicesManager servicesManager,
+            @Qualifier("samlIdPTicketValidator")
+            final TicketValidator samlIdPTicketValidator,
+            @Qualifier("ssoSamlHttpRequestExtractor")
+            final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
+            @Qualifier("defaultAuthenticationSystemSupport")
+            final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier("samlObjectSignatureValidator")
+            final SamlObjectSignatureValidator samlObjectSignatureValidator,
+            @Qualifier("singleSignOnParticipationStrategy")
+            final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
+            @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+            final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
+            @Qualifier("samlIdPLogoutResponseObjectBuilder")
+            final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
+            @Qualifier("samlIdPDistributedSessionCookieGenerator")
+            final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier("samlArtifactTicketFactory")
+            final SamlArtifactTicketFactory samlArtifactTicketFactory,
+            @Qualifier("samlIdPDistributedSessionStore")
+            final SessionStore samlIdPDistributedSessionStore,
+            @Qualifier("samlAttributeQueryTicketFactory")
+            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
+            @Qualifier("samlProfileSamlResponseBuilder")
+            final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("ssoPostSimpleSignProfileHandlerDecoders")
+            final HttpServletRequestXMLMessageDecodersMap ssoPostSimpleSignProfileHandlerDecoders) {
+            val context = SamlProfileHandlerConfigurationContext.builder()
+                .samlObjectSigner(samlObjectSigner)
+                .authenticationSystemSupport(authenticationSystemSupport)
+                .servicesManager(servicesManager)
+                .webApplicationServiceFactory(samlIdPServiceFactory)
+                .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
+                .openSamlConfigBean(openSamlConfigBean)
+                .casProperties(casProperties)
+                .ticketRegistrySupport(ticketRegistrySupport)
+                .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
+                .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
+                .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
+                .artifactTicketFactory(samlArtifactTicketFactory)
+                .samlObjectSignatureValidator(samlObjectSignatureValidator)
+                .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
+                .responseBuilder(samlProfileSamlResponseBuilder)
+                .ticketValidator(samlIdPTicketValidator)
+                .ticketRegistry(ticketRegistry)
+                .sessionStore(samlIdPDistributedSessionStore)
+                .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
+                .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
+                .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
+                .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
+                .callbackService(samlIdPCallbackService)
+                .samlMessageDecoders(ssoPostSimpleSignProfileHandlerDecoders)
+                .build();
+            return new SSOSamlIdPPostSimpleSignProfileHandlerController(context);
+        }
+
+
+        @Bean
+        @RefreshScope
+        @Autowired
+        public SLOSamlIdPRedirectProfileHandlerController sloRedirectProfileHandlerController(
+            @Qualifier("samlIdPCallbackService")
+            final Service samlIdPCallbackService,
+            @Qualifier("samlObjectSigner")
+            final SamlIdPObjectSigner samlObjectSigner,
+            @Qualifier("defaultTicketRegistrySupport")
+            final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier("openSamlConfigBean")
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
+            @Qualifier("samlIdPServiceFactory")
+            final ServiceFactory samlIdPServiceFactory,
+            @Qualifier("ticketRegistry")
+            final TicketRegistry ticketRegistry,
+            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier("servicesManager")
+            final ServicesManager servicesManager,
+            @Qualifier("samlIdPTicketValidator")
+            final TicketValidator samlIdPTicketValidator,
+            @Qualifier("ssoSamlHttpRequestExtractor")
+            final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
+            @Qualifier("defaultAuthenticationSystemSupport")
+            final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier("samlObjectSignatureValidator")
+            final SamlObjectSignatureValidator samlObjectSignatureValidator,
+            @Qualifier("singleSignOnParticipationStrategy")
+            final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
+            @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+            final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
+            @Qualifier("samlIdPLogoutResponseObjectBuilder")
+            final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
+            @Qualifier("samlIdPDistributedSessionCookieGenerator")
+            final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier("samlArtifactTicketFactory")
+            final SamlArtifactTicketFactory samlArtifactTicketFactory,
+            @Qualifier("samlIdPDistributedSessionStore")
+            final SessionStore samlIdPDistributedSessionStore,
+            @Qualifier("samlAttributeQueryTicketFactory")
+            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
+            @Qualifier("samlProfileSamlResponseBuilder")
+            final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("sloRedirectProfileHandlerDecoders")
+            final HttpServletRequestXMLMessageDecodersMap sloRedirectProfileHandlerDecoders) {
+            val context = SamlProfileHandlerConfigurationContext.builder()
+                .samlObjectSigner(samlObjectSigner)
+                .authenticationSystemSupport(authenticationSystemSupport)
+                .servicesManager(servicesManager)
+                .webApplicationServiceFactory(samlIdPServiceFactory)
+                .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
+                .openSamlConfigBean(openSamlConfigBean)
+                .casProperties(casProperties)
+                .ticketRegistrySupport(ticketRegistrySupport)
+                .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
+                .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
+                .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
+                .artifactTicketFactory(samlArtifactTicketFactory)
+                .samlObjectSignatureValidator(samlObjectSignatureValidator)
+                .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
+                .responseBuilder(samlProfileSamlResponseBuilder)
+                .ticketValidator(samlIdPTicketValidator)
+                .ticketRegistry(ticketRegistry)
+                .sessionStore(samlIdPDistributedSessionStore)
+                .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
+                .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
+                .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
+                .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
+                .callbackService(samlIdPCallbackService)
+                .samlMessageDecoders(sloRedirectProfileHandlerDecoders)
+                .build();
+            return new SLOSamlIdPRedirectProfileHandlerController(context);
+        }
+
+        @Bean
+        @RefreshScope
+        @Autowired
+        public SLOSamlIdPPostProfileHandlerController sloPostProfileHandlerController(
+            @Qualifier("samlIdPCallbackService")
+            final Service samlIdPCallbackService,
+            @Qualifier("samlObjectSigner")
+            final SamlIdPObjectSigner samlObjectSigner,
+            @Qualifier("defaultTicketRegistrySupport")
+            final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier("openSamlConfigBean")
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
+            @Qualifier("samlIdPServiceFactory")
+            final ServiceFactory samlIdPServiceFactory,
+            @Qualifier("ticketRegistry")
+            final TicketRegistry ticketRegistry,
+            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier("servicesManager")
+            final ServicesManager servicesManager,
+            @Qualifier("samlIdPTicketValidator")
+            final TicketValidator samlIdPTicketValidator,
+            @Qualifier("ssoSamlHttpRequestExtractor")
+            final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
+            @Qualifier("defaultAuthenticationSystemSupport")
+            final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier("samlObjectSignatureValidator")
+            final SamlObjectSignatureValidator samlObjectSignatureValidator,
+            @Qualifier("singleSignOnParticipationStrategy")
+            final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
+            @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+            final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("samlIdPLogoutResponseObjectBuilder")
+            final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
+            @Qualifier("samlIdPDistributedSessionCookieGenerator")
+            final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier("samlArtifactTicketFactory")
+            final SamlArtifactTicketFactory samlArtifactTicketFactory,
+            @Qualifier("samlIdPDistributedSessionStore")
+            final SessionStore samlIdPDistributedSessionStore,
+            @Qualifier("samlAttributeQueryTicketFactory")
+            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
+            @Qualifier("samlProfileSamlResponseBuilder")
+            final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
+            @Qualifier("sloPostProfileHandlerDecoders")
+            final HttpServletRequestXMLMessageDecodersMap sloPostProfileHandlerDecoders) {
+            val context = SamlProfileHandlerConfigurationContext.builder()
+                .samlObjectSigner(samlObjectSigner)
+                .authenticationSystemSupport(authenticationSystemSupport)
+                .servicesManager(servicesManager)
+                .webApplicationServiceFactory(samlIdPServiceFactory)
+                .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
+                .openSamlConfigBean(openSamlConfigBean)
+                .casProperties(casProperties)
+                .ticketRegistrySupport(ticketRegistrySupport)
+                .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
+                .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
+                .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
+                .artifactTicketFactory(samlArtifactTicketFactory)
+                .samlObjectSignatureValidator(samlObjectSignatureValidator)
+                .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
+                .responseBuilder(samlProfileSamlResponseBuilder)
+                .ticketValidator(samlIdPTicketValidator)
+                .ticketRegistry(ticketRegistry)
+                .sessionStore(samlIdPDistributedSessionStore)
+                .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
+                .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
+                .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
+                .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
+                .callbackService(samlIdPCallbackService)
+                .samlMessageDecoders(sloPostProfileHandlerDecoders)
+                .build();
+            return new SLOSamlIdPPostProfileHandlerController(context);
+        }
+
+        @Bean
+        @RefreshScope
+        @Autowired
+        public SamlIdPInitiatedProfileHandlerController idpInitiatedSamlProfileHandlerController(
+            @Qualifier("samlIdPObjectSignatureValidator")
+            final SamlObjectSignatureValidator samlIdPObjectSignatureValidator,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("samlIdPCallbackService")
+            final Service samlIdPCallbackService,
+            @Qualifier("samlObjectSigner")
+            final SamlIdPObjectSigner samlObjectSigner,
+            @Qualifier("defaultTicketRegistrySupport")
+            final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier("openSamlConfigBean")
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
+            @Qualifier("samlIdPServiceFactory")
+            final ServiceFactory samlIdPServiceFactory,
+            @Qualifier("ticketRegistry")
+            final TicketRegistry ticketRegistry,
+            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier("servicesManager")
+            final ServicesManager servicesManager,
+            @Qualifier("samlIdPTicketValidator")
+            final TicketValidator samlIdPTicketValidator,
+            @Qualifier("ssoSamlHttpRequestExtractor")
+            final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
+            @Qualifier("defaultAuthenticationSystemSupport")
+            final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier("singleSignOnParticipationStrategy")
+            final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
+            @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+            final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
+            @Qualifier("samlIdPLogoutResponseObjectBuilder")
+            final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
+            @Qualifier("samlIdPDistributedSessionCookieGenerator")
+            final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier("samlArtifactTicketFactory")
+            final SamlArtifactTicketFactory samlArtifactTicketFactory,
+            @Qualifier("samlIdPDistributedSessionStore")
+            final SessionStore samlIdPDistributedSessionStore,
+            @Qualifier("samlAttributeQueryTicketFactory")
+            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
+            @Qualifier("samlProfileSamlResponseBuilder")
+            final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
+            @Qualifier("samlObjectSignatureValidator")
+            final SamlObjectSignatureValidator samlObjectSignatureValidator) {
+            val context = SamlProfileHandlerConfigurationContext.builder()
+                .samlObjectSigner(samlObjectSigner)
+                .authenticationSystemSupport(authenticationSystemSupport)
+                .servicesManager(servicesManager)
+                .webApplicationServiceFactory(samlIdPServiceFactory)
+                .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
+                .openSamlConfigBean(openSamlConfigBean)
+                .casProperties(casProperties)
+                .ticketRegistrySupport(ticketRegistrySupport)
+                .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
+                .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
+                .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
+                .artifactTicketFactory(samlArtifactTicketFactory)
+                .samlObjectSignatureValidator(samlObjectSignatureValidator)
+                .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
+                .responseBuilder(samlProfileSamlResponseBuilder)
+                .ticketValidator(samlIdPTicketValidator)
+                .ticketRegistry(ticketRegistry)
+                .sessionStore(samlIdPDistributedSessionStore)
+                .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
+                .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
+                .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
+                .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
+                .callbackService(samlIdPCallbackService)
+                .samlObjectSignatureValidator(samlIdPObjectSignatureValidator)
+                .build();
+            return new SamlIdPInitiatedProfileHandlerController(context);
+        }
+
+        @Bean
+        @RefreshScope
+        @Autowired
+        public SSOSamlIdPProfileCallbackHandlerController ssoPostProfileCallbackHandlerController(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("samlIdPCallbackService")
+            final Service samlIdPCallbackService,
+            @Qualifier("samlObjectSigner")
+            final SamlIdPObjectSigner samlObjectSigner,
+            @Qualifier("defaultTicketRegistrySupport")
+            final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier("openSamlConfigBean")
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
+            @Qualifier("samlIdPServiceFactory")
+            final ServiceFactory samlIdPServiceFactory,
+            @Qualifier("ticketRegistry")
+            final TicketRegistry ticketRegistry,
+            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier("servicesManager")
+            final ServicesManager servicesManager,
+            @Qualifier("samlIdPTicketValidator")
+            final TicketValidator samlIdPTicketValidator,
+            @Qualifier("ssoSamlHttpRequestExtractor")
+            final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
+            @Qualifier("defaultAuthenticationSystemSupport")
+            final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier("samlObjectSignatureValidator")
+            final SamlObjectSignatureValidator samlObjectSignatureValidator,
+            @Qualifier("singleSignOnParticipationStrategy")
+            final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
+            @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+            final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
+            @Qualifier("samlIdPLogoutResponseObjectBuilder")
+            final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
+            @Qualifier("samlIdPDistributedSessionCookieGenerator")
+            final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier("samlArtifactTicketFactory")
+            final SamlArtifactTicketFactory samlArtifactTicketFactory,
+            @Qualifier("samlIdPDistributedSessionStore")
+            final SessionStore samlIdPDistributedSessionStore,
+            @Qualifier("samlAttributeQueryTicketFactory")
+            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
+            @Qualifier("samlProfileSamlResponseBuilder")
+            final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
+            val context = SamlProfileHandlerConfigurationContext.builder()
+                .samlObjectSigner(samlObjectSigner)
+                .authenticationSystemSupport(authenticationSystemSupport)
+                .servicesManager(servicesManager)
+                .webApplicationServiceFactory(samlIdPServiceFactory)
+                .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
+                .openSamlConfigBean(openSamlConfigBean)
+                .casProperties(casProperties)
+                .ticketRegistrySupport(ticketRegistrySupport)
+                .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
+                .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
+                .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
+                .artifactTicketFactory(samlArtifactTicketFactory)
+                .samlObjectSignatureValidator(samlObjectSignatureValidator)
+                .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
+                .responseBuilder(samlProfileSamlResponseBuilder)
+                .ticketValidator(samlIdPTicketValidator)
+                .ticketRegistry(ticketRegistry)
+                .sessionStore(samlIdPDistributedSessionStore)
+                .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
+                .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
+                .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
+                .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
+                .callbackService(samlIdPCallbackService)
+                .build();
+            return new SSOSamlIdPProfileCallbackHandlerController(context);
+        }
+
+        @Bean
+        @RefreshScope
+        @Autowired
+        public ECPSamlIdPProfileHandlerController ecpProfileHandlerController(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("samlProfileSamlSoap11FaultResponseBuilder")
+            final SamlProfileObjectBuilder<org.opensaml.saml.saml2.ecp.Response> samlProfileSamlSoap11FaultResponseBuilder,
+            @Qualifier("samlProfileSamlSoap11ResponseBuilder")
+            final SamlProfileObjectBuilder<org.opensaml.saml.saml2.ecp.Response> samlProfileSamlSoap11ResponseBuilder,
+            @Qualifier("samlIdPCallbackService")
+            final Service samlIdPCallbackService,
+            @Qualifier("samlObjectSigner")
+            final SamlIdPObjectSigner samlObjectSigner,
+            @Qualifier("defaultTicketRegistrySupport")
+            final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier("openSamlConfigBean")
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
+            @Qualifier("samlIdPServiceFactory")
+            final ServiceFactory samlIdPServiceFactory,
+            @Qualifier("ticketRegistry")
+            final TicketRegistry ticketRegistry,
+            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier("servicesManager")
+            final ServicesManager servicesManager,
+            @Qualifier("samlIdPTicketValidator")
+            final TicketValidator samlIdPTicketValidator,
+            @Qualifier("ssoSamlHttpRequestExtractor")
+            final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
+            @Qualifier("defaultAuthenticationSystemSupport")
+            final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier("samlObjectSignatureValidator")
+            final SamlObjectSignatureValidator samlObjectSignatureValidator,
+            @Qualifier("singleSignOnParticipationStrategy")
+            final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
+            @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+            final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
+            @Qualifier("samlIdPLogoutResponseObjectBuilder")
+            final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
+            @Qualifier("samlIdPDistributedSessionCookieGenerator")
+            final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier("samlArtifactTicketFactory")
+            final SamlArtifactTicketFactory samlArtifactTicketFactory,
+            @Qualifier("samlIdPDistributedSessionStore")
+            final SessionStore samlIdPDistributedSessionStore,
+            @Qualifier("samlAttributeQueryTicketFactory")
+            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
+            @Qualifier("samlProfileSamlResponseBuilder")
+            final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
+            val context = SamlProfileHandlerConfigurationContext.builder()
+                .samlObjectSigner(samlObjectSigner)
+                .authenticationSystemSupport(authenticationSystemSupport)
+                .servicesManager(servicesManager)
+                .webApplicationServiceFactory(samlIdPServiceFactory)
+                .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
+                .openSamlConfigBean(openSamlConfigBean)
+                .casProperties(casProperties)
+                .ticketRegistrySupport(ticketRegistrySupport)
+                .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
+                .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
+                .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
+                .artifactTicketFactory(samlArtifactTicketFactory)
+                .samlObjectSignatureValidator(samlObjectSignatureValidator)
+                .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
+                .responseBuilder(samlProfileSamlResponseBuilder)
+                .ticketValidator(samlIdPTicketValidator)
+                .ticketRegistry(ticketRegistry)
+                .sessionStore(samlIdPDistributedSessionStore)
+                .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
+                .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
+                .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
+                .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
+                .callbackService(samlIdPCallbackService)
+                .responseBuilder(samlProfileSamlSoap11ResponseBuilder)
+                .samlFaultResponseBuilder(samlProfileSamlSoap11FaultResponseBuilder)
+                .build();
+            return new ECPSamlIdPProfileHandlerController(context);
+        }
+
+        @Bean
+        @RefreshScope
+        @Autowired
+        public SamlIdPSaml1ArtifactResolutionProfileHandlerController saml1ArtifactResolutionController(
+            @Qualifier("samlProfileSamlArtifactFaultResponseBuilder")
+            final SamlProfileObjectBuilder<Response> samlProfileSamlArtifactFaultResponseBuilder,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("samlProfileSamlArtifactResponseBuilder")
+            final SamlProfileObjectBuilder<Response> samlProfileSamlArtifactResponseBuilder,
+            @Qualifier("samlIdPCallbackService")
+            final Service samlIdPCallbackService,
+            @Qualifier("samlObjectSigner")
+            final SamlIdPObjectSigner samlObjectSigner,
+            @Qualifier("defaultTicketRegistrySupport")
+            final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier("openSamlConfigBean")
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
+            @Qualifier("samlIdPServiceFactory")
+            final ServiceFactory samlIdPServiceFactory,
+            @Qualifier("ticketRegistry")
+            final TicketRegistry ticketRegistry,
+            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier("servicesManager")
+            final ServicesManager servicesManager,
+            @Qualifier("samlIdPTicketValidator")
+            final TicketValidator samlIdPTicketValidator,
+            @Qualifier("ssoSamlHttpRequestExtractor")
+            final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
+            @Qualifier("defaultAuthenticationSystemSupport")
+            final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier("samlObjectSignatureValidator")
+            final SamlObjectSignatureValidator samlObjectSignatureValidator,
+            @Qualifier("singleSignOnParticipationStrategy")
+            final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
+            @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+            final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
+            @Qualifier("samlIdPLogoutResponseObjectBuilder")
+            final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
+            @Qualifier("samlIdPDistributedSessionCookieGenerator")
+            final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier("samlArtifactTicketFactory")
+            final SamlArtifactTicketFactory samlArtifactTicketFactory,
+            @Qualifier("samlIdPDistributedSessionStore")
+            final SessionStore samlIdPDistributedSessionStore,
+            @Qualifier("samlAttributeQueryTicketFactory")
+            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
+            @Qualifier("samlProfileSamlResponseBuilder")
+            final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
+            val context = SamlProfileHandlerConfigurationContext.builder()
+                .samlObjectSigner(samlObjectSigner)
+                .authenticationSystemSupport(authenticationSystemSupport)
+                .servicesManager(servicesManager)
+                .webApplicationServiceFactory(samlIdPServiceFactory)
+                .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
+                .openSamlConfigBean(openSamlConfigBean)
+                .casProperties(casProperties)
+                .ticketRegistrySupport(ticketRegistrySupport)
+                .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
+                .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
+                .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
+                .artifactTicketFactory(samlArtifactTicketFactory)
+                .samlObjectSignatureValidator(samlObjectSignatureValidator)
+                .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
+                .responseBuilder(samlProfileSamlResponseBuilder)
+                .ticketValidator(samlIdPTicketValidator)
+                .ticketRegistry(ticketRegistry)
+                .sessionStore(samlIdPDistributedSessionStore)
+                .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
+                .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
+                .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
+                .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
+                .callbackService(samlIdPCallbackService)
+                .responseBuilder(samlProfileSamlArtifactResponseBuilder)
+                .samlFaultResponseBuilder(samlProfileSamlArtifactFaultResponseBuilder)
+                .build();
+            return new SamlIdPSaml1ArtifactResolutionProfileHandlerController(context);
+        }
+
+        @ConditionalOnProperty(prefix = "cas.authn.saml-idp.core", name = "attribute-query-profile-enabled", havingValue = "true")
+        @Bean
+        @RefreshScope
+        @Autowired
+        public SamlIdPSaml2AttributeQueryProfileHandlerController saml2AttributeQueryProfileHandlerController(
+            @Qualifier("samlProfileSamlAttributeQueryFaultResponseBuilder")
+            final SamlProfileObjectBuilder<Response> samlProfileSamlAttributeQueryFaultResponseBuilder,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("samlProfileSamlAttributeQueryResponseBuilder")
+            final SamlProfileObjectBuilder<Response> samlProfileSamlAttributeQueryResponseBuilder,
+            @Qualifier("samlIdPCallbackService")
+            final Service samlIdPCallbackService,
+            @Qualifier("samlObjectSigner")
+            final SamlIdPObjectSigner samlObjectSigner,
+            @Qualifier("defaultTicketRegistrySupport")
+            final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier("openSamlConfigBean")
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
+            @Qualifier("samlIdPServiceFactory")
+            final ServiceFactory samlIdPServiceFactory,
+            @Qualifier("ticketRegistry")
+            final TicketRegistry ticketRegistry,
+            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier("servicesManager")
+            final ServicesManager servicesManager,
+            @Qualifier("samlIdPTicketValidator")
+            final TicketValidator samlIdPTicketValidator,
+            @Qualifier("ssoSamlHttpRequestExtractor")
+            final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
+            @Qualifier("defaultAuthenticationSystemSupport")
+            final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier("samlObjectSignatureValidator")
+            final SamlObjectSignatureValidator samlObjectSignatureValidator,
+            @Qualifier("singleSignOnParticipationStrategy")
+            final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
+            @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+            final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
+            @Qualifier("samlIdPLogoutResponseObjectBuilder")
+            final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
+            @Qualifier("samlIdPDistributedSessionCookieGenerator")
+            final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier("samlArtifactTicketFactory")
+            final SamlArtifactTicketFactory samlArtifactTicketFactory,
+            @Qualifier("samlIdPDistributedSessionStore")
+            final SessionStore samlIdPDistributedSessionStore,
+            @Qualifier("samlAttributeQueryTicketFactory")
+            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
+            @Qualifier("samlProfileSamlResponseBuilder")
+            final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
+            val context = SamlProfileHandlerConfigurationContext.builder()
+                .samlObjectSigner(samlObjectSigner)
+                .authenticationSystemSupport(authenticationSystemSupport)
+                .servicesManager(servicesManager)
+                .webApplicationServiceFactory(samlIdPServiceFactory)
+                .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
+                .openSamlConfigBean(openSamlConfigBean)
+                .casProperties(casProperties)
+                .ticketRegistrySupport(ticketRegistrySupport)
+                .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
+                .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
+                .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
+                .artifactTicketFactory(samlArtifactTicketFactory)
+                .samlObjectSignatureValidator(samlObjectSignatureValidator)
+                .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
+                .responseBuilder(samlProfileSamlResponseBuilder)
+                .ticketValidator(samlIdPTicketValidator)
+                .ticketRegistry(ticketRegistry)
+                .sessionStore(samlIdPDistributedSessionStore)
+                .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
+                .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
+                .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
+                .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
+                .callbackService(samlIdPCallbackService)
+                .responseBuilder(samlProfileSamlAttributeQueryResponseBuilder)
+                .samlFaultResponseBuilder(samlProfileSamlAttributeQueryFaultResponseBuilder)
+                .build();
+            return new SamlIdPSaml2AttributeQueryProfileHandlerController(context);
+        }
+
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "samlIdPTicketValidator")
-    @Autowired
-    public TicketValidator samlIdPTicketValidator(
-        @Qualifier("servicesManager")
-        final ServicesManager servicesManager,
-        @Qualifier("centralAuthenticationService")
-        final CentralAuthenticationService centralAuthenticationService,
-        @Qualifier("samlIdPServiceFactory")
-        final ServiceFactory samlIdPServiceFactory,
-        @Qualifier("authenticationAttributeReleasePolicy")
-        final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
-        return new InternalTicketValidator(centralAuthenticationService, samlIdPServiceFactory, authenticationAttributeReleasePolicy, servicesManager);
+    @Configuration(value = "SamlIdPEndpointDecoderConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPEndpointDecoderConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "ssoPostProfileHandlerDecoders")
+        @Autowired
+        public HttpServletRequestXMLMessageDecodersMap ssoPostProfileHandlerDecoders(final CasConfigurationProperties casProperties) {
+            val props = casProperties.getAuthn()
+                .getSamlIdp()
+                .getProfile()
+                .getSso();
+            val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
+            decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
+            decoders.put(HttpMethod.POST, new HTTPPostDecoder());
+            return decoders;
+        }
+
+
+        @Bean
+        @ConditionalOnMissingBean(name = "ssoPostSimpleSignProfileHandlerDecoders")
+        @Autowired
+        public HttpServletRequestXMLMessageDecodersMap ssoPostSimpleSignProfileHandlerDecoders(final CasConfigurationProperties casProperties) {
+            val props = casProperties.getAuthn().getSamlIdp().getProfile().getSsoPostSimpleSign();
+            val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
+            decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
+            decoders.put(HttpMethod.POST, new HTTPPostSimpleSignDecoder());
+            return decoders;
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "sloRedirectProfileHandlerDecoders")
+        @Autowired
+        public HttpServletRequestXMLMessageDecodersMap sloRedirectProfileHandlerDecoders(final CasConfigurationProperties casProperties) {
+            val props = casProperties.getAuthn().getSamlIdp().getProfile().getSlo();
+            val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
+            decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
+            return decoders;
+        }
+
+
+        @Bean
+        @ConditionalOnMissingBean(name = "sloPostProfileHandlerDecoders")
+        public HttpServletRequestXMLMessageDecodersMap sloPostProfileHandlerDecoders() {
+            val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
+            decoders.put(HttpMethod.POST, new HTTPPostDecoder());
+            return decoders;
+        }
+
     }
 
-    @ConditionalOnMissingBean(name = "samlLogoutBuilder")
-    @Bean
-    @RefreshScope
-    @Autowired
-    public SingleLogoutMessageCreator samlLogoutBuilder(final CasConfigurationProperties casProperties,
-                                                        @Qualifier("servicesManager")
-                                                        final ServicesManager servicesManager,
-                                                        @Qualifier("openSamlConfigBean")
-                                                        final OpenSamlConfigBean openSamlConfigBean,
-                                                        @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-                                                        final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
-                                                        @Qualifier("samlObjectSigner")
-                                                        final SamlIdPObjectSigner samlObjectSigner) {
-        return new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
-            defaultSamlRegisteredServiceCachingMetadataResolver, casProperties.getAuthn()
-            .getSamlIdp(), samlObjectSigner);
+    @Configuration(value = "SamlIdPEndpointLogoutConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPEndpointLogoutConfiguration {
+        @ConditionalOnMissingBean(name = "samlLogoutBuilder")
+        @Bean
+        @RefreshScope
+        @Autowired
+        public SingleLogoutMessageCreator samlLogoutBuilder(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("servicesManager")
+            final ServicesManager servicesManager,
+            @Qualifier("openSamlConfigBean")
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
+            @Qualifier("samlObjectSigner")
+            final SamlIdPObjectSigner samlObjectSigner) {
+            return new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
+                defaultSamlRegisteredServiceCachingMetadataResolver, casProperties.getAuthn()
+                .getSamlIdp(), samlObjectSigner);
+        }
+
+        @ConditionalOnMissingBean(name = "samlSingleLogoutServiceMessageHandler")
+        @Bean
+        @Autowired
+        public SingleLogoutServiceMessageHandler samlSingleLogoutServiceMessageHandler(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("samlLogoutBuilder")
+            final SingleLogoutMessageCreator samlLogoutBuilder,
+            @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+            final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
+            @Qualifier("httpClient")
+            final HttpClient httpClient,
+            @Qualifier("velocityEngineFactory")
+            final VelocityEngine velocityEngineFactory,
+            @Qualifier("authenticationServiceSelectionPlan")
+            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
+            @Qualifier("servicesManager")
+            final ServicesManager servicesManager,
+            @Qualifier("openSamlConfigBean")
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver) {
+            return new SamlIdPSingleLogoutServiceMessageHandler(httpClient, samlLogoutBuilder, servicesManager,
+                singleLogoutServiceLogoutUrlBuilder, casProperties.getSlo().isAsynchronous(),
+                authenticationServiceSelectionPlan, defaultSamlRegisteredServiceCachingMetadataResolver,
+                velocityEngineFactory, openSamlConfigBean);
+        }
+
+        @ConditionalOnMissingBean(name = "casSamlIdPLogoutExecutionPlanConfigurer")
+        @Bean
+        @RefreshScope
+        public LogoutExecutionPlanConfigurer casSamlIdPLogoutExecutionPlanConfigurer(
+            @Qualifier("samlIdPSingleLogoutRedirectionStrategy")
+            final LogoutRedirectionStrategy samlIdPSingleLogoutRedirectionStrategy,
+            @Qualifier("samlSingleLogoutServiceMessageHandler")
+            final SingleLogoutServiceMessageHandler samlSingleLogoutServiceMessageHandler) {
+            return plan -> {
+                plan.registerLogoutRedirectionStrategy(samlIdPSingleLogoutRedirectionStrategy);
+                plan.registerSingleLogoutServiceMessageHandler(samlSingleLogoutServiceMessageHandler);
+            };
+        }
+
+        @Bean
+        public SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder(
+            @Qualifier("openSamlConfigBean")
+            final OpenSamlConfigBean openSamlConfigBean) {
+            return new SamlIdPLogoutResponseObjectBuilder(openSamlConfigBean);
+        }
+
+
+        @ConditionalOnMissingBean(name = "samlIdPSingleLogoutRedirectionStrategy")
+        @Bean
+        @RefreshScope
+        @Autowired
+        public LogoutRedirectionStrategy samlIdPSingleLogoutRedirectionStrategy(
+            @Qualifier("samlIdPCallbackService")
+            final Service samlIdPCallbackService,
+            @Qualifier("samlObjectSigner")
+            final SamlIdPObjectSigner samlObjectSigner,
+            @Qualifier("defaultTicketRegistrySupport")
+            final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier("openSamlConfigBean")
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
+            @Qualifier("samlIdPServiceFactory")
+            final ServiceFactory samlIdPServiceFactory,
+            @Qualifier("ticketRegistry")
+            final TicketRegistry ticketRegistry,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier("servicesManager")
+            final ServicesManager servicesManager,
+            @Qualifier("samlIdPTicketValidator")
+            final TicketValidator samlIdPTicketValidator,
+            @Qualifier("ssoSamlHttpRequestExtractor")
+            final SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor,
+            @Qualifier("defaultAuthenticationSystemSupport")
+            final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier("samlObjectSignatureValidator")
+            final SamlObjectSignatureValidator samlObjectSignatureValidator,
+            @Qualifier("singleSignOnParticipationStrategy")
+            final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy,
+            @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+            final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
+            @Qualifier("samlIdPLogoutResponseObjectBuilder")
+            final SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder,
+            @Qualifier("samlIdPDistributedSessionCookieGenerator")
+            final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier("samlArtifactTicketFactory")
+            final SamlArtifactTicketFactory samlArtifactTicketFactory,
+            @Qualifier("samlIdPDistributedSessionStore")
+            final SessionStore samlIdPDistributedSessionStore,
+            @Qualifier("samlAttributeQueryTicketFactory")
+            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
+            @Qualifier("samlProfileSamlResponseBuilder")
+            final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
+            val context = SamlProfileHandlerConfigurationContext.builder()
+                .samlObjectSigner(samlObjectSigner)
+                .authenticationSystemSupport(authenticationSystemSupport)
+                .servicesManager(servicesManager)
+                .webApplicationServiceFactory(samlIdPServiceFactory)
+                .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver)
+                .openSamlConfigBean(openSamlConfigBean)
+                .casProperties(casProperties)
+                .ticketRegistrySupport(ticketRegistrySupport)
+                .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy)
+                .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder)
+                .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder)
+                .artifactTicketFactory(samlArtifactTicketFactory)
+                .samlObjectSignatureValidator(samlObjectSignatureValidator)
+                .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor)
+                .responseBuilder(samlProfileSamlResponseBuilder)
+                .ticketValidator(samlIdPTicketValidator)
+                .ticketRegistry(ticketRegistry)
+                .sessionStore(samlIdPDistributedSessionStore)
+                .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
+                .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
+                .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
+                .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
+                .callbackService(samlIdPCallbackService)
+                .build();
+            return new SamlIdPSingleLogoutRedirectionStrategy(context);
+        }
+
     }
 
-    @ConditionalOnMissingBean(name = "samlSingleLogoutServiceMessageHandler")
-    @Bean
-    @Autowired
-    public SingleLogoutServiceMessageHandler samlSingleLogoutServiceMessageHandler(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("samlLogoutBuilder")
-        final SingleLogoutMessageCreator samlLogoutBuilder,
-        @Qualifier("singleLogoutServiceLogoutUrlBuilder")
-        final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
-        @Qualifier("httpClient")
-        final HttpClient httpClient,
-        @Qualifier("velocityEngineFactory")
-        final VelocityEngine velocityEngineFactory,
-        @Qualifier("authenticationServiceSelectionPlan")
-        final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
-        @Qualifier("servicesManager")
-        final ServicesManager servicesManager,
-        @Qualifier("openSamlConfigBean")
-        final OpenSamlConfigBean openSamlConfigBean,
-        @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-        final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver) {
-        return new SamlIdPSingleLogoutServiceMessageHandler(httpClient, samlLogoutBuilder, servicesManager,
-            singleLogoutServiceLogoutUrlBuilder, casProperties.getSlo().isAsynchronous(),
-            authenticationServiceSelectionPlan, defaultSamlRegisteredServiceCachingMetadataResolver,
-            velocityEngineFactory, openSamlConfigBean);
+    @Configuration(value = "SamlIdPServicesConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPServicesConfiguration {
+        @Bean
+        @Autowired
+        public Service samlIdPCallbackService(
+            @Qualifier("samlIdPServiceFactory")
+            final ServiceFactory samlIdPServiceFactory,
+            final CasConfigurationProperties casProperties) {
+            val service = casProperties.getServer()
+                .getPrefix()
+                .concat(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK);
+            return samlIdPServiceFactory.createService(service);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "samlIdPServiceRegistryExecutionPlanConfigurer")
+        @Autowired
+        public ServiceRegistryExecutionPlanConfigurer samlIdPServiceRegistryExecutionPlanConfigurer(final ConfigurableApplicationContext applicationContext,
+                                                                                                    @Qualifier("samlIdPCallbackService")
+                                                                                                    final Service samlIdPCallbackService) {
+            return plan -> {
+                val callbackService = samlIdPCallbackService.getId()
+                    .concat(".*");
+                LOGGER.debug("Initializing SAML IdP callback service [{}]", callbackService);
+                val service = new RegexRegisteredService();
+                service.setId(RandomUtils.nextLong());
+                service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
+                service.setName(service.getClass()
+                    .getSimpleName());
+                service.setDescription("SAML Authentication Request Callback");
+                service.setServiceId(callbackService);
+                plan.registerServiceRegistry(new SamlIdPServiceRegistry(applicationContext, service));
+            };
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "samlIdPServicesManagerRegisteredServiceLocator")
+        public ServicesManagerRegisteredServiceLocator samlIdPServicesManagerRegisteredServiceLocator(
+            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver) {
+            return new SamlIdPServicesManagerRegisteredServiceLocator(defaultSamlRegisteredServiceCachingMetadataResolver);
+        }
+
     }
 
-    @ConditionalOnMissingBean(name = "casSamlIdPLogoutExecutionPlanConfigurer")
-    @Bean
-    @RefreshScope
-    public LogoutExecutionPlanConfigurer casSamlIdPLogoutExecutionPlanConfigurer(
-        @Qualifier("samlIdPSingleLogoutRedirectionStrategy")
-        final LogoutRedirectionStrategy samlIdPSingleLogoutRedirectionStrategy,
-        @Qualifier("samlSingleLogoutServiceMessageHandler")
-        final SingleLogoutServiceMessageHandler samlSingleLogoutServiceMessageHandler) {
-        return plan -> {
-            plan.registerLogoutRedirectionStrategy(samlIdPSingleLogoutRedirectionStrategy);
-            plan.registerSingleLogoutServiceMessageHandler(samlSingleLogoutServiceMessageHandler);
-        };
-    }
+    @Configuration(value = "SamlIdPEndpointCoreConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPEndpointCoreConfiguration {
 
-    @Bean
-    public SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder(
-        @Qualifier("openSamlConfigBean")
-        final OpenSamlConfigBean openSamlConfigBean) {
-        return new SamlIdPLogoutResponseObjectBuilder(openSamlConfigBean);
-    }
+        @ConditionalOnMissingBean(name = "ssoSamlHttpRequestExtractor")
+        @Bean
+        public SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor(
+            @Qualifier("openSamlConfigBean")
+            final OpenSamlConfigBean openSamlConfigBean) {
+            return new DefaultSSOSamlHttpRequestExtractor(openSamlConfigBean.getParserPool());
+        }
 
-    @Bean
-    public ProtocolEndpointWebSecurityConfigurer<Void> samlIdPProtocolEndpointConfigurer() {
-        return new ProtocolEndpointWebSecurityConfigurer<>() {
+        @Bean
+        @ConditionalOnMissingBean(name = "samlIdPTicketValidator")
+        @Autowired
+        public TicketValidator samlIdPTicketValidator(
+            @Qualifier("servicesManager")
 
-            @Override
-            public List<String> getIgnoredEndpoints() {
-                return List.of(StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML1, "/"),
-                    StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML2, "/"));
+            final ServicesManager servicesManager,
+            @Qualifier("centralAuthenticationService")
+            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier("samlIdPServiceFactory")
+            final ServiceFactory samlIdPServiceFactory,
+            @Qualifier("authenticationAttributeReleasePolicy")
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
+            return new InternalTicketValidator(centralAuthenticationService, samlIdPServiceFactory, authenticationAttributeReleasePolicy, servicesManager);
+        }
+
+        @Bean
+        public ProtocolEndpointWebSecurityConfigurer<Void> samlIdPProtocolEndpointConfigurer() {
+            return new ProtocolEndpointWebSecurityConfigurer<>() {
+
+                @Override
+                public List<String> getIgnoredEndpoints() {
+                    return List.of(StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML1, "/"),
+                        StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML2, "/"));
+                }
+            };
+        }
+
+        @ConditionalOnMissingBean(name = "samlIdPDistributedSessionCookieGenerator")
+        @Bean
+        @RefreshScope
+        @Autowired
+        public CasCookieBuilder samlIdPDistributedSessionCookieGenerator(final CasConfigurationProperties casProperties) {
+            val cookie = casProperties.getSessionReplication().getCookie();
+            return CookieUtils.buildCookieRetrievingGenerator(cookie);
+        }
+
+        @ConditionalOnMissingBean(name = DistributedJEESessionStore.DEFAULT_BEAN_NAME)
+        @Bean
+        @RefreshScope
+        @Autowired
+        public SessionStore samlIdPDistributedSessionStore(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("samlIdPDistributedSessionCookieGenerator")
+            final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
+            @Qualifier("webflowCipherExecutor")
+            final CipherExecutor webflowCipherExecutor,
+            @Qualifier("centralAuthenticationService")
+            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier("defaultTicketFactory")
+            final TicketFactory ticketFactory) {
+            val type = casProperties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
+            if (type == SamlIdPCoreProperties.SessionStorageTypes.TICKET_REGISTRY) {
+                return new DistributedJEESessionStore(centralAuthenticationService, ticketFactory, samlIdPDistributedSessionCookieGenerator);
             }
-        };
+            if (type == SamlIdPCoreProperties.SessionStorageTypes.BROWSER_SESSION_STORAGE) {
+                return new BrowserWebStorageSessionStore(webflowCipherExecutor);
+            }
+            return JEESessionStore.INSTANCE;
+        }
     }
 }

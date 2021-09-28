@@ -216,11 +216,11 @@ public class DelegatedAuthenticationWebflowConfiguration {
     @Autowired
     public CasWebflowConfigurer delegatedAuthenticationWebflowConfigurer(final CasConfigurationProperties casProperties,
                                                                          final ConfigurableApplicationContext applicationContext,
-                                                                         @Qualifier("loginFlowDefinitionRegistry")
+                                                                         @Qualifier("loginFlowRegistry")
                                                                          final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                                          @Qualifier("flowBuilderServices")
                                                                          final FlowBuilderServices flowBuilderServices,
-                                                                         @Qualifier("logoutFlowDefinitionRegistry")
+                                                                         @Qualifier("logoutFlowRegistry")
                                                                          final FlowDefinitionRegistry logoutFlowDefinitionRegistry) {
         return new DelegatedAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
             logoutFlowDefinitionRegistry, applicationContext, casProperties);

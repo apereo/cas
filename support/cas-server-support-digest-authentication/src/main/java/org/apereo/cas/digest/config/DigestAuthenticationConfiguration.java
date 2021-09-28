@@ -38,7 +38,7 @@ public class DigestAuthenticationConfiguration {
     @Bean
     @Autowired
     public CasWebflowConfigurer digestAuthenticationWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                                      @Qualifier("loginFlowDefinitionRegistry")
+                                                                      @Qualifier("loginFlowRegistry")
                                                                       final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                                       @Qualifier("flowBuilderServices")
                                                                       final FlowBuilderServices flowBuilderServices) {

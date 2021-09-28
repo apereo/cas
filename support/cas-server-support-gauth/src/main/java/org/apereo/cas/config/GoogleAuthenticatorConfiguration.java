@@ -59,7 +59,7 @@ public class GoogleAuthenticatorConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("googleAuthenticatorFlowRegistry")
         final FlowDefinitionRegistry googleAuthenticatorFlowRegistry,
-        @Qualifier("loginFlowDefinitionRegistry")
+        @Qualifier("loginFlowRegistry")
         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
         @Qualifier("flowBuilderServices")
         final FlowBuilderServices flowBuilderServices) {

@@ -21,12 +21,10 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasHibernateJpaConfiguration {
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @RefreshScope
     @Bean
-    public JpaBeanFactory jpaBeanFactory() {
+    @Autowired
+    public JpaBeanFactory jpaBeanFactory(final ConfigurableApplicationContext applicationContext) {
         return new CasHibernateJpaBeanFactory(applicationContext);
     }
 }

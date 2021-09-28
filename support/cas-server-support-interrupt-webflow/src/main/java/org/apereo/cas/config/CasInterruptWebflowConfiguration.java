@@ -42,7 +42,7 @@ public class CasInterruptWebflowConfiguration {
     @Bean
     @Autowired
     public CasWebflowConfigurer interruptWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                           @Qualifier("loginFlowDefinitionRegistry")
+                                                           @Qualifier("loginFlowRegistry")
                                                            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                            @Qualifier("flowBuilderServices")
                                                            final FlowBuilderServices flowBuilderServices) {

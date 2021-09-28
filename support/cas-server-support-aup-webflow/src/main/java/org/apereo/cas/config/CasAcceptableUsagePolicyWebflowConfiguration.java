@@ -95,7 +95,7 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
     @Bean
     @Autowired
     public CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                                       @Qualifier("loginFlowDefinitionRegistry")
+                                                                       @Qualifier("loginFlowRegistry")
                                                                        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                                        @Qualifier("flowBuilderServices")
                                                                        final FlowBuilderServices flowBuilderServices) {

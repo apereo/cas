@@ -70,7 +70,7 @@ public class QRAuthenticationConfiguration {
     @Bean
     @Autowired
     public CasWebflowConfigurer qrAuthenticationWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                                  @Qualifier("loginFlowDefinitionRegistry")
+                                                                  @Qualifier("loginFlowRegistry")
                                                                   final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                                   @Qualifier("flowBuilderServices")
                                                                   final FlowBuilderServices flowBuilderServices) {

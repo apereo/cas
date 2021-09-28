@@ -84,7 +84,7 @@ public class RadiusMultifactorConfiguration {
                                                                    final ConfigurableApplicationContext applicationContext,
                                                                    @Qualifier("radiusFlowRegistry")
                                                                    final FlowDefinitionRegistry radiusFlowRegistry,
-                                                                   @Qualifier("loginFlowDefinitionRegistry")
+                                                                   @Qualifier("loginFlowRegistry")
                                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                                    @Qualifier("flowBuilderServices")
                                                                    final FlowBuilderServices flowBuilderServices) {
@@ -119,7 +119,7 @@ public class RadiusMultifactorConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("radiusFlowRegistry")
             final FlowDefinitionRegistry radiusFlowRegistry,
-            @Qualifier("loginFlowDefinitionRegistry")
+            @Qualifier("loginFlowRegistry")
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
             @Qualifier("flowBuilderServices")
             final FlowBuilderServices flowBuilderServices) {

@@ -27,33 +27,45 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "samlIdPAuthenticationServiceSelectionStrategyConfiguration", proxyBeanMethods = false)
 public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
 
-    @ConditionalOnMissingBean(name = "samlIdPEntityIdValidationServiceSelectionStrategy")
-    @Bean
-    @Autowired
-    public AuthenticationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy(final CasConfigurationProperties casProperties,
-                                                                                                    @Qualifier("samlIdPServiceFactory")
-                                                                                                    final ServiceFactory samlIdPServiceFactory,
-                                                                                                    @Qualifier("servicesManager")
-                                                                                                    final ServicesManager servicesManager) {
-        return new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(servicesManager, samlIdPServiceFactory, casProperties.getServer().getPrefix());
+    @Configuration(value = "SamlIdPAuthenticationServiceSelectionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPAuthenticationServiceSelectionConfiguration {
+        @ConditionalOnMissingBean(name = "samlIdPEntityIdValidationServiceSelectionStrategy")
+        @Bean
+        @Autowired
+        public AuthenticationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("samlIdPServiceFactory")
+            final ServiceFactory samlIdPServiceFactory,
+            @Qualifier("servicesManager")
+            final ServicesManager servicesManager) {
+            return new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(servicesManager,
+                samlIdPServiceFactory, casProperties.getServer().getPrefix());
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "samlIdPAuthenticationServiceSelectionStrategyConfigurer")
+        public AuthenticationServiceSelectionStrategyConfigurer samlIdPAuthenticationServiceSelectionStrategyConfigurer(
+            @Qualifier("samlIdPEntityIdValidationServiceSelectionStrategy")
+            final AuthenticationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy) {
+            return plan -> plan.registerStrategy(samlIdPEntityIdValidationServiceSelectionStrategy);
+        }
     }
 
-    @Bean
-    public AuthenticationServiceSelectionStrategyConfigurer samlIdPAuthenticationServiceSelectionStrategyConfigurer(
-        @Qualifier("samlIdPEntityIdValidationServiceSelectionStrategy")
-        final AuthenticationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy) {
-        return plan -> plan.registerStrategy(samlIdPEntityIdValidationServiceSelectionStrategy);
-    }
+    @Configuration(value = "SamlIdPAuthenticationServiceFactoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPAuthenticationServiceFactoryConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "samlIdPServiceFactory")
+        public ServiceFactory samlIdPServiceFactory() {
+            return new SamlIdPServiceFactory();
+        }
 
-    @Bean
-    public ServiceFactory samlIdPServiceFactory() {
-        return new SamlIdPServiceFactory();
-    }
-
-    @Bean
-    public ServiceFactoryConfigurer samlIdPServiceFactoryConfigurer(
-        @Qualifier("samlIdPServiceFactory")
-        final ServiceFactory samlIdPServiceFactory) {
-        return () -> CollectionUtils.wrap(samlIdPServiceFactory);
+        @Bean
+        public ServiceFactoryConfigurer samlIdPServiceFactoryConfigurer(
+            @Qualifier("samlIdPServiceFactory")
+            final ServiceFactory samlIdPServiceFactory) {
+            return () -> CollectionUtils.wrap(samlIdPServiceFactory);
+        }
     }
 }
