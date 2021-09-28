@@ -525,10 +525,13 @@ public class SamlIdPConfiguration {
         @Qualifier("samlIdPServiceFactory")
         final ServiceFactory samlIdPServiceFactory,
         @Qualifier("attributeDefinitionStore")
-        final AttributeDefinitionStore attributeDefinitionStore) {
-        return new SamlProfileSamlAttributeStatementBuilder(openSamlConfigBean, casProperties.getAuthn()
-            .getSamlIdp(), samlObjectEncrypter, attributeDefinitionStore, samlIdPServiceFactory,
-            samlProfileSamlNameIdBuilder);
+        final AttributeDefinitionStore attributeDefinitionStore,
+        @Qualifier("casSamlIdPMetadataResolver")
+        final MetadataResolver casSamlIdPMetadataResolver) {
+        return new SamlProfileSamlAttributeStatementBuilder(openSamlConfigBean,
+            casProperties.getAuthn() .getSamlIdp(), samlObjectEncrypter,
+            attributeDefinitionStore, samlIdPServiceFactory,
+            samlProfileSamlNameIdBuilder, casSamlIdPMetadataResolver);
     }
 
     @ConditionalOnMissingBean(name = "samlObjectEncrypter")

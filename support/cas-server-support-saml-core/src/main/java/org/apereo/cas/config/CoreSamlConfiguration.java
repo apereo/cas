@@ -51,12 +51,10 @@ public class CoreSamlConfiguration {
     }
 
     @Lazy
-    @Bean(name = "shibboleth.VelocityEngine")
+    @Bean(name = {"shibboleth.VelocityEngine", "velocityEngineFactoryBean"})
     @ConditionalOnMissingBean(name = "velocityEngineFactoryBean")
     @Autowired
-    public VelocityEngine velocityEngineFactoryBean(
-        @Qualifier("shibboleth.parserPool")
-        final BasicParserPool parserPool) {
+    public VelocityEngine velocityEngineFactoryBean() {
         val properties = new Properties();
         properties.put(RuntimeConstants.INPUT_ENCODING, StandardCharsets.UTF_8.name());
         properties.put(RuntimeConstants.ENCODING_DEFAULT, StandardCharsets.UTF_8.name());
@@ -69,15 +67,15 @@ public class CoreSamlConfiguration {
         return new VelocityEngine(properties);
     }
 
-    @Bean(name = OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+    @Bean(name = {OpenSamlConfigBean.DEFAULT_BEAN_NAME, "openSamlConfigBean"})
     @Autowired
     public OpenSamlConfigBean openSamlConfigBean(
-        @Qualifier("shibboleth.parserPool")
+        @Qualifier("shibboleth.ParserPool")
         final BasicParserPool parserPool) throws Exception {
         return new OpenSamlConfigBean(parserPool);
     }
 
-    @Bean(name = "shibboleth.ParserPool", initMethod = "initialize")
+    @Bean(name = {"shibboleth.ParserPool", "basicParserPool"}, initMethod = "initialize")
     @Autowired
     public BasicParserPool parserPool(final CasConfigurationProperties casProperties) throws Exception {
         val pool = new BasicParserPool();

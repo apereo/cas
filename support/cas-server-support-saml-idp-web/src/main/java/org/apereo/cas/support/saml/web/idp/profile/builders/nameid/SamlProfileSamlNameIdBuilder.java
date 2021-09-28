@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
-import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
@@ -14,20 +13,16 @@ import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.validation.Assertion;
-import org.jooq.lambda.Unchecked;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
-import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -162,8 +157,8 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         val supportedNameFormats = getSupportedNameIdFormats(service, adaptor);
         val requiredNameFormat = getRequiredNameIdFormatIfAny(authnRequest);
         validateRequiredNameIdFormatIfAny(authnRequest, adaptor, supportedNameFormats, requiredNameFormat);
-        val nameid = determineNameId(authnRequest, assertion, supportedNameFormats, service, adaptor);
-        return finalizeNameId(nameid, authnRequest, assertion, supportedNameFormats, service, adaptor);
+        val nameID = determineNameId(authnRequest, assertion, supportedNameFormats, service, adaptor);
+        return finalizeNameId(nameID, authnRequest, assertion, supportedNameFormats, service, adaptor);
     }
 
     /**
@@ -188,30 +183,11 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
             if (StringUtils.isNotBlank(service.getNameIdQualifier())) {
                 nameid.setNameQualifier(service.getNameIdQualifier());
             } else {
-                val nameIdFormat = parseAndBuildRequiredNameIdFormat(service);
-                if (StringUtils.equals(nameIdFormat, NameIDType.PERSISTENT)) {
-                    val nameQualifier = FunctionUtils.doIf(StringUtils.isNotBlank(service.getIssuerEntityId()),
-                            service::getIssuerEntityId,
-                            Unchecked.supplier(() -> {
-                                val criteriaSet = new CriteriaSet(
-                                    new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME),
-                                    new SamlIdPSamlRegisteredServiceCriterion(service));
-                                LOGGER.trace("Resolving entity id from SAML2 IdP metadata to determine issuer for [{}]", service.getName());
-                                val entityDescriptor = Objects.requireNonNull(samlIdPMetadataResolver.resolveSingle(criteriaSet));
-                                return entityDescriptor.getEntityID();
-                            }))
-                        .get();
-                    LOGGER.debug("Using name qualifier [{}] for the Name ID", nameQualifier);
-                    nameid.setNameQualifier(nameQualifier);
-                } else {
-                    val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
-                    nameid.setNameQualifier(issuer);
-                }
-            }
-            if (StringUtils.isNotBlank(service.getServiceProviderNameIdQualifier())) {
-                nameid.setSPNameQualifier(service.getServiceProviderNameIdQualifier());
-            } else {
-                nameid.setSPNameQualifier(adaptor.getEntityId());
+                nameid.setNameQualifier(SamlIdPUtils.determineNameIdNameQualifier(service, samlIdPMetadataResolver));
+                FunctionUtils.doIf(StringUtils.isNotBlank(service.getServiceProviderNameIdQualifier()),
+                        value -> nameid.setSPNameQualifier(service.getServiceProviderNameIdQualifier()),
+                        value -> nameid.setSPNameQualifier(adaptor.getEntityId()))
+                    .accept(service);
             }
         }
         return nameid;
@@ -231,9 +207,9 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                                                      final String requiredNameFormat) {
         if (StringUtils.isNotBlank(requiredNameFormat) && !supportedNameFormats.contains(requiredNameFormat)) {
             LOGGER.warn("Required NameID format [{}] in the AuthN request issued by [{}] is not supported based on the metadata for [{}]. "
-                    + "The requested NameID format may not be honored. You should consult the metadata for this service "
-                    + "and ensure the requested NameID format is present in the collection of supported "
-                    + "metadata formats in the metadata, which are the following: [{}]",
+                        + "The requested NameID format may not be honored. You should consult the metadata for this service "
+                        + "and ensure the requested NameID format is present in the collection of supported "
+                        + "metadata formats in the metadata, which are the following: [{}]",
                 requiredNameFormat, SamlIdPUtils.getIssuerFromSamlObject(authnRequest),
                 adaptor.getEntityId(), adaptor.getSupportedNameIdFormats());
         }
