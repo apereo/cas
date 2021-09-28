@@ -26,15 +26,16 @@ import org.springframework.webflow.execution.Action;
 @Configuration(value = "DelegatedAuthenticationDynamicDiscoverySelectionConfiguration", proxyBeanMethods = false)
 public class DelegatedAuthenticationDynamicDiscoverySelectionConfiguration {
 
-    @Autowired
-    @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
-    private DelegatedClientAuthenticationConfigurationContext configContext;
+
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "delegatedAuthenticationDynamicDiscoveryProviderLocator")
     @Autowired
-    public DelegatedAuthenticationDynamicDiscoveryProviderLocator delegatedAuthenticationDynamicDiscoveryProviderLocator(final CasConfigurationProperties casProperties) {
+    public DelegatedAuthenticationDynamicDiscoveryProviderLocator delegatedAuthenticationDynamicDiscoveryProviderLocator(
+        @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+        final DelegatedClientAuthenticationConfigurationContext configContext,
+        final CasConfigurationProperties casProperties) {
         return new DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator(configContext.getDelegatedClientIdentityProvidersProducer(), configContext.getClients(), casProperties);
     }
 
@@ -42,6 +43,8 @@ public class DelegatedAuthenticationDynamicDiscoverySelectionConfiguration {
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_DYNAMIC_DISCOVERY_EXECUTION)
     @Bean
     public Action delegatedAuthenticationProviderDynamicDiscoveryExecutionAction(
+        @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+        final DelegatedClientAuthenticationConfigurationContext configContext,
         @Qualifier("delegatedAuthenticationDynamicDiscoveryProviderLocator")
         final DelegatedAuthenticationDynamicDiscoveryProviderLocator delegatedAuthenticationDynamicDiscoveryProviderLocator) {
         return new DelegatedClientAuthenticationDynamicDiscoveryExecutionAction(configContext, delegatedAuthenticationDynamicDiscoveryProviderLocator);

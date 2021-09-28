@@ -3,6 +3,11 @@ package org.apereo.cas.validation.config;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandler;
+import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandler;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.validation.AuthenticationPolicyAwareServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.Cas10ProtocolValidationSpecification;
 import org.apereo.cas.validation.Cas20ProtocolValidationSpecification;
@@ -19,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -37,6 +43,25 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreValidationConfiguration {
+    @ConditionalOnMissingBean(name = "proxy10Handler")
+    @Bean
+    @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
+    public ProxyHandler proxy10Handler() {
+        return new Cas10ProxyHandler();
+    }
+
+    @ConditionalOnMissingBean(name = "proxy20Handler")
+    @Bean
+    @Autowired
+    @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
+    public ProxyHandler proxy20Handler(
+        @Qualifier("proxy20TicketUniqueIdGenerator")
+        final UniqueTicketIdGenerator proxy20TicketUniqueIdGenerator,
+        @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
+        final HttpClient httpClient) {
+        return new Cas20ProxyHandler(httpClient, proxy20TicketUniqueIdGenerator);
+    }
+    
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     @Autowired

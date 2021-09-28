@@ -4,7 +4,6 @@ import org.apereo.cas.adaptors.u2f.storage.U2FCouchDbDeviceRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.u2f.U2FDeviceRegistrationCouchDbRepository;
-import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -19,8 +18,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.io.Serializable;
-
 /**
  * This is {@link U2FCouchDbConfiguration}.
  *
@@ -31,17 +28,15 @@ import java.io.Serializable;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class U2FCouchDbConfiguration {
 
-    @Autowired
-    @Qualifier("u2fRegistrationRecordCipherExecutor")
-    private CipherExecutor<Serializable, String> u2fRegistrationRecordCipherExecutor;
 
     @ConditionalOnMissingBean(name = "u2fCouchDbFactory")
     @Bean
     @RefreshScope
     @Autowired
-    public CouchDbConnectorFactory u2fCouchDbFactory(final CasConfigurationProperties casProperties,
-                                                     @Qualifier("objectMapperFactory")
-                                                     final ObjectMapperFactory objectMapperFactory) {
+    public CouchDbConnectorFactory u2fCouchDbFactory(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("objectMapperFactory")
+        final ObjectMapperFactory objectMapperFactory) {
         return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getU2f().getCouchDb(), objectMapperFactory);
     }
 
@@ -51,9 +46,11 @@ public class U2FCouchDbConfiguration {
     @Autowired
     public U2FDeviceRegistrationCouchDbRepository couchDbU2fDeviceRegistrationRepository(
         @Qualifier("u2fCouchDbFactory")
-        final CouchDbConnectorFactory u2fCouchDbFactory, final CasConfigurationProperties casProperties) {
+        final CouchDbConnectorFactory u2fCouchDbFactory,
+        final CasConfigurationProperties casProperties) {
         val couchDb = casProperties.getAuthn().getMfa().getU2f().getCouchDb();
-        return new U2FDeviceRegistrationCouchDbRepository(u2fCouchDbFactory.getCouchDbConnector(), u2fCouchDbFactory.getCouchDbInstance(), couchDb.isCreateIfNotExists());
+        return new U2FDeviceRegistrationCouchDbRepository(u2fCouchDbFactory.getCouchDbConnector(),
+            u2fCouchDbFactory.getCouchDbInstance(), couchDb.isCreateIfNotExists());
     }
 
     @ConditionalOnMissingBean(name = "couchDbU2fDeviceRepository")
@@ -61,13 +58,19 @@ public class U2FCouchDbConfiguration {
     @RefreshScope
     @Autowired
     public U2FCouchDbDeviceRepository u2fDeviceRepository(
+        @Qualifier("u2fRegistrationRecordCipherExecutor")
+        final CipherExecutor<Serializable, String> u2fRegistrationRecordCipherExecutor,
         @Qualifier("couchDbU2fDeviceRegistrationRepository")
-        final U2FDeviceRegistrationCouchDbRepository couchDbU2fDeviceRegistrationRepository, final CasConfigurationProperties casProperties) {
+        final U2FDeviceRegistrationCouchDbRepository couchDbU2fDeviceRegistrationRepository,
+        final CasConfigurationProperties casProperties) {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
         val couchDb = u2f.getCouchDb();
         final LoadingCache<String, String> requestStorage =
-            Caffeine.newBuilder().expireAfterWrite(u2f.getCore().getExpireRegistrations(), u2f.getCore().getExpireRegistrationsTimeUnit()).build(key -> StringUtils.EMPTY);
-        return new U2FCouchDbDeviceRepository(requestStorage, couchDbU2fDeviceRegistrationRepository, u2f.getCore().getExpireRegistrations(), u2f.getCore().getExpireDevicesTimeUnit(),
+            Caffeine.newBuilder().expireAfterWrite(u2f.getCore().getExpireRegistrations(),
+                u2f.getCore().getExpireRegistrationsTimeUnit()).build(key -> StringUtils.EMPTY);
+        return new U2FCouchDbDeviceRepository(requestStorage,
+            couchDbU2fDeviceRegistrationRepository, u2f.getCore().getExpireRegistrations(),
+            u2f.getCore().getExpireDevicesTimeUnit(),
             couchDb.isAsynchronous(), u2fRegistrationRecordCipherExecutor);
     }
 }

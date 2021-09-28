@@ -39,19 +39,18 @@ import java.util.Collection;
 @Configuration(value = "wsFederationAuthenticationWebflowConfiguration", proxyBeanMethods = false)
 public class WsFederationAuthenticationWebflowConfiguration {
 
-    @Autowired
-    @Qualifier("wsFederationConfigurations")
-    private Collection<WsFederationConfiguration> wsFederationConfigurations;
-
     @ConditionalOnMissingBean(name = "wsFederationWebflowConfigurer")
     @Bean
     @Autowired
-    public CasWebflowConfigurer wsFederationWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                              @Qualifier("loginFlowRegistry")
-                                                              final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                              @Qualifier("flowBuilderServices")
-                                                              final FlowBuilderServices flowBuilderServices) {
-        return new WsFederationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+    public CasWebflowConfigurer wsFederationWebflowConfigurer(
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier("loginFlowRegistry")
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier("flowBuilderServices")
+        final FlowBuilderServices flowBuilderServices) {
+        return new WsFederationWebflowConfigurer(flowBuilderServices,
+            loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
@@ -68,7 +67,8 @@ public class WsFederationAuthenticationWebflowConfiguration {
         final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
         @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
-        return new WsFederationAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy, wsFederationRequestBuilder,
+        return new WsFederationAction(initialAuthenticationAttemptWebflowEventResolver,
+            serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy, wsFederationRequestBuilder,
             wsFederationResponseValidator);
     }
 
@@ -76,6 +76,8 @@ public class WsFederationAuthenticationWebflowConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "wsFederationRequestBuilder")
     public WsFederationRequestBuilder wsFederationRequestBuilder(
+        @Qualifier("wsFederationConfigurations")
+        final Collection<WsFederationConfiguration> wsFederationConfigurations,
         @Qualifier("wsFederationHelper")
         final WsFederationHelper wsFederationHelper) {
         return new WsFederationRequestBuilder(wsFederationConfigurations, wsFederationHelper);
@@ -85,13 +87,16 @@ public class WsFederationAuthenticationWebflowConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "wsFederationResponseValidator")
     public WsFederationResponseValidator wsFederationResponseValidator(
+        @Qualifier("wsFederationConfigurations")
+        final Collection<WsFederationConfiguration> wsFederationConfigurations,
         @Qualifier("wsFederationCookieManager")
         final WsFederationCookieManager wsFederationCookieManager,
         @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("wsFederationHelper")
         final WsFederationHelper wsFederationHelper) {
-        return new WsFederationResponseValidator(wsFederationHelper, wsFederationConfigurations, authenticationSystemSupport, wsFederationCookieManager);
+        return new WsFederationResponseValidator(wsFederationHelper,
+            wsFederationConfigurations, authenticationSystemSupport, wsFederationCookieManager);
     }
 
     @Bean

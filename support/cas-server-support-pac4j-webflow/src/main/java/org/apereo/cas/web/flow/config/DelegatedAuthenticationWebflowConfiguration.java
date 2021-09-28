@@ -111,7 +111,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
     @Bean
     @RefreshScope
     public Action delegatedAuthenticationClientRetryAction(
-        @Qualifier("delegatedClientIdentityProviderConfigurationProducer")
+        @Qualifier(DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
         final DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProviderConfigurationProducer,
         @Qualifier("builtClients")
         final Clients builtClients) {
@@ -147,7 +147,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         final ServicesManager servicesManager,
         @Qualifier("builtClients")
         final Clients builtClients,
-        @Qualifier("delegatedClientIdentityProviderConfigurationProducer")
+        @Qualifier(DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
         final DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProviderConfigurationProducer,
         @Qualifier("delegatedClientIdentityProviderConfigurationPostProcessor")
         final DelegatedClientIdentityProviderConfigurationPostProcessor delegatedClientIdentityProviderConfigurationPostProcessor,
@@ -273,7 +273,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
     @Bean
     @RefreshScope
-    @ConditionalOnMissingBean(name = "delegatedClientIdentityProviderConfigurationProducer")
+    @ConditionalOnMissingBean(name = DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
     @Autowired
     public DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProviderConfigurationProducer(
         @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")

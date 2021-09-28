@@ -87,7 +87,7 @@ public class SpnegoConfiguration {
     @ConditionalOnMissingBean(name = "spnegoHandler")
     @Autowired
     public AuthenticationHandler spnegoHandler(
-        @Qualifier("List<Authentication> spnegoAuthentications")
+        @Qualifier("spnegoAuthentications")
         final List<Authentication> spnegoAuthentications,
         @Qualifier("spnegoPrincipalFactory")
         final PrincipalFactory spnegoPrincipalFactory,
