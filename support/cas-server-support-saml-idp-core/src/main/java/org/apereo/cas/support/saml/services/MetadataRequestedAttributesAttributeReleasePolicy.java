@@ -44,14 +44,15 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
     private boolean useFriendlyName;
 
     @Override
-    protected Map<String, List<Object>> getAttributesForSamlRegisteredService(final Map<String, List<Object>> attributes,
-                                                                              final SamlRegisteredService registeredService,
-                                                                              final ApplicationContext applicationContext,
-                                                                              final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                              final SamlRegisteredServiceServiceProviderMetadataFacade facade,
-                                                                              final EntityDescriptor entityDescriptor,
-                                                                              final Principal principal,
-                                                                              final Service selectedService) {
+    protected Map<String, List<Object>> getAttributesForSamlRegisteredService(
+        final Map<String, List<Object>> attributes,
+        final SamlRegisteredService registeredService,
+        final ApplicationContext applicationContext,
+        final SamlRegisteredServiceCachingMetadataResolver resolver,
+        final SamlRegisteredServiceServiceProviderMetadataFacade facade,
+        final EntityDescriptor entityDescriptor,
+        final Principal principal,
+        final Service selectedService) {
         return fetchRequestedAttributes(attributes, registeredService, facade);
     }
 
@@ -70,6 +71,7 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
                     .collect(Collectors.toList()))
                 .flatMap(List::stream)
                 .sorted()
+                .distinct()
                 .collect(Collectors.toList()))
             .orElse(new ArrayList<>());
     }
