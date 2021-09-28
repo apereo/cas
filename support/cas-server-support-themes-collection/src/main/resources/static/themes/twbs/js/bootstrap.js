@@ -26,16 +26,14 @@ function resourceLoadedSuccessfully() {
             }
         });
 
-        var $revealpassword = $('.reveal-password');
-        $revealpassword.mouseup(function (ev) {
-            $('.pwd').attr('type', 'password');
-            $(".reveal-password-icon").removeClass("fas fa-eye-slash").addClass("fas fa-eye");
-            ev.preventDefault();
-        });
-
-        $revealpassword.mousedown(function (ev) {
-            $('.pwd').attr('type', 'text');
-            $(".reveal-password-icon").removeClass("fas fa-eye").addClass("fas fa-eye-slash");
+        $('.reveal-password').click(function (ev) {
+            if ($('.pwd').attr('type') != 'text') {
+                $('.pwd').attr('type', 'text');
+                $(".reveal-password-icon").removeClass("fas fa-eye").addClass("fas fa-eye-slash");
+            } else {
+                $('.pwd').attr('type', 'password');
+                $(".reveal-password-icon").removeClass("fas fa-eye-slash").addClass("fas fa-eye");
+            }
             ev.preventDefault();
         });
 

@@ -38,9 +38,11 @@
                     <button id="cas-notifications-menu"
                             th:if="${'true' == #strings.defaultString(#themes.code('cas.notifications-menu.enabled'), 'true')}"
                             class="mdc-icon-button mdc-top-app-bar__action-item cas-notification-toggle btn btn-outline-light"
-                            aria-label="Bookmark this page">
-                        <span class="mdi mdi-bell-alert"></span>
-                        <span class="sr-only">notifications</span>
+                            aria-label="Bookmark this page"
+                            data-bs-toggle="modal"
+                            data-bs-target="#cas-notification-dialog">
+                        <span class="mdi mdi-bell-alert fa fa-bell"></span>
+                        <span class="visually-hidden">notifications</span>
                         <i id="notifications-count" class="notifications-count count">2</i>
                     </button>
 
@@ -50,7 +52,7 @@
 <!--                   class="mdc-icon-button mdc-top-app-bar__action-item"-->
 <!--                   aria-label="User Account">-->
 <!--                    <span class="mdi mdi-account-group"></span>-->
-<!--                    <span class="sr-only">user account</span>-->
+<!--                    <span class="visually-hidden">user account</span>-->
 <!--                </a>-->
                 </section>
             </div>
