@@ -41,11 +41,15 @@ public class MetadataRequestedAttributesAttributeReleasePolicyTests extends Base
         filter.setUseFriendlyName(true);
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
-        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser",
-            CollectionUtils.wrap("eduPersonPrincipalName", "cas-eduPerson-user")),
-            CoreAuthenticationTestUtils.getService(), registeredService);
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
+            CollectionUtils.wrap("eduPersonPrincipalName", "cas-eduPerson-user"));
+        val attributes = filter.getAttributes(principal, CoreAuthenticationTestUtils.getService(), registeredService);
         assertFalse(attributes.isEmpty());
         assertTrue(attributes.containsKey("eduPersonPrincipalName"));
+
+        val defns = filter.determineRequestedAttributeDefinitions(principal, registeredService, CoreAuthenticationTestUtils.getService());
+        assertEquals(3, defns.size());
+        assertTrue(defns.contains("eduPersonPrincipalName"));
     }
 
     @Test

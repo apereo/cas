@@ -63,11 +63,12 @@ public class CouchDbSamlIdPMetadataConfiguration {
     @Bean
     @RefreshScope
     @Autowired
-    public SamlIdPMetadataCouchDbRepository samlIdPMetadataCouchDbRepository(final CasConfigurationProperties casProperties,
-                                                                             @Qualifier("samlMetadataCouchDbFactory")
-                                                                             final CouchDbConnectorFactory samlMetadataCouchDbFactory) {
-        val repository =
-            new SamlIdPMetadataCouchDbRepository(samlMetadataCouchDbFactory.getCouchDbConnector(), casProperties.getAuthn().getSamlIdp().getMetadata().getCouchDb().isCreateIfNotExists());
+    public SamlIdPMetadataCouchDbRepository samlIdPMetadataCouchDbRepository(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("samlMetadataCouchDbFactory")
+        final CouchDbConnectorFactory samlMetadataCouchDbFactory) {
+        val repository = new SamlIdPMetadataCouchDbRepository(samlMetadataCouchDbFactory.getCouchDbConnector(),
+            casProperties.getAuthn().getSamlIdp().getMetadata().getCouchDb().isCreateIfNotExists());
         repository.initStandardDesignDocument();
         return repository;
     }
@@ -111,6 +112,6 @@ public class CouchDbSamlIdPMetadataConfiguration {
         @Qualifier("samlIdPMetadataRepository")
         final SamlIdPMetadataCouchDbRepository samlIdPMetadataRepository) {
         return new CouchDbSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor,
-            samlIdPMetadataCache.getObject(), samlIdPMetadataRepository);
+            samlIdPMetadataCache, samlIdPMetadataRepository);
     }
 }
