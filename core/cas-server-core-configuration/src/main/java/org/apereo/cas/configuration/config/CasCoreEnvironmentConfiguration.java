@@ -19,14 +19,11 @@ import org.springframework.core.env.Environment;
 public class CasCoreEnvironmentConfiguration {
 
     @Autowired
-    private ConfigurationPropertiesBindingPostProcessor binder;
-
-    @Autowired
-    private Environment environment;
-
     @ConditionalOnMissingBean(name = "configurationPropertiesEnvironmentManager")
     @Bean
-    public CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager() {
+    public CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager(
+        final ConfigurationPropertiesBindingPostProcessor binder,
+        final Environment environment) {
         return new CasConfigurationPropertiesEnvironmentManager(binder, environment);
     }
 }

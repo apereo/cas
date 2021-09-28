@@ -78,7 +78,7 @@ public class U2FWebflowConfiguration {
                                                                 final ConfigurableApplicationContext applicationContext,
                                                                 @Qualifier("u2fFlowRegistry")
                                                                 final FlowDefinitionRegistry u2fFlowRegistry,
-                                                                @Qualifier("loginFlowDefinitionRegistry")
+                                                                @Qualifier("loginFlowRegistry")
                                                                 final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                                 @Qualifier("flowBuilderServices")
                                                                 final FlowBuilderServices flowBuilderServices) {

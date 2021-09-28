@@ -55,95 +55,116 @@ import java.util.Objects;
 @Configuration(value = "samlIdPWebflowConfiguration", proxyBeanMethods = false)
 public class SamlIdPWebflowConfiguration {
 
-    @ConditionalOnMissingBean(name = "samlIdPWebConfigurer")
-    @Bean
-    @Autowired
-    public CasWebflowConfigurer samlIdPWebConfigurer(final CasConfigurationProperties casProperties,
-                                                     final ConfigurableApplicationContext applicationContext,
-                                                     @Qualifier("loginFlowDefinitionRegistry")
-                                                     final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                     @Qualifier("flowBuilderServices")
-                                                     final FlowBuilderServices flowBuilderServices) {
-        return new SamlIdPWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+    @Configuration(value = "SamlIdPWebflowCoreConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPWebflowCoreConfiguration {
+        @Bean
+        @RefreshScope
+        @ConditionalOnMissingBean(name = "samlIdPCasWebflowExecutionPlanConfigurer")
+        public CasWebflowExecutionPlanConfigurer samlIdPCasWebflowExecutionPlanConfigurer(
+            @Qualifier("samlIdPWebConfigurer")
+            final CasWebflowConfigurer samlIdPWebConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(samlIdPWebConfigurer);
+        }
+
+        @ConditionalOnMissingBean(name = "samlIdPWebConfigurer")
+        @Bean
+        @Autowired
+        public CasWebflowConfigurer samlIdPWebConfigurer(final CasConfigurationProperties casProperties,
+                                                         final ConfigurableApplicationContext applicationContext,
+                                                         @Qualifier("loginFlowRegistry")
+                                                         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                         @Qualifier("flowBuilderServices")
+                                                         final FlowBuilderServices flowBuilderServices) {
+            return new SamlIdPWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        }
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "samlIdPSessionStoreTicketGrantingTicketAction")
-    public Action samlIdPSessionStoreTicketGrantingTicketAction(
-        @Qualifier("samlIdPDistributedSessionStore")
-        final SessionStore samlIdPDistributedSessionStore) {
-        return new SessionStoreTicketGrantingTicketAction(samlIdPDistributedSessionStore);
+    @Configuration(value = "SamlIdPWebflowActionsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPWebflowActionsConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "samlIdPSessionStoreTicketGrantingTicketAction")
+        public Action samlIdPSessionStoreTicketGrantingTicketAction(
+            @Qualifier("samlIdPDistributedSessionStore")
+            final SessionStore samlIdPDistributedSessionStore) {
+            return new SessionStoreTicketGrantingTicketAction(samlIdPDistributedSessionStore);
+        }
+
+        @ConditionalOnMissingBean(name = "samlIdPMetadataUIParserAction")
+        @Bean
+        @RefreshScope
+        public Action samlIdPMetadataUIParserAction(
+            @Qualifier("servicesManager")
+            final ServicesManager servicesManager,
+            @Qualifier("authenticationServiceSelectionPlan")
+            final AuthenticationServiceSelectionPlan selectionStrategies,
+            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver) {
+            return new SamlIdPMetadataUIAction(servicesManager, defaultSamlRegisteredServiceCachingMetadataResolver, selectionStrategies);
+        }
     }
 
-    @ConditionalOnMissingBean(name = "samlIdPMetadataUIParserAction")
-    @Bean
-    @RefreshScope
-    public Action samlIdPMetadataUIParserAction(
-        @Qualifier("servicesManager")
-        final ServicesManager servicesManager,
-        @Qualifier("selectionStrategies")
-        final AuthenticationServiceSelectionPlan selectionStrategies,
-        @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-        final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver) {
-        return new SamlIdPMetadataUIAction(servicesManager, defaultSamlRegisteredServiceCachingMetadataResolver, selectionStrategies);
+    @Configuration(value = "SamlIdPWebflowSingleSignOnConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPWebflowSingleSignOnConfiguration {
+        @Bean
+        @RefreshScope
+        @ConditionalOnMissingBean(name = "samlIdPSingleSignOnParticipationStrategy")
+        public SingleSignOnParticipationStrategy samlIdPSingleSignOnParticipationStrategy(
+            @Qualifier("servicesManager")
+            final ServicesManager servicesManager,
+            @Qualifier("defaultTicketRegistrySupport")
+            final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier("authenticationServiceSelectionPlan")
+            final AuthenticationServiceSelectionPlan selectionStrategies) {
+            return new SamlIdPSingleSignOnParticipationStrategy(servicesManager, ticketRegistrySupport, selectionStrategies);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "samlIdPSingleSignOnParticipationStrategyConfigurer")
+        @RefreshScope
+        public SingleSignOnParticipationStrategyConfigurer samlIdPSingleSignOnParticipationStrategyConfigurer(
+            @Qualifier("samlIdPSingleSignOnParticipationStrategy")
+            final SingleSignOnParticipationStrategy samlIdPSingleSignOnParticipationStrategy) {
+            return chain -> chain.addStrategy(samlIdPSingleSignOnParticipationStrategy);
+        }
     }
 
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "samlIdPCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer samlIdPCasWebflowExecutionPlanConfigurer(
-        @Qualifier("samlIdPWebConfigurer")
-        final CasWebflowConfigurer samlIdPWebConfigurer) {
-        return plan -> plan.registerWebflowConfigurer(samlIdPWebConfigurer);
+    @Configuration(value = "SamlIdPWebflowMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPWebflowMultifactorAuthenticationConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "samlIdPMultifactorAuthenticationTrigger")
+        @Autowired
+        public MultifactorAuthenticationTrigger samlIdPMultifactorAuthenticationTrigger(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("openSamlConfigBean")
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("samlIdPDistributedSessionStore")
+            final SessionStore samlIdPDistributedSessionStore) {
+            return new SamlIdPMultifactorAuthenticationTrigger(openSamlConfigBean, samlIdPDistributedSessionStore, applicationContext, casProperties);
+        }
     }
 
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "samlIdPSingleSignOnParticipationStrategy")
-    public SingleSignOnParticipationStrategy samlIdPSingleSignOnParticipationStrategy(
-        @Qualifier("servicesManager")
-        final ServicesManager servicesManager,
-        @Qualifier("defaultTicketRegistrySupport")
-        final TicketRegistrySupport ticketRegistrySupport,
-        @Qualifier("selectionStrategies")
-        final AuthenticationServiceSelectionPlan selectionStrategies) {
-        return new SamlIdPSingleSignOnParticipationStrategy(servicesManager, ticketRegistrySupport, selectionStrategies);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "samlIdPSingleSignOnParticipationStrategyConfigurer")
-    @RefreshScope
-    public SingleSignOnParticipationStrategyConfigurer samlIdPSingleSignOnParticipationStrategyConfigurer(
-        @Qualifier("samlIdPSingleSignOnParticipationStrategy")
-        final SingleSignOnParticipationStrategy samlIdPSingleSignOnParticipationStrategy) {
-        return chain -> chain.addStrategy(samlIdPSingleSignOnParticipationStrategy);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "samlIdPMultifactorAuthenticationTrigger")
-    @Autowired
-    public MultifactorAuthenticationTrigger samlIdPMultifactorAuthenticationTrigger(final CasConfigurationProperties casProperties,
-                                                                                    final ConfigurableApplicationContext applicationContext,
-                                                                                    @Qualifier("openSamlConfigBean")
-                                                                                    final OpenSamlConfigBean openSamlConfigBean,
-                                                                                    @Qualifier("samlIdPDistributedSessionStore")
-                                                                                    final SessionStore samlIdPDistributedSessionStore) {
-        return new SamlIdPMultifactorAuthenticationTrigger(openSamlConfigBean, samlIdPDistributedSessionStore, applicationContext, casProperties);
-    }
-
-    @RefreshScope
-    @Bean
-    @ConditionalOnMissingBean(name = "samlIdPAuthenticationContextWebflowEventResolver")
-    public CasWebflowEventResolver samlIdPAuthenticationContextWebflowEventResolver(
-        @Qualifier("samlIdPMultifactorAuthenticationTrigger")
-        final MultifactorAuthenticationTrigger samlIdPMultifactorAuthenticationTrigger,
-        @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-        final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
-        @Qualifier("casWebflowConfigurationContext")
-        final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
-        val r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(casWebflowConfigurationContext, samlIdPMultifactorAuthenticationTrigger);
-        Objects.requireNonNull(initialAuthenticationAttemptWebflowEventResolver).addDelegate(r);
-        return r;
+    @Configuration(value = "SamlIdPWebflowEventsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPWebflowEventsConfiguration {
+        @RefreshScope
+        @Bean
+        @ConditionalOnMissingBean(name = "samlIdPAuthenticationContextWebflowEventResolver")
+        public CasWebflowEventResolver samlIdPAuthenticationContextWebflowEventResolver(
+            @Qualifier("samlIdPMultifactorAuthenticationTrigger")
+            final MultifactorAuthenticationTrigger samlIdPMultifactorAuthenticationTrigger,
+            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+            @Qualifier("casWebflowConfigurationContext")
+            final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
+            val r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(casWebflowConfigurationContext, samlIdPMultifactorAuthenticationTrigger);
+            Objects.requireNonNull(initialAuthenticationAttemptWebflowEventResolver).addDelegate(r);
+            return r;
+        }
     }
 
     @Configuration(value = "SamlIdPConsentWebflowConfiguration", proxyBeanMethods = false)

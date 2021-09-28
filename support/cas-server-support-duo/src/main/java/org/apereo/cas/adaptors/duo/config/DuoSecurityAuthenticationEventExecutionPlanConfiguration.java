@@ -147,7 +147,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     public CasWebflowConfigurer duoMultifactorWebflowConfigurer(final CasConfigurationProperties casProperties,
                                                                 final ConfigurableApplicationContext applicationContext,
-                                                                @Qualifier("loginFlowDefinitionRegistry")
+                                                                @Qualifier("loginFlowRegistry")
                                                                 final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                                 @Qualifier("flowBuilderServices")
                                                                 final FlowBuilderServices flowBuilderServices) {

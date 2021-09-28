@@ -42,7 +42,7 @@ public class CasScimConfiguration {
     @Bean
     @Autowired
     public CasWebflowConfigurer scimWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                      @Qualifier("loginFlowDefinitionRegistry")
+                                                      @Qualifier("loginFlowRegistry")
                                                       final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                       @Qualifier("flowBuilderServices")
                                                       final FlowBuilderServices flowBuilderServices) {

@@ -86,7 +86,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     public SessionStore delegatedClientDistributedSessionStore(final CasConfigurationProperties casProperties,
                                                                @Qualifier("delegatedClientDistributedSessionCookieGenerator")
                                                                final CasCookieBuilder delegatedClientDistributedSessionCookieGenerator,
-                                                               @Qualifier("ticketFactory")
+                                                               @Qualifier("defaultTicketFactory")
                                                                final TicketFactory ticketFactory,
                                                                @Qualifier("centralAuthenticationService")
                                                                final CentralAuthenticationService centralAuthenticationService) {

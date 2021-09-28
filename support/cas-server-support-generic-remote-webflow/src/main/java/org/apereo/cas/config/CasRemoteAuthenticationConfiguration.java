@@ -44,7 +44,7 @@ public class CasRemoteAuthenticationConfiguration {
     @Bean
     @Autowired
     public CasWebflowConfigurer remoteAddressWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                               @Qualifier("loginFlowDefinitionRegistry")
+                                                               @Qualifier("loginFlowRegistry")
                                                                final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                                @Qualifier("flowBuilderServices")
                                                                final FlowBuilderServices flowBuilderServices) {

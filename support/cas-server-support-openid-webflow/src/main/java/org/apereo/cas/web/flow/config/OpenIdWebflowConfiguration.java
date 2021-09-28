@@ -47,7 +47,7 @@ public class OpenIdWebflowConfiguration {
     @Bean
     @Autowired
     public CasWebflowConfigurer openidWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                        @Qualifier("loginFlowDefinitionRegistry")
+                                                        @Qualifier("loginFlowRegistry")
                                                         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                         @Qualifier("flowBuilderServices")
                                                         final FlowBuilderServices flowBuilderServices) {

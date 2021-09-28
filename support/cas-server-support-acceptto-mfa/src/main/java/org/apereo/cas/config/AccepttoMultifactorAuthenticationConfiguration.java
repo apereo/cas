@@ -69,9 +69,6 @@ import java.security.PublicKey;
 @Configuration(value = "accepttoMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
 public class AccepttoMultifactorAuthenticationConfiguration {
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @Bean
     @ConditionalOnMissingBean(name = "mfaAccepttoAuthenticatorFlowRegistry")
     @Autowired
@@ -80,7 +77,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
                                                                        final FlowBuilderServices flowBuilderServices,
                                                                        @Qualifier("flowBuilder")
                                                                        final FlowBuilder flowBuilder) {
-        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices);
+        val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
         builder.addFlowBuilder(flowBuilder, AccepttoMultifactorWebflowConfigurer.MFA_ACCEPTTO_EVENT_ID);
         return builder.build();
     }
@@ -88,14 +85,16 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorWebflowConfigurer")
     @Bean
     @Autowired
-    public CasWebflowConfigurer mfaAccepttoMultifactorWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                                        @Qualifier("mfaAccepttoAuthenticatorFlowRegistry")
-                                                                        final FlowDefinitionRegistry mfaAccepttoAuthenticatorFlowRegistry,
-                                                                        @Qualifier("loginFlowDefinitionRegistry")
-                                                                        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                                        @Qualifier("flowBuilderServices")
-                                                                        final FlowBuilderServices flowBuilderServices) {
-        return new AccepttoMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, mfaAccepttoAuthenticatorFlowRegistry, applicationContext, casProperties,
+    public CasWebflowConfigurer mfaAccepttoMultifactorWebflowConfigurer(
+        final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+        @Qualifier("mfaAccepttoAuthenticatorFlowRegistry")
+        final FlowDefinitionRegistry mfaAccepttoAuthenticatorFlowRegistry,
+        @Qualifier("loginFlowRegistry")
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier("flowBuilderServices")
+        final FlowBuilderServices flowBuilderServices) {
+        return new AccepttoMultifactorWebflowConfigurer(flowBuilderServices,
+            loginFlowDefinitionRegistry, mfaAccepttoAuthenticatorFlowRegistry, applicationContext, casProperties,
             MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
     }
 
@@ -113,7 +112,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     public SessionStore mfaAccepttoDistributedSessionStore(final CasConfigurationProperties casProperties,
                                                            @Qualifier("centralAuthenticationService")
                                                            final CentralAuthenticationService centralAuthenticationService,
-                                                           @Qualifier("ticketFactory")
+                                                           @Qualifier("defaultTicketFactory")
                                                            final TicketFactory ticketFactory) {
         val cookie = casProperties.getSessionReplication().getCookie();
         val cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);

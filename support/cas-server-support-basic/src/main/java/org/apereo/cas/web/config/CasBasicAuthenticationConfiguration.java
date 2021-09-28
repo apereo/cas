@@ -51,7 +51,7 @@ public class CasBasicAuthenticationConfiguration {
     @Bean
     @Autowired
     public CasWebflowConfigurer basicAuthenticationWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                                     @Qualifier("loginFlowDefinitionRegistry")
+                                                                     @Qualifier("loginFlowRegistry")
                                                                      final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                                      @Qualifier("flowBuilderServices")
                                                                      final FlowBuilderServices flowBuilderServices) {

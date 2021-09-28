@@ -1,6 +1,7 @@
 package org.apereo.cas.support.wsfederation.config;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -56,6 +57,8 @@ public class WsFederationAuthenticationConfiguration {
     @Bean
     @Autowired
     public WsFederationNavigationController wsFederationNavigationController(
+        @Qualifier("Collection<WsFederationConfiguration> wsFederationConfigurations")
+        final Collection<WsFederationConfiguration> wsFederationConfigurations,
         @Qualifier("webApplicationServiceFactory")
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
         final CasConfigurationProperties casProperties,

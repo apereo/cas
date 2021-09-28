@@ -37,7 +37,7 @@ public class TokenAuthenticationWebflowConfiguration {
     @Bean
     @Autowired
     public CasWebflowConfigurer tokenWebflowConfigurer(
-        @Qualifier("loginFlowDefinitionRegistry")
+        @Qualifier("loginFlowRegistry")
         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
         @Qualifier("flowBuilderServices")
         final FlowBuilderServices flowBuilderServices, final CasConfigurationProperties casProperties,

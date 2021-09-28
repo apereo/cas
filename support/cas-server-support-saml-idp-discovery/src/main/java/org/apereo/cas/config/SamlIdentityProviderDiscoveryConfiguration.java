@@ -46,7 +46,7 @@ public class SamlIdentityProviderDiscoveryConfiguration {
     @Bean
     @Autowired
     public CasWebflowConfigurer identityProviderDiscoveryWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                                           @Qualifier("loginFlowDefinitionRegistry")
+                                                                           @Qualifier("loginFlowRegistry")
                                                                            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                                            @Qualifier("flowBuilderServices")
                                                                            final FlowBuilderServices flowBuilderServices) {
