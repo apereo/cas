@@ -25,7 +25,7 @@ public class TokenTicketsConfiguration {
     @Autowired
     @Bean
     public ResponseBuilder webApplicationServiceResponseBuilder(
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("tokenTicketBuilder")
         final TokenTicketBuilder tokenTicketBuilder,

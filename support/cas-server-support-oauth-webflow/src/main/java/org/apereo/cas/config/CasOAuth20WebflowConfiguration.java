@@ -42,7 +42,7 @@ public class CasOAuth20WebflowConfiguration {
     public Action oauth20RegisteredServiceUIAction(
         @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
         final AuthenticationServiceSelectionStrategy oauth20AuthenticationServiceSelectionStrategy,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new OAuth20RegisteredServiceUIAction(servicesManager, oauth20AuthenticationServiceSelectionStrategy);
     }

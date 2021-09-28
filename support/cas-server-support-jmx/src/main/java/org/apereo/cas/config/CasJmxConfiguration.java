@@ -29,7 +29,7 @@ public class CasJmxConfiguration {
     @Autowired
     @Bean
     public ServicesManagerManagedResource servicesManagerManagedResource(
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new ServicesManagerManagedResource(servicesManager);
     }
@@ -37,7 +37,7 @@ public class CasJmxConfiguration {
     @Autowired
     @Bean
     public TicketRegistryManagedResource ticketRegistryManagedResource(
-        @Qualifier("ticketRegistry")
+        @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry) {
         return new TicketRegistryManagedResource(ticketRegistry);
     }

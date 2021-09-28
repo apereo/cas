@@ -37,7 +37,7 @@ public class OAuth20RegisteredServiceUIActionTests {
     private Action oauth20RegisteredServiceUIAction;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Test

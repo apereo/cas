@@ -56,7 +56,7 @@ public class WSFederationValidateRequestCallbackControllerTests extends BaseCore
     private WSFederationValidateRequestCallbackController federationValidateRequestCallbackController;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired
@@ -64,7 +64,7 @@ public class WSFederationValidateRequestCallbackControllerTests extends BaseCore
     private CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Test

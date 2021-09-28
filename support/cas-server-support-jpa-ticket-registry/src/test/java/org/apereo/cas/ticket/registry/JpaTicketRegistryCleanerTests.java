@@ -68,11 +68,11 @@ public class JpaTicketRegistryCleanerTests {
     protected OAuth20AccessTokenFactory accessTokenFactory;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Autowired

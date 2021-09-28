@@ -67,7 +67,7 @@ public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
     protected WsFederationHelper wsFederationHelper;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     public static WsFederationCredential getCredential() {

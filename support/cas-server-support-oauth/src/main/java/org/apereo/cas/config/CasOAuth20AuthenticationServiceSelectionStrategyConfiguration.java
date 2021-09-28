@@ -33,7 +33,7 @@ public class CasOAuth20AuthenticationServiceSelectionStrategyConfiguration {
     public AuthenticationServiceSelectionStrategy oauth20AuthenticationRequestServiceSelectionStrategy(
         @Qualifier("webApplicationServiceFactory")
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties) {
         return new OAuth20AuthenticationServiceSelectionStrategy(servicesManager,

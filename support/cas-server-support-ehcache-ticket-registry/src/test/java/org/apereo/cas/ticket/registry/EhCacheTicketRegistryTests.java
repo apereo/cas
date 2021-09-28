@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
 public class EhCacheTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
 
     @RepeatedTest(1)

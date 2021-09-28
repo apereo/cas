@@ -95,7 +95,7 @@ public class SamlIdPWebflowConfiguration {
         @Bean
         @RefreshScope
         public Action samlIdPMetadataUIParserAction(
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("authenticationServiceSelectionPlan")
             final AuthenticationServiceSelectionPlan selectionStrategies,
@@ -112,7 +112,7 @@ public class SamlIdPWebflowConfiguration {
         @RefreshScope
         @ConditionalOnMissingBean(name = "samlIdPSingleSignOnParticipationStrategy")
         public SingleSignOnParticipationStrategy samlIdPSingleSignOnParticipationStrategy(
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("defaultTicketRegistrySupport")
             final TicketRegistrySupport ticketRegistrySupport,
@@ -140,7 +140,7 @@ public class SamlIdPWebflowConfiguration {
         public MultifactorAuthenticationTrigger samlIdPMultifactorAuthenticationTrigger(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("samlIdPDistributedSessionStore")
             final SessionStore samlIdPDistributedSessionStore) {

@@ -54,7 +54,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -144,7 +143,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("delegatedClientWebflowManager")
         final DelegatedClientAuthenticationWebflowManager delegatedClientWebflowManager,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("builtClients")
         final Clients builtClients,
@@ -154,7 +153,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         final DelegatedClientIdentityProviderConfigurationPostProcessor delegatedClientIdentityProviderConfigurationPostProcessor,
         @Qualifier("delegatedClientDistributedSessionCookieGenerator")
         final CasCookieBuilder delegatedClientDistributedSessionCookieGenerator,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
@@ -166,7 +165,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         final TicketFactory ticketFactory,
         @Qualifier("registeredServiceAccessStrategyEnforcer")
         final AuditableExecution registeredServiceAccessStrategyEnforcer,
-        @Qualifier("signOnParticipationStrategy")
+        @Qualifier("singleSignOnParticipationStrategy")
         final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy,
         @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
@@ -212,16 +211,16 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "delegatedAuthenticationWebflowConfigurer")
     @Bean
-    @DependsOn({"defaultWebflowConfigurer", "defaultLogoutWebflowConfigurer"})
     @Autowired
-    public CasWebflowConfigurer delegatedAuthenticationWebflowConfigurer(final CasConfigurationProperties casProperties,
-                                                                         final ConfigurableApplicationContext applicationContext,
-                                                                         @Qualifier("loginFlowRegistry")
-                                                                         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                                         @Qualifier("flowBuilderServices")
-                                                                         final FlowBuilderServices flowBuilderServices,
-                                                                         @Qualifier("logoutFlowRegistry")
-                                                                         final FlowDefinitionRegistry logoutFlowDefinitionRegistry) {
+    public CasWebflowConfigurer delegatedAuthenticationWebflowConfigurer(
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier("loginFlowRegistry")
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier("flowBuilderServices")
+        final FlowBuilderServices flowBuilderServices,
+        @Qualifier("logoutFlowRegistry")
+        final FlowDefinitionRegistry logoutFlowDefinitionRegistry) {
         return new DelegatedAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
             logoutFlowDefinitionRegistry, applicationContext, casProperties);
     }
@@ -239,7 +238,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
     public DelegatedSaml2ClientMetadataController delegatedSaml2ClientMetadataController(
         @Qualifier("builtClients")
         final Clients builtClients,
-        @Qualifier("configBean")
+        @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
         final OpenSamlConfigBean configBean) {
         return new DelegatedSaml2ClientMetadataController(builtClients, configBean);
     }
@@ -279,7 +278,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
     public DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProviderConfigurationProducer(
         @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
         final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("delegatedClientAuthenticationRequestCustomizers")
@@ -306,7 +305,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("delegatedAuthenticationCookieGenerator")
         final CasCookieBuilder delegatedAuthenticationCookieGenerator,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val chain = new ChainingDelegatedClientIdentityProviderRedirectionStrategy();
         val strategy = casProperties.getAuthn().getPac4j().getCore().getGroovyRedirectionStrategy();

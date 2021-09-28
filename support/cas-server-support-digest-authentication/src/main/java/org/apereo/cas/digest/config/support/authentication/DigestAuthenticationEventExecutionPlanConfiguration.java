@@ -43,7 +43,7 @@ public class DigestAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler digestAuthenticationHandler(final CasConfigurationProperties casProperties,
                                                              @Qualifier("digestAuthenticationPrincipalFactory")
                                                              final PrincipalFactory digestAuthenticationPrincipalFactory,
-                                                             @Qualifier("servicesManager")
+                                                             @Qualifier(ServicesManager.BEAN_NAME)
                                                              final ServicesManager servicesManager) {
         val digest = casProperties.getAuthn().getDigest();
         return new DigestAuthenticationHandler(digest.getName(), servicesManager, digestAuthenticationPrincipalFactory, digest.getOrder());

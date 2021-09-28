@@ -29,7 +29,7 @@ public class SurrogateRestAuthenticationConfiguration {
     @Bean
     @Autowired
     public SurrogateAuthenticationService surrogateAuthenticationService(final CasConfigurationProperties casProperties,
-                                                                         @Qualifier("servicesManager")
+                                                                         @Qualifier(ServicesManager.BEAN_NAME)
                                                                          final ServicesManager servicesManager) {
         val su = casProperties.getAuthn().getSurrogate();
         LOGGER.debug("Using REST endpoint [{}] with method [{}] to locate surrogate accounts", su.getRest().getUrl(), su.getRest().getMethod());

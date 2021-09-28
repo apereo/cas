@@ -94,10 +94,11 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         final PrincipalFactory googlePrincipalFactory,
         @Qualifier("googleAuthenticatorOneTimeTokenCredentialValidator")
         final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> googleAuthenticatorOneTimeTokenCredentialValidator,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
-        return new GoogleAuthenticatorAuthenticationHandler(gauth.getName(), servicesManager, googlePrincipalFactory, googleAuthenticatorOneTimeTokenCredentialValidator, gauth.getOrder());
+        return new GoogleAuthenticatorAuthenticationHandler(gauth.getName(), servicesManager,
+            googlePrincipalFactory, googleAuthenticatorOneTimeTokenCredentialValidator, gauth.getOrder());
     }
 
     @ConditionalOnMissingBean(name = "googleAuthenticatorOneTimeTokenCredentialValidator")
@@ -110,18 +111,20 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry,
         @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
         final OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository) {
-        return new GoogleAuthenticatorOneTimeTokenCredentialValidator(googleAuthenticatorInstance, oneTimeTokenAuthenticatorTokenRepository, googleAuthenticatorAccountRegistry);
+        return new GoogleAuthenticatorOneTimeTokenCredentialValidator(googleAuthenticatorInstance,
+            oneTimeTokenAuthenticatorTokenRepository, googleAuthenticatorAccountRegistry);
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "googleAuthenticatorMultifactorAuthenticationProvider")
     @Autowired
-    public MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider(final CasConfigurationProperties casProperties,
-                                                                                                  @Qualifier("googleAuthenticatorBypassEvaluator")
-                                                                                                  final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorBypassEvaluator,
-                                                                                                  @Qualifier("failureModeEvaluator")
-                                                                                                  final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
+    public MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("googleAuthenticatorBypassEvaluator")
+        final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorBypassEvaluator,
+        @Qualifier("failureModeEvaluator")
+        final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         val p = new GoogleAuthenticatorMultifactorAuthenticationProvider();
         p.setBypassEvaluator(googleAuthenticatorBypassEvaluator);
@@ -136,12 +139,14 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "googleAuthenticatorAuthenticationMetaDataPopulator")
     @Autowired
-    public AuthenticationMetaDataPopulator googleAuthenticatorAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,
-                                                                                              @Qualifier("googleAuthenticatorAuthenticationHandler")
-                                                                                              final AuthenticationHandler googleAuthenticatorAuthenticationHandler,
-                                                                                              @Qualifier("googleAuthenticatorMultifactorAuthenticationProvider")
-                                                                                              final MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider) {
-        return new AuthenticationContextAttributeMetaDataPopulator(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(), googleAuthenticatorAuthenticationHandler,
+    public AuthenticationMetaDataPopulator googleAuthenticatorAuthenticationMetaDataPopulator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("googleAuthenticatorAuthenticationHandler")
+        final AuthenticationHandler googleAuthenticatorAuthenticationHandler,
+        @Qualifier("googleAuthenticatorMultifactorAuthenticationProvider")
+        final MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider) {
+        return new AuthenticationContextAttributeMetaDataPopulator(
+            casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(), googleAuthenticatorAuthenticationHandler,
             googleAuthenticatorMultifactorAuthenticationProvider.getId());
     }
 
@@ -184,9 +189,10 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "googleAccountCreateRegistrationAction")
     @Autowired
-    public Action googleAccountCreateRegistrationAction(final CasConfigurationProperties casProperties,
-                                                        @Qualifier("googleAuthenticatorAccountRegistry")
-                                                        final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry) {
+    public Action googleAccountCreateRegistrationAction(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("googleAuthenticatorAccountRegistry")
+        final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry) {
         val gauth = casProperties.getAuthn().getMfa().getGauth().getCore();
         return new OneTimeTokenAccountCreateRegistrationAction(googleAuthenticatorAccountRegistry, gauth.getLabel(), gauth.getIssuer());
     }
@@ -204,19 +210,23 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     @Autowired
-    public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(final CasConfigurationProperties casProperties,
-                                                                               @Qualifier("googleAuthenticatorInstance")
-                                                                               final IGoogleAuthenticator googleAuthenticatorInstance,
-                                                                               @Qualifier("googleAuthenticatorAccountCipherExecutor")
-                                                                               final CipherExecutor googleAuthenticatorAccountCipherExecutor) {
+    public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("googleAuthenticatorInstance")
+        final IGoogleAuthenticator googleAuthenticatorInstance,
+        @Qualifier("googleAuthenticatorAccountCipherExecutor")
+        final CipherExecutor googleAuthenticatorAccountCipherExecutor) {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
-        if (gauth.getJson().getLocation()!=null) {
-            return new JsonGoogleAuthenticatorTokenCredentialRepository(gauth.getJson().getLocation(), googleAuthenticatorInstance, googleAuthenticatorAccountCipherExecutor);
+        if (gauth.getJson().getLocation() != null) {
+            return new JsonGoogleAuthenticatorTokenCredentialRepository(gauth.getJson().getLocation(),
+                googleAuthenticatorInstance, googleAuthenticatorAccountCipherExecutor);
         }
         if (StringUtils.isNotBlank(gauth.getRest().getUrl())) {
-            return new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance, gauth, googleAuthenticatorAccountCipherExecutor);
+            return new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
+                gauth, googleAuthenticatorAccountCipherExecutor);
         }
-        return new InMemoryGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorAccountCipherExecutor, googleAuthenticatorInstance);
+        return new InMemoryGoogleAuthenticatorTokenCredentialRepository(
+            googleAuthenticatorAccountCipherExecutor, googleAuthenticatorInstance);
     }
 
     @Bean

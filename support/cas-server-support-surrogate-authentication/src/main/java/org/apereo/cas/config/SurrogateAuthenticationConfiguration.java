@@ -64,7 +64,7 @@ public class SurrogateAuthenticationConfiguration {
     @Bean
     @Autowired
     public SurrogateAuthenticationService surrogateAuthenticationService(
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager, final CasConfigurationProperties casProperties) throws Exception {
         val su = casProperties.getAuthn().getSurrogate();
         if (su.getJson().getLocation() != null) {
@@ -84,7 +84,7 @@ public class SurrogateAuthenticationConfiguration {
     public AuthenticationPostProcessor surrogateAuthenticationPostProcessor(
         @Qualifier("surrogateAuthenticationService")
         final SurrogateAuthenticationService surrogateAuthenticationService,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("registeredServiceAccessStrategyEnforcer")
         final AuditableExecution registeredServiceAccessStrategyEnforcer,

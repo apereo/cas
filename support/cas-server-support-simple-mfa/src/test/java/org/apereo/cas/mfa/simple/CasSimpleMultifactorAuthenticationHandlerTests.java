@@ -49,11 +49,11 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
     private AuthenticationHandler casSimpleMultifactorAuthenticationHandler;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Autowired
@@ -61,7 +61,7 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
     private TicketFactory defaultTicketFactory;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Test

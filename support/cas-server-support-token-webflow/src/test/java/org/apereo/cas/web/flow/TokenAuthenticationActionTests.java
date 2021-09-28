@@ -63,7 +63,7 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
     private ObjectProvider<Action> action;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ObjectProvider<ServicesManager> servicesManager;
 
     @BeforeEach

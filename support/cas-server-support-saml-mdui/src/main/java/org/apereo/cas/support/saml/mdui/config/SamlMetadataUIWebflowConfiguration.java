@@ -53,7 +53,7 @@ public class SamlMetadataUIWebflowConfiguration {
     public Action samlMetadataUIParserAction(
         @Qualifier("chainingSamlMetadataUIMetadataResolverAdapter")
         final MetadataResolverAdapter chainingSamlMetadataUIMetadataResolverAdapter,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("webApplicationServiceFactory")

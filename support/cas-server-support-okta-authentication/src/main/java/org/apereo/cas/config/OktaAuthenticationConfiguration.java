@@ -59,7 +59,7 @@ public class OktaAuthenticationConfiguration {
     public AuthenticationHandler oktaAuthenticationHandler(
         @Qualifier("oktaPrincipalFactory")
         final PrincipalFactory oktaPrincipalFactory,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("oktaAuthenticationClient")
         final AuthenticationClient oktaAuthenticationClient,

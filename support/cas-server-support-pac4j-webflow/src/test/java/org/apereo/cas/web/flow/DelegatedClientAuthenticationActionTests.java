@@ -84,7 +84,7 @@ public class DelegatedClientAuthenticationActionTests {
     private Action delegatedAuthenticationAction;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired
@@ -92,7 +92,7 @@ public class DelegatedClientAuthenticationActionTests {
     private DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired

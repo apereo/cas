@@ -54,7 +54,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverWithComp
     private CasDelegatingWebflowEventResolver resolver;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService cas;
 
     @BeforeEach

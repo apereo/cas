@@ -84,7 +84,7 @@ public abstract class BaseConsentActionTests {
     protected Action checkConsentRequiredAction;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     @Autowired

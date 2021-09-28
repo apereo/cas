@@ -62,7 +62,7 @@ public class CasOAuth20ThrottleConfiguration {
             final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors,
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new OAuth20HandlerInterceptorAdapter(
                 requiresAuthenticationAccessTokenInterceptor,

@@ -38,7 +38,7 @@ public class DelegatedClientIdentityProviderConfigurationProducerTests {
     private DelegatedClientIdentityProviderConfigurationProducer producer;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
     
     @Test

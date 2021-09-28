@@ -64,7 +64,7 @@ public class CasRestConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "restServiceTicketResourceEntityResponseFactoryConfigurer")
     public ServiceTicketResourceEntityResponseFactoryConfigurer restServiceTicketResourceEntityResponseFactoryConfigurer(
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService) {
         return plan -> plan.registerFactory(new CasProtocolServiceTicketResourceEntityResponseFactory(centralAuthenticationService));
     }
@@ -130,7 +130,7 @@ public class CasRestConfiguration {
         @Bean
         @Autowired
         public TicketStatusResource ticketStatusResource(
-            @Qualifier("centralAuthenticationService")
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {
             return new TicketStatusResource(centralAuthenticationService);
         }
@@ -159,7 +159,7 @@ public class CasRestConfiguration {
             @Qualifier("ticketGrantingTicketResourceEntityResponseFactory")
             final TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("centralAuthenticationService")
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("restAuthenticationService")
             final RestAuthenticationService restAuthenticationService,

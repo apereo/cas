@@ -55,7 +55,7 @@ import static org.mockito.Mockito.*;
 @Tag("AuthenticationPolicy")
 public class UniquePrincipalAuthenticationPolicyTests {
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Autowired

@@ -30,6 +30,6 @@ public abstract class BaseRedisSentinelTicketRegistryTests extends BaseTicketReg
     protected RedisTemplate<String, Ticket> ticketRedisTemplate;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
 }

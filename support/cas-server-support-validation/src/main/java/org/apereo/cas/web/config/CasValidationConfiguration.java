@@ -73,7 +73,7 @@ public class CasValidationConfiguration {
         final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
         @Qualifier("casAttributeEncoder")
         final ProtocolAttributeEncoder protocolAttributeEncoder,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
@@ -92,7 +92,7 @@ public class CasValidationConfiguration {
         final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
         @Qualifier("casAttributeEncoder")
         final ProtocolAttributeEncoder protocolAttributeEncoder,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
@@ -111,7 +111,7 @@ public class CasValidationConfiguration {
         final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
         @Qualifier("casAttributeEncoder")
         final ProtocolAttributeEncoder protocolAttributeEncoder,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
@@ -131,7 +131,7 @@ public class CasValidationConfiguration {
         final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
         @Qualifier("casAttributeEncoder")
         final ProtocolAttributeEncoder protocolAttributeEncoder,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
@@ -178,7 +178,7 @@ public class CasValidationConfiguration {
         final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
         @Qualifier("casAttributeEncoder")
         final ProtocolAttributeEncoder protocolAttributeEncoder,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
@@ -198,7 +198,7 @@ public class CasValidationConfiguration {
     public ProxyController proxyController(
         @Qualifier("webApplicationServiceFactory")
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("cas2ProxySuccessView")
@@ -277,13 +277,13 @@ public class CasValidationConfiguration {
     public V3ServiceValidateController v3ServiceValidateController(
         @Qualifier("serviceValidationAuthorizers")
         final ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("argumentExtractor")
         final ArgumentExtractor argumentExtractor,
         @Qualifier("proxy20Handler")
         final ProxyHandler proxy20Handler,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         final CasConfigurationProperties casProperties,
         @Qualifier("defaultAuthenticationSystemSupport")
@@ -331,13 +331,13 @@ public class CasValidationConfiguration {
         final RequestedAuthenticationContextValidator requestedContextValidator,
         @Qualifier("serviceValidationAuthorizers")
         final ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("argumentExtractor")
         final ArgumentExtractor argumentExtractor,
         @Qualifier("proxy20Handler")
         final ProxyHandler proxy20Handler,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         final CasConfigurationProperties casProperties,
         @Qualifier("defaultAuthenticationSystemSupport")
@@ -381,13 +381,13 @@ public class CasValidationConfiguration {
         final RequestedAuthenticationContextValidator requestedContextValidator,
         @Qualifier("serviceValidationAuthorizers")
         final ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("argumentExtractor")
         final ArgumentExtractor argumentExtractor,
         @Qualifier("proxy20Handler")
         final ProxyHandler proxy20Handler,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         final CasConfigurationProperties casProperties,
         @Qualifier("defaultAuthenticationSystemSupport")
@@ -433,11 +433,11 @@ public class CasValidationConfiguration {
         final ProxyHandler proxy10Handler,
         @Qualifier("serviceValidationAuthorizers")
         final ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("argumentExtractor")
         final ArgumentExtractor argumentExtractor,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         final CasConfigurationProperties casProperties,
         @Qualifier("defaultAuthenticationSystemSupport")
@@ -481,14 +481,14 @@ public class CasValidationConfiguration {
         final RequestedAuthenticationContextValidator requestedContextValidator,
         @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("serviceValidationAuthorizers")
         final ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers,
         @Qualifier("proxy20Handler")
         final ProxyHandler proxy20Handler,
         final CasConfigurationProperties casProperties,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         @Qualifier("argumentExtractor")
         final ArgumentExtractor argumentExtractor,

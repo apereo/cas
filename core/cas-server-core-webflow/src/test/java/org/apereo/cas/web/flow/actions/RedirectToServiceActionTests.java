@@ -47,7 +47,7 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowActions")
 public class RedirectToServiceActionTests {
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired

@@ -42,7 +42,7 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler casAccepttoMultifactorAuthenticationHandler(final CasConfigurationProperties casProperties,
                                                                              @Qualifier("casAccepttoMultifactorPrincipalFactory")
                                                                              final PrincipalFactory casAccepttoMultifactorPrincipalFactory,
-                                                                             @Qualifier("servicesManager")
+                                                                             @Qualifier(ServicesManager.BEAN_NAME)
                                                                              final ServicesManager servicesManager) {
         val props = casProperties.getAuthn().getMfa().getAcceptto();
         return new AccepttoMultifactorAuthenticationHandler(servicesManager, casAccepttoMultifactorPrincipalFactory, props);

@@ -106,7 +106,7 @@ public class TokenWebApplicationServiceResponseBuilderTests {
     private ServiceFactory<WebApplicationService> serviceFactory;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService cas;
 
     @Test

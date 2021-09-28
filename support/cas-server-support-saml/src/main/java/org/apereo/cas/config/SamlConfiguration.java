@@ -65,12 +65,12 @@ public class SamlConfiguration {
     @Bean
     @Autowired
     public SamlResponseBuilder samlResponseBuilder(
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("saml10ObjectBuilder")
         final Saml10ObjectBuilder saml10ObjectBuilder,
-        @Qualifier("protocolAttributeEncoder")
+        @Qualifier("casAttributeEncoder")
         final ProtocolAttributeEncoder protocolAttributeEncoder) {
         val samlCore = casProperties.getSamlCore();
         return new SamlResponseBuilder(saml10ObjectBuilder, samlCore.getIssuer(),
@@ -86,11 +86,11 @@ public class SamlConfiguration {
         final SamlResponseBuilder samlResponseBuilder,
         @Qualifier("argumentExtractor")
         final ArgumentExtractor argumentExtractor,
-        @Qualifier("protocolAttributeEncoder")
+        @Qualifier("casAttributeEncoder")
         final ProtocolAttributeEncoder protocolAttributeEncoder,
         @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("authenticationAttributeReleasePolicy")
         final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
@@ -107,11 +107,11 @@ public class SamlConfiguration {
         final SamlResponseBuilder samlResponseBuilder,
         @Qualifier("argumentExtractor")
         final ArgumentExtractor argumentExtractor,
-        @Qualifier("protocolAttributeEncoder")
+        @Qualifier("casAttributeEncoder")
         final ProtocolAttributeEncoder protocolAttributeEncoder,
         @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("authenticationAttributeReleasePolicy")
         final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
@@ -123,7 +123,7 @@ public class SamlConfiguration {
     @ConditionalOnMissingBean(name = "samlServiceResponseBuilder")
     @Bean
     public ResponseBuilder samlServiceResponseBuilder(
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("urlValidator")
         final UrlValidator urlValidator) {
@@ -134,7 +134,7 @@ public class SamlConfiguration {
     @Bean
     @Autowired
     public Saml10ObjectBuilder saml10ObjectBuilder(
-        @Qualifier("openSamlConfigBean")
+        @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
         final OpenSamlConfigBean openSamlConfigBean) {
         return new Saml10ObjectBuilder(openSamlConfigBean);
     }
@@ -148,9 +148,9 @@ public class SamlConfiguration {
                                                          final ArgumentExtractor argumentExtractor,
                                                          @Qualifier("proxy20Handler")
                                                          final ProxyHandler proxy20Handler,
-                                                         @Qualifier("servicesManager")
+                                                         @Qualifier(ServicesManager.BEAN_NAME)
                                                          final ServicesManager servicesManager,
-                                                         @Qualifier("centralAuthenticationService")
+                                                         @Qualifier(CentralAuthenticationService.BEAN_NAME)
                                                          final CentralAuthenticationService centralAuthenticationService,
                                                          @Qualifier("requestedContextValidator")
                                                          final RequestedAuthenticationContextValidator requestedContextValidator,
@@ -203,9 +203,9 @@ public class SamlConfiguration {
                                                      final SamlResponseBuilder samlResponseBuilder,
                                                      @Qualifier("webApplicationServiceFactory")
                                                      final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                                                     @Qualifier("openSamlConfigBean")
+                                                     @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
                                                      final OpenSamlConfigBean openSamlConfigBean,
-                                                     @Qualifier("servicesManager")
+                                                     @Qualifier(ServicesManager.BEAN_NAME)
                                                      final ServicesManager servicesManager,
                                                      @Qualifier("defaultAuthenticationSystemSupport")
                                                      final AuthenticationSystemSupport authenticationSystemSupport,

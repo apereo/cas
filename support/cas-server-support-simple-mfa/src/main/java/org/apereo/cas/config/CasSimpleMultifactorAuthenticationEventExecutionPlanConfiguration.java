@@ -43,9 +43,9 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler casSimpleMultifactorAuthenticationHandler(
         @Qualifier("casSimpleMultifactorPrincipalFactory")
         final PrincipalFactory casSimpleMultifactorPrincipalFactory,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         final CasConfigurationProperties casProperties) {
         val props = casProperties.getAuthn().getMfa().getSimple();

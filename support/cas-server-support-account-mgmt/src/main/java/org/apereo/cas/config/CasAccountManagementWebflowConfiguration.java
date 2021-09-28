@@ -110,7 +110,7 @@ public class CasAccountManagementWebflowConfiguration {
                                                   final AccountRegistrationService accountMgmtRegistrationService,
                                                   @Qualifier("defaultTicketFactory")
                                                   final TicketFactory defaultTicketFactory,
-                                                  @Qualifier("ticketRegistry")
+                                                  @Qualifier(TicketRegistry.BEAN_NAME)
                                                   final TicketRegistry ticketRegistry,
                                                   @Qualifier("communicationsManager")
                                                   final CommunicationsManager communicationsManager) {
@@ -185,7 +185,7 @@ public class CasAccountManagementWebflowConfiguration {
     public Action validateAccountRegistrationTokenAction(
         @Qualifier("accountMgmtRegistrationService")
         final AccountRegistrationService accountMgmtRegistrationService,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService) {
         return new ValidateAccountRegistrationTokenAction(centralAuthenticationService, accountMgmtRegistrationService);
     }

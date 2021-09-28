@@ -97,7 +97,7 @@ import static org.mockito.Mockito.*;
 public class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
 
     @Autowired

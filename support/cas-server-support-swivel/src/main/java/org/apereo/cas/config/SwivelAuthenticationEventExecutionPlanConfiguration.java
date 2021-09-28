@@ -62,7 +62,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("swivelPrincipalFactory")
         final PrincipalFactory swivelPrincipalFactory,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val swivel = casProperties.getAuthn().getMfa().getSwivel();
         return new SwivelAuthenticationHandler(swivel.getName(), servicesManager, swivelPrincipalFactory, swivel);

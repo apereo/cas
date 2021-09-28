@@ -100,7 +100,7 @@ public class CasOAuthUmaConfiguration {
         final UmaPermissionTicketFactory defaultUmaPermissionTicketFactory,
         @Qualifier("umaResourceSetClaimPermissionExaminer")
         final UmaResourceSetClaimPermissionExaminer umaResourceSetClaimPermissionExaminer,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         @Qualifier("oauthDistributedSessionStore")
         final SessionStore oauthDistributedSessionStore,
@@ -110,9 +110,9 @@ public class CasOAuthUmaConfiguration {
         final JwtBuilder accessTokenJwtBuilder,
         @Qualifier("umaRequestingPartyTokenGenerator")
         final IdTokenGeneratorService umaRequestingPartyTokenGenerator,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
-        @Qualifier("ticketRegistry")
+        @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
         @Qualifier("umaResourceSetRepository")
         final ResourceSetRepository umaResourceSetRepository,
@@ -155,9 +155,9 @@ public class CasOAuthUmaConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("accessTokenJwtBuilder")
         final JwtBuilder accessTokenJwtBuilder,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
-        @Qualifier("ticketRegistry")
+        @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
         @Qualifier("oauthDistributedSessionCookieGenerator")
         final CasCookieBuilder oauthDistributedSessionCookieGenerator,
@@ -333,7 +333,7 @@ public class CasOAuthUmaConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("oauthDistributedSessionStore")
         final SessionStore oauthDistributedSessionStore,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         @Qualifier("accessTokenJwtBuilder")
         final JwtBuilder accessTokenJwtBuilder) {
@@ -347,7 +347,7 @@ public class CasOAuthUmaConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("oauthDistributedSessionStore")
         final SessionStore oauthDistributedSessionStore,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         @Qualifier("accessTokenJwtBuilder")
         final JwtBuilder accessTokenJwtBuilder) {

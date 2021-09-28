@@ -100,7 +100,7 @@ public class AzureActiveDirectoryAuthenticationHandlerTests {
     private List<IPersonAttributeDao> microsoftAzureActiveDirectoryAttributeRepositories;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired

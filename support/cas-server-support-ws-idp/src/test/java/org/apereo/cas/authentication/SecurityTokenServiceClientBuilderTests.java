@@ -41,7 +41,7 @@ public class SecurityTokenServiceClientBuilderTests extends BaseCoreWsSecurityId
     private SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @BeforeEach

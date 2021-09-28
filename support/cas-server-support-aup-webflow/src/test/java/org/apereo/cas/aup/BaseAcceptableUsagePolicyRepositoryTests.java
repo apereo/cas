@@ -71,7 +71,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseAcceptableUsagePolicyRepositoryTests.SharedTestConfiguration.class)
 public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     protected TicketRegistry ticketRegistry;
 
     @Autowired

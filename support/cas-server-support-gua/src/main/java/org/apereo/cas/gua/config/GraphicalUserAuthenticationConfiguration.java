@@ -97,7 +97,7 @@ public class GraphicalUserAuthenticationConfiguration {
     @RefreshScope
     @Autowired
     public Action initializeLoginAction(final CasConfigurationProperties casProperties,
-                                        @Qualifier("servicesManager")
+                                        @Qualifier(ServicesManager.BEAN_NAME)
                                         final ServicesManager servicesManager) {
         return new PrepareForGraphicalAuthenticationAction(servicesManager, casProperties);
     }

@@ -47,7 +47,7 @@ public class CasServiceRegistryInitializationConfigurationTests {
     private ServiceRegistry embeddedJsonServiceRegistry;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired

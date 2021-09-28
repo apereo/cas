@@ -49,7 +49,7 @@ public class OidcLogoutConfiguration {
     @RefreshScope
     @Autowired
     public SingleLogoutServiceLogoutUrlBuilderConfigurer oidcSingleLogoutServiceLogoutUrlBuilderConfigurer(
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("urlValidator")
         final UrlValidator urlValidator) {
@@ -62,7 +62,7 @@ public class OidcLogoutConfiguration {
     @Autowired
     public SingleLogoutServiceMessageHandler oidcSingleLogoutServiceMessageHandler(
         final CasConfigurationProperties casProperties,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("oidcSingleLogoutMessageCreator")
         final SingleLogoutMessageCreator oidcSingleLogoutMessageCreator,

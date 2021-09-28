@@ -38,7 +38,7 @@ public class GeoLocationDeviceFingerprintComponentManager implements DeviceFinge
 
         if (loc != null && loc.isValid()) {
             LOGGER.trace("Attempting to geolocate [{}]", loc);
-            val geoResponse = this.geoLocationService.locate(loc);
+            val geoResponse = geoLocationService.locate(loc);
             val address = geoResponse.build();
             if (StringUtils.isBlank(address)) {
                 return getDefaultGeoLocation(loc);

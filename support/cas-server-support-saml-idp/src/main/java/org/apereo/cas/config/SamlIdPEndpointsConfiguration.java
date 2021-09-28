@@ -138,17 +138,17 @@ public class SamlIdPEndpointsConfiguration {
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier("defaultTicketRegistrySupport")
             final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("samlIdPTicketValidator")
             final TicketValidator samlIdPTicketValidator,
@@ -219,17 +219,17 @@ public class SamlIdPEndpointsConfiguration {
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier("defaultTicketRegistrySupport")
             final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("samlIdPTicketValidator")
             final TicketValidator samlIdPTicketValidator,
@@ -300,17 +300,17 @@ public class SamlIdPEndpointsConfiguration {
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier("defaultTicketRegistrySupport")
             final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("samlIdPTicketValidator")
             final TicketValidator samlIdPTicketValidator,
@@ -380,17 +380,17 @@ public class SamlIdPEndpointsConfiguration {
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier("defaultTicketRegistrySupport")
             final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("samlIdPTicketValidator")
             final TicketValidator samlIdPTicketValidator,
@@ -463,17 +463,17 @@ public class SamlIdPEndpointsConfiguration {
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier("defaultTicketRegistrySupport")
             final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("samlIdPTicketValidator")
             final TicketValidator samlIdPTicketValidator,
@@ -541,17 +541,17 @@ public class SamlIdPEndpointsConfiguration {
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier("defaultTicketRegistrySupport")
             final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("samlIdPTicketValidator")
             final TicketValidator samlIdPTicketValidator,
@@ -622,17 +622,17 @@ public class SamlIdPEndpointsConfiguration {
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier("defaultTicketRegistrySupport")
             final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("samlIdPTicketValidator")
             final TicketValidator samlIdPTicketValidator,
@@ -705,17 +705,17 @@ public class SamlIdPEndpointsConfiguration {
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier("defaultTicketRegistrySupport")
             final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("samlIdPTicketValidator")
             final TicketValidator samlIdPTicketValidator,
@@ -789,17 +789,17 @@ public class SamlIdPEndpointsConfiguration {
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier("defaultTicketRegistrySupport")
             final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("samlIdPTicketValidator")
             final TicketValidator samlIdPTicketValidator,
@@ -919,9 +919,9 @@ public class SamlIdPEndpointsConfiguration {
         @Autowired
         public SingleLogoutMessageCreator samlLogoutBuilder(
             final CasConfigurationProperties casProperties,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
@@ -947,9 +947,9 @@ public class SamlIdPEndpointsConfiguration {
             final VelocityEngine velocityEngineFactory,
             @Qualifier("authenticationServiceSelectionPlan")
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver) {
@@ -975,7 +975,7 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         public SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder(
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {
             return new SamlIdPLogoutResponseObjectBuilder(openSamlConfigBean);
         }
@@ -992,18 +992,18 @@ public class SamlIdPEndpointsConfiguration {
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier("defaultTicketRegistrySupport")
             final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory,
-            @Qualifier("ticketRegistry")
+            @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("samlIdPTicketValidator")
             final TicketValidator samlIdPTicketValidator,
@@ -1114,7 +1114,7 @@ public class SamlIdPEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "ssoSamlHttpRequestExtractor")
         @Bean
         public SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor(
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {
             return new DefaultSSOSamlHttpRequestExtractor(openSamlConfigBean.getParserPool());
         }
@@ -1123,10 +1123,10 @@ public class SamlIdPEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPTicketValidator")
         @Autowired
         public TicketValidator samlIdPTicketValidator(
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
 
             final ServicesManager servicesManager,
-            @Qualifier("centralAuthenticationService")
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory,
@@ -1166,7 +1166,7 @@ public class SamlIdPEndpointsConfiguration {
             final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
             @Qualifier("webflowCipherExecutor")
             final CipherExecutor webflowCipherExecutor,
-            @Qualifier("centralAuthenticationService")
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("defaultTicketFactory")
             final TicketFactory ticketFactory) {

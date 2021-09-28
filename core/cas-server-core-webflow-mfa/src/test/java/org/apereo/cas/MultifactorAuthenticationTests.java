@@ -54,7 +54,7 @@ public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAut
     private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService cas;
 
     @Test

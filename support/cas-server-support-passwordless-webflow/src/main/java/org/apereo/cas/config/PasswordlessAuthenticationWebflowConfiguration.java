@@ -124,7 +124,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     @Bean
     @Autowired
     public Action initializeLoginAction(final CasConfigurationProperties casProperties,
-                                        @Qualifier("servicesManager")
+                                        @Qualifier(ServicesManager.BEAN_NAME)
                                         final ServicesManager servicesManager) {
         return new PrepareForPasswordlessAuthenticationAction(servicesManager, casProperties);
     }

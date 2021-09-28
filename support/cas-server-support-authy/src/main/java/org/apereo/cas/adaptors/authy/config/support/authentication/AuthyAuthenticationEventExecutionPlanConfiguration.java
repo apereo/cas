@@ -62,7 +62,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
                                                             final PrincipalFactory authyPrincipalFactory,
                                                             @Qualifier("authyClientInstance")
                                                             final AuthyClientInstance authyClientInstance,
-                                                            @Qualifier("servicesManager")
+                                                            @Qualifier(ServicesManager.BEAN_NAME)
                                                             final ServicesManager servicesManager) {
         val authy = casProperties.getAuthn().getMfa().getAuthy();
         val forceVerification = authy.isForceVerification();

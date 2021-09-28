@@ -19,7 +19,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -45,15 +44,15 @@ public class CasGoogleAnalyticsConfiguration {
 
     @ConditionalOnMissingBean(name = "casGoogleAnalyticsWebflowConfigurer")
     @Bean
-    @DependsOn({"defaultWebflowConfigurer", "defaultLogoutWebflowConfigurer"})
     @Autowired
-    public CasWebflowConfigurer casGoogleAnalyticsWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                                    @Qualifier("loginFlowRegistry")
-                                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                                    @Qualifier("logoutFlowRegistry")
-                                                                    final FlowDefinitionRegistry logoutFlowDefinitionRegistry,
-                                                                    @Qualifier("flowBuilderServices")
-                                                                    final FlowBuilderServices flowBuilderServices) {
+    public CasWebflowConfigurer casGoogleAnalyticsWebflowConfigurer(
+        final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+        @Qualifier("loginFlowRegistry")
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier("logoutFlowRegistry")
+        final FlowDefinitionRegistry logoutFlowDefinitionRegistry,
+        @Qualifier("flowBuilderServices")
+        final FlowBuilderServices flowBuilderServices) {
         val cfg = new CasGoogleAnalyticsWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         cfg.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
         return cfg;

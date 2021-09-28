@@ -77,7 +77,7 @@ public abstract class BaseJwtTokenTicketBuilderTests {
     protected CipherExecutor tokenCipherExecutor;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     @TestConfiguration("TokenTicketBuilderTestConfiguration")

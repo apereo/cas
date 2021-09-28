@@ -53,7 +53,7 @@ public class TrustedAuthenticationConfiguration {
     public AuthenticationHandler principalBearingCredentialsAuthenticationHandler(final CasConfigurationProperties casProperties,
                                                                                   @Qualifier("trustedPrincipalFactory")
                                                                                   final PrincipalFactory trustedPrincipalFactory,
-                                                                                  @Qualifier("servicesManager")
+                                                                                  @Qualifier(ServicesManager.BEAN_NAME)
                                                                                   final ServicesManager servicesManager) {
         val trusted = casProperties.getAuthn().getTrusted();
         return new PrincipalBearingCredentialsAuthenticationHandler(trusted.getName(),

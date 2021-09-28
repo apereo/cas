@@ -41,7 +41,7 @@ public class RestServicesConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("webApplicationServiceFactory")
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("defaultAuthenticationSystemSupport")
         final AuthenticationSystemSupport authenticationSystemSupport) {

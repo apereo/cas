@@ -54,7 +54,7 @@ import static org.mockito.Mockito.*;
 @Getter
 public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
 
     @Autowired

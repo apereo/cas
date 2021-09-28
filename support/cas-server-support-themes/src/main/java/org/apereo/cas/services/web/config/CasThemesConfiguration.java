@@ -70,7 +70,7 @@ public class CasThemesConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("authenticationServiceSelectionPlan")
         final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val defaultThemeName = casProperties.getTheme().getDefaultThemeName();
         val fixedResolver = new FixedThemeResolver();

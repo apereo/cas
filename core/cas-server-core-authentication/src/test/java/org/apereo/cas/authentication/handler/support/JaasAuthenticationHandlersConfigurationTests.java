@@ -113,7 +113,7 @@ public class JaasAuthenticationHandlersConfigurationTests {
         }
 
         @Bean
-        @ConditionalOnMissingBean(name = "servicesManager")
+        @ConditionalOnMissingBean(name = ServicesManager.BEAN_NAME)
         public ServicesManager servicesManager() {
             return mock(ServicesManager.class);
         }

@@ -50,7 +50,7 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
                                                                   final PrincipalFactory rejectUsersPrincipalFactory,
                                                                   @Qualifier("rejectPasswordPolicyConfiguration")
                                                                   final PasswordPolicyContext rejectPasswordPolicyConfiguration,
-                                                                  @Qualifier("servicesManager")
+                                                                  @Qualifier(ServicesManager.BEAN_NAME)
                                                                   final ServicesManager servicesManager) {
         val rejectProperties = casProperties.getAuthn().getReject();
         val users = org.springframework.util.StringUtils.commaDelimitedListToSet(rejectProperties.getUsers());

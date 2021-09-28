@@ -38,7 +38,7 @@ public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfigur
         final CasConfigurationProperties casProperties,
         @Qualifier("registeredServiceAccessStrategyEnforcer")
         final AuditableExecution registeredServiceAccessStrategyEnforcer,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("webApplicationServiceFactory")
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {

@@ -30,7 +30,7 @@ public class SamlIdPAmazonS3RegisteredServiceMetadataConfiguration {
     @RefreshScope
     @Autowired
     public SamlRegisteredServiceMetadataResolver amazonS3SamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
-                                                                                               @Qualifier("openSamlConfigBean")
+                                                                                               @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
                                                                                                final OpenSamlConfigBean openSamlConfigBean,
                                                                                                @Qualifier("amazonS3Client")
                                                                                                final S3Client amazonS3Client) {

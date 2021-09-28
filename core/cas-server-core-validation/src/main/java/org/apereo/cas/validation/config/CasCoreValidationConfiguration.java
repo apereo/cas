@@ -42,7 +42,7 @@ public class CasCoreValidationConfiguration {
     @Autowired
     @ConditionalOnMissingBean(name = "cas10ProtocolValidationSpecification")
     public CasProtocolValidationSpecification cas10ProtocolValidationSpecification(
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new Cas10ProtocolValidationSpecification(servicesManager);
     }
@@ -52,7 +52,7 @@ public class CasCoreValidationConfiguration {
     @Autowired
     @ConditionalOnMissingBean(name = "cas20ProtocolValidationSpecification")
     public CasProtocolValidationSpecification cas20ProtocolValidationSpecification(
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new Cas20ProtocolValidationSpecification(servicesManager);
     }
@@ -62,7 +62,7 @@ public class CasCoreValidationConfiguration {
     @ConditionalOnMissingBean(name = "cas20WithoutProxyProtocolValidationSpecification")
     @Autowired
     public CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification(
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new Cas20WithoutProxyingValidationSpecification(servicesManager);
     }
@@ -84,7 +84,7 @@ public class CasCoreValidationConfiguration {
     @ConditionalOnMissingBean(name = "authenticationPolicyAwareServiceTicketValidationAuthorizer")
     public ServiceTicketValidationAuthorizer authenticationPolicyAwareServiceTicketValidationAuthorizer(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
         final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {

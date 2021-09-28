@@ -114,7 +114,7 @@ public class CasOAuth20EndpointsConfiguration {
         public OAuth20TokenManagementEndpoint oauth20TokenManagementEndpoint(
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder,
-            @Qualifier("centralAuthenticationService")
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             final CasConfigurationProperties casProperties) {
             return new OAuth20TokenManagementEndpoint(casProperties,

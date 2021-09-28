@@ -78,7 +78,7 @@ public class RedisAuthenticationConfiguration {
                                                             final PrincipalFactory redisPrincipalFactory,
                                                             @Qualifier("authenticationRedisTemplate")
                                                             final RedisTemplate authenticationRedisTemplate,
-                                                            @Qualifier("servicesManager")
+                                                            @Qualifier(ServicesManager.BEAN_NAME)
                                                             final ServicesManager servicesManager) {
         val redis = casProperties.getAuthn().getRedis();
         val handler = new RedisAuthenticationHandler(redis.getName(), servicesManager, redisPrincipalFactory, redis.getOrder(), authenticationRedisTemplate);

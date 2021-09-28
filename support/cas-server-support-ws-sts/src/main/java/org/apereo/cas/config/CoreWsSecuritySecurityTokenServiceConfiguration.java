@@ -445,7 +445,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder,
         @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
         final AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new DefaultSecurityTokenServiceTokenFetcher(servicesManager, wsFederationAuthenticationServiceSelectionStrategy, securityTokenServiceCredentialCipherExecutor,
             securityTokenServiceClientBuilder);

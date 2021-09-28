@@ -109,11 +109,11 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
     protected ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     protected TicketRegistry ticketRegistry;
 
     @BeforeEach

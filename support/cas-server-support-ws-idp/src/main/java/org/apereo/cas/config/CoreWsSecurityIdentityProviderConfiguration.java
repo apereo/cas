@@ -120,7 +120,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     public AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy(
         @Qualifier("webApplicationServiceFactory")
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new WSFederationAuthenticationServiceSelectionStrategy(servicesManager, webApplicationServiceFactory);
     }
@@ -178,9 +178,9 @@ public class CoreWsSecurityIdentityProviderConfiguration {
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
         @Qualifier("authenticationAttributeReleasePolicy")
         final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new InternalTicketValidator(centralAuthenticationService,
             webApplicationServiceFactory, authenticationAttributeReleasePolicy, servicesManager);
@@ -196,13 +196,13 @@ public class CoreWsSecurityIdentityProviderConfiguration {
         final TicketRegistrySupport ticketRegistrySupport,
         @Qualifier("securityTokenTicketFactory")
         final SecurityTokenTicketFactory securityTokenTicketFactory,
-        @Qualifier("ticketRegistry")
+        @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
         @Qualifier("wsFederationCallbackService")
         final Service wsFederationCallbackService,
         @Qualifier("securityTokenServiceTokenFetcher")
         final SecurityTokenServiceTokenFetcher securityTokenServiceTokenFetcher,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("ticketGrantingTicketCookieGenerator")
         final CasCookieBuilder ticketGrantingTicketCookieGenerator,

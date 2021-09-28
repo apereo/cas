@@ -72,7 +72,7 @@ public class CasRestAuthenticationConfiguration {
     public AuthenticationHandler restAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
                                                            @Qualifier("restAuthenticationPrincipalFactory")
                                                            final PrincipalFactory restAuthenticationPrincipalFactory,
-                                                           @Qualifier("servicesManager")
+                                                           @Qualifier(ServicesManager.BEAN_NAME)
                                                            final ServicesManager servicesManager) {
         val rest = casProperties.getAuthn().getRest();
         val r = new RestAuthenticationHandler(servicesManager, restAuthenticationPrincipalFactory, rest);

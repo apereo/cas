@@ -90,7 +90,7 @@ public class SamlIdPMetadataConfiguration {
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator,
             @Qualifier("samlIdPMetadataLocator")
             final SamlIdPMetadataLocator samlIdPMetadataLocator,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) throws Exception {
             return new SamlIdPMetadataController(samlIdPMetadataGenerator, samlIdPMetadataLocator, servicesManager, webApplicationServiceFactory);
         }
@@ -101,7 +101,7 @@ public class SamlIdPMetadataConfiguration {
         public HealthIndicator samlRegisteredServiceMetadataHealthIndicator(
             @Qualifier("samlRegisteredServiceMetadataResolvers")
             final SamlRegisteredServiceMetadataResolutionPlan samlRegisteredServiceMetadataResolvers,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new SamlRegisteredServiceMetadataHealthIndicator(samlRegisteredServiceMetadataResolvers, servicesManager);
         }
@@ -113,9 +113,9 @@ public class SamlIdPMetadataConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer) {
@@ -131,9 +131,9 @@ public class SamlIdPMetadataConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("defaultAuthenticationSystemSupport")
             final AuthenticationSystemSupport authenticationSystemSupport,
@@ -158,7 +158,7 @@ public class SamlIdPMetadataConfiguration {
         public SamlRegisteredServiceMetadataResolutionPlan samlRegisteredServiceMetadataResolvers(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {
             val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
             val samlIdp = casProperties.getAuthn().getSamlIdp();
@@ -187,7 +187,7 @@ public class SamlIdPMetadataConfiguration {
             final SamlIdPMetadataLocator samlIdPMetadataLocator,
             @Qualifier("samlIdPMetadataGenerator")
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) throws Exception {
             val idp = casProperties.getAuthn().getSamlIdp();
             val resolver = new SamlIdPMetadataResolver(samlIdPMetadataLocator, samlIdPMetadataGenerator, openSamlConfigBean, casProperties);
@@ -263,7 +263,7 @@ public class SamlIdPMetadataConfiguration {
             final SamlRegisteredServiceMetadataResolutionPlan samlRegisteredServiceMetadataResolvers,
             @Qualifier("httpClient")
             final HttpClient httpClient,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {
             return new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean, httpClient, samlRegisteredServiceMetadataResolvers);
         }
@@ -277,7 +277,7 @@ public class SamlIdPMetadataConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("chainingMetadataResolverCacheLoader")
             final SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {
             return new SamlRegisteredServiceDefaultCachingMetadataResolver(
                 Beans.newDuration(casProperties.getAuthn().getSamlIdp().getMetadata().getCore().getCacheExpiration()),
@@ -300,7 +300,7 @@ public class SamlIdPMetadataConfiguration {
             final SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter,
             @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
             final CipherExecutor samlIdPMetadataGeneratorCipherExecutor,
-            @Qualifier("openSamlConfigBean")
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("velocityEngineFactoryBean")
             final VelocityEngine velocityEngineFactoryBean) throws Exception {

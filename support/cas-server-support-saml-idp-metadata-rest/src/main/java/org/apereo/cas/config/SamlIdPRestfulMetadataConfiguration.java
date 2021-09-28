@@ -30,7 +30,7 @@ public class SamlIdPRestfulMetadataConfiguration {
     @RefreshScope
     @Autowired
     public SamlRegisteredServiceMetadataResolver restSamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
-                                                                                           @Qualifier("openSamlConfigBean")
+                                                                                           @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
                                                                                            final OpenSamlConfigBean openSamlConfigBean) {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new RestfulSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean);

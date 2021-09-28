@@ -102,7 +102,7 @@ public abstract class BaseTicketResourceEntityResponseFactoryTests {
     protected TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     @Autowired
@@ -114,7 +114,7 @@ public abstract class BaseTicketResourceEntityResponseFactoryTests {
     protected CipherExecutor tokenCipherExecutor;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Qualifier(CentralAuthenticationService.BEAN_NAME)
     protected CentralAuthenticationService centralAuthenticationService;
 
     @Autowired

@@ -48,7 +48,7 @@ public class CasMongoAuthenticationConfiguration {
     public AuthenticationHandler mongoAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
                                                             @Qualifier("mongoPrincipalFactory")
                                                             final PrincipalFactory mongoPrincipalFactory,
-                                                            @Qualifier("servicesManager")
+                                                            @Qualifier(ServicesManager.BEAN_NAME)
                                                             final ServicesManager servicesManager,
                                                             @Qualifier("sslContext")
                                                             final SSLContext sslContext) {

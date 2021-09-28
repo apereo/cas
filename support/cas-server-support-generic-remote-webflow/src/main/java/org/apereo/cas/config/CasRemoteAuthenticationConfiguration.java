@@ -58,7 +58,7 @@ public class CasRemoteAuthenticationConfiguration {
     public AuthenticationHandler remoteAddressAuthenticationHandler(final CasConfigurationProperties casProperties,
                                                                     @Qualifier("remoteAddressPrincipalFactory")
                                                                     final PrincipalFactory remoteAddressPrincipalFactory,
-                                                                    @Qualifier("servicesManager")
+                                                                    @Qualifier(ServicesManager.BEAN_NAME)
                                                                     final ServicesManager servicesManager) {
         val remoteAddress = casProperties.getAuthn().getRemoteAddress();
         val bean = new RemoteAddressAuthenticationHandler(remoteAddress.getName(), servicesManager, remoteAddressPrincipalFactory, remoteAddress.getOrder());

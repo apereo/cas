@@ -67,7 +67,7 @@ public class CoreSamlConfiguration {
         return new VelocityEngine(properties);
     }
 
-    @Bean(name = {OpenSamlConfigBean.DEFAULT_BEAN_NAME, "openSamlConfigBean"})
+    @Bean(name = {OpenSamlConfigBean.DEFAULT_BEAN_NAME, OpenSamlConfigBean.DEFAULT_BEAN_NAME})
     @Autowired
     public OpenSamlConfigBean openSamlConfigBean(
         @Qualifier("shibboleth.ParserPool")

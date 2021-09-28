@@ -37,7 +37,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
     private AuthenticationHandler openIdCredentialsAuthenticationHandler;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Test

@@ -253,7 +253,7 @@ public class CasCoreServicesConfiguration {
             };
         }
 
-        @ConditionalOnMissingBean(name = "servicesManager")
+        @ConditionalOnMissingBean(name = ServicesManager.BEAN_NAME)
         @Bean
         @RefreshScope
         public ChainingServicesManager servicesManager() {
@@ -264,7 +264,7 @@ public class CasCoreServicesConfiguration {
         @Autowired
         public RegisteredServicesEventListener registeredServicesEventListener(
             final CasConfigurationProperties casProperties,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("communicationsManager")
             final CommunicationsManager communicationsManager) {
@@ -276,7 +276,7 @@ public class CasCoreServicesConfiguration {
         @Autowired
         @RefreshScope
         public ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder(
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("urlValidator")
             final UrlValidator urlValidator) {
@@ -301,7 +301,7 @@ public class CasCoreServicesConfiguration {
         @EventListener
         public void refreshServicesManagerWhenReady(final ApplicationReadyEvent event) {
             val configurers = event.getApplicationContext().getBeansOfType(ServicesManagerExecutionPlanConfigurer.class, false, true).values();
-            val servicesManager = event.getApplicationContext().getBean("servicesManager", ChainingServicesManager.class);
+            val servicesManager = event.getApplicationContext().getBean(ServicesManager.BEAN_NAME, ChainingServicesManager.class);
             configurers.forEach(c -> servicesManager.registerServiceManager(c.configureServicesManager()));
             servicesManager.load();
         }
@@ -317,7 +317,7 @@ public class CasCoreServicesConfiguration {
         @Autowired
         public Runnable servicesManagerScheduledLoader(
             final CasConfigurationProperties casProperties,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             LOGGER.trace("Background task to load services is enabled to run every [{}]",
                 casProperties.getServiceRegistry().getSchedule().getRepeatInterval());

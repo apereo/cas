@@ -156,7 +156,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected UrlValidator urlValidator;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     @Autowired
@@ -195,7 +195,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected SamlIdPMetadataGenerator samlIdPMetadataGenerator;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     protected TicketRegistry ticketRegistry;
 
     @Autowired

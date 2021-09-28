@@ -78,7 +78,7 @@ import static org.mockito.Mockito.*;
 @EnableRetry
 public abstract class BaseOAuth20AuthenticatorTests {
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     @Autowired
@@ -112,7 +112,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
     protected OAuthRegisteredService serviceWithAttributesMapping;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     protected TicketRegistry ticketRegistry;
 
     @Autowired

@@ -90,7 +90,7 @@ public class MultifactorAuthnTrustWebflowConfiguration {
                                                   final MultifactorAuthenticationTrustStorage mfaTrustEngine,
                                                   @Qualifier("registeredServiceAccessStrategyEnforcer")
                                                   final AuditableExecution registeredServiceAccessStrategyEnforcer,
-                                                  @Qualifier("servicesManager")
+                                                  @Qualifier(ServicesManager.BEAN_NAME)
                                                   final ServicesManager servicesManager) {
         return new MultifactorAuthenticationPrepareTrustDeviceViewAction(mfaTrustEngine, deviceFingerprintStrategy, casProperties.getAuthn().getMfa().getTrusted(),
             registeredServiceAccessStrategyEnforcer, servicesManager, mfaTrustedDeviceBypassEvaluator, mfaTrustDeviceNamingStrategy);

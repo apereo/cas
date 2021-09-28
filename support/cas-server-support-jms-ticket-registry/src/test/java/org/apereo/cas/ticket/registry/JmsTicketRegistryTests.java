@@ -34,6 +34,6 @@ import org.springframework.jms.annotation.EnableJms;
 @Getter
 public class JmsTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
 }

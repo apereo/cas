@@ -48,7 +48,7 @@ public class OktaAuthenticationStateHandlerTests {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired

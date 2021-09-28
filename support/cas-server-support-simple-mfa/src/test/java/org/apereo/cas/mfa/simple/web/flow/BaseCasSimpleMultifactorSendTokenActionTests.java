@@ -50,7 +50,7 @@ public abstract class BaseCasSimpleMultifactorSendTokenActionTests {
     protected AuthenticationHandler authenticationHandler;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     protected TicketRegistry ticketRegistry;
 
     @Autowired

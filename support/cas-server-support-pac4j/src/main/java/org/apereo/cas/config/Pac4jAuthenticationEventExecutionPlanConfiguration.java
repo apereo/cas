@@ -88,7 +88,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                                                                final CasCookieBuilder delegatedClientDistributedSessionCookieGenerator,
                                                                @Qualifier("defaultTicketFactory")
                                                                final TicketFactory ticketFactory,
-                                                               @Qualifier("centralAuthenticationService")
+                                                               @Qualifier(CentralAuthenticationService.BEAN_NAME)
                                                                final CentralAuthenticationService centralAuthenticationService) {
         val replicate = casProperties.getAuthn().getPac4j().getCore().isReplicateSessions();
         if (replicate) {
@@ -143,7 +143,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                                                              final DelegatedClientUserProfileProvisioner clientUserProfileProvisioner,
                                                              @Qualifier("delegatedClientDistributedSessionStore")
                                                              final SessionStore delegatedClientDistributedSessionStore,
-                                                             @Qualifier("servicesManager")
+                                                             @Qualifier(ServicesManager.BEAN_NAME)
                                                              final ServicesManager servicesManager) {
         val pac4j = casProperties.getAuthn().getPac4j().getCore();
         val h = new DelegatedClientAuthenticationHandler(pac4j.getName(), pac4j.getOrder(), servicesManager, clientPrincipalFactory, builtClients, clientUserProfileProvisioner,

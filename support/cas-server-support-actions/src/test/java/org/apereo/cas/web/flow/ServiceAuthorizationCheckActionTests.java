@@ -37,7 +37,7 @@ public class ServiceAuthorizationCheckActionTests extends AbstractWebflowActions
     private Action action;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @BeforeEach

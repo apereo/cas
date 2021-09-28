@@ -157,7 +157,7 @@ public class OidcEndpointsConfiguration {
             final HandlerInterceptor requiresAuthenticationClientConfigurationInterceptor,
             @Qualifier("requiresAuthenticationDynamicRegistrationInterceptor")
             final HandlerInterceptor requiresAuthenticationDynamicRegistrationInterceptor,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties) {
             val oidc = casProperties.getAuthn().getOidc();
@@ -231,7 +231,7 @@ public class OidcEndpointsConfiguration {
         public HandlerInterceptor oidcLocaleChangeInterceptor(
             @Qualifier("argumentExtractor")
             final ArgumentExtractor argumentExtractor,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties) {
             val interceptor = new OidcLocaleChangeInterceptor(casProperties.getLocale(), argumentExtractor, servicesManager);
@@ -478,7 +478,7 @@ public class OidcEndpointsConfiguration {
         public Action oidcRegisteredServiceUIAction(
             @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
             final AuthenticationServiceSelectionStrategy oauth20AuthenticationServiceSelectionStrategy,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new OidcRegisteredServiceUIAction(servicesManager, oauth20AuthenticationServiceSelectionStrategy);
         }

@@ -71,7 +71,7 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
     protected OAuth20CodeFactory oAuthCodeFactory;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     protected TicketRegistry newTicketRegistry;
 
     @Autowired

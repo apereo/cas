@@ -34,11 +34,11 @@ public class CasRestTokensConfiguration {
 
     @Bean
     public ServiceTicketResourceEntityResponseFactoryConfigurer restTokenServiceTicketResourceEntityResponseFactoryConfigurer(
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         @Qualifier("tokenTicketBuilder")
         final TokenTicketBuilder tokenTicketBuilder,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("defaultTicketRegistrySupport")
         final TicketRegistrySupport ticketRegistrySupport) {

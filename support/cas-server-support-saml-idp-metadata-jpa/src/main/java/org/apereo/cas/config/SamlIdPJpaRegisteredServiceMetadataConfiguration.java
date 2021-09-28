@@ -45,7 +45,7 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
     @ConditionalOnMissingBean(name = "jpaSamlRegisteredServiceMetadataResolver")
     @Autowired
     public SamlRegisteredServiceMetadataResolver jpaSamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
-                                                                                          @Qualifier("openSamlConfigBean")
+                                                                                          @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
                                                                                           final OpenSamlConfigBean openSamlConfigBean) {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new JpaSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean);

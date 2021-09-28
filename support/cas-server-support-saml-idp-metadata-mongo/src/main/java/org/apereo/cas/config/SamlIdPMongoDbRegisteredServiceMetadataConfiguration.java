@@ -35,7 +35,7 @@ public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration {
     public SamlRegisteredServiceMetadataResolver mongoDbSamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
                                                                                               @Qualifier("mongoDbSamlMetadataResolverTemplate")
                                                                                               final MongoTemplate mongoDbSamlMetadataResolverTemplate,
-                                                                                              @Qualifier("openSamlConfigBean")
+                                                                                              @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
                                                                                               final OpenSamlConfigBean openSamlConfigBean) {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new MongoDbSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean, mongoDbSamlMetadataResolverTemplate);

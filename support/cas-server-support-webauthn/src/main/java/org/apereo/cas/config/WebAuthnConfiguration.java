@@ -102,9 +102,10 @@ public class WebAuthnConfiguration {
     @Bean
     @RefreshScope
     @Autowired
-    public WebAuthnCredentialRepository webAuthnCredentialRepository(final CasConfigurationProperties casProperties,
-                                                                     @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
-                                                                     final CipherExecutor webAuthnCredentialRegistrationCipherExecutor) {
+    public WebAuthnCredentialRepository webAuthnCredentialRepository(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
+        final CipherExecutor webAuthnCredentialRegistrationCipherExecutor) {
         val webauthn = casProperties.getAuthn().getMfa().getWebAuthn();
         val location = webauthn.getJson().getLocation();
         if (location != null) {
@@ -117,11 +118,12 @@ public class WebAuthnConfiguration {
     @Bean
     @RefreshScope
     @Autowired
-    public MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider(final CasConfigurationProperties casProperties,
-                                                                                       @Qualifier("failureModeEvaluator")
-                                                                                       final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator,
-                                                                                       @Qualifier("webAuthnBypassEvaluator")
-                                                                                       final MultifactorAuthenticationProviderBypassEvaluator webAuthnBypassEvaluator) {
+    public MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("failureModeEvaluator")
+        final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator,
+        @Qualifier("webAuthnBypassEvaluator")
+        final MultifactorAuthenticationProviderBypassEvaluator webAuthnBypassEvaluator) {
         val webauthn = casProperties.getAuthn().getMfa().getWebAuthn();
         val p = new WebAuthnMultifactorAuthenticationProvider();
         p.setBypassEvaluator(webAuthnBypassEvaluator);
@@ -141,7 +143,8 @@ public class WebAuthnConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "webAuthnMetadataService")
     @Autowired
-    public MetadataService webAuthnMetadataService(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext) throws Exception {
+    public MetadataService webAuthnMetadataService(final CasConfigurationProperties casProperties,
+                                                   final ConfigurableApplicationContext applicationContext) throws Exception {
         val foundTrustResolvers = applicationContext.getBeansOfType(TrustResolver.class, false, true);
         val trustResolvers = new ArrayList<TrustResolver>();
         trustResolvers.add(StandardMetadataService.createDefaultTrustResolver());
@@ -188,10 +191,10 @@ public class WebAuthnConfiguration {
             origins.add(serverName);
         }
         val conveyance = AttestationConveyancePreference.valueOf(webAuthn.getAttestationConveyancePreference().toUpperCase());
-        val relyingParty =
-            RelyingParty.builder().identity(defaultRelyingPartyId).credentialRepository(webAuthnCredentialRepository).origins(origins).attestationConveyancePreference(conveyance)
-                .metadataService(webAuthnMetadataService).allowUnrequestedExtensions(webAuthn.isAllowUnrequestedExtensions())
-                .allowUntrustedAttestation(webAuthn.isAllowUntrustedAttestation()).validateSignatureCounter(webAuthn.isValidateSignatureCounter()).appId(appId).build();
+        val relyingParty = RelyingParty.builder().identity(defaultRelyingPartyId)
+            .credentialRepository(webAuthnCredentialRepository).origins(origins).attestationConveyancePreference(conveyance)
+            .metadataService(webAuthnMetadataService).allowUnrequestedExtensions(webAuthn.isAllowUnrequestedExtensions())
+            .allowUntrustedAttestation(webAuthn.isAllowUntrustedAttestation()).validateSignatureCounter(webAuthn.isValidateSignatureCounter()).appId(appId).build();
         return new WebAuthnServer(webAuthnCredentialRepository, newCache(), newCache(), relyingParty, webAuthnSessionManager);
     }
 
@@ -219,28 +222,31 @@ public class WebAuthnConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "webAuthnAuthenticationHandler")
     @Autowired
-    public AuthenticationHandler webAuthnAuthenticationHandler(final CasConfigurationProperties casProperties,
-                                                               @Qualifier("webAuthnPrincipalFactory")
-                                                               final PrincipalFactory webAuthnPrincipalFactory,
-                                                               @Qualifier("webAuthnCredentialRepository")
-                                                               final WebAuthnCredentialRepository webAuthnCredentialRepository,
-                                                               @Qualifier("webAuthnSessionManager")
-                                                               final SessionManager webAuthnSessionManager,
-                                                               @Qualifier("servicesManager")
-                                                               final ServicesManager servicesManager) {
+    public AuthenticationHandler webAuthnAuthenticationHandler(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("webAuthnPrincipalFactory")
+        final PrincipalFactory webAuthnPrincipalFactory,
+        @Qualifier("webAuthnCredentialRepository")
+        final WebAuthnCredentialRepository webAuthnCredentialRepository,
+        @Qualifier("webAuthnSessionManager")
+        final SessionManager webAuthnSessionManager,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager) {
         val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn();
-        return new WebAuthnAuthenticationHandler(webAuthn.getName(), servicesManager, webAuthnPrincipalFactory, webAuthnCredentialRepository, webAuthnSessionManager, webAuthn.getOrder());
+        return new WebAuthnAuthenticationHandler(webAuthn.getName(), servicesManager, webAuthnPrincipalFactory,
+            webAuthnCredentialRepository, webAuthnSessionManager, webAuthn.getOrder());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "webAuthnAuthenticationMetaDataPopulator")
     @Autowired
-    public AuthenticationMetaDataPopulator webAuthnAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,
-                                                                                   @Qualifier("webAuthnAuthenticationHandler")
-                                                                                   final AuthenticationHandler webAuthnAuthenticationHandler,
-                                                                                   @Qualifier("webAuthnMultifactorAuthenticationProvider")
-                                                                                   final MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider) {
+    public AuthenticationMetaDataPopulator webAuthnAuthenticationMetaDataPopulator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("webAuthnAuthenticationHandler")
+        final AuthenticationHandler webAuthnAuthenticationHandler,
+        @Qualifier("webAuthnMultifactorAuthenticationProvider")
+        final MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider) {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute, webAuthnAuthenticationHandler, webAuthnMultifactorAuthenticationProvider.getId());
     }

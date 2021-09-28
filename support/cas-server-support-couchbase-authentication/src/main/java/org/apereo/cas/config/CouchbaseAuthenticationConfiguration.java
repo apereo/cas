@@ -60,7 +60,7 @@ public class CouchbaseAuthenticationConfiguration {
                                                                 final PrincipalFactory couchbasePrincipalFactory,
                                                                 @Qualifier("authenticationCouchbaseClientFactory")
                                                                 final CouchbaseClientFactory authenticationCouchbaseClientFactory,
-                                                                @Qualifier("servicesManager")
+                                                                @Qualifier(ServicesManager.BEAN_NAME)
                                                                 final ServicesManager servicesManager) {
         val couchbase = casProperties.getAuthn().getCouchbase();
         val handler = new CouchbaseAuthenticationHandler(servicesManager, couchbasePrincipalFactory, authenticationCouchbaseClientFactory, couchbase);

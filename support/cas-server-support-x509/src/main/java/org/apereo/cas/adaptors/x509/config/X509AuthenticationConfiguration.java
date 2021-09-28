@@ -269,7 +269,7 @@ public class X509AuthenticationConfiguration {
                                                                       final RevocationChecker crlDistributionPointRevocationChecker,
                                                                       @Qualifier("noOpRevocationChecker")
                                                                       final RevocationChecker noOpRevocationChecker,
-                                                                      @Qualifier("servicesManager")
+                                                                      @Qualifier(ServicesManager.BEAN_NAME)
                                                                       final ServicesManager servicesManager) {
         val x509 = casProperties.getAuthn().getX509();
         val revChecker = getRevocationCheckerFrom(x509, resourceCrlRevocationChecker, crlDistributionPointRevocationChecker, noOpRevocationChecker);

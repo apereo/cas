@@ -56,7 +56,7 @@ public class SoapAuthenticationConfiguration {
                                                                          final PrincipalFactory soapAuthenticationPrincipalFactory,
                                                                          @Qualifier("soapAuthenticationClient")
                                                                          final SoapAuthenticationClient soapAuthenticationClient,
-                                                                         @Qualifier("servicesManager")
+                                                                         @Qualifier(ServicesManager.BEAN_NAME)
                                                                          final ServicesManager servicesManager) {
         val soap = casProperties.getAuthn().getSoap();
         val handler = new SoapAuthenticationHandler(soap.getName(), servicesManager, soapAuthenticationPrincipalFactory, soap.getOrder(), soapAuthenticationClient);

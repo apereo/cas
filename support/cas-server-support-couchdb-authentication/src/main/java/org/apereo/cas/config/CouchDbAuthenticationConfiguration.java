@@ -83,7 +83,7 @@ public class CouchDbAuthenticationConfiguration {
         final CouchProfileService couchProfileService,
         @Qualifier("couchDbPrincipalFactory")
         final PrincipalFactory principalFactory, final CasConfigurationProperties casProperties,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val couchDb = casProperties.getAuthn().getCouchDb();
         val handler = new CouchDbAuthenticationHandler(couchDb.getName(), servicesManager, principalFactory, couchDb.getOrder());

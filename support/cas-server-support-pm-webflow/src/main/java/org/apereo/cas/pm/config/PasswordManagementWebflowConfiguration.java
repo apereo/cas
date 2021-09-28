@@ -74,9 +74,9 @@ public class PasswordManagementWebflowConfiguration {
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
         @Qualifier("defaultTicketRegistrySupport")
         final TicketRegistrySupport ticketRegistrySupport,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
-        @Qualifier("servicesManager")
+        @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return new PasswordManagementSingleSignOnParticipationStrategy(
             servicesManager, ticketRegistrySupport, authenticationServiceSelectionPlan, centralAuthenticationService);
@@ -146,7 +146,7 @@ public class PasswordManagementWebflowConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
         final PasswordManagementService passwordManagementService,
-        @Qualifier("ticketRegistry")
+        @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
         @Qualifier("defaultPrincipalResolver")
         final PrincipalResolver defaultPrincipalResolver,
@@ -166,7 +166,7 @@ public class PasswordManagementWebflowConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
         final PasswordManagementService passwordManagementService,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService) {
         return new VerifyPasswordResetRequestAction(casProperties,
             passwordManagementService, centralAuthenticationService);
@@ -200,7 +200,7 @@ public class PasswordManagementWebflowConfiguration {
     public Action validatePasswordResetTokenAction(
         @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
         final PasswordManagementService passwordManagementService,
-        @Qualifier("centralAuthenticationService")
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService) {
         return new ValidatePasswordResetTokenAction(passwordManagementService, centralAuthenticationService);
     }

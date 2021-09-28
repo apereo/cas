@@ -47,7 +47,7 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler jsonResourceAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
                                                                    @Qualifier("jsonPrincipalFactory")
                                                                    final PrincipalFactory jsonPrincipalFactory,
-                                                                   @Qualifier("servicesManager")
+                                                                   @Qualifier(ServicesManager.BEAN_NAME)
                                                                    final ServicesManager servicesManager) {
         val jsonProps = casProperties.getAuthn().getJson();
         val h = new JsonResourceAuthenticationHandler(jsonProps.getName(), servicesManager, jsonPrincipalFactory, null, jsonProps.getLocation());

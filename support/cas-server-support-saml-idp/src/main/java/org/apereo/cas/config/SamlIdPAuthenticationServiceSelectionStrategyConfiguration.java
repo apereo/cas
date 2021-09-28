@@ -37,7 +37,7 @@ public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory,
-            @Qualifier("servicesManager")
+            @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(servicesManager,
                 samlIdPServiceFactory, casProperties.getServer().getPrefix());

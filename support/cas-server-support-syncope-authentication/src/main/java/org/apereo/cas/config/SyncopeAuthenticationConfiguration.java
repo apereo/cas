@@ -49,7 +49,7 @@ public class SyncopeAuthenticationConfiguration {
                                                               final PrincipalFactory syncopePrincipalFactory,
                                                               @Qualifier("syncopePasswordPolicyConfiguration")
                                                               final PasswordPolicyContext syncopePasswordPolicyConfiguration,
-                                                              @Qualifier("servicesManager")
+                                                              @Qualifier(ServicesManager.BEAN_NAME)
                                                               final ServicesManager servicesManager) {
         val syncope = casProperties.getAuthn().getSyncope();
         val h = new SyncopeAuthenticationHandler(syncope.getName(), servicesManager, syncopePrincipalFactory, syncope.getUrl(), syncope.getDomain());

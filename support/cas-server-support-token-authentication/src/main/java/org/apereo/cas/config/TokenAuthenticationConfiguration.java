@@ -42,7 +42,7 @@ public class TokenAuthenticationConfiguration {
     public AuthenticationHandler tokenAuthenticationHandler(final CasConfigurationProperties casProperties,
                                                             @Qualifier("tokenPrincipalFactory")
                                                             final PrincipalFactory tokenPrincipalFactory,
-                                                            @Qualifier("servicesManager")
+                                                            @Qualifier(ServicesManager.BEAN_NAME)
                                                             final ServicesManager servicesManager) {
         val token = casProperties.getAuthn().getToken();
         val principalNameTransformer = PrincipalNameTransformerUtils.newPrincipalNameTransformer(token.getPrincipalTransformation());
