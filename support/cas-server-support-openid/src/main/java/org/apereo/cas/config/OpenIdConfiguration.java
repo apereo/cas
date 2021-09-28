@@ -130,7 +130,7 @@ public class OpenIdConfiguration {
         final CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
-        @Qualifier("validationAuthorizers")
+        @Qualifier("serviceValidationAuthorizers")
         final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
         val context = ServiceValidateConfigurationContext.builder()
             .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification))

@@ -232,10 +232,10 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         for (val nameFormat : supportedNameFormats) {
             LOGGER.debug("Evaluating NameID format [{}]", nameFormat);
-            val nameid = encodeNameIdBasedOnNameFormat(authnRequest, assertion, nameFormat, service, adaptor);
-            if (nameid != null) {
-                LOGGER.debug("Determined NameID based on format [{}] to be [{}]", nameFormat, nameid.getValue());
-                return nameid;
+            val nameId = encodeNameIdBasedOnNameFormat(authnRequest, assertion, nameFormat, service, adaptor);
+            if (nameId != null) {
+                LOGGER.debug("Determined NameID based on format [{}] to be [{}]", nameFormat, nameId.getValue());
+                return nameId;
             }
         }
         LOGGER.warn("No NameID could be determined based on the supported formats [{}]", supportedNameFormats);

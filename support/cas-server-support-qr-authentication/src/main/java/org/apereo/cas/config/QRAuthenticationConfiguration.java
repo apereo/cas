@@ -103,14 +103,16 @@ public class QRAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "qrAuthenticationTokenValidatorService")
     @RefreshScope
     @Autowired
-    public QRAuthenticationTokenValidatorService qrAuthenticationTokenValidatorService(final CasConfigurationProperties casProperties,
-                                                                                       @Qualifier("qrAuthenticationDeviceRepository")
-                                                                                       final QRAuthenticationDeviceRepository qrAuthenticationDeviceRepository,
-                                                                                       @Qualifier("jwtBuilder")
-                                                                                       final JwtBuilder jwtBuilder,
-                                                                                       @Qualifier(CentralAuthenticationService.BEAN_NAME)
-                                                                                       final CentralAuthenticationService centralAuthenticationService) {
-        return new DefaultQRAuthenticationTokenValidatorService(jwtBuilder, centralAuthenticationService, casProperties, qrAuthenticationDeviceRepository);
+    public QRAuthenticationTokenValidatorService qrAuthenticationTokenValidatorService(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("qrAuthenticationDeviceRepository")
+        final QRAuthenticationDeviceRepository qrAuthenticationDeviceRepository,
+        @Qualifier("tokenTicketJwtBuilder")
+        final JwtBuilder tokenTicketJwtBuilder,
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
+        final CentralAuthenticationService centralAuthenticationService) {
+        return new DefaultQRAuthenticationTokenValidatorService(tokenTicketJwtBuilder,
+            centralAuthenticationService, casProperties, qrAuthenticationDeviceRepository);
     }
 
     @Bean

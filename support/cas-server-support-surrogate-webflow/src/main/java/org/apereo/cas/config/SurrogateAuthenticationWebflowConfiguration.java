@@ -41,11 +41,7 @@ import java.util.Set;
  */
 @Configuration(value = "surrogateAuthenticationWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SurrogateAuthenticationWebflowConfiguration implements InitializingBean {
-
-    @Autowired
-    @Qualifier("handledAuthenticationExceptions")
-    private Set<Class<? extends Throwable>> handledAuthenticationExceptions;
+public class SurrogateAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "surrogateWebflowConfigurer")
     @Bean
@@ -54,7 +50,9 @@ public class SurrogateAuthenticationWebflowConfiguration implements Initializing
         @Qualifier("flowBuilderServices")
         final FlowBuilderServices flowBuilderServices,
         @Qualifier("loginFlowRegistry")
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry, final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext) {
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext) {
         return new SurrogateWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
@@ -77,7 +75,8 @@ public class SurrogateAuthenticationWebflowConfiguration implements Initializing
         final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
         @Qualifier("serviceTicketRequestWebflowEventResolver")
         final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver, final CasConfigurationProperties casProperties) {
-        return new SurrogateInitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy,
+        return new SurrogateInitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
+            serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy,
             casProperties.getAuthn().getSurrogate().getSeparator());
     }
 
@@ -103,9 +102,12 @@ public class SurrogateAuthenticationWebflowConfiguration implements Initializing
         return new LoadSurrogatesListAction(surrogateAuthenticationService, surrogatePrincipalBuilder);
     }
 
-    @Override
-    public void afterPropertiesSet() {
-        this.handledAuthenticationExceptions.add(SurrogateAuthenticationException.class);
+    @Bean
+    @Autowired
+    public InitializingBean surrogateAuthenticationWebflowInitializer(
+        @Qualifier("handledAuthenticationExceptions")
+        final Set<Class<? extends Throwable>> handledAuthenticationExceptions) {
+        return () -> handledAuthenticationExceptions.add(SurrogateAuthenticationException.class);
     }
 
     @Bean

@@ -26,6 +26,7 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -62,26 +63,29 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "determineMultifactorPasswordlessAuthenticationAction")
     @RefreshScope
     @Autowired
-    public Action determineMultifactorPasswordlessAuthenticationAction(final CasConfigurationProperties casProperties,
-                                                                       @Qualifier("passwordlessPrincipalFactory")
-                                                                       final PrincipalFactory passwordlessPrincipalFactory,
-                                                                       @Qualifier("defaultAuthenticationSystemSupport")
-                                                                       final AuthenticationSystemSupport authenticationSystemSupport,
-                                                                       @Qualifier("multifactorTriggerSelectionStrategy")
-                                                                       final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy) {
-        return new DetermineMultifactorPasswordlessAuthenticationAction(multifactorTriggerSelectionStrategy, passwordlessPrincipalFactory, authenticationSystemSupport, casProperties);
+    public Action determineMultifactorPasswordlessAuthenticationAction(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("passwordlessPrincipalFactory")
+        final PrincipalFactory passwordlessPrincipalFactory,
+        @Qualifier("defaultAuthenticationSystemSupport")
+        final AuthenticationSystemSupport authenticationSystemSupport,
+        @Qualifier("defaultMultifactorTriggerSelectionStrategy")
+        final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy) {
+        return new DetermineMultifactorPasswordlessAuthenticationAction(multifactorTriggerSelectionStrategy,
+            passwordlessPrincipalFactory, authenticationSystemSupport, casProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "determineDelegatedAuthenticationAction")
     @RefreshScope
     @Autowired
-    public Action determineDelegatedAuthenticationAction(final CasConfigurationProperties casProperties,
-                                                         @Qualifier("delegatedClientIdentityProviderConfigurationProducer")
-                                                         final DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProviderConfigurationProducer) {
-        if (delegatedClientIdentityProviderConfigurationProducer != null) {
+    public Action determineDelegatedAuthenticationAction(
+        @Qualifier(DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
+        final ObjectProvider<DelegatedClientIdentityProviderConfigurationProducer> pp,
+        final CasConfigurationProperties casProperties) {
+        if (pp.getIfAvailable() != null) {
             val selectorScriptResource = casProperties.getAuthn().getPasswordless().getCore().getDelegatedAuthenticationSelectorScript().getLocation();
-            return new DetermineDelegatedAuthenticationAction(casProperties, delegatedClientIdentityProviderConfigurationProducer, new WatchableGroovyScriptResource(selectorScriptResource));
+            return new DetermineDelegatedAuthenticationAction(casProperties, pp.getObject(), new WatchableGroovyScriptResource(selectorScriptResource));
         }
         return requestContext -> new EventFactorySupport().success(this);
     }
@@ -102,7 +106,8 @@ public class PasswordlessAuthenticationWebflowConfiguration {
         final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
         @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
-        return new AcceptPasswordlessAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy,
+        return new AcceptPasswordlessAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
+            serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy,
             passwordlessTokenRepository, authenticationSystemSupport, passwordlessUserAccountStore);
     }
 
@@ -110,13 +115,14 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "displayBeforePasswordlessAuthenticationAction")
     @RefreshScope
     @Autowired
-    public Action displayBeforePasswordlessAuthenticationAction(final CasConfigurationProperties casProperties,
-                                                                @Qualifier("communicationsManager")
-                                                                final CommunicationsManager communicationsManager,
-                                                                @Qualifier("passwordlessUserAccountStore")
-                                                                final PasswordlessUserAccountStore passwordlessUserAccountStore,
-                                                                @Qualifier("passwordlessTokenRepository")
-                                                                final PasswordlessTokenRepository passwordlessTokenRepository) {
+    public Action displayBeforePasswordlessAuthenticationAction(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("communicationsManager")
+        final CommunicationsManager communicationsManager,
+        @Qualifier("passwordlessUserAccountStore")
+        final PasswordlessUserAccountStore passwordlessUserAccountStore,
+        @Qualifier("passwordlessTokenRepository")
+        final PasswordlessTokenRepository passwordlessTokenRepository) {
         return new DisplayBeforePasswordlessAuthenticationAction(passwordlessTokenRepository, passwordlessUserAccountStore, communicationsManager,
             casProperties.getAuthn().getPasswordless());
     }
@@ -132,11 +138,12 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "passwordlessAuthenticationWebflowConfigurer")
     @Bean
     @Autowired
-    public CasWebflowConfigurer passwordlessAuthenticationWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                                            @Qualifier("loginFlowRegistry")
-                                                                            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                                            @Qualifier("flowBuilderServices")
-                                                                            final FlowBuilderServices flowBuilderServices) {
+    public CasWebflowConfigurer passwordlessAuthenticationWebflowConfigurer(
+        final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+        @Qualifier("loginFlowRegistry")
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier("flowBuilderServices")
+        final FlowBuilderServices flowBuilderServices) {
         return new PasswordlessAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 

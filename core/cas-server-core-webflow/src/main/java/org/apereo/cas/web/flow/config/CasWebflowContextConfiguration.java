@@ -22,6 +22,7 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
 
 import lombok.val;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +80,23 @@ public class CasWebflowContextConfiguration {
 
     private static final FlowExecutionListener[] FLOW_EXECUTION_LISTENERS = new FlowExecutionListener[0];
 
+    @Bean
+    @Autowired
+    public InitializingBean casWebflowExecutionPlanInitializer(
+        @Qualifier("loginFlowHandlerMapping")
+        final ObjectProvider<CasFlowHandlerMapping> loginFlowHandlerMapping,
+        @Qualifier(CasWebflowExecutionPlan.BEAN_NAME)
+        final CasWebflowExecutionPlan webflowExecutionPlan) {
+        return () -> {
+            webflowExecutionPlan.execute();
+            loginFlowHandlerMapping.ifAvailable(
+                mapping -> {
+                    mapping.setInterceptors(webflowExecutionPlan.getWebflowInterceptors().toArray());
+                    mapping.initApplicationContext();
+                });
+        };
+    }
+
     @Configuration(value = "CasWebflowContextFlowHandlerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasWebflowContextFlowHandlerConfiguration {
@@ -108,10 +126,10 @@ public class CasWebflowContextConfiguration {
 
         @Bean
         @Autowired
-        public FlowHandlerMapping loginFlowHandlerMapping(
+        public CasFlowHandlerMapping loginFlowHandlerMapping(
             @Qualifier("loginFlowRegistry")
             final FlowDefinitionRegistry loginFlowRegistry) {
-            val handler = new FlowHandlerMapping();
+            val handler = new CasFlowHandlerMapping();
             handler.setOrder(LOGOUT_FLOW_HANDLER_ORDER - 1);
             handler.setFlowRegistry(loginFlowRegistry);
             return handler;
@@ -145,7 +163,7 @@ public class CasWebflowContextConfiguration {
         }
 
     }
-    
+
     @Configuration(value = "CasWebflowContextFlowExecutorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasWebflowContextFlowExecutorConfiguration {
@@ -203,7 +221,7 @@ public class CasWebflowContextConfiguration {
             return interceptor;
         }
     }
-    
+
     @Configuration(value = "CasWebflowContextExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasWebflowContextExecutionPlanConfiguration {
@@ -388,18 +406,11 @@ public class CasWebflowContextConfiguration {
         }
     }
 
-    @Bean
-    @Autowired
-    public InitializingBean casWebflowExecutionPlanInitializer(
-        @Qualifier("loginFlowHandlerMapping")
-        final ObjectProvider<FlowHandlerMapping> loginFlowHandlerMapping,
-        @Qualifier(CasWebflowExecutionPlan.BEAN_NAME)
-        final CasWebflowExecutionPlan webflowExecutionPlan) {
-        return () -> {
-            webflowExecutionPlan.execute();
-            loginFlowHandlerMapping.ifAvailable(
-                handler -> handler.setInterceptors(webflowExecutionPlan.getWebflowInterceptors().toArray()));
-        };
+    public static class CasFlowHandlerMapping extends FlowHandlerMapping {
+        @Override
+        public void initApplicationContext() throws BeansException {
+            super.initApplicationContext();
+        }
     }
 }
 

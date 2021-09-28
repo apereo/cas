@@ -61,6 +61,15 @@ public class SamlIdPObjectEncrypter {
 
     private final SamlIdPProperties samlIdPProperties;
 
+    private static void handleEncryptionFailure(final SamlRegisteredService service,
+                                                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+        val entityId = adaptor.getEntityId();
+        if (!service.isEncryptionOptional()) {
+            throw new SamlException("Unable to encrypt assertion for " + entityId);
+        }
+        LOGGER.debug("Skipping to encrypt; No encrypter can be determined and encryption is optional for [{}]", entityId);
+    }
+
     /**
      * Encode a given saml object by invoking a number of outbound security handlers on the context.
      *
@@ -70,8 +79,8 @@ public class SamlIdPObjectEncrypter {
      * @return the t
      */
     public EncryptedAssertion encode(final Assertion samlObject,
-        final SamlRegisteredService service,
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+                                     final SamlRegisteredService service,
+                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
 
         try {
             val encrypter = buildEncrypterForSamlObject(samlObject, service, adaptor);
@@ -93,8 +102,8 @@ public class SamlIdPObjectEncrypter {
      * @return the encrypted id
      */
     public EncryptedID encode(final NameID samlObject,
-        final SamlRegisteredService service,
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+                              final SamlRegisteredService service,
+                              final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
 
         try {
             val encrypter = buildEncrypterForSamlObject(samlObject, service, adaptor);
@@ -116,9 +125,9 @@ public class SamlIdPObjectEncrypter {
      * @return the encrypted attribute
      */
     public EncryptedAttribute encode(final Attribute samlObject,
-        final SamlRegisteredService service,
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
-        
+                                     final SamlRegisteredService service,
+                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+
         try {
             val encrypter = buildEncrypterForSamlObject(samlObject, service, adaptor);
             if (encrypter != null) {
@@ -140,8 +149,8 @@ public class SamlIdPObjectEncrypter {
      */
     @SneakyThrows
     protected Encrypter buildEncrypterForSamlObject(final Object samlObject,
-        final SamlRegisteredService service,
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+                                                    final SamlRegisteredService service,
+                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         val entityId = adaptor.getEntityId();
         LOGGER.trace("Calculating encryption security configuration for [{}] based on service [{}]", entityId, service.getName());
         val encryptionConfiguration = configureEncryptionSecurityConfiguration(service);
@@ -175,10 +184,10 @@ public class SamlIdPObjectEncrypter {
      * @return the encrypter
      */
     protected Encrypter getEncrypter(final Object samlObject,
-        final SamlRegisteredService service,
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-        final KeyEncryptionParameters keyEncParams,
-        final DataEncryptionParameters dataEncParams) {
+                                     final SamlRegisteredService service,
+                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                     final KeyEncryptionParameters keyEncParams,
+                                     final DataEncryptionParameters dataEncParams) {
         val entityId = adaptor.getEntityId();
         if (keyEncParams == null || dataEncParams == null) {
             LOGGER.warn("No key/data encryption parameters could be determined for [{}]", entityId);
@@ -201,9 +210,9 @@ public class SamlIdPObjectEncrypter {
      * @return the data encryption parameters
      */
     protected DataEncryptionParameters getDataEncryptionParameters(final Object samlObject,
-        final SamlRegisteredService service,
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-        final BasicEncryptionConfiguration encryptionConfiguration) {
+                                                                   final SamlRegisteredService service,
+                                                                   final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                                   final BasicEncryptionConfiguration encryptionConfiguration) {
         try {
             val params = resolveEncryptionParameters(service, encryptionConfiguration);
             if (params != null) {
@@ -226,9 +235,9 @@ public class SamlIdPObjectEncrypter {
      * @return the key encryption parameters
      */
     protected KeyEncryptionParameters getKeyEncryptionParameters(final Object samlObject,
-        final SamlRegisteredService service,
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-        final BasicEncryptionConfiguration encryptionConfiguration) {
+                                                                 final SamlRegisteredService service,
+                                                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                                 final BasicEncryptionConfiguration encryptionConfiguration) {
         try {
             val params = resolveEncryptionParameters(service, encryptionConfiguration);
             if (params != null) {
@@ -252,9 +261,9 @@ public class SamlIdPObjectEncrypter {
      * @throws Exception the exception
      */
     protected Credential configureKeyEncryptionCredential(final String peerEntityId,
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-        final SamlRegisteredService service,
-        final BasicEncryptionConfiguration encryptionConfiguration) throws Exception {
+                                                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                          final SamlRegisteredService service,
+                                                          final BasicEncryptionConfiguration encryptionConfiguration) throws Exception {
 
         val mdCredentialResolver = new SamlIdPMetadataCredentialResolver();
         val providers = new ArrayList<KeyInfoProvider>(5);
@@ -306,7 +315,7 @@ public class SamlIdPObjectEncrypter {
      * @throws ResolverException the exception
      */
     protected EncryptionParameters resolveEncryptionParameters(final SamlRegisteredService service,
-        final BasicEncryptionConfiguration encryptionConfiguration) throws ResolverException {
+                                                               final BasicEncryptionConfiguration encryptionConfiguration) throws ResolverException {
         val criteria = new CriteriaSet();
         criteria.add(new EncryptionConfigurationCriterion(encryptionConfiguration));
         criteria.add(new EncryptionOptionalCriterion(service.isEncryptionOptional()));
@@ -366,14 +375,5 @@ public class SamlIdPObjectEncrypter {
             config.setIncludeExcludePrecedence(precedence);
         }
         return config;
-    }
-
-    private static void handleEncryptionFailure(final SamlRegisteredService service,
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
-        val entityId = adaptor.getEntityId();
-        if (!service.isEncryptionOptional()) {
-            throw new SamlException("Unable to encrypt assertion for " + entityId);
-        }
-        LOGGER.debug("Skipping to encrypt; No encrypter can be determined and encryption is optional for [{}]", entityId);
     }
 }

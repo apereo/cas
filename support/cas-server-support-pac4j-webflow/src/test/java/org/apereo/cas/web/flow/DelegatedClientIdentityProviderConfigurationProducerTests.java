@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Delegation")
 public class DelegatedClientIdentityProviderConfigurationProducerTests {
     @Autowired
-    @Qualifier("delegatedClientIdentityProviderConfigurationProducer")
+    @Qualifier(DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
     private DelegatedClientIdentityProviderConfigurationProducer producer;
 
     @Autowired

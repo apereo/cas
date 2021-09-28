@@ -141,25 +141,26 @@ public class SamlConfiguration {
 
     @Bean
     @Autowired
-    public SamlValidateController samlValidateController(final CasConfigurationProperties casProperties,
-                                                         @Qualifier("serviceValidationViewFactory")
-                                                         final ServiceValidationViewFactory serviceValidationViewFactory,
-                                                         @Qualifier("argumentExtractor")
-                                                         final ArgumentExtractor argumentExtractor,
-                                                         @Qualifier("proxy20Handler")
-                                                         final ProxyHandler proxy20Handler,
-                                                         @Qualifier(ServicesManager.BEAN_NAME)
-                                                         final ServicesManager servicesManager,
-                                                         @Qualifier(CentralAuthenticationService.BEAN_NAME)
-                                                         final CentralAuthenticationService centralAuthenticationService,
-                                                         @Qualifier("requestedContextValidator")
-                                                         final RequestedAuthenticationContextValidator requestedContextValidator,
-                                                         @Qualifier("defaultAuthenticationSystemSupport")
-                                                         final AuthenticationSystemSupport authenticationSystemSupport,
-                                                         @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
-                                                         final CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification,
-                                                         @Qualifier("validationAuthorizers")
-                                                         final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
+    public SamlValidateController samlValidateController(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("serviceValidationViewFactory")
+        final ServiceValidationViewFactory serviceValidationViewFactory,
+        @Qualifier("argumentExtractor")
+        final ArgumentExtractor argumentExtractor,
+        @Qualifier("proxy20Handler")
+        final ProxyHandler proxy20Handler,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
+        final CentralAuthenticationService centralAuthenticationService,
+        @Qualifier("requestedContextValidator")
+        final RequestedAuthenticationContextValidator requestedContextValidator,
+        @Qualifier("defaultAuthenticationSystemSupport")
+        final AuthenticationSystemSupport authenticationSystemSupport,
+        @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
+        final CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification,
+        @Qualifier("serviceValidationAuthorizers")
+        final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
         val context = ServiceValidateConfigurationContext.builder()
             .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification))
             .authenticationSystemSupport(authenticationSystemSupport)

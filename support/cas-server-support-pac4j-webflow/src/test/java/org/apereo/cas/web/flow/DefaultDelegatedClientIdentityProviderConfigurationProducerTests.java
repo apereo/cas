@@ -40,7 +40,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
     @SuppressWarnings("ClassCanBeStatic")
     public abstract class BaseDelegatedClientIdentityProviderConfigurationProducerTests {
         @Autowired
-        @Qualifier("delegatedClientIdentityProviderConfigurationProducer")
+        @Qualifier(DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
         protected DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProviderConfigurationProducer;
 
         @Autowired
