@@ -117,8 +117,11 @@ public class EhcacheTicketRegistryConfiguration {
      * Create ticket registry bean with all necessary caches.
      * Using the spring ehcache wrapper bean so it can be initialized after the caches are built.
      *
-     * @param manager       Spring EhCache manager bean, wraps EhCache manager and is used for cache actuator endpoint.
-     * @param ticketCatalog Ticket Catalog
+     * @param ticketRMISynchronousCacheReplicator the ticket rmi synchronous cache replicator
+     * @param ticketCacheBootstrapCacheLoader     the ticket cache bootstrap cache loader
+     * @param casProperties                       the cas properties
+     * @param manager                             Spring EhCache manager bean, wraps EhCache manager and is used for cache actuator endpoint.
+     * @param ticketCatalog                       Ticket Catalog
      * @return Ticket Registry
      */
     @Autowired

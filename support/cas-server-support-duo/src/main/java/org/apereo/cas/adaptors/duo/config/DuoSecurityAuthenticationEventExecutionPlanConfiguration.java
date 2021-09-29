@@ -30,6 +30,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
@@ -145,12 +146,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "duoMultifactorWebflowConfigurer")
     @Bean
     @Autowired
-    public CasWebflowConfigurer duoMultifactorWebflowConfigurer(final CasConfigurationProperties casProperties,
-                                                                final ConfigurableApplicationContext applicationContext,
-                                                                @Qualifier("loginFlowRegistry")
-                                                                final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                                @Qualifier("flowBuilderServices")
-                                                                final FlowBuilderServices flowBuilderServices) {
+    public CasWebflowConfigurer duoMultifactorWebflowConfigurer(
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+        final FlowBuilderServices flowBuilderServices) {
         return new DuoSecurityMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties,
             MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
     }

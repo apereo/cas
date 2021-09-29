@@ -48,16 +48,16 @@ import java.time.ZonedDateTime;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreUtilConfiguration {
 
+    @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    @Lazy(false)
+    public ApplicationContextProvider casApplicationContextProvider() {
+        return new ApplicationContextProvider();
+    }
+
     @Configuration(value = "CasCoreUtilContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreUtilContextConfiguration {
-        @Bean
-        @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-        @Lazy(false)
-        public ApplicationContextProvider casApplicationContextProvider() {
-            return new ApplicationContextProvider();
-        }
-
         @Bean
         @Autowired
         public InitializingBean casCoreUtilInitialization(

@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.flow.action.LoadSurrogatesListAction;
@@ -47,9 +48,9 @@ public class SurrogateAuthenticationWebflowConfiguration {
     @Bean
     @Autowired
     public CasWebflowConfigurer surrogateWebflowConfigurer(
-        @Qualifier("flowBuilderServices")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices,
-        @Qualifier("loginFlowRegistry")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext) {

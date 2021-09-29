@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.config.ConditionalOnMultifactorTrustedDevicesEnabled;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -55,9 +56,9 @@ public class WebAuthnWebflowConfiguration {
     @ConditionalOnMissingBean(name = "webAuthnFlowRegistry")
     @Autowired
     public FlowDefinitionRegistry webAuthnFlowRegistry(
-        @Qualifier("flowBuilderServices")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices,
-        @Qualifier("flowBuilder")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
         final FlowBuilder flowBuilder,
         final ConfigurableApplicationContext applicationContext) {
         val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
@@ -79,9 +80,9 @@ public class WebAuthnWebflowConfiguration {
     @Bean
     @Autowired
     public CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer(
-        @Qualifier("loginFlowRegistry")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-        @Qualifier("flowBuilderServices")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices,
         @Qualifier("webAuthnFlowRegistry")
         final FlowDefinitionRegistry webAuthnFlowRegistry,
@@ -191,9 +192,9 @@ public class WebAuthnWebflowConfiguration {
         public CasWebflowConfigurer webAuthnMultifactorTrustWebflowConfigurer(
             @Qualifier("webAuthnFlowRegistry")
             final FlowDefinitionRegistry webAuthnFlowRegistry,
-            @Qualifier("loginFlowRegistry")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-            @Qualifier("flowBuilderServices")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {

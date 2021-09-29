@@ -6,6 +6,7 @@ import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfig
 import org.apereo.cas.trusted.config.ConditionalOnMultifactorTrustedDevicesEnabled;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
@@ -46,9 +47,9 @@ public class GoogleAuthenticatorConfiguration {
         @Autowired
         public FlowDefinitionRegistry googleAuthenticatorFlowRegistry(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("flowBuilderServices")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
-            @Qualifier("flowBuilder")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
             final FlowBuilder flowBuilder) {
             val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
             builder.addFlowBuilder(flowBuilder, GoogleAuthenticatorMultifactorWebflowConfigurer.MFA_GAUTH_EVENT_ID);
@@ -63,9 +64,9 @@ public class GoogleAuthenticatorConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("googleAuthenticatorFlowRegistry")
             final FlowDefinitionRegistry googleAuthenticatorFlowRegistry,
-            @Qualifier("loginFlowRegistry")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-            @Qualifier("flowBuilderServices")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             val cfg = new GoogleAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices,
                 loginFlowDefinitionRegistry, googleAuthenticatorFlowRegistry, applicationContext, casProperties,
@@ -97,9 +98,9 @@ public class GoogleAuthenticatorConfiguration {
             final FlowDefinitionRegistry googleAuthenticatorFlowRegistry,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("loginFlowRegistry")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-            @Qualifier("flowBuilderServices")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             val cfg = new GoogleAuthenticatorMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices,
                 loginFlowDefinitionRegistry, googleAuthenticatorFlowRegistry, applicationContext, casProperties,

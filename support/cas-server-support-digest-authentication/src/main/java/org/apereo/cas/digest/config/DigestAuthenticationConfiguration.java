@@ -7,6 +7,7 @@ import org.apereo.cas.digest.DigestHashedCredentialRetriever;
 import org.apereo.cas.digest.web.flow.DigestAuthenticationAction;
 import org.apereo.cas.digest.web.flow.DigestAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -37,11 +38,12 @@ public class DigestAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "digestAuthenticationWebflowConfigurer")
     @Bean
     @Autowired
-    public CasWebflowConfigurer digestAuthenticationWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                                      @Qualifier("loginFlowRegistry")
-                                                                      final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                                      @Qualifier("flowBuilderServices")
-                                                                      final FlowBuilderServices flowBuilderServices) {
+    public CasWebflowConfigurer digestAuthenticationWebflowConfigurer(
+        final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+        final FlowBuilderServices flowBuilderServices) {
         return new DigestAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 

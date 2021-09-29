@@ -7,6 +7,7 @@ import org.apereo.cas.consent.ConsentActivationStrategy;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.CheckConsentRequiredAction;
 import org.apereo.cas.web.flow.ConfirmConsentAction;
@@ -40,17 +41,18 @@ public class CasConsentWebflowConfiguration {
     @ConditionalOnMissingBean(name = "checkConsentRequiredAction")
     @Bean
     @Autowired
-    public Action checkConsentRequiredAction(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                             @Qualifier("attributeDefinitionStore")
-                                             final AttributeDefinitionStore attributeDefinitionStore,
-                                             @Qualifier("authenticationServiceSelectionPlan")
-                                             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-                                             @Qualifier(ConsentEngine.BEAN_NAME)
-                                             final ConsentEngine consentEngine,
-                                             @Qualifier(ServicesManager.BEAN_NAME)
-                                             final ServicesManager servicesManager,
-                                             @Qualifier("consentActivationStrategy")
-                                             final ConsentActivationStrategy consentActivationStrategy) {
+    public Action checkConsentRequiredAction(
+        final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+        @Qualifier("attributeDefinitionStore")
+        final AttributeDefinitionStore attributeDefinitionStore,
+        @Qualifier("authenticationServiceSelectionPlan")
+        final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+        @Qualifier(ConsentEngine.BEAN_NAME)
+        final ConsentEngine consentEngine,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
+        @Qualifier("consentActivationStrategy")
+        final ConsentActivationStrategy consentActivationStrategy) {
         return new CheckConsentRequiredAction(servicesManager, authenticationRequestServiceSelectionStrategies, consentEngine, casProperties, attributeDefinitionStore, applicationContext,
             consentActivationStrategy);
     }
@@ -74,9 +76,9 @@ public class CasConsentWebflowConfiguration {
     @Bean
     @Autowired
     public CasWebflowConfigurer consentWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                         @Qualifier("loginFlowRegistry")
+                                                         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
                                                          final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                         @Qualifier("flowBuilderServices")
+                                                         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
                                                          final FlowBuilderServices flowBuilderServices) {
         return new ConsentWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }

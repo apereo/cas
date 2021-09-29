@@ -38,6 +38,7 @@ import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -458,11 +459,11 @@ public class OidcEndpointsConfiguration {
         @Bean
         @Autowired
         public CasWebflowConfigurer oidcWebflowConfigurer(
-            @Qualifier("logoutFlowRegistry")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry logoutFlowDefinitionRegistry,
-            @Qualifier("flowBuilderServices")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
-            @Qualifier("loginFlowRegistry")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {

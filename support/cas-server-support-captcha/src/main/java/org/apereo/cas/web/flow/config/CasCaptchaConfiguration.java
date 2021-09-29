@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.flow.CasCaptchaWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.InitializeCaptchaAction;
 import org.apereo.cas.web.flow.ValidateCaptchaAction;
@@ -37,11 +38,12 @@ public class CasCaptchaConfiguration {
     @ConditionalOnMissingBean(name = "captchaWebflowConfigurer")
     @Bean
     @Autowired
-    public CasWebflowConfigurer captchaWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                         @Qualifier("loginFlowRegistry")
-                                                         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                         @Qualifier("flowBuilderServices")
-                                                         final FlowBuilderServices flowBuilderServices) {
+    public CasWebflowConfigurer captchaWebflowConfigurer(
+        final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+        final FlowBuilderServices flowBuilderServices) {
         return new CasCaptchaWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 

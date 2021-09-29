@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.config.ConditionalOnMultifactorTrustedDevicesEnabled;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -47,9 +48,9 @@ public class SwivelConfiguration {
     @Autowired
     public FlowDefinitionRegistry swivelAuthenticatorFlowRegistry(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("flowBuilderServices")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices,
-        @Qualifier("flowBuilder")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
         final FlowBuilder flowBuilder) {
         val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
         builder.addFlowBuilder(flowBuilder, SwivelMultifactorWebflowConfigurer.MFA_SWIVEL_EVENT_ID);
@@ -64,9 +65,9 @@ public class SwivelConfiguration {
         final FlowDefinitionRegistry swivelAuthenticatorFlowRegistry,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
-        @Qualifier("loginFlowRegistry")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-        @Qualifier("flowBuilderServices")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices) {
         val cfg = new SwivelMultifactorWebflowConfigurer(flowBuilderServices,
             loginFlowDefinitionRegistry,
@@ -130,9 +131,9 @@ public class SwivelConfiguration {
             final FlowDefinitionRegistry swivelAuthenticatorFlowRegistry,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("loginFlowRegistry")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-            @Qualifier("flowBuilderServices")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             val cfg = new SwivelMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices,
                 loginFlowDefinitionRegistry,

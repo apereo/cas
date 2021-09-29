@@ -16,6 +16,7 @@ import org.apereo.cas.web.flow.AcceptableUsagePolicyVerifyAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyVerifyServiceAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -94,11 +95,12 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
     @ConditionalOnMissingBean(name = "acceptableUsagePolicyWebflowConfigurer")
     @Bean
     @Autowired
-    public CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                                       @Qualifier("loginFlowRegistry")
-                                                                       final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                                       @Qualifier("flowBuilderServices")
-                                                                       final FlowBuilderServices flowBuilderServices) {
+    public CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer(
+        final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+        final FlowBuilderServices flowBuilderServices) {
         return new AcceptableUsagePolicyWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
@@ -106,9 +108,10 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
     @Bean
     @RefreshScope
     @Autowired
-    public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                                           @Qualifier("defaultTicketRegistrySupport")
-                                                                           final TicketRegistrySupport ticketRegistrySupport) {
+    public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(
+        final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+        @Qualifier("defaultTicketRegistrySupport")
+        final TicketRegistrySupport ticketRegistrySupport) {
         val groovy = casProperties.getAcceptableUsagePolicy().getGroovy();
         if (groovy.getLocation() != null) {
             return new GroovyAcceptableUsagePolicyRepository(ticketRegistrySupport, casProperties.getAcceptableUsagePolicy(), new WatchableGroovyScriptResource(groovy.getLocation()),

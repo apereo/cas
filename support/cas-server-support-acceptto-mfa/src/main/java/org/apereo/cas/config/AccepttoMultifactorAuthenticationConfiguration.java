@@ -27,6 +27,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -73,9 +74,9 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "mfaAccepttoAuthenticatorFlowRegistry")
     @Autowired
     public FlowDefinitionRegistry mfaAccepttoAuthenticatorFlowRegistry(final ConfigurableApplicationContext applicationContext,
-                                                                       @Qualifier("flowBuilderServices")
+                                                                       @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
                                                                        final FlowBuilderServices flowBuilderServices,
-                                                                       @Qualifier("flowBuilder")
+                                                                       @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
                                                                        final FlowBuilder flowBuilder) {
         val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
         builder.addFlowBuilder(flowBuilder, AccepttoMultifactorWebflowConfigurer.MFA_ACCEPTTO_EVENT_ID);
@@ -89,9 +90,9 @@ public class AccepttoMultifactorAuthenticationConfiguration {
         final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
         @Qualifier("mfaAccepttoAuthenticatorFlowRegistry")
         final FlowDefinitionRegistry mfaAccepttoAuthenticatorFlowRegistry,
-        @Qualifier("loginFlowRegistry")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-        @Qualifier("flowBuilderServices")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices) {
         return new AccepttoMultifactorWebflowConfigurer(flowBuilderServices,
             loginFlowDefinitionRegistry, mfaAccepttoAuthenticatorFlowRegistry, applicationContext, casProperties,

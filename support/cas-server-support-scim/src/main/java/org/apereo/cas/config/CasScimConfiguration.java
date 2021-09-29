@@ -7,6 +7,7 @@ import org.apereo.cas.scim.v1.ScimV1PrincipalProvisioner;
 import org.apereo.cas.scim.v2.ScimV2PrincipalAttributeMapper;
 import org.apereo.cas.scim.v2.ScimV2PrincipalProvisioner;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.PrincipalScimProvisionerAction;
 import org.apereo.cas.web.flow.ScimWebflowConfigurer;
@@ -37,15 +38,16 @@ import org.springframework.webflow.execution.Action;
 @ConditionalOnProperty(prefix = "cas.scim", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Configuration(value = "casScimConfiguration", proxyBeanMethods = false)
 public class CasScimConfiguration {
-    
+
     @ConditionalOnMissingBean(name = "scimWebflowConfigurer")
     @Bean
     @Autowired
-    public CasWebflowConfigurer scimWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                      @Qualifier("loginFlowRegistry")
-                                                      final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                      @Qualifier("flowBuilderServices")
-                                                      final FlowBuilderServices flowBuilderServices) {
+    public CasWebflowConfigurer scimWebflowConfigurer(
+        final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+        final FlowBuilderServices flowBuilderServices) {
         return new ScimWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 

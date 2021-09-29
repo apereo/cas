@@ -14,6 +14,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.config.ConditionalOnMultifactorTrustedDevicesEnabled;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -53,11 +54,12 @@ public class U2FWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "u2fFlowRegistry")
     @Autowired
-    public FlowDefinitionRegistry u2fFlowRegistry(final ConfigurableApplicationContext applicationContext,
-                                                  @Qualifier("flowBuilderServices")
-                                                  final FlowBuilderServices flowBuilderServices,
-                                                  @Qualifier("flowBuilder")
-                                                  final FlowBuilder flowBuilder) {
+    public FlowDefinitionRegistry u2fFlowRegistry(
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+        final FlowBuilderServices flowBuilderServices,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
+        final FlowBuilder flowBuilder) {
         val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
         builder.addFlowBuilder(flowBuilder, U2FMultifactorWebflowConfigurer.MFA_U2F_EVENT_ID);
         return builder.build();
@@ -80,9 +82,9 @@ public class U2FWebflowConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("u2fFlowRegistry")
         final FlowDefinitionRegistry u2fFlowRegistry,
-        @Qualifier("loginFlowRegistry")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-        @Qualifier("flowBuilderServices")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices) {
         val cfg = new U2FMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, u2fFlowRegistry, applicationContext, casProperties,
             MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
@@ -177,11 +179,11 @@ public class U2FWebflowConfiguration {
             final FlowDefinitionRegistry u2fFlowRegistry,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("loginFlowRegistry")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-            @Qualifier("logoutFlowRegistry")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry logoutFlowRegistry,
-            @Qualifier("flowBuilderServices")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             val cfg = new U2FMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, u2fFlowRegistry,
                 applicationContext, casProperties, MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));

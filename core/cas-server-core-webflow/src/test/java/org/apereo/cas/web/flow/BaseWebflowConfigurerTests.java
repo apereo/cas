@@ -63,11 +63,11 @@ public class BaseWebflowConfigurerTests {
     protected CasWebflowExecutionPlan casWebflowExecutionPlan;
 
     @Autowired
-    @Qualifier("loginFlowRegistry")
+    @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
     protected FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
     @Autowired
-    @Qualifier("logoutFlowRegistry")
+    @Qualifier(CasWebflowConstants.BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY)
     protected FlowDefinitionRegistry logoutFlowDefinitionRegistry;
 
     @ImportAutoConfiguration({

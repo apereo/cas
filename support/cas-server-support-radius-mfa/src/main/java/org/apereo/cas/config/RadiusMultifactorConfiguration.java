@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.config.ConditionalOnMultifactorTrustedDevicesEnabled;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -48,11 +49,12 @@ public class RadiusMultifactorConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "radiusFlowRegistry")
     @Autowired
-    public FlowDefinitionRegistry radiusFlowRegistry(final ConfigurableApplicationContext applicationContext,
-                                                     @Qualifier("flowBuilderServices")
-                                                     final FlowBuilderServices flowBuilderServices,
-                                                     @Qualifier("flowBuilder")
-                                                     final FlowBuilder flowBuilder) {
+    public FlowDefinitionRegistry radiusFlowRegistry(
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+        final FlowBuilderServices flowBuilderServices,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
+        final FlowBuilder flowBuilder) {
         val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
         builder.addFlowBuilder(flowBuilder, RadiusMultifactorWebflowConfigurer.MFA_RADIUS_EVENT_ID);
         return builder.build();
@@ -85,9 +87,9 @@ public class RadiusMultifactorConfiguration {
                                                                    final ConfigurableApplicationContext applicationContext,
                                                                    @Qualifier("radiusFlowRegistry")
                                                                    final FlowDefinitionRegistry radiusFlowRegistry,
-                                                                   @Qualifier("loginFlowRegistry")
+                                                                   @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
                                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                                   @Qualifier("flowBuilderServices")
+                                                                   @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
                                                                    final FlowBuilderServices flowBuilderServices) {
         val cfg = new RadiusMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, radiusFlowRegistry, applicationContext, casProperties,
             MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
@@ -121,9 +123,9 @@ public class RadiusMultifactorConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("radiusFlowRegistry")
             final FlowDefinitionRegistry radiusFlowRegistry,
-            @Qualifier("loginFlowRegistry")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-            @Qualifier("flowBuilderServices")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             val cfg = new RadiusMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices,
                 loginFlowDefinitionRegistry, radiusFlowRegistry,

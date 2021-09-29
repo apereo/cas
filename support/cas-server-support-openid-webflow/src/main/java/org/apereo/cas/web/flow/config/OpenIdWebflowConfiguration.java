@@ -7,6 +7,7 @@ import org.apereo.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
 import org.apereo.cas.support.openid.web.support.OpenIdUserNameExtractor;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
 import org.apereo.cas.web.flow.OpenIdCasWebflowLoginContextProvider;
@@ -46,11 +47,12 @@ public class OpenIdWebflowConfiguration {
     @ConditionalOnMissingBean(name = "openidWebflowConfigurer")
     @Bean
     @Autowired
-    public CasWebflowConfigurer openidWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                        @Qualifier("loginFlowRegistry")
-                                                        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                        @Qualifier("flowBuilderServices")
-                                                        final FlowBuilderServices flowBuilderServices) {
+    public CasWebflowConfigurer openidWebflowConfigurer(
+        final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+        final FlowBuilderServices flowBuilderServices) {
         return new OpenIdWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
