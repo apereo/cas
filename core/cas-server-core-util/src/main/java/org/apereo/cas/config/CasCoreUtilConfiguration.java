@@ -16,6 +16,7 @@ import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -65,7 +66,7 @@ public class CasCoreUtilConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "casBeanValidationPostProcessor")
-    public BeanValidationPostProcessor casBeanValidationPostProcessor() {
+    public BeanPostProcessor casBeanValidationPostProcessor() {
         return new BeanValidationPostProcessor();
     }
 
