@@ -60,7 +60,6 @@ public class CasCoreConfiguration {
         return new AcceptAnyAuthenticationPolicyFactory();
     }
 
-
     @Bean
     @ConditionalOnMissingBean(name = "serviceMatchingStrategy")
     @Autowired

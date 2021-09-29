@@ -22,7 +22,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -32,7 +31,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManagerFactory;
@@ -45,13 +43,13 @@ import java.util.Set;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
 @Configuration(value = "jpaTicketRegistryConfiguration", proxyBeanMethods = false)
 public class JpaTicketRegistryConfiguration {
 
     @Configuration(value = "JpaTicketRegistryEntityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaTicketRegistryEntityConfiguration {
+
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceTicket")
         @RefreshScope
@@ -59,7 +57,7 @@ public class JpaTicketRegistryConfiguration {
         public CloseableDataSource dataSourceTicket(final CasConfigurationProperties casProperties) {
             return JpaBeans.newDataSource(casProperties.getTicket().getRegistry().getJpa());
         }
-        
+
         @Bean
         @Autowired
         @RefreshScope
@@ -81,50 +79,45 @@ public class JpaTicketRegistryConfiguration {
             @Qualifier("jpaBeanFactory")
             final JpaBeanFactory jpaBeanFactory) {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
-            val factory = jpaBeanFactory;
             val ctx = JpaConfigurationContext.builder()
                 .jpaVendorAdapter(jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc()))
                 .persistenceUnitName("jpaTicketRegistryContext")
                 .dataSource(dataSourceTicket)
                 .packagesToScan(ticketPackagesToScan)
                 .build();
-            return factory.newEntityManagerFactoryBean(ctx, casProperties.getTicket().getRegistry().getJpa());
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getTicket().getRegistry().getJpa());
         }
     }
 
     @Configuration(value = "JpaTicketRegistryTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaTicketRegistryTransactionConfiguration {
-        @ConditionalOnMissingBean(name = JpaTicketRegistry.BEAN_NAME_TRANSACTION_MANAGER)
         @Bean
         @Autowired
         public PlatformTransactionManager ticketTransactionManager(
             @Qualifier("ticketEntityManagerFactory")
             final EntityManagerFactory emf) {
-            val mgmr = new JpaTransactionManager();
-            mgmr.setEntityManagerFactory(emf);
-            return mgmr;
-        }
-
-
-        @ConditionalOnMissingBean(name = "jpaTicketRegistryTransactionTemplate")
-        @Bean
-        @Autowired
-        public TransactionTemplate jpaTicketRegistryTransactionTemplate(
-            final CasConfigurationProperties casProperties,
-            final ConfigurableApplicationContext applicationContext) {
-            var mgr = applicationContext.getBean(JpaTicketRegistry.BEAN_NAME_TRANSACTION_MANAGER, PlatformTransactionManager.class);
-            val t = new TransactionTemplate(mgr);
-            val jpa = casProperties.getTicket().getRegistry().getJpa();
-            t.setIsolationLevelName(jpa.getIsolationLevelName());
-            t.setPropagationBehaviorName(jpa.getPropagationBehaviorName());
-            return t;
+            return new JpaTransactionManager(emf);
         }
     }
 
     @Configuration(value = "JpaTicketRegistryCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaTicketRegistryCoreConfiguration {
+        @ConditionalOnMissingBean(name = "jpaTicketRegistryTransactionTemplate")
+        @Bean
+        @Autowired
+        public TransactionTemplate jpaTicketRegistryTransactionTemplate(
+            @Qualifier("ticketTransactionManager")
+            final PlatformTransactionManager ticketTransactionManager,
+            final CasConfigurationProperties casProperties) {
+            val template = new TransactionTemplate(ticketTransactionManager);
+            val jpa = casProperties.getTicket().getRegistry().getJpa();
+            template.setIsolationLevelName(jpa.getIsolationLevelName());
+            template.setPropagationBehaviorName(jpa.getPropagationBehaviorName());
+            return template;
+        }
+
         @Bean
         @RefreshScope
         @Autowired
