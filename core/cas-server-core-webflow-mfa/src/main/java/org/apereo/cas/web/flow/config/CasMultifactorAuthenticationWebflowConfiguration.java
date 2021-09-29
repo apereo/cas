@@ -23,7 +23,6 @@ import org.apereo.cas.authentication.mfa.trigger.RestEndpointMultifactorAuthenti
 import org.apereo.cas.authentication.mfa.trigger.ScriptedRegisteredServiceMultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.mfa.trigger.TimedMultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -78,12 +77,15 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "multifactorAuthenticationProviderResolver")
-    public MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver() {
-        val resolvers = ApplicationContextProvider.getMultifactorAuthenticationPrincipalResolvers();
+    @RefreshScope
+    public MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver(
+        final List<MultifactorAuthenticationPrincipalResolver> resolvers) {
+        AnnotationAwareOrderComparator.sort(resolvers);
         return new DefaultMultifactorAuthenticationProviderResolver(resolvers);
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "defaultMultifactorAuthenticationPrincipalResolver")
     public MultifactorAuthenticationPrincipalResolver defaultMultifactorAuthenticationPrincipalResolver() {
         return MultifactorAuthenticationPrincipalResolver.identical();
@@ -309,7 +311,8 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "defaultMultifactorTriggerSelectionStrategy")
     @Autowired
-    public MultifactorAuthenticationTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy(final List<MultifactorAuthenticationTrigger> triggers) {
+    public MultifactorAuthenticationTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy(
+        final List<MultifactorAuthenticationTrigger> triggers) {
         AnnotationAwareOrderComparator.sortIfNecessary(triggers);
         return new DefaultMultifactorAuthenticationTriggerSelectionStrategy(triggers);
     }

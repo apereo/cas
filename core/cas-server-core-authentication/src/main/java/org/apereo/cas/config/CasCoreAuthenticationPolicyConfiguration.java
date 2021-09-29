@@ -28,35 +28,6 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreAuthenticationPolicyConfiguration {
 
-    @ConditionalOnMissingBean(name = "authenticationPolicyExecutionPlanConfigurer")
-    @Bean
-    @RefreshScope
-    @Autowired
-    public AuthenticationEventExecutionPlanConfigurer authenticationPolicyExecutionPlanConfigurer(
-        final CasConfigurationProperties casProperties) {
-        return plan -> {
-            val policyProps = casProperties.getAuthn().getPolicy();
-            val authPolicy = CoreAuthenticationUtils.newAuthenticationPolicy(policyProps);
-            if (authPolicy != null) {
-                plan.registerAuthenticationPolicies(authPolicy);
-            }
-        };
-    }
-
-    @ConditionalOnMissingBean(name = "adaptiveAuthenticationPolicy")
-    @Bean
-    @RefreshScope
-    @Autowired
-    public AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("ipAddressIntelligenceService")
-        final IPAddressIntelligenceService ipAddressIntelligenceService,
-        @Qualifier("geoLocationService")
-        final ObjectProvider<GeoLocationService> geoLocationService) {
-        return new DefaultAdaptiveAuthenticationPolicy(geoLocationService.getIfAvailable(),
-            ipAddressIntelligenceService, casProperties.getAuthn().getAdaptive());
-    }
-
     @ConditionalOnMissingBean(name = "ipAddressIntelligenceService")
     @Bean
     @RefreshScope
@@ -64,5 +35,38 @@ public class CasCoreAuthenticationPolicyConfiguration {
     public IPAddressIntelligenceService ipAddressIntelligenceService(final CasConfigurationProperties casProperties) {
         val adaptive = casProperties.getAuthn().getAdaptive();
         return CoreAuthenticationUtils.newIpAddressIntelligenceService(adaptive);
+    }
+
+    @Configuration(value = "CasCoreAuthenticationPolicyPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreAuthenticationPolicyPlanConfiguration {
+        @ConditionalOnMissingBean(name = "authenticationPolicyExecutionPlanConfigurer")
+        @Bean
+        @RefreshScope
+        @Autowired
+        public AuthenticationEventExecutionPlanConfigurer authenticationPolicyExecutionPlanConfigurer(
+            final CasConfigurationProperties casProperties) {
+            return plan -> {
+                val policyProps = casProperties.getAuthn().getPolicy();
+                val authPolicy = CoreAuthenticationUtils.newAuthenticationPolicy(policyProps);
+                if (authPolicy != null) {
+                    plan.registerAuthenticationPolicies(authPolicy);
+                }
+            };
+        }
+
+        @ConditionalOnMissingBean(name = "adaptiveAuthenticationPolicy")
+        @Bean
+        @RefreshScope
+        @Autowired
+        public AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("ipAddressIntelligenceService")
+            final IPAddressIntelligenceService ipAddressIntelligenceService,
+            @Qualifier("geoLocationService")
+            final ObjectProvider<GeoLocationService> geoLocationService) {
+            return new DefaultAdaptiveAuthenticationPolicy(geoLocationService.getIfAvailable(),
+                ipAddressIntelligenceService, casProperties.getAuthn().getAdaptive());
+        }
     }
 }

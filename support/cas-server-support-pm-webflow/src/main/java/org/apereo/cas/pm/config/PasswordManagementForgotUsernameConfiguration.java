@@ -48,59 +48,68 @@ import org.springframework.webflow.execution.RequestContext;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class PasswordManagementForgotUsernameConfiguration {
 
-    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS_ACTION)
-    @Bean
-    @RefreshScope
-    @Autowired
-    public Action sendForgotUsernameInstructionsAction(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("communicationsManager")
-        final CommunicationsManager communicationsManager,
-        @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-        final PasswordManagementService passwordManagementService,
-        @Qualifier("defaultPrincipalResolver")
-        final PrincipalResolver defaultPrincipalResolver) {
-        return new SendForgotUsernameInstructionsAction(casProperties, communicationsManager,
-            passwordManagementService, defaultPrincipalResolver);
+    @Configuration(value = "PasswordManagementForgotUsernameAuditConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class PasswordManagementForgotUsernameAuditConfiguration {
+        @Bean
+        @Autowired
+        @ConditionalOnMissingBean(name = "forgotUsernameAuditTrailRecordResolutionPlanConfigurer")
+        public AuditTrailRecordResolutionPlanConfigurer forgotUsernameAuditTrailRecordResolutionPlanConfigurer(
+            @Qualifier("returnValueResourceResolver")
+            final AuditResourceResolver returnValueResourceResolver) {
+            return plan -> {
+                plan.registerAuditActionResolver(AuditActionResolvers.REQUEST_FORGOT_USERNAME_ACTION_RESOLVER,
+                    new DefaultAuditActionResolver());
+                plan.registerAuditResourceResolver(AuditResourceResolvers.REQUEST_FORGOT_USERNAME_RESOURCE_RESOLVER,
+                    returnValueResourceResolver);
+                plan.registerAuditPrincipalResolver(AuditPrincipalResolvers.REQUEST_FORGOT_USERNAME_PRINCIPAL_RESOLVER,
+                    new SpringWebflowActionExecutionAuditablePrincipalResolver(SendForgotUsernameInstructionsAction.REQUEST_PARAMETER_EMAIL));
+            };
+        }
     }
 
-    @ConditionalOnMissingBean(name = "forgotUsernameWebflowConfigurer")
-    @Bean
-    @Autowired
-    public CasWebflowConfigurer forgotUsernameWebflowConfigurer(
-        final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-        final FlowBuilderServices flowBuilderServices) {
-        return new ForgotUsernameWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, applicationContext, casProperties);
-    }
+    @Configuration(value = "PasswordManagementForgotUsernameWebflowConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class PasswordManagementForgotUsernameWebflowConfiguration {
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS_ACTION)
+        @Bean
+        @RefreshScope
+        @Autowired
+        public Action sendForgotUsernameInstructionsAction(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("communicationsManager")
+            final CommunicationsManager communicationsManager,
+            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
+            final PasswordManagementService passwordManagementService,
+            @Qualifier("defaultPrincipalResolver")
+            final PrincipalResolver defaultPrincipalResolver) {
+            return new SendForgotUsernameInstructionsAction(casProperties, communicationsManager,
+                passwordManagementService, defaultPrincipalResolver);
+        }
 
-    @Bean
-    @Autowired
-    @ConditionalOnMissingBean(name = "forgotUsernameAuditTrailRecordResolutionPlanConfigurer")
-    public AuditTrailRecordResolutionPlanConfigurer forgotUsernameAuditTrailRecordResolutionPlanConfigurer(
-        @Qualifier("returnValueResourceResolver")
-        final AuditResourceResolver returnValueResourceResolver) {
-        return plan -> {
-            plan.registerAuditActionResolver(AuditActionResolvers.REQUEST_FORGOT_USERNAME_ACTION_RESOLVER,
-                new DefaultAuditActionResolver());
-            plan.registerAuditResourceResolver(AuditResourceResolvers.REQUEST_FORGOT_USERNAME_RESOURCE_RESOLVER,
-                returnValueResourceResolver);
-            plan.registerAuditPrincipalResolver(AuditPrincipalResolvers.REQUEST_FORGOT_USERNAME_PRINCIPAL_RESOLVER,
-                new SpringWebflowActionExecutionAuditablePrincipalResolver(SendForgotUsernameInstructionsAction.REQUEST_PARAMETER_EMAIL));
-        };
-    }
+        @ConditionalOnMissingBean(name = "forgotUsernameWebflowConfigurer")
+        @Bean
+        @Autowired
+        public CasWebflowConfigurer forgotUsernameWebflowConfigurer(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
+            return new ForgotUsernameWebflowConfigurer(flowBuilderServices,
+                loginFlowDefinitionRegistry, applicationContext, casProperties);
+        }
 
-    @Bean
-    @Autowired
-    @ConditionalOnMissingBean(name = "forgotUsernameCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer forgotUsernameCasWebflowExecutionPlanConfigurer(
-        @Qualifier("forgotUsernameWebflowConfigurer")
-        final CasWebflowConfigurer forgotUsernameWebflowConfigurer) {
-        return plan -> plan.registerWebflowConfigurer(forgotUsernameWebflowConfigurer);
+        @Bean
+        @Autowired
+        @ConditionalOnMissingBean(name = "forgotUsernameCasWebflowExecutionPlanConfigurer")
+        public CasWebflowExecutionPlanConfigurer forgotUsernameCasWebflowExecutionPlanConfigurer(
+            @Qualifier("forgotUsernameWebflowConfigurer")
+            final CasWebflowConfigurer forgotUsernameWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(forgotUsernameWebflowConfigurer);
+        }
+
     }
 
     @ConditionalOnProperty(prefix = "cas.authn.pm.forgot-username.google-recaptcha", name = "enabled", havingValue = "true")
