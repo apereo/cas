@@ -19,6 +19,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import jcifs.spnego.Authentication;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -153,7 +154,7 @@ public class SpnegoConfiguration {
     @Autowired
     public AuthenticationEventExecutionPlanConfigurer spnegoAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("ntlmAuthenticationHandler")
-        final AuthenticationHandler ntlmAuthenticationHandler,
+        final ObjectProvider<AuthenticationHandler> ntlmAuthenticationHandler,
         @Qualifier("spnegoPrincipalResolver")
         final PrincipalResolver spnegoPrincipalResolver,
         @Qualifier("spnegoHandler")
@@ -161,9 +162,7 @@ public class SpnegoConfiguration {
         final CasConfigurationProperties casProperties) {
         return plan -> {
             plan.registerAuthenticationHandlerWithPrincipalResolver(spnegoHandler, spnegoPrincipalResolver);
-            if (casProperties.getAuthn().getNtlm().isEnabled()) {
-                plan.registerAuthenticationHandler(ntlmAuthenticationHandler);
-            }
+            ntlmAuthenticationHandler.ifAvailable(plan::registerAuthenticationHandler);
         };
     }
 }

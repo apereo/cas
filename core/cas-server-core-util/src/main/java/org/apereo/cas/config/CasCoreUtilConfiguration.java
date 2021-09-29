@@ -47,57 +47,71 @@ import java.time.ZonedDateTime;
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreUtilConfiguration {
-    @Bean
-    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    @Lazy(false)
-    public ApplicationContextProvider casApplicationContextProvider() {
-        return new ApplicationContextProvider();
+
+    @Configuration(value = "CasCoreUtilContextConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreUtilContextConfiguration {
+        @Bean
+        @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        @Lazy(false)
+        public ApplicationContextProvider casApplicationContextProvider() {
+            return new ApplicationContextProvider();
+        }
+
+        @Bean
+        @Autowired
+        public InitializingBean casCoreUtilInitialization(
+            @Qualifier("casApplicationContextProvider")
+            final ApplicationContextProvider casApplicationContextProvider,
+            @Qualifier("zonedDateTimeToStringConverter")
+            final Converter<ZonedDateTime, String> zonedDateTimeToStringConverter) {
+            return () -> {
+                Assert.notNull(casApplicationContextProvider, "Application context cannot be initialized");
+                val registry = (ConverterRegistry) DefaultConversionService.getSharedInstance();
+                registry.addConverter(zonedDateTimeToStringConverter);
+            };
+        }
     }
 
-    @Bean
-    public MessageInterpolator messageInterpolator() {
-        return new SpringAwareMessageMessageInterpolator();
+    @Configuration(value = "CasCoreUtilConverterConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreUtilConverterConfiguration {
+        @Bean
+        public MessageInterpolator messageInterpolator() {
+            return new SpringAwareMessageMessageInterpolator();
+        }
+
+        @Bean
+        public Converter<ZonedDateTime, String> zonedDateTimeToStringConverter() {
+            return new Converters.ZonedDateTimeToStringConverter();
+        }
+
+        @Bean
+        public ObjectMapper objectMapper() {
+            return JacksonObjectMapperFactory.builder().build().toObjectMapper();
+        }
+
     }
 
-    @Bean
-    public Converter<ZonedDateTime, String> zonedDateTimeToStringConverter() {
-        return new Converters.ZonedDateTimeToStringConverter();
-    }
+    @Configuration(value = "CasCoreUtilEssentialConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreUtilEssentialConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "casBeanValidationPostProcessor")
+        public BeanPostProcessor casBeanValidationPostProcessor() {
+            return new BeanValidationPostProcessor();
+        }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "casBeanValidationPostProcessor")
-    public BeanPostProcessor casBeanValidationPostProcessor() {
-        return new BeanValidationPostProcessor();
-    }
+        @Bean
+        @ConditionalOnMissingBean(name = ScriptResourceCacheManager.BEAN_NAME)
+        public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> scriptResourceCacheManager() {
+            return new GroovyScriptResourceCacheManager();
+        }
 
-    @Bean
-    @ConditionalOnMissingBean(name = ScriptResourceCacheManager.BEAN_NAME)
-    public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> scriptResourceCacheManager() {
-        return new GroovyScriptResourceCacheManager();
-    }
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        return JacksonObjectMapperFactory.builder().build().toObjectMapper();
-    }
-
-    @Bean
-    public CasRuntimeModuleLoader casRuntimeModuleLoader() {
-        return new DefaultCasRuntimeModuleLoader();
-    }
-
-    @Bean
-    @Autowired
-    public InitializingBean casCoreUtilInitialization(
-        @Qualifier("casApplicationContextProvider")
-        final ApplicationContextProvider casApplicationContextProvider,
-        @Qualifier("zonedDateTimeToStringConverter")
-        final Converter<ZonedDateTime, String> zonedDateTimeToStringConverter) {
-        return () -> {
-            Assert.notNull(casApplicationContextProvider, "Application context cannot be initialized");
-            val registry = (ConverterRegistry) DefaultConversionService.getSharedInstance();
-            registry.addConverter(zonedDateTimeToStringConverter);
-        };
+        @Bean
+        public CasRuntimeModuleLoader casRuntimeModuleLoader() {
+            return new DefaultCasRuntimeModuleLoader();
+        }
     }
 
 }

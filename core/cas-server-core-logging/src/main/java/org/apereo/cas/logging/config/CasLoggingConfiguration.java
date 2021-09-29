@@ -37,24 +37,27 @@ import java.util.HashMap;
 @Configuration(value = "casLoggingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasLoggingConfiguration {
-    @Autowired
+
     @ConditionalOnBean(value = TicketRegistry.class)
     @ConditionalOnProperty(prefix = "cas.logging", name = "mdc-enabled", havingValue = "true", matchIfMissing = true)
-    @Bean
-    public FilterRegistrationBean threadContextMDCServletFilter(
-        @Qualifier("defaultTicketRegistrySupport")
-        final TicketRegistrySupport ticketRegistrySupport,
-        @Qualifier("ticketGrantingTicketCookieGenerator")
-        final CasCookieBuilder ticketGrantingTicketCookieGenerator) {
-        val filter = new ThreadContextMDCServletFilter(ticketRegistrySupport, ticketGrantingTicketCookieGenerator);
-        val initParams = new HashMap<String, String>();
-        val bean = new FilterRegistrationBean<ThreadContextMDCServletFilter>();
-        bean.setFilter(filter);
-        bean.setUrlPatterns(CollectionUtils.wrap("/*"));
-        bean.setInitParameters(initParams);
-        bean.setName("threadContextMDCServletFilter");
-        bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
-        return bean;
+    public static class CasMdcLoggingConfiguration {
+        @Autowired
+        @Bean
+        public FilterRegistrationBean<ThreadContextMDCServletFilter> threadContextMDCServletFilter(
+            @Qualifier("defaultTicketRegistrySupport")
+            final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator) {
+            val filter = new ThreadContextMDCServletFilter(ticketRegistrySupport, ticketGrantingTicketCookieGenerator);
+            val initParams = new HashMap<String, String>();
+            val bean = new FilterRegistrationBean<ThreadContextMDCServletFilter>();
+            bean.setFilter(filter);
+            bean.setUrlPatterns(CollectionUtils.wrap("/*"));
+            bean.setInitParameters(initParams);
+            bean.setName("threadContextMDCServletFilter");
+            bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
+            return bean;
+        }
     }
 
     /**
