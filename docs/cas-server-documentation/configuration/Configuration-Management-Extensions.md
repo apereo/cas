@@ -41,7 +41,7 @@ public class SomethingConfiguration {
     @Qualifier("someOtherBeanId")
     private SomeBean someOtherBeanId;
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public MyBean myBean() {
         return new MyBean();
@@ -49,7 +49,7 @@ public class SomethingConfiguration {
 } 
 ```
 
-- The `@Bean` definitions can also be tagged with `@RefreshScope` to become auto-reloadable when the CAS 
+- The `@Bean` definitions can also be tagged with `@RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)` to become auto-reloadable when the CAS 
   context is refreshed as a result of an external property change.
 - `@Configuration` classes can be assigned an order with `@Order(1984)` which would place 
   them in an ordered queue waiting to be loaded in that sequence.

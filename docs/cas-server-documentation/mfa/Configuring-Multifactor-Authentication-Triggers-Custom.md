@@ -73,7 +73,7 @@ public class SomethingConfiguration {
     }
     
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowEventResolver exampleMultifactorAuthenticationWebflowEventResolver() {
         val r = new DefaultMultifactorAuthenticationProviderEventResolver(
             authenticationSystemSupport.getObject(),
