@@ -42,84 +42,104 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreAuthenticationPrincipalConfiguration {
-    @ConditionalOnMissingBean(name = "principalElectionStrategy")
-    @Bean
-    @RefreshScope
-    @Autowired
-    public PrincipalElectionStrategy principalElectionStrategy(final List<PrincipalElectionStrategyConfigurer> configurers,
-                                                               final CasConfigurationProperties casProperties) {
-        LOGGER.trace("Building principal election strategies from [{}]", configurers);
-        val chain = new ChainingPrincipalElectionStrategy();
-        val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
-        chain.setAttributeMerger(merger);
-        AnnotationAwareOrderComparator.sortIfNecessary(configurers);
 
-        configurers.forEach(c -> {
-            LOGGER.trace("Configuring principal selection strategy: [{}]", c);
-            c.configurePrincipalElectionStrategy(chain);
-        });
-        return chain;
-    }
+    @Configuration(value = "CasCoreAuthenticationPrincipalResolutionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreAuthenticationPrincipalResolutionConfiguration {
 
-    @ConditionalOnMissingBean(name = "defaultPrincipalElectionStrategyConfigurer")
-    @Bean
-    @RefreshScope
-    @Autowired
-    public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("principalFactory")
-        final PrincipalFactory principalFactory) {
-        return chain -> {
-            val strategy = new DefaultPrincipalElectionStrategy(principalFactory,
-                CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(casProperties.getPersonDirectory()));
-            val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
-            strategy.setAttributeMerger(merger);
-            chain.registerElectionStrategy(strategy);
-        };
-    }
+        @Bean
+        @ConditionalOnMissingBean(name = "defaultPrincipalResolver")
+        @RefreshScope
+        @Autowired
+        public PrincipalResolver defaultPrincipalResolver(final List<PrincipalResolutionExecutionPlanConfigurer> configurers,
+                                                          final CasConfigurationProperties casProperties,
+                                                          @Qualifier("principalElectionStrategy")
+                                                          final PrincipalElectionStrategy principalElectionStrategy) {
+            val plan = new DefaultPrincipalResolutionExecutionPlan();
+            val sortedConfigurers = new ArrayList<>(configurers);
+            AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
 
-    @ConditionalOnMissingBean(name = "principalFactory")
-    @Bean
-    @RefreshScope
-    public PrincipalFactory principalFactory() {
-        return PrincipalFactoryUtils.newPrincipalFactory();
-    }
+            sortedConfigurers.forEach(Unchecked.consumer(c -> {
+                LOGGER.trace("Configuring principal resolution execution plan [{}]", c.getName());
+                c.configurePrincipalResolutionExecutionPlan(plan);
+            }));
+            plan.registerPrincipalResolver(new EchoingPrincipalResolver());
 
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_GLOBAL_PRINCIPAL_ATTRIBUTE_REPOSITORY)
-    @Autowired
-    public RegisteredServicePrincipalAttributesRepository globalPrincipalAttributeRepository(final CasConfigurationProperties casProperties) {
-        val props = casProperties.getAuthn().getAttributeRepository().getCore();
-        val cacheTime = props.getExpirationTime();
-        if (cacheTime <= 0) {
-            LOGGER.warn("Caching for the global principal attribute repository is disabled");
-            return new DefaultPrincipalAttributesRepository();
+            val registeredPrincipalResolvers = plan.getRegisteredPrincipalResolvers();
+            val resolver = new ChainingPrincipalResolver(principalElectionStrategy, casProperties);
+            resolver.setChain(registeredPrincipalResolvers);
+            return resolver;
         }
-        return new CachingPrincipalAttributesRepository(props.getExpirationTimeUnit().toUpperCase(), cacheTime);
+    }
+    
+    @Configuration(value = "CasCoreAuthenticationPrincipalElectionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreAuthenticationPrincipalElectionConfiguration {
+        @ConditionalOnMissingBean(name = "principalElectionStrategy")
+        @Bean
+        @RefreshScope
+        @Autowired
+        public PrincipalElectionStrategy principalElectionStrategy(final List<PrincipalElectionStrategyConfigurer> configurers,
+                                                                   final CasConfigurationProperties casProperties) {
+            LOGGER.trace("Building principal election strategies from [{}]", configurers);
+            val chain = new ChainingPrincipalElectionStrategy();
+            val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
+            chain.setAttributeMerger(merger);
+            AnnotationAwareOrderComparator.sortIfNecessary(configurers);
+
+            configurers.forEach(c -> {
+                LOGGER.trace("Configuring principal selection strategy: [{}]", c);
+                c.configurePrincipalElectionStrategy(chain);
+            });
+            return chain;
+        }
+
+        @ConditionalOnMissingBean(name = "defaultPrincipalElectionStrategyConfigurer")
+        @Bean
+        @RefreshScope
+        @Autowired
+        public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("principalFactory")
+            final PrincipalFactory principalFactory) {
+            return chain -> {
+                val strategy = new DefaultPrincipalElectionStrategy(principalFactory,
+                    CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(casProperties.getPersonDirectory()));
+                val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
+                strategy.setAttributeMerger(merger);
+                chain.registerElectionStrategy(strategy);
+            };
+        }
+
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "defaultPrincipalResolver")
-    @RefreshScope
-    @Autowired
-    public PrincipalResolver defaultPrincipalResolver(final List<PrincipalResolutionExecutionPlanConfigurer> configurers,
-                                                      final CasConfigurationProperties casProperties,
-                                                      @Qualifier("principalElectionStrategy")
-                                                      final PrincipalElectionStrategy principalElectionStrategy) {
-        val plan = new DefaultPrincipalResolutionExecutionPlan();
-        val sortedConfigurers = new ArrayList<>(configurers);
-        AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
 
-        sortedConfigurers.forEach(Unchecked.consumer(c -> {
-            LOGGER.trace("Configuring principal resolution execution plan [{}]", c.getName());
-            c.configurePrincipalResolutionExecutionPlan(plan);
-        }));
-        plan.registerPrincipalResolver(new EchoingPrincipalResolver());
+    @Configuration(value = "CasCoreAuthenticationPrincipalFactoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreAuthenticationPrincipalFactoryConfiguration {
 
-        val registeredPrincipalResolvers = plan.getRegisteredPrincipalResolvers();
-        val resolver = new ChainingPrincipalResolver(principalElectionStrategy, casProperties);
-        resolver.setChain(registeredPrincipalResolvers);
-        return resolver;
+        @ConditionalOnMissingBean(name = "principalFactory")
+        @Bean
+        @RefreshScope
+        public PrincipalFactory principalFactory() {
+            return PrincipalFactoryUtils.newPrincipalFactory();
+        }
+
+        @Bean
+        @RefreshScope
+        @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_GLOBAL_PRINCIPAL_ATTRIBUTE_REPOSITORY)
+        @Autowired
+        public RegisteredServicePrincipalAttributesRepository globalPrincipalAttributeRepository(final CasConfigurationProperties casProperties) {
+            val props = casProperties.getAuthn().getAttributeRepository().getCore();
+            val cacheTime = props.getExpirationTime();
+            if (cacheTime <= 0) {
+                LOGGER.warn("Caching for the global principal attribute repository is disabled");
+                return new DefaultPrincipalAttributesRepository();
+            }
+            return new CachingPrincipalAttributesRepository(props.getExpirationTimeUnit().toUpperCase(), cacheTime);
+        }
+
     }
+
+
 }

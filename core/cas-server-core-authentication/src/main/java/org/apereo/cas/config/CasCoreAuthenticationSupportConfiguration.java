@@ -44,117 +44,140 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasCoreAuthenticationSupportConfiguration {
 
-    @RefreshScope
-    @Bean
-    @ConditionalOnMissingBean(name = "defaultAuthenticationSystemSupport")
-    @Autowired
-    public AuthenticationSystemSupport defaultAuthenticationSystemSupport(
-        @Qualifier("authenticationTransactionManager")
-        final AuthenticationTransactionManager authenticationTransactionManager,
-        @Qualifier("principalElectionStrategy")
-        final PrincipalElectionStrategy principalElectionStrategy,
-        @Qualifier("authenticationResultBuilderFactory")
-        final AuthenticationResultBuilderFactory authenticationResultBuilderFactory,
-        @Qualifier("authenticationTransactionFactory")
-        final AuthenticationTransactionFactory authenticationTransactionFactory) {
-        return new DefaultAuthenticationSystemSupport(authenticationTransactionManager,
-            principalElectionStrategy, authenticationResultBuilderFactory,
-            authenticationTransactionFactory);
+    @Configuration(value = "CasCoreAuthenticationPrincipalCacheConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreAuthenticationPrincipalCacheConfiguration {
+
+        @ConditionalOnMissingBean(name = PrincipalAttributesRepositoryCache.DEFAULT_BEAN_NAME)
+        @Bean
+        public PrincipalAttributesRepositoryCache principalAttributesRepositoryCache() {
+            return new DefaultPrincipalAttributesRepositoryCache();
+        }
     }
 
-    @RefreshScope
-    @Bean
-    @Autowired
-    @ConditionalOnMissingBean(name = "registeredServiceAuthenticationHandlerResolver")
-    public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver(
-        final CasConfigurationProperties casProperties,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
-        @Qualifier("authenticationServiceSelectionPlan")
-        final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
-        val resolver = new RegisteredServiceAuthenticationHandlerResolver(servicesManager,
-            authenticationServiceSelectionPlan);
-        resolver.setOrder(casProperties.getAuthn().getCore().getServiceAuthenticationResolution().getOrder());
-        return resolver;
+    @Configuration(value = "CasCoreAuthenticationHandlerResolverConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreAuthenticationHandlerResolverConfiguration {
+        @RefreshScope
+        @Bean
+        @Autowired
+        @ConditionalOnMissingBean(name = "registeredServiceAuthenticationHandlerResolver")
+        public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("authenticationServiceSelectionPlan")
+            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
+            val resolver = new RegisteredServiceAuthenticationHandlerResolver(servicesManager,
+                authenticationServiceSelectionPlan);
+            resolver.setOrder(casProperties.getAuthn().getCore().getServiceAuthenticationResolution().getOrder());
+            return resolver;
+        }
+
+        @RefreshScope
+        @Bean
+        @Autowired
+        @ConditionalOnMissingBean(name = "groovyAuthenticationHandlerResolver")
+        @ConditionalOnProperty(name = "cas.authn.core.groovy-authentication-resolution.location")
+        public AuthenticationHandlerResolver groovyAuthenticationHandlerResolver(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            val groovy = casProperties.getAuthn().getCore().getGroovyAuthenticationResolution();
+            return new GroovyAuthenticationHandlerResolver(groovy.getLocation(), servicesManager, groovy.getOrder());
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "byCredentialSourceAuthenticationHandlerResolver")
+        @RefreshScope
+        @ConditionalOnProperty(prefix = "cas.authn.policy", name = "source-selection-enabled", havingValue = "true")
+        public AuthenticationHandlerResolver byCredentialSourceAuthenticationHandlerResolver() {
+            return new ByCredentialSourceAuthenticationHandlerResolver();
+        }
+
     }
 
-    @RefreshScope
-    @Bean
-    @ConditionalOnMissingBean(name = "registeredServiceAuthenticationPolicyResolver")
-    @Autowired
-    public AuthenticationPolicyResolver registeredServiceAuthenticationPolicyResolver(
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
-        @Qualifier("authenticationServiceSelectionPlan")
-        final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
-        return new RegisteredServiceAuthenticationPolicyResolver(servicesManager,
-            authenticationServiceSelectionPlan);
+    @Configuration(value = "CasCoreAuthenticationSupportBaseConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreAuthenticationSupportBaseConfiguration {
+        @RefreshScope
+        @Bean
+        @ConditionalOnMissingBean(name = "defaultAuthenticationSystemSupport")
+        @Autowired
+        public AuthenticationSystemSupport defaultAuthenticationSystemSupport(
+            @Qualifier("authenticationTransactionManager")
+            final AuthenticationTransactionManager authenticationTransactionManager,
+            @Qualifier("principalElectionStrategy")
+            final PrincipalElectionStrategy principalElectionStrategy,
+            @Qualifier("authenticationResultBuilderFactory")
+            final AuthenticationResultBuilderFactory authenticationResultBuilderFactory,
+            @Qualifier("authenticationTransactionFactory")
+            final AuthenticationTransactionFactory authenticationTransactionFactory) {
+            return new DefaultAuthenticationSystemSupport(authenticationTransactionManager,
+                principalElectionStrategy, authenticationResultBuilderFactory,
+                authenticationTransactionFactory);
+        }
     }
 
-    @RefreshScope
-    @Bean
-    @Autowired
-    @ConditionalOnMissingBean(name = "groovyAuthenticationHandlerResolver")
-    @ConditionalOnProperty(name = "cas.authn.core.groovy-authentication-resolution.location")
-    public AuthenticationHandlerResolver groovyAuthenticationHandlerResolver(
-        final CasConfigurationProperties casProperties,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager) {
-        val groovy = casProperties.getAuthn().getCore().getGroovyAuthenticationResolution();
-        return new GroovyAuthenticationHandlerResolver(groovy.getLocation(), servicesManager, groovy.getOrder());
+    @Configuration(value = "CasCoreAuthenticationPolicyResolverConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreAuthenticationPolicyResolverConfiguration {
+        @RefreshScope
+        @Bean
+        @ConditionalOnMissingBean(name = "registeredServiceAuthenticationPolicyResolver")
+        @Autowired
+        public AuthenticationPolicyResolver registeredServiceAuthenticationPolicyResolver(
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("authenticationServiceSelectionPlan")
+            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
+            return new RegisteredServiceAuthenticationPolicyResolver(servicesManager,
+                authenticationServiceSelectionPlan);
+        }
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "byCredentialSourceAuthenticationHandlerResolver")
-    @RefreshScope
-    @ConditionalOnProperty(prefix = "cas.authn.policy", name = "source-selection-enabled", havingValue = "true")
-    public AuthenticationHandlerResolver byCredentialSourceAuthenticationHandlerResolver() {
-        return new ByCredentialSourceAuthenticationHandlerResolver();
+    @Configuration(value = "CasCoreAuthenticationExecutionPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreAuthenticationExecutionPlanConfiguration {
+        @ConditionalOnMissingBean(name = "authenticationHandlerResolversExecutionPlanConfigurer")
+        @Bean
+        @RefreshScope
+        @Autowired
+        public AuthenticationEventExecutionPlanConfigurer authenticationHandlerResolversExecutionPlanConfigurer(
+            @Qualifier("byCredentialSourceAuthenticationHandlerResolver")
+            final ObjectProvider<AuthenticationHandlerResolver> byCredentialSourceAuthenticationHandlerResolver,
+            @Qualifier("registeredServiceAuthenticationHandlerResolver")
+            final AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver,
+            @Qualifier("registeredServiceAuthenticationPolicyResolver")
+            final AuthenticationPolicyResolver registeredServiceAuthenticationPolicyResolver,
+            @Qualifier("groovyAuthenticationHandlerResolver")
+            final ObjectProvider<AuthenticationHandlerResolver> groovyAuthenticationHandlerResolver) {
+            return plan -> {
+                byCredentialSourceAuthenticationHandlerResolver.ifAvailable(plan::registerAuthenticationHandlerResolver);
+                plan.registerAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver);
+                plan.registerAuthenticationPolicyResolver(registeredServiceAuthenticationPolicyResolver);
+                groovyAuthenticationHandlerResolver.ifAvailable(plan::registerAuthenticationHandlerResolver);
+            };
+        }
+
+        @ConditionalOnMissingBean(name = "groovyAuthenticationProcessorExecutionPlanConfigurer")
+        @Bean
+        @RefreshScope
+        @Autowired
+        public AuthenticationEventExecutionPlanConfigurer groovyAuthenticationProcessorExecutionPlanConfigurer(
+            final CasConfigurationProperties casProperties) {
+            return plan -> {
+                val engine = casProperties.getAuthn().getCore().getEngine();
+                val preResource = engine.getGroovyPreProcessor().getLocation();
+                if (preResource != null) {
+                    plan.registerAuthenticationPreProcessor(new GroovyAuthenticationPreProcessor(preResource));
+                }
+                val postResource = engine.getGroovyPostProcessor().getLocation();
+                if (postResource != null) {
+                    plan.registerAuthenticationPostProcessor(new GroovyAuthenticationPostProcessor(postResource));
+                }
+            };
+        }
     }
 
-    @ConditionalOnMissingBean(name = "authenticationHandlerResolversExecutionPlanConfigurer")
-    @Bean
-    @RefreshScope
-    @Autowired
-    public AuthenticationEventExecutionPlanConfigurer authenticationHandlerResolversExecutionPlanConfigurer(
-        @Qualifier("byCredentialSourceAuthenticationHandlerResolver")
-        final ObjectProvider<AuthenticationHandlerResolver> byCredentialSourceAuthenticationHandlerResolver,
-        @Qualifier("registeredServiceAuthenticationHandlerResolver")
-        final AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver,
-        @Qualifier("registeredServiceAuthenticationPolicyResolver")
-        final AuthenticationPolicyResolver registeredServiceAuthenticationPolicyResolver,
-        @Qualifier("groovyAuthenticationHandlerResolver")
-        final ObjectProvider<AuthenticationHandlerResolver> groovyAuthenticationHandlerResolver) {
-        return plan -> {
-            byCredentialSourceAuthenticationHandlerResolver.ifAvailable(plan::registerAuthenticationHandlerResolver);
-            plan.registerAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver);
-            plan.registerAuthenticationPolicyResolver(registeredServiceAuthenticationPolicyResolver);
-            groovyAuthenticationHandlerResolver.ifAvailable(plan::registerAuthenticationHandlerResolver);
-        };
-    }
-
-    @ConditionalOnMissingBean(name = "groovyAuthenticationProcessorExecutionPlanConfigurer")
-    @Bean
-    @RefreshScope
-    @Autowired
-    public AuthenticationEventExecutionPlanConfigurer groovyAuthenticationProcessorExecutionPlanConfigurer(
-        final CasConfigurationProperties casProperties) {
-        return plan -> {
-            val engine = casProperties.getAuthn().getCore().getEngine();
-            val preResource = engine.getGroovyPreProcessor().getLocation();
-            if (preResource != null) {
-                plan.registerAuthenticationPreProcessor(new GroovyAuthenticationPreProcessor(preResource));
-            }
-            val postResource = engine.getGroovyPostProcessor().getLocation();
-            if (postResource != null) {
-                plan.registerAuthenticationPostProcessor(new GroovyAuthenticationPostProcessor(postResource));
-            }
-        };
-    }
-
-    @ConditionalOnMissingBean(name = PrincipalAttributesRepositoryCache.DEFAULT_BEAN_NAME)
-    @Bean
-    public PrincipalAttributesRepositoryCache principalAttributesRepositoryCache() {
-        return new DefaultPrincipalAttributesRepositoryCache();
-    }
 }

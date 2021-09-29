@@ -17,6 +17,7 @@ import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityPrepareWebLoginFor
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderFactoryBean;
 import org.apereo.cas.authentication.bypass.ChainingMultifactorAuthenticationProviderBypassEvaluator;
@@ -28,13 +29,11 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
-import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -46,6 +45,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -53,6 +53,7 @@ import org.springframework.webflow.execution.Action;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -99,14 +100,16 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     public MultifactorAuthenticationProviderFactoryBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderFactory(
         final CasConfigurationProperties casProperties,
+        final List<MultifactorAuthenticationPrincipalResolver> resolvers,
         @Qualifier("httpClient")
         final HttpClient httpClient,
         @Qualifier("duoSecurityBypassEvaluator")
         final ChainingMultifactorAuthenticationProviderBypassEvaluator duoSecurityBypassEvaluator,
         @Qualifier("failureModeEvaluator")
         final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
-        val resolvers = ApplicationContextProvider.getMultifactorAuthenticationPrincipalResolvers();
-        return new DuoSecurityMultifactorAuthenticationProviderFactory(httpClient, duoSecurityBypassEvaluator, failureModeEvaluator, casProperties, resolvers);
+        AnnotationAwareOrderComparator.sort(resolvers);
+        return new DuoSecurityMultifactorAuthenticationProviderFactory(httpClient, duoSecurityBypassEvaluator,
+            failureModeEvaluator, casProperties, resolvers);
     }
 
     @ConditionalOnMissingBean(name = "duoProviderBean")
@@ -125,6 +128,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @Autowired
     public Collection<DuoSecurityAuthenticationHandler> duoAuthenticationHandlers(
+        final List<MultifactorAuthenticationPrincipalResolver> resolvers,
         final CasConfigurationProperties casProperties,
         @Qualifier("duoPrincipalFactory")
         final PrincipalFactory duoPrincipalFactory,
@@ -132,7 +136,8 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         final MultifactorAuthenticationProviderBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
-        val resolvers = ApplicationContextProvider.getMultifactorAuthenticationPrincipalResolvers();
+
+        AnnotationAwareOrderComparator.sort(resolvers);
         return casProperties.getAuthn()
             .getMfa()
             .getDuo()

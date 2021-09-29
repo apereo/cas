@@ -67,6 +67,7 @@ public class CasCoreUtilConfiguration {
             final Converter<ZonedDateTime, String> zonedDateTimeToStringConverter) {
             return () -> {
                 Assert.notNull(casApplicationContextProvider, "Application context cannot be initialized");
+                Assert.notNull(ApplicationContextProvider.getConfigurableApplicationContext(), "Application context cannot be initialized");
                 val registry = (ConverterRegistry) DefaultConversionService.getSharedInstance();
                 registry.addConverter(zonedDateTimeToStringConverter);
             };

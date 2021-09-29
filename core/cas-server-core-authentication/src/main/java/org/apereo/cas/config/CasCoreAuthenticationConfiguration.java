@@ -48,34 +48,40 @@ import java.util.List;
 @Slf4j
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasCoreAuthenticationConfiguration {
-    @ConditionalOnMissingBean(name = "authenticationResultBuilderFactory")
-    @Bean
-    @RefreshScope
-    public AuthenticationResultBuilderFactory authenticationResultBuilderFactory() {
-        return new DefaultAuthenticationResultBuilderFactory();
-    }
 
-    @ConditionalOnMissingBean(name = "authenticationTransactionFactory")
-    @Bean
-    @RefreshScope
-    public AuthenticationTransactionFactory authenticationTransactionFactory() {
-        return new DefaultAuthenticationTransactionFactory();
-    }
+    @Configuration(value = "CasCoreAuthenticationBaseConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreAuthenticationBaseConfiguration {
 
-    @ConditionalOnMissingBean(name = "authenticationAttributeReleasePolicy")
-    @RefreshScope
-    @Bean
-    @Autowired
-    public AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy(
-        final CasConfigurationProperties casProperties) {
-        val release = casProperties.getAuthn().getAuthenticationAttributeRelease();
-        if (!release.isEnabled()) {
-            LOGGER.debug("CAS is configured to not release protocol-level authentication attributes.");
-            return AuthenticationAttributeReleasePolicy.none();
+        @ConditionalOnMissingBean(name = "authenticationResultBuilderFactory")
+        @Bean
+        @RefreshScope
+        public AuthenticationResultBuilderFactory authenticationResultBuilderFactory() {
+            return new DefaultAuthenticationResultBuilderFactory();
         }
-        return new DefaultAuthenticationAttributeReleasePolicy(release.getOnlyRelease(),
-            release.getNeverRelease(),
-            casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute());
+
+        @ConditionalOnMissingBean(name = "authenticationTransactionFactory")
+        @Bean
+        @RefreshScope
+        public AuthenticationTransactionFactory authenticationTransactionFactory() {
+            return new DefaultAuthenticationTransactionFactory();
+        }
+
+        @ConditionalOnMissingBean(name = "authenticationAttributeReleasePolicy")
+        @RefreshScope
+        @Bean
+        @Autowired
+        public AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy(
+            final CasConfigurationProperties casProperties) {
+            val release = casProperties.getAuthn().getAuthenticationAttributeRelease();
+            if (!release.isEnabled()) {
+                LOGGER.debug("CAS is configured to not release protocol-level authentication attributes.");
+                return AuthenticationAttributeReleasePolicy.none();
+            }
+            return new DefaultAuthenticationAttributeReleasePolicy(release.getOnlyRelease(),
+                release.getNeverRelease(),
+                casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute());
+        }
     }
 
     @Configuration(value = "CasCoreAuthenticationManagerConfiguration", proxyBeanMethods = false)
