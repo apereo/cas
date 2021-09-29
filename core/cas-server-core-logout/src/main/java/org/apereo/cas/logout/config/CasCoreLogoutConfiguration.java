@@ -60,147 +60,160 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CasCoreLogoutConfiguration {
 
-    @ConditionalOnMissingBean(name = "singleLogoutServiceLogoutUrlBuilder")
-    @Bean
-    @RefreshScope
-    @Autowired
-    public SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder(
-        final ConfigurableApplicationContext applicationContext) {
-        val configurers = new ArrayList<>(applicationContext.getBeansOfType(SingleLogoutServiceLogoutUrlBuilderConfigurer.class, false, true).values());
-        val results = configurers
-            .stream()
-            .sorted(Comparator.comparing(SingleLogoutServiceLogoutUrlBuilderConfigurer::getOrder))
-            .map(cfg -> {
-                val builder = cfg.configureBuilder();
-                LOGGER.trace("Configuring single logout url builder [{}]", builder.getName());
-                return builder;
-            })
-            .map(SingleLogoutServiceLogoutUrlBuilder.class::cast)
-            .sorted(Comparator.comparing(SingleLogoutServiceLogoutUrlBuilder::getOrder))
-            .collect(Collectors.toList());
-        return new ChainingSingleLogoutServiceLogoutUrlBuilder(results);
+    @Configuration(value = "CasCoreLogoutRedirectConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreLogoutRedirectConfiguration {
+        @Bean
+        @RefreshScope
+        @Autowired
+        @ConditionalOnMissingBean(name = "defaultLogoutRedirectionStrategy")
+        public LogoutRedirectionStrategy defaultLogoutRedirectionStrategy(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("argumentExtractor")
+            final ArgumentExtractor argumentExtractor,
+            @Qualifier("webApplicationServiceFactory")
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+            final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder) {
+            return new DefaultLogoutRedirectionStrategy(argumentExtractor,
+                casProperties, singleLogoutServiceLogoutUrlBuilder, webApplicationServiceFactory);
+        }
+
+        @ConditionalOnMissingBean(name = "singleLogoutServiceLogoutUrlBuilder")
+        @Bean
+        @RefreshScope
+        @Autowired
+        public SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder(
+            final ConfigurableApplicationContext applicationContext) {
+            val configurers = new ArrayList<>(applicationContext.getBeansOfType(SingleLogoutServiceLogoutUrlBuilderConfigurer.class, false, true).values());
+            val results = configurers
+                .stream()
+                .sorted(Comparator.comparing(SingleLogoutServiceLogoutUrlBuilderConfigurer::getOrder))
+                .map(cfg -> {
+                    val builder = cfg.configureBuilder();
+                    LOGGER.trace("Configuring single logout url builder [{}]", builder.getName());
+                    return builder;
+                })
+                .map(SingleLogoutServiceLogoutUrlBuilder.class::cast)
+                .sorted(Comparator.comparing(SingleLogoutServiceLogoutUrlBuilder::getOrder))
+                .collect(Collectors.toList());
+            return new ChainingSingleLogoutServiceLogoutUrlBuilder(results);
+        }
+
+        @ConditionalOnMissingBean(name = "defaultSingleLogoutServiceLogoutUrlBuilderConfigurer")
+        @Bean
+        @RefreshScope
+        @Autowired
+        public SingleLogoutServiceLogoutUrlBuilderConfigurer defaultSingleLogoutServiceLogoutUrlBuilderConfigurer(
+            @Qualifier("urlValidator")
+            final UrlValidator urlValidator,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return () -> new DefaultSingleLogoutServiceLogoutUrlBuilder(servicesManager, urlValidator);
+        }
     }
 
-    @ConditionalOnMissingBean(name = "defaultSingleLogoutServiceLogoutUrlBuilderConfigurer")
-    @Bean
-    @RefreshScope
-    @Autowired
-    public SingleLogoutServiceLogoutUrlBuilderConfigurer defaultSingleLogoutServiceLogoutUrlBuilderConfigurer(
-        @Qualifier("urlValidator")
-        final UrlValidator urlValidator,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager) {
-        return () -> new DefaultSingleLogoutServiceLogoutUrlBuilder(servicesManager, urlValidator);
+    @Configuration(value = "CasCoreLogoutMessagesConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreLogoutMessagesConfiguration {
+        @ConditionalOnMissingBean(name = "defaultSingleLogoutRequestExecutor")
+        @RefreshScope
+        @Autowired
+        @Bean
+        public SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor(
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
+            final LogoutManager logoutManager,
+            final ConfigurableApplicationContext applicationContext) {
+            return new DefaultSingleLogoutRequestExecutor(centralAuthenticationService, logoutManager, applicationContext);
+        }
+
+        @ConditionalOnMissingBean(name = "defaultSingleLogoutServiceMessageHandler")
+        @Bean
+        @RefreshScope
+        @Autowired
+        public SingleLogoutServiceMessageHandler defaultSingleLogoutServiceMessageHandler(
+            @Qualifier("authenticationServiceSelectionPlan")
+            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("defaultSingleLogoutMessageCreator")
+            final SingleLogoutMessageCreator defaultSingleLogoutMessageCreator,
+            @Qualifier("noRedirectHttpClient")
+            final HttpClient noRedirectHttpClient,
+            @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+            final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder) {
+            return new DefaultSingleLogoutServiceMessageHandler(noRedirectHttpClient,
+                defaultSingleLogoutMessageCreator,
+                servicesManager,
+                singleLogoutServiceLogoutUrlBuilder,
+                casProperties.getSlo().isAsynchronous(),
+                authenticationServiceSelectionPlan);
+        }
+
+        @ConditionalOnMissingBean(name = "defaultSingleLogoutMessageCreator")
+        @Bean
+        public SingleLogoutMessageCreator defaultSingleLogoutMessageCreator() {
+            return new DefaultSingleLogoutMessageCreator();
+        }
     }
 
-    @ConditionalOnMissingBean(name = "defaultSingleLogoutServiceMessageHandler")
-    @Bean
-    @RefreshScope
-    @Autowired
-    public SingleLogoutServiceMessageHandler defaultSingleLogoutServiceMessageHandler(
-        @Qualifier("authenticationServiceSelectionPlan")
-        final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
-        final CasConfigurationProperties casProperties,
-        @Qualifier("defaultSingleLogoutMessageCreator")
-        final SingleLogoutMessageCreator defaultSingleLogoutMessageCreator,
-        @Qualifier("noRedirectHttpClient")
-        final HttpClient noRedirectHttpClient,
-        @Qualifier("singleLogoutServiceLogoutUrlBuilder")
-        final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder) {
-        return new DefaultSingleLogoutServiceMessageHandler(noRedirectHttpClient,
-            defaultSingleLogoutMessageCreator,
-            servicesManager,
-            singleLogoutServiceLogoutUrlBuilder,
-            casProperties.getSlo().isAsynchronous(),
-            authenticationServiceSelectionPlan);
-    }
+    @Configuration(value = "CasCoreLogoutExecutionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreLogoutExecutionConfiguration {
 
-    @ConditionalOnMissingBean(name = LogoutManager.DEFAULT_BEAN_NAME)
-    @RefreshScope
-    @Autowired
-    @Bean
-    public LogoutManager logoutManager(
-        @Qualifier("logoutExecutionPlan")
-        final LogoutExecutionPlan logoutExecutionPlan,
-        final CasConfigurationProperties casProperties) {
-        return new DefaultLogoutManager(casProperties.getSlo().isDisabled(), logoutExecutionPlan);
-    }
+        @Bean
+        @RefreshScope
+        @Autowired
+        @ConditionalOnMissingBean(name = "casCoreLogoutExecutionPlanConfigurer")
+        public LogoutExecutionPlanConfigurer casCoreLogoutExecutionPlanConfigurer(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("defaultSingleLogoutServiceMessageHandler")
+            final SingleLogoutServiceMessageHandler defaultSingleLogoutServiceMessageHandler,
+            @Qualifier("defaultLogoutRedirectionStrategy")
+            final LogoutRedirectionStrategy defaultLogoutRedirectionStrategy,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry) {
+            return plan -> {
+                plan.registerSingleLogoutServiceMessageHandler(defaultSingleLogoutServiceMessageHandler);
+                plan.registerLogoutRedirectionStrategy(defaultLogoutRedirectionStrategy);
 
-    @ConditionalOnMissingBean(name = "defaultSingleLogoutMessageCreator")
-    @Bean
-    public SingleLogoutMessageCreator defaultSingleLogoutMessageCreator() {
-        return new DefaultSingleLogoutMessageCreator();
-    }
+                if (casProperties.getLogout().isRemoveDescendantTickets()) {
+                    LOGGER.debug("CAS is configured to remove descendant tickets of the ticket-granting tickets");
+                    plan.registerLogoutPostProcessor(ticketGrantingTicket -> ticketGrantingTicket.getDescendantTickets()
+                        .forEach(t -> {
+                            LOGGER.debug("Deleting ticket [{}] from the registry as a descendant of [{}]", t, ticketGrantingTicket.getId());
+                            ticketRegistry.deleteTicket(t);
+                        }));
+                }
+            };
+        }
 
-    @ConditionalOnMissingBean(name = "defaultSingleLogoutRequestExecutor")
-    @RefreshScope
-    @Autowired
-    @Bean
-    public SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor(
-        @Qualifier(CentralAuthenticationService.BEAN_NAME)
-        final CentralAuthenticationService centralAuthenticationService,
-        @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
-        final LogoutManager logoutManager,
-        final ConfigurableApplicationContext applicationContext) {
-        return new DefaultSingleLogoutRequestExecutor(centralAuthenticationService, logoutManager, applicationContext);
-    }
+        @ConditionalOnMissingBean(name = LogoutManager.DEFAULT_BEAN_NAME)
+        @RefreshScope
+        @Autowired
+        @Bean
+        public LogoutManager logoutManager(
+            @Qualifier("logoutExecutionPlan")
+            final LogoutExecutionPlan logoutExecutionPlan,
+            final CasConfigurationProperties casProperties) {
+            return new DefaultLogoutManager(casProperties.getSlo().isDisabled(), logoutExecutionPlan);
+        }
 
-    @ConditionalOnMissingBean(name = "logoutExecutionPlan")
-    @Autowired
-    @Bean
-    @RefreshScope
-    public LogoutExecutionPlan logoutExecutionPlan(final List<LogoutExecutionPlanConfigurer> configurers) {
-        val plan = new DefaultLogoutExecutionPlan();
-        configurers.forEach(c -> {
-            LOGGER.trace("Configuring logout execution plan [{}]", c.getName());
-            c.configureLogoutExecutionPlan(plan);
-        });
-        return plan;
-    }
-
-    @Bean
-    @RefreshScope
-    @Autowired
-    @ConditionalOnMissingBean(name = "defaultLogoutRedirectionStrategy")
-    public LogoutRedirectionStrategy defaultLogoutRedirectionStrategy(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("argumentExtractor")
-        final ArgumentExtractor argumentExtractor,
-        @Qualifier("webApplicationServiceFactory")
-        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-        @Qualifier("singleLogoutServiceLogoutUrlBuilder")
-        final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder) {
-        return new DefaultLogoutRedirectionStrategy(argumentExtractor,
-            casProperties, singleLogoutServiceLogoutUrlBuilder, webApplicationServiceFactory);
-    }
-
-    @Bean
-    @RefreshScope
-    @Autowired
-    @ConditionalOnMissingBean(name = "casCoreLogoutExecutionPlanConfigurer")
-    public LogoutExecutionPlanConfigurer casCoreLogoutExecutionPlanConfigurer(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("defaultSingleLogoutServiceMessageHandler")
-        final SingleLogoutServiceMessageHandler defaultSingleLogoutServiceMessageHandler,
-        @Qualifier("defaultLogoutRedirectionStrategy")
-        final LogoutRedirectionStrategy defaultLogoutRedirectionStrategy,
-        @Qualifier(TicketRegistry.BEAN_NAME)
-        final TicketRegistry ticketRegistry) {
-        return plan -> {
-            plan.registerSingleLogoutServiceMessageHandler(defaultSingleLogoutServiceMessageHandler);
-            plan.registerLogoutRedirectionStrategy(defaultLogoutRedirectionStrategy);
-
-            if (casProperties.getLogout().isRemoveDescendantTickets()) {
-                LOGGER.debug("CAS is configured to remove descendant tickets of the ticket-granting tickets");
-                plan.registerLogoutPostProcessor(ticketGrantingTicket -> ticketGrantingTicket.getDescendantTickets()
-                    .forEach(t -> {
-                        LOGGER.debug("Deleting ticket [{}] from the registry as a descendant of [{}]", t, ticketGrantingTicket.getId());
-                        ticketRegistry.deleteTicket(t);
-                    }));
-            }
-        };
+        @ConditionalOnMissingBean(name = "logoutExecutionPlan")
+        @Autowired
+        @Bean
+        @RefreshScope
+        public LogoutExecutionPlan logoutExecutionPlan(final List<LogoutExecutionPlanConfigurer> configurers) {
+            val plan = new DefaultLogoutExecutionPlan();
+            configurers.forEach(c -> {
+                LOGGER.trace("Configuring logout execution plan [{}]", c.getName());
+                c.configureLogoutExecutionPlan(plan);
+            });
+            return plan;
+        }
     }
 
     @Configuration(value = "casCoreLogoutServiceConfiguration", proxyBeanMethods = false)
