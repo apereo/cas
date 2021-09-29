@@ -182,6 +182,8 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     public static class CoreWsSecurityIdentityProviderContextConfiguration {
         @Bean
         public WSFederationRequestConfigurationContext wsFederationConfigurationContext(
+            @Qualifier("wsFederationRelyingPartyTokenProducer")
+            final WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer,
             @Qualifier("noRedirectHttpClient")
             final HttpClient httpClient,
             @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
@@ -207,6 +209,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
             final CasConfigurationProperties casProperties) {
             return WSFederationRequestConfigurationContext.builder()
                 .servicesManager(servicesManager)
+                .relyingPartyTokenProducer(wsFederationRelyingPartyTokenProducer)
                 .webApplicationServiceFactory(webApplicationServiceFactory)
                 .casProperties(casProperties)
                 .ticketValidator(wsFederationTicketValidator)

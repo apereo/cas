@@ -4,6 +4,7 @@ import org.apereo.cas.adaptors.u2f.storage.U2FCouchDbDeviceRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.u2f.U2FDeviceRegistrationCouchDbRepository;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -27,7 +28,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "couchDbU2fConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class U2FCouchDbConfiguration {
-
 
     @ConditionalOnMissingBean(name = "u2fCouchDbFactory")
     @Bean
@@ -59,7 +59,7 @@ public class U2FCouchDbConfiguration {
     @Autowired
     public U2FCouchDbDeviceRepository u2fDeviceRepository(
         @Qualifier("u2fRegistrationRecordCipherExecutor")
-        final CipherExecutor<Serializable, String> u2fRegistrationRecordCipherExecutor,
+        final CipherExecutor u2fRegistrationRecordCipherExecutor,
         @Qualifier("couchDbU2fDeviceRegistrationRepository")
         final U2FDeviceRegistrationCouchDbRepository couchDbU2fDeviceRegistrationRepository,
         final CasConfigurationProperties casProperties) {
