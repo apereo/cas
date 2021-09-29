@@ -27,34 +27,49 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(prefix = "cas.events.core", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasCoreEventsConfiguration {
 
-    @ConditionalOnMissingBean(name = "defaultCasEventListener")
-    @Bean
-    @Autowired
-    public DefaultCasEventListener defaultCasEventListener(
-        @Qualifier("casEventRepository")
-        final CasEventRepository casEventRepository) {
-        return new DefaultCasEventListener(casEventRepository);
+    @Configuration(value = "CasCoreEventsListenerConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreEventsListenerConfiguration {
+        @ConditionalOnMissingBean(name = "defaultCasEventListener")
+        @Bean
+        @Autowired
+        public DefaultCasEventListener defaultCasEventListener(
+            @Qualifier("casEventRepository")
+            final CasEventRepository casEventRepository) {
+            return new DefaultCasEventListener(casEventRepository);
+        }
+
+        @ConditionalOnMissingBean(name = "loggingCasEventListener")
+        @Bean
+        public LoggingCasEventListener loggingCasEventListener() {
+            return new LoggingCasEventListener();
+        }
     }
 
-    @ConditionalOnMissingBean(name = "casEventRepository")
-    @Bean
-    public CasEventRepository casEventRepository() {
-        return NoOpCasEventRepository.INSTANCE;
+
+    @Configuration(value = "CasCoreEventsWebConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreEventsWebConfiguration {
+
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @Autowired
+        public CasEventsReportEndpoint casEventsReportEndpoint(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("casEventRepository")
+            final CasEventRepository casEventRepository) {
+            return new CasEventsReportEndpoint(casProperties, casEventRepository);
+        }
     }
 
-    @Bean
-    @ConditionalOnAvailableEndpoint
-    @Autowired
-    public CasEventsReportEndpoint casEventsReportEndpoint(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("casEventRepository")
-        final CasEventRepository casEventRepository) {
-        return new CasEventsReportEndpoint(casProperties, casEventRepository);
+    @Configuration(value = "CasCoreEventsRepositoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreEventsRepositoryConfiguration {
+        @ConditionalOnMissingBean(name = "casEventRepository")
+        @Bean
+        public CasEventRepository casEventRepository() {
+            return NoOpCasEventRepository.INSTANCE;
+        }
     }
 
-    @ConditionalOnMissingBean(name = "loggingCasEventListener")
-    @Bean
-    public LoggingCasEventListener loggingCasEventListener() {
-        return new LoggingCasEventListener();
-    }
 }

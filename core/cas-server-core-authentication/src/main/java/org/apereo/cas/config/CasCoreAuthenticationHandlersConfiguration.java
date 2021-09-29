@@ -87,7 +87,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
             final PrincipalFactory proxyPrincipalFactory) {
             return new ProxyingPrincipalResolver(proxyPrincipalFactory);
         }
-        
+
         @ConditionalOnMissingBean(name = "proxyAuthenticationEventExecutionPlanConfigurer")
         @Bean
         @Autowired
@@ -96,7 +96,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
             final AuthenticationHandler proxyAuthenticationHandler,
             @Qualifier("proxyPrincipalResolver")
             final PrincipalResolver proxyPrincipalResolver) {
-            return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver( proxyAuthenticationHandler, proxyPrincipalResolver);
+            return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(proxyAuthenticationHandler, proxyPrincipalResolver);
         }
 
     }

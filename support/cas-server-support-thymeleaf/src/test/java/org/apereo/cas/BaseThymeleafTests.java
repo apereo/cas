@@ -12,7 +12,6 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreViewsConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
@@ -68,8 +67,7 @@ public abstract class BaseThymeleafTests {
         CasMultifactorAuthenticationWebflowConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasThemesConfiguration.class,
-        CasThymeleafConfiguration.class,
-        CasCoreViewsConfiguration.class
+        CasThymeleafConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

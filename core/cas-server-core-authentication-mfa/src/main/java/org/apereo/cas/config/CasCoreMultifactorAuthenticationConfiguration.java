@@ -31,38 +31,48 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasCoreMultifactorAuthenticationConfiguration {
-    @Autowired
-    @RefreshScope
-    @Bean
-    @ConditionalOnMissingBean(name = "authenticationContextValidator")
-    public MultifactorAuthenticationContextValidator authenticationContextValidator(
-        final CasConfigurationProperties casProperties,
-        final ConfigurableApplicationContext applicationContext) {
-        val mfa = casProperties.getAuthn().getMfa();
-        val contextAttribute = mfa.getCore().getAuthenticationContextAttribute();
-        val authnAttributeName = mfa.getTrusted().getCore().getAuthenticationContextAttribute();
-        return new DefaultMultifactorAuthenticationContextValidator(contextAttribute, authnAttributeName, applicationContext);
+
+    @Configuration(value = "CasCoreMultifactorAuthenticationContextConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreMultifactorAuthenticationContextConfiguration {
+        @Autowired
+        @RefreshScope
+        @Bean
+        @ConditionalOnMissingBean(name = "authenticationContextValidator")
+        public MultifactorAuthenticationContextValidator authenticationContextValidator(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
+            val mfa = casProperties.getAuthn().getMfa();
+            val contextAttribute = mfa.getCore().getAuthenticationContextAttribute();
+            val authnAttributeName = mfa.getTrusted().getCore().getAuthenticationContextAttribute();
+            return new DefaultMultifactorAuthenticationContextValidator(contextAttribute, authnAttributeName, applicationContext);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "requestedContextValidator")
+        @Autowired
+        @RefreshScope
+        public RequestedAuthenticationContextValidator requestedContextValidator(
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("defaultMultifactorTriggerSelectionStrategy")
+            final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
+            @Qualifier("authenticationContextValidator")
+            final MultifactorAuthenticationContextValidator authenticationContextValidator) {
+            return new DefaultRequestedAuthenticationContextValidator(servicesManager,
+                multifactorTriggerSelectionStrategy, authenticationContextValidator);
+        }
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "requestedContextValidator")
-    @Autowired
-    public RequestedAuthenticationContextValidator requestedContextValidator(
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
-        @Qualifier("defaultMultifactorTriggerSelectionStrategy")
-        final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
-        @Qualifier("authenticationContextValidator")
-        final MultifactorAuthenticationContextValidator authenticationContextValidator) {
-        return new DefaultRequestedAuthenticationContextValidator(servicesManager,
-            multifactorTriggerSelectionStrategy, authenticationContextValidator);
-    }
-
-    @RefreshScope
-    @Bean
-    @ConditionalOnMissingBean(name = "failureModeEvaluator")
-    @Autowired
-    public MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator(final CasConfigurationProperties casProperties) {
-        return new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties);
+    @Configuration(value = "CasCoreMultifactorAuthenticationFailureConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreMultifactorAuthenticationFailureConfiguration {
+        @RefreshScope
+        @Bean
+        @ConditionalOnMissingBean(name = "failureModeEvaluator")
+        @Autowired
+        public MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator(final CasConfigurationProperties casProperties) {
+            return new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties);
+        }
     }
 }

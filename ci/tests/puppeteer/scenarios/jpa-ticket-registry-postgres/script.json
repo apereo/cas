@@ -12,7 +12,7 @@
     "--logging.level.org.apereo.cas.ticket.registry=debug"
     ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
-  "loadScript": "./ci/tests/puppeteer/scenarios/db-postgres-load/test.js",
+  "loadScript": "./ci/tests/puppeteer/scenarios/jpa-ticket-registry/test.js",
   "samplesRequested": 5,
   "concurrencyRequested": 5
 }
