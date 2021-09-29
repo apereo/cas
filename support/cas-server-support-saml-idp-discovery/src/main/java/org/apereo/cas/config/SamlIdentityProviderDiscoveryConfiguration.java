@@ -8,6 +8,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.SamlIdentityProviderDiscoveryFeedController;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SamlIdentityProviderDiscoveryWebflowConfigurer;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -45,11 +46,12 @@ public class SamlIdentityProviderDiscoveryConfiguration {
     @RefreshScope
     @Bean
     @Autowired
-    public CasWebflowConfigurer identityProviderDiscoveryWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                                           @Qualifier("loginFlowRegistry")
-                                                                           final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                                           @Qualifier("flowBuilderServices")
-                                                                           final FlowBuilderServices flowBuilderServices) {
+    public CasWebflowConfigurer identityProviderDiscoveryWebflowConfigurer(
+        final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+        final FlowBuilderServices flowBuilderServices) {
         return new SamlIdentityProviderDiscoveryWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 

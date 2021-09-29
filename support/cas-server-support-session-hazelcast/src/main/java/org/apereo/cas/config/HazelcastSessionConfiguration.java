@@ -28,6 +28,7 @@ public class HazelcastSessionConfiguration {
      * repository to broadcast session events. The name
      * of this bean must be left untouched.
      *
+     * @param casProperties the cas properties
      * @return the hazelcast instance
      * @throws Exception the exception
      */

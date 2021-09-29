@@ -16,6 +16,7 @@ import org.apereo.cas.support.saml.web.idp.web.SamlIdPMultifactorAuthenticationT
 import org.apereo.cas.support.saml.web.idp.web.SamlIdPSingleSignOnParticipationStrategy;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
@@ -67,12 +68,13 @@ public class SamlIdPWebflowConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPWebConfigurer")
         @Bean
         @Autowired
-        public CasWebflowConfigurer samlIdPWebConfigurer(final CasConfigurationProperties casProperties,
-                                                         final ConfigurableApplicationContext applicationContext,
-                                                         @Qualifier("loginFlowRegistry")
-                                                         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                         @Qualifier("flowBuilderServices")
-                                                         final FlowBuilderServices flowBuilderServices) {
+        public CasWebflowConfigurer samlIdPWebConfigurer(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
             return new SamlIdPWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         }
     }

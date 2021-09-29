@@ -22,6 +22,7 @@ import org.apereo.cas.qr.web.flow.QRAuthenticationWebflowConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
 import lombok.val;
@@ -69,11 +70,12 @@ public class QRAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "qrAuthenticationWebflowConfigurer")
     @Bean
     @Autowired
-    public CasWebflowConfigurer qrAuthenticationWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                                  @Qualifier("loginFlowRegistry")
-                                                                  final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                                  @Qualifier("flowBuilderServices")
-                                                                  final FlowBuilderServices flowBuilderServices) {
+    public CasWebflowConfigurer qrAuthenticationWebflowConfigurer(
+        final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+        final FlowBuilderServices flowBuilderServices) {
         return new QRAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 

@@ -16,6 +16,7 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
@@ -56,9 +57,9 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "mfaSimpleAuthenticatorFlowRegistry")
         @Autowired
         public FlowDefinitionRegistry mfaSimpleAuthenticatorFlowRegistry(
-            @Qualifier("flowBuilder")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
             final FlowBuilder flowBuilder,
-            @Qualifier("flowBuilderServices")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
             final ConfigurableApplicationContext applicationContext) {
             val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
@@ -72,9 +73,9 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         public CasWebflowConfigurer mfaSimpleMultifactorWebflowConfigurer(
             @Qualifier("mfaSimpleAuthenticatorFlowRegistry")
             final FlowDefinitionRegistry mfaSimpleAuthenticatorFlowRegistry,
-            @Qualifier("loginFlowRegistry")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry loginFlowRegistry,
-            @Qualifier("flowBuilderServices")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
@@ -178,9 +179,9 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         public CasWebflowConfigurer mfaSimpleMultifactorTrustWebflowConfigurer(
             @Qualifier("mfaSimpleAuthenticatorFlowRegistry")
             final FlowDefinitionRegistry mfaSimpleAuthenticatorFlowRegistry,
-            @Qualifier("loginFlowRegistry")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-            @Qualifier("flowBuilderServices")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {

@@ -28,6 +28,8 @@ public class SurrogateAuthenticationRestConfiguration {
      * that handles username+password to
      * avoid duplicate authentication attempts.
      *
+     * @param surrogateAuthenticationService the surrogate authentication service
+     * @param casProperties                  the cas properties
      * @return configurer instance
      */
     @Bean

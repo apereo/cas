@@ -61,14 +61,16 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
                                        final boolean encryptionEnabled,
                                        final int signingKeySize,
                                        final int encryptionKeySize) {
-        this(secretKeyEncryption, secretKeySigning, encryptionEnabled, true, signingKeySize, encryptionKeySize);
+        this(secretKeyEncryption, secretKeySigning, encryptionEnabled,
+            true, signingKeySize, encryptionKeySize);
     }
 
     protected BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
                                        final String contentEncryptionAlgorithmIdentifier,
                                        final int signingKeySize,
                                        final int encryptionKeySize) {
-        this(secretKeyEncryption, secretKeySigning, contentEncryptionAlgorithmIdentifier, true, true, signingKeySize, encryptionKeySize);
+        this(secretKeyEncryption, secretKeySigning, contentEncryptionAlgorithmIdentifier,
+            true, true, signingKeySize, encryptionKeySize);
     }
 
     protected BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
@@ -121,6 +123,59 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         return decryptAndVerify(value);
     }
 
+    /**
+     * Configure encryption key from public key resource.
+     *
+     * @param secretKeyToUse the secret key to use
+     */
+    protected void configureEncryptionKeyFromPublicKeyResource(final String secretKeyToUse) {
+        val object = extractPublicKeyFromResource(secretKeyToUse);
+        LOGGER.debug("Located encryption key resource [{}]", secretKeyToUse);
+        setEncryptionKey(object);
+        setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+    }
+
+    /**
+     * Is encryption possible?
+     *
+     * @return true/false
+     */
+    protected boolean isEncryptionPossible() {
+        return this.encryptionEnabled && this.encryptionKey != null;
+    }
+
+    /**
+     * Gets encryption key setting.
+     *
+     * @return the encryption key setting
+     */
+    protected String getEncryptionKeySetting() {
+        return "N/A";
+    }
+
+    /**
+     * Gets signing key setting.
+     *
+     * @return the signing key setting
+     */
+    protected String getSigningKeySetting() {
+        return "N/A";
+    }
+
+    /**
+     * Define the order of cipher operations.
+     */
+    public enum CipherOperationsStrategyType {
+        /**
+         * Encrypt the value first, and then sign.
+         */
+        ENCRYPT_AND_SIGN,
+        /**
+         * Sign the value first, and then encrypt.
+         */
+        SIGN_AND_ENCRYPT
+    }
+
     private void configureSigningParameters(final String secretKeySigning) {
         var signingKeyToUse = secretKeySigning;
         if (StringUtils.isBlank(signingKeyToUse)) {
@@ -130,7 +185,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
                 signingKeyToUse, this.signingKeySize, getName(), getSigningKeySetting());
         } else {
             try {
-                val jwk = PublicJsonWebKey.class.cast(EncodingUtils.newJsonWebKey(signingKeyToUse));
+                val jwk = (PublicJsonWebKey) EncodingUtils.newJsonWebKey(signingKeyToUse);
                 LOGGER.trace("Parsed signing key as a JSON web key for [{}] with kid [{}]", getName(), jwk.getKeyId());
                 if (jwk.getPrivateKey() == null) {
                     val msg = "Provided signing key as a JSON web key does not carry a private key";
@@ -243,7 +298,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             },
             value::toString
         ).get();
-        
+
         return FunctionUtils.doIf(isEncryptionPossible(),
             () -> {
                 LOGGER.trace("Attempting to encrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
@@ -251,58 +306,5 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
                     this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier, getCustomHeaders());
             },
             () -> encoded).get();
-    }
-
-    /**
-     * Define the order of cipher operations.
-     */
-    public enum CipherOperationsStrategyType {
-        /**
-         * Encrypt the value first, and then sign.
-         */
-        ENCRYPT_AND_SIGN,
-        /**
-         * Sign the value first, and then encrypt.
-         */
-        SIGN_AND_ENCRYPT
-    }
-
-    /**
-     * Configure encryption key from public key resource.
-     *
-     * @param secretKeyToUse the secret key to use
-     */
-    protected void configureEncryptionKeyFromPublicKeyResource(final String secretKeyToUse) {
-        val object = extractPublicKeyFromResource(secretKeyToUse);
-        LOGGER.debug("Located encryption key resource [{}]", secretKeyToUse);
-        setEncryptionKey(object);
-        setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
-    }
-
-    /**
-     * Is encryption possible?
-     *
-     * @return true/false
-     */
-    protected boolean isEncryptionPossible() {
-        return this.encryptionEnabled && this.encryptionKey != null;
-    }
-
-    /**
-     * Gets encryption key setting.
-     *
-     * @return the encryption key setting
-     */
-    protected String getEncryptionKeySetting() {
-        return "N/A";
-    }
-
-    /**
-     * Gets signing key setting.
-     *
-     * @return the signing key setting
-     */
-    protected String getSigningKeySetting() {
-        return "N/A";
     }
 }

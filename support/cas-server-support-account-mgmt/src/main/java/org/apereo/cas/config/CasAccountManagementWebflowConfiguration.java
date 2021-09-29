@@ -77,9 +77,9 @@ public class CasAccountManagementWebflowConfiguration {
     @Autowired
     public CasWebflowConfigurer accountMgmtWebflowConfigurer(final CasConfigurationProperties casProperties,
                                                              final ConfigurableApplicationContext applicationContext,
-                                                             @Qualifier("loginFlowRegistry")
+                                                             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
                                                              final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                             @Qualifier("flowBuilderServices")
+                                                             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
                                                              final FlowBuilderServices flowBuilderServices) {
         return new AccountManagementWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
@@ -251,9 +251,9 @@ public class CasAccountManagementWebflowConfiguration {
         @Bean
         @Autowired
         public CasWebflowConfigurer accountMgmtRegistrationCaptchaWebflowConfigurer(
-            @Qualifier("loginFlowRegistry")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-            @Qualifier("flowBuilderServices")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {

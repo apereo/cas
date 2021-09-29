@@ -12,6 +12,7 @@ import org.apereo.cas.support.inwebo.web.flow.actions.InweboPushAuthenticateActi
 import org.apereo.cas.trusted.config.ConditionalOnMultifactorTrustedDevicesEnabled;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -51,9 +52,9 @@ public class InweboWebflowConfiguration {
     @Bean
     @Autowired
     public FlowDefinitionRegistry inweboFlowRegistry(
-        @Qualifier("flowBuilder")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
         final FlowBuilder flowBuilder,
-        @Qualifier("flowBuilderServices")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices,
         final ConfigurableApplicationContext applicationContext) {
         val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
@@ -68,11 +69,11 @@ public class InweboWebflowConfiguration {
     public CasWebflowConfigurer inweboMultifactorWebflowConfigurer(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
-        @Qualifier("loginFlowRegistry")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
         @Qualifier("inweboFlowRegistry")
         final FlowDefinitionRegistry inweboFlowRegistry,
-        @Qualifier("flowBuilderServices")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices) {
         val cfg = new InweboMultifactorWebflowConfigurer(flowBuilderServices,
             loginFlowDefinitionRegistry,
@@ -169,9 +170,9 @@ public class InweboWebflowConfiguration {
             final FlowDefinitionRegistry inweboFlowRegistry,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("loginFlowRegistry")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-            @Qualifier("flowBuilderServices")
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             val cfg = new InweboMultifactorTrustWebflowConfigurer(flowBuilderServices,
                 loginFlowDefinitionRegistry,

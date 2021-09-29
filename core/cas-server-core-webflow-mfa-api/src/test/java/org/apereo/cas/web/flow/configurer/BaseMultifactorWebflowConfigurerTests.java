@@ -32,7 +32,7 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
     protected CasWebflowExecutionPlan casWebflowExecutionPlan;
 
     @Autowired
-    @Qualifier("loginFlowRegistry")
+    @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
     protected FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
     /**
@@ -48,7 +48,7 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
         states.forEach(stateId -> {
             val state = (State) flow.getState(stateId);
             if (state instanceof TransitionableState) {
-                TransitionableState.class.cast(state).getTransitionSet().forEach(t -> {
+                ((TransitionableState) state).getTransitionSet().forEach(t -> {
                     assertTrue(flow.containsState(t.getTargetStateId()),
                         String.format("Destination of transition [%s]-%s->[%s] must be in flow definition",
                             stateId, t.getId(), t.getTargetStateId()));
