@@ -1,7 +1,6 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
-import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 
@@ -9,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * This is {@link ThrottledSubmissionHandlerConfigurationContext}.
@@ -37,5 +37,5 @@ public class ThrottledSubmissionHandlerConfigurationContext {
 
     private final ThrottledRequestExecutor throttledRequestExecutor;
 
-    private final AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan;
+    private final ConfigurableApplicationContext applicationContext;
 }

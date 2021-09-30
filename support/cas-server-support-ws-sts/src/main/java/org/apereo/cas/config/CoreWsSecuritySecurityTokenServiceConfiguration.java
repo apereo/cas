@@ -66,6 +66,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import javax.net.ssl.HostnameVerifier;
 import java.util.ArrayList;
@@ -104,7 +105,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "delegationHandlers")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public List<TokenDelegationHandler> delegationHandlers() {
         val handlers = new ArrayList<TokenDelegationHandler>(2);
@@ -232,7 +233,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "transportTokenValidators")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public List transportTokenValidators(
         @Qualifier("transportSamlTokenValidator")
@@ -252,7 +253,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "transportTokenProviders")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public List transportTokenProviders(
         @Qualifier("transportSamlTokenProvider")
@@ -289,7 +290,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         return realm;
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "securityTokenServiceRealms")
     @Autowired
@@ -437,7 +438,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
     @ConditionalOnMissingBean(name = "securityTokenServiceTokenFetcher")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SecurityTokenServiceTokenFetcher securityTokenServiceTokenFetcher(
         @Qualifier("securityTokenServiceCredentialCipherExecutor")
         final CipherExecutor securityTokenServiceCredentialCipherExecutor,
@@ -452,7 +453,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "securityTokenServiceCredentialCipherExecutor")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public CipherExecutor securityTokenServiceCredentialCipherExecutor(final CasConfigurationProperties casProperties) {

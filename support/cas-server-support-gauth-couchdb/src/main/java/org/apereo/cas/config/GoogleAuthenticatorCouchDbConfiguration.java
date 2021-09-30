@@ -20,6 +20,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
@@ -35,7 +36,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
 
     @ConditionalOnMissingBean(name = "oneTimeTokenAccountCouchDbFactory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CouchDbConnectorFactory oneTimeTokenAccountCouchDbFactory(final CasConfigurationProperties casProperties,
                                                                      @Qualifier("objectMapperFactory")
@@ -45,7 +46,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbGoogleAuthenticatorAccountRegistry")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
         @Qualifier("googleAuthenticatorInstance")
         final IGoogleAuthenticator googleAuthenticatorInstance,
@@ -58,7 +59,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbOneTimeTokenAccountRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public GoogleAuthenticatorAccountCouchDbRepository couchDbOneTimeTokenAccountRepository(
         @Qualifier("oneTimeTokenAccountCouchDbFactory")
@@ -71,7 +72,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbOneTimeTokenAutneticatorTokenRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(
         @Qualifier("couchDbOneTimeTokenRepository")
@@ -81,7 +82,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
 
     @ConditionalOnMissingBean(name = "oneTimeTokenCouchDbFactory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CouchDbConnectorFactory oneTimeTokenCouchDbFactory(final CasConfigurationProperties casProperties,
                                                               @Qualifier("objectMapperFactory")
@@ -91,7 +92,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbbOneTimeTokenRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public GoogleAuthenticatorTokenCouchDbRepository couchDbOneTimeTokenRepository(
         @Qualifier("oneTimeTokenAccountCouchDbFactory")

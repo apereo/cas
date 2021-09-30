@@ -23,6 +23,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -50,7 +51,7 @@ import java.util.Set;
 @Configuration(value = "jpaServiceRegistryConfiguration", proxyBeanMethods = false)
 public class JpaServiceRegistryConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public JpaVendorAdapter jpaServiceVendorAdapter(final CasConfigurationProperties casProperties,
@@ -59,7 +60,7 @@ public class JpaServiceRegistryConfiguration {
         return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public PersistenceProvider jpaServicePersistenceProvider(final CasConfigurationProperties casProperties,
@@ -111,14 +112,14 @@ public class JpaServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "dataSourceService")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public DataSource dataSourceService(final CasConfigurationProperties casProperties) {
         return JpaBeans.newDataSource(casProperties.getServiceRegistry().getJpa());
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "jpaServiceRegistry")
     @Autowired
     public ServiceRegistry jpaServiceRegistry(final ConfigurableApplicationContext applicationContext,
@@ -141,7 +142,7 @@ public class JpaServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "jpaServiceRegistryExecutionPlanConfigurer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ServiceRegistryExecutionPlanConfigurer jpaServiceRegistryExecutionPlanConfigurer(
         @Qualifier("jpaServiceRegistry")
         final ServiceRegistry jpaServiceRegistry) {
@@ -149,7 +150,7 @@ public class JpaServiceRegistryConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "jpaServicePersistenceProviderConfigurer")
     public JpaPersistenceProviderConfigurer jpaServicePersistenceProviderConfigurer() {
         return context -> {

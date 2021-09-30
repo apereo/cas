@@ -26,6 +26,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CouchDbAuthenticationConfiguration}.
@@ -39,7 +40,7 @@ import org.springframework.context.annotation.Configuration;
 public class CouchDbAuthenticationConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "authenticationCouchDbFactory")
     @Autowired
     public CouchDbConnectorFactory authenticationCouchDbFactory(final CasConfigurationProperties casProperties,
@@ -50,7 +51,7 @@ public class CouchDbAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "authenticationCouchDbRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public ProfileCouchDbRepository authenticationCouchDbRepository(
         @Qualifier("authenticationCouchDbFactory")
@@ -76,7 +77,7 @@ public class CouchDbAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbAuthenticationHandler")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationHandler couchDbAuthenticationHandler(
         @Qualifier("couchDbAuthenticatorProfileService")

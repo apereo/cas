@@ -162,7 +162,7 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
      * @return true, if successful
      */
     private boolean verifyAccessTokenRequest(final WebContext context) {
-        val validators = getConfigurationContext().getAccessTokenGrantRequestValidators();
+        val validators = getConfigurationContext().getAccessTokenGrantRequestValidators().getObject();
         return validators.stream()
             .filter(ext -> ext.supports(context))
             .findFirst()

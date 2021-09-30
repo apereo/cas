@@ -60,6 +60,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -141,13 +142,13 @@ public class CasOAuthUmaConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "umaResourceSetClaimPermissionExaminer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public UmaResourceSetClaimPermissionExaminer umaResourceSetClaimPermissionExaminer() {
         return new DefaultUmaResourceSetClaimPermissionExaminer();
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "umaRequestingPartyTokenGenerator")
     @Autowired
     public IdTokenGeneratorService umaRequestingPartyTokenGenerator(
@@ -293,13 +294,13 @@ public class CasOAuthUmaConfiguration {
 
     @ConditionalOnMissingBean(name = "umaPermissionTicketIdGenerator")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public UniqueTicketIdGenerator umaPermissionTicketIdGenerator() {
         return new DefaultUniqueTicketIdGenerator();
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "umaPermissionTicketExpirationPolicy")
     @Autowired
     public ExpirationPolicyBuilder umaPermissionTicketExpirationPolicy(final CasConfigurationProperties casProperties) {
@@ -307,7 +308,7 @@ public class CasOAuthUmaConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "defaultUmaPermissionTicketFactory")
     public UmaPermissionTicketFactory defaultUmaPermissionTicketFactory(
         @Qualifier("umaPermissionTicketIdGenerator")
@@ -319,7 +320,7 @@ public class CasOAuthUmaConfiguration {
 
     @ConditionalOnMissingBean(name = "defaultUmaPermissionTicketFactoryConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public TicketFactoryExecutionPlanConfigurer defaultUmaPermissionTicketFactoryConfigurer(
         @Qualifier("defaultUmaPermissionTicketFactory")

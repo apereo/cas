@@ -24,6 +24,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SamlGoogleAppsConfiguration}.
@@ -47,7 +48,7 @@ public class SamlGoogleAppsConfiguration implements InitializingBean {
 
     @ConditionalOnMissingBean(name = "googleAccountsServiceFactory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ServiceFactory googleAccountsServiceFactory(
         @Qualifier("googleSaml20ObjectBuilder")
         final GoogleSaml20ObjectBuilder googleSaml20ObjectBuilder) {

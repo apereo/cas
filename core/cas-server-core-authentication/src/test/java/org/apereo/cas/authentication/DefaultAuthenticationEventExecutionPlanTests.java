@@ -42,7 +42,7 @@ public class DefaultAuthenticationEventExecutionPlanTests {
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
 
-        val plan = new DefaultAuthenticationEventExecutionPlan(CoreAuthenticationTestUtils.getAuthenticationSystemSupport());
+        val plan = new DefaultAuthenticationEventExecutionPlan();
         plan.registerAuthenticationPreProcessor(transaction -> false);
         plan.registerAuthenticationMetadataPopulators(
             Set.of(new RememberMeAuthenticationMetaDataPopulator(new RememberMeAuthenticationProperties())));
@@ -57,7 +57,7 @@ public class DefaultAuthenticationEventExecutionPlanTests {
 
     @Test
     public void verifyMismatchedCount() {
-        val plan = new DefaultAuthenticationEventExecutionPlan(CoreAuthenticationTestUtils.getAuthenticationSystemSupport());
+        val plan = new DefaultAuthenticationEventExecutionPlan();
         plan.registerAuthenticationHandlerWithPrincipalResolvers(List.of(new SimpleTestUsernamePasswordAuthenticationHandler()), List.of());
         assertTrue(plan.getAuthenticationHandlers().isEmpty());
     }
@@ -67,7 +67,7 @@ public class DefaultAuthenticationEventExecutionPlanTests {
     public void verifyNoHandlerResolves() {
         val transaction = new DefaultAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
             List.of(mock(Credential.class)));
-        val plan = new DefaultAuthenticationEventExecutionPlan(CoreAuthenticationTestUtils.getAuthenticationSystemSupport());
+        val plan = new DefaultAuthenticationEventExecutionPlan();
         assertThrows(AuthenticationException.class, () -> plan.getAuthenticationHandlers(transaction));
     }
 

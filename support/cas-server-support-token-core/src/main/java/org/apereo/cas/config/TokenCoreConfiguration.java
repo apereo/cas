@@ -31,6 +31,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 
 /**
@@ -46,7 +47,7 @@ import org.springframework.core.Ordered;
 public class TokenCoreConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "tokenCipherExecutor")
     @Autowired
     public CipherExecutor tokenCipherExecutor(final CasConfigurationProperties casProperties) {
@@ -82,7 +83,7 @@ public class TokenCoreConfiguration {
             webApplicationServiceFactory, authenticationAttributeReleasePolicy, servicesManager);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "tokenTicketBuilder")
     @Autowired
@@ -99,7 +100,7 @@ public class TokenCoreConfiguration {
             grantingTicketExpirationPolicy, tokenTicketJwtBuilder, servicesManager, casProperties);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "tokenTicketJwtBuilder")
     public JwtBuilder tokenTicketJwtBuilder(

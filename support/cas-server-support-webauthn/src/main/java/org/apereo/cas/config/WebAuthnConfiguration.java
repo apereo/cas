@@ -61,6 +61,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -101,7 +102,7 @@ public class WebAuthnConfiguration {
 
     @ConditionalOnMissingBean(name = "webAuthnCredentialRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public WebAuthnCredentialRepository webAuthnCredentialRepository(
         final CasConfigurationProperties casProperties,
@@ -117,7 +118,7 @@ public class WebAuthnConfiguration {
 
     @ConditionalOnMissingBean(name = "webAuthnMultifactorAuthenticationProvider")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider(
         final CasConfigurationProperties casProperties,
@@ -201,14 +202,14 @@ public class WebAuthnConfiguration {
 
     @ConditionalOnMissingBean(name = "webAuthnPrincipalFactory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory webAuthnPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnMissingBean(name = "webAuthnCredentialRegistrationCipherExecutor")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CipherExecutor webAuthnCredentialRegistrationCipherExecutor(final CasConfigurationProperties casProperties) {
         val crypto = casProperties.getAuthn().getMfa().getWebAuthn().getCrypto();
@@ -220,7 +221,7 @@ public class WebAuthnConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "webAuthnAuthenticationHandler")
     @Autowired
     public AuthenticationHandler webAuthnAuthenticationHandler(
@@ -239,7 +240,7 @@ public class WebAuthnConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "webAuthnAuthenticationMetaDataPopulator")
     @Autowired
     public AuthenticationMetaDataPopulator webAuthnAuthenticationMetaDataPopulator(

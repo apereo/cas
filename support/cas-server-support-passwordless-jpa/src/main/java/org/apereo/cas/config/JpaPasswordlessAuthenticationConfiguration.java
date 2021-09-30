@@ -19,6 +19,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -43,7 +44,7 @@ public class JpaPasswordlessAuthenticationConfiguration {
         return Set.of(PasswordlessAuthenticationToken.class.getPackage().getName());
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public JpaVendorAdapter jpaPasswordlessVendorAdapter(final CasConfigurationProperties casProperties,
@@ -54,7 +55,7 @@ public class JpaPasswordlessAuthenticationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "passwordlessDataSource")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public DataSource passwordlessDataSource(final CasConfigurationProperties casProperties) {
         return JpaBeans.newDataSource(casProperties.getAuthn().getPasswordless().getTokens().getJpa());
@@ -90,7 +91,7 @@ public class JpaPasswordlessAuthenticationConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public PasswordlessTokenRepository passwordlessTokenRepository(final CasConfigurationProperties casProperties) {
         val tokens = casProperties.getAuthn()

@@ -46,6 +46,8 @@ public class DefaultCasWebflowAuthenticationExceptionHandlerTests {
         val errors = new LinkedHashSet<Class<? extends Throwable>>();
         errors.add(UnauthorizedServiceForPrincipalException.class);
         errors.add(UnauthorizedAuthenticationException.class);
+        val catalog = new DefaultCasWebflowExceptionCatalog();
+        catalog.registerExceptions(errors);
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -56,7 +58,7 @@ public class DefaultCasWebflowAuthenticationExceptionHandlerTests {
         when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
 
-        this.handler = new DefaultCasWebflowAuthenticationExceptionHandler(errors,
+        this.handler = new DefaultCasWebflowAuthenticationExceptionHandler(catalog,
             MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
     }
 

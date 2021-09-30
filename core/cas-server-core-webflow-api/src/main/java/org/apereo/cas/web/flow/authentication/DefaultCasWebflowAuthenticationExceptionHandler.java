@@ -15,7 +15,6 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -32,7 +31,7 @@ public class DefaultCasWebflowAuthenticationExceptionHandler implements CasWebfl
     /**
      * Ordered list of error classes that this class knows how to handle.
      */
-    private final Set<Class<? extends Throwable>> errors;
+    private final CasWebflowExceptionCatalog errors;
 
     /**
      * String appended to exception class name to create a message bundle key for that particular error.
@@ -72,7 +71,7 @@ public class DefaultCasWebflowAuthenticationExceptionHandler implements CasWebfl
             }
         }
         val values = e.getHandlerErrors().values().stream().map(Throwable::getClass).collect(Collectors.toList());
-        val handlerErrorName = this.errors
+        val handlerErrorName = errors.getRegisteredExceptions()
             .stream()
             .filter(values::contains)
             .map(Class::getSimpleName)

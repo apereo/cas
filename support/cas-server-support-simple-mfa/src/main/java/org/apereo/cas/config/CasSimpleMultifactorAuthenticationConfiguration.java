@@ -31,6 +31,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -98,7 +99,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "mfaSimpleMultifactorSendTokenAction")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public Action mfaSimpleMultifactorSendTokenAction(
             @Qualifier("casSimpleMultifactorAuthenticationTicketFactory")
@@ -128,7 +129,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
     public static class CasSimpleMultifactorAuthenticationTicketConfiguration {
         @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationTicketExpirationPolicy")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public ExpirationPolicyBuilder casSimpleMultifactorAuthenticationTicketExpirationPolicy(final CasConfigurationProperties casProperties) {
             return new CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder(casProperties);
@@ -136,7 +137,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationUniqueTicketIdGenerator")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public UniqueTicketIdGenerator casSimpleMultifactorAuthenticationUniqueTicketIdGenerator(final CasConfigurationProperties casProperties) {
             val simple = casProperties.getAuthn().getMfa().getSimple();
@@ -145,7 +146,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationTicketFactory")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public CasSimpleMultifactorAuthenticationTicketFactory casSimpleMultifactorAuthenticationTicketFactory(
             @Qualifier("casSimpleMultifactorAuthenticationUniqueTicketIdGenerator")
@@ -159,7 +160,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationTicketFactoryConfigurer")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public TicketFactoryExecutionPlanConfigurer casSimpleMultifactorAuthenticationTicketFactoryConfigurer(
             @Qualifier("casSimpleMultifactorAuthenticationTicketFactory")

@@ -18,6 +18,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * X509 Rest configuration class.
@@ -31,7 +32,7 @@ import org.springframework.context.annotation.Configuration;
 public class X509RestConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509RestMultipartBody")
     public RestHttpRequestCredentialFactory x509RestMultipartBody() {
         return new X509RestMultipartBodyCredentialFactory();
@@ -40,7 +41,7 @@ public class X509RestConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "x509RestRequestHeader")
     @Autowired
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RestHttpRequestCredentialFactory x509RestRequestHeader(
         @Qualifier("x509CertificateExtractor")
         final X509CertificateExtractor x509CertificateExtractor) {
@@ -49,13 +50,13 @@ public class X509RestConfiguration {
 
     @ConditionalOnProperty(prefix = "cas.rest.x509", name = "tls-client-auth", havingValue = "true")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RestHttpRequestCredentialFactory x509RestTlsClientCert() {
         return new X509RestTlsClientCertCredentialFactory();
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     @ConditionalOnMissingBean(name = "x509RestHttpRequestCredentialFactoryConfigurer")
     public RestHttpRequestCredentialFactoryConfigurer x509RestHttpRequestCredentialFactoryConfigurer(

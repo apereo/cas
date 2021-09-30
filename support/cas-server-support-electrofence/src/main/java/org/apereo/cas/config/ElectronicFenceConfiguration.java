@@ -36,6 +36,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.HashSet;
@@ -69,7 +70,7 @@ public class ElectronicFenceConfiguration {
 
     @ConditionalOnMissingBean(name = "authenticationRiskEmailNotifier")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationRiskNotifier authenticationRiskEmailNotifier(final CasConfigurationProperties casProperties,
                                                                       @Qualifier("communicationsManager")
@@ -79,7 +80,7 @@ public class ElectronicFenceConfiguration {
 
     @ConditionalOnMissingBean(name = "authenticationRiskSmsNotifier")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationRiskNotifier authenticationRiskSmsNotifier(final CasConfigurationProperties casProperties,
                                                                     @Qualifier("communicationsManager")
@@ -89,7 +90,7 @@ public class ElectronicFenceConfiguration {
 
     @ConditionalOnMissingBean(name = "blockAuthenticationContingencyPlan")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationRiskContingencyPlan blockAuthenticationContingencyPlan(final CasConfigurationProperties casProperties,
                                                                                 final ConfigurableApplicationContext applicationContext,
@@ -104,7 +105,7 @@ public class ElectronicFenceConfiguration {
 
     @ConditionalOnMissingBean(name = "multifactorAuthenticationContingencyPlan")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationRiskContingencyPlan multifactorAuthenticationContingencyPlan(final CasConfigurationProperties casProperties,
                                                                                       final ConfigurableApplicationContext applicationContext,
@@ -119,7 +120,7 @@ public class ElectronicFenceConfiguration {
 
     @ConditionalOnMissingBean(name = "authenticationRiskMitigator")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationRiskMitigator authenticationRiskMitigator(final CasConfigurationProperties casProperties,
                                                                    @Qualifier("blockAuthenticationContingencyPlan")
@@ -134,7 +135,7 @@ public class ElectronicFenceConfiguration {
 
     @ConditionalOnMissingBean(name = "ipAddressAuthenticationRequestRiskCalculator")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationRequestRiskCalculator ipAddressAuthenticationRequestRiskCalculator(final CasConfigurationProperties casProperties,
                                                                                             @Qualifier("casEventRepository")
@@ -144,7 +145,7 @@ public class ElectronicFenceConfiguration {
 
     @ConditionalOnMissingBean(name = "userAgentAuthenticationRequestRiskCalculator")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationRequestRiskCalculator userAgentAuthenticationRequestRiskCalculator(final CasConfigurationProperties casProperties,
                                                                                             @Qualifier("casEventRepository")
@@ -154,7 +155,7 @@ public class ElectronicFenceConfiguration {
 
     @ConditionalOnMissingBean(name = "dateTimeAuthenticationRequestRiskCalculator")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationRequestRiskCalculator dateTimeAuthenticationRequestRiskCalculator(final CasConfigurationProperties casProperties,
                                                                                            @Qualifier("casEventRepository")
@@ -164,7 +165,7 @@ public class ElectronicFenceConfiguration {
 
     @ConditionalOnMissingBean(name = "geoLocationAuthenticationRequestRiskCalculator")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationRequestRiskCalculator geoLocationAuthenticationRequestRiskCalculator(final CasConfigurationProperties casProperties,
                                                                                               @Qualifier("geoLocationService")
@@ -176,7 +177,7 @@ public class ElectronicFenceConfiguration {
 
     @ConditionalOnMissingBean(name = "authenticationRiskEvaluator")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationRiskEvaluator authenticationRiskEvaluator(final CasConfigurationProperties casProperties,
                                                                    @Qualifier("ipAddressAuthenticationRequestRiskCalculator")

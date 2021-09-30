@@ -29,6 +29,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowBuilder;
@@ -79,7 +80,7 @@ public class YubiKeyAuthenticationWebflowConfiguration {
         return new YubiKeyAuthenticationWebflowEventResolver(casWebflowConfigurationContext);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     @ConditionalOnMissingBean(name = "yubikeyAuthenticationWebflowAction")
@@ -110,7 +111,7 @@ public class YubiKeyAuthenticationWebflowConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     @ConditionalOnMissingBean(name = "prepareYubiKeyAuthenticationLoginAction")
     public Action prepareYubiKeyAuthenticationLoginAction(final CasConfigurationProperties casProperties) {
@@ -118,7 +119,7 @@ public class YubiKeyAuthenticationWebflowConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     @ConditionalOnMissingBean(name = "yubiKeyAccountRegistrationAction")
     public Action yubiKeyAccountRegistrationAction(
@@ -128,7 +129,7 @@ public class YubiKeyAuthenticationWebflowConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     @ConditionalOnMissingBean(name = "yubiKeySaveAccountRegistrationAction")
     public Action yubiKeySaveAccountRegistrationAction(

@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.GroovyPersonAttributeDao;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -18,6 +19,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +38,7 @@ public class CasPersonDirectoryGroovyConfiguration {
 
     @ConditionalOnMissingBean(name = "groovyAttributeRepositories")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public List<IPersonAttributeDao> groovyAttributeRepositories(
         final ConfigurableApplicationContext applicationContext,
@@ -58,9 +60,10 @@ public class CasPersonDirectoryGroovyConfiguration {
 
     @Bean
     @Autowired
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PersonDirectoryAttributeRepositoryPlanConfigurer groovyPersonDirectoryAttributeRepositoryPlanConfigurer(
-        @Qualifier("groovyAttributeRepositories") final List<IPersonAttributeDao> groovyAttributeRepositories) {
-        return plan -> plan.registerAttributeRepositories(groovyAttributeRepositories);
+        @Qualifier("groovyAttributeRepositories") final ObjectProvider<List<IPersonAttributeDao>> groovyAttributeRepositories) {
+        return plan -> plan.registerAttributeRepositories(groovyAttributeRepositories.getObject());
     }
 
 }

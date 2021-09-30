@@ -104,6 +104,7 @@ import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.http.client.direct.HeaderClient;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -113,13 +114,13 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link OidcConfiguration}.
@@ -162,7 +163,7 @@ public class OidcConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "oidcCasClientRedirectActionBuilder")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public OAuth20CasClientRedirectActionBuilder oidcCasClientRedirectActionBuilder(
         @Qualifier("oidcRequestSupport")
@@ -172,7 +173,7 @@ public class OidcConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "oidcRequestSupport")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public OidcRequestSupport oidcRequestSupport(
         @Qualifier("ticketGrantingTicketCookieGenerator")
@@ -183,9 +184,9 @@ public class OidcConfiguration {
         final TicketRegistrySupport ticketRegistrySupport) {
         return new OidcRequestSupport(ticketGrantingTicketCookieGenerator, ticketRegistrySupport, oidcIssuerService);
     }
-    
+
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter(
         @Qualifier("oidcPrincipalFactory")
@@ -204,8 +205,8 @@ public class OidcConfiguration {
         final OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory) {
         return new OidcServiceRegistryListener(oidcAttributeReleasePolicyFactory);
     }
-    
-    @RefreshScope
+
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "oidcWebFingerDiscoveryService")
     public OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService(
@@ -218,7 +219,7 @@ public class OidcConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "oidcUserProfileDataCreator")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public OAuth20UserProfileDataCreator oidcUserProfileDataCreator(
         @Qualifier("profileScopeToAttributesFilter")
@@ -229,7 +230,7 @@ public class OidcConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     @ConditionalOnMissingBean(name = "oidcTokenSigningAndEncryptionService")
     public OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService(
@@ -248,7 +249,7 @@ public class OidcConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     @ConditionalOnMissingBean(name = "oidcUserProfileSigningAndEncryptionService")
     public OAuth20TokenSigningAndEncryptionService oidcUserProfileSigningAndEncryptionService(
@@ -268,7 +269,7 @@ public class OidcConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "oidcServiceJsonWebKeystoreCache")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public LoadingCache<OAuthRegisteredService, Optional<PublicJsonWebKey>> oidcServiceJsonWebKeystoreCache(
         @Qualifier("oidcServiceJsonWebKeystoreCacheLoader")
@@ -279,10 +280,10 @@ public class OidcConfiguration {
             .expireAfter(new OidcServiceJsonWebKeystoreCacheExpirationPolicy(casProperties))
             .build(oidcServiceJsonWebKeystoreCacheLoader);
     }
-    
+
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcRegisteredServiceJwtAccessTokenCipherExecutor")
     @Autowired
     public RegisteredServiceCipherExecutor oidcRegisteredServiceJwtAccessTokenCipherExecutor(
@@ -297,7 +298,7 @@ public class OidcConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcAccessTokenJwtCipherExecutor")
     @Autowired
     public CipherExecutor<Serializable, String> oidcAccessTokenJwtCipherExecutor(
@@ -395,10 +396,9 @@ public class OidcConfiguration {
     }
 
 
-
     @ConditionalOnMissingBean(name = "oidcUserProfileViewRenderer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public OAuth20UserProfileViewRenderer oidcUserProfileViewRenderer(
         @Qualifier("oidcUserProfileSigningAndEncryptionService")
@@ -411,7 +411,7 @@ public class OidcConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcAccessTokenJwtBuilder")
     @Autowired
     public JwtBuilder accessTokenJwtBuilder(
@@ -452,8 +452,7 @@ public class OidcConfiguration {
         final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
         @Qualifier("oidcRequestSupport")
         final OidcRequestSupport oidcRequestSupport,
-        @Qualifier("oauthAuthorizationRequestValidators")
-        final Set<OAuth20AuthorizationRequestValidator> oauthRequestValidators,
+        final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthRequestValidators,
         @Qualifier("oauthRegisteredServiceCipherExecutor")
         final CipherExecutor oauthRegisteredServiceCipherExecutor,
         @Qualifier("defaultDeviceTokenFactory")
@@ -474,8 +473,7 @@ public class OidcConfiguration {
         final OidcIssuerService oidcIssuerService,
         @Qualifier("defaultDeviceUserCodeFactory")
         final OAuth20DeviceUserCodeFactory defaultDeviceUserCodeFactory,
-        @Qualifier("oidcAuthorizationResponseBuilders")
-        final Set<OAuth20AuthorizationResponseBuilder> oidcAuthorizationResponseBuilders,
+        final ObjectProvider<List<OAuth20AuthorizationResponseBuilder>> oidcAuthorizationResponseBuilders,
         @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
         @Qualifier("oauthDistributedSessionCookieGenerator")
@@ -488,8 +486,7 @@ public class OidcConfiguration {
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
         @Qualifier("ticketGrantingTicketCookieGenerator")
         final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-        @Qualifier("oauthTokenRequestValidators")
-        final Collection<OAuth20TokenRequestValidator> oauthTokenRequestValidators,
+        final ObjectProvider<List<OAuth20TokenRequestValidator>> oauthTokenRequestValidators,
         @Qualifier("oauthSecConfig")
         final Config oauthSecConfig,
         @Qualifier("oidcAccessTokenResponseGenerator")
@@ -585,23 +582,23 @@ public class OidcConfiguration {
         }
 
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         @ConditionalOnMissingBean(name = "oidcCasCallbackUrlResolver")
         public UrlResolver casCallbackUrlResolver(
             final CasConfigurationProperties casProperties) {
             return new OidcCasCallbackUrlResolver(casProperties);
         }
-        
+
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcIdTokenClaimCollector")
         public OidcIdTokenClaimCollector oidcIdTokenClaimCollector() {
             return OidcIdTokenClaimCollector.defaultCollector();
         }
 
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcIssuerService")
         @Autowired
         public OidcIssuerService oidcIssuerService(final CasConfigurationProperties casProperties) {
@@ -610,13 +607,13 @@ public class OidcConfiguration {
 
         @ConditionalOnMissingBean(name = "oidcPrincipalFactory")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalFactory oidcPrincipalFactory() {
             return PrincipalFactoryUtils.newPrincipalFactory();
         }
 
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = OidcAttributeToScopeClaimMapper.DEFAULT_BEAN_NAME)
         @Autowired
         public OidcAttributeToScopeClaimMapper oidcAttributeToScopeClaimMapper(final CasConfigurationProperties casProperties) {
@@ -625,7 +622,7 @@ public class OidcConfiguration {
         }
 
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         @ConditionalOnMissingBean(name = "oidcAttributeReleasePolicyFactory")
         public OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory(
@@ -641,7 +638,7 @@ public class OidcConfiguration {
 
         @ConditionalOnMissingBean(name = "clientRegistrationRequestSerializer")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer() {
             return new OidcClientRegistrationRequestSerializer();
         }
@@ -655,7 +652,7 @@ public class OidcConfiguration {
         }
 
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder(
             final CasConfigurationProperties casProperties,

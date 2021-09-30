@@ -35,6 +35,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -111,7 +112,7 @@ public class CasJdbcAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "jdbcAuthenticationHandlers")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Collection<AuthenticationHandler> jdbcAuthenticationHandlers(
         @Qualifier("queryPasswordPolicyConfiguration")
@@ -143,42 +144,42 @@ public class CasJdbcAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "jdbcPrincipalFactory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory jdbcPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnMissingBean(name = "queryAndEncodePasswordPolicyConfiguration")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PasswordPolicyContext queryAndEncodePasswordPolicyConfiguration() {
         return new PasswordPolicyContext();
     }
 
     @ConditionalOnMissingBean(name = "searchModePasswordPolicyConfiguration")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PasswordPolicyContext searchModePasswordPolicyConfiguration() {
         return new PasswordPolicyContext();
     }
 
     @ConditionalOnMissingBean(name = "queryPasswordPolicyConfiguration")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PasswordPolicyContext queryPasswordPolicyConfiguration() {
         return new PasswordPolicyContext();
     }
 
     @ConditionalOnMissingBean(name = "bindSearchPasswordPolicyConfiguration")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PasswordPolicyContext bindSearchPasswordPolicyConfiguration() {
         return new PasswordPolicyContext();
     }
 
     @ConditionalOnMissingBean(name = "jdbcAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer jdbcAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("jdbcAuthenticationHandlers")
         final Collection<AuthenticationHandler> jdbcAuthenticationHandlers,

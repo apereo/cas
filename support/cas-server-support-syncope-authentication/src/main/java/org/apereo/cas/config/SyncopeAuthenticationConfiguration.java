@@ -22,6 +22,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SyncopeAuthenticationConfiguration}.
@@ -35,14 +36,14 @@ public class SyncopeAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "syncopePrincipalFactory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory syncopePrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnMissingBean(name = "syncopeAuthenticationHandler")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationHandler syncopeAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
                                                               @Qualifier("syncopePrincipalFactory")
@@ -63,7 +64,7 @@ public class SyncopeAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "syncopeAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationEventExecutionPlanConfigurer syncopeAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
                                                                                                         @Qualifier("syncopeAuthenticationHandler")
@@ -80,7 +81,7 @@ public class SyncopeAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "syncopePasswordPolicyConfiguration")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PasswordPolicyContext syncopePasswordPolicyConfiguration() {
         return new PasswordPolicyContext();
     }

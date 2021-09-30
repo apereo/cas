@@ -21,6 +21,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -53,7 +54,7 @@ public class CasCoreNotificationsConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "smsSender")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public SmsSender smsSender(final CasConfigurationProperties casProperties) {
         val groovy = casProperties.getSmsProvider().getGroovy();
@@ -69,7 +70,7 @@ public class CasCoreNotificationsConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "notificationSender")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public NotificationSender notificationSender(final ConfigurableApplicationContext applicationContext) {
         val configurers = applicationContext.getBeansOfType(NotificationSenderExecutionPlanConfigurer.class, false, true);

@@ -18,6 +18,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -32,7 +33,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 @Configuration(value = "u2fRedisConfiguration", proxyBeanMethods = false)
 public class U2FRedisConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "u2fRedisTemplate")
     public RedisTemplate u2fRedisTemplate(
@@ -43,7 +44,7 @@ public class U2FRedisConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "u2fRedisConnectionFactory")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public RedisConnectionFactory u2fRedisConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getMfa().getU2f().getRedis();
@@ -51,7 +52,7 @@ public class U2FRedisConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public U2FDeviceRepository u2fDeviceRepository(final CasConfigurationProperties casProperties,
                                                    @Qualifier("u2fRedisTemplate")

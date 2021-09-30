@@ -25,6 +25,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration}.
@@ -38,7 +39,7 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationHandler")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationHandler casSimpleMultifactorAuthenticationHandler(
         @Qualifier("casSimpleMultifactorPrincipalFactory")
@@ -55,7 +56,7 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationProvider")
     @Autowired
     public MultifactorAuthenticationProvider casSimpleMultifactorAuthenticationProvider(
@@ -75,7 +76,7 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationMetaDataPopulator")
     @Autowired
     public AuthenticationMetaDataPopulator casSimpleMultifactorAuthenticationMetaDataPopulator(
@@ -99,7 +100,7 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationEventExecutionPlanConfigurer casSimpleMultifactorAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("casSimpleMultifactorAuthenticationHandler")

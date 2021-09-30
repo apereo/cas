@@ -17,6 +17,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.s3.S3Client;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ import java.util.Optional;
 public class AmazonS3ServiceRegistryConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "amazonS3ServiceRegistryClient")
     @Autowired
     public S3Client amazonS3ServiceRegistryClient(final CasConfigurationProperties casProperties) {
@@ -46,7 +47,7 @@ public class AmazonS3ServiceRegistryConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "amazonS3ServiceRegistry")
     @Autowired
     public ServiceRegistry amazonS3ServiceRegistry(
@@ -59,7 +60,7 @@ public class AmazonS3ServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "amazonS3ServiceRegistryExecutionPlanConfigurer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public ServiceRegistryExecutionPlanConfigurer amazonS3ServiceRegistryExecutionPlanConfigurer(
         @Qualifier("amazonS3ServiceRegistry")

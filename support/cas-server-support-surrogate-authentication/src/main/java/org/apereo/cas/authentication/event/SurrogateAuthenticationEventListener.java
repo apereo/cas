@@ -7,6 +7,7 @@ import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationFailureEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationSuccessfulEvent;
+import org.apereo.cas.util.spring.CasEventListener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ import java.util.Map;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class SurrogateAuthenticationEventListener {
+public class SurrogateAuthenticationEventListener implements CasEventListener {
     private final CommunicationsManager communicationsManager;
     private final CasConfigurationProperties casProperties;
 

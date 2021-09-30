@@ -18,6 +18,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.List;
 
@@ -33,7 +34,7 @@ import java.util.List;
 public class OktaPersonDirectoryConfiguration {
     @ConditionalOnMissingBean(name = "oktaPersonDirectoryClient")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Client oktaPersonDirectoryClient(final CasConfigurationProperties casProperties) {
         val properties = casProperties.getAuthn().getAttributeRepository().getOkta();
@@ -42,7 +43,7 @@ public class OktaPersonDirectoryConfiguration {
 
     @ConditionalOnMissingBean(name = "oktaPersonAttributeDaos")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public List<IPersonAttributeDao> oktaPersonAttributeDaos(
         @Qualifier("oktaPersonDirectoryClient")
@@ -58,7 +59,7 @@ public class OktaPersonDirectoryConfiguration {
 
     @ConditionalOnMissingBean(name = "oktaAttributeRepositoryPlanConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public PersonDirectoryAttributeRepositoryPlanConfigurer oktaAttributeRepositoryPlanConfigurer(
         @Qualifier("oktaPersonAttributeDaos")

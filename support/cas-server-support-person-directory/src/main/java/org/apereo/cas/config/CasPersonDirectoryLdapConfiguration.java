@@ -14,6 +14,7 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao;
 import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.SearchResultHandler;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -21,6 +22,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import javax.naming.directory.SearchControls;
 import java.util.ArrayList;
@@ -40,7 +42,7 @@ public class CasPersonDirectoryLdapConfiguration {
 
     @ConditionalOnMissingBean(name = "ldapAttributeRepositories")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public List<IPersonAttributeDao> ldapAttributeRepositories(final CasConfigurationProperties casProperties) {
         val list = new ArrayList<IPersonAttributeDao>();
@@ -105,9 +107,10 @@ public class CasPersonDirectoryLdapConfiguration {
 
     @Bean
     @Autowired
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PersonDirectoryAttributeRepositoryPlanConfigurer ldapPersonDirectoryAttributeRepositoryPlanConfigurer(
-        @Qualifier("ldapAttributeRepositories") final List<IPersonAttributeDao> ldapAttributeRepositories) {
-        return plan -> plan.registerAttributeRepositories(ldapAttributeRepositories);
+        @Qualifier("ldapAttributeRepositories") final ObjectProvider<List<IPersonAttributeDao>> ldapAttributeRepositories) {
+        return plan -> plan.registerAttributeRepositories(ldapAttributeRepositories.getObject());
     }
 }
 

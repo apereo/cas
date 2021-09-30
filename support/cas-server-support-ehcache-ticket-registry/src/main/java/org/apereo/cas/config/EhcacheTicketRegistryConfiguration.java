@@ -33,6 +33,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.Objects;
 
@@ -49,7 +50,7 @@ import java.util.Objects;
 @Deprecated(since = "6.2.0")
 @Slf4j
 public class EhcacheTicketRegistryConfiguration {
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "ticketRMISynchronousCacheReplicator")
     @Autowired
@@ -63,7 +64,7 @@ public class EhcacheTicketRegistryConfiguration {
             cache.isReplicateRemovals());
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "ticketRMIAsynchronousCacheReplicator")
     @Autowired
@@ -79,7 +80,7 @@ public class EhcacheTicketRegistryConfiguration {
             cache.getMaximumBatchSize());
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "ticketCacheBootstrapCacheLoader")
     @Autowired
@@ -126,7 +127,7 @@ public class EhcacheTicketRegistryConfiguration {
      */
     @Autowired
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Lazy(false)
     public TicketRegistry ticketRegistry(
         @Qualifier("ticketRMISynchronousCacheReplicator")

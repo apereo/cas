@@ -36,6 +36,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -53,7 +54,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "verifyPasswordlessAccountAuthenticationAction")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action verifyPasswordlessAccountAuthenticationAction(
         @Qualifier("passwordlessUserAccountStore")
         final PasswordlessUserAccountStore passwordlessUserAccountStore) {
@@ -62,7 +63,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "determineMultifactorPasswordlessAuthenticationAction")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action determineMultifactorPasswordlessAuthenticationAction(
         final CasConfigurationProperties casProperties,
@@ -78,7 +79,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "determineDelegatedAuthenticationAction")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action determineDelegatedAuthenticationAction(
         @Qualifier(DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
@@ -93,7 +94,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "acceptPasswordlessAuthenticationAction")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action acceptPasswordlessAuthenticationAction(
         @Qualifier("passwordlessUserAccountStore")
         final PasswordlessUserAccountStore passwordlessUserAccountStore,
@@ -114,7 +115,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "displayBeforePasswordlessAuthenticationAction")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action displayBeforePasswordlessAuthenticationAction(
         final CasConfigurationProperties casProperties,
@@ -163,7 +164,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "passwordlessCasWebflowLoginContextProvider")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowLoginContextProvider passwordlessCasWebflowLoginContextProvider() {
         return new PasswordlessCasWebflowLoginContextProvider();
     }

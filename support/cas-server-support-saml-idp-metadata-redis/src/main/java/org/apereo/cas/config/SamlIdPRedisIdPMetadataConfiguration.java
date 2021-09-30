@@ -23,6 +23,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -39,7 +40,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class SamlIdPRedisIdPMetadataConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CipherExecutor samlIdPMetadataGeneratorCipherExecutor(final CasConfigurationProperties casProperties) {
         val idp = casProperties.getAuthn().getSamlIdp();
@@ -63,7 +64,7 @@ public class SamlIdPRedisIdPMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "redisSamlIdPMetadataTemplate")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate(
         @Qualifier("redisSamlIdPMetadataConnectionFactory")
         final RedisConnectionFactory redisSamlIdPMetadataConnectionFactory) {
@@ -71,7 +72,7 @@ public class SamlIdPRedisIdPMetadataConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
         @Qualifier("redisSamlIdPMetadataTemplate")
         final RedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate,
@@ -81,7 +82,7 @@ public class SamlIdPRedisIdPMetadataConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SamlIdPMetadataLocator samlIdPMetadataLocator(
         @Qualifier("samlIdPMetadataCache")
         final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache,

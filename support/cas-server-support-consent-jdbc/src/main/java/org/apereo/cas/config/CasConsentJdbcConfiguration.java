@@ -18,6 +18,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -43,7 +44,7 @@ public class CasConsentJdbcConfiguration {
         return new JpaConsentRepository();
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public JpaVendorAdapter jpaConsentVendorAdapter(
@@ -55,7 +56,7 @@ public class CasConsentJdbcConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "dataSourceConsent")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public DataSource dataSourceConsent(final CasConfigurationProperties casProperties) {
         return JpaBeans.newDataSource(casProperties.getConsent().getJpa());

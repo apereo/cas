@@ -15,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CoreWsSecuritySecurityTokenTicketConfiguration}.
@@ -28,7 +29,7 @@ public class CoreWsSecuritySecurityTokenTicketConfiguration {
 
     @ConditionalOnMissingBean(name = "securityTokenTicketFactory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public SecurityTokenTicketFactory securityTokenTicketFactory(
         @Qualifier("securityTokenTicketIdGenerator")
@@ -40,7 +41,7 @@ public class CoreWsSecuritySecurityTokenTicketConfiguration {
 
     @ConditionalOnMissingBean(name = "securityTokenTicketFactoryConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public TicketFactoryExecutionPlanConfigurer securityTokenTicketFactoryConfigurer(
         @Qualifier("securityTokenTicketFactory")
@@ -50,7 +51,7 @@ public class CoreWsSecuritySecurityTokenTicketConfiguration {
 
     @ConditionalOnMissingBean(name = "securityTokenTicketIdGenerator")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public UniqueTicketIdGenerator securityTokenTicketIdGenerator() {
         return new DefaultUniqueTicketIdGenerator();
     }

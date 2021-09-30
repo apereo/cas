@@ -37,6 +37,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -57,7 +58,7 @@ public class SamlIdPWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPWebflowCoreConfiguration {
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "samlIdPCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer samlIdPCasWebflowExecutionPlanConfigurer(
             @Qualifier("samlIdPWebConfigurer")
@@ -92,7 +93,7 @@ public class SamlIdPWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "samlIdPMetadataUIParserAction")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action samlIdPMetadataUIParserAction(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -108,7 +109,7 @@ public class SamlIdPWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPWebflowSingleSignOnConfiguration {
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "samlIdPSingleSignOnParticipationStrategy")
         public SingleSignOnParticipationStrategy samlIdPSingleSignOnParticipationStrategy(
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -122,7 +123,7 @@ public class SamlIdPWebflowConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPSingleSignOnParticipationStrategyConfigurer")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SingleSignOnParticipationStrategyConfigurer samlIdPSingleSignOnParticipationStrategyConfigurer(
             @Qualifier("samlIdPSingleSignOnParticipationStrategy")
             final SingleSignOnParticipationStrategy samlIdPSingleSignOnParticipationStrategy) {
@@ -150,7 +151,7 @@ public class SamlIdPWebflowConfiguration {
     @Configuration(value = "SamlIdPWebflowEventsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPWebflowEventsConfiguration {
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPAuthenticationContextWebflowEventResolver")
         public CasWebflowEventResolver samlIdPAuthenticationContextWebflowEventResolver(
@@ -171,7 +172,7 @@ public class SamlIdPWebflowConfiguration {
     public static class SamlIdPConsentWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPConsentableAttributeBuilder")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public ConsentableAttributeBuilder samlIdPConsentableAttributeBuilder(
             @Qualifier("attributeDefinitionStore")

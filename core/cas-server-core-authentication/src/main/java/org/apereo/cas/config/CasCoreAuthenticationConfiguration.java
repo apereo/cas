@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationResultBuilderFactory;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.AuthenticationTransactionFactory;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
@@ -30,6 +29,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
@@ -55,20 +55,20 @@ public class CasCoreAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "authenticationResultBuilderFactory")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationResultBuilderFactory authenticationResultBuilderFactory() {
             return new DefaultAuthenticationResultBuilderFactory();
         }
 
         @ConditionalOnMissingBean(name = "authenticationTransactionFactory")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationTransactionFactory authenticationTransactionFactory() {
             return new DefaultAuthenticationTransactionFactory();
         }
 
         @ConditionalOnMissingBean(name = "authenticationAttributeReleasePolicy")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         public AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy(
@@ -88,7 +88,7 @@ public class CasCoreAuthenticationConfiguration {
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     public static class CasCoreAuthenticationManagerConfiguration {
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         @ConditionalOnMissingBean(name = "authenticationTransactionManager")
         public AuthenticationTransactionManager authenticationTransactionManager(
@@ -100,7 +100,7 @@ public class CasCoreAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "casAuthenticationManager")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public AuthenticationManager casAuthenticationManager(
             final CasConfigurationProperties casProperties,
@@ -118,12 +118,10 @@ public class CasCoreAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
         @Autowired
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(
-            @Qualifier("defaultAuthenticationSystemSupport")
-            final AuthenticationSystemSupport authenticationSystemSupport,
             final List<AuthenticationEventExecutionPlanConfigurer> configurers) {
-            val plan = new DefaultAuthenticationEventExecutionPlan(authenticationSystemSupport);
+            val plan = new DefaultAuthenticationEventExecutionPlan();
             val sortedConfigurers = new ArrayList<>(configurers);
             AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
 

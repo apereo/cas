@@ -62,6 +62,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.net.URL;
 
@@ -82,7 +83,7 @@ public class SamlIdPMetadataConfiguration {
 
         @Lazy
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPMetadataController samlIdPMetadataController(
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -247,7 +248,7 @@ public class SamlIdPMetadataConfiguration {
 
         @ConditionalOnMissingBean(name = "samlIdPMetadataCache")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache(final CasConfigurationProperties casProperties) {
             val idp = casProperties.getAuthn().getSamlIdp();
@@ -257,7 +258,7 @@ public class SamlIdPMetadataConfiguration {
 
         @ConditionalOnMissingBean(name = "chainingMetadataResolverCacheLoader")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader(
             @Qualifier("samlRegisteredServiceMetadataResolvers")
             final SamlRegisteredServiceMetadataResolutionPlan samlRegisteredServiceMetadataResolvers,
@@ -271,7 +272,7 @@ public class SamlIdPMetadataConfiguration {
 
         @ConditionalOnMissingBean(name = SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver(
             final CasConfigurationProperties casProperties,

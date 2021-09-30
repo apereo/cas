@@ -26,6 +26,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ import java.util.Optional;
 public class GitServiceRegistryConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "gitServiceRegistryRepositoryInstance")
     @Autowired
     public GitRepository gitServiceRegistryRepositoryInstance(final CasConfigurationProperties casProperties) {
@@ -52,7 +53,7 @@ public class GitServiceRegistryConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "gitServiceRegistry")
     @Autowired
     public ServiceRegistry gitServiceRegistry(final CasConfigurationProperties casProperties,
@@ -77,7 +78,7 @@ public class GitServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "gitServiceRegistryExecutionPlanConfigurer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ServiceRegistryExecutionPlanConfigurer gitServiceRegistryExecutionPlanConfigurer(
         @Qualifier("gitServiceRegistry")
         final ServiceRegistry gitServiceRegistry) {

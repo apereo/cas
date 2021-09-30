@@ -28,6 +28,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -42,7 +43,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration(value = "authyAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class AuthyAuthenticationEventExecutionPlanConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public AuthyClientInstance authyClientInstance(final CasConfigurationProperties casProperties) {
@@ -54,7 +55,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "authyAuthenticationHandler")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public AuthenticationHandler authyAuthenticationHandler(final CasConfigurationProperties casProperties,
@@ -76,7 +77,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationProvider authyAuthenticatorMultifactorAuthenticationProvider(final CasConfigurationProperties casProperties,
                                                                                                  @Qualifier("authyBypassEvaluator")
@@ -94,7 +95,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationMetaDataPopulator authyAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,
                                                                                 @Qualifier("authyAuthenticationHandler")
@@ -105,7 +106,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
             authyAuthenticatorMultifactorAuthenticationProvider.getId());
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public Action authyAuthenticationRegistrationWebflowAction(
         @Qualifier("authyClientInstance")

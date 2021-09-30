@@ -18,6 +18,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -37,7 +38,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration(value = "googleAuthenticatorRedisConfiguration", proxyBeanMethods = false)
 public class GoogleAuthenticatorRedisConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcessor() {
         return new PersistenceExceptionTranslationPostProcessor();
@@ -51,7 +52,7 @@ public class GoogleAuthenticatorRedisConfiguration {
         return RedisObjectFactory.newRedisConnectionFactory(redis);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "redisGoogleAuthenticatorTemplate")
     public RedisTemplate redisGoogleAuthenticatorTemplate(

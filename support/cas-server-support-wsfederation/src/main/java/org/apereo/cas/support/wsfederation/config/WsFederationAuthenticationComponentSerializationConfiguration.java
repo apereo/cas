@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link WsFederationAuthenticationComponentSerializationConfiguration}.
@@ -21,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 public class WsFederationAuthenticationComponentSerializationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "wsFederationAuthenticationComponentSerializationPlanConfigurer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ComponentSerializationPlanConfigurer wsFederationAuthenticationComponentSerializationPlanConfigurer() {
         return plan -> plan.registerSerializableClass(WsFederationCredential.class);
     }

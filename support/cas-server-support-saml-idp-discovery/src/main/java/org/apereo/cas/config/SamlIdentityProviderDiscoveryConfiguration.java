@@ -25,6 +25,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
@@ -43,7 +44,7 @@ import java.util.function.Supplier;
 public class SamlIdentityProviderDiscoveryConfiguration {
 
     @ConditionalOnMissingBean(name = "identityProviderDiscoveryWebflowConfigurer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public CasWebflowConfigurer identityProviderDiscoveryWebflowConfigurer(

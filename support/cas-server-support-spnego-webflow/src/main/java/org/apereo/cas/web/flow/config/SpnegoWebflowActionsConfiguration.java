@@ -22,6 +22,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.execution.Action;
 
 import java.util.stream.Collectors;
@@ -38,7 +39,7 @@ import java.util.stream.Stream;
 public class SpnegoWebflowActionsConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action spnego(
         final CasConfigurationProperties casProperties,
@@ -55,7 +56,7 @@ public class SpnegoWebflowActionsConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action negociateSpnego(final CasConfigurationProperties casProperties) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
@@ -65,7 +66,7 @@ public class SpnegoWebflowActionsConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action baseSpnegoClientAction(final CasConfigurationProperties casProperties) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
@@ -76,7 +77,7 @@ public class SpnegoWebflowActionsConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action hostnameSpnegoClientAction(final CasConfigurationProperties casProperties) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
@@ -90,7 +91,7 @@ public class SpnegoWebflowActionsConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SpnegoLdapWebflowActionsConfiguration {
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public Action ldapSpnegoClientAction(final CasConfigurationProperties casProperties) {
             val spnegoProperties = casProperties.getAuthn().getSpnego();

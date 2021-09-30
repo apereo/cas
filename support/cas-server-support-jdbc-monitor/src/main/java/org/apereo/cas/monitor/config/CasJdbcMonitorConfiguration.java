@@ -16,6 +16,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
 import javax.sql.DataSource;
@@ -40,7 +41,7 @@ public class CasJdbcMonitorConfiguration {
 
     @Autowired
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnEnabledHealthIndicator("dataSourceHealthIndicator")
     public HealthIndicator dataSourceHealthIndicator(
         @Qualifier("pooledJdbcMonitorExecutorService")
@@ -53,7 +54,7 @@ public class CasJdbcMonitorConfiguration {
 
     @ConditionalOnMissingBean(name = "monitorDataSource")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public DataSource monitorDataSource(final CasConfigurationProperties casProperties) {
         return JpaBeans.newDataSource(casProperties.getMonitor().getJdbc());

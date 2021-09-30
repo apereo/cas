@@ -19,6 +19,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -41,7 +42,7 @@ import java.util.Set;
 @Configuration(value = "jpaEventsConfiguration", proxyBeanMethods = false)
 public class JpaEventsConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public JpaVendorAdapter jpaEventVendorAdapter(final CasConfigurationProperties casProperties,
@@ -52,7 +53,7 @@ public class JpaEventsConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "dataSourceEvent")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public DataSource dataSourceEvent(final CasConfigurationProperties casProperties) {
         return JpaBeans.newDataSource(casProperties.getEvents().getJpa());

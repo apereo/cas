@@ -33,6 +33,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
 
     @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.client-ip", name = "enabled", havingValue = "true")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "deviceFingerprintClientIpComponentExtractor")
     @Autowired
     public DeviceFingerprintComponentManager deviceFingerprintClientIpComponentExtractor(final CasConfigurationProperties casProperties) {
@@ -61,7 +62,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
 
     @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.cookie", name = "enabled", havingValue = "true", matchIfMissing = true)
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "deviceFingerprintCookieComponentExtractor")
     @Autowired
     public DeviceFingerprintComponentManager deviceFingerprintCookieComponentExtractor(
@@ -79,7 +80,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.cookie", name = "enabled", havingValue = "true", matchIfMissing = true)
     @ConditionalOnMissingBean(name = "deviceFingerprintCookieGenerator")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CasCookieBuilder deviceFingerprintCookieGenerator(
         final CasConfigurationProperties casProperties,
@@ -91,7 +92,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
 
     @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.user-agent", name = "enabled", havingValue = "true")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "deviceFingerprintUserAgentComponentExtractor")
     @Autowired
     public DeviceFingerprintComponentManager deviceFingerprintUserAgentComponentExtractor(final CasConfigurationProperties casProperties) {
@@ -103,7 +104,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
 
     @ConditionalOnMissingBean(name = DeviceFingerprintStrategy.DEFAULT_BEAN_NAME)
     @Bean(DeviceFingerprintStrategy.DEFAULT_BEAN_NAME)
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public DeviceFingerprintStrategy deviceFingerprintStrategy(final List<DeviceFingerprintComponentManager> extractors,
                                                                final CasConfigurationProperties casProperties) {
@@ -127,7 +128,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
 
     @ConditionalOnMissingBean(name = "deviceFingerprintCookieCipherExecutor")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CipherExecutor deviceFingerprintCookieCipherExecutor(final CasConfigurationProperties casProperties) {
         val crypto = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie().getCrypto();
@@ -149,7 +150,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class MultifactorAuthnTrustedDeviceGeoLocationConfiguration {
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "deviceFingerprintGeoLocationComponentExtractor")
         @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.geolocation", name = "enabled", havingValue = "true")
         @Autowired

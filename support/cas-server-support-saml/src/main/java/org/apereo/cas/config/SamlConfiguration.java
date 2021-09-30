@@ -45,6 +45,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.servlet.View;
 
 import java.nio.charset.StandardCharsets;
@@ -61,7 +62,7 @@ import java.util.List;
 public class SamlConfiguration {
 
     @ConditionalOnMissingBean(name = "samlResponseBuilder")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public SamlResponseBuilder samlResponseBuilder(
@@ -79,7 +80,7 @@ public class SamlConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "casSamlServiceSuccessView")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public View casSamlServiceSuccessView(
         @Qualifier("samlResponseBuilder")
@@ -100,7 +101,7 @@ public class SamlConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "casSamlServiceFailureView")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public View casSamlServiceFailureView(
         @Qualifier("samlResponseBuilder")

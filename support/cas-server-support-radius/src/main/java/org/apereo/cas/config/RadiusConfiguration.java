@@ -39,6 +39,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -97,7 +98,7 @@ public class RadiusConfiguration {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public AbstractRadiusServer radiusServer(final CasConfigurationProperties casProperties,
@@ -110,7 +111,7 @@ public class RadiusConfiguration {
         return getSingleRadiusServer(client, server, ips.iterator().next(), casSslContext);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public List<RadiusServer> radiusServers(
@@ -173,7 +174,7 @@ public class RadiusConfiguration {
         return new PasswordPolicyContext();
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "radiusAccessChallengedMultifactorAuthenticationTrigger")
     @Autowired
@@ -185,7 +186,7 @@ public class RadiusConfiguration {
         return new RadiusAccessChallengedMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver, applicationContext);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public CasWebflowEventResolver radiusAccessChallengedAuthenticationWebflowEventResolver(

@@ -37,6 +37,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.OrderComparator;
 import org.springframework.core.Ordered;
 import org.springframework.util.MimeType;
@@ -148,7 +149,7 @@ public class CasThymeleafConfiguration {
 
     @ConditionalOnMissingBean(name = "casPropertiesThymeleafViewResolverConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CasThymeleafViewResolverConfigurer casPropertiesThymeleafViewResolverConfigurer(final CasConfigurationProperties casProperties) {
         return new CasThymeleafViewResolverConfigurer() {
@@ -194,7 +195,7 @@ public class CasThymeleafConfiguration {
 
         @ConditionalOnMissingBean(name = "casProtocolViewFactory")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public CasProtocolViewFactory casProtocolViewFactory(final SpringTemplateEngine springTemplateEngine, final ThymeleafProperties thymeleafProperties) {
             return new CasProtocolThymeleafViewFactory(springTemplateEngine, thymeleafProperties);
@@ -215,7 +216,7 @@ public class CasThymeleafConfiguration {
         @ConditionalOnMissingBean(name = "registeredServiceViewResolver")
         @Bean
         @Autowired
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ViewResolver registeredServiceViewResolver(
             @Qualifier("themeResolver")
             final ThemeResolver themeResolver,
@@ -228,7 +229,7 @@ public class CasThymeleafConfiguration {
 
         @ConditionalOnMissingBean(name = "themeViewResolverFactory")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public ThemeViewResolverFactory themeViewResolverFactory(final ThymeleafProperties thymeleafProperties, final CasConfigurationProperties casProperties,
                                                                  final ConfigurableApplicationContext applicationContext,

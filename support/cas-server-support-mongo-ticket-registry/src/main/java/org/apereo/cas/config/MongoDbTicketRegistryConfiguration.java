@@ -17,6 +17,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import javax.net.ssl.SSLContext;
@@ -31,7 +32,7 @@ import javax.net.ssl.SSLContext;
 @Configuration(value = "mongoTicketRegistryConfiguration", proxyBeanMethods = false)
 public class MongoDbTicketRegistryConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public TicketRegistry ticketRegistry(
@@ -51,7 +52,7 @@ public class MongoDbTicketRegistryConfiguration {
 
     @ConditionalOnMissingBean(name = "mongoDbTicketRegistryTemplate")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MongoTemplate mongoDbTicketRegistryTemplate(final CasConfigurationProperties casProperties,
                                                        @Qualifier("sslContext")

@@ -19,6 +19,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link FortressAuthenticationConfiguration}.
@@ -33,13 +34,13 @@ public class FortressAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "fortressPrincipalFactory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory fortressPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "fortressAccessManager")
     @Autowired
     public AccessMgr fortressAccessManager(final CasConfigurationProperties casProperties) {
@@ -52,7 +53,7 @@ public class FortressAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "fortressAuthenticationHandler")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationHandler fortressAuthenticationHandler(
         @Qualifier("fortressAccessManager")
         final AccessMgr fortressAccessManager,
@@ -65,7 +66,7 @@ public class FortressAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "fortressAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer fortressAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("fortressAuthenticationHandler")
         final AuthenticationHandler fortressAuthenticationHandler) {

@@ -30,6 +30,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
     public static class CasCoreAuthenticationHandlersProxyConfiguration {
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public AuthenticationHandler proxyAuthenticationHandler(
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -73,14 +74,14 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
         @ConditionalOnMissingBean(name = "proxyPrincipalFactory")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalFactory proxyPrincipalFactory() {
             return PrincipalFactoryUtils.newPrincipalFactory();
         }
 
         @ConditionalOnMissingBean(name = "proxyPrincipalResolver")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public PrincipalResolver proxyPrincipalResolver(
             @Qualifier("proxyPrincipalFactory")
@@ -120,12 +121,12 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
         @ConditionalOnMissingBean(name = "acceptPasswordPolicyConfiguration")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PasswordPolicyContext acceptPasswordPolicyConfiguration() {
             return new PasswordPolicyContext();
         }
 
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "acceptUsersAuthenticationHandler")
         @Autowired
@@ -162,7 +163,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
         @ConditionalOnMissingBean(name = "acceptUsersPrincipalFactory")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalFactory acceptUsersPrincipalFactory() {
             return PrincipalFactoryUtils.newPrincipalFactory();
         }
@@ -174,21 +175,21 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
         @ConditionalOnMissingBean(name = "jaasPasswordPolicyConfiguration")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PasswordPolicyContext jaasPasswordPolicyConfiguration() {
             return new PasswordPolicyContext();
         }
 
         @ConditionalOnMissingBean(name = "jaasPrincipalFactory")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalFactory jaasPrincipalFactory() {
             return PrincipalFactoryUtils.newPrincipalFactory();
         }
 
         @Bean
         @ConditionalOnMissingBean(name = "jaasPersonDirectoryPrincipalResolvers")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public List<PrincipalResolver> jaasPersonDirectoryPrincipalResolvers(
             final CasConfigurationProperties casProperties,
@@ -210,7 +211,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
         }
 
         @ConditionalOnMissingBean(name = "jaasAuthenticationHandlers")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         public List<AuthenticationHandler> jaasAuthenticationHandlers(
@@ -258,7 +259,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
         @ConditionalOnMissingBean(name = "jaasAuthenticationEventExecutionPlanConfigurer")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer jaasAuthenticationEventExecutionPlanConfigurer(
             @Qualifier("jaasAuthenticationHandlers")
             final List<AuthenticationHandler> jaasAuthenticationHandlers,

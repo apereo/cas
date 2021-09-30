@@ -15,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasSupportCouchDbAuditConfiguration}.
@@ -27,7 +28,7 @@ import org.springframework.context.annotation.Configuration;
 public class CasSupportCouchDbAuditConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "auditCouchDbFactory")
     @Autowired
     public CouchDbConnectorFactory auditCouchDbFactory(final CasConfigurationProperties casProperties,
@@ -38,7 +39,7 @@ public class CasSupportCouchDbAuditConfiguration {
 
     @ConditionalOnMissingBean(name = "auditActionContextCouchDbRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuditActionContextCouchDbRepository auditActionContextCouchDbRepository(
         @Qualifier("auditCouchDbFactory")
@@ -48,7 +49,7 @@ public class CasSupportCouchDbAuditConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbAuditTrailManager")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuditTrailManager couchDbAuditTrailManager(
         @Qualifier("auditActionContextCouchDbRepository")
@@ -58,7 +59,7 @@ public class CasSupportCouchDbAuditConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbAuditTrailExecutionPlanConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuditTrailExecutionPlanConfigurer couchDbAuditTrailExecutionPlanConfigurer(
         @Qualifier("couchDbAuditTrailManager")
         final AuditTrailManager auditTrailManager) {

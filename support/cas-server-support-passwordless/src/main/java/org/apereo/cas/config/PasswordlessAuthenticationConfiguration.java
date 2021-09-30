@@ -31,6 +31,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -50,7 +51,7 @@ public class PasswordlessAuthenticationConfiguration {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "passwordlessTokenAuthenticationHandler")
     public AuthenticationHandler passwordlessTokenAuthenticationHandler(
@@ -64,7 +65,7 @@ public class PasswordlessAuthenticationConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "passwordlessUserAccountStore")
     @Autowired
     public PasswordlessUserAccountStore passwordlessUserAccountStore(final CasConfigurationProperties casProperties) {
@@ -93,7 +94,7 @@ public class PasswordlessAuthenticationConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "passwordlessCipherExecutor")
     @Autowired
     public CipherExecutor passwordlessCipherExecutor(final CasConfigurationProperties casProperties) {
@@ -106,7 +107,7 @@ public class PasswordlessAuthenticationConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "passwordlessTokenRepository")
     @Autowired
     public PasswordlessTokenRepository passwordlessTokenRepository(final CasConfigurationProperties casProperties,

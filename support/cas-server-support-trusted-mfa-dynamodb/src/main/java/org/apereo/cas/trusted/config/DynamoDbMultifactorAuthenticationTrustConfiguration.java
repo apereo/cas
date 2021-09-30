@@ -16,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 /**
@@ -28,7 +29,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 @Configuration(value = "dynamoDbMultifactorAuthenticationTrustConfiguration", proxyBeanMethods = false)
 public class DynamoDbMultifactorAuthenticationTrustConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "amazonDynamoDbMultifactorTrustEngineClient")
     @Autowired
@@ -38,7 +39,7 @@ public class DynamoDbMultifactorAuthenticationTrustConfiguration {
         return factory.createAmazonDynamoDb(db);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbMultifactorTrustEngineFacilitator")
     @Autowired
@@ -53,7 +54,7 @@ public class DynamoDbMultifactorAuthenticationTrustConfiguration {
         return f;
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public MultifactorAuthenticationTrustStorage mfaTrustEngine(final CasConfigurationProperties casProperties,

@@ -20,6 +20,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ import java.util.Optional;
 public class CouchDbServiceRegistryConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "serviceRegistryCouchDbFactory")
     @Autowired
     public CouchDbConnectorFactory serviceRegistryCouchDbFactory(final CasConfigurationProperties casProperties,
@@ -47,7 +48,7 @@ public class CouchDbServiceRegistryConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "serviceRegistryCouchDbRepository")
     @Autowired
     public RegisteredServiceCouchDbRepository serviceRegistryCouchDbRepository(final CasConfigurationProperties casProperties,
@@ -60,7 +61,7 @@ public class CouchDbServiceRegistryConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "couchDbServiceRegistry")
     @Autowired
     public ServiceRegistry couchDbServiceRegistry(final ConfigurableApplicationContext applicationContext,
@@ -73,7 +74,7 @@ public class CouchDbServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "couchDbServiceRegistryExecutionPlanConfigurer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ServiceRegistryExecutionPlanConfigurer couchDbServiceRegistryExecutionPlanConfigurer(
         @Qualifier("couchDbServiceRegistry")
         final ServiceRegistry couchDbServiceRegistry) {

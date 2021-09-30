@@ -21,6 +21,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -65,7 +66,7 @@ public class DigestAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "defaultDigestCredentialRetriever")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public DigestHashedCredentialRetriever defaultDigestCredentialRetriever(final CasConfigurationProperties casProperties) {
         val digest = casProperties.getAuthn().getDigest();

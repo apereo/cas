@@ -25,6 +25,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class CasOAuth20EndpointsConfiguration {
     public static class CasOAuth20EndpointControllersConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "callbackAuthorizeController")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public OAuth20CallbackAuthorizeEndpointController callbackAuthorizeController(
             @Qualifier("oauth20ConfigurationContext")
@@ -101,7 +102,7 @@ public class CasOAuth20EndpointsConfiguration {
 
         @ConditionalOnMissingBean(name = "authorizeController")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthorizeEndpointController authorizeController(
             @Qualifier("oauth20ConfigurationContext")
             final OAuth20ConfigurationContext context) {

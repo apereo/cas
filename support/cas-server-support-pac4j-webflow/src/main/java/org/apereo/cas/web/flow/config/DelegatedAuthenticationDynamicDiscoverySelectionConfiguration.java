@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -27,9 +28,8 @@ import org.springframework.webflow.execution.Action;
 public class DelegatedAuthenticationDynamicDiscoverySelectionConfiguration {
 
 
-
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "delegatedAuthenticationDynamicDiscoveryProviderLocator")
     @Autowired
     public DelegatedAuthenticationDynamicDiscoveryProviderLocator delegatedAuthenticationDynamicDiscoveryProviderLocator(
@@ -39,7 +39,7 @@ public class DelegatedAuthenticationDynamicDiscoverySelectionConfiguration {
         return new DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator(configContext.getDelegatedClientIdentityProvidersProducer(), configContext.getClients(), casProperties);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_DYNAMIC_DISCOVERY_EXECUTION)
     @Bean
     public Action delegatedAuthenticationProviderDynamicDiscoveryExecutionAction(

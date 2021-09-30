@@ -18,6 +18,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CouchDbTicketRegistryConfiguration}.
@@ -29,7 +30,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "couchDbTicketRegistryConfiguration", proxyBeanMethods = false)
 public class CouchDbTicketRegistryConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "ticketRegistryCouchDbFactory")
     @Autowired
@@ -40,7 +41,7 @@ public class CouchDbTicketRegistryConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "ticketRegistryCouchDbRepository")
     @Autowired
     public TicketRepository ticketRegistryCouchDbRepository(final CasConfigurationProperties casProperties,
@@ -52,7 +53,7 @@ public class CouchDbTicketRegistryConfiguration {
         return ticketRepository;
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "couchDbTicketRegistry")
     @Autowired
@@ -66,7 +67,7 @@ public class CouchDbTicketRegistryConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "couchDbTicketRegistryCleaner")
     public TicketRegistryCleaner ticketRegistryCleaner() {
         return NoOpTicketRegistryCleaner.getInstance();

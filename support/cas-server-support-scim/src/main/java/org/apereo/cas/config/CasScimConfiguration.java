@@ -22,6 +22,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -51,21 +52,21 @@ public class CasScimConfiguration {
         return new ScimWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "scim2PrincipalAttributeMapper")
     public ScimV2PrincipalAttributeMapper scim2PrincipalAttributeMapper() {
         return new ScimV2PrincipalAttributeMapper();
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "scim1PrincipalAttributeMapper")
     public ScimV1PrincipalAttributeMapper scim1PrincipalAttributeMapper() {
         return new ScimV1PrincipalAttributeMapper();
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "scimProvisioner")
     @Autowired
@@ -83,7 +84,7 @@ public class CasScimConfiguration {
 
     @ConditionalOnMissingBean(name = "principalScimProvisionerAction")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action principalScimProvisionerAction(
         @Qualifier("scimProvisioner")
         final PrincipalProvisioner scimProvisioner) {

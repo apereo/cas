@@ -173,7 +173,7 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
      * @return whether the authorize request is valid
      */
     private boolean verifyRevocationRequest(final JEEContext context) {
-        val validator = getConfigurationContext().getAccessTokenGrantRequestValidators()
+        val validator = getConfigurationContext().getAccessTokenGrantRequestValidators().getObject()
             .stream()
             .filter(b -> b.supports(context))
             .findFirst()

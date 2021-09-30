@@ -24,6 +24,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 import javax.xml.bind.Marshaller;
@@ -49,7 +50,7 @@ public class SoapAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "soapAuthenticationAuthenticationHandler")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationHandler soapAuthenticationAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
                                                                          @Qualifier("soapAuthenticationPrincipalFactory")
@@ -89,7 +90,7 @@ public class SoapAuthenticationConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "soapAuthenticationClient")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public SoapAuthenticationClient soapAuthenticationClient(final CasConfigurationProperties casProperties,

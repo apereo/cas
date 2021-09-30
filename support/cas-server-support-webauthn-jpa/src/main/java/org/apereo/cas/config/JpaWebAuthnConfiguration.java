@@ -19,6 +19,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -37,7 +38,7 @@ import java.util.Set;
 @Configuration(value = "JpaWebAuthnConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class JpaWebAuthnConfiguration {
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public JpaVendorAdapter jpaWebAuthnVendorAdapter(
@@ -49,7 +50,7 @@ public class JpaWebAuthnConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "dataSourceWebAuthn")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public DataSource dataSourceWebAuthn(final CasConfigurationProperties casProperties) {
         return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getWebAuthn().getJpa());
@@ -92,8 +93,8 @@ public class JpaWebAuthnConfiguration {
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }
-    
-    @RefreshScope
+
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public WebAuthnCredentialRepository webAuthnCredentialRepository(

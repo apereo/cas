@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
+import org.apereo.cas.util.spring.CasEventListener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ import org.springframework.scheduling.annotation.Async;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class ServiceRegistryInitializerEventListener {
+public class ServiceRegistryInitializerEventListener implements CasEventListener {
     private final ServiceRegistryInitializer serviceRegistryInitializer;
 
     /**
@@ -46,6 +47,6 @@ public class ServiceRegistryInitializerEventListener {
 
     private void rebind() {
         LOGGER.info("Refreshing CAS service registry configuration. Stand by...");
-        serviceRegistryInitializer.initServiceRegistryIfNecessary();
+        serviceRegistryInitializer.initialize();
     }
 }

@@ -33,6 +33,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -68,7 +69,7 @@ public class WebAuthnWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "webAuthnAuthenticationWebflowAction")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action webAuthnAuthenticationWebflowAction(
         @Qualifier("webAuthnAuthenticationWebflowEventResolver")
@@ -98,7 +99,7 @@ public class WebAuthnWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "webAuthnStartAuthenticationAction")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action webAuthnStartAuthenticationAction(
         @Qualifier("webAuthnCredentialRepository")
@@ -108,7 +109,7 @@ public class WebAuthnWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "webAuthnStartRegistrationAction")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action webAuthnStartRegistrationAction(
         @Qualifier("webAuthnCsrfTokenRepository")
@@ -122,7 +123,7 @@ public class WebAuthnWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "webAuthnCheckAccountRegistrationAction")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action webAuthnCheckAccountRegistrationAction(
         @Qualifier("webAuthnCredentialRepository")
@@ -132,7 +133,7 @@ public class WebAuthnWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "webAuthnSaveAccountRegistrationAction")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action webAuthnSaveAccountRegistrationAction(
         @Qualifier("webAuthnSessionManager")
@@ -144,7 +145,7 @@ public class WebAuthnWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "webAuthnValidateSessionCredentialTokenAction")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action webAuthnValidateSessionCredentialTokenAction(
         @Qualifier("webAuthnSessionManager")
@@ -159,7 +160,7 @@ public class WebAuthnWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "webAuthnAuthenticationWebflowEventResolver")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver(
         @Qualifier("casWebflowConfigurationContext")

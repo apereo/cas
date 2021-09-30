@@ -15,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 /**
@@ -42,7 +43,7 @@ public class CasEventsDynamoDbRepositoryConfiguration {
         return CasEventRepositoryFilter.noOp();
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public DynamoDbCasEventsFacilitator dynamoDbCasEventsFacilitator(
@@ -57,7 +58,7 @@ public class CasEventsDynamoDbRepositoryConfiguration {
         return f;
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbEventRepositoryClient")
     @Autowired

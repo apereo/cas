@@ -47,6 +47,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 
 import java.util.HashSet;
@@ -83,7 +84,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CoreWsSecurityIdentityProviderServiceSelectionConfiguration {
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         @ConditionalOnMissingBean(name = "wsFederationAuthenticationServiceSelectionStrategy")
         public AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy(
@@ -149,7 +150,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
 
         @Autowired
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "wsFederationRelyingPartyTokenProducer")
         public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer(
             @Qualifier("securityTokenServiceCredentialCipherExecutor")
@@ -247,7 +248,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
         }
 
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public WSFederationMetadataController wsFederationMetadataController(final CasConfigurationProperties casProperties) {
             return new WSFederationMetadataController(casProperties);

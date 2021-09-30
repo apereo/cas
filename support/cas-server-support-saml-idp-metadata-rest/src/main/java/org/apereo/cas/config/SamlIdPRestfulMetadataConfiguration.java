@@ -14,6 +14,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SamlIdPRestfulMetadataConfiguration}.
@@ -27,7 +28,7 @@ public class SamlIdPRestfulMetadataConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "restSamlRegisteredServiceMetadataResolver")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public SamlRegisteredServiceMetadataResolver restSamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
                                                                                            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
@@ -37,7 +38,7 @@ public class SamlIdPRestfulMetadataConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "restSamlRegisteredServiceMetadataResolutionPlanConfigurer")
     public SamlRegisteredServiceMetadataResolutionPlanConfigurer restSamlRegisteredServiceMetadataResolutionPlanConfigurer(
         @Qualifier("restSamlRegisteredServiceMetadataResolver")

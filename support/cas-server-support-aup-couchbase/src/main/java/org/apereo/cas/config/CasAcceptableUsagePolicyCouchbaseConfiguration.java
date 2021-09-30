@@ -14,6 +14,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasAcceptableUsagePolicyCouchbaseConfiguration} that stores AUP decisions in a mongo database.
@@ -26,7 +27,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "casAcceptableUsagePolicyCouchbaseConfiguration", proxyBeanMethods = false)
 public class CasAcceptableUsagePolicyCouchbaseConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public CouchbaseClientFactory aupCouchbaseClientFactory(final CasConfigurationProperties casProperties) {
@@ -34,7 +35,7 @@ public class CasAcceptableUsagePolicyCouchbaseConfiguration {
         return new CouchbaseClientFactory(cb);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(final CasConfigurationProperties casProperties,

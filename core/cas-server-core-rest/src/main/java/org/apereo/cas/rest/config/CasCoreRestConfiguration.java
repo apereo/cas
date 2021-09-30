@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class CasCoreRestConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "restAuthenticationService")
     @Autowired
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RestAuthenticationService restAuthenticationService(
         @Qualifier("restHttpRequestCredentialFactory")
         final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory,
@@ -61,7 +62,7 @@ public class CasCoreRestConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "restHttpRequestCredentialFactory")
     @Autowired
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RestHttpRequestCredentialFactory restHttpRequestCredentialFactory(
         final List<RestHttpRequestCredentialFactoryConfigurer> configurers) {
         
@@ -78,7 +79,7 @@ public class CasCoreRestConfiguration {
 
     @ConditionalOnMissingBean(name = "restHttpRequestCredentialFactoryConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RestHttpRequestCredentialFactoryConfigurer restHttpRequestCredentialFactoryConfigurer() {
         return factory -> factory.registerCredentialFactory(new UsernamePasswordRestHttpRequestCredentialFactory());
     }

@@ -20,6 +20,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link MemcachedMonitorConfiguration}.
@@ -33,7 +34,7 @@ public class MemcachedMonitorConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "memcachedMonitorTranscoder")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Transcoder memcachedMonitorTranscoder(final CasConfigurationProperties casProperties,
                                                  @Qualifier("componentSerializationPlan")
@@ -56,7 +57,7 @@ public class MemcachedMonitorConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "memcachedHealthClientPool")
     @Autowired
     public ObjectPool<MemcachedClientIF> memcachedHealthClientPool(

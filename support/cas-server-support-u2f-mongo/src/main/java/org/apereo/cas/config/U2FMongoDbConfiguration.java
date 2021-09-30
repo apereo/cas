@@ -16,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import javax.net.ssl.SSLContext;
 
@@ -30,7 +31,7 @@ import javax.net.ssl.SSLContext;
 public class U2FMongoDbConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public U2FDeviceRepository u2fDeviceRepository(final CasConfigurationProperties casProperties,
                                                    @Qualifier("u2fRegistrationRecordCipherExecutor")

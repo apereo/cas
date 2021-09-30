@@ -27,6 +27,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "defaultPrincipalResolver")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public PrincipalResolver defaultPrincipalResolver(final List<PrincipalResolutionExecutionPlanConfigurer> configurers,
                                                           final CasConfigurationProperties casProperties,
@@ -77,7 +78,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     public static class CasCoreAuthenticationPrincipalElectionConfiguration {
         @ConditionalOnMissingBean(name = "principalElectionStrategy")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public PrincipalElectionStrategy principalElectionStrategy(final List<PrincipalElectionStrategyConfigurer> configurers,
                                                                    final CasConfigurationProperties casProperties) {
@@ -96,7 +97,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
 
         @ConditionalOnMissingBean(name = "defaultPrincipalElectionStrategyConfigurer")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer(
             final CasConfigurationProperties casProperties,
@@ -120,13 +121,13 @@ public class CasCoreAuthenticationPrincipalConfiguration {
 
         @ConditionalOnMissingBean(name = "principalFactory")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalFactory principalFactory() {
             return PrincipalFactoryUtils.newPrincipalFactory();
         }
 
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_GLOBAL_PRINCIPAL_ATTRIBUTE_REPOSITORY)
         @Autowired
         public RegisteredServicePrincipalAttributesRepository globalPrincipalAttributeRepository(final CasConfigurationProperties casProperties) {

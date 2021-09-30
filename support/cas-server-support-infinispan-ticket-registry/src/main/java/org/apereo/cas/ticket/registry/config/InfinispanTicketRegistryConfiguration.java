@@ -16,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link InfinispanTicketRegistryConfiguration}.
@@ -36,7 +37,7 @@ public class InfinispanTicketRegistryConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public TicketRegistry ticketRegistry(final CasConfigurationProperties casProperties,
                                          final EmbeddedCacheManager cacheManager) throws Exception {

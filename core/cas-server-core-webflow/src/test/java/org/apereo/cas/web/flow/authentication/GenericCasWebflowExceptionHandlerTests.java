@@ -36,6 +36,8 @@ public class GenericCasWebflowExceptionHandlerTests {
         errors.add(AccountLockedException.class);
         errors.add(CredentialExpiredException.class);
         errors.add(AccountExpiredException.class);
+        val catalog = new DefaultCasWebflowExceptionCatalog();
+        catalog.registerExceptions(errors);
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -44,7 +46,7 @@ public class GenericCasWebflowExceptionHandlerTests {
         when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
 
-        val handler = new GenericCasWebflowExceptionHandler(errors, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+        val handler = new GenericCasWebflowExceptionHandler(catalog, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
         assertTrue(handler.supports(new AccountExpiredException(), context));
 
         val event = handler.handle(new CredentialExpiredException(), context);

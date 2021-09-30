@@ -22,6 +22,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasCookieConfiguration}.
@@ -40,7 +41,7 @@ public class CasCookieConfiguration {
         @ConditionalOnMissingBean(name = "cookieValueManager")
         @Bean
         @Autowired
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CookieValueManager cookieValueManager(
             final CasConfigurationProperties casProperties,
             @Qualifier("cookieCipherExecutor")
@@ -52,7 +53,7 @@ public class CasCookieConfiguration {
         }
 
         @ConditionalOnMissingBean(name = "cookieCipherExecutor")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         public CipherExecutor cookieCipherExecutor(final CasConfigurationProperties casProperties) {
@@ -79,7 +80,7 @@ public class CasCookieConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCookieGeneratorConfiguration {
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "warnCookieGenerator")
         @Autowired
         public CasCookieBuilder warnCookieGenerator(final CasConfigurationProperties casProperties) {
@@ -89,7 +90,7 @@ public class CasCookieConfiguration {
 
         @ConditionalOnMissingBean(name = "ticketGrantingTicketCookieGenerator")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public CasCookieBuilder ticketGrantingTicketCookieGenerator(
             final CasConfigurationProperties casProperties,

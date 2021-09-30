@@ -1131,6 +1131,7 @@ public interface CasWebflowConstants {
      * Action id 'serviceWarningAction'.
      */
     String ACTION_ID_SERVICE_WARNING = "serviceWarningAction";
+
     /**
      * Action id 'finishLogoutAction'.
      */

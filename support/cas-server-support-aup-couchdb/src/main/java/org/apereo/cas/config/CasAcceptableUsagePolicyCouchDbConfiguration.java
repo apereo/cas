@@ -17,6 +17,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasAcceptableUsagePolicyCouchDbConfiguration} that stores AUP decisions in a CouchDb database.
@@ -31,7 +32,7 @@ public class CasAcceptableUsagePolicyCouchDbConfiguration {
 
     @ConditionalOnMissingBean(name = "aupCouchDbFactory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CouchDbConnectorFactory aupCouchDbFactory(final CasConfigurationProperties casProperties,
                                                      @Qualifier("objectMapperFactory")
@@ -41,7 +42,7 @@ public class CasAcceptableUsagePolicyCouchDbConfiguration {
 
     @ConditionalOnMissingBean(name = "aupCouchDbRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public ProfileCouchDbRepository aupCouchDbRepository(
         @Qualifier("aupCouchDbFactory")
@@ -52,7 +53,7 @@ public class CasAcceptableUsagePolicyCouchDbConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbAcceptableUsagePolicyRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(
         @Qualifier("aupCouchDbRepository")

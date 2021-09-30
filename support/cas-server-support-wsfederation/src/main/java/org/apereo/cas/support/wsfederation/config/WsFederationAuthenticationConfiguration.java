@@ -19,6 +19,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.Collection;
 
@@ -33,7 +34,7 @@ import java.util.Collection;
 public class WsFederationAuthenticationConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "wsFederationHelper")
     public WsFederationHelper wsFederationHelper(
         @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
@@ -44,7 +45,7 @@ public class WsFederationAuthenticationConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "wsFederationCookieManager")
     @Autowired
     public WsFederationCookieManager wsFederationCookieManager(

@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.AccessLevel;
@@ -68,7 +69,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
         val throttled = throttleRequest(request, response) || exceedsThreshold(request);
         if (throttled) {
             LOGGER.warn("Throttling submission from [{}]. More than [{}] failed login attempts within [{}] seconds. "
-                    + "Authentication attempt exceeds the failure threshold [{}]", request.getRemoteAddr(),
+                        + "Authentication attempt exceeds the failure threshold [{}]", request.getRemoteAddr(),
                 this.thresholdRate, configurationContext.getFailureRangeInSeconds(), configurationContext.getFailureThreshold());
 
             recordThrottle(request);
@@ -129,7 +130,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
     protected boolean shouldResponseBeRecordedAsFailure(final HttpServletResponse response) {
         val status = response.getStatus();
         return status != HttpStatus.CREATED.value()
-            && status != HttpStatus.OK.value() && status != HttpStatus.FOUND.value();
+               && status != HttpStatus.OK.value() && status != HttpStatus.FOUND.value();
     }
 
     /**
@@ -208,6 +209,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
     }
 
     private boolean isRequestIgnoredForThrottling(final HttpServletRequest request, final HttpServletResponse response) {
-        return !configurationContext.getAuthenticationThrottlingExecutionPlan().getAuthenticationThrottleFilter().supports(request, response);
+        val plan = configurationContext.getApplicationContext().getBean(AuthenticationThrottlingExecutionPlan.class);
+        return !plan.getAuthenticationThrottleFilter().supports(request, response);
     }
 }

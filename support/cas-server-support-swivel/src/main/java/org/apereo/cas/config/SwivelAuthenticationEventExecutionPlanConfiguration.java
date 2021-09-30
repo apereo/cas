@@ -23,6 +23,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SwivelAuthenticationEventExecutionPlanConfiguration}.
@@ -36,7 +37,7 @@ import org.springframework.context.annotation.Configuration;
 public class SwivelAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "swivelAuthenticationMetaDataPopulator")
     @Autowired
     public AuthenticationMetaDataPopulator swivelAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,
@@ -55,7 +56,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "swivelAuthenticationHandler")
     @Autowired
     public SwivelAuthenticationHandler swivelAuthenticationHandler(
@@ -69,7 +70,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "swivelMultifactorAuthenticationProvider")
     @Autowired
     public MultifactorAuthenticationProvider swivelMultifactorAuthenticationProvider(
@@ -90,7 +91,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "swivelAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer swivelAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("swivelAuthenticationHandler")
         final SwivelAuthenticationHandler swivelAuthenticationHandler,

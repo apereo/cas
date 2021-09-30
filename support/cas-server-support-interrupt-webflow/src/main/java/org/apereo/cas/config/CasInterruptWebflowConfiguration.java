@@ -25,6 +25,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -52,7 +53,7 @@ public class CasInterruptWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "inquireInterruptAction")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action inquireInterruptAction(final CasConfigurationProperties casProperties,
                                          @Qualifier("interruptCookieGenerator")
@@ -64,14 +65,14 @@ public class CasInterruptWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "prepareInterruptViewAction")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action prepareInterruptViewAction() {
         return new PrepareInterruptViewAction();
     }
 
     @ConditionalOnMissingBean(name = "finalizeInterruptFlowAction")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action finalizeInterruptFlowAction(
         @Qualifier("interruptCookieGenerator")
         final CasCookieBuilder interruptCookieGenerator) {
@@ -79,7 +80,7 @@ public class CasInterruptWebflowConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "interruptSingleSignOnParticipationStrategy")
     public SingleSignOnParticipationStrategy interruptSingleSignOnParticipationStrategy(
         @Qualifier("defaultTicketRegistrySupport")
@@ -93,7 +94,7 @@ public class CasInterruptWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "interruptSingleSignOnParticipationStrategyConfigurer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SingleSignOnParticipationStrategyConfigurer interruptSingleSignOnParticipationStrategyConfigurer(
         @Qualifier("interruptSingleSignOnParticipationStrategy")
         final SingleSignOnParticipationStrategy interruptSingleSignOnParticipationStrategy) {

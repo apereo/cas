@@ -14,6 +14,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import javax.net.ssl.SSLContext;
@@ -29,7 +30,7 @@ import javax.net.ssl.SSLContext;
 @Configuration(value = "casAcceptableUsagePolicyMongoDbConfiguration", proxyBeanMethods = false)
 public class CasAcceptableUsagePolicyMongoDbConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public MongoTemplate mongoAcceptableUsagePolicyTemplate(final CasConfigurationProperties casProperties,
@@ -42,7 +43,7 @@ public class CasAcceptableUsagePolicyMongoDbConfiguration {
         return mongoTemplate;
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(final CasConfigurationProperties casProperties,

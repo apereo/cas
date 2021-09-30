@@ -16,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CouchbasePersonDirectoryConfiguration}.
@@ -31,7 +32,7 @@ public class CouchbasePersonDirectoryConfiguration {
 
     @ConditionalOnMissingBean(name = "couchbasePersonAttributeDao")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public IPersonAttributeDao couchbasePersonAttributeDao(final CasConfigurationProperties casProperties) {
         val couchbase = casProperties.getAuthn().getAttributeRepository().getCouchbase();
@@ -43,7 +44,7 @@ public class CouchbasePersonDirectoryConfiguration {
 
     @ConditionalOnMissingBean(name = "couchbaseAttributeRepositoryPlanConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PersonDirectoryAttributeRepositoryPlanConfigurer couchbaseAttributeRepositoryPlanConfigurer(
         @Qualifier("couchbasePersonAttributeDao")
         final IPersonAttributeDao couchbasePersonAttributeDao) {

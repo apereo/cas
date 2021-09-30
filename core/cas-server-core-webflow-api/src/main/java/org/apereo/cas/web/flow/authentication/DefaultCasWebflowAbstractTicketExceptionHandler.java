@@ -11,8 +11,6 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Set;
-
 /**
  * This is {@link DefaultCasWebflowAbstractTicketExceptionHandler}.
  *
@@ -28,7 +26,7 @@ public class DefaultCasWebflowAbstractTicketExceptionHandler implements CasWebfl
     /**
      * Ordered list of error classes that this class knows how to handle.
      */
-    private final Set<Class<? extends Throwable>> errors;
+    private final CasWebflowExceptionCatalog errors;
 
     /**
      * String appended to exception class name to create a message bundle key for that particular error.
@@ -58,7 +56,7 @@ public class DefaultCasWebflowAbstractTicketExceptionHandler implements CasWebfl
      */
     protected String handleAbstractTicketException(final AbstractTicketException e, final RequestContext requestContext) {
         val messageContext = requestContext.getMessageContext();
-        val match = this.errors.stream()
+        val match = this.errors.getRegisteredExceptions().stream()
             .filter(c -> c.isInstance(e)).map(Class::getSimpleName)
             .findFirst();
 

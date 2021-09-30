@@ -25,6 +25,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.util.StringUtils;
 
 import javax.cache.expiry.CreatedExpiryPolicy;
@@ -59,7 +60,7 @@ public class IgniteTicketRegistryConfiguration {
     }
 
     @Autowired
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public IgniteConfiguration igniteConfiguration(
         @Qualifier("ticketCatalog")
@@ -103,7 +104,7 @@ public class IgniteTicketRegistryConfiguration {
 
     @Autowired
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(
         @Qualifier("ticketCatalog")
         final TicketCatalog ticketCatalog, final CasConfigurationProperties casProperties,

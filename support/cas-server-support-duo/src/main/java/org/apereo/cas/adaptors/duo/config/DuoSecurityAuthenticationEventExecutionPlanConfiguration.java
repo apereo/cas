@@ -45,6 +45,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -81,7 +82,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "prepareDuoWebLoginFormAction")
     public Action prepareDuoWebLoginFormAction() {
         return new DuoSecurityPrepareWebLoginFormAction();
@@ -89,14 +90,14 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "determineDuoUserAccountAction")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action determineDuoUserAccountAction() {
         return new DuoSecurityDetermineUserAccountAction();
     }
 
     @ConditionalOnMissingBean(name = "duoProviderFactory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationProviderFactoryBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderFactory(
         final CasConfigurationProperties casProperties,
@@ -114,7 +115,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "duoProviderBean")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationProviderBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean(
         final CasConfigurationProperties casProperties,
@@ -124,7 +125,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         return new MultifactorAuthenticationProviderBean(duoProviderFactory, applicationContext.getDefaultListableBeanFactory(), casProperties.getAuthn().getMfa().getDuo());
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public Collection<DuoSecurityAuthenticationHandler> duoAuthenticationHandlers(

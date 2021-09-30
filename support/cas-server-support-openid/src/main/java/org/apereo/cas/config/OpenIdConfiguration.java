@@ -39,6 +39,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.servlet.View;
 
 import java.util.Properties;
@@ -65,7 +66,7 @@ public class OpenIdConfiguration {
         return new SmartOpenIdController(serverManager, casOpenIdAssociationSuccessView);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "serverManager")
     @Autowired
@@ -96,14 +97,14 @@ public class OpenIdConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "yadisController")
     public YadisController yadisController() {
         return new YadisController();
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public OpenIdProviderController openIdProviderController() {
         return new OpenIdProviderController();
     }
