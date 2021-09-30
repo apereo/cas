@@ -2,6 +2,7 @@ package org.apereo.cas.util.spring;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +32,7 @@ public interface BeanContainer<T> {
      * @return the bean container
      */
     static <T> BeanContainer<T> toList(final List<T> entries) {
-        return new ListBeanContainer<>(entries);
+        return new ListBeanContainer<>(new ArrayList<>(entries));
     }
 
     /**
