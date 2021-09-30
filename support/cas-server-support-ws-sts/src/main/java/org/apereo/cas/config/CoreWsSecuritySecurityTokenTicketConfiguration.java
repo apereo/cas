@@ -26,34 +26,45 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Configuration(value = "coreWsSecuritySecurityTokenTicketConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CoreWsSecuritySecurityTokenTicketConfiguration {
+    
+    @Configuration(value = "CoreWsSecuritySecurityTokenTicketFactoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CoreWsSecuritySecurityTokenTicketFactoryConfiguration {
+        @ConditionalOnMissingBean(name = "securityTokenTicketFactory")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public SecurityTokenTicketFactory securityTokenTicketFactory(
+            @Qualifier("securityTokenTicketIdGenerator")
+            final UniqueTicketIdGenerator securityTokenTicketIdGenerator,
+            @Qualifier("grantingTicketExpirationPolicy")
+            final ExpirationPolicyBuilder grantingTicketExpirationPolicy) {
+            return new DefaultSecurityTokenTicketFactory(securityTokenTicketIdGenerator, grantingTicketExpirationPolicy);
+        }
 
-    @ConditionalOnMissingBean(name = "securityTokenTicketFactory")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public SecurityTokenTicketFactory securityTokenTicketFactory(
-        @Qualifier("securityTokenTicketIdGenerator")
-        final UniqueTicketIdGenerator securityTokenTicketIdGenerator,
-        @Qualifier("grantingTicketExpirationPolicy")
-        final ExpirationPolicyBuilder grantingTicketExpirationPolicy) {
-        return new DefaultSecurityTokenTicketFactory(securityTokenTicketIdGenerator, grantingTicketExpirationPolicy);
+        @ConditionalOnMissingBean(name = "securityTokenTicketIdGenerator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public UniqueTicketIdGenerator securityTokenTicketIdGenerator() {
+            return new DefaultUniqueTicketIdGenerator();
+        }
+        
+    }
+    
+    @Configuration(value = "CoreWsSecuritySecurityTokenTicketPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CoreWsSecuritySecurityTokenTicketPlanConfiguration {
+        @ConditionalOnMissingBean(name = "securityTokenTicketFactoryConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public TicketFactoryExecutionPlanConfigurer securityTokenTicketFactoryConfigurer(
+            @Qualifier("securityTokenTicketFactory")
+            final SecurityTokenTicketFactory securityTokenTicketFactory) {
+            return () -> securityTokenTicketFactory;
+        }
     }
 
-    @ConditionalOnMissingBean(name = "securityTokenTicketFactoryConfigurer")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public TicketFactoryExecutionPlanConfigurer securityTokenTicketFactoryConfigurer(
-        @Qualifier("securityTokenTicketFactory")
-        final SecurityTokenTicketFactory securityTokenTicketFactory) {
-        return () -> securityTokenTicketFactory;
-    }
 
-    @ConditionalOnMissingBean(name = "securityTokenTicketIdGenerator")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public UniqueTicketIdGenerator securityTokenTicketIdGenerator() {
-        return new DefaultUniqueTicketIdGenerator();
-    }
 
 }

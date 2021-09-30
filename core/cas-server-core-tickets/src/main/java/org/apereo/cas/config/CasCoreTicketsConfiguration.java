@@ -213,6 +213,62 @@ public class CasCoreTicketsConfiguration {
         }
     }
 
+
+    public static class CasCoreTicketsFactoryConfiguration {
+        @ConditionalOnMissingBean(name = "defaultProxyGrantingTicketFactoryConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public TicketFactoryExecutionPlanConfigurer defaultProxyGrantingTicketFactoryConfigurer(
+            @Qualifier("defaultProxyGrantingTicketFactory")
+            final ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory) {
+            return () -> defaultProxyGrantingTicketFactory;
+        }
+
+        @ConditionalOnMissingBean(name = "defaultProxyTicketFactoryConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public TicketFactoryExecutionPlanConfigurer defaultProxyTicketFactoryConfigurer(
+            @Qualifier("defaultProxyTicketFactory")
+            final ProxyTicketFactory defaultProxyTicketFactory) {
+            return () -> defaultProxyTicketFactory;
+        }
+
+        @ConditionalOnMissingBean(name = "defaultTransientSessionTicketFactoryConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public TicketFactoryExecutionPlanConfigurer defaultTransientSessionTicketFactoryConfigurer(
+            @Qualifier("defaultTransientSessionTicketFactory")
+            final TransientSessionTicketFactory defaultTransientSessionTicketFactory) {
+            return () -> defaultTransientSessionTicketFactory;
+        }
+
+
+        @ConditionalOnMissingBean(name = "defaultServiceTicketFactoryConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public TicketFactoryExecutionPlanConfigurer defaultServiceTicketFactoryConfigurer(
+            @Qualifier("defaultServiceTicketFactory")
+            final ServiceTicketFactory defaultServiceTicketFactory) {
+            return () -> defaultServiceTicketFactory;
+        }
+
+        @ConditionalOnMissingBean(name = "defaultTicketGrantingTicketFactoryConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public TicketFactoryExecutionPlanConfigurer defaultTicketGrantingTicketFactoryConfigurer(
+            @Qualifier("defaultTicketGrantingTicketFactory")
+            final TicketGrantingTicketFactory defaultTicketGrantingTicketFactory) {
+            return () -> defaultTicketGrantingTicketFactory;
+        }
+
+
+    }
+
     @Configuration(value = "CasCoreTicketFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreTicketFactoryConfiguration {
@@ -236,15 +292,6 @@ public class CasCoreTicketsConfiguration {
                 servicesManager);
         }
 
-        @ConditionalOnMissingBean(name = "defaultProxyGrantingTicketFactoryConfigurer")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public TicketFactoryExecutionPlanConfigurer defaultProxyGrantingTicketFactoryConfigurer(
-            @Qualifier("defaultProxyGrantingTicketFactory")
-            final ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory) {
-            return () -> defaultProxyGrantingTicketFactory;
-        }
 
         @ConditionalOnMissingBean(name = "defaultProxyTicketFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -265,15 +312,6 @@ public class CasCoreTicketsConfiguration {
                 protocolTicketCipherExecutor, onlyTrackMostRecentSession, servicesManager);
         }
 
-        @ConditionalOnMissingBean(name = "defaultProxyTicketFactoryConfigurer")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public TicketFactoryExecutionPlanConfigurer defaultProxyTicketFactoryConfigurer(
-            @Qualifier("defaultProxyTicketFactory")
-            final ProxyTicketFactory defaultProxyTicketFactory) {
-            return () -> defaultProxyTicketFactory;
-        }
 
         @ConditionalOnMissingBean(name = "defaultTransientSessionTicketFactory")
         @Bean
@@ -283,16 +321,6 @@ public class CasCoreTicketsConfiguration {
             @Qualifier("transientSessionTicketExpirationPolicy")
             final ExpirationPolicyBuilder transientSessionTicketExpirationPolicy) {
             return new DefaultTransientSessionTicketFactory(transientSessionTicketExpirationPolicy);
-        }
-
-        @ConditionalOnMissingBean(name = "defaultTransientSessionTicketFactoryConfigurer")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public TicketFactoryExecutionPlanConfigurer defaultTransientSessionTicketFactoryConfigurer(
-            @Qualifier("defaultTransientSessionTicketFactory")
-            final TransientSessionTicketFactory defaultTransientSessionTicketFactory) {
-            return () -> defaultTransientSessionTicketFactory;
         }
 
 
@@ -316,15 +344,6 @@ public class CasCoreTicketsConfiguration {
                 protocolTicketCipherExecutor, servicesManager);
         }
 
-        @ConditionalOnMissingBean(name = "defaultServiceTicketFactoryConfigurer")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public TicketFactoryExecutionPlanConfigurer defaultServiceTicketFactoryConfigurer(
-            @Qualifier("defaultServiceTicketFactory")
-            final ServiceTicketFactory defaultServiceTicketFactory) {
-            return () -> defaultServiceTicketFactory;
-        }
 
         @ConditionalOnMissingBean(name = "defaultTicketGrantingTicketFactory")
         @Bean
@@ -343,15 +362,6 @@ public class CasCoreTicketsConfiguration {
                 grantingTicketExpirationPolicy, protocolTicketCipherExecutor, servicesManager);
         }
 
-        @ConditionalOnMissingBean(name = "defaultTicketGrantingTicketFactoryConfigurer")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public TicketFactoryExecutionPlanConfigurer defaultTicketGrantingTicketFactoryConfigurer(
-            @Qualifier("defaultTicketGrantingTicketFactory")
-            final TicketGrantingTicketFactory defaultTicketGrantingTicketFactory) {
-            return () -> defaultTicketGrantingTicketFactory;
-        }
 
         @ConditionalOnMissingBean(name = "defaultTicketFactory")
         @Bean

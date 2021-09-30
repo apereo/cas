@@ -48,7 +48,7 @@ public interface BeanContainer<T> {
      * @param entry the entry
      * @return the container bean
      */
-    BeanContainer<T> and(final T entry);
+    BeanContainer<T> and(T entry);
 
     @RequiredArgsConstructor
     class ListBeanContainer<T> implements BeanContainer<T> {
