@@ -18,6 +18,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link U2FCouchDbConfiguration}.
@@ -31,7 +32,7 @@ public class U2FCouchDbConfiguration {
 
     @ConditionalOnMissingBean(name = "u2fCouchDbFactory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CouchDbConnectorFactory u2fCouchDbFactory(
         final CasConfigurationProperties casProperties,
@@ -42,7 +43,7 @@ public class U2FCouchDbConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbU2fDeviceRegistrationRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public U2FDeviceRegistrationCouchDbRepository couchDbU2fDeviceRegistrationRepository(
         @Qualifier("u2fCouchDbFactory")
@@ -55,7 +56,7 @@ public class U2FCouchDbConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbU2fDeviceRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public U2FCouchDbDeviceRepository u2fDeviceRepository(
         @Qualifier("u2fRegistrationRecordCipherExecutor")

@@ -52,6 +52,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -93,7 +94,7 @@ public class CasAccountManagementWebflowConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "loadAccountRegistrationPropertiesAction")
     public Action loadAccountRegistrationPropertiesAction(
         @Qualifier("accountMgmtRegistrationService")
@@ -102,7 +103,7 @@ public class CasAccountManagementWebflowConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "submitAccountRegistrationAction")
     @Autowired
     public Action submitAccountRegistrationAction(final CasConfigurationProperties casProperties,
@@ -118,7 +119,7 @@ public class CasAccountManagementWebflowConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "accountMgmtCipherExecutor")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public CipherExecutor accountMgmtCipherExecutor(final CasConfigurationProperties casProperties) {
@@ -127,14 +128,14 @@ public class CasAccountManagementWebflowConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "accountRegistrationUsernameBuilder")
     public AccountRegistrationUsernameBuilder accountRegistrationUsernameBuilder() {
         return AccountRegistrationUsernameBuilder.asDefault();
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "accountMgmtRegistrationService")
     @Autowired
     public AccountRegistrationService accountMgmtRegistrationService(final CasConfigurationProperties casProperties,
@@ -151,7 +152,7 @@ public class CasAccountManagementWebflowConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "accountMgmtRegistrationProvisioner")
     @Autowired
     public AccountRegistrationProvisioner accountMgmtRegistrationProvisioner(final ConfigurableApplicationContext applicationContext) {
@@ -163,7 +164,7 @@ public class CasAccountManagementWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "accountMgmtRegistrationPropertyLoader")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AccountRegistrationPropertyLoader accountMgmtRegistrationPropertyLoader(final CasConfigurationProperties casProperties) {
         val resource = casProperties.getAccountRegistration().getCore().getRegistrationProperties().getLocation();
@@ -171,7 +172,7 @@ public class CasAccountManagementWebflowConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "accountMgmtRegistrationAuditPrincipalIdResolver")
     public AuditPrincipalIdProvider accountMgmtRegistrationAuditPrincipalIdResolver(
         @Qualifier("accountMgmtRegistrationService")
@@ -180,7 +181,7 @@ public class CasAccountManagementWebflowConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_VALIDATE_ACCOUNT_REGISTRATION_TOKEN)
     public Action validateAccountRegistrationTokenAction(
         @Qualifier("accountMgmtRegistrationService")
@@ -190,7 +191,7 @@ public class CasAccountManagementWebflowConfiguration {
         return new ValidateAccountRegistrationTokenAction(centralAuthenticationService, accountMgmtRegistrationService);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FINALIZE_ACCOUNT_REGISTRATION_REQUEST)
     @Bean
     public Action finalizeAccountRegistrationRequestAction(
@@ -219,7 +220,7 @@ public class CasAccountManagementWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "restfulAccountRegistrationProvisionerConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnProperty(name = "cas.account-registration.provisioning.rest.url")
     @Autowired
     public AccountRegistrationProvisionerConfigurer restfulAccountRegistrationProvisionerConfigurer(final CasConfigurationProperties casProperties) {
@@ -231,7 +232,7 @@ public class CasAccountManagementWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "groovyAccountRegistrationProvisionerConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnProperty(name = "cas.account-registration.provisioning.groovy.location")
     @Autowired
     public AccountRegistrationProvisionerConfigurer groovyAccountRegistrationProvisionerConfigurer(final CasConfigurationProperties casProperties,
@@ -247,7 +248,7 @@ public class CasAccountManagementWebflowConfiguration {
     public static class CasAccountManagementRegistrationCaptchaConfiguration {
 
         @ConditionalOnMissingBean(name = "accountMgmtRegistrationCaptchaWebflowConfigurer")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         public CasWebflowConfigurer accountMgmtRegistrationCaptchaWebflowConfigurer(
@@ -264,7 +265,7 @@ public class CasAccountManagementWebflowConfiguration {
         }
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_VALIDATE_CAPTCHA)
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         public Action accountMgmtRegistrationValidateCaptchaAction(final CasConfigurationProperties casProperties) {
@@ -272,7 +273,7 @@ public class CasAccountManagementWebflowConfiguration {
             return new ValidateCaptchaAction(CaptchaValidator.getInstance(recaptcha));
         }
 
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_INIT_CAPTCHA)

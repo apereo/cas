@@ -17,6 +17,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasCoreAuthenticationPolicyConfiguration}.
@@ -30,7 +31,7 @@ public class CasCoreAuthenticationPolicyConfiguration {
 
     @ConditionalOnMissingBean(name = "ipAddressIntelligenceService")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public IPAddressIntelligenceService ipAddressIntelligenceService(final CasConfigurationProperties casProperties) {
         val adaptive = casProperties.getAuthn().getAdaptive();
@@ -42,7 +43,7 @@ public class CasCoreAuthenticationPolicyConfiguration {
     public static class CasCoreAuthenticationPolicyPlanConfiguration {
         @ConditionalOnMissingBean(name = "authenticationPolicyExecutionPlanConfigurer")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public AuthenticationEventExecutionPlanConfigurer authenticationPolicyExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties) {
@@ -57,7 +58,7 @@ public class CasCoreAuthenticationPolicyConfiguration {
 
         @ConditionalOnMissingBean(name = "adaptiveAuthenticationPolicy")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy(
             final CasConfigurationProperties casProperties,

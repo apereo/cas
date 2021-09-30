@@ -18,6 +18,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import javax.net.ssl.SSLContext;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ import java.util.Optional;
 public class CassandraServiceRegistryConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "cassandraServiceRegistry")
     @Autowired
     public ServiceRegistry cassandraServiceRegistry(final CasConfigurationProperties casProperties,
@@ -49,7 +50,7 @@ public class CassandraServiceRegistryConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "cassandraServiceRegistrySessionFactory")
     @Autowired
     public CassandraSessionFactory cassandraServiceRegistrySessionFactory(final CasConfigurationProperties casProperties,
@@ -61,7 +62,7 @@ public class CassandraServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "cassandraServiceRegistryExecutionPlanConfigurer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ServiceRegistryExecutionPlanConfigurer cassandraServiceRegistryExecutionPlanConfigurer(
         @Qualifier("cassandraServiceRegistry")
         final ServiceRegistry cassandraServiceRegistry) {

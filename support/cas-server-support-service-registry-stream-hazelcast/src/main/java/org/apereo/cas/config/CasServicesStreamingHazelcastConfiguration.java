@@ -22,6 +22,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.concurrent.TimeUnit;
 
@@ -38,7 +39,7 @@ import java.util.concurrent.TimeUnit;
 public class CasServicesStreamingHazelcastConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier> registeredServiceDistributedCacheManager(
         @Qualifier("casRegisteredServiceHazelcastInstance")
         final HazelcastInstance casRegisteredServiceHazelcastInstance) {
@@ -49,7 +50,7 @@ public class CasServicesStreamingHazelcastConfiguration {
     }
 
     @Bean(destroyMethod = "shutdown")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "casRegisteredServiceHazelcastInstance")
     @Autowired
     public HazelcastInstance casRegisteredServiceHazelcastInstance(final CasConfigurationProperties casProperties) {

@@ -24,6 +24,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import javax.net.ssl.SSLContext;
 
@@ -39,13 +40,13 @@ import javax.net.ssl.SSLContext;
 public class CassandraAuthenticationConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory cassandraPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "cassandraAuthnSessionFactory")
     @Autowired
     public CassandraSessionFactory cassandraAuthnSessionFactory(final CasConfigurationProperties casProperties,
@@ -56,7 +57,7 @@ public class CassandraAuthenticationConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CassandraRepository cassandraRepository(final CasConfigurationProperties casProperties,
                                                    @Qualifier("cassandraAuthnSessionFactory")

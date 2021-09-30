@@ -15,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.concurrent.TimeUnit;
 
@@ -30,7 +31,7 @@ public class GoogleMapsGeoCodingConfiguration {
 
     @ConditionalOnMissingBean(name = "geoLocationService")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public GeoLocationService geoLocationService(final CasConfigurationProperties casProperties) {
         val builder = new GeoApiContext.Builder();

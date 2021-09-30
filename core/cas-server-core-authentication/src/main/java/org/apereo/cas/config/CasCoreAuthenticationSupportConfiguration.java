@@ -32,6 +32,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasCoreAuthenticationSupportConfiguration}.
@@ -58,7 +59,7 @@ public class CasCoreAuthenticationSupportConfiguration {
     @Configuration(value = "CasCoreAuthenticationHandlerResolverConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreAuthenticationHandlerResolverConfiguration {
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         @ConditionalOnMissingBean(name = "registeredServiceAuthenticationHandlerResolver")
@@ -74,7 +75,7 @@ public class CasCoreAuthenticationSupportConfiguration {
             return resolver;
         }
 
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         @ConditionalOnMissingBean(name = "groovyAuthenticationHandlerResolver")
@@ -89,7 +90,7 @@ public class CasCoreAuthenticationSupportConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "byCredentialSourceAuthenticationHandlerResolver")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnProperty(prefix = "cas.authn.policy", name = "source-selection-enabled", havingValue = "true")
         public AuthenticationHandlerResolver byCredentialSourceAuthenticationHandlerResolver() {
             return new ByCredentialSourceAuthenticationHandlerResolver();
@@ -100,7 +101,7 @@ public class CasCoreAuthenticationSupportConfiguration {
     @Configuration(value = "CasCoreAuthenticationSupportBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreAuthenticationSupportBaseConfiguration {
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "defaultAuthenticationSystemSupport")
         @Autowired
@@ -122,7 +123,7 @@ public class CasCoreAuthenticationSupportConfiguration {
     @Configuration(value = "CasCoreAuthenticationPolicyResolverConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreAuthenticationPolicyResolverConfiguration {
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "registeredServiceAuthenticationPolicyResolver")
         @Autowired
@@ -141,7 +142,7 @@ public class CasCoreAuthenticationSupportConfiguration {
     public static class CasCoreAuthenticationExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "authenticationHandlerResolversExecutionPlanConfigurer")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public AuthenticationEventExecutionPlanConfigurer authenticationHandlerResolversExecutionPlanConfigurer(
             @Qualifier("byCredentialSourceAuthenticationHandlerResolver")
@@ -162,7 +163,7 @@ public class CasCoreAuthenticationSupportConfiguration {
 
         @ConditionalOnMissingBean(name = "groovyAuthenticationProcessorExecutionPlanConfigurer")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public AuthenticationEventExecutionPlanConfigurer groovyAuthenticationProcessorExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties) {

@@ -15,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 /**
@@ -28,7 +29,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 public class CasSupportDynamoDbAuditConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbAuditTrailManager")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuditTrailManager dynamoDbAuditTrailManager(
         final CasConfigurationProperties casProperties,
@@ -38,7 +39,7 @@ public class CasSupportDynamoDbAuditConfiguration {
         return new DynamoDbAuditTrailManager(dynamoDbAuditTrailManagerFacilitator, db.isAsynchronous());
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     @ConditionalOnMissingBean(name = "amazonDynamoDbAuditTrailManagerClient")
@@ -48,7 +49,7 @@ public class CasSupportDynamoDbAuditConfiguration {
         return factory.createAmazonDynamoDb(db);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     @ConditionalOnMissingBean(name = "dynamoDbAuditTrailManagerFacilitator")

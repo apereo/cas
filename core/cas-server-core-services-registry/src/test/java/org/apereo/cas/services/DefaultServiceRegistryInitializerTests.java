@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @Tag("RegisteredService")
-public class ServiceRegistryInitializerTests {
+public class DefaultServiceRegistryInitializerTests {
 
     private static RegisteredService newService() {
         val service = mock(RegisteredService.class);
@@ -37,16 +37,16 @@ public class ServiceRegistryInitializerTests {
         appCtx.refresh();
 
         val serviceRegistry = new InMemoryServiceRegistry(appCtx);
-        val serviceRegistryInitializer = new ServiceRegistryInitializer(jsonServiceRegistry,
+        val serviceRegistryInitializer = new DefaultServiceRegistryInitializer(jsonServiceRegistry,
             new DefaultChainingServiceRegistry(appCtx, List.of(serviceRegistry)),
             servicesManager);
-        serviceRegistryInitializer.initServiceRegistryIfNecessary();
+        serviceRegistryInitializer.initialize();
         assertEquals(1, serviceRegistry.size());
 
         val initialService2 = newService();
         when(jsonServiceRegistry.load()).thenReturn(List.of(initialService2));
 
-        serviceRegistryInitializer.initServiceRegistryIfNecessary();
+        serviceRegistryInitializer.initialize();
         assertEquals(1, serviceRegistry.size());
     }
 }

@@ -21,6 +21,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -40,7 +41,7 @@ public class LdapAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "ldapPrincipalFactory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory ldapPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
@@ -54,7 +55,7 @@ public class LdapAuthenticationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class LdapAuthenticationPlanConfiguration {
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public Collection<AuthenticationHandler> ldapAuthenticationHandlers(
             @Qualifier("ldapAuthenticationHandlerSetFactoryBean")
@@ -84,7 +85,7 @@ public class LdapAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "ldapAuthenticationEventExecutionPlanConfigurer")
         @Bean
         @Autowired
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer ldapAuthenticationEventExecutionPlanConfigurer(
             @Qualifier("ldapAuthenticationHandlers")
             final Collection<AuthenticationHandler> ldapAuthenticationHandlers,

@@ -14,6 +14,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.s3.S3Client;
 
 /**
@@ -27,7 +28,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 public class SamlIdPAmazonS3RegisteredServiceMetadataConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public SamlRegisteredServiceMetadataResolver amazonS3SamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
                                                                                                @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
@@ -39,7 +40,7 @@ public class SamlIdPAmazonS3RegisteredServiceMetadataConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "amazonS3SamlRegisteredServiceMetadataResolutionPlanConfigurer")
     public SamlRegisteredServiceMetadataResolutionPlanConfigurer amazonS3SamlRegisteredServiceMetadataResolutionPlanConfigurer(
         @Qualifier("amazonS3SamlRegisteredServiceMetadataResolver")

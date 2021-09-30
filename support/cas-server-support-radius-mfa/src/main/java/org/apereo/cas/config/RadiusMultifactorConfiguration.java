@@ -26,6 +26,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowBuilder;
@@ -61,7 +62,7 @@ public class RadiusMultifactorConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "radiusAuthenticationWebflowAction")
     public Action radiusAuthenticationWebflowAction(
         @Qualifier("radiusAuthenticationWebflowEventResolver")
@@ -69,7 +70,7 @@ public class RadiusMultifactorConfiguration {
         return new RadiusAuthenticationWebflowAction(radiusAuthenticationWebflowEventResolver);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "radiusAuthenticationWebflowEventResolver")
     @Autowired

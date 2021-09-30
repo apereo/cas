@@ -18,6 +18,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ import java.util.Optional;
 @Configuration(value = "dynamoDbServiceRegistryConfiguration", proxyBeanMethods = false)
 public class DynamoDbServiceRegistryConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator(final CasConfigurationProperties casProperties,
@@ -45,7 +46,7 @@ public class DynamoDbServiceRegistryConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "dynamoDbServiceRegistry")
     @Autowired
     public ServiceRegistry dynamoDbServiceRegistry(final ConfigurableApplicationContext applicationContext,
@@ -58,14 +59,14 @@ public class DynamoDbServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbServiceRegistryExecutionPlanConfigurer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ServiceRegistryExecutionPlanConfigurer dynamoDbServiceRegistryExecutionPlanConfigurer(
         @Qualifier("dynamoDbServiceRegistry")
         final ServiceRegistry dynamoDbServiceRegistry) {
         return plan -> plan.registerServiceRegistry(dynamoDbServiceRegistry);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "amazonDynamoDbServiceRegistryClient")
     @Autowired

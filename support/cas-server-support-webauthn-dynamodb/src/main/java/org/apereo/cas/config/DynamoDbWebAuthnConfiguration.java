@@ -15,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 /**
@@ -27,7 +28,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 @Configuration(value = "DynamoDbWebAuthnConfiguration", proxyBeanMethods = false)
 public class DynamoDbWebAuthnConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "amazonDynamoDbWebAuthnClient")
     @Autowired
@@ -37,7 +38,7 @@ public class DynamoDbWebAuthnConfiguration {
         return factory.createAmazonDynamoDb(db);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbWebAuthnFacilitator")
     @Autowired
@@ -52,7 +53,7 @@ public class DynamoDbWebAuthnConfiguration {
         return f;
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public WebAuthnCredentialRepository webAuthnCredentialRepository(final CasConfigurationProperties casProperties,

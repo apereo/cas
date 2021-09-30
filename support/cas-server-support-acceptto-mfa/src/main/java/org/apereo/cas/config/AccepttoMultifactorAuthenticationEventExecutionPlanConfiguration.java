@@ -24,6 +24,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration}.
@@ -37,7 +38,7 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorAuthenticationHandler")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationHandler casAccepttoMultifactorAuthenticationHandler(final CasConfigurationProperties casProperties,
                                                                              @Qualifier("casAccepttoMultifactorPrincipalFactory")
@@ -49,7 +50,7 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorAuthenticationProvider")
     @Autowired
     public MultifactorAuthenticationProvider casAccepttoMultifactorAuthenticationProvider(final CasConfigurationProperties casProperties,
@@ -68,7 +69,7 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorAuthenticationMetaDataPopulator")
     @Autowired
     public AuthenticationMetaDataPopulator casAccepttoMultifactorAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,

@@ -24,6 +24,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -45,7 +46,7 @@ public class DuoSecurityConfiguration {
 
     @ConditionalOnMissingBean(name = "duoAuthenticationWebflowAction")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action duoAuthenticationWebflowAction(
         @Qualifier("duoAuthenticationWebflowEventResolver")
@@ -55,7 +56,7 @@ public class DuoSecurityConfiguration {
 
     @ConditionalOnMissingBean(name = "duoUniversalPromptPrepareLoginAction")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action duoUniversalPromptPrepareLoginAction(
         @Qualifier("duoProviderBean")
@@ -70,7 +71,7 @@ public class DuoSecurityConfiguration {
     @ConditionalOnMissingBean(name = "duoUniversalPromptValidateLoginAction")
     @Bean
     @Autowired
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action duoUniversalPromptValidateLoginAction(
         @Qualifier("duoAuthenticationWebflowEventResolver")
         final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,

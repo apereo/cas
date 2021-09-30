@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link DelegatedAuthenticationSAMLConfiguration}.
@@ -29,7 +30,7 @@ public class DelegatedAuthenticationSAMLConfiguration {
     public static class DelegatedAuthenticationSAMLHazelcastConfiguration {
         @Autowired
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnBean(name = "casTicketRegistryHazelcastInstance")
         @ConditionalOnMissingBean(name = DelegatedClientFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)
         public SAMLMessageStoreFactory delegatedSaml2ClientSAMLMessageStoreFactory(

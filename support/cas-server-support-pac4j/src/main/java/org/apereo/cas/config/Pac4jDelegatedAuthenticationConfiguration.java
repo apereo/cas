@@ -27,6 +27,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link Pac4jDelegatedAuthenticationConfiguration}.
@@ -38,65 +39,78 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class Pac4jDelegatedAuthenticationConfiguration {
 
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
-    public AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer() {
-        return new RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer();
+    @Configuration(value = "Pac4jDelegatedAuthenticationBaseConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class Pac4jDelegatedAuthenticationBaseConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
+        public AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer() {
+            return new RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "pac4jJacksonModule")
+        public Module pac4jJacksonModule() {
+            val module = new SimpleModule();
+            module.setMixInAnnotation(OAuth1RequestToken.class, AbstractOAuth1RequestTokenMixin.class);
+            return module;
+        }
+    }
+    
+    @Configuration(value = "Pac4jDelegatedAuthenticationAuthorizerConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class Pac4jDelegatedAuthenticationAuthorizerConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer(
+            @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
+            final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return new DelegatedAuthenticationServiceTicketValidationAuthorizer(servicesManager,
+                registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public ServiceTicketValidationAuthorizerConfigurer pac4jServiceTicketValidationAuthorizerConfigurer(
+            @Qualifier("pac4jServiceTicketValidationAuthorizer")
+            final ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer) {
+            return plan -> plan.registerAuthorizer(pac4jServiceTicketValidationAuthorizer);
+        }
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "pac4jJacksonModule")
-    public Module pac4jJacksonModule() {
-        val module = new SimpleModule();
-        module.setMixInAnnotation(OAuth1RequestToken.class, AbstractOAuth1RequestTokenMixin.class);
-        return module;
-    }
 
-    @Bean
-    @RefreshScope
-    @Autowired
-    public ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer(
-        @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
-        final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager) {
-        return new DelegatedAuthenticationServiceTicketValidationAuthorizer(servicesManager,
-            registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer);
-    }
+    @Configuration(value = "Pac4jDelegatedAuthenticationSingleSignOnConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class Pac4jDelegatedAuthenticationSingleSignOnConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        @ConditionalOnMissingBean(name = "pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy")
+        public SingleSignOnParticipationStrategy pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy(
+            @Qualifier("authenticationServiceSelectionPlan")
+            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
+            @Qualifier("defaultTicketRegistrySupport")
+            final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return new DelegatedAuthenticationSingleSignOnParticipationStrategy(servicesManager,
+                authenticationServiceSelectionPlan, ticketRegistrySupport);
+        }
 
-    @Bean
-    @RefreshScope
-    @Autowired
-    public ServiceTicketValidationAuthorizerConfigurer pac4jServiceTicketValidationAuthorizerConfigurer(
-        @Qualifier("pac4jServiceTicketValidationAuthorizer")
-        final ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer) {
-        return plan -> plan.registerAuthorizer(pac4jServiceTicketValidationAuthorizer);
-    }
-
-    @Bean
-    @RefreshScope
-    @Autowired
-    @ConditionalOnMissingBean(name = "pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy")
-    public SingleSignOnParticipationStrategy pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy(
-        @Qualifier("authenticationServiceSelectionPlan")
-        final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
-        @Qualifier("defaultTicketRegistrySupport")
-        final TicketRegistrySupport ticketRegistrySupport,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager) {
-        return new DelegatedAuthenticationSingleSignOnParticipationStrategy(servicesManager,
-            authenticationServiceSelectionPlan, ticketRegistrySupport);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "pac4jDelegatedAuthenticationSingleSignOnParticipationStrategyConfigurer")
-    @RefreshScope
-    @Autowired
-    public SingleSignOnParticipationStrategyConfigurer pac4jDelegatedAuthenticationSingleSignOnParticipationStrategyConfigurer(
-        @Qualifier("pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy")
-        final SingleSignOnParticipationStrategy pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy) {
-        return chain -> chain.addStrategy(pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy);
+        @Bean
+        @ConditionalOnMissingBean(name = "pac4jDelegatedAuthenticationSingleSignOnParticipationStrategyConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public SingleSignOnParticipationStrategyConfigurer pac4jDelegatedAuthenticationSingleSignOnParticipationStrategyConfigurer(
+            @Qualifier("pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy")
+            final SingleSignOnParticipationStrategy pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy) {
+            return chain -> chain.addStrategy(pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy);
+        }
     }
 
     /**

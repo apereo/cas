@@ -17,6 +17,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SamlIdPGitRegisteredServiceMetadataConfiguration}.
@@ -30,7 +31,7 @@ import org.springframework.context.annotation.Configuration;
 public class SamlIdPGitRegisteredServiceMetadataConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "gitSamlRegisteredServiceRepositoryInstance")
     @Autowired
     public GitRepository gitSamlRegisteredServiceRepositoryInstance(final CasConfigurationProperties casProperties) {
@@ -39,7 +40,7 @@ public class SamlIdPGitRegisteredServiceMetadataConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public SamlRegisteredServiceMetadataResolver gitSamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
                                                                                           @Qualifier("gitSamlRegisteredServiceRepositoryInstance")
@@ -52,7 +53,7 @@ public class SamlIdPGitRegisteredServiceMetadataConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "gitSamlRegisteredServiceMetadataResolutionPlanConfigurer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SamlRegisteredServiceMetadataResolutionPlanConfigurer gitSamlRegisteredServiceMetadataResolutionPlanConfigurer(
         @Qualifier("gitSamlRegisteredServiceMetadataResolver")
         final SamlRegisteredServiceMetadataResolver gitSamlRegisteredServiceMetadataResolver) {

@@ -14,6 +14,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
@@ -29,7 +30,7 @@ public class TrustedAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "trustedWebflowConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CasWebflowConfigurer trustedWebflowConfigurer(
         final ConfigurableApplicationContext applicationContext,

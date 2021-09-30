@@ -11,6 +11,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -39,7 +40,7 @@ import java.util.Optional;
 @Configuration(value = "casWebAppConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasWebAppConfiguration {
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public ThemeChangeInterceptor themeChangeInterceptor(final CasConfigurationProperties casProperties) {
@@ -50,7 +51,7 @@ public class CasWebAppConfiguration {
 
     @ConditionalOnMissingBean(name = "casLocaleResolver")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public LocaleResolver localeResolver(final CasConfigurationProperties casProperties) {
         val localeProps = casProperties.getLocale();

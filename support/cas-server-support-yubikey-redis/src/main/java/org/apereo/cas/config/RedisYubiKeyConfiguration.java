@@ -16,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -30,7 +31,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 @ConditionalOnProperty(prefix = "cas.authn.mfa.yubikey.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class RedisYubiKeyConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "redisYubiKeyTemplate")
     @Autowired
@@ -42,14 +43,14 @@ public class RedisYubiKeyConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisYubiKeyConnectionFactory")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public RedisConnectionFactory redisYubiKeyConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getMfa().getYubikey().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public YubiKeyAccountRegistry yubiKeyAccountRegistry(

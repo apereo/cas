@@ -16,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SamlIdPCouchDbRegisteredServiceMetadataConfiguration}.
@@ -29,7 +30,7 @@ public class SamlIdPCouchDbRegisteredServiceMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "samlMetadataDocumentCouchDbRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public SamlMetadataDocumentCouchDbRepository samlMetadataDocumentCouchDbRepository(final CasConfigurationProperties casProperties,
                                                                                        @Qualifier("samlMetadataCouchDbFactory")
@@ -43,7 +44,7 @@ public class SamlIdPCouchDbRegisteredServiceMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbSamlRegisteredServiceMetadataResolver")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public SamlRegisteredServiceMetadataResolver couchDbSamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
                                                                                               @Qualifier("samlMetadataDocumentCouchDbRepository")
@@ -55,7 +56,7 @@ public class SamlIdPCouchDbRegisteredServiceMetadataConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "couchDbSamlRegisteredServiceMetadataResolutionPlanConfigurer")
     public SamlRegisteredServiceMetadataResolutionPlanConfigurer couchDbSamlRegisteredServiceMetadataResolutionPlanConfigurer(
         @Qualifier("couchDbSamlRegisteredServiceMetadataResolver")

@@ -21,6 +21,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfiguration}.
@@ -34,7 +35,7 @@ public class CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfigur
 
     @ConditionalOnMissingBean(name = "casSimpleMultifactorBypassEvaluator")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator casSimpleMultifactorBypassEvaluator(
         @Qualifier("casSimpleMultifactorHttpRequestMultifactorAuthenticationProviderBypass")
@@ -86,7 +87,7 @@ public class CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfigur
 
     @ConditionalOnMissingBean(name = "casSimpleMultifactorRestMultifactorAuthenticationProviderBypass")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator casSimpleMultifactorRestMultifactorAuthenticationProviderBypass(
         final CasConfigurationProperties casProperties) {
@@ -97,7 +98,7 @@ public class CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfigur
 
     @ConditionalOnMissingBean(name = "casSimpleMultifactorGroovyMultifactorAuthenticationProviderBypass")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator casSimpleMultifactorGroovyMultifactorAuthenticationProviderBypass(
         final CasConfigurationProperties casProperties) {
@@ -108,7 +109,7 @@ public class CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfigur
 
     @ConditionalOnMissingBean(name = "casSimpleMultifactorHttpRequestMultifactorAuthenticationProviderBypass")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator casSimpleMultifactorHttpRequestMultifactorAuthenticationProviderBypass(
         final CasConfigurationProperties casProperties) {
@@ -119,7 +120,7 @@ public class CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfigur
 
     @ConditionalOnMissingBean(name = "casSimpleRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator casSimpleRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(
         final CasConfigurationProperties casProperties) {
@@ -128,7 +129,7 @@ public class CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfigur
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "casSimpleMultifactorCredentialMultifactorAuthenticationProviderBypass")
     @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator casSimpleMultifactorCredentialMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
@@ -138,7 +139,7 @@ public class CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfigur
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "casSimpleMultifactorRegisteredServiceMultifactorAuthenticationProviderBypass")
     @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator casSimpleMultifactorRegisteredServiceMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
@@ -156,7 +157,7 @@ public class CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfigur
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationMultifactorAuthenticationProviderBypass")
     @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator casSimpleMultifactorAuthenticationMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {

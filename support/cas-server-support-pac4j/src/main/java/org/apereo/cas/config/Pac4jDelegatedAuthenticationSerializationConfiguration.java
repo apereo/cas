@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link Pac4jDelegatedAuthenticationSerializationConfiguration}.
@@ -21,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 public class Pac4jDelegatedAuthenticationSerializationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "pac4jComponentSerializationPlanConfigurer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ComponentSerializationPlanConfigurer pac4jComponentSerializationPlanConfigurer() {
         return plan -> plan.registerSerializableClass(ClientCredential.class);
     }

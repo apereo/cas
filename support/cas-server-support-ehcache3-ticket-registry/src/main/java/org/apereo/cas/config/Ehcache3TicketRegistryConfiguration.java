@@ -42,6 +42,7 @@ import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import javax.cache.CacheManager;
 import javax.cache.Caching;
@@ -117,7 +118,7 @@ public class Ehcache3TicketRegistryConfiguration {
      */
     @Autowired
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(
         @Qualifier("ehcache3TicketCacheManager")
         final CacheManager ehcacheManager,

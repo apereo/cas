@@ -16,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 /**
@@ -28,7 +29,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DynamoDbTicketRegistryConfiguration {
     @Autowired
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public TicketRegistry ticketRegistry(
         @Qualifier("dynamoDbTicketRegistryFacilitator")
@@ -42,7 +43,7 @@ public class DynamoDbTicketRegistryConfiguration {
     }
 
     @Autowired
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public DynamoDbTicketRegistryFacilitator dynamoDbTicketRegistryFacilitator(
         @Qualifier("amazonDynamoDbTicketRegistryClient")
@@ -58,7 +59,7 @@ public class DynamoDbTicketRegistryConfiguration {
         return f;
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     @ConditionalOnMissingBean(name = "amazonDynamoDbTicketRegistryClient")

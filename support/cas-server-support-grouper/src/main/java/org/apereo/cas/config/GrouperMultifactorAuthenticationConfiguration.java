@@ -21,6 +21,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link GrouperMultifactorAuthenticationConfiguration}.
@@ -41,7 +42,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationTrigger grouperMultifactorAuthenticationTrigger(final CasConfigurationProperties casProperties,
                                                                                     final ConfigurableApplicationContext applicationContext,
@@ -53,7 +54,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowEventResolver grouperMultifactorAuthenticationWebflowEventResolver(
         @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,

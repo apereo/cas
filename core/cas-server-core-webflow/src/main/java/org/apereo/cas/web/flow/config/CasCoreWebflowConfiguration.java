@@ -40,13 +40,14 @@ import org.apereo.cas.web.flow.actions.ClearWebflowCredentialAction;
 import org.apereo.cas.web.flow.actions.InjectResponseHeadersAction;
 import org.apereo.cas.web.flow.actions.RedirectToServiceAction;
 import org.apereo.cas.web.flow.actions.RenewAuthenticationRequestCheckAction;
+import org.apereo.cas.web.flow.authentication.CasWebflowExceptionCatalog;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAbstractTicketExceptionHandler;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAuthenticationExceptionHandler;
+import org.apereo.cas.web.flow.authentication.DefaultCasWebflowExceptionCatalog;
 import org.apereo.cas.web.flow.authentication.GenericCasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.authentication.GroovyCasWebflowAuthenticationExceptionHandler;
 import org.apereo.cas.web.flow.authentication.RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategy;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolver;
@@ -64,6 +65,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.execution.Action;
 
@@ -73,8 +75,6 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * This is {@link CasCoreWebflowConfiguration}.
@@ -93,7 +93,7 @@ public class CasCoreWebflowConfiguration {
     public static class CasCoreWebflowEventResolutionConfiguration {
         @ConditionalOnMissingBean(name = "serviceTicketRequestWebflowEventResolver")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public CasWebflowEventResolver serviceTicketRequestWebflowEventResolver(
             @Qualifier("casWebflowConfigurationContext")
@@ -103,7 +103,7 @@ public class CasCoreWebflowConfiguration {
 
 
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public CipherExecutor webflowCipherExecutor(final CasConfigurationProperties casProperties) {
             val webflow = casProperties.getWebflow();
@@ -135,7 +135,7 @@ public class CasCoreWebflowConfiguration {
     public static class CasCoreWebflowContextConfiguration {
 
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext(
             final ConfigurableApplicationContext applicationContext,
@@ -150,8 +150,6 @@ public class CasCoreWebflowConfiguration {
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("authenticationContextValidator")
             final MultifactorAuthenticationContextValidator authenticationContextValidator,
-            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-            final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
             @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
             final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -167,7 +165,6 @@ public class CasCoreWebflowConfiguration {
             @Qualifier("ticketGrantingTicketCookieGenerator")
             final CasCookieBuilder ticketGrantingTicketCookieGenerator) {
             return CasWebflowEventResolutionConfigurationContext.builder()
-                .casDelegatingWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver)
                 .authenticationContextValidator(authenticationContextValidator)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .centralAuthenticationService(centralAuthenticationService)
@@ -191,14 +188,14 @@ public class CasCoreWebflowConfiguration {
     public static class CasCoreWebflowActionConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS)
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action clearWebflowCredentialsAction() {
             return new ClearWebflowCredentialAction();
         }
 
         @Bean
         @ConditionalOnMissingBean(name = "checkWebAuthenticationRequestAction")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public Action checkWebAuthenticationRequestAction(final CasConfigurationProperties casProperties) {
             return new CheckWebAuthenticationRequestAction(casProperties.getAuthn().getMfa().getCore().getContentType());
@@ -206,7 +203,7 @@ public class CasCoreWebflowConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "renewAuthenticationRequestCheckAction")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public Action renewAuthenticationRequestCheckAction(
             @Qualifier("singleSignOnParticipationStrategy")
@@ -216,7 +213,7 @@ public class CasCoreWebflowConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_REDIRECT_TO_SERVICE)
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public Action redirectToServiceAction(
             @Qualifier("webApplicationResponseBuilderLocator")
@@ -226,7 +223,7 @@ public class CasCoreWebflowConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "injectResponseHeadersAction")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public Action injectResponseHeadersAction(
             @Qualifier("webApplicationResponseBuilderLocator")
@@ -237,7 +234,7 @@ public class CasCoreWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER)
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public Action authenticationExceptionHandler(final ConfigurableApplicationContext applicationContext) {
             val beans = applicationContext.getBeansOfType(CasWebflowExceptionHandler.class, false, true);
@@ -254,7 +251,7 @@ public class CasCoreWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "groovyCasWebflowAuthenticationExceptionHandler")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         @ConditionalOnProperty(name = "cas.authn.errors.groovy.location")
         public CasWebflowExceptionHandler<Exception> groovyCasWebflowAuthenticationExceptionHandler(
@@ -266,71 +263,74 @@ public class CasCoreWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "defaultCasWebflowAuthenticationExceptionHandler")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public CasWebflowExceptionHandler<AuthenticationException> defaultCasWebflowAuthenticationExceptionHandler(
             @Qualifier("handledAuthenticationExceptions")
-            final Set<Class<? extends Throwable>> handledAuthenticationExceptions) {
+            final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
             return new DefaultCasWebflowAuthenticationExceptionHandler(
                 handledAuthenticationExceptions, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
         }
 
         @ConditionalOnMissingBean(name = "defaultCasWebflowAbstractTicketExceptionHandler")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public CasWebflowExceptionHandler<AbstractTicketException> defaultCasWebflowAbstractTicketExceptionHandler(
             @Qualifier("handledAuthenticationExceptions")
-            final Set<Class<? extends Throwable>> handledAuthenticationExceptions) {
+            final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
             return new DefaultCasWebflowAbstractTicketExceptionHandler(
                 handledAuthenticationExceptions, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
         }
 
         @ConditionalOnMissingBean(name = "genericCasWebflowExceptionHandler")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public CasWebflowExceptionHandler genericCasWebflowExceptionHandler(
             @Qualifier("handledAuthenticationExceptions")
-            final Set<Class<? extends Throwable>> handledAuthenticationExceptions) {
+            final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
             return new GenericCasWebflowExceptionHandler(
                 handledAuthenticationExceptions, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
         }
 
-
-        @RefreshScope
+        /**
+         * Handled authentication exceptions set.
+         * Order is important here; We want the account policy exceptions to be handled
+         * first before moving onto more generic errors. In the event that multiple handlers
+         * are defined, where one fails due to account policy restriction and one fails
+         * due to a bad password, we want the error associated with the account policy
+         * to be processed first, rather than presenting a more generic error associated
+         *
+         * @param casProperties the cas properties
+         * @return the set
+         */
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         @ConditionalOnMissingBean(name = "handledAuthenticationExceptions")
-        public Set<Class<? extends Throwable>> handledAuthenticationExceptions(
+        public CasWebflowExceptionCatalog handledAuthenticationExceptions(
             final CasConfigurationProperties casProperties) {
-            /*
-             * Order is important here; We want the account policy exceptions to be handled
-             * first before moving onto more generic errors. In the event that multiple handlers
-             * are defined, where one fails due to account policy restriction and one fails
-             * due to a bad password, we want the error associated with the account policy
-             * to be processed first, rather than presenting a more generic error associated
-             */
-            val errors = new LinkedHashSet<Class<? extends Throwable>>();
-            errors.add(AccountLockedException.class);
-            errors.add(CredentialExpiredException.class);
-            errors.add(AccountExpiredException.class);
-            errors.add(AccountDisabledException.class);
-            errors.add(InvalidLoginLocationException.class);
-            errors.add(AccountPasswordMustChangeException.class);
-            errors.add(InvalidLoginTimeException.class);
-            errors.add(UniquePrincipalRequiredException.class);
+            val errors = new DefaultCasWebflowExceptionCatalog();
+            errors.registerException(AccountLockedException.class);
+            errors.registerException(CredentialExpiredException.class);
+            errors.registerException(AccountExpiredException.class);
+            errors.registerException(AccountDisabledException.class);
+            errors.registerException(InvalidLoginLocationException.class);
+            errors.registerException(AccountPasswordMustChangeException.class);
+            errors.registerException(InvalidLoginTimeException.class);
+            errors.registerException(UniquePrincipalRequiredException.class);
 
-            errors.add(AccountNotFoundException.class);
-            errors.add(FailedLoginException.class);
-            errors.add(UnauthorizedServiceForPrincipalException.class);
-            errors.add(PrincipalException.class);
-            errors.add(UnsatisfiedAuthenticationPolicyException.class);
-            errors.add(UnauthorizedAuthenticationException.class);
-            errors.add(MultifactorAuthenticationProviderAbsentException.class);
-            errors.add(MultifactorAuthenticationRequiredException.class);
+            errors.registerException(AccountNotFoundException.class);
+            errors.registerException(FailedLoginException.class);
+            errors.registerException(UnauthorizedServiceForPrincipalException.class);
+            errors.registerException(PrincipalException.class);
+            errors.registerException(UnsatisfiedAuthenticationPolicyException.class);
+            errors.registerException(UnauthorizedAuthenticationException.class);
+            errors.registerException(MultifactorAuthenticationProviderAbsentException.class);
+            errors.registerException(MultifactorAuthenticationRequiredException.class);
 
-            errors.addAll(casProperties.getAuthn().getErrors().getExceptions());
+            errors.registerExceptions(casProperties.getAuthn().getErrors().getExceptions());
             return errors;
         }
 
@@ -342,7 +342,7 @@ public class CasCoreWebflowConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "singleSignOnParticipationStrategy")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SingleSignOnParticipationStrategy singleSignOnParticipationStrategy(
             final ConfigurableApplicationContext applicationContext) {
@@ -355,7 +355,7 @@ public class CasCoreWebflowConfiguration {
         }
 
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "defaultSingleSignOnParticipationStrategy")
         @Autowired
         public SingleSignOnParticipationStrategy defaultSingleSignOnParticipationStrategy(
@@ -374,7 +374,7 @@ public class CasCoreWebflowConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "defaultSingleSignOnParticipationStrategyConfigurer")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SingleSignOnParticipationStrategyConfigurer defaultSingleSignOnParticipationStrategyConfigurer(
             @Qualifier("defaultSingleSignOnParticipationStrategy")
@@ -383,7 +383,7 @@ public class CasCoreWebflowConfiguration {
         }
 
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "requiredAuthenticationHandlersSingleSignOnParticipationStrategy")
         @Autowired
         public SingleSignOnParticipationStrategy requiredAuthenticationHandlersSingleSignOnParticipationStrategy(
@@ -403,7 +403,7 @@ public class CasCoreWebflowConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "requiredAuthenticationHandlersSingleSignOnParticipationStrategyConfigurer")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SingleSignOnParticipationStrategyConfigurer requiredAuthenticationHandlersSingleSignOnParticipationStrategyConfigurer(
             @Qualifier("requiredAuthenticationHandlersSingleSignOnParticipationStrategy")

@@ -23,6 +23,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CouchbaseAuthenticationConfiguration}.
@@ -43,7 +44,7 @@ public class CouchbaseAuthenticationConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "authenticationCouchbaseClientFactory")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public CouchbaseClientFactory authenticationCouchbaseClientFactory(final CasConfigurationProperties casProperties) {
@@ -53,7 +54,7 @@ public class CouchbaseAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "couchbaseAuthenticationHandler")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationHandler couchbaseAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
                                                                 @Qualifier("couchbasePrincipalFactory")
@@ -71,7 +72,7 @@ public class CouchbaseAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "couchbaseAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationEventExecutionPlanConfigurer couchbaseAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
                                                                                                           @Qualifier("couchbaseAuthenticationHandler")

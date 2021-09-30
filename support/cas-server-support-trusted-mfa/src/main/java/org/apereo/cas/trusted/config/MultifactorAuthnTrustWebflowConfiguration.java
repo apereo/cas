@@ -20,6 +20,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -34,7 +35,7 @@ public class MultifactorAuthnTrustWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaTrustedDeviceBypassEvaluator")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationTrustedDeviceBypassEvaluator mfaTrustedDeviceBypassEvaluator(
         @Qualifier("registeredServiceAccessStrategyEnforcer")
         final AuditableExecution registeredServiceAccessStrategyEnforcer) {
@@ -43,7 +44,7 @@ public class MultifactorAuthnTrustWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_MFA_SET_TRUST_ACTION)
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action mfaSetTrustAction(final CasConfigurationProperties casProperties,
                                     @Qualifier("mfaTrustedDeviceBypassEvaluator")
@@ -60,7 +61,7 @@ public class MultifactorAuthnTrustWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_MFA_VERIFY_TRUST_ACTION)
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action mfaVerifyTrustAction(final CasConfigurationProperties casProperties,
                                        @Qualifier("mfaTrustedDeviceBypassEvaluator")
@@ -77,7 +78,7 @@ public class MultifactorAuthnTrustWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_MFA_PREPARE_TRUST_DEVICE_VIEW_ACTION)
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action mfaPrepareTrustDeviceViewAction(final CasConfigurationProperties casProperties,
                                                   @Qualifier("mfaTrustedDeviceBypassEvaluator")

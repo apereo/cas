@@ -29,6 +29,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,7 +45,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SpnegoConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "spnegoAuthentications")
     @Autowired
@@ -84,7 +85,7 @@ public class SpnegoConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "spnegoHandler")
     @Autowired
     public AuthenticationHandler spnegoHandler(
@@ -103,7 +104,7 @@ public class SpnegoConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnProperty(prefix = "cas.authn.ntlm", name = "enabled", havingValue = "true")
     @Autowired
     public AuthenticationHandler ntlmAuthenticationHandler(
@@ -126,7 +127,7 @@ public class SpnegoConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "spnegoPrincipalResolver")
     @Autowired
     public PrincipalResolver spnegoPrincipalResolver(

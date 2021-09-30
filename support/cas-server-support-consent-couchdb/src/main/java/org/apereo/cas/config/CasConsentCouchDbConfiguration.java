@@ -15,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasConsentCouchDbConfiguration}.
@@ -27,7 +28,7 @@ import org.springframework.context.annotation.Configuration;
 public class CasConsentCouchDbConfiguration {
 
     @ConditionalOnMissingBean(name = "consentCouchDbFactory")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public CouchDbConnectorFactory consentCouchDbFactory(final CasConfigurationProperties casProperties,
@@ -39,7 +40,7 @@ public class CasConsentCouchDbConfiguration {
 
     @ConditionalOnMissingBean(name = "consentCouchDbRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public ConsentDecisionCouchDbRepository consentCouchDbRepository(
         @Qualifier("consentCouchDbFactory")
@@ -51,7 +52,7 @@ public class CasConsentCouchDbConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "couchDbConsentRepository")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public ConsentRepository consentRepository(
         @Qualifier("consentCouchDbRepository")

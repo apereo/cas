@@ -48,6 +48,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.View;
@@ -66,7 +67,7 @@ public class CasValidationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "cas1ServiceSuccessView")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public View cas1ServiceSuccessView(
         @Qualifier("authenticationAttributeReleasePolicy")
@@ -85,7 +86,7 @@ public class CasValidationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "cas1ServiceFailureView")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public View cas1ServiceFailureView(
         @Qualifier("authenticationAttributeReleasePolicy")
@@ -104,7 +105,7 @@ public class CasValidationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "cas2ServiceSuccessView")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public View cas2ServiceSuccessView(
         @Qualifier("authenticationAttributeReleasePolicy")
@@ -123,7 +124,7 @@ public class CasValidationConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "cas3ServiceJsonView")
     @Autowired
     public View cas3ServiceJsonView(
@@ -143,7 +144,7 @@ public class CasValidationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "cas3ProtocolAttributesRenderer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CasProtocolAttributesRenderer cas3ProtocolAttributesRenderer(final CasConfigurationProperties casProperties) {
         switch (casProperties.getView().getCas3().getAttributeRendererType()) {
@@ -157,7 +158,7 @@ public class CasValidationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "cas1ProtocolAttributesRenderer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CasProtocolAttributesRenderer cas1ProtocolAttributesRenderer(final CasConfigurationProperties casProperties) {
         switch (casProperties.getView().getCas1().getAttributeRendererType()) {
@@ -171,7 +172,7 @@ public class CasValidationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "cas3ServiceSuccessView")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public View cas3ServiceSuccessView(
         @Qualifier("authenticationAttributeReleasePolicy")
@@ -209,7 +210,7 @@ public class CasValidationConfiguration {
             centralAuthenticationService, webApplicationServiceFactory, applicationContext);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "serviceValidationViewFactory")
     @Autowired
@@ -223,7 +224,7 @@ public class CasValidationConfiguration {
         return viewFactory;
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "casServiceValidationViewFactoryConfigurer")
     @Autowired

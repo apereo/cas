@@ -20,6 +20,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -36,7 +37,7 @@ public class CasGoogleAnalyticsConfiguration {
 
     @ConditionalOnMissingBean(name = "casGoogleAnalyticsCookieGenerator")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CasCookieBuilder casGoogleAnalyticsCookieGenerator(final CasConfigurationProperties casProperties) {
         val props = casProperties.getGoogleAnalytics().getCookie();
@@ -61,7 +62,7 @@ public class CasGoogleAnalyticsConfiguration {
 
     @ConditionalOnMissingBean(name = "createGoogleAnalyticsCookieAction")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action createGoogleAnalyticsCookieAction(final CasConfigurationProperties casProperties,
                                                     @Qualifier("casGoogleAnalyticsCookieGenerator")
@@ -71,7 +72,7 @@ public class CasGoogleAnalyticsConfiguration {
 
     @ConditionalOnMissingBean(name = "removeGoogleAnalyticsCookieAction")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action removeGoogleAnalyticsCookieAction(
         @Qualifier("casGoogleAnalyticsCookieGenerator")
         final CasCookieBuilder casGoogleAnalyticsCookieGenerator) {
@@ -80,7 +81,7 @@ public class CasGoogleAnalyticsConfiguration {
 
     @ConditionalOnMissingBean(name = "casGoogleAnalyticsWebflowExecutionPlanConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowExecutionPlanConfigurer casGoogleAnalyticsWebflowExecutionPlanConfigurer(
         @Qualifier("casGoogleAnalyticsWebflowConfigurer")
         final CasWebflowConfigurer casGoogleAnalyticsWebflowConfigurer) {

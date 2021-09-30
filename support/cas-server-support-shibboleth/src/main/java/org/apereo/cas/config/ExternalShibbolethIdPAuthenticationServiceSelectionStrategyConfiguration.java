@@ -18,6 +18,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration}.
@@ -33,7 +34,7 @@ public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfigur
     @Autowired
     @ConditionalOnMissingBean(name = "shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationServiceSelectionStrategy shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy(
         final CasConfigurationProperties casProperties,
         @Qualifier("registeredServiceAccessStrategyEnforcer")

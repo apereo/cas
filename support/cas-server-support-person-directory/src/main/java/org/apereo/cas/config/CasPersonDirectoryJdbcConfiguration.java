@@ -19,6 +19,7 @@ import org.apereo.services.persondir.support.jdbc.AbstractJdbcPersonAttributeDao
 import org.apereo.services.persondir.support.jdbc.MultiRowJdbcPersonAttributeDao;
 import org.apereo.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -27,6 +28,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +86,7 @@ public class CasPersonDirectoryJdbcConfiguration {
     @ConditionalOnMissingBean(name = "jdbcAttributeRepositories")
     @Bean
     @Autowired
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public List<IPersonAttributeDao> jdbcAttributeRepositories(final CasConfigurationProperties casProperties) {
         val list = new ArrayList<IPersonAttributeDao>();
         val attrs = casProperties.getAuthn().getAttributeRepository();
@@ -118,8 +120,9 @@ public class CasPersonDirectoryJdbcConfiguration {
 
     @Bean
     @Autowired
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PersonDirectoryAttributeRepositoryPlanConfigurer jdbcPersonDirectoryAttributeRepositoryPlanConfigurer(
-        @Qualifier("jdbcAttributeRepositories") final List<IPersonAttributeDao> jdbcAttributeRepositories) {
-        return plan -> plan.registerAttributeRepositories(jdbcAttributeRepositories);
+        @Qualifier("jdbcAttributeRepositories") final ObjectProvider<List<IPersonAttributeDao>> jdbcAttributeRepositories) {
+        return plan -> plan.registerAttributeRepositories(jdbcAttributeRepositories.getObject());
     }
 }

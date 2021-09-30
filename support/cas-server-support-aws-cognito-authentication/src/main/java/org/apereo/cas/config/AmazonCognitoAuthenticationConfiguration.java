@@ -30,6 +30,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
 
@@ -47,7 +48,7 @@ public class AmazonCognitoAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "amazonCognitoIdentityProvider")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CognitoIdentityProviderClient amazonCognitoIdentityProvider(final CasConfigurationProperties casProperties) {
         val props = casProperties.getAuthn().getCognito();
@@ -64,7 +65,7 @@ public class AmazonCognitoAuthenticationConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "amazonCognitoAuthenticationHandler")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public AuthenticationHandler amazonCognitoAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
@@ -87,7 +88,7 @@ public class AmazonCognitoAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "amazonCognitoAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer amazonCognitoAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("amazonCognitoAuthenticationHandler")
         final AuthenticationHandler amazonCognitoAuthenticationHandler,
@@ -98,7 +99,7 @@ public class AmazonCognitoAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "amazonCognitoAuthenticationJwtProcessor")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public ConfigurableJWTProcessor amazonCognitoAuthenticationJwtProcessor(final CasConfigurationProperties casProperties) throws Exception {
         val cognito = casProperties.getAuthn().getCognito();

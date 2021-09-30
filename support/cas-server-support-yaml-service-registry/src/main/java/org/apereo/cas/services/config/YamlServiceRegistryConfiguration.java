@@ -21,6 +21,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ import java.util.Optional;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class YamlServiceRegistryConfiguration {
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     @ConditionalOnMissingBean(name = "yamlServiceRegistry")
     public ServiceRegistry yamlServiceRegistry(
@@ -63,7 +64,7 @@ public class YamlServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "yamlServiceRegistryExecutionPlanConfigurer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public ServiceRegistryExecutionPlanConfigurer yamlServiceRegistryExecutionPlanConfigurer(
         final CasConfigurationProperties casProperties,

@@ -17,6 +17,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import javax.net.ssl.SSLContext;
 
@@ -33,7 +34,7 @@ public class CassandraTicketRegistryConfiguration {
 
     @Autowired
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(
         @Qualifier("ticketCatalog")
         final TicketCatalog ticketCatalog, final CasConfigurationProperties casProperties,
@@ -49,7 +50,7 @@ public class CassandraTicketRegistryConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "cassandraTicketRegistrySessionFactory")
     @Autowired
     public CassandraSessionFactory cassandraTicketRegistrySessionFactory(final CasConfigurationProperties casProperties,

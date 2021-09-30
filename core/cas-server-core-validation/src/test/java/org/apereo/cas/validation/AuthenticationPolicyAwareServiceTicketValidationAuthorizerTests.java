@@ -215,7 +215,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
 
     private ServiceTicketValidationAuthorizer getAuthorizer(final AuthenticationPolicy policy,
         final List<? extends AuthenticationHandler> authenticationHandlers) {
-        val plan = new DefaultAuthenticationEventExecutionPlan(CoreAuthenticationTestUtils.getAuthenticationSystemSupport());
+        val plan = new DefaultAuthenticationEventExecutionPlan();
         plan.registerAuthenticationHandlers(authenticationHandlers);
         plan.registerAuthenticationPolicy(policy);
         return new AuthenticationPolicyAwareServiceTicketValidationAuthorizer(servicesManager, plan, applicationContext);

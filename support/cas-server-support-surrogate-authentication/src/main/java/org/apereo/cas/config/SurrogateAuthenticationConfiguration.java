@@ -27,6 +27,7 @@ import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.expiration.builder.TicketGrantingTicketExpirationPolicyBuilder;
+import org.apereo.cas.util.spring.CasEventListener;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -40,6 +41,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -59,7 +61,7 @@ import java.util.List;
 @Slf4j
 public class SurrogateAuthenticationConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "surrogateAuthenticationService")
     @Bean
     @Autowired
@@ -79,7 +81,7 @@ public class SurrogateAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "surrogateAuthenticationPostProcessor")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationPostProcessor surrogateAuthenticationPostProcessor(
         @Qualifier("surrogateAuthenticationService")
@@ -97,14 +99,14 @@ public class SurrogateAuthenticationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "surrogateMultifactorAuthenticationPrincipalResolver")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationPrincipalResolver surrogateMultifactorAuthenticationPrincipalResolver() {
         return new SurrogateMultifactorAuthenticationPrincipalResolver();
     }
 
     @ConditionalOnMissingBean(name = "surrogatePrincipalElectionStrategyConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public PrincipalElectionStrategyConfigurer surrogatePrincipalElectionStrategyConfigurer(final CasConfigurationProperties casProperties) {
         return chain -> {
@@ -123,7 +125,7 @@ public class SurrogateAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "surrogateAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("surrogateAuthenticationPostProcessor")
         final AuthenticationPostProcessor surrogateAuthenticationPostProcessor) throws Exception {
@@ -131,7 +133,7 @@ public class SurrogateAuthenticationConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public ExpirationPolicyBuilder grantingTicketExpirationPolicy(final CasConfigurationProperties casProperties) {
         val grantingTicketExpirationPolicy = new TicketGrantingTicketExpirationPolicyBuilder(casProperties);
@@ -141,7 +143,7 @@ public class SurrogateAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "surrogateAuthenticationEventListener")
     @Bean
     @Autowired
-    public SurrogateAuthenticationEventListener surrogateAuthenticationEventListener(
+    public CasEventListener surrogateAuthenticationEventListener(
         @Qualifier("communicationsManager")
         final CommunicationsManager communicationsManager,
         final CasConfigurationProperties casProperties) {
@@ -155,7 +157,7 @@ public class SurrogateAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "surrogatePrincipalBuilder")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SurrogatePrincipalBuilder surrogatePrincipalBuilder(
             @Qualifier("surrogateAuthenticationService")
@@ -169,7 +171,7 @@ public class SurrogateAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "surrogatePrincipalResolver")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public PrincipalResolver surrogatePrincipalResolver(
             final CasConfigurationProperties casProperties,
@@ -183,14 +185,14 @@ public class SurrogateAuthenticationConfiguration {
             val personDirectory = casProperties.getPersonDirectory();
             var attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
             val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(surrogatePrincipalFactory,
-                    attributeRepository, attributeMerger, SurrogatePrincipalResolver.class, principal,
-                    personDirectory);
+                attributeRepository, attributeMerger, SurrogatePrincipalResolver.class, principal,
+                personDirectory);
             resolver.setSurrogatePrincipalBuilder(surrogatePrincipalBuilder);
             return resolver;
         }
 
         @ConditionalOnMissingBean(name = "surrogatePrincipalFactory")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public PrincipalFactory surrogatePrincipalFactory() {
             return PrincipalFactoryUtils.newPrincipalFactory();

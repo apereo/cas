@@ -22,6 +22,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.s3.S3Client;
 
 import java.util.Optional;
@@ -39,7 +40,7 @@ import java.util.Optional;
 public class AmazonS3SamlIdPMetadataConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "samlIdPMetadataGeneratorCipherExecutor")
     @Autowired
     public CipherExecutor samlIdPMetadataGeneratorCipherExecutor(final CasConfigurationProperties casProperties) {
@@ -54,7 +55,7 @@ public class AmazonS3SamlIdPMetadataConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator(final CasConfigurationProperties casProperties,
                                                              @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
@@ -68,7 +69,7 @@ public class AmazonS3SamlIdPMetadataConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public SamlIdPMetadataLocator samlIdPMetadataLocator(
         final CasConfigurationProperties casProperties,

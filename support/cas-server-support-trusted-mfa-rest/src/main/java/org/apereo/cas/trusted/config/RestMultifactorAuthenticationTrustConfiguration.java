@@ -12,6 +12,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -24,7 +25,7 @@ import org.springframework.web.client.RestTemplate;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RestMultifactorAuthenticationTrustConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public MultifactorAuthenticationTrustStorage mfaTrustEngine(

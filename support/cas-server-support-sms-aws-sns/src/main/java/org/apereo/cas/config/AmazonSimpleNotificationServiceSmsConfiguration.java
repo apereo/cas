@@ -12,6 +12,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.sns.SnsClient;
 
 /**
@@ -24,7 +25,7 @@ import software.amazon.awssdk.services.sns.SnsClient;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class AmazonSimpleNotificationServiceSmsConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public SmsSender smsSender(final CasConfigurationProperties casProperties) {

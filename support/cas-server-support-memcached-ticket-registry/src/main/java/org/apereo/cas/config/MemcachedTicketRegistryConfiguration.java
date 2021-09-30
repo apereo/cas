@@ -19,6 +19,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link MemcachedTicketRegistryConfiguration}.
@@ -31,7 +32,7 @@ import org.springframework.context.annotation.Configuration;
 public class MemcachedTicketRegistryConfiguration {
 
     @ConditionalOnMissingBean(name = "memcachedTicketRegistryTranscoder")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public Transcoder memcachedTicketRegistryTranscoder(
@@ -45,7 +46,7 @@ public class MemcachedTicketRegistryConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "memcachedPooledClientConnectionFactory")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public MemcachedPooledClientConnectionFactory memcachedPooledClientConnectionFactory(final CasConfigurationProperties casProperties,
@@ -58,7 +59,7 @@ public class MemcachedTicketRegistryConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public TicketRegistry ticketRegistry(final CasConfigurationProperties casProperties,
                                          @Qualifier("memcachedTicketRegistryTranscoder")

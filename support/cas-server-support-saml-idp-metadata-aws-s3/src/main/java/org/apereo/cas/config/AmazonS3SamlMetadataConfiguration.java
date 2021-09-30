@@ -11,6 +11,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.s3.S3Client;
 
 /**
@@ -25,7 +26,7 @@ public class AmazonS3SamlMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "amazonS3Client")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public S3Client amazonS3Client(final CasConfigurationProperties casProperties) {
         val amz = casProperties.getAuthn().getSamlIdp().getMetadata().getAmazonS3();

@@ -24,6 +24,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.clouddirectory.CloudDirectoryClient;
 
 /**
@@ -44,7 +45,7 @@ public class CloudDirectoryAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "cloudDirectoryAuthenticationHandler")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationHandler cloudDirectoryAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
                                                                      @Qualifier("cloudDirectoryPrincipalFactory")
@@ -62,7 +63,7 @@ public class CloudDirectoryAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "cloudDirectoryRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AmazonCloudDirectoryRepository cloudDirectoryRepository(final CasConfigurationProperties casProperties,
                                                                    @Qualifier("amazonCloudDirectory")
@@ -73,7 +74,7 @@ public class CloudDirectoryAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "amazonCloudDirectory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CloudDirectoryClient amazonCloudDirectory(final CasConfigurationProperties casProperties) {
         val cloud = casProperties.getAuthn().getCloudDirectory();
@@ -85,7 +86,7 @@ public class CloudDirectoryAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "cloudDirectoryAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer cloudDirectoryAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("cloudDirectoryAuthenticationHandler")
         final AuthenticationHandler cloudDirectoryAuthenticationHandler,

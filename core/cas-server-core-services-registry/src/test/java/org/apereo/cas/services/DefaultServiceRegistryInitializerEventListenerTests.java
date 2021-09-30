@@ -14,13 +14,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link ServiceRegistryInitializerEventListenerTests}.
+ * This is {@link DefaultServiceRegistryInitializerEventListenerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Tag("RegisteredService")
-public class ServiceRegistryInitializerEventListenerTests {
+public class DefaultServiceRegistryInitializerEventListenerTests {
 
     @Test
     public void verifyOperation() {

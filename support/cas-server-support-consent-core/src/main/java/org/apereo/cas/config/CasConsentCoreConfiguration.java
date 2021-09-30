@@ -33,6 +33,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.List;
@@ -56,7 +57,7 @@ public class CasConsentCoreConfiguration {
 
     @ConditionalOnMissingBean(name = ConsentEngine.BEAN_NAME)
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public ConsentEngine consentEngine(
         final CasConfigurationProperties casProperties,
@@ -71,7 +72,7 @@ public class CasConsentCoreConfiguration {
 
     @ConditionalOnMissingBean(name = "consentCipherExecutor")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CipherExecutor consentCipherExecutor(final CasConfigurationProperties casProperties) {
         val consent = casProperties.getConsent().getCore();
@@ -85,7 +86,7 @@ public class CasConsentCoreConfiguration {
 
     @ConditionalOnMissingBean(name = "consentDecisionBuilder")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public ConsentDecisionBuilder consentDecisionBuilder(
         @Qualifier("consentCipherExecutor")
@@ -95,7 +96,7 @@ public class CasConsentCoreConfiguration {
 
     @ConditionalOnMissingBean(name = "consentActivationStrategy")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public ConsentActivationStrategy consentActivationStrategy(
         @Qualifier(ConsentEngine.BEAN_NAME)
@@ -110,7 +111,7 @@ public class CasConsentCoreConfiguration {
 
     @ConditionalOnMissingBean(name = "consentRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public ConsentRepository consentRepository(final CasConfigurationProperties casProperties) {
         val location = casProperties.getConsent().getJson().getLocation();

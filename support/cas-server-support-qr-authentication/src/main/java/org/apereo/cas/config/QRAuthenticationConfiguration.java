@@ -36,6 +36,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -89,21 +90,21 @@ public class QRAuthenticationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "qrAuthenticationValidateWebSocketChannelAction")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action qrAuthenticationValidateWebSocketChannelAction() {
         return new QRAuthenticationValidateTokenAction();
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "qrAuthenticationGenerateCodeAction")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action qrAuthenticationGenerateCodeAction() {
         return new QRAuthenticationGenerateCodeAction();
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "qrAuthenticationTokenValidatorService")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public QRAuthenticationTokenValidatorService qrAuthenticationTokenValidatorService(
         final CasConfigurationProperties casProperties,
@@ -119,7 +120,7 @@ public class QRAuthenticationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "qrAuthenticationDeviceRepository")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public QRAuthenticationDeviceRepository qrAuthenticationDeviceRepository(final CasConfigurationProperties casProperties) {
         val qr = casProperties.getAuthn().getQr();
@@ -137,7 +138,7 @@ public class QRAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "qrAuthenticationTokenAuthenticationHandler")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationHandler qrAuthenticationTokenAuthenticationHandler(
         @Qualifier("qrAuthenticationPrincipalFactory")
         final PrincipalFactory qrAuthenticationPrincipalFactory,

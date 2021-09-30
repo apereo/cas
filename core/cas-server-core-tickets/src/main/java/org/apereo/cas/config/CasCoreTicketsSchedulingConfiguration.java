@@ -22,6 +22,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -44,7 +45,7 @@ public class CasCoreTicketsSchedulingConfiguration {
 
     @ConditionalOnMissingBean(name = "ticketRegistryCleaner")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public TicketRegistryCleaner ticketRegistryCleaner(final CasConfigurationProperties casProperties,
                                                        @Qualifier("lockingStrategy")
@@ -68,7 +69,7 @@ public class CasCoreTicketsSchedulingConfiguration {
     @ConditionalOnProperty(prefix = "cas.ticket.registry.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
     @ConditionalOnMatchingHostname(name = "cas.ticket.registry.cleaner.schedule.enabled-on-host")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public TicketRegistryCleanerScheduler ticketRegistryCleanerScheduler(
         @Qualifier("ticketRegistryCleaner")

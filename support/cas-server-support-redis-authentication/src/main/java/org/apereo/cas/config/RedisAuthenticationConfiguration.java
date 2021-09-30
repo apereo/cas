@@ -27,6 +27,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -43,9 +44,9 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty(prefix = "cas.authn.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Configuration(value = "redisAuthenticationConfiguration", proxyBeanMethods = false)
 public class RedisAuthenticationConfiguration {
-    
+
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "redisPrincipalFactory")
     public PrincipalFactory redisPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
@@ -53,7 +54,7 @@ public class RedisAuthenticationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisAuthenticationConnectionFactory")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public RedisConnectionFactory redisAuthenticationConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getRedis();
@@ -62,7 +63,7 @@ public class RedisAuthenticationConfiguration {
 
     @Bean(name = {"authenticationRedisTemplate", "redisTemplate"})
     @ConditionalOnMissingBean(name = "authenticationRedisTemplate")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisTemplate authenticationRedisTemplate(
         @Qualifier("redisAuthenticationConnectionFactory")
         final RedisConnectionFactory redisAuthenticationConnectionFactory) {
@@ -70,7 +71,7 @@ public class RedisAuthenticationConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "redisAuthenticationHandler")
     @Autowired
     public AuthenticationHandler redisAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
@@ -89,7 +90,7 @@ public class RedisAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "redisAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer redisAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("redisAuthenticationHandler")
         final AuthenticationHandler redisAuthenticationHandler,
@@ -100,7 +101,7 @@ public class RedisAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "redisPersonAttributeDaos")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public List<IPersonAttributeDao> redisPersonAttributeDaos(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getAttributeRepository().getRedis();
@@ -117,7 +118,7 @@ public class RedisAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "redisAttributeRepositoryPlanConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PersonDirectoryAttributeRepositoryPlanConfigurer redisAttributeRepositoryPlanConfigurer(
         @Qualifier("redisPersonAttributeDaos")
         final List<IPersonAttributeDao> redisPersonAttributeDaos) {

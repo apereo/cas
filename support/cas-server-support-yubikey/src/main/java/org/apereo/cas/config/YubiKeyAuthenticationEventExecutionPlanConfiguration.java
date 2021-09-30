@@ -41,6 +41,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
@@ -62,7 +63,7 @@ import java.util.stream.Collectors;
 public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "yubikeyAuthenticationMetaDataPopulator")
     @Autowired
     public AuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,
@@ -76,12 +77,12 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "yubikeyPrincipalFactory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory yubikeyPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "yubicoClient")
     @Autowired
@@ -102,7 +103,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "yubikeyAuthenticationHandler")
     @Autowired
     public AuthenticationHandler yubikeyAuthenticationHandler(final CasConfigurationProperties casProperties,
@@ -119,7 +120,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "yubiKeyAccountValidator")
     public YubiKeyAccountValidator yubiKeyAccountValidator(
         @Qualifier("yubicoClient")
@@ -128,7 +129,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "yubiKeyAccountRegistry")
     @Autowired
     public YubiKeyAccountRegistry yubiKeyAccountRegistry(final CasConfigurationProperties casProperties,
@@ -179,7 +180,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationProvider yubikeyMultifactorAuthenticationProvider(final CasConfigurationProperties casProperties,
                                                                                       @Qualifier("yubicoClient")

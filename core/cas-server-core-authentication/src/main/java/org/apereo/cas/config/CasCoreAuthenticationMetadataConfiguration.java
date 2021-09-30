@@ -25,6 +25,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasCoreAuthenticationMetadataConfiguration}.
@@ -85,7 +86,7 @@ public class CasCoreAuthenticationMetadataConfiguration {
     public static class CasCoreAuthenticationMetadataClearPassConfiguration {
         @ConditionalOnMissingBean(name = "cacheCredentialsCipherExecutor")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public CipherExecutor cacheCredentialsCipherExecutor(final CasConfigurationProperties casProperties) {
             val cp = casProperties.getClearpass();
@@ -103,7 +104,7 @@ public class CasCoreAuthenticationMetadataConfiguration {
 
         @ConditionalOnMissingBean(name = "cacheCredentialsMetaDataPopulator")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         @ConditionalOnProperty(prefix = "cas.clearpass", name = "cache-credential", havingValue = "true")
         public AuthenticationMetaDataPopulator cacheCredentialsMetaDataPopulator(

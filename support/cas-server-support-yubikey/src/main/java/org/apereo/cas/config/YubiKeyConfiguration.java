@@ -14,6 +14,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
@@ -36,7 +37,7 @@ public class YubiKeyConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "yubikeyAccountCipherExecutor")
     @Autowired
     public CipherExecutor yubikeyAccountCipherExecutor(final CasConfigurationProperties casProperties) {

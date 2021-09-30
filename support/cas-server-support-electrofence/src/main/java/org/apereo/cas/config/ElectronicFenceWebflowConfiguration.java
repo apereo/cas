@@ -21,6 +21,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -38,7 +39,7 @@ public class ElectronicFenceWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "riskAwareAuthenticationWebflowEventResolver")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver(
         @Qualifier("casWebflowConfigurationContext")
@@ -57,7 +58,7 @@ public class ElectronicFenceWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "riskAwareAuthenticationWebflowConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CasWebflowConfigurer riskAwareAuthenticationWebflowConfigurer(
         final ConfigurableApplicationContext applicationContext,
@@ -71,7 +72,7 @@ public class ElectronicFenceWebflowConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     @ConditionalOnMissingBean(name = "riskAwareCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer riskAwareCasWebflowExecutionPlanConfigurer(

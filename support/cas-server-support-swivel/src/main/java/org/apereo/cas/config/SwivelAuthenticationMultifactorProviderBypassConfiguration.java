@@ -21,6 +21,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SwivelAuthenticationMultifactorProviderBypassConfiguration}.
@@ -34,7 +35,7 @@ public class SwivelAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "swivelBypassEvaluator")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator swivelBypassEvaluator(
         final CasConfigurationProperties casProperties,
@@ -82,7 +83,7 @@ public class SwivelAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "swivelRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator swivelRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(
         final CasConfigurationProperties casProperties) {
@@ -92,7 +93,7 @@ public class SwivelAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "swivelRestMultifactorAuthenticationProviderBypass")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator swivelRestMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val swivel = casProperties.getAuthn().getMfa().getSwivel();
@@ -102,7 +103,7 @@ public class SwivelAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "swivelGroovyMultifactorAuthenticationProviderBypass")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator swivelGroovyMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val swivel = casProperties.getAuthn().getMfa().getSwivel();
@@ -112,7 +113,7 @@ public class SwivelAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "swivelHttpRequestMultifactorAuthenticationProviderBypass")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator swivelHttpRequestMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val swivel = casProperties.getAuthn().getMfa().getSwivel();
@@ -121,7 +122,7 @@ public class SwivelAuthenticationMultifactorProviderBypassConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "swivelCredentialMultifactorAuthenticationProviderBypass")
     @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator swivelCredentialMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
@@ -131,7 +132,7 @@ public class SwivelAuthenticationMultifactorProviderBypassConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "swivelRegisteredServiceMultifactorAuthenticationProviderBypass")
     @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator swivelRegisteredServiceMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
@@ -141,7 +142,7 @@ public class SwivelAuthenticationMultifactorProviderBypassConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "swivelPrincipalMultifactorAuthenticationProviderBypass")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator swivelPrincipalMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val swivel = casProperties.getAuthn().getMfa().getSwivel();
@@ -150,7 +151,7 @@ public class SwivelAuthenticationMultifactorProviderBypassConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "swivelAuthenticationMultifactorAuthenticationProviderBypass")
     @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator swivelAuthenticationMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {

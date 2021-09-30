@@ -5,6 +5,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.util.PublisherIdentifier;
+import org.apereo.cas.util.spring.CasEventListener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,7 @@ import org.springframework.scheduling.annotation.Async;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class CasServicesRegistryStreamingEventListener {
+public class CasServicesRegistryStreamingEventListener implements CasEventListener {
     private final CasRegisteredServiceStreamPublisher publisher;
 
     private final PublisherIdentifier publisherIdentifier;

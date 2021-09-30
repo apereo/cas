@@ -14,6 +14,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import javax.net.ssl.SSLContext;
@@ -29,7 +30,7 @@ import javax.net.ssl.SSLContext;
 public class MongoDbMonitoringConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "mongoHealthIndicatorTemplate")
     @Autowired
     public MongoTemplate mongoHealthIndicatorTemplate(final CasConfigurationProperties casProperties,
@@ -41,7 +42,7 @@ public class MongoDbMonitoringConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnEnabledHealthIndicator("mongoHealthIndicator")
     @ConditionalOnMissingBean(name = "mongoHealthIndicator")
     @Autowired

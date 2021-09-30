@@ -34,6 +34,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -102,7 +103,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "wsFederationConfigurations")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Collection<WsFederationConfiguration> wsFederationConfigurations(
         final ConfigurableApplicationContext applicationContext,
@@ -117,14 +118,14 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "wsfedPrincipalFactory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory wsfedPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnMissingBean(name = "wsfedAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationEventExecutionPlanConfigurer wsfedAuthenticationEventExecutionPlanConfigurer(
         final CasConfigurationProperties casProperties,

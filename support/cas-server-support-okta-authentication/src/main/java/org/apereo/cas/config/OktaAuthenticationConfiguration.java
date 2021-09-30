@@ -23,6 +23,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link OktaAuthenticationConfiguration}.
@@ -54,7 +55,7 @@ public class OktaAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "oktaAuthenticationHandler")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationHandler oktaAuthenticationHandler(
         @Qualifier("oktaPrincipalFactory")
@@ -77,7 +78,7 @@ public class OktaAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "oktaAuthenticationClient")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationClient oktaAuthenticationClient(final CasConfigurationProperties casProperties) {
         val properties = casProperties.getAuthn().getOkta();

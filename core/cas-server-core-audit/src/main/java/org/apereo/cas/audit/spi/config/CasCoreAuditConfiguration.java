@@ -56,6 +56,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
@@ -110,7 +111,7 @@ public class CasCoreAuditConfiguration {
         }
 
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "protocolSpecificationValidationResourceResolver")
         @Autowired
         public AuditResourceResolver protocolSpecificationValidationResourceResolver(
@@ -127,7 +128,7 @@ public class CasCoreAuditConfiguration {
         @ConditionalOnMissingBean(name = "ticketValidationResourceResolver")
         @Bean
         @Autowired
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditResourceResolver ticketValidationResourceResolver(
             @Qualifier("ticketResourceResolver")
             final AuditResourceResolver ticketResourceResolver,
@@ -330,7 +331,7 @@ public class CasCoreAuditConfiguration {
         @Autowired
         @ConditionalOnMissingBean(name = "auditTrailRecordResolutionPlan")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditTrailRecordResolutionPlan auditTrailRecordResolutionPlan(
             final List<AuditTrailRecordResolutionPlanConfigurer> configurers) {
             val plan = new DefaultAuditTrailRecordResolutionPlan();
@@ -423,7 +424,7 @@ public class CasCoreAuditConfiguration {
         @Autowired
         @ConditionalOnMissingBean(name = "auditTrailExecutionPlan")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditTrailExecutionPlan auditTrailExecutionPlan(final List<AuditTrailExecutionPlanConfigurer> configurers) {
             val plan = new DefaultAuditTrailExecutionPlan();
             configurers.forEach(c -> {
@@ -447,8 +448,6 @@ public class CasCoreAuditConfiguration {
                 plan.registerAuditTrailManager(slf4jManager);
             };
         }
-        
-
     }
 
 }

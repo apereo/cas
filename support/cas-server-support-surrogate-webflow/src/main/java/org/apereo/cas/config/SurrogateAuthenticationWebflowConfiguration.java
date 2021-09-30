@@ -14,6 +14,7 @@ import org.apereo.cas.web.flow.action.LoadSurrogatesListAction;
 import org.apereo.cas.web.flow.action.SurrogateAuthorizationAction;
 import org.apereo.cas.web.flow.action.SurrogateInitialAuthenticationAction;
 import org.apereo.cas.web.flow.action.SurrogateSelectionAction;
+import org.apereo.cas.web.flow.authentication.CasWebflowExceptionCatalog;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
@@ -26,11 +27,10 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-
-import java.util.Set;
 
 /**
  * This is {@link SurrogateAuthenticationWebflowConfiguration}.
@@ -59,7 +59,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "selectSurrogateAction")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action selectSurrogateAction(
         @Qualifier("surrogatePrincipalBuilder")
@@ -83,7 +83,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "surrogateAuthorizationCheck")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action surrogateAuthorizationCheck(
         @Qualifier("registeredServiceAccessStrategyEnforcer")
@@ -93,7 +93,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "loadSurrogatesListAction")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action loadSurrogatesListAction(
         @Qualifier("surrogateAuthenticationService")
@@ -107,8 +107,8 @@ public class SurrogateAuthenticationWebflowConfiguration {
     @Autowired
     public InitializingBean surrogateAuthenticationWebflowInitializer(
         @Qualifier("handledAuthenticationExceptions")
-        final Set<Class<? extends Throwable>> handledAuthenticationExceptions) {
-        return () -> handledAuthenticationExceptions.add(SurrogateAuthenticationException.class);
+        final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
+        return () -> handledAuthenticationExceptions.registerException(SurrogateAuthenticationException.class);
     }
 
     @Bean

@@ -26,6 +26,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.Optional;
 
@@ -42,7 +43,7 @@ import java.util.Optional;
 public class CouchDbSamlIdPMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbInstance")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public CouchDbInstance samlIdPMetadataCouchDbInstance(
         @Qualifier("samlMetadataCouchDbFactory")
@@ -51,7 +52,7 @@ public class CouchDbSamlIdPMetadataConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbConnector")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public CouchDbConnector samlIdPMetadataCouchDbConnector(
         @Qualifier("samlMetadataCouchDbFactory")
@@ -61,7 +62,7 @@ public class CouchDbSamlIdPMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public SamlIdPMetadataCouchDbRepository samlIdPMetadataCouchDbRepository(
         final CasConfigurationProperties casProperties,
@@ -74,7 +75,7 @@ public class CouchDbSamlIdPMetadataConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CipherExecutor samlIdPMetadataGeneratorCipherExecutor(final CasConfigurationProperties casProperties) {
         val idp = casProperties.getAuthn().getSamlIdp();
@@ -90,7 +91,7 @@ public class CouchDbSamlIdPMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbSamlIdPMetadataGenerator")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
         @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
         final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext,
@@ -103,7 +104,7 @@ public class CouchDbSamlIdPMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbSamlIdPMetadataLocator")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SamlIdPMetadataLocator samlIdPMetadataLocator(
         @Qualifier("samlIdPMetadataCache")
         final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache,

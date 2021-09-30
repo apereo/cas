@@ -24,6 +24,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SamlIdPGitIdPMetadataConfiguration}.
@@ -39,7 +40,7 @@ public class SamlIdPGitIdPMetadataConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "gitSamlIdPMetadataCipherExecutor")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CipherExecutor samlIdPMetadataGeneratorCipherExecutor(final CasConfigurationProperties casProperties) {
         val idp = casProperties.getAuthn().getSamlIdp();
@@ -53,7 +54,7 @@ public class SamlIdPGitIdPMetadataConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "gitIdPMetadataRepositoryInstance")
     @Autowired
     public GitRepository gitIdPMetadataRepositoryInstance(final CasConfigurationProperties casProperties) {
@@ -62,7 +63,7 @@ public class SamlIdPGitIdPMetadataConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
         @Qualifier("gitIdPMetadataRepositoryInstance")
         final GitRepository gitIdPMetadataRepositoryInstance,
@@ -72,7 +73,7 @@ public class SamlIdPGitIdPMetadataConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SamlIdPMetadataLocator samlIdPMetadataLocator(
         @Qualifier("samlIdPMetadataCache")
         final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache,

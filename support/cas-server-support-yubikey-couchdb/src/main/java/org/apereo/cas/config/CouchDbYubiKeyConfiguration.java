@@ -19,6 +19,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CouchDbYubiKeyConfiguration}.
@@ -32,7 +33,7 @@ public class CouchDbYubiKeyConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbYubiKeyAccountRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public YubiKeyAccountCouchDbRepository couchDbYubiKeyAccountRepository(final CasConfigurationProperties casProperties,
                                                                            @Qualifier("yubikeyCouchDbFactory")
@@ -42,7 +43,7 @@ public class CouchDbYubiKeyConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "yubikeyCouchDbInstance")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public CouchDbInstance yubikeyCouchDbInstance(
         @Qualifier("yubikeyCouchDbFactory")
@@ -51,7 +52,7 @@ public class CouchDbYubiKeyConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "yubikeyCouchDbConnector")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public CouchDbConnector yubikeyCouchDbConnector(
         @Qualifier("yubikeyCouchDbFactory")
@@ -61,7 +62,7 @@ public class CouchDbYubiKeyConfiguration {
 
     @ConditionalOnMissingBean(name = "yubikeyCouchDbFactory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CouchDbConnectorFactory yubikeyCouchDbFactory(final CasConfigurationProperties casProperties,
                                                          @Qualifier("objectMapperFactory")
@@ -70,7 +71,7 @@ public class CouchDbYubiKeyConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "couchDbYubikeyAccountRegistry")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public YubiKeyAccountRegistry yubiKeyAccountRegistry(
         @Qualifier("couchDbYubiKeyAccountRepository")

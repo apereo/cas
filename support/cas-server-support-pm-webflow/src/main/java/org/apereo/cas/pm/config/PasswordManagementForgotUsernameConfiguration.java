@@ -32,6 +32,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -73,7 +74,7 @@ public class PasswordManagementForgotUsernameConfiguration {
     public static class PasswordManagementForgotUsernameWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS_ACTION)
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public Action sendForgotUsernameInstructionsAction(
             final CasConfigurationProperties casProperties,
@@ -117,7 +118,7 @@ public class PasswordManagementForgotUsernameConfiguration {
     public static class ForgotUsernameCaptchaConfiguration {
 
         @ConditionalOnMissingBean(name = "forgotUsernameCaptchaWebflowConfigurer")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         public CasWebflowConfigurer forgotUsernameCaptchaWebflowConfigurer(
@@ -134,7 +135,7 @@ public class PasswordManagementForgotUsernameConfiguration {
         }
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FORGOT_USERNAME_VALIDATE_CAPTCHA)
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         public Action forgotUsernameValidateCaptchaAction(final CasConfigurationProperties casProperties) {
@@ -142,7 +143,7 @@ public class PasswordManagementForgotUsernameConfiguration {
             return new ValidateCaptchaAction(CaptchaValidator.getInstance(recaptcha));
         }
 
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA)
         @Autowired

@@ -42,6 +42,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.time.Duration;
@@ -67,14 +68,14 @@ public class MultifactorAuthnTrustConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaTrustDeviceNamingStrategy")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationTrustedDeviceNamingStrategy mfaTrustDeviceNamingStrategy() {
         return MultifactorAuthenticationTrustedDeviceNamingStrategy.random();
     }
 
     @ConditionalOnMissingBean(name = "mfaTrustEngine")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationTrustStorage mfaTrustEngine(
         final CasConfigurationProperties casProperties,
@@ -105,7 +106,7 @@ public class MultifactorAuthnTrustConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaTrustRecordKeyGenerator")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator(final CasConfigurationProperties casProperties) {
         val type = casProperties.getAuthn().getMfa().getTrusted().getCore().getKeyGeneratorType();
@@ -116,7 +117,7 @@ public class MultifactorAuthnTrustConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "mfaTrustCipherExecutor")
     @Autowired
     public CipherExecutor mfaTrustCipherExecutor(final CasConfigurationProperties casProperties) {

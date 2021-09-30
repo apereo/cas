@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.RestfulPersonAttributeDao;
 import org.apereo.services.persondir.support.SimpleUsernameAttributeProvider;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -19,6 +20,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
@@ -40,7 +42,7 @@ import java.util.Objects;
 public class CasPersonDirectoryRestConfiguration {
     @ConditionalOnMissingBean(name = "restfulAttributeRepositories")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public List<IPersonAttributeDao> restfulAttributeRepositories(final CasConfigurationProperties casProperties) {
         val list = new ArrayList<IPersonAttributeDao>();
@@ -77,9 +79,10 @@ public class CasPersonDirectoryRestConfiguration {
 
     @Bean
     @Autowired
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PersonDirectoryAttributeRepositoryPlanConfigurer restfulPersonDirectoryAttributeRepositoryPlanConfigurer(
-        @Qualifier("restfulAttributeRepositories") final List<IPersonAttributeDao> restfulAttributeRepositories) {
-        return plan -> plan.registerAttributeRepositories(restfulAttributeRepositories);
+        @Qualifier("restfulAttributeRepositories") final ObjectProvider<List<IPersonAttributeDao>> restfulAttributeRepositories) {
+        return plan -> plan.registerAttributeRepositories(restfulAttributeRepositories.getObject());
     }
 }
 

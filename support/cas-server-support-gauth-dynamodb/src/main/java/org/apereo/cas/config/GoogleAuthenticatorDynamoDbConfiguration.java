@@ -19,6 +19,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 /**
@@ -59,7 +60,7 @@ public class GoogleAuthenticatorDynamoDbConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "googleAuthenticatorDynamoDbTokenRepositoryFacilitator")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator googleAuthenticatorDynamoDbTokenRepositoryFacilitator(
         final CasConfigurationProperties casProperties,
@@ -77,7 +78,7 @@ public class GoogleAuthenticatorDynamoDbConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "googleAuthenticatorTokenCredentialRepositoryFacilitator")
     @Autowired
     public DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator googleAuthenticatorTokenCredentialRepositoryFacilitator(
@@ -95,7 +96,7 @@ public class GoogleAuthenticatorDynamoDbConfiguration {
         return facilitator;
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "amazonDynamoDbGoogleAuthenticatorClient")
     @Autowired

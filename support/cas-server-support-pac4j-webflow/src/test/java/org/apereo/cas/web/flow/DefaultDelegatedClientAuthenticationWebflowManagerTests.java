@@ -74,7 +74,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     private TicketRegistry ticketRegistry;
 
     @Autowired
-    @Qualifier("delegatedClientWebflowManager")
+    @Qualifier(DelegatedClientAuthenticationWebflowManager.DEFAULT_BEAN_NAME)
     private DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
 
     @Autowired

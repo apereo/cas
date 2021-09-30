@@ -16,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -30,7 +31,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 @Configuration(value = "RedisWebAuthnConfiguration", proxyBeanMethods = false)
 public class RedisWebAuthnConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "webAuthnRedisTemplate")
     public RedisTemplate<String, RedisWebAuthnCredentialRegistration> webAuthnRedisTemplate(
@@ -41,14 +42,14 @@ public class RedisWebAuthnConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "webAuthnRedisConnectionFactory")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public RedisConnectionFactory webAuthnRedisConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getMfa().getWebAuthn().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public WebAuthnCredentialRepository webAuthnCredentialRepository(final CasConfigurationProperties casProperties,

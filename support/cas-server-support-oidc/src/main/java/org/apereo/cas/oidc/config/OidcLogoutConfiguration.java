@@ -23,6 +23,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link OidcLogoutConfiguration}.
@@ -36,7 +37,7 @@ public class OidcLogoutConfiguration {
 
     @ConditionalOnMissingBean(name = "oidcSingleLogoutMessageCreator")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public SingleLogoutMessageCreator oidcSingleLogoutMessageCreator(
         @Qualifier("oidcConfigurationContext")
@@ -46,7 +47,7 @@ public class OidcLogoutConfiguration {
 
     @ConditionalOnMissingBean(name = "oidcSingleLogoutServiceLogoutUrlBuilderConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public SingleLogoutServiceLogoutUrlBuilderConfigurer oidcSingleLogoutServiceLogoutUrlBuilderConfigurer(
         @Qualifier(ServicesManager.BEAN_NAME)
@@ -58,7 +59,7 @@ public class OidcLogoutConfiguration {
 
     @ConditionalOnMissingBean(name = "oidcSingleLogoutServiceMessageHandler")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public SingleLogoutServiceMessageHandler oidcSingleLogoutServiceMessageHandler(
         final CasConfigurationProperties casProperties,

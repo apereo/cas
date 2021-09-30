@@ -19,6 +19,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ import java.util.Optional;
 @Configuration(value = "couchbaseServiceRegistryConfiguration", proxyBeanMethods = false)
 public class CouchbaseServiceRegistryConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "serviceRegistryCouchbaseClientFactory")
     @Autowired
@@ -44,7 +45,7 @@ public class CouchbaseServiceRegistryConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "couchbaseServiceRegistry")
     @Autowired
     public ServiceRegistry couchbaseServiceRegistry(final ConfigurableApplicationContext applicationContext,
@@ -57,7 +58,7 @@ public class CouchbaseServiceRegistryConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "couchbaseServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer couchbaseServiceRegistryExecutionPlanConfigurer(
         @Qualifier("couchbaseServiceRegistry")

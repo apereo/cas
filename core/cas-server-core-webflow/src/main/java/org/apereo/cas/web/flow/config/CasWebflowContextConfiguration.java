@@ -37,6 +37,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.Order;
@@ -111,7 +112,7 @@ public class CasWebflowContextConfiguration {
             return new CasDefaultFlowUrlHandler();
         }
 
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         public HandlerAdapter logoutHandlerAdapter(
@@ -168,7 +169,7 @@ public class CasWebflowContextConfiguration {
     @Configuration(value = "CasWebflowContextFlowExecutorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasWebflowContextFlowExecutorConfiguration {
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         public FlowExecutor logoutFlowExecutor(
@@ -182,7 +183,7 @@ public class CasWebflowContextConfiguration {
             return factory.build();
         }
 
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         public FlowExecutor loginFlowExecutor(
@@ -203,7 +204,7 @@ public class CasWebflowContextConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasWebflowContextInterceptorConfiguration {
 
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         @ConditionalOnMissingBean(name = "localeChangeInterceptor")
@@ -266,7 +267,7 @@ public class CasWebflowContextConfiguration {
 
         @ConditionalOnMissingBean(name = "groovyWebflowConfigurer")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public CasWebflowConfigurer groovyWebflowConfigurer(
             final ConfigurableApplicationContext applicationContext,
@@ -346,7 +347,7 @@ public class CasWebflowContextConfiguration {
             return builder.build();
         }
 
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         public FlowBuilderServices flowBuilderServices(
@@ -373,7 +374,7 @@ public class CasWebflowContextConfiguration {
             return new LogoutConversionService();
         }
 
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         public ViewFactoryCreator viewFactoryCreator(

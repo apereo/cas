@@ -16,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CouchDbMultifactorAuthenticationTrustConfiguration}.
@@ -29,7 +30,7 @@ public class CouchDbMultifactorAuthenticationTrustConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaTrustCouchDbFactory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CouchDbConnectorFactory mfaTrustCouchDbFactory(final CasConfigurationProperties casProperties,
                                                           @Qualifier("objectMapperFactory")
@@ -39,7 +40,7 @@ public class CouchDbMultifactorAuthenticationTrustConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbTrustRecordRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationTrustRecordCouchDbRepository couchDbTrustRecordRepository(
         @Qualifier("mfaTrustCouchDbFactory")
@@ -49,7 +50,7 @@ public class CouchDbMultifactorAuthenticationTrustConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationTrustStorage mfaTrustEngine(
         @Qualifier("couchDbTrustRecordRepository")

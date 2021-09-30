@@ -25,6 +25,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -58,7 +59,7 @@ public class CasSupportJdbcAuditConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuditTrailManager jdbcAuditTrailManager(
         @Qualifier("auditCleanupCriteria")
@@ -85,7 +86,7 @@ public class CasSupportJdbcAuditConfiguration {
 
     @ConditionalOnMissingBean(name = "jdbcAuditTrailExecutionPlanConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuditTrailExecutionPlanConfigurer jdbcAuditTrailExecutionPlanConfigurer(
         @Qualifier("jdbcAuditTrailManager")
@@ -112,7 +113,7 @@ public class CasSupportJdbcAuditConfiguration {
 
     @ConditionalOnMissingBean(name = "auditCleanupCriteria")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public WhereClauseMatchCriteria auditCleanupCriteria(final CasConfigurationProperties casProperties) {
         return new MaxAgeWhereClauseMatchCriteria(casProperties.getAudit().getJdbc().getMaxAgeDays());
@@ -129,7 +130,7 @@ public class CasSupportJdbcAuditConfiguration {
 
     @ConditionalOnMissingBean(name = "inspektrAuditTrailDataSource")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public DataSource inspektrAuditTrailDataSource(final CasConfigurationProperties casProperties) {
         return JpaBeans.newDataSource(casProperties.getAudit().getJdbc());

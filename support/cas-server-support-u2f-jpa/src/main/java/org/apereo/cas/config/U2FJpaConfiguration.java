@@ -22,6 +22,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -43,7 +44,7 @@ import java.util.Set;
 @Configuration(value = "u2fJpaConfiguration", proxyBeanMethods = false)
 public class U2FJpaConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public JpaVendorAdapter jpaU2fVendorAdapter(final CasConfigurationProperties casProperties,
@@ -54,7 +55,7 @@ public class U2FJpaConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "dataSourceU2f")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public DataSource dataSourceU2f(final CasConfigurationProperties casProperties) {
         return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getU2f().getJpa());
@@ -95,7 +96,7 @@ public class U2FJpaConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public U2FDeviceRepository u2fDeviceRepository(
         @Qualifier("transactionManagerU2f")

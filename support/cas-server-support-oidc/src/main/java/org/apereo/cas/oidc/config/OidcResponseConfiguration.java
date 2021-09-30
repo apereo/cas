@@ -31,6 +31,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.Map;
 import java.util.Set;
@@ -48,7 +49,7 @@ public class OidcResponseConfiguration {
 
     @ConditionalOnMissingBean(name = "oidcAccessTokenResponseGenerator")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator(
         @Qualifier("oidcIdTokenGenerator")
@@ -63,7 +64,7 @@ public class OidcResponseConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     @ConditionalOnMissingBean(name = "oidcClientCredentialsResponseBuilder")
     public OAuth20AuthorizationResponseBuilder oidcClientCredentialsResponseBuilder(
@@ -85,7 +86,7 @@ public class OidcResponseConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     @ConditionalOnMissingBean(name = "oidcTokenResponseBuilder")
     public OAuth20AuthorizationResponseBuilder oidcTokenResponseBuilder(
@@ -108,7 +109,7 @@ public class OidcResponseConfiguration {
 
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     @ConditionalOnMissingBean(name = "oidcAuthorizationCodeResponseBuilder")
     public OAuth20AuthorizationResponseBuilder oidcAuthorizationCodeResponseBuilder(
@@ -130,7 +131,7 @@ public class OidcResponseConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcAuthorizationResponseBuilders")
     @Autowired
     public Set<OAuth20AuthorizationResponseBuilder> oidcAuthorizationResponseBuilders(
@@ -143,7 +144,7 @@ public class OidcResponseConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     @ConditionalOnMissingBean(name = "oidcImplicitIdTokenCallbackUrlBuilder")
     public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenCallbackUrlBuilder(
@@ -171,7 +172,7 @@ public class OidcResponseConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     @ConditionalOnMissingBean(name = "oidcImplicitIdTokenAndTokenCallbackUrlBuilder")
     public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenAndTokenCallbackUrlBuilder(
@@ -199,7 +200,7 @@ public class OidcResponseConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcResourceOwnerCredentialsResponseBuilder")
     @Autowired
     public OAuth20AuthorizationResponseBuilder oidcResourceOwnerCredentialsResponseBuilder(
@@ -220,7 +221,7 @@ public class OidcResponseConfiguration {
             oauthAuthorizationModelAndViewBuilder);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oidcIdTokenGenerator")
     @Bean
     @Autowired

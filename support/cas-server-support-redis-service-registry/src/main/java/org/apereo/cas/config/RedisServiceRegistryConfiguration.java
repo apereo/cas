@@ -19,6 +19,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -39,7 +40,7 @@ public class RedisServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisServiceConnectionFactory")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public RedisConnectionFactory redisServiceConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getServiceRegistry().getRedis();
@@ -56,7 +57,7 @@ public class RedisServiceRegistryConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     @ConditionalOnMissingBean(name = "redisServiceRegistry")
     public ServiceRegistry redisServiceRegistry(
@@ -69,7 +70,7 @@ public class RedisServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisServiceRegistryExecutionPlanConfigurer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public ServiceRegistryExecutionPlanConfigurer redisServiceRegistryExecutionPlanConfigurer(
         @Qualifier("redisServiceRegistry")

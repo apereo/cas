@@ -17,6 +17,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -35,14 +36,14 @@ public class RedisMultifactorAuthenticationTrustConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisMfaTrustedConnectionFactory")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public RedisConnectionFactory redisMfaTrustedConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getMfa().getTrusted().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "redisMfaTrustedAuthnTemplate")
     public RedisTemplate<String, List<MultifactorAuthenticationTrustRecord>> redisMfaTrustedAuthnTemplate(
@@ -51,7 +52,7 @@ public class RedisMultifactorAuthenticationTrustConfiguration {
         return RedisObjectFactory.newRedisTemplate(redisMfaTrustedConnectionFactory);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public MultifactorAuthenticationTrustStorage mfaTrustEngine(final CasConfigurationProperties casProperties,

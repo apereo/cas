@@ -26,6 +26,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -54,7 +55,7 @@ public class CasRemoteAuthenticationConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "remoteAddressAuthenticationHandler")
     @Autowired
     public AuthenticationHandler remoteAddressAuthenticationHandler(final CasConfigurationProperties casProperties,
@@ -70,7 +71,7 @@ public class CasRemoteAuthenticationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "remoteAddressCheck")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action remoteAddressCheck(
         @Qualifier("adaptiveAuthenticationPolicy")
         final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
@@ -83,14 +84,14 @@ public class CasRemoteAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "remoteAddressPrincipalFactory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory remoteAddressPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnMissingBean(name = "remoteAddressAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer remoteAddressAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("remoteAddressAuthenticationHandler")
         final AuthenticationHandler remoteAddressAuthenticationHandler,
@@ -100,7 +101,7 @@ public class CasRemoteAuthenticationConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "remoteCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer remoteCasWebflowExecutionPlanConfigurer(
         @Qualifier("remoteAddressWebflowConfigurer")

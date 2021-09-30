@@ -18,17 +18,18 @@ import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.apereo.cas.support.oauth.OAuth20Constants.*;
@@ -43,23 +44,42 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasOAuth20ThrottleConfiguration {
 
+    @Configuration(value = "CasOAuth20ThrottlePlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnBean(name = "authenticationThrottlingExecutionPlan")
+    public static class CasOAuth20ThrottlePlanConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "oauthThrottleWebMvcConfigurer")
+        @Autowired
+        public WebMvcConfigurer oauthThrottleWebMvcConfigurer(
+            @Qualifier("authenticationThrottlingExecutionPlan")
+            final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
+            return new WebMvcConfigurer() {
+                @Override
+                public void addInterceptors(final InterceptorRegistry registry) {
+                    authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors()
+                        .forEach(handler -> registry.addInterceptor(handler)
+                            .order(0).addPathPatterns(BASE_OAUTH20_URL.concat("/*")));
+                }
+            };
+        }
+    }
+
     @Configuration(value = "CasOAuth20ThrottleMvcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20ThrottleMvcConfiguration {
 
         @ConditionalOnMissingBean(name = "oauthHandlerInterceptorAdapter")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public HandlerInterceptor oauthHandlerInterceptorAdapter(
             @Qualifier("requiresAuthenticationAuthorizeInterceptor")
             final HandlerInterceptor requiresAuthenticationAuthorizeInterceptor,
             @Qualifier("requiresAuthenticationAccessTokenInterceptor")
             final HandlerInterceptor requiresAuthenticationAccessTokenInterceptor,
-            @Qualifier("oauthAuthorizationRequestValidators")
-            final Set<OAuth20AuthorizationRequestValidator> oauthAuthorizationRequestValidators,
-            @Qualifier("accessTokenGrantRequestExtractors")
-            final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors,
+            final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators,
+            final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -74,19 +94,14 @@ public class CasOAuth20ThrottleConfiguration {
         }
 
         @Bean
-        @ConditionalOnMissingBean(name = "oauthThrottleWebMvcConfigurer")
+        @ConditionalOnMissingBean(name = "oauthWebMvcConfigurer")
         @Autowired
-        public WebMvcConfigurer oauthThrottleWebMvcConfigurer(
+        public WebMvcConfigurer oauthWebMvcConfigurer(
             @Qualifier("oauthHandlerInterceptorAdapter")
-            final ObjectProvider<HandlerInterceptor> oauthHandlerInterceptorAdapter,
-            @Qualifier("authenticationThrottlingExecutionPlan")
-            final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
+            final ObjectProvider<HandlerInterceptor> oauthHandlerInterceptorAdapter) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(final InterceptorRegistry registry) {
-                    authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors()
-                        .forEach(handler -> registry.addInterceptor(handler)
-                            .order(0).addPathPatterns(BASE_OAUTH20_URL.concat("/*")));
                     registry.addInterceptor(oauthHandlerInterceptorAdapter.getObject())
                         .order(1).addPathPatterns(BASE_OAUTH20_URL.concat("/*"));
                 }

@@ -26,6 +26,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
@@ -77,7 +78,7 @@ public class CasCoreWebConfiguration {
             return properties;
         }
 
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         public HierarchicalMessageSource messageSource(
@@ -110,7 +111,7 @@ public class CasCoreWebConfiguration {
         }
 
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "urlValidator")
         @Autowired
         public FactoryBean<UrlValidator> urlValidator(final CasConfigurationProperties casProperties) {

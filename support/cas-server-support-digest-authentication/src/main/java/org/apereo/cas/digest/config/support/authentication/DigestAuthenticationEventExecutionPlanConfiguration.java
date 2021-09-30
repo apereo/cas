@@ -17,6 +17,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link DigestAuthenticationEventExecutionPlanConfiguration}.
@@ -31,13 +32,13 @@ public class DigestAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "digestAuthenticationPrincipalFactory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory digestAuthenticationPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "digestAuthenticationHandler")
     @Autowired
     public AuthenticationHandler digestAuthenticationHandler(final CasConfigurationProperties casProperties,

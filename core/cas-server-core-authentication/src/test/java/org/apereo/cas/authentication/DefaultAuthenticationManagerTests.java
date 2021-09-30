@@ -123,7 +123,7 @@ public class DefaultAuthenticationManagerTests {
     }
 
     private static AuthenticationEventExecutionPlan getAuthenticationExecutionPlan(final Map<AuthenticationHandler, PrincipalResolver> map) {
-        val plan = new DefaultAuthenticationEventExecutionPlan(CoreAuthenticationTestUtils.getAuthenticationSystemSupport());
+        val plan = new DefaultAuthenticationEventExecutionPlan();
         plan.registerAuthenticationHandlerWithPrincipalResolver(map);
         plan.registerAuthenticationHandlerResolver(new RegisteredServiceAuthenticationHandlerResolver(mockServicesManager(),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy())));

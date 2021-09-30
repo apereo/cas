@@ -19,6 +19,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ import java.util.Optional;
 public class RestServiceRegistryConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "restfulServiceRegistry")
     @Autowired
     public ServiceRegistry restfulServiceRegistry(
@@ -50,7 +51,7 @@ public class RestServiceRegistryConfiguration {
             Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new), registry);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "restfulServiceRegistryExecutionPlanConfigurer")
     @Autowired

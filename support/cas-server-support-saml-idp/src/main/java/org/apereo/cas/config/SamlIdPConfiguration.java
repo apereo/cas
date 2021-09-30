@@ -73,6 +73,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.time.Duration;
 
@@ -91,7 +92,7 @@ public class SamlIdPConfiguration {
     public static class SamlIdPProfileBuilderConfiguration {
         @ConditionalOnMissingBean(name = "samlProfileSamlAttributeQueryFaultResponseBuilder")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlAttributeQueryFaultResponseBuilder(
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
@@ -144,7 +145,7 @@ public class SamlIdPConfiguration {
 
         @ConditionalOnMissingBean(name = "samlProfileSamlAttributeQueryResponseBuilder")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlAttributeQueryResponseBuilder(
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
@@ -198,7 +199,7 @@ public class SamlIdPConfiguration {
 
         @ConditionalOnMissingBean(name = "samlProfileSamlSubjectBuilder")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder(
             final CasConfigurationProperties casProperties,
@@ -213,7 +214,7 @@ public class SamlIdPConfiguration {
 
         @ConditionalOnMissingBean(name = "samlProfileSamlSoap11FaultResponseBuilder")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlProfileObjectBuilder<Response> samlProfileSamlSoap11FaultResponseBuilder(
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
@@ -266,7 +267,7 @@ public class SamlIdPConfiguration {
 
         @ConditionalOnMissingBean(name = "samlProfileSamlSoap11ResponseBuilder")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlProfileObjectBuilder<Response> samlProfileSamlSoap11ResponseBuilder(
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
@@ -319,7 +320,7 @@ public class SamlIdPConfiguration {
 
         @ConditionalOnMissingBean(name = "samlProfileSamlArtifactFaultResponseBuilder")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlArtifactFaultResponseBuilder(
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
@@ -372,7 +373,7 @@ public class SamlIdPConfiguration {
 
         @ConditionalOnMissingBean(name = "samlProfileSamlArtifactResponseBuilder")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlArtifactResponseBuilder(
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
@@ -425,7 +426,7 @@ public class SamlIdPConfiguration {
 
         @ConditionalOnMissingBean(name = "samlProfileSamlNameIdBuilder")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlProfileObjectBuilder<NameID> samlProfileSamlNameIdBuilder(
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
@@ -438,7 +439,7 @@ public class SamlIdPConfiguration {
 
         @ConditionalOnMissingBean(name = "samlProfileSamlConditionsBuilder")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder(final CasConfigurationProperties casProperties,
                                                                                      @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
@@ -448,7 +449,7 @@ public class SamlIdPConfiguration {
 
         @ConditionalOnMissingBean(name = "defaultAuthnContextClassRefBuilder")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public AuthnContextClassRefBuilder defaultAuthnContextClassRefBuilder(final CasConfigurationProperties casProperties) {
             return new DefaultAuthnContextClassRefBuilder(casProperties);
@@ -456,7 +457,7 @@ public class SamlIdPConfiguration {
 
         @ConditionalOnMissingBean(name = "samlProfileSamlAssertionBuilder")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder(
             @Qualifier("samlProfileSamlAuthNStatementBuilder")
             final SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder,
@@ -479,7 +480,7 @@ public class SamlIdPConfiguration {
 
         @ConditionalOnMissingBean(name = "samlProfileSamlAuthNStatementBuilder")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder(final CasConfigurationProperties casProperties,
                                                                                              @Qualifier("defaultAuthnContextClassRefBuilder")
@@ -491,7 +492,7 @@ public class SamlIdPConfiguration {
 
         @ConditionalOnMissingBean(name = "samlProfileSamlAttributeStatementBuilder")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder(
             final CasConfigurationProperties casProperties,
@@ -516,7 +517,7 @@ public class SamlIdPConfiguration {
 
         @ConditionalOnMissingBean(name = "samlProfileSamlResponseBuilder")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder(
             final CasConfigurationProperties casProperties,
@@ -575,7 +576,7 @@ public class SamlIdPConfiguration {
     public static class SamlIdPTicketConfiguration {
         @ConditionalOnMissingBean(name = "samlAttributeQueryTicketFactory")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory(
             @Qualifier("samlAttributeQueryTicketExpirationPolicy")
             final ExpirationPolicyBuilder samlAttributeQueryTicketExpirationPolicy,
@@ -588,7 +589,7 @@ public class SamlIdPConfiguration {
 
         @ConditionalOnMissingBean(name = "samlAttributeQueryTicketFactoryConfigurer")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public TicketFactoryExecutionPlanConfigurer samlAttributeQueryTicketFactoryConfigurer(
             @Qualifier("samlAttributeQueryTicketFactory")
@@ -598,7 +599,7 @@ public class SamlIdPConfiguration {
 
         @ConditionalOnMissingBean(name = "samlAttributeQueryTicketExpirationPolicy")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public ExpirationPolicyBuilder samlAttributeQueryTicketExpirationPolicy(final CasConfigurationProperties casProperties) {
             return new SamlAttributeQueryTicketExpirationPolicyBuilder(casProperties);
@@ -607,7 +608,7 @@ public class SamlIdPConfiguration {
 
         @ConditionalOnMissingBean(name = "samlArtifactTicketFactory")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SamlArtifactTicketFactory samlArtifactTicketFactory(
             @Qualifier("samlArtifactTicketExpirationPolicy")
@@ -621,7 +622,7 @@ public class SamlIdPConfiguration {
 
         @ConditionalOnMissingBean(name = "samlArtifactTicketFactoryConfigurer")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public TicketFactoryExecutionPlanConfigurer samlArtifactTicketFactoryConfigurer(
             @Qualifier("samlArtifactTicketFactory")
@@ -631,14 +632,14 @@ public class SamlIdPConfiguration {
 
         @ConditionalOnMissingBean(name = "samlArtifactTicketExpirationPolicy")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public ExpirationPolicyBuilder samlArtifactTicketExpirationPolicy(final CasConfigurationProperties casProperties) {
             return new SamlArtifactTicketExpirationPolicyBuilder(casProperties);
         }
 
         @Bean(initMethod = "initialize", destroyMethod = "destroy")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SAMLArtifactMap samlArtifactMap(
             @Qualifier("samlArtifactTicketFactory")
             final SamlArtifactTicketFactory samlArtifactTicketFactory,
@@ -666,7 +667,7 @@ public class SamlIdPConfiguration {
     public static class SamlIdPLogoutConfiguration {
         @ConditionalOnMissingBean(name = "samlSingleLogoutServiceLogoutUrlBuilder")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SingleLogoutServiceLogoutUrlBuilder samlSingleLogoutServiceLogoutUrlBuilder(
             @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
@@ -680,7 +681,7 @@ public class SamlIdPConfiguration {
 
         @ConditionalOnMissingBean(name = "samlSingleLogoutServiceLogoutUrlBuilderConfigurer")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SingleLogoutServiceLogoutUrlBuilderConfigurer samlSingleLogoutServiceLogoutUrlBuilderConfigurer(
             @Qualifier("samlSingleLogoutServiceLogoutUrlBuilder")
@@ -694,7 +695,7 @@ public class SamlIdPConfiguration {
     public static class SamlIdPCryptoConfiguration {
         @ConditionalOnMissingBean(name = "samlObjectEncrypter")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SamlIdPObjectEncrypter samlObjectEncrypter(final CasConfigurationProperties casProperties) {
             return new SamlIdPObjectEncrypter(casProperties.getAuthn().getSamlIdp());
@@ -702,7 +703,7 @@ public class SamlIdPConfiguration {
 
         @ConditionalOnMissingBean(name = SamlIdPObjectSigner.DEFAULT_BEAN_NAME)
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SamlIdPObjectSigner samlObjectSigner(final CasConfigurationProperties casProperties,
                                                     @Qualifier("casSamlIdPMetadataResolver")

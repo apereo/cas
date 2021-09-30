@@ -31,6 +31,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -61,14 +62,14 @@ public class X509AuthenticationWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "x509CasMultifactorWebflowCustomizer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasMultifactorWebflowCustomizer x509CasMultifactorWebflowCustomizer() {
         return new X509CasMultifactorWebflowCustomizer();
     }
 
     @ConditionalOnMissingBean(name = "x509Check")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Action x509Check(
         @Qualifier("initialAuthenticationAttemptWebflowEventResolver")

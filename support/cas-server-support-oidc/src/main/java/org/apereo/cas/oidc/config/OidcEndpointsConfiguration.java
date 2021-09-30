@@ -68,6 +68,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.View;
@@ -78,10 +79,8 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import java.time.Duration;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link OidcEndpointsConfiguration}.
@@ -94,7 +93,7 @@ import java.util.Set;
 public class OidcEndpointsConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     @ConditionalOnMissingBean(name = "oidcMultifactorAuthenticationTrigger")
     public MultifactorAuthenticationTrigger oidcMultifactorAuthenticationTrigger(
@@ -105,7 +104,7 @@ public class OidcEndpointsConfiguration {
         return new OidcMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver, applicationContext);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = OidcPostLogoutRedirectUrlMatcher.BEAN_NAME_POST_LOGOUT_REDIRECT_URL_MATCHER)
     public OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher() {
@@ -144,10 +143,8 @@ public class OidcEndpointsConfiguration {
         @Bean
         @Autowired
         public HandlerInterceptor oauthInterceptor(
-            @Qualifier("accessTokenGrantRequestExtractors")
-            final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors,
-            @Qualifier("oauthAuthorizationRequestValidators")
-            final Set<OAuth20AuthorizationRequestValidator> oauthRequestValidators,
+            final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
+            final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthRequestValidators,
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
             @Qualifier("requiresAuthenticationAuthorizeInterceptor")
@@ -210,7 +207,7 @@ public class OidcEndpointsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "oidcProtocolEndpointConfigurer")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public ProtocolEndpointWebSecurityConfigurer<Void> oidcProtocolEndpointConfigurer(
             @Qualifier("oidcIssuerService")
@@ -227,7 +224,7 @@ public class OidcEndpointsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "oidcLocaleChangeInterceptor")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public HandlerInterceptor oidcLocaleChangeInterceptor(
             @Qualifier("argumentExtractor")
@@ -255,7 +252,7 @@ public class OidcEndpointsConfiguration {
     public static class OidcJwksConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oidcDefaultJsonWebKeystoreCacheLoader")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public CacheLoader<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCacheLoader(
             @Qualifier("oidcJsonWebKeystoreGeneratorService")
@@ -265,7 +262,7 @@ public class OidcEndpointsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "oidcDefaultJsonWebKeystoreCache")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public LoadingCache<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCache(
             @Qualifier("oidcDefaultJsonWebKeystoreCacheLoader")
@@ -278,7 +275,7 @@ public class OidcEndpointsConfiguration {
         }
 
         @Bean(initMethod = "generate")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreGeneratorService")
         public OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService(
@@ -295,7 +292,7 @@ public class OidcEndpointsConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     public static class OidcControllerEndpointsConfiguration {
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcWellKnownController")
         @Bean
         @Autowired
@@ -307,7 +304,7 @@ public class OidcEndpointsConfiguration {
             return new OidcWellKnownEndpointController(oidcConfigurationContext, oidcWebFingerDiscoveryService);
         }
 
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcProfileController")
         @Bean
         @Autowired
@@ -317,7 +314,7 @@ public class OidcEndpointsConfiguration {
             return new OidcUserProfileEndpointController(oidcConfigurationContext);
         }
 
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         public OidcAuthorizeEndpointController oidcAuthorizeController(
@@ -326,7 +323,7 @@ public class OidcEndpointsConfiguration {
             return new OidcAuthorizeEndpointController(oidcConfigurationContext);
         }
 
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         @ConditionalOnMissingBean(name = "oidcLogoutEndpointController")
@@ -341,7 +338,7 @@ public class OidcEndpointsConfiguration {
                 postLogoutRedirectUrlMatcher, urlValidator);
         }
 
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "oidcRevocationEndpointController")
         @Autowired
@@ -351,7 +348,7 @@ public class OidcEndpointsConfiguration {
             return new OidcRevocationEndpointController(oidcConfigurationContext);
         }
 
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "oidcAccessTokenController")
         @Autowired
@@ -364,7 +361,7 @@ public class OidcEndpointsConfiguration {
                 accessTokenGrantAuditableRequestExtractor);
         }
 
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "oidcDynamicClientRegistrationEndpointController")
         @Autowired
@@ -374,7 +371,7 @@ public class OidcEndpointsConfiguration {
             return new OidcDynamicClientRegistrationEndpointController(oidcConfigurationContext);
         }
 
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcClientConfigurationEndpointController")
         @Bean
         @Autowired
@@ -384,7 +381,7 @@ public class OidcEndpointsConfiguration {
             return new OidcClientConfigurationEndpointController(oidcConfigurationContext);
         }
 
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcJwksController")
         @Bean
         @Autowired
@@ -396,7 +393,7 @@ public class OidcEndpointsConfiguration {
             return new OidcJwksEndpointController(oidcConfigurationContext, oidcJsonWebKeystoreGeneratorService);
         }
 
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         @ConditionalOnMissingBean(name = "oidcIntrospectionEndpointController")
@@ -430,7 +427,7 @@ public class OidcEndpointsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "oidcCasWebflowLoginContextProvider")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public CasWebflowLoginContextProvider oidcCasWebflowLoginContextProvider(
             @Qualifier("argumentExtractor")
@@ -439,7 +436,7 @@ public class OidcEndpointsConfiguration {
         }
 
 
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver(
@@ -474,7 +471,7 @@ public class OidcEndpointsConfiguration {
 
         @ConditionalOnMissingBean(name = "oidcRegisteredServiceUIAction")
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public Action oidcRegisteredServiceUIAction(
             @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")

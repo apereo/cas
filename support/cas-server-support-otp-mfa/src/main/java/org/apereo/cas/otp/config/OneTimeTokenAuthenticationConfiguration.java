@@ -19,6 +19,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.execution.Action;
 
@@ -42,7 +43,7 @@ public class OneTimeTokenAuthenticationConfiguration {
     private static final long MAX_CACHE_SIZE = 1_000_000;
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CasWebflowEventResolver oneTimeTokenAuthenticationWebflowEventResolver(
         @Qualifier("casWebflowConfigurationContext")
@@ -51,7 +52,7 @@ public class OneTimeTokenAuthenticationConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_OTP_AUTHENTICATION_ACTION)
     @Autowired
     public Action oneTimeTokenAuthenticationWebflowAction(
@@ -62,7 +63,7 @@ public class OneTimeTokenAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "oneTimeTokenAuthenticatorTokenRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
         final Cache<String, Collection<OneTimeToken>> storage = Caffeine.newBuilder()
             .initialCapacity(INITIAL_CACHE_SIZE)

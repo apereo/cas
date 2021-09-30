@@ -13,6 +13,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import javax.net.ssl.SSLContext;
 
@@ -28,7 +29,7 @@ public class CasMongoDbThrottlingConfiguration {
 
     @Autowired
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle(final CasConfigurationProperties casProperties,
                                                                         @Qualifier("authenticationThrottlingConfigurationContext")
                                                                         final ThrottledSubmissionHandlerConfigurationContext authenticationThrottlingConfigurationContext,

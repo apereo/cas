@@ -28,6 +28,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -52,7 +53,7 @@ import java.util.Set;
 @Configuration(value = "samlIdPJpaIdPMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPJpaIdPMetadataConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "jpaSamlMetadataIdPVendorAdapter")
     @Autowired
@@ -62,7 +63,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
         return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "dataSourceSamlMetadataIdP")
     @Autowired
@@ -72,7 +73,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public Set<String> jpaSamlMetadataIdPPackagesToScan(final CasConfigurationProperties casProperties) {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
@@ -109,7 +110,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
         return mgmr;
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public CipherExecutor samlIdPMetadataGeneratorCipherExecutor(final CasConfigurationProperties casProperties) {
@@ -135,7 +136,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
         return new JpaSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext, transactionTemplate);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public SamlIdPMetadataLocator samlIdPMetadataLocator(
         @Qualifier("samlIdPMetadataCache")

@@ -15,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.ws.transport.http.HttpsUrlConnectionMessageSender;
@@ -35,7 +36,7 @@ public class InweboServiceConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboConsoleAdmin")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public InweboConsoleAdmin inweboConsoleAdmin(
         @Qualifier("casSslContext")
@@ -67,7 +68,7 @@ public class InweboServiceConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboService")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public InweboService inweboService(
         @Qualifier("inweboConsoleAdmin")

@@ -26,6 +26,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link U2FAuthenticationEventExecutionPlanConfiguration}.
@@ -39,7 +40,7 @@ import org.springframework.context.annotation.Configuration;
 public class U2FAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "u2fAuthenticationMetaDataPopulator")
     @Autowired
     public AuthenticationMetaDataPopulator u2fAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,
@@ -59,7 +60,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "u2fAuthenticationHandler")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public AuthenticationHandler u2fAuthenticationHandler(final CasConfigurationProperties casProperties,
                                                           @Qualifier("u2fPrincipalFactory")
@@ -76,7 +77,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "u2fMultifactorAuthenticationProvider")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MultifactorAuthenticationProvider u2fMultifactorAuthenticationProvider(final CasConfigurationProperties casProperties,
                                                                                   @Qualifier("u2fBypassEvaluator")
@@ -95,7 +96,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "u2fAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer u2fAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("u2fAuthenticationHandler")
         final AuthenticationHandler u2fAuthenticationHandler,

@@ -15,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -47,7 +48,7 @@ public class CasRedisThrottlingConfiguration {
 
     @Autowired
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle(
         @Qualifier("throttleRedisTemplate")
         final RedisTemplate throttleRedisTemplate,

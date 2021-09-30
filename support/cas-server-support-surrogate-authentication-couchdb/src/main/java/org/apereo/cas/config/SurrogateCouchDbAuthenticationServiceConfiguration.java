@@ -20,6 +20,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SurrogateCouchDbAuthenticationServiceConfiguration}.
@@ -32,7 +33,7 @@ import org.springframework.context.annotation.Configuration;
 public class SurrogateCouchDbAuthenticationServiceConfiguration {
 
     @ConditionalOnMissingBean(name = "surrogateCouchDbFactory")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public CouchDbConnectorFactory surrogateCouchDbFactory(final CasConfigurationProperties casProperties,
@@ -42,7 +43,7 @@ public class SurrogateCouchDbAuthenticationServiceConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "surrogateCouchDbInstance")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public CouchDbInstance surrogateCouchDbInstance(
         @Qualifier("surrogateCouchDbFactory")
@@ -51,7 +52,7 @@ public class SurrogateCouchDbAuthenticationServiceConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "surrogateCouchDbConnector")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public CouchDbConnector surrogateCouchDbConnector(
         @Qualifier("surrogateCouchDbFactory")
@@ -61,7 +62,7 @@ public class SurrogateCouchDbAuthenticationServiceConfiguration {
 
     @ConditionalOnMissingBean(name = "surrogateAuthorizationCouchDbRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public SurrogateAuthorizationCouchDbRepository surrogateAuthorizationCouchDbRepository(final CasConfigurationProperties casProperties,
                                                                                            @Qualifier("surrogateCouchDbFactory")
@@ -72,7 +73,7 @@ public class SurrogateCouchDbAuthenticationServiceConfiguration {
 
     @ConditionalOnMissingBean(name = "surrogateAuthorizationProfileCouchDbRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public ProfileCouchDbRepository surrogateAuthorizationProfileCouchDbRepository(final CasConfigurationProperties casProperties,
                                                                                    @Qualifier("surrogateCouchDbFactory")
@@ -83,7 +84,7 @@ public class SurrogateCouchDbAuthenticationServiceConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbSurrogateAuthenticationService")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public SurrogateAuthenticationService surrogateAuthenticationService(final CasConfigurationProperties casProperties,
                                                                          @Qualifier("surrogateAuthorizationProfileCouchDbRepository")

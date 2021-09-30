@@ -43,6 +43,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -61,7 +62,7 @@ import java.util.List;
 public class CasRestConfiguration {
     @Bean
     @Autowired
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "restServiceTicketResourceEntityResponseFactoryConfigurer")
     public ServiceTicketResourceEntityResponseFactoryConfigurer restServiceTicketResourceEntityResponseFactoryConfigurer(
         @Qualifier(CentralAuthenticationService.BEAN_NAME)
@@ -72,7 +73,7 @@ public class CasRestConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "serviceTicketResourceEntityResponseFactory")
     @Autowired
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory(
         final List<ServiceTicketResourceEntityResponseFactoryConfigurer> configurers) {
         val plan = new DefaultServiceTicketResourceEntityResponseFactoryPlan();
@@ -82,21 +83,21 @@ public class CasRestConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "ticketGrantingTicketResourceEntityResponseFactory")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory() {
         return new DefaultTicketGrantingTicketResourceEntityResponseFactory();
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "userAuthenticationResourceEntityResponseFactory")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public UserAuthenticationResourceEntityResponseFactory userAuthenticationResourceEntityResponseFactory() {
         return new DefaultUserAuthenticationResourceEntityResponseFactory();
     }
-    
+
     @Bean
     @ConditionalOnMissingBean(name = "restProtocolEndpointConfigurer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ProtocolEndpointWebSecurityConfigurer<Void> restProtocolEndpointConfigurer() {
         return new ProtocolEndpointWebSecurityConfigurer<>() {
             @Override
@@ -108,7 +109,7 @@ public class CasRestConfiguration {
 
     @Bean
     @Autowired
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "restAuthenticationThrottle")
     public WebMvcConfigurer casRestThrottlingWebMvcConfigurer(
         @Qualifier("authenticationThrottlingExecutionPlan")
@@ -187,7 +188,7 @@ public class CasRestConfiguration {
     public static class CasRestAuditConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "restAuditTrailRecordResolutionPlanConfigurer")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditTrailRecordResolutionPlanConfigurer restAuditTrailRecordResolutionPlanConfigurer() {
             return plan -> {
                 plan.registerAuditActionResolver(AuditActionResolvers.REST_API_TICKET_GRANTING_TICKET_ACTION_RESOLVER,

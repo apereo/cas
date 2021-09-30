@@ -22,6 +22,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ import java.util.Optional;
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 1)
 public class JsonServiceRegistryConfiguration {
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "jsonServiceRegistry")
     @Autowired
     public ServiceRegistry jsonServiceRegistry(
@@ -65,7 +66,7 @@ public class JsonServiceRegistryConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     @ConditionalOnMissingBean(name = "jsonServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer jsonServiceRegistryExecutionPlanConfigurer(

@@ -11,6 +11,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link OpenIdServiceFactoryConfiguration}.
@@ -32,7 +33,7 @@ public class OpenIdServiceFactoryConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public OpenIdServiceFactory openIdServiceFactory(final CasConfigurationProperties casProperties) {
         return new OpenIdServiceFactory(casProperties.getServer().getPrefix().concat("/openid"));

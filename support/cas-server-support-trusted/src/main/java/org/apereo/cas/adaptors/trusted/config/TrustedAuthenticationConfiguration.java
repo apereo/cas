@@ -34,6 +34,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link TrustedAuthenticationConfiguration}.
@@ -47,7 +48,7 @@ import org.springframework.context.annotation.Configuration;
 public class TrustedAuthenticationConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "principalBearingCredentialsAuthenticationHandler")
     @Autowired
     public AuthenticationHandler principalBearingCredentialsAuthenticationHandler(final CasConfigurationProperties casProperties,
@@ -63,7 +64,7 @@ public class TrustedAuthenticationConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "trustedPrincipalResolver")
     @Autowired
     public PrincipalResolver trustedPrincipalResolver(
@@ -97,13 +98,13 @@ public class TrustedAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "remoteRequestPrincipalAttributesExtractor")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RemoteRequestPrincipalAttributesExtractor remoteRequestPrincipalAttributesExtractor() {
         return new ShibbolethServiceProviderRequestPrincipalAttributesExtractor();
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "principalFromRemoteUserAction")
     public PrincipalFromRequestExtractorAction principalFromRemoteUserAction(
         @Qualifier("trustedPrincipalFactory")
@@ -124,7 +125,7 @@ public class TrustedAuthenticationConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "principalFromRemoteUserPrincipalAction")
     public PrincipalFromRequestExtractorAction principalFromRemoteUserPrincipalAction(
         @Qualifier("trustedPrincipalFactory")
@@ -145,7 +146,7 @@ public class TrustedAuthenticationConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "principalFromRemoteHeaderPrincipalAction")
     @Autowired
     public PrincipalFromRequestExtractorAction principalFromRemoteHeaderPrincipalAction(
@@ -171,7 +172,7 @@ public class TrustedAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "remoteUserAuthenticationAction")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFromRequestExtractorAction remoteUserAuthenticationAction(
         @Qualifier("trustedPrincipalFactory")
         final PrincipalFactory trustedPrincipalFactory,
@@ -202,7 +203,7 @@ public class TrustedAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "trustedAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer trustedAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("principalBearingCredentialsAuthenticationHandler")
         final AuthenticationHandler principalBearingCredentialsAuthenticationHandler,

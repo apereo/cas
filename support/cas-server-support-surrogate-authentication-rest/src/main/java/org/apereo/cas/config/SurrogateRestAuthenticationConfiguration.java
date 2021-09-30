@@ -13,6 +13,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SurrogateRestAuthenticationConfiguration}.
@@ -25,7 +26,7 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 public class SurrogateRestAuthenticationConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public SurrogateAuthenticationService surrogateAuthenticationService(final CasConfigurationProperties casProperties,

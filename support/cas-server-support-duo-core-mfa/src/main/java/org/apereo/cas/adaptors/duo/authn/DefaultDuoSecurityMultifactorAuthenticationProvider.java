@@ -12,6 +12,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link DefaultDuoSecurityMultifactorAuthenticationProvider}.
@@ -24,7 +25,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@RefreshScope
+@RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
 public class DefaultDuoSecurityMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider
     implements DuoSecurityMultifactorAuthenticationProvider {
 

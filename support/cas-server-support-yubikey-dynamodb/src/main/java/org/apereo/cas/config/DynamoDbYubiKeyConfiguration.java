@@ -16,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 /**
@@ -28,7 +29,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 @Configuration(value = "dynamoDbYubiKeyConfiguration", proxyBeanMethods = false)
 public class DynamoDbYubiKeyConfiguration {
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
     public DynamoDbYubiKeyFacilitator yubikeyDynamoDbFacilitator(final CasConfigurationProperties casProperties,
@@ -42,7 +43,7 @@ public class DynamoDbYubiKeyConfiguration {
         return f;
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "yubikeyDynamoDbClient")
     @Autowired
@@ -52,7 +53,7 @@ public class DynamoDbYubiKeyConfiguration {
         return factory.createAmazonDynamoDb(db);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public YubiKeyAccountRegistry yubiKeyAccountRegistry(
         @Qualifier("yubikeyDynamoDbFacilitator")

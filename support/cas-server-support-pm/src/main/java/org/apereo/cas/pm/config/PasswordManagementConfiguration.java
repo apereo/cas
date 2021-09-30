@@ -37,6 +37,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link PasswordManagementConfiguration}.
@@ -48,12 +49,12 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @Configuration(value = "passwordManagementConfiguration", proxyBeanMethods = false)
 public class PasswordManagementConfiguration {
-
-    @Configuration(value = "PasswordManagementHistoryConfiguration", proxyBeanMethods = false)
+    
+    @Configuration(value = "PasswordManagementValidationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class PasswordManagementHistoryConfiguration {
+    public static class PasswordManagementValidationConfiguration {
         @ConditionalOnMissingBean(name = "passwordValidationService")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         public PasswordValidationService passwordValidationService(final CasConfigurationProperties casProperties,
@@ -62,9 +63,13 @@ public class PasswordManagementConfiguration {
             val policyPattern = casProperties.getAuthn().getPm().getCore().getPasswordPolicyPattern();
             return new DefaultPasswordValidationService(policyPattern, passwordHistoryService);
         }
-
+    }
+    
+    @Configuration(value = "PasswordManagementHistoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class PasswordManagementHistoryConfiguration {
         @ConditionalOnMissingBean(name = "passwordHistoryService")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         public PasswordHistoryService passwordHistoryService(final CasConfigurationProperties casProperties) {
@@ -111,7 +116,7 @@ public class PasswordManagementConfiguration {
     public static class PasswordManagementCoreConfiguration {
 
         @ConditionalOnMissingBean(name = "passwordManagementCipherExecutor")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         public CipherExecutor passwordManagementCipherExecutor(final CasConfigurationProperties casProperties) {
@@ -125,7 +130,7 @@ public class PasswordManagementConfiguration {
 
 
         @ConditionalOnMissingBean(name = PasswordManagementService.DEFAULT_BEAN_NAME)
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
         public PasswordManagementService passwordChangeService(
@@ -146,7 +151,8 @@ public class PasswordManagementConfiguration {
                 val groovyScript = pm.getGroovy().getLocation();
                 if (groovyScript != null) {
                     LOGGER.debug("Configuring password management based on Groovy resource [{}]", groovyScript);
-                    return new GroovyResourcePasswordManagementService(passwordManagementCipherExecutor, casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm(),
+                    return new GroovyResourcePasswordManagementService(passwordManagementCipherExecutor,
+                        casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm(),
                         groovyScript,
                         passwordHistoryService);
                 }

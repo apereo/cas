@@ -15,6 +15,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -29,7 +30,7 @@ import org.springframework.http.HttpStatus;
 public class CasEmbeddedContainerTomcatFiltersConfiguration {
 
     @ConditionalOnProperty(prefix = "cas.server.tomcat.csrf", name = "enabled", havingValue = "true")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "tomcatCsrfPreventionFilter")
     public FilterRegistrationBean<CsrfPreventionFilter> tomcatCsrfPreventionFilter() {
@@ -41,7 +42,7 @@ public class CasEmbeddedContainerTomcatFiltersConfiguration {
     }
 
     @ConditionalOnProperty(prefix = "cas.server.tomcat.remote-addr", name = "enabled", havingValue = "true")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "tomcatRemoteAddressFilter")
     @Autowired

@@ -208,7 +208,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
                                                         final String clientId,
                                                         final Service service,
                                                         final Authentication authentication) {
-        val builder = getConfigurationContext().getOauthAuthorizationResponseBuilders()
+        val builder = getConfigurationContext().getOauthAuthorizationResponseBuilders().getObject()
             .stream()
             .filter(b -> b.supports(context))
             .findFirst()
