@@ -49,110 +49,138 @@ import java.util.List;
 @Slf4j
 public class CasConsentCoreConfiguration {
 
-    @Bean
-    @ConditionalOnMissingBean(name = "defaultConsentableAttributeBuilder")
-    public ConsentableAttributeBuilder defaultConsentableAttributeBuilder() {
-        return ConsentableAttributeBuilder.noOp();
-    }
+    @Configuration(value = "CasConsentCoreEngineConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasConsentCoreEngineConfiguration {
 
-    @ConditionalOnMissingBean(name = ConsentEngine.BEAN_NAME)
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public ConsentEngine consentEngine(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("consentDecisionBuilder")
-        final ConsentDecisionBuilder consentDecisionBuilder,
-        final List<ConsentableAttributeBuilder> builders,
-        @Qualifier("consentRepository")
-        final ConsentRepository consentRepository) {
-        AnnotationAwareOrderComparator.sortIfNecessary(builders);
-        return new DefaultConsentEngine(consentRepository, consentDecisionBuilder, casProperties, builders);
-    }
-
-    @ConditionalOnMissingBean(name = "consentCipherExecutor")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public CipherExecutor consentCipherExecutor(final CasConfigurationProperties casProperties) {
-        val consent = casProperties.getConsent().getCore();
-        val crypto = consent.getCrypto();
-        if (crypto.isEnabled()) {
-            return CipherExecutorUtils.newStringCipherExecutor(crypto, AttributeReleaseConsentCipherExecutor.class);
+        @ConditionalOnMissingBean(name = ConsentEngine.BEAN_NAME)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public ConsentEngine consentEngine(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("consentDecisionBuilder")
+            final ConsentDecisionBuilder consentDecisionBuilder,
+            final List<ConsentableAttributeBuilder> builders,
+            @Qualifier("consentRepository")
+            final ConsentRepository consentRepository) {
+            AnnotationAwareOrderComparator.sortIfNecessary(builders);
+            return new DefaultConsentEngine(consentRepository, consentDecisionBuilder, casProperties, builders);
         }
-        LOGGER.debug("Consent attributes stored by CAS are not signed/encrypted.");
-        return CipherExecutor.noOp();
     }
 
-    @ConditionalOnMissingBean(name = "consentDecisionBuilder")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public ConsentDecisionBuilder consentDecisionBuilder(
-        @Qualifier("consentCipherExecutor")
-        final CipherExecutor consentCipherExecutor) {
-        return new DefaultConsentDecisionBuilder(consentCipherExecutor);
-    }
-
-    @ConditionalOnMissingBean(name = "consentActivationStrategy")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public ConsentActivationStrategy consentActivationStrategy(
-        @Qualifier(ConsentEngine.BEAN_NAME)
-        final ConsentEngine consentEngine,
-        final CasConfigurationProperties casProperties) {
-        val location = casProperties.getConsent().getActivationStrategyGroovyScript().getLocation();
-        if (location != null) {
-            return new GroovyConsentActivationStrategy(location, consentEngine, casProperties);
-        }
-        return new DefaultConsentActivationStrategy(consentEngine, casProperties);
-    }
-
-    @ConditionalOnMissingBean(name = "consentRepository")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public ConsentRepository consentRepository(final CasConfigurationProperties casProperties) {
-        val location = casProperties.getConsent().getJson().getLocation();
-        if (location != null) {
-            LOGGER.warn("Storing consent records in [{}]. This MAY NOT be appropriate in production. "
-                + "Consider choosing an alternative repository format for storing consent decisions", location);
-            return new JsonConsentRepository(location);
+    @Configuration(value = "CasConsentCoreBuilderConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasConsentCoreBuilderConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "defaultConsentableAttributeBuilder")
+        public ConsentableAttributeBuilder defaultConsentableAttributeBuilder() {
+            return ConsentableAttributeBuilder.noOp();
         }
 
-        val groovy = casProperties.getConsent().getGroovy().getLocation();
-        if (groovy != null) {
-            return new GroovyConsentRepository(groovy);
+        @ConditionalOnMissingBean(name = "consentCipherExecutor")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public CipherExecutor consentCipherExecutor(final CasConfigurationProperties casProperties) {
+            val consent = casProperties.getConsent().getCore();
+            val crypto = consent.getCrypto();
+            if (crypto.isEnabled()) {
+                return CipherExecutorUtils.newStringCipherExecutor(crypto, AttributeReleaseConsentCipherExecutor.class);
+            }
+            LOGGER.debug("Consent attributes stored by CAS are not signed/encrypted.");
+            return CipherExecutor.noOp();
         }
 
-        LOGGER.warn("Storing consent records in memory. This option is ONLY relevant for demos and testing purposes.");
-        return new InMemoryConsentRepository();
+        @ConditionalOnMissingBean(name = "consentDecisionBuilder")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public ConsentDecisionBuilder consentDecisionBuilder(
+            @Qualifier("consentCipherExecutor")
+            final CipherExecutor consentCipherExecutor) {
+            return new DefaultConsentDecisionBuilder(consentCipherExecutor);
+        }
     }
 
-    @Bean
-    @Autowired
-    @ConditionalOnMissingBean(name = "casConsentAuditTrailRecordResolutionPlanConfigurer")
-    public AuditTrailRecordResolutionPlanConfigurer casConsentAuditTrailRecordResolutionPlanConfigurer(
-        @Qualifier("authenticationActionResolver")
-        final AuditActionResolver authenticationActionResolver,
-        @Qualifier("returnValueResourceResolver")
-        final AuditResourceResolver returnValueResourceResolver) {
-        return plan -> {
-            plan.registerAuditActionResolver(AuditActionResolvers.SAVE_CONSENT_ACTION_RESOLVER, authenticationActionResolver);
-            plan.registerAuditResourceResolver(AuditResourceResolvers.SAVE_CONSENT_RESOURCE_RESOLVER, returnValueResourceResolver);
-        };
+    @Configuration(value = "CasConsentCoreActivationConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasConsentCoreActivationConfiguration {
+        @ConditionalOnMissingBean(name = "consentActivationStrategy")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public ConsentActivationStrategy consentActivationStrategy(
+            @Qualifier(ConsentEngine.BEAN_NAME)
+            final ConsentEngine consentEngine,
+            final CasConfigurationProperties casProperties) {
+            val location = casProperties.getConsent().getActivationStrategyGroovyScript().getLocation();
+            if (location != null) {
+                return new GroovyConsentActivationStrategy(location, consentEngine, casProperties);
+            }
+            return new DefaultConsentActivationStrategy(consentEngine, casProperties);
+        }
+
     }
 
-    @Bean
-    @ConditionalOnAvailableEndpoint
-    @Autowired
-    public AttributeConsentReportEndpoint attributeConsentReportEndpoint(
-        @Qualifier(ConsentEngine.BEAN_NAME)
-        final ConsentEngine consentEngine,
-        @Qualifier("consentRepository")
-        final ConsentRepository consentRepository,
-        final CasConfigurationProperties casProperties) {
-        return new AttributeConsentReportEndpoint(casProperties, consentRepository, consentEngine);
+    @Configuration(value = "CasConsentCoreRepositoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasConsentCoreRepositoryConfiguration {
+        @ConditionalOnMissingBean(name = "consentRepository")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public ConsentRepository consentRepository(final CasConfigurationProperties casProperties) {
+            val location = casProperties.getConsent().getJson().getLocation();
+            if (location != null) {
+                LOGGER.warn("Storing consent records in [{}]. This MAY NOT be appropriate in production. "
+                            + "Consider choosing an alternative repository format for storing consent decisions", location);
+                return new JsonConsentRepository(location);
+            }
+
+            val groovy = casProperties.getConsent().getGroovy().getLocation();
+            if (groovy != null) {
+                return new GroovyConsentRepository(groovy);
+            }
+
+            LOGGER.warn("Storing consent records in memory. This option is ONLY relevant for demos and testing purposes.");
+            return new InMemoryConsentRepository();
+        }
+    }
+
+    @Configuration(value = "CasConsentCoreAuditConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasConsentCoreAuditConfiguration {
+        @Bean
+        @Autowired
+        @ConditionalOnMissingBean(name = "casConsentAuditTrailRecordResolutionPlanConfigurer")
+        public AuditTrailRecordResolutionPlanConfigurer casConsentAuditTrailRecordResolutionPlanConfigurer(
+            @Qualifier("authenticationActionResolver")
+            final AuditActionResolver authenticationActionResolver,
+            @Qualifier("returnValueResourceResolver")
+            final AuditResourceResolver returnValueResourceResolver) {
+            return plan -> {
+                plan.registerAuditActionResolver(AuditActionResolvers.SAVE_CONSENT_ACTION_RESOLVER, authenticationActionResolver);
+                plan.registerAuditResourceResolver(AuditResourceResolvers.SAVE_CONSENT_RESOURCE_RESOLVER, returnValueResourceResolver);
+            };
+        }
+    }
+
+
+    @Configuration(value = "CasConsentCoreWebConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasConsentCoreWebConfiguration {
+
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @Autowired
+        public AttributeConsentReportEndpoint attributeConsentReportEndpoint(
+            @Qualifier(ConsentEngine.BEAN_NAME)
+            final ConsentEngine consentEngine,
+            @Qualifier("consentRepository")
+            final ConsentRepository consentRepository,
+            final CasConfigurationProperties casProperties) {
+            return new AttributeConsentReportEndpoint(casProperties, consentRepository, consentEngine);
+        }
     }
 }
