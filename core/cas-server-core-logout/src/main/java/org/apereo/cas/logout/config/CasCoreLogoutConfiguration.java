@@ -166,10 +166,10 @@ public class CasCoreLogoutConfiguration {
         }
 
     }
-
-    @Configuration(value = "CasCoreLogoutExecutionPlanConfiguration", proxyBeanMethods = false)
+    
+    @Configuration(value = "CasCoreLogoutExecutionPlanBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreLogoutExecutionPlanConfiguration {
+    public static class CasCoreLogoutExecutionPlanBaseConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
@@ -195,7 +195,11 @@ public class CasCoreLogoutConfiguration {
                 }
             };
         }
+    }
 
+    @Configuration(value = "CasCoreLogoutExecutionPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreLogoutExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "logoutExecutionPlan")
         @Autowired
         @Bean

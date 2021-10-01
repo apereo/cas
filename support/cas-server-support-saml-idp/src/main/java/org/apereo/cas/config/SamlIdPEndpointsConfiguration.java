@@ -911,77 +911,10 @@ public class SamlIdPEndpointsConfiguration {
 
     }
 
-    @Configuration(value = "SamlIdPEndpointLogoutConfiguration", proxyBeanMethods = false)
+
+    @Configuration(value = "SamlIdPEndpointsLogoutResponseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SamlIdPEndpointLogoutConfiguration {
-        @ConditionalOnMissingBean(name = "samlLogoutBuilder")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public SingleLogoutMessageCreator samlLogoutBuilder(
-            final CasConfigurationProperties casProperties,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-            final OpenSamlConfigBean openSamlConfigBean,
-            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
-            @Qualifier("samlObjectSigner")
-            final SamlIdPObjectSigner samlObjectSigner) {
-            return new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
-                defaultSamlRegisteredServiceCachingMetadataResolver, casProperties.getAuthn()
-                .getSamlIdp(), samlObjectSigner);
-        }
-
-        @ConditionalOnMissingBean(name = "samlSingleLogoutServiceMessageHandler")
-        @Bean
-        @Autowired
-        public SingleLogoutServiceMessageHandler samlSingleLogoutServiceMessageHandler(
-            final CasConfigurationProperties casProperties,
-            @Qualifier("samlLogoutBuilder")
-            final SingleLogoutMessageCreator samlLogoutBuilder,
-            @Qualifier("singleLogoutServiceLogoutUrlBuilder")
-            final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
-            @Qualifier("httpClient")
-            final HttpClient httpClient,
-            @Qualifier("velocityEngineFactory")
-            final VelocityEngine velocityEngineFactory,
-            @Qualifier("authenticationServiceSelectionPlan")
-            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-            final OpenSamlConfigBean openSamlConfigBean,
-            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver) {
-            return new SamlIdPSingleLogoutServiceMessageHandler(httpClient, samlLogoutBuilder, servicesManager,
-                singleLogoutServiceLogoutUrlBuilder, casProperties.getSlo().isAsynchronous(),
-                authenticationServiceSelectionPlan, defaultSamlRegisteredServiceCachingMetadataResolver,
-                velocityEngineFactory, openSamlConfigBean);
-        }
-
-        @ConditionalOnMissingBean(name = "casSamlIdPLogoutExecutionPlanConfigurer")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public LogoutExecutionPlanConfigurer casSamlIdPLogoutExecutionPlanConfigurer(
-            @Qualifier("samlIdPSingleLogoutRedirectionStrategy")
-            final LogoutRedirectionStrategy samlIdPSingleLogoutRedirectionStrategy,
-            @Qualifier("samlSingleLogoutServiceMessageHandler")
-            final SingleLogoutServiceMessageHandler samlSingleLogoutServiceMessageHandler) {
-            return plan -> {
-                plan.registerLogoutRedirectionStrategy(samlIdPSingleLogoutRedirectionStrategy);
-                plan.registerSingleLogoutServiceMessageHandler(samlSingleLogoutServiceMessageHandler);
-            };
-        }
-
-        @Bean
-        public SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder(
-            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-            final OpenSamlConfigBean openSamlConfigBean) {
-            return new SamlIdPLogoutResponseObjectBuilder(openSamlConfigBean);
-        }
-
-
+    public static class SamlIdPEndpointsLogoutResponseConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPSingleLogoutRedirectionStrategy")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -1060,6 +993,82 @@ public class SamlIdPEndpointsConfiguration {
             return new SamlIdPSingleLogoutRedirectionStrategy(context);
         }
 
+    }
+
+    @Configuration(value = "SamlIdPEndpointLogoutConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPEndpointLogoutConfiguration {
+        @ConditionalOnMissingBean(name = "samlLogoutBuilder")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public SingleLogoutMessageCreator samlLogoutBuilder(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
+            @Qualifier("samlObjectSigner")
+            final SamlIdPObjectSigner samlObjectSigner) {
+            return new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
+                defaultSamlRegisteredServiceCachingMetadataResolver, casProperties.getAuthn()
+                .getSamlIdp(), samlObjectSigner);
+        }
+
+        @ConditionalOnMissingBean(name = "samlSingleLogoutServiceMessageHandler")
+        @Bean
+        @Autowired
+        public SingleLogoutServiceMessageHandler samlSingleLogoutServiceMessageHandler(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("samlLogoutBuilder")
+            final SingleLogoutMessageCreator samlLogoutBuilder,
+            @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+            final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
+            @Qualifier("httpClient")
+            final HttpClient httpClient,
+            @Qualifier("velocityEngineFactory")
+            final VelocityEngine velocityEngineFactory,
+            @Qualifier("authenticationServiceSelectionPlan")
+            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver) {
+            return new SamlIdPSingleLogoutServiceMessageHandler(httpClient, samlLogoutBuilder, servicesManager,
+                singleLogoutServiceLogoutUrlBuilder, casProperties.getSlo().isAsynchronous(),
+                authenticationServiceSelectionPlan, defaultSamlRegisteredServiceCachingMetadataResolver,
+                velocityEngineFactory, openSamlConfigBean);
+        }
+
+
+        @Bean
+        public SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder(
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+            final OpenSamlConfigBean openSamlConfigBean) {
+            return new SamlIdPLogoutResponseObjectBuilder(openSamlConfigBean);
+        }
+    }
+    
+    @Configuration(value = "SamlIdPEndpointsLogoutExecutionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPEndpointsLogoutExecutionConfiguration {
+        @ConditionalOnMissingBean(name = "casSamlIdPLogoutExecutionPlanConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public LogoutExecutionPlanConfigurer casSamlIdPLogoutExecutionPlanConfigurer(
+            @Qualifier("samlIdPSingleLogoutRedirectionStrategy")
+            final LogoutRedirectionStrategy samlIdPSingleLogoutRedirectionStrategy,
+            @Qualifier("samlSingleLogoutServiceMessageHandler")
+            final SingleLogoutServiceMessageHandler samlSingleLogoutServiceMessageHandler) {
+            return plan -> {
+                plan.registerLogoutRedirectionStrategy(samlIdPSingleLogoutRedirectionStrategy);
+                plan.registerSingleLogoutServiceMessageHandler(samlSingleLogoutServiceMessageHandler);
+            };
+        }
     }
 
     @Configuration(value = "SamlIdPServicesConfiguration", proxyBeanMethods = false)

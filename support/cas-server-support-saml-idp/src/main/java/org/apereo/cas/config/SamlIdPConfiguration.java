@@ -546,9 +546,7 @@ public class SamlIdPConfiguration {
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("samlAttributeQueryTicketFactory")
-            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
-            @Qualifier("samlProfileSamlResponseBuilder")
-            final SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder) {
+            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory) {
             val context = SamlProfileSamlResponseBuilderConfigurationContext.builder()
                 .samlIdPMetadataResolver(casSamlIdPMetadataResolver)
                 .openSamlConfigBean(openSamlConfigBean)
@@ -564,7 +562,6 @@ public class SamlIdPConfiguration {
                 .centralAuthenticationService(centralAuthenticationService)
                 .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
                 .casProperties(casProperties)
-                .samlSoapResponseBuilder(samlProfileSamlResponseBuilder)
                 .build();
             return new SamlProfileSaml2ResponseBuilder(context);
         }
