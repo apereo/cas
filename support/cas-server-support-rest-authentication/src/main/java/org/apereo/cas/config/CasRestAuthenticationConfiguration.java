@@ -70,11 +70,13 @@ public class CasRestAuthenticationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "restAuthenticationHandler")
     @Autowired
-    public AuthenticationHandler restAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                           @Qualifier("restAuthenticationPrincipalFactory")
-                                                           final PrincipalFactory restAuthenticationPrincipalFactory,
-                                                           @Qualifier(ServicesManager.BEAN_NAME)
-                                                           final ServicesManager servicesManager) {
+    public AuthenticationHandler restAuthenticationHandler(
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier("restAuthenticationPrincipalFactory")
+        final PrincipalFactory restAuthenticationPrincipalFactory,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager) {
         val rest = casProperties.getAuthn().getRest();
         val r = new RestAuthenticationHandler(servicesManager, restAuthenticationPrincipalFactory, rest);
         r.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rest.getPasswordEncoder(), applicationContext));
@@ -85,11 +87,12 @@ public class CasRestAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "casRestAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @Autowired
-    public AuthenticationEventExecutionPlanConfigurer casRestAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
-                                                                                                        @Qualifier("restAuthenticationHandler")
-                                                                                                        final AuthenticationHandler restAuthenticationHandler,
-                                                                                                        @Qualifier("defaultPrincipalResolver")
-                                                                                                        final PrincipalResolver defaultPrincipalResolver) {
+    public AuthenticationEventExecutionPlanConfigurer casRestAuthenticationEventExecutionPlanConfigurer(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("restAuthenticationHandler")
+        final AuthenticationHandler restAuthenticationHandler,
+        @Qualifier("defaultPrincipalResolver")
+        final PrincipalResolver defaultPrincipalResolver) {
         return plan -> {
             if (StringUtils.isNotBlank(casProperties.getAuthn().getRest().getUri())) {
                 plan.registerAuthenticationHandlerWithPrincipalResolver(restAuthenticationHandler, defaultPrincipalResolver);

@@ -70,24 +70,10 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Configuration(value = "googleAuthenticatorAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
-
-    @Configuration(value = "GoogleAuthenticatorMultifactorAuthenticationCoreConfiguration", proxyBeanMethods = false)
+    
+    @Configuration(value = "GoogleAuthenticatorAuthenticationEventExecutionPlaHandlerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class GoogleAuthenticatorMultifactorAuthenticationCoreConfiguration {
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Bean
-        @ConditionalOnMissingBean(name = "googleAuthenticatorInstance")
-        @Autowired
-        public IGoogleAuthenticator googleAuthenticatorInstance(final CasConfigurationProperties casProperties) {
-            val gauth = casProperties.getAuthn().getMfa().getGauth().getCore();
-            val bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
-            bldr.setCodeDigits(gauth.getCodeDigits());
-            bldr.setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(gauth.getTimeStepSize()));
-            bldr.setWindowSize(gauth.getWindowSize());
-            bldr.setKeyRepresentation(KeyRepresentation.BASE32);
-            return new GoogleAuthenticatorService(new GoogleAuthenticator(bldr.build()));
-        }
-
+    public static class GoogleAuthenticatorAuthenticationEventExecutionPlaHandlerConfiguration {
         @ConditionalOnMissingBean(name = "googleAuthenticatorAuthenticationHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -105,21 +91,23 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
                 googlePrincipalFactory, googleAuthenticatorOneTimeTokenCredentialValidator, gauth.getOrder());
         }
 
-        @Bean
+    }
+    @Configuration(value = "GoogleAuthenticatorMultifactorAuthenticationCoreConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class GoogleAuthenticatorMultifactorAuthenticationCoreConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "googleAuthenticatorAuthenticationMetaDataPopulator")
+        @Bean
+        @ConditionalOnMissingBean(name = "googleAuthenticatorInstance")
         @Autowired
-        public AuthenticationMetaDataPopulator googleAuthenticatorAuthenticationMetaDataPopulator(
-            final CasConfigurationProperties casProperties,
-            @Qualifier("googleAuthenticatorAuthenticationHandler")
-            final AuthenticationHandler googleAuthenticatorAuthenticationHandler,
-            @Qualifier("googleAuthenticatorMultifactorAuthenticationProvider")
-            final MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider) {
-            return new AuthenticationContextAttributeMetaDataPopulator(
-                casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(), googleAuthenticatorAuthenticationHandler,
-                googleAuthenticatorMultifactorAuthenticationProvider.getId());
+        public IGoogleAuthenticator googleAuthenticatorInstance(final CasConfigurationProperties casProperties) {
+            val gauth = casProperties.getAuthn().getMfa().getGauth().getCore();
+            val bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
+            bldr.setCodeDigits(gauth.getCodeDigits());
+            bldr.setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(gauth.getTimeStepSize()));
+            bldr.setWindowSize(gauth.getWindowSize());
+            bldr.setKeyRepresentation(KeyRepresentation.BASE32);
+            return new GoogleAuthenticatorService(new GoogleAuthenticator(bldr.build()));
         }
-
 
         @ConditionalOnMissingBean(name = "googleAuthenticatorAccountCipherExecutor")
         @Bean
@@ -142,7 +130,26 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         }
 
     }
+    
+    @Configuration(value = "GoogleAuthenticatorAuthenticationEventExecutionPlanMetadataConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class GoogleAuthenticatorAuthenticationEventExecutionPlanMetadataConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "googleAuthenticatorAuthenticationMetaDataPopulator")
+        @Autowired
+        public AuthenticationMetaDataPopulator googleAuthenticatorAuthenticationMetaDataPopulator(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("googleAuthenticatorAuthenticationHandler")
+            final AuthenticationHandler googleAuthenticatorAuthenticationHandler,
+            @Qualifier("googleAuthenticatorMultifactorAuthenticationProvider")
+            final MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider) {
+            return new AuthenticationContextAttributeMetaDataPopulator(
+                casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(), googleAuthenticatorAuthenticationHandler,
+                googleAuthenticatorMultifactorAuthenticationProvider.getId());
+        }
 
+    }
     @Configuration(value = "GoogleAuthenticatorMultifactorAuthenticationWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class GoogleAuthenticatorMultifactorAuthenticationWebConfiguration {

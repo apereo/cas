@@ -42,36 +42,51 @@ public class OneTimeTokenAuthenticationConfiguration {
 
     private static final long MAX_CACHE_SIZE = 1_000_000;
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public CasWebflowEventResolver oneTimeTokenAuthenticationWebflowEventResolver(
-        @Qualifier("casWebflowConfigurationContext")
-        final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
-        return new OneTimeTokenAuthenticationWebflowEventResolver(casWebflowConfigurationContext);
+    @Configuration(value = "OneTimeTokenAuthenticationWebflowConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class OneTimeTokenAuthenticationWebflowConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public CasWebflowEventResolver oneTimeTokenAuthenticationWebflowEventResolver(
+            @Qualifier("casWebflowConfigurationContext")
+            final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
+            return new OneTimeTokenAuthenticationWebflowEventResolver(casWebflowConfigurationContext);
+        }
+
     }
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_OTP_AUTHENTICATION_ACTION)
-    @Autowired
-    public Action oneTimeTokenAuthenticationWebflowAction(
-        @Qualifier("oneTimeTokenAuthenticationWebflowEventResolver")
-        final CasWebflowEventResolver oneTimeTokenAuthenticationWebflowEventResolver) {
-        return new OneTimeTokenAuthenticationWebflowAction(oneTimeTokenAuthenticationWebflowEventResolver);
+    @Configuration(value = "OneTimeTokenAuthenticationActionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class OneTimeTokenAuthenticationActionConfiguration {
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_OTP_AUTHENTICATION_ACTION)
+        @Autowired
+        public Action oneTimeTokenAuthenticationWebflowAction(
+            @Qualifier("oneTimeTokenAuthenticationWebflowEventResolver")
+            final CasWebflowEventResolver oneTimeTokenAuthenticationWebflowEventResolver) {
+            return new OneTimeTokenAuthenticationWebflowAction(oneTimeTokenAuthenticationWebflowEventResolver);
+        }
+
     }
 
-    @ConditionalOnMissingBean(name = "oneTimeTokenAuthenticatorTokenRepository")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
-        final Cache<String, Collection<OneTimeToken>> storage = Caffeine.newBuilder()
-            .initialCapacity(INITIAL_CACHE_SIZE)
-            .maximumSize(MAX_CACHE_SIZE)
-            .recordStats()
-            .expireAfterWrite(Duration.ofSeconds(EXPIRE_TOKENS_IN_SECONDS))
-            .build();
-        return new CachingOneTimeTokenRepository(storage);
+    @Configuration(value = "OneTimeTokenAuthenticationRepositoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class OneTimeTokenAuthenticationRepositoryConfiguration {
+        @ConditionalOnMissingBean(name = "oneTimeTokenAuthenticatorTokenRepository")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
+            final Cache<String, Collection<OneTimeToken>> storage = Caffeine.newBuilder()
+                .initialCapacity(INITIAL_CACHE_SIZE)
+                .maximumSize(MAX_CACHE_SIZE)
+                .recordStats()
+                .expireAfterWrite(Duration.ofSeconds(EXPIRE_TOKENS_IN_SECONDS))
+                .build();
+            return new CachingOneTimeTokenRepository(storage);
+        }
     }
 }
 
