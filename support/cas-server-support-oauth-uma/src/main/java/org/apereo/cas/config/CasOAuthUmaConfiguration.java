@@ -41,7 +41,6 @@ import org.apereo.cas.uma.web.controllers.resource.UmaFindResourceSetRegistratio
 import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpointController;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.val;
 import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
@@ -52,6 +51,7 @@ import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.http.client.direct.HeaderClient;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -68,7 +68,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.apereo.cas.support.oauth.OAuth20Constants.*;
 
 /**
  * This is {@link CasOAuthUmaConfiguration}.
@@ -80,303 +79,330 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.*;
 @Configuration(value = "casOAuthUmaConfiguration", proxyBeanMethods = false)
 public class CasOAuthUmaConfiguration {
 
-    private static SecurityInterceptor getSecurityInterceptor(final Authenticator authenticator,
-                                                              final String clientName,
-                                                              final SessionStore oauthDistributedSessionStore,
-                                                              final CasConfigurationProperties casProperties) {
-        val headerClient = new HeaderClient(HttpHeaders.AUTHORIZATION, OAuth20Constants.TOKEN_TYPE_BEARER.concat(" "), authenticator);
-        headerClient.setName(clientName);
-        val clients = Stream.of(headerClient.getName()).collect(Collectors.joining(","));
-        val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), headerClient);
-        config.setSessionStore(oauthDistributedSessionStore);
-        val interceptor = new SecurityInterceptor(config, clients, JEEHttpActionAdapter.INSTANCE);
-        interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
-        return interceptor;
+
+    @Configuration(value = "CasOAuthUmaTokenConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasOAuthUmaTokenConfiguration {
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "umaRequestingPartyTokenGenerator")
+        @Autowired
+        public IdTokenGeneratorService umaRequestingPartyTokenGenerator(final ObjectProvider<OAuth20ConfigurationContext> context) {
+            return new UmaIdTokenGeneratorService(context);
+        }
     }
 
-    @Bean
-    @Autowired
-    public UmaConfigurationContext umaConfigurationContext(
-        @Qualifier("defaultUmaPermissionTicketFactory")
-        final UmaPermissionTicketFactory defaultUmaPermissionTicketFactory,
-        @Qualifier("umaResourceSetClaimPermissionExaminer")
-        final UmaResourceSetClaimPermissionExaminer umaResourceSetClaimPermissionExaminer,
-        @Qualifier(CentralAuthenticationService.BEAN_NAME)
-        final CentralAuthenticationService centralAuthenticationService,
-        @Qualifier("oauthDistributedSessionStore")
-        final SessionStore oauthDistributedSessionStore,
-        @Qualifier("oauthTokenGenerator")
-        final OAuth20TokenGenerator oauthTokenGenerator,
-        @Qualifier("accessTokenJwtBuilder")
-        final JwtBuilder accessTokenJwtBuilder,
-        @Qualifier("umaRequestingPartyTokenGenerator")
-        final IdTokenGeneratorService umaRequestingPartyTokenGenerator,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
-        @Qualifier(TicketRegistry.BEAN_NAME)
-        final TicketRegistry ticketRegistry,
-        @Qualifier("umaResourceSetRepository")
-        final ResourceSetRepository umaResourceSetRepository,
-        final CasConfigurationProperties casProperties) {
-        return UmaConfigurationContext.builder()
-            .accessTokenGenerator(oauthTokenGenerator)
-            .casProperties(casProperties)
-            .accessTokenJwtBuilder(accessTokenJwtBuilder)
-            .claimPermissionExaminer(umaResourceSetClaimPermissionExaminer)
-            .requestingPartyTokenGenerator(umaRequestingPartyTokenGenerator)
-            .servicesManager(servicesManager)
-            .sessionStore(oauthDistributedSessionStore)
-            .ticketRegistry(ticketRegistry)
-            .centralAuthenticationService(centralAuthenticationService)
-            .umaPermissionTicketFactory(defaultUmaPermissionTicketFactory)
-            .umaResourceSetRepository(umaResourceSetRepository)
-            .build();
+    @Configuration(value = "CasOAuthUmaResourcesConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasOAuthUmaResourcesConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "umaResourceSetClaimPermissionExaminer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public UmaResourceSetClaimPermissionExaminer umaResourceSetClaimPermissionExaminer() {
+            return new DefaultUmaResourceSetClaimPermissionExaminer();
+        }
+
+
+        @Bean
+        @ConditionalOnMissingBean(name = "umaResourceSetRepository")
+        public ResourceSetRepository umaResourceSetRepository() {
+            return new DefaultResourceSetRepository();
+        }
+
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "umaServerDiscoverySettingsFactory")
-    @Autowired
-    public FactoryBean<UmaServerDiscoverySettings> umaServerDiscoverySettingsFactory(final CasConfigurationProperties casProperties) {
-        return new UmaServerDiscoverySettingsFactory(casProperties);
+    @Configuration(value = "CasOAuthUmaContextConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasOAuthUmaContextConfiguration {
+
+        @Bean
+        @Autowired
+        public UmaConfigurationContext umaConfigurationContext(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("defaultUmaPermissionTicketFactory")
+            final UmaPermissionTicketFactory defaultUmaPermissionTicketFactory,
+            @Qualifier("umaResourceSetClaimPermissionExaminer")
+            final UmaResourceSetClaimPermissionExaminer umaResourceSetClaimPermissionExaminer,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier("oauthDistributedSessionStore")
+            final SessionStore oauthDistributedSessionStore,
+            @Qualifier("oauthTokenGenerator")
+            final OAuth20TokenGenerator oauthTokenGenerator,
+            @Qualifier("accessTokenJwtBuilder")
+            final JwtBuilder accessTokenJwtBuilder,
+            @Qualifier("umaRequestingPartyTokenGenerator")
+            final IdTokenGeneratorService umaRequestingPartyTokenGenerator,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier("umaResourceSetRepository")
+            final ResourceSetRepository umaResourceSetRepository,
+            final CasConfigurationProperties casProperties) {
+            val uma = casProperties.getAuthn().getOauth().getUma();
+            val jwks = uma.getRequestingPartyToken().getJwksFile().getLocation();
+            val signingService = new UmaRequestingPartyTokenSigningService(jwks, uma.getCore().getIssuer());
+
+            return UmaConfigurationContext.builder()
+                .applicationContext(applicationContext)
+                .accessTokenGenerator(oauthTokenGenerator)
+                .casProperties(casProperties)
+                .accessTokenJwtBuilder(accessTokenJwtBuilder)
+                .claimPermissionExaminer(umaResourceSetClaimPermissionExaminer)
+                .requestingPartyTokenGenerator(umaRequestingPartyTokenGenerator)
+                .servicesManager(servicesManager)
+                .sessionStore(oauthDistributedSessionStore)
+                .ticketRegistry(ticketRegistry)
+                .centralAuthenticationService(centralAuthenticationService)
+                .umaPermissionTicketFactory(defaultUmaPermissionTicketFactory)
+                .umaResourceSetRepository(umaResourceSetRepository)
+                .signingService(signingService)
+                .build();
+        }
+
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "umaResourceSetClaimPermissionExaminer")
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public UmaResourceSetClaimPermissionExaminer umaResourceSetClaimPermissionExaminer() {
-        return new DefaultUmaResourceSetClaimPermissionExaminer();
+    @Configuration(value = "CasOAuthUmaInterceptorConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasOAuthUmaInterceptorConfiguration {
+
+
+        private static SecurityInterceptor getSecurityInterceptor(final Authenticator authenticator,
+                                                                  final String clientName,
+                                                                  final SessionStore oauthDistributedSessionStore,
+                                                                  final CasConfigurationProperties casProperties) {
+            val headerClient = new HeaderClient(HttpHeaders.AUTHORIZATION, OAuth20Constants.TOKEN_TYPE_BEARER.concat(" "), authenticator);
+            headerClient.setName(clientName);
+            val clients = Stream.of(headerClient.getName()).collect(Collectors.joining(","));
+            val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), headerClient);
+            config.setSessionStore(oauthDistributedSessionStore);
+            val interceptor = new SecurityInterceptor(config, clients, JEEHttpActionAdapter.INSTANCE);
+            interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
+            return interceptor;
+        }
+
+
+        @Bean
+        @Autowired
+        public SecurityInterceptor umaRequestingPartyTokenSecurityInterceptor(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("oauthDistributedSessionStore")
+            final SessionStore oauthDistributedSessionStore,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier("accessTokenJwtBuilder")
+            final JwtBuilder accessTokenJwtBuilder) {
+            val authenticator = new UmaRequestingPartyTokenAuthenticator(centralAuthenticationService, accessTokenJwtBuilder);
+            return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_RPT_AUTH", oauthDistributedSessionStore, casProperties);
+        }
+
+        @Bean
+        @Autowired
+        public SecurityInterceptor umaAuthorizationApiTokenSecurityInterceptor(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("oauthDistributedSessionStore")
+            final SessionStore oauthDistributedSessionStore,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier("accessTokenJwtBuilder")
+            final JwtBuilder accessTokenJwtBuilder) {
+            val authenticator = new UmaAuthorizationApiTokenAuthenticator(centralAuthenticationService, accessTokenJwtBuilder);
+            return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_AAT_AUTH",
+                oauthDistributedSessionStore, casProperties);
+        }
+
     }
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "umaRequestingPartyTokenGenerator")
-    @Autowired
-    public IdTokenGeneratorService umaRequestingPartyTokenGenerator(
-        final CasConfigurationProperties casProperties,
-        final ConfigurableApplicationContext applicationContext,
-        @Qualifier("accessTokenJwtBuilder")
-        final JwtBuilder accessTokenJwtBuilder,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
-        @Qualifier(TicketRegistry.BEAN_NAME)
-        final TicketRegistry ticketRegistry,
-        @Qualifier("oauthDistributedSessionCookieGenerator")
-        final CasCookieBuilder oauthDistributedSessionCookieGenerator,
-        @Qualifier("oauthDistributedSessionStore")
-        final SessionStore oauthDistributedSessionStore,
-        @Qualifier("oauthTokenGenerator")
-        final OAuth20TokenGenerator oauthTokenGenerator) {
-        val uma = casProperties.getAuthn().getOauth().getUma();
-        val jwks = uma.getRequestingPartyToken().getJwksFile().getLocation();
-        val signingService = new UmaRequestingPartyTokenSigningService(jwks, uma.getCore().getIssuer());
-        val context = OAuth20ConfigurationContext.builder()
-            .ticketRegistry(ticketRegistry)
-            .servicesManager(servicesManager)
-            .idTokenSigningAndEncryptionService(signingService)
-            .oauthDistributedSessionCookieGenerator(oauthDistributedSessionCookieGenerator)
-            .sessionStore(oauthDistributedSessionStore)
-            .casProperties(casProperties)
-            .accessTokenJwtBuilder(accessTokenJwtBuilder)
-            .accessTokenGenerator(oauthTokenGenerator)
-            .applicationContext(applicationContext).build();
-        return new UmaIdTokenGeneratorService(context);
+    @Configuration(value = "CasOAuthUmaDiscoveryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasOAuthUmaDiscoveryConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "umaServerDiscoverySettingsFactory")
+        @Autowired
+        public FactoryBean<UmaServerDiscoverySettings> umaServerDiscoverySettingsFactory(final CasConfigurationProperties casProperties) {
+            return new UmaServerDiscoverySettingsFactory(casProperties);
+        }
     }
 
-    @Bean
-    @Autowired
-    public UmaAuthorizationRequestEndpointController umaAuthorizationRequestEndpointController(
-        @Qualifier("umaConfigurationContext")
-        final UmaConfigurationContext umaConfigurationContext) {
-        return new UmaAuthorizationRequestEndpointController(umaConfigurationContext);
+    @Configuration(value = "CasOAuthUmaWbMvcConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasOAuthUmaWbMvcConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "umaWebMvcConfigurer")
+        public WebMvcConfigurer umaWebMvcConfigurer(
+            @Qualifier("umaAuthorizationApiTokenSecurityInterceptor")
+            final SecurityInterceptor umaAuthorizationApiTokenSecurityInterceptor,
+            @Qualifier("umaRequestingPartyTokenSecurityInterceptor")
+            final SecurityInterceptor umaRequestingPartyTokenSecurityInterceptor) {
+            return new WebMvcConfigurer() {
+                @Override
+                public void addInterceptors(final InterceptorRegistry registry) {
+                    registry.addInterceptor(umaRequestingPartyTokenSecurityInterceptor).order(100)
+                        .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_PERMISSION_URL).concat("*"))
+                        .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL).concat("*"))
+                        .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/*/").concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
+                        .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
+                        .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_CLAIMS_COLLECTION_URL).concat("*"));
+                    registry.addInterceptor(umaAuthorizationApiTokenSecurityInterceptor).order(100)
+                        .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL).concat("*"));
+                }
+            };
+        }
+
     }
 
-    @Bean
-    @Autowired
-    public UmaRequestingPartyTokenJwksEndpointController umaRequestingPartyTokenJwksEndpointController(
-        @Qualifier("umaConfigurationContext")
-        final UmaConfigurationContext umaConfigurationContext) {
-        return new UmaRequestingPartyTokenJwksEndpointController(umaConfigurationContext);
+    @Configuration(value = "CasOAuthUmaTicketsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasOAuthUmaTicketsConfiguration {
+        @ConditionalOnMissingBean(name = "umaPermissionTicketIdGenerator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public UniqueTicketIdGenerator umaPermissionTicketIdGenerator() {
+            return new DefaultUniqueTicketIdGenerator();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "umaPermissionTicketExpirationPolicy")
+        @Autowired
+        public ExpirationPolicyBuilder umaPermissionTicketExpirationPolicy(final CasConfigurationProperties casProperties) {
+            return new UmaPermissionTicketExpirationPolicyBuilder(casProperties);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "defaultUmaPermissionTicketFactory")
+        public UmaPermissionTicketFactory defaultUmaPermissionTicketFactory(
+            @Qualifier("umaPermissionTicketIdGenerator")
+            final UniqueTicketIdGenerator umaPermissionTicketIdGenerator,
+            @Qualifier("umaPermissionTicketExpirationPolicy")
+            final ExpirationPolicyBuilder umaPermissionTicketExpirationPolicy) {
+            return new DefaultUmaPermissionTicketFactory(umaPermissionTicketIdGenerator, umaPermissionTicketExpirationPolicy);
+        }
+
+        @ConditionalOnMissingBean(name = "defaultUmaPermissionTicketFactoryConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public TicketFactoryExecutionPlanConfigurer defaultUmaPermissionTicketFactoryConfigurer(
+            @Qualifier("defaultUmaPermissionTicketFactory")
+            final UmaPermissionTicketFactory defaultUmaPermissionTicketFactory) {
+            return () -> defaultUmaPermissionTicketFactory;
+        }
+
     }
 
-    @Bean
-    @Autowired
-    public UmaRequestingPartyClaimsCollectionEndpointController umaRequestingPartyClaimsCollectionEndpointController(
-        @Qualifier("umaConfigurationContext")
-        final UmaConfigurationContext umaConfigurationContext) {
-        return new UmaRequestingPartyClaimsCollectionEndpointController(umaConfigurationContext);
-    }
+    @Configuration(value = "CasOAuthUmaControllersConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasOAuthUmaControllersConfiguration {
+        @Bean
+        @Autowired
+        public UmaAuthorizationRequestEndpointController umaAuthorizationRequestEndpointController(
+            @Qualifier("umaConfigurationContext")
+            final UmaConfigurationContext umaConfigurationContext) {
+            return new UmaAuthorizationRequestEndpointController(umaConfigurationContext);
+        }
 
-    @Autowired
-    @Bean
-    public UmaWellKnownEndpointController umaWellKnownEndpointController(
-        @Qualifier("umaServerDiscoverySettingsFactory")
-        final UmaServerDiscoverySettings discoverySettings) {
-        return new UmaWellKnownEndpointController(discoverySettings);
-    }
+        @Bean
+        @Autowired
+        public UmaRequestingPartyTokenJwksEndpointController umaRequestingPartyTokenJwksEndpointController(
+            @Qualifier("umaConfigurationContext")
+            final UmaConfigurationContext umaConfigurationContext) {
+            return new UmaRequestingPartyTokenJwksEndpointController(umaConfigurationContext);
+        }
 
-    @Bean
-    @Autowired
-    public UmaPermissionRegistrationEndpointController umaPermissionRegistrationEndpointController(
-        @Qualifier("umaConfigurationContext")
-        final UmaConfigurationContext umaConfigurationContext) {
-        return new UmaPermissionRegistrationEndpointController(umaConfigurationContext);
-    }
+        @Bean
+        @Autowired
+        public UmaRequestingPartyClaimsCollectionEndpointController umaRequestingPartyClaimsCollectionEndpointController(
+            @Qualifier("umaConfigurationContext")
+            final UmaConfigurationContext umaConfigurationContext) {
+            return new UmaRequestingPartyClaimsCollectionEndpointController(umaConfigurationContext);
+        }
 
-    @Bean
-    @Autowired
-    public UmaCreateResourceSetRegistrationEndpointController umaCreateResourceSetRegistrationEndpointController(
-        @Qualifier("umaConfigurationContext")
-        final UmaConfigurationContext umaConfigurationContext) {
-        return new UmaCreateResourceSetRegistrationEndpointController(umaConfigurationContext);
-    }
+        @Autowired
+        @Bean
+        public UmaWellKnownEndpointController umaWellKnownEndpointController(
+            @Qualifier("umaServerDiscoverySettingsFactory")
+            final UmaServerDiscoverySettings discoverySettings) {
+            return new UmaWellKnownEndpointController(discoverySettings);
+        }
 
-    @Bean
-    @Autowired
-    public UmaDeleteResourceSetRegistrationEndpointController umaDeleteResourceSetRegistrationEndpointController(
-        @Qualifier("umaConfigurationContext")
-        final UmaConfigurationContext umaConfigurationContext) {
-        return new UmaDeleteResourceSetRegistrationEndpointController(umaConfigurationContext);
-    }
+        @Bean
+        @Autowired
+        public UmaPermissionRegistrationEndpointController umaPermissionRegistrationEndpointController(
+            @Qualifier("umaConfigurationContext")
+            final UmaConfigurationContext umaConfigurationContext) {
+            return new UmaPermissionRegistrationEndpointController(umaConfigurationContext);
+        }
 
-    @Bean
-    @Autowired
-    public UmaUpdateResourceSetRegistrationEndpointController umaUpdateResourceSetRegistrationEndpointController(
-        @Qualifier("umaConfigurationContext")
-        final UmaConfigurationContext umaConfigurationContext) {
-        return new UmaUpdateResourceSetRegistrationEndpointController(umaConfigurationContext);
-    }
+        @Bean
+        @Autowired
+        public UmaCreateResourceSetRegistrationEndpointController umaCreateResourceSetRegistrationEndpointController(
+            @Qualifier("umaConfigurationContext")
+            final UmaConfigurationContext umaConfigurationContext) {
+            return new UmaCreateResourceSetRegistrationEndpointController(umaConfigurationContext);
+        }
 
-    @Bean
-    @Autowired
-    public UmaFindResourceSetRegistrationEndpointController umaFindResourceSetRegistrationEndpointController(
-        @Qualifier("umaConfigurationContext")
-        final UmaConfigurationContext umaConfigurationContext) {
-        return new UmaFindResourceSetRegistrationEndpointController(umaConfigurationContext);
-    }
+        @Bean
+        @Autowired
+        public UmaDeleteResourceSetRegistrationEndpointController umaDeleteResourceSetRegistrationEndpointController(
+            @Qualifier("umaConfigurationContext")
+            final UmaConfigurationContext umaConfigurationContext) {
+            return new UmaDeleteResourceSetRegistrationEndpointController(umaConfigurationContext);
+        }
 
-    @Bean
-    @Autowired
-    public UmaCreatePolicyForResourceSetEndpointController umaCreatePolicyForResourceSetEndpointController(
-        @Qualifier("umaConfigurationContext")
-        final UmaConfigurationContext umaConfigurationContext) {
-        return new UmaCreatePolicyForResourceSetEndpointController(umaConfigurationContext);
-    }
+        @Bean
+        @Autowired
+        public UmaUpdateResourceSetRegistrationEndpointController umaUpdateResourceSetRegistrationEndpointController(
+            @Qualifier("umaConfigurationContext")
+            final UmaConfigurationContext umaConfigurationContext) {
+            return new UmaUpdateResourceSetRegistrationEndpointController(umaConfigurationContext);
+        }
 
-    @Bean
-    @Autowired
-    public UmaDeletePolicyForResourceSetEndpointController umaDeletePolicyForResourceSetEndpointController(
-        @Qualifier("umaConfigurationContext")
-        final UmaConfigurationContext umaConfigurationContext) {
-        return new UmaDeletePolicyForResourceSetEndpointController(umaConfigurationContext);
-    }
+        @Bean
+        @Autowired
+        public UmaFindResourceSetRegistrationEndpointController umaFindResourceSetRegistrationEndpointController(
+            @Qualifier("umaConfigurationContext")
+            final UmaConfigurationContext umaConfigurationContext) {
+            return new UmaFindResourceSetRegistrationEndpointController(umaConfigurationContext);
+        }
 
-    @Bean
-    @Autowired
-    public UmaUpdatePolicyForResourceSetEndpointController umaUpdatePolicyForResourceSetEndpointController(
-        @Qualifier("umaConfigurationContext")
-        final UmaConfigurationContext umaConfigurationContext) {
-        return new UmaUpdatePolicyForResourceSetEndpointController(umaConfigurationContext);
-    }
+        @Bean
+        @Autowired
+        public UmaCreatePolicyForResourceSetEndpointController umaCreatePolicyForResourceSetEndpointController(
+            @Qualifier("umaConfigurationContext")
+            final UmaConfigurationContext umaConfigurationContext) {
+            return new UmaCreatePolicyForResourceSetEndpointController(umaConfigurationContext);
+        }
 
-    @Bean
-    @Autowired
-    public UmaFindPolicyForResourceSetEndpointController umaFindPolicyForResourceSetEndpointController(
-        @Qualifier("umaConfigurationContext")
-        final UmaConfigurationContext umaConfigurationContext) {
-        return new UmaFindPolicyForResourceSetEndpointController(umaConfigurationContext);
-    }
+        @Bean
+        @Autowired
+        public UmaDeletePolicyForResourceSetEndpointController umaDeletePolicyForResourceSetEndpointController(
+            @Qualifier("umaConfigurationContext")
+            final UmaConfigurationContext umaConfigurationContext) {
+            return new UmaDeletePolicyForResourceSetEndpointController(umaConfigurationContext);
+        }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "umaResourceSetRepository")
-    public ResourceSetRepository umaResourceSetRepository() {
-        return new DefaultResourceSetRepository();
-    }
+        @Bean
+        @Autowired
+        public UmaUpdatePolicyForResourceSetEndpointController umaUpdatePolicyForResourceSetEndpointController(
+            @Qualifier("umaConfigurationContext")
+            final UmaConfigurationContext umaConfigurationContext) {
+            return new UmaUpdatePolicyForResourceSetEndpointController(umaConfigurationContext);
+        }
 
-    @ConditionalOnMissingBean(name = "umaPermissionTicketIdGenerator")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public UniqueTicketIdGenerator umaPermissionTicketIdGenerator() {
-        return new DefaultUniqueTicketIdGenerator();
-    }
+        @Bean
+        @Autowired
+        public UmaFindPolicyForResourceSetEndpointController umaFindPolicyForResourceSetEndpointController(
+            @Qualifier("umaConfigurationContext")
+            final UmaConfigurationContext umaConfigurationContext) {
+            return new UmaFindPolicyForResourceSetEndpointController(umaConfigurationContext);
+        }
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "umaPermissionTicketExpirationPolicy")
-    @Autowired
-    public ExpirationPolicyBuilder umaPermissionTicketExpirationPolicy(final CasConfigurationProperties casProperties) {
-        return new UmaPermissionTicketExpirationPolicyBuilder(casProperties);
-    }
-
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "defaultUmaPermissionTicketFactory")
-    public UmaPermissionTicketFactory defaultUmaPermissionTicketFactory(
-        @Qualifier("umaPermissionTicketIdGenerator")
-        final UniqueTicketIdGenerator umaPermissionTicketIdGenerator,
-        @Qualifier("umaPermissionTicketExpirationPolicy")
-        final ExpirationPolicyBuilder umaPermissionTicketExpirationPolicy) {
-        return new DefaultUmaPermissionTicketFactory(umaPermissionTicketIdGenerator, umaPermissionTicketExpirationPolicy);
-    }
-
-    @ConditionalOnMissingBean(name = "defaultUmaPermissionTicketFactoryConfigurer")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public TicketFactoryExecutionPlanConfigurer defaultUmaPermissionTicketFactoryConfigurer(
-        @Qualifier("defaultUmaPermissionTicketFactory")
-        final UmaPermissionTicketFactory defaultUmaPermissionTicketFactory) {
-        return () -> defaultUmaPermissionTicketFactory;
-    }
-
-    @Bean
-    @Autowired
-    public SecurityInterceptor umaRequestingPartyTokenSecurityInterceptor(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("oauthDistributedSessionStore")
-        final SessionStore oauthDistributedSessionStore,
-        @Qualifier(CentralAuthenticationService.BEAN_NAME)
-        final CentralAuthenticationService centralAuthenticationService,
-        @Qualifier("accessTokenJwtBuilder")
-        final JwtBuilder accessTokenJwtBuilder) {
-        val authenticator = new UmaRequestingPartyTokenAuthenticator(centralAuthenticationService, accessTokenJwtBuilder);
-        return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_RPT_AUTH", oauthDistributedSessionStore, casProperties);
-    }
-
-    @Bean
-    @Autowired
-    public SecurityInterceptor umaAuthorizationApiTokenSecurityInterceptor(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("oauthDistributedSessionStore")
-        final SessionStore oauthDistributedSessionStore,
-        @Qualifier(CentralAuthenticationService.BEAN_NAME)
-        final CentralAuthenticationService centralAuthenticationService,
-        @Qualifier("accessTokenJwtBuilder")
-        final JwtBuilder accessTokenJwtBuilder) {
-        val authenticator = new UmaAuthorizationApiTokenAuthenticator(centralAuthenticationService, accessTokenJwtBuilder);
-        return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_AAT_AUTH",
-            oauthDistributedSessionStore, casProperties);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "umaWebMvcConfigurer")
-    public WebMvcConfigurer umaWebMvcConfigurer(
-        @Qualifier("umaAuthorizationApiTokenSecurityInterceptor")
-        final SecurityInterceptor umaAuthorizationApiTokenSecurityInterceptor,
-        @Qualifier("umaRequestingPartyTokenSecurityInterceptor")
-        final SecurityInterceptor umaRequestingPartyTokenSecurityInterceptor) {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addInterceptors(final InterceptorRegistry registry) {
-                registry.addInterceptor(umaRequestingPartyTokenSecurityInterceptor).order(100)
-                    .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_PERMISSION_URL).concat("*"))
-                    .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL).concat("*"))
-                    .addPathPatterns(BASE_OAUTH20_URL.concat("/*/").concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
-                    .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
-                    .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_CLAIMS_COLLECTION_URL).concat("*"));
-                registry.addInterceptor(umaAuthorizationApiTokenSecurityInterceptor).order(100)
-                    .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL).concat("*"));
-            }
-        };
     }
 
 }

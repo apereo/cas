@@ -15,6 +15,7 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.UserProfile;
+import org.springframework.beans.factory.ObjectProvider;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -27,7 +28,7 @@ import java.util.UUID;
  */
 @Slf4j
 public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService<OAuth20ConfigurationContext> {
-    public UmaIdTokenGeneratorService(final OAuth20ConfigurationContext configurationContext) {
+    public UmaIdTokenGeneratorService(final ObjectProvider<OAuth20ConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 

@@ -441,9 +441,10 @@ public class SamlIdPConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
-        public SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder(final CasConfigurationProperties casProperties,
-                                                                                     @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-                                                                                     final OpenSamlConfigBean openSamlConfigBean) {
+        public SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+            final OpenSamlConfigBean openSamlConfigBean) {
             return new SamlProfileSamlConditionsBuilder(openSamlConfigBean, casProperties);
         }
 
@@ -482,11 +483,12 @@ public class SamlIdPConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
-        public SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder(final CasConfigurationProperties casProperties,
-                                                                                             @Qualifier("defaultAuthnContextClassRefBuilder")
-                                                                                             final AuthnContextClassRefBuilder defaultAuthnContextClassRefBuilder,
-                                                                                             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-                                                                                             final OpenSamlConfigBean openSamlConfigBean) {
+        public SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("defaultAuthnContextClassRefBuilder")
+            final AuthnContextClassRefBuilder defaultAuthnContextClassRefBuilder,
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+            final OpenSamlConfigBean openSamlConfigBean) {
             return new SamlProfileSamlAuthNStatementBuilder(openSamlConfigBean, defaultAuthnContextClassRefBuilder, casProperties);
         }
 

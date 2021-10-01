@@ -16,6 +16,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.UrlValidator;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -35,61 +36,84 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class OidcLogoutConfiguration {
 
-    @ConditionalOnMissingBean(name = "oidcSingleLogoutMessageCreator")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public SingleLogoutMessageCreator oidcSingleLogoutMessageCreator(
-        @Qualifier("oidcConfigurationContext")
-        final OidcConfigurationContext oidcConfigurationContext) {
-        return new OidcSingleLogoutMessageCreator(oidcConfigurationContext);
+    @Configuration(value = "OidcLogoutBuilderConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class OidcLogoutBuilderConfiguration {
+
+        @ConditionalOnMissingBean(name = "oidcSingleLogoutServiceLogoutUrlBuilderConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public SingleLogoutServiceLogoutUrlBuilderConfigurer oidcSingleLogoutServiceLogoutUrlBuilderConfigurer(
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("urlValidator")
+            final UrlValidator urlValidator) {
+            return () -> new OidcSingleLogoutServiceLogoutUrlBuilder(servicesManager, urlValidator);
+        }
+
     }
 
-    @ConditionalOnMissingBean(name = "oidcSingleLogoutServiceLogoutUrlBuilderConfigurer")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public SingleLogoutServiceLogoutUrlBuilderConfigurer oidcSingleLogoutServiceLogoutUrlBuilderConfigurer(
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
-        @Qualifier("urlValidator")
-        final UrlValidator urlValidator) {
-        return () -> new OidcSingleLogoutServiceLogoutUrlBuilder(servicesManager, urlValidator);
+    @Configuration(value = "OidcLogoutMessageConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class OidcLogoutMessageConfiguration {
+
+        @ConditionalOnMissingBean(name = "oidcSingleLogoutMessageCreator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public SingleLogoutMessageCreator oidcSingleLogoutMessageCreator(
+            @Qualifier("oidcConfigurationContext")
+            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+            return new OidcSingleLogoutMessageCreator(oidcConfigurationContext);
+        }
     }
 
-    @ConditionalOnMissingBean(name = "oidcSingleLogoutServiceMessageHandler")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public SingleLogoutServiceMessageHandler oidcSingleLogoutServiceMessageHandler(
-        final CasConfigurationProperties casProperties,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
-        @Qualifier("oidcSingleLogoutMessageCreator")
-        final SingleLogoutMessageCreator oidcSingleLogoutMessageCreator,
-        @Qualifier("authenticationServiceSelectionPlan")
-        final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
-        @Qualifier("singleLogoutServiceLogoutUrlBuilder")
-        final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
-        @Qualifier("noRedirectHttpClient")
-        final HttpClient httpClient,
-        @Qualifier("oidcIssuerService")
-        final OidcIssuerService oidcIssuerService) {
-        return new OidcSingleLogoutServiceMessageHandler(httpClient,
-            oidcSingleLogoutMessageCreator,
-            servicesManager,
-            singleLogoutServiceLogoutUrlBuilder,
-            casProperties.getSlo().isAsynchronous(),
-            authenticationServiceSelectionPlan,
-            oidcIssuerService);
+    @Configuration(value = "OidcLogoutHandlerConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class OidcLogoutHandlerConfiguration {
+
+
+        @ConditionalOnMissingBean(name = "oidcSingleLogoutServiceMessageHandler")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public SingleLogoutServiceMessageHandler oidcSingleLogoutServiceMessageHandler(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("oidcSingleLogoutMessageCreator")
+            final SingleLogoutMessageCreator oidcSingleLogoutMessageCreator,
+            @Qualifier("authenticationServiceSelectionPlan")
+            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
+            @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+            final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
+            @Qualifier("noRedirectHttpClient")
+            final HttpClient httpClient,
+            @Qualifier("oidcIssuerService")
+            final OidcIssuerService oidcIssuerService) {
+            return new OidcSingleLogoutServiceMessageHandler(httpClient,
+                null,
+                servicesManager,
+                singleLogoutServiceLogoutUrlBuilder,
+                casProperties.getSlo().isAsynchronous(),
+                authenticationServiceSelectionPlan,
+                oidcIssuerService);
+        }
+
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "oidcLogoutExecutionPlanConfigurer")
-    @Autowired
-    public LogoutExecutionPlanConfigurer oidcLogoutExecutionPlanConfigurer(
-        @Qualifier("oidcSingleLogoutServiceMessageHandler")
-        final SingleLogoutServiceMessageHandler oidcSingleLogoutServiceMessageHandler) {
-        return plan -> plan.registerSingleLogoutServiceMessageHandler(oidcSingleLogoutServiceMessageHandler);
+    @Configuration(value = "OidcLogoutExecutionPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class OidcLogoutExecutionPlanConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "oidcLogoutExecutionPlanConfigurer")
+        @Autowired
+        public LogoutExecutionPlanConfigurer oidcLogoutExecutionPlanConfigurer(
+            @Qualifier("oidcSingleLogoutServiceMessageHandler")
+            final SingleLogoutServiceMessageHandler oidcSingleLogoutServiceMessageHandler) {
+            return plan -> plan.registerSingleLogoutServiceMessageHandler(oidcSingleLogoutServiceMessageHandler);
+        }
     }
 }

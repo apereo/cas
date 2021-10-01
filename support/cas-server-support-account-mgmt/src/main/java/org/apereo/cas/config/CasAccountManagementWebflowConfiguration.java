@@ -53,14 +53,13 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -155,9 +154,8 @@ public class CasAccountManagementWebflowConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "accountMgmtRegistrationProvisioner")
     @Autowired
-    public AccountRegistrationProvisioner accountMgmtRegistrationProvisioner(final ConfigurableApplicationContext applicationContext) {
-        val beans = new ArrayList<>(applicationContext.getBeansOfType(AccountRegistrationProvisionerConfigurer.class, false, true).values());
-        AnnotationAwareOrderComparator.sortIfNecessary(beans);
+    public AccountRegistrationProvisioner accountMgmtRegistrationProvisioner(
+        final List<AccountRegistrationProvisionerConfigurer> beans) {
         val configurers = beans.stream().map(AccountRegistrationProvisionerConfigurer::configure).sorted().collect(Collectors.toList());
         return new ChainingAccountRegistrationProvisioner(configurers);
     }

@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -40,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -125,16 +125,10 @@ public class CasPersonDirectoryConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public PersonDirectoryAttributeRepositoryPlan personDirectoryAttributeRepositoryPlan(
-            final ConfigurableApplicationContext applicationContext) {
-            val configurers = applicationContext
-                .getBeansOfType(PersonDirectoryAttributeRepositoryPlanConfigurer.class, false, true)
-                .values();
-
-            val customizers = new ArrayList<>(applicationContext
-                .getBeansOfType(PersonDirectoryAttributeRepositoryCustomizer.class, false, true)
-                .values());
-
-            val plan = new DefaultPersonDirectoryAttributeRepositoryPlan(customizers);
+            final List<PersonDirectoryAttributeRepositoryPlanConfigurer> configurers,
+            final ObjectProvider<List<PersonDirectoryAttributeRepositoryCustomizer>> customizers) {
+            val plan = new DefaultPersonDirectoryAttributeRepositoryPlan(
+                Optional.ofNullable(customizers.getIfAvailable()).orElse(new ArrayList<>()));
             configurers.forEach(c -> c.configureAttributeRepositoryPlan(plan));
             AnnotationAwareOrderComparator.sort(plan.getAttributeRepositories());
             LOGGER.trace("Final list of attribute repositories is [{}]", plan.getAttributeRepositories());
@@ -255,7 +249,7 @@ public class CasPersonDirectoryConfiguration {
             }
             return list;
         }
-        
+
         @Bean
         @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

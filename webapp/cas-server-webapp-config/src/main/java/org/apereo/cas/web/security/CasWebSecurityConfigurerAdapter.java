@@ -58,6 +58,8 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     private final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints;
 
+    private final List<ProtocolEndpointWebSecurityConfigurer> protocolEndpointWebSecurityConfigurers;
+
     private EndpointLdapAuthenticationProvider endpointLdapAuthenticationProvider;
 
     @Override
@@ -76,8 +78,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      */
     @Override
     public void configure(final WebSecurity web) {
-        val beans = getApplicationContext().getBeansOfType(ProtocolEndpointWebSecurityConfigurer.class, false, true).values();
-        val patterns = beans.stream()
+        val patterns = protocolEndpointWebSecurityConfigurers.stream()
             .map(ProtocolEndpointWebSecurityConfigurer::getIgnoredEndpoints)
             .flatMap(List<String>::stream)
             .map(endpoint -> StringUtils.prependIfMissing(endpoint, "/").concat("/**"))
@@ -137,9 +138,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         }));
         configureEndpointAccessToDenyUndefined(http, requests);
         configureEndpointAccessForStaticResources(requests);
-
-        val beans = getApplicationContext().getBeansOfType(ProtocolEndpointWebSecurityConfigurer.class, false, true).values();
-        beans.forEach(cfg -> cfg.configure(http));
+        protocolEndpointWebSecurityConfigurers.forEach(cfg -> cfg.configure(http));
     }
 
     /**

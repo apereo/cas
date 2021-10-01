@@ -88,27 +88,39 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "oidcEndpointsConfiguration", proxyBeanMethods = false)
+@Configuration(value = "OidcEndpointsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class OidcEndpointsConfiguration {
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    @ConditionalOnMissingBean(name = "oidcMultifactorAuthenticationTrigger")
-    public MultifactorAuthenticationTrigger oidcMultifactorAuthenticationTrigger(
-        @Qualifier("multifactorAuthenticationProviderResolver")
-        final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver,
-        final CasConfigurationProperties casProperties,
-        final ConfigurableApplicationContext applicationContext) {
-        return new OidcMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver, applicationContext);
+    @Configuration(value = "OidcEndpointsMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class OidcEndpointsMultifactorAuthenticationConfiguration {
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        @ConditionalOnMissingBean(name = "oidcMultifactorAuthenticationTrigger")
+        public MultifactorAuthenticationTrigger oidcMultifactorAuthenticationTrigger(
+            @Qualifier("multifactorAuthenticationProviderResolver")
+            final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver,
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
+            return new OidcMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver, applicationContext);
+        }
+
     }
 
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Bean
-    @ConditionalOnMissingBean(name = OidcPostLogoutRedirectUrlMatcher.BEAN_NAME_POST_LOGOUT_REDIRECT_URL_MATCHER)
-    public OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher() {
-        return String::equalsIgnoreCase;
+    @Configuration(value = "OidcEndpointsLogoutConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class OidcEndpointsLogoutConfiguration {
+
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @ConditionalOnMissingBean(name = OidcPostLogoutRedirectUrlMatcher.BEAN_NAME_POST_LOGOUT_REDIRECT_URL_MATCHER)
+        public OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher() {
+            return String::equalsIgnoreCase;
+        }
+
     }
 
     @Configuration(value = "OidcInterceptorsConfiguration", proxyBeanMethods = false)
@@ -176,9 +188,9 @@ public class OidcEndpointsConfiguration {
         }
     }
 
-    @Configuration(value = "OidcWebConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "OidcEndpointsWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcWebConfiguration {
+    public static class OidcEndpointsWebConfiguration {
         private static String getOidcBaseEndpoint(final OidcIssuerService issuerService,
                                                   final CasConfigurationProperties casProperties) {
             val issuer = issuerService.determineIssuer(Optional.empty());
@@ -247,9 +259,9 @@ public class OidcEndpointsConfiguration {
         }
     }
 
-    @Configuration(value = "OidcJwksConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "OidcEndpointsJwksConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcJwksConfiguration {
+    public static class OidcEndpointsJwksConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oidcDefaultJsonWebKeystoreCacheLoader")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -404,9 +416,9 @@ public class OidcEndpointsConfiguration {
         }
     }
 
-    @Configuration(value = "OidcWebflowConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "OidcEndpointsWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcWebflowConfiguration {
+    public static class OidcEndpointsWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "oidcCasWebflowExecutionPlanConfigurer")
         @Bean

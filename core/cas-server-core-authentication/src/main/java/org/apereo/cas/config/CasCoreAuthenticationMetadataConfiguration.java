@@ -38,7 +38,28 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreAuthenticationMetadataConfiguration {
-
+    
+    @Configuration(value = "CasCoreAuthenticationMetadataCipherConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreAuthenticationMetadataCipherConfiguration {
+        @ConditionalOnMissingBean(name = "cacheCredentialsCipherExecutor")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public CipherExecutor cacheCredentialsCipherExecutor(final CasConfigurationProperties casProperties) {
+            val cp = casProperties.getClearpass();
+            if (cp.isCacheCredential()) {
+                val crypto = cp.getCrypto();
+                if (crypto.isEnabled()) {
+                    return CipherExecutorUtils.newStringCipherExecutor(crypto, CacheCredentialsCipherExecutor.class);
+                }
+                LOGGER.warn("CAS is configured to capture and cache credentials via Clearpass yet crypto operations for the cached password are "
+                            + "turned off. Consider enabling the crypto configuration in CAS settings "
+                            + "that allow the system to sign & encrypt the captured credential.");
+            }
+            return CipherExecutor.noOp();
+        }
+    }
     @Configuration(value = "CasCoreAuthenticationMetadataPopulatorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreAuthenticationMetadataPopulatorConfiguration {
@@ -84,24 +105,6 @@ public class CasCoreAuthenticationMetadataConfiguration {
     @Configuration(value = "CasCoreAuthenticationMetadataClearPassConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreAuthenticationMetadataClearPassConfiguration {
-        @ConditionalOnMissingBean(name = "cacheCredentialsCipherExecutor")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public CipherExecutor cacheCredentialsCipherExecutor(final CasConfigurationProperties casProperties) {
-            val cp = casProperties.getClearpass();
-            if (cp.isCacheCredential()) {
-                val crypto = cp.getCrypto();
-                if (crypto.isEnabled()) {
-                    return CipherExecutorUtils.newStringCipherExecutor(crypto, CacheCredentialsCipherExecutor.class);
-                }
-                LOGGER.warn("CAS is configured to capture and cache credentials via Clearpass yet crypto operations for the cached password are "
-                            + "turned off. Consider enabling the crypto configuration in CAS settings "
-                            + "that allow the system to sign & encrypt the captured credential.");
-            }
-            return CipherExecutor.noOp();
-        }
-
         @ConditionalOnMissingBean(name = "cacheCredentialsMetaDataPopulator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

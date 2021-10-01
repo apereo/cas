@@ -18,14 +18,16 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -72,9 +74,10 @@ public class CasCoreNotificationsConfiguration {
     @ConditionalOnMissingBean(name = "notificationSender")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
-    public NotificationSender notificationSender(final ConfigurableApplicationContext applicationContext) {
-        val configurers = applicationContext.getBeansOfType(NotificationSenderExecutionPlanConfigurer.class, false, true);
-        val results = configurers.values()
+    public NotificationSender notificationSender(
+        final ObjectProvider<List<NotificationSenderExecutionPlanConfigurer>> configurerProviders) {
+        val configurers = Optional.ofNullable(configurerProviders.getIfAvailable()).orElse(new ArrayList<>());
+        val results = configurers
             .stream()
             .map(cfg -> {
                 LOGGER.trace("Configuring notification sender [{}]", cfg.getName());

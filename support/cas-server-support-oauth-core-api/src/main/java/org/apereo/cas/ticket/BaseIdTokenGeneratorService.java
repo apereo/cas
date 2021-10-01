@@ -13,6 +13,7 @@ import org.jose4j.jwt.JwtClaims;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
+import org.springframework.beans.factory.ObjectProvider;
 
 /**
  * This is {@link BaseIdTokenGeneratorService}.
@@ -24,7 +25,11 @@ import org.pac4j.core.profile.UserProfile;
 @Slf4j
 @Getter
 public abstract class BaseIdTokenGeneratorService<T extends OAuth20ConfigurationContext> implements IdTokenGeneratorService {
-    private final T configurationContext;
+    private final ObjectProvider<T> configurationContextProvider;
+
+    protected T getConfigurationContext() {
+        return this.configurationContextProvider.getObject();
+    }
 
     /**
      * Gets authenticated profile.

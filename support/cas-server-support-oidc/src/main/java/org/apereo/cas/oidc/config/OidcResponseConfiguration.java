@@ -22,20 +22,15 @@ import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 
-import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcResponseConfiguration}.
@@ -47,188 +42,211 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class OidcResponseConfiguration {
 
-    @ConditionalOnMissingBean(name = "oidcAccessTokenResponseGenerator")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator(
-        @Qualifier("oidcIdTokenGenerator")
-        final IdTokenGeneratorService oidcIdTokenGenerator,
-        @Qualifier("accessTokenJwtBuilder")
-        final JwtBuilder accessTokenJwtBuilder,
-        final CasConfigurationProperties casProperties,
-        @Qualifier("oidcIssuerService")
-        final OidcIssuerService oidcIssuerService) {
-        return new OidcAccessTokenResponseGenerator(oidcIdTokenGenerator, accessTokenJwtBuilder,
-            casProperties, oidcIssuerService);
+    @Configuration(value = "OidcResponseAccessTokenConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class OidcResponseAccessTokenConfiguration {
+
+        @ConditionalOnMissingBean(name = "oidcAccessTokenResponseGenerator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator(
+            @Qualifier("oidcIdTokenGenerator")
+            final IdTokenGeneratorService oidcIdTokenGenerator,
+            @Qualifier("accessTokenJwtBuilder")
+            final JwtBuilder accessTokenJwtBuilder,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("oidcIssuerService")
+            final OidcIssuerService oidcIssuerService) {
+            return new OidcAccessTokenResponseGenerator(oidcIdTokenGenerator, accessTokenJwtBuilder,
+                casProperties, oidcIssuerService);
+        }
+
     }
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    @ConditionalOnMissingBean(name = "oidcClientCredentialsResponseBuilder")
-    public OAuth20AuthorizationResponseBuilder oidcClientCredentialsResponseBuilder(
-        @Qualifier("oidcAccessTokenResponseGenerator")
-        final OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator,
-        @Qualifier("oauthTokenGenerator")
-        final OAuth20TokenGenerator oauthTokenGenerator,
-        @Qualifier("oauthAuthorizationModelAndViewBuilder")
-        final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
-        final CasConfigurationProperties casProperties) {
-        return new OAuth20ClientCredentialsResponseBuilder(
-            servicesManager,
-            oidcAccessTokenResponseGenerator,
-            oauthTokenGenerator,
-            casProperties,
-            oauthAuthorizationModelAndViewBuilder);
+    @Configuration(value = "OidcResponseClientCredentialConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class OidcResponseClientCredentialConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        @ConditionalOnMissingBean(name = "oidcClientCredentialsResponseBuilder")
+        public OAuth20AuthorizationResponseBuilder oidcClientCredentialsResponseBuilder(
+            @Qualifier("oidcAccessTokenResponseGenerator")
+            final OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator,
+            @Qualifier("oauthTokenGenerator")
+            final OAuth20TokenGenerator oauthTokenGenerator,
+            @Qualifier("oauthAuthorizationModelAndViewBuilder")
+            final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            final CasConfigurationProperties casProperties) {
+            return new OAuth20ClientCredentialsResponseBuilder(
+                servicesManager,
+                oidcAccessTokenResponseGenerator,
+                oauthTokenGenerator,
+                casProperties,
+                oauthAuthorizationModelAndViewBuilder);
+        }
+
     }
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    @ConditionalOnMissingBean(name = "oidcTokenResponseBuilder")
-    public OAuth20AuthorizationResponseBuilder oidcTokenResponseBuilder(
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
-        @Qualifier("oauthAuthorizationModelAndViewBuilder")
-        final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-        @Qualifier("accessTokenJwtBuilder")
-        final JwtBuilder accessTokenJwtBuilder,
-        @Qualifier("oauthTokenGenerator")
-        final OAuth20TokenGenerator oauthTokenGenerator,
-        final CasConfigurationProperties casProperties) {
-        return new OAuth20TokenAuthorizationResponseBuilder(
-            servicesManager,
-            casProperties,
-            oauthTokenGenerator,
-            accessTokenJwtBuilder,
-            oauthAuthorizationModelAndViewBuilder);
+    @Configuration(value = "OidcResponseTokenConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class OidcResponseTokenConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        @ConditionalOnMissingBean(name = "oidcTokenResponseBuilder")
+        public OAuth20AuthorizationResponseBuilder oidcTokenResponseBuilder(
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("oauthAuthorizationModelAndViewBuilder")
+            final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
+            @Qualifier("accessTokenJwtBuilder")
+            final JwtBuilder accessTokenJwtBuilder,
+            @Qualifier("oauthTokenGenerator")
+            final OAuth20TokenGenerator oauthTokenGenerator,
+            final CasConfigurationProperties casProperties) {
+            return new OAuth20TokenAuthorizationResponseBuilder(
+                servicesManager,
+                casProperties,
+                oauthTokenGenerator,
+                accessTokenJwtBuilder,
+                oauthAuthorizationModelAndViewBuilder);
+        }
+
+
     }
 
+    @Configuration(value = "OidcResponseAuthorizationCodeConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class OidcResponseAuthorizationCodeConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        @ConditionalOnMissingBean(name = "oidcAuthorizationCodeResponseBuilder")
+        public OAuth20AuthorizationResponseBuilder oidcAuthorizationCodeResponseBuilder(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("oauthAuthorizationModelAndViewBuilder")
+            final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
+            @Qualifier("defaultOAuthCodeFactory")
+            final OAuth20CodeFactory defaultOAuthCodeFactory,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry) {
+            return new OAuth20AuthorizationCodeAuthorizationResponseBuilder(
+                servicesManager,
+                casProperties,
+                ticketRegistry,
+                defaultOAuthCodeFactory,
+                oauthAuthorizationModelAndViewBuilder);
+        }
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    @ConditionalOnMissingBean(name = "oidcAuthorizationCodeResponseBuilder")
-    public OAuth20AuthorizationResponseBuilder oidcAuthorizationCodeResponseBuilder(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("oauthAuthorizationModelAndViewBuilder")
-        final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-        @Qualifier("defaultOAuthCodeFactory")
-        final OAuth20CodeFactory defaultOAuthCodeFactory,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
-        @Qualifier(TicketRegistry.BEAN_NAME)
-        final TicketRegistry ticketRegistry) {
-        return new OAuth20AuthorizationCodeAuthorizationResponseBuilder(
-            servicesManager,
-            casProperties,
-            ticketRegistry,
-            defaultOAuthCodeFactory,
-            oauthAuthorizationModelAndViewBuilder);
+
     }
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "oidcAuthorizationResponseBuilders")
-    @Autowired
-    public Set<OAuth20AuthorizationResponseBuilder> oidcAuthorizationResponseBuilders(
-        final ConfigurableApplicationContext applicationContext) {
-        val builders = applicationContext.getBeansOfType(OAuth20AuthorizationResponseBuilder.class, false, true);
-        return builders.entrySet().stream().
-            filter(e -> !e.getKey().startsWith("oauth")).
-            map(Map.Entry::getValue).
-            collect(Collectors.toSet());
+    @Configuration(value = "OidcResponseImplicitConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class OidcResponseImplicitConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        @ConditionalOnMissingBean(name = "oidcImplicitIdTokenCallbackUrlBuilder")
+        public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenCallbackUrlBuilder(
+            @Qualifier("oidcIdTokenGenerator")
+            final IdTokenGeneratorService oidcIdTokenGenerator,
+            @Qualifier("oauthAuthorizationModelAndViewBuilder")
+            final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
+            @Qualifier("grantingTicketExpirationPolicy")
+            final ExpirationPolicyBuilder grantingTicketExpirationPolicy,
+            @Qualifier("accessTokenJwtBuilder")
+            final JwtBuilder accessTokenJwtBuilder,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("oauthTokenGenerator")
+            final OAuth20TokenGenerator oauthTokenGenerator,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return new OidcImplicitIdTokenAuthorizationResponseBuilder(
+                oidcIdTokenGenerator,
+                oauthTokenGenerator,
+                grantingTicketExpirationPolicy,
+                servicesManager,
+                accessTokenJwtBuilder,
+                casProperties,
+                oauthAuthorizationModelAndViewBuilder);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        @ConditionalOnMissingBean(name = "oidcImplicitIdTokenAndTokenCallbackUrlBuilder")
+        public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenAndTokenCallbackUrlBuilder(
+            @Qualifier("oauthAuthorizationModelAndViewBuilder")
+            final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
+            @Qualifier("grantingTicketExpirationPolicy")
+            final ExpirationPolicyBuilder grantingTicketExpirationPolicy,
+            @Qualifier("accessTokenJwtBuilder")
+            final JwtBuilder accessTokenJwtBuilder,
+            @Qualifier("oauthTokenGenerator")
+            final OAuth20TokenGenerator oauthTokenGenerator,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("oidcIdTokenGenerator")
+            final IdTokenGeneratorService oidcIdTokenGenerator,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return new OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder(
+                oidcIdTokenGenerator,
+                oauthTokenGenerator,
+                grantingTicketExpirationPolicy,
+                servicesManager,
+                accessTokenJwtBuilder,
+                casProperties,
+                oauthAuthorizationModelAndViewBuilder);
+        }
+
     }
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    @ConditionalOnMissingBean(name = "oidcImplicitIdTokenCallbackUrlBuilder")
-    public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenCallbackUrlBuilder(
-        @Qualifier("oidcIdTokenGenerator")
-        final IdTokenGeneratorService oidcIdTokenGenerator,
-        @Qualifier("oauthAuthorizationModelAndViewBuilder")
-        final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-        @Qualifier("grantingTicketExpirationPolicy")
-        final ExpirationPolicyBuilder grantingTicketExpirationPolicy,
-        @Qualifier("accessTokenJwtBuilder")
-        final JwtBuilder accessTokenJwtBuilder,
-        final CasConfigurationProperties casProperties,
-        @Qualifier("oauthTokenGenerator")
-        final OAuth20TokenGenerator oauthTokenGenerator,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager) {
-        return new OidcImplicitIdTokenAuthorizationResponseBuilder(
-            oidcIdTokenGenerator,
-            oauthTokenGenerator,
-            grantingTicketExpirationPolicy,
-            servicesManager,
-            accessTokenJwtBuilder,
-            casProperties,
-            oauthAuthorizationModelAndViewBuilder);
+    @Configuration(value = "OidcResponseResourceOwnerConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class OidcResponseResourceOwnerConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcResourceOwnerCredentialsResponseBuilder")
+        @Autowired
+        public OAuth20AuthorizationResponseBuilder oidcResourceOwnerCredentialsResponseBuilder(
+            @Qualifier("oidcAccessTokenResponseGenerator")
+            final OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator,
+            @Qualifier("oauthAuthorizationModelAndViewBuilder")
+            final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
+            @Qualifier("oauthTokenGenerator")
+            final OAuth20TokenGenerator oauthTokenGenerator,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            final CasConfigurationProperties casProperties) {
+            return new OAuth20ResourceOwnerCredentialsResponseBuilder(
+                servicesManager,
+                casProperties,
+                oidcAccessTokenResponseGenerator,
+                oauthTokenGenerator,
+                oauthAuthorizationModelAndViewBuilder);
+        }
     }
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    @ConditionalOnMissingBean(name = "oidcImplicitIdTokenAndTokenCallbackUrlBuilder")
-    public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenAndTokenCallbackUrlBuilder(
-        @Qualifier("oauthAuthorizationModelAndViewBuilder")
-        final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-        @Qualifier("grantingTicketExpirationPolicy")
-        final ExpirationPolicyBuilder grantingTicketExpirationPolicy,
-        @Qualifier("accessTokenJwtBuilder")
-        final JwtBuilder accessTokenJwtBuilder,
-        @Qualifier("oauthTokenGenerator")
-        final OAuth20TokenGenerator oauthTokenGenerator,
-        final CasConfigurationProperties casProperties,
-        @Qualifier("oidcIdTokenGenerator")
-        final IdTokenGeneratorService oidcIdTokenGenerator,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager) {
-        return new OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder(
-            oidcIdTokenGenerator,
-            oauthTokenGenerator,
-            grantingTicketExpirationPolicy,
-            servicesManager,
-            accessTokenJwtBuilder,
-            casProperties,
-            oauthAuthorizationModelAndViewBuilder);
-    }
+    @Configuration(value = "OidcResponseTokenGenerationConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class OidcResponseTokenGenerationConfiguration {
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "oidcResourceOwnerCredentialsResponseBuilder")
-    @Autowired
-    public OAuth20AuthorizationResponseBuilder oidcResourceOwnerCredentialsResponseBuilder(
-        @Qualifier("oidcAccessTokenResponseGenerator")
-        final OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator,
-        @Qualifier("oauthAuthorizationModelAndViewBuilder")
-        final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-        @Qualifier("oauthTokenGenerator")
-        final OAuth20TokenGenerator oauthTokenGenerator,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
-        final CasConfigurationProperties casProperties) {
-        return new OAuth20ResourceOwnerCredentialsResponseBuilder(
-            servicesManager,
-            casProperties,
-            oidcAccessTokenResponseGenerator,
-            oauthTokenGenerator,
-            oauthAuthorizationModelAndViewBuilder);
-    }
-
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "oidcIdTokenGenerator")
-    @Bean
-    @Autowired
-    public IdTokenGeneratorService oidcIdTokenGenerator(
-        @Qualifier("oidcConfigurationContext")
-        final OidcConfigurationContext oidcConfigurationContext) {
-        return new OidcIdTokenGeneratorService(oidcConfigurationContext);
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcIdTokenGenerator")
+        @Bean
+        @Autowired
+        public IdTokenGeneratorService oidcIdTokenGenerator(
+            @Qualifier("oidcConfigurationContext")
+            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+            return new OidcIdTokenGeneratorService(oidcConfigurationContext);
+        }
     }
 
 }
