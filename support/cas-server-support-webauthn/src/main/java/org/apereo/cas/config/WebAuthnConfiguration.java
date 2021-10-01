@@ -73,6 +73,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link WebAuthnConfiguration}.
@@ -147,12 +148,13 @@ public class WebAuthnConfiguration {
     @ConditionalOnMissingBean(name = "webAuthnMetadataService")
     @Autowired
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public MetadataService webAuthnMetadataService(final CasConfigurationProperties casProperties,
-                                                   final List<TrustResolver> foundTrustResolvers,
-                                                   final List<AttestationResolver> foundAttestations) throws Exception {
+    public MetadataService webAuthnMetadataService(
+        final CasConfigurationProperties casProperties,
+        final ObjectProvider<List<TrustResolver>> foundTrustResolvers,
+        final ObjectProvider<List<AttestationResolver>> foundAttestations) throws Exception {
         val trustResolvers = new ArrayList<TrustResolver>();
         trustResolvers.add(StandardMetadataService.createDefaultTrustResolver());
-        trustResolvers.addAll(foundTrustResolvers);
+        trustResolvers.addAll(Optional.ofNullable(foundTrustResolvers.getIfAvailable()).orElse(new ArrayList<>()));
         val trustResolver = new CompositeTrustResolver(trustResolvers);
         val attestationResolvers = new ArrayList<AttestationResolver>();
         attestationResolvers.add(StandardMetadataService.createDefaultAttestationResolver(trustResolver));
@@ -161,7 +163,7 @@ public class WebAuthnConfiguration {
             val metadata = WebAuthnUtils.getObjectMapper().readValue(resource.getInputStream(), MetadataObject.class);
             attestationResolvers.add(new SimpleAttestationResolver(CollectionUtils.wrapList(metadata), trustResolver));
         }
-        attestationResolvers.addAll(foundAttestations);
+        attestationResolvers.addAll(Optional.ofNullable(foundAttestations.getIfAvailable()).orElse(new ArrayList<>()));
         val attestationResolver = new CompositeAttestationResolver(attestationResolvers);
         return new StandardMetadataService(attestationResolver);
     }

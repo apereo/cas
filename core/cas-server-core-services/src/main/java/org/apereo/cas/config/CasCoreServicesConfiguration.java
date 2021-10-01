@@ -151,6 +151,12 @@ public class CasCoreServicesConfiguration {
             return new RegisteredServiceAccessStrategyAuditableEnforcer();
         }
 
+    }
+    
+    @Configuration(value = "CasCoreServicesStrategyConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreServicesStrategyConfiguration {
+
         @ConditionalOnMissingBean(name = "registeredServiceReplicationStrategy")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -164,7 +170,6 @@ public class CasCoreServicesConfiguration {
         public RegisteredServiceResourceNamingStrategy registeredServiceResourceNamingStrategy() {
             return new DefaultRegisteredServiceResourceNamingStrategy();
         }
-
     }
 
     @Configuration(value = "CasCoreServiceRegistryConfiguration", proxyBeanMethods = false)

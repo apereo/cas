@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -20,7 +22,7 @@ public interface BeanContainer<T> {
      *
      * @return the container bean
      */
-    static <T> BeanContainer<T> toList(final T... entries) {
+    static <T> BeanContainer<T> of(final T... entries) {
         return new ListBeanContainer<>(Arrays.stream(entries).collect(Collectors.toList()));
     }
 
@@ -31,7 +33,18 @@ public interface BeanContainer<T> {
      * @param entries the entries
      * @return the bean container
      */
-    static <T> BeanContainer<T> toList(final List<T> entries) {
+    static <T> BeanContainer<T> of(final List<T> entries) {
+        return new ListBeanContainer<>(new ArrayList<>(entries));
+    }
+
+    /**
+     * Of bean container.
+     *
+     * @param <T>     the type parameter
+     * @param entries the entries
+     * @return the bean container
+     */
+    static <T> BeanContainer<T> of(final Set<T> entries) {
         return new ListBeanContainer<>(new ArrayList<>(entries));
     }
 
@@ -40,7 +53,14 @@ public interface BeanContainer<T> {
      *
      * @return the items
      */
-    List<T> get();
+    List<T> toList();
+
+    /**
+     * To set set.
+     *
+     * @return the set
+     */
+    Set<T> toSet();
 
     /**
      * And include a single item..
@@ -50,12 +70,19 @@ public interface BeanContainer<T> {
      */
     BeanContainer<T> and(T entry);
 
+    /**
+     * Size.
+     *
+     * @return the int
+     */
+    int size();
+
     @RequiredArgsConstructor
     class ListBeanContainer<T> implements BeanContainer<T> {
         private final List<T> items;
 
         @Override
-        public List<T> get() {
+        public List<T> toList() {
             return this.items;
         }
 
@@ -63,6 +90,16 @@ public interface BeanContainer<T> {
         public BeanContainer<T> and(final T entry) {
             items.add(entry);
             return this;
+        }
+
+        @Override
+        public int size() {
+            return this.items.size();
+        }
+
+        @Override
+        public Set<T> toSet() {
+            return new LinkedHashSet<>(this.items);
         }
     }
 }

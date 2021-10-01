@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -57,7 +58,7 @@ public class LdapAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
-        public Collection<AuthenticationHandler> ldapAuthenticationHandlers(
+        public BeanContainer<AuthenticationHandler> ldapAuthenticationHandlers(
             @Qualifier("ldapAuthenticationHandlerSetFactoryBean")
             final SetFactoryBean ldapAuthenticationHandlerSetFactoryBean,
             final CasConfigurationProperties casProperties,
@@ -79,7 +80,7 @@ public class LdapAuthenticationConfiguration {
                 handlers.add(handler);
             });
             ldapAuthenticationHandlerSetFactoryBean.getObject().addAll(handlers);
-            return handlers;
+            return BeanContainer.of(handlers);
         }
 
         @ConditionalOnMissingBean(name = "ldapAuthenticationEventExecutionPlanConfigurer")
@@ -88,10 +89,10 @@ public class LdapAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer ldapAuthenticationEventExecutionPlanConfigurer(
             @Qualifier("ldapAuthenticationHandlers")
-            final Collection<AuthenticationHandler> ldapAuthenticationHandlers,
+            final BeanContainer<AuthenticationHandler> ldapAuthenticationHandlers,
             @Qualifier("defaultPrincipalResolver")
             final PrincipalResolver defaultPrincipalResolver) throws Exception {
-            return plan -> ldapAuthenticationHandlers.forEach(handler -> {
+            return plan -> ldapAuthenticationHandlers.toList().forEach(handler -> {
                 LOGGER.info("Registering LDAP authentication for [{}]", handler.getName());
                 plan.registerAuthenticationHandlerWithPrincipalResolver(handler, defaultPrincipalResolver);
             });

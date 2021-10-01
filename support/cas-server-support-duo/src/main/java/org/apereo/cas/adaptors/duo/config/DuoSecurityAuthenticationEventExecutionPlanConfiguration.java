@@ -93,7 +93,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
             final ServicesManager servicesManager) {
 
             AnnotationAwareOrderComparator.sort(resolvers);
-            return BeanContainer.toList(casProperties.getAuthn()
+            return BeanContainer.of(casProperties.getAuthn()
                 .getMfa()
                 .getDuo()
                 .stream()
@@ -114,7 +114,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
             @Qualifier("duoAuthenticationHandlers")
             final BeanContainer<DuoSecurityAuthenticationHandler> duoAuthenticationHandlers) {
             return plan -> {
-                duoAuthenticationHandlers.get().forEach(dh -> {
+                duoAuthenticationHandlers.toList().forEach(dh -> {
                     plan.registerAuthenticationHandler(dh);
                     plan.registerAuthenticationMetadataPopulator(duoAuthenticationMetaDataPopulator(dh, casProperties));
                 });

@@ -42,14 +42,15 @@ public class AuthenticatedLdapAuthenticationHandlerTests {
         @Test
         public void verifyAuthenticateNotFound() {
             assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
-                () -> ldapAuthenticationHandlers.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("notfound", "badpassword")))));
+                () -> ldapAuthenticationHandlers.toList()
+                    .forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("notfound", "badpassword")))));
         }
 
         @Test
         public void verifyAuthenticateFailureNotFound() {
             assertNotEquals(ldapAuthenticationHandlers.size(), 0);
             assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
-                () -> ldapAuthenticationHandlers.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("bad", "bad")))));
+                () -> ldapAuthenticationHandlers.toList().forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("bad", "bad")))));
         }
     }
 

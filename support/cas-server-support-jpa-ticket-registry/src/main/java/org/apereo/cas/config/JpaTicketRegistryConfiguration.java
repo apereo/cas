@@ -17,6 +17,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.InetAddressUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +36,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManagerFactory;
-import java.util.Set;
 
 /**
  * This this {@link JpaTicketRegistryConfiguration}.
@@ -46,10 +46,10 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "jpaTicketRegistryConfiguration", proxyBeanMethods = false)
 public class JpaTicketRegistryConfiguration {
-
-    @Configuration(value = "JpaTicketRegistryEntityConfiguration", proxyBeanMethods = false)
+    
+    @Configuration(value = "JpaTicketRegistryDataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class JpaTicketRegistryEntityConfiguration {
+    public static class JpaTicketRegistryDataConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceTicket")
@@ -59,13 +59,18 @@ public class JpaTicketRegistryConfiguration {
             return JpaBeans.newDataSource(casProperties.getTicket().getRegistry().getJpa());
         }
 
+    }
+    @Configuration(value = "JpaTicketRegistryEntityConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class JpaTicketRegistryEntityConfiguration {
         @Bean
         @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Set<String> ticketPackagesToScan(final CasConfigurationProperties casProperties) {
+        public BeanContainer<String> ticketPackagesToScan(final CasConfigurationProperties casProperties) {
             val jpa = casProperties.getTicket().getRegistry().getJpa();
             val type = new JpaTicketEntityFactory(jpa.getDialect()).getType();
-            return CollectionUtils.wrapSet(type.getPackage().getName(), JpaLockEntity.class.getPackage().getName());
+            return BeanContainer.of(CollectionUtils.wrapSet(type.getPackage().getName(),
+                JpaLockEntity.class.getPackage().getName()));
         }
 
         @Bean
@@ -76,7 +81,7 @@ public class JpaTicketRegistryConfiguration {
             @Qualifier("dataSourceTicket")
             final CloseableDataSource dataSourceTicket,
             @Qualifier("ticketPackagesToScan")
-            final Set<String> ticketPackagesToScan,
+            final BeanContainer<String> ticketPackagesToScan,
             @Qualifier("jpaBeanFactory")
             final JpaBeanFactory jpaBeanFactory) {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -84,7 +89,7 @@ public class JpaTicketRegistryConfiguration {
                 .jpaVendorAdapter(jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc()))
                 .persistenceUnitName("jpaTicketRegistryContext")
                 .dataSource(dataSourceTicket)
-                .packagesToScan(ticketPackagesToScan)
+                .packagesToScan(ticketPackagesToScan.toSet())
                 .build();
             return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getTicket().getRegistry().getJpa());
         }
