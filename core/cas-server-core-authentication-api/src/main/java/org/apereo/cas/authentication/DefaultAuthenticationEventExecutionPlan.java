@@ -208,7 +208,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
         if (resolvedPolicies.isEmpty()) {
-            LOGGER.debug("Authentication policy resolvers produced no candidate authentication handler. Using default policies");
+            LOGGER.debug("Authentication policy resolvers produced no candidate authentication policy. Using default policies");
             return list;
         }
         LOGGER.debug("Resolved authentication policies are [{}]", resolvedPolicies);

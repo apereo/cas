@@ -28,6 +28,7 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.UserProfile;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ import java.util.stream.Stream;
 @Slf4j
 public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<OidcConfigurationContext> {
 
-    public OidcIdTokenGeneratorService(final OidcConfigurationContext configurationContext) {
+    public OidcIdTokenGeneratorService(final ObjectProvider<OidcConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 

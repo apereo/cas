@@ -378,6 +378,7 @@ public class CasWebflowContextConfiguration {
         @Bean
         @Autowired
         public ViewFactoryCreator viewFactoryCreator(
+            final ObjectProvider<List<ViewResolver>> resolversProvider,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("registeredServiceViewResolver")
             final ObjectProvider<ViewResolver> registeredServiceViewResolver) {
@@ -386,8 +387,7 @@ public class CasWebflowContextConfiguration {
             if (viewResolver != null) {
                 resolver.setViewResolvers(CollectionUtils.wrap(viewResolver));
             } else {
-                val resolverBeans = applicationContext.getBeansOfType(ViewResolver.class, false, true);
-                val resolvers = new ArrayList<>(resolverBeans.values());
+                val resolvers = new ArrayList<>(resolversProvider.getObject());
                 AnnotationAwareOrderComparator.sort(resolvers);
                 resolver.setViewResolvers(resolvers);
             }

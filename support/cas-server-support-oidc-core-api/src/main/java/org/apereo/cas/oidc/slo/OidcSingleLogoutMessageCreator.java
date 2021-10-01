@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwt.JwtClaims;
+import org.springframework.beans.factory.ObjectProvider;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -29,17 +30,19 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OidcSingleLogoutMessageCreator implements SingleLogoutMessageCreator {
 
-    private final OidcConfigurationContext configurationContext;
+    private final ObjectProvider<OidcConfigurationContext> configurationProvider;
 
     @Override
     public SingleLogoutMessage create(final SingleLogoutRequestContext request) {
+        val configurationContext = configurationProvider.getObject();
+
         val builder = SingleLogoutMessage.builder();
         if (request.getLogoutType() == RegisteredServiceLogoutType.BACK_CHANNEL) {
             LOGGER.trace("Building logout token for [{}]", request.getRegisteredService());
 
             val claims = buildJwtClaims(request);
             val logoutToken = configurationContext.getIdTokenSigningAndEncryptionService()
-                    .encode((OidcRegisteredService) request.getRegisteredService(), claims);
+                .encode((OidcRegisteredService) request.getRegisteredService(), claims);
             return builder.payload(logoutToken).build();
         }
         return builder.payload(StringUtils.EMPTY).build();
@@ -52,9 +55,9 @@ public class OidcSingleLogoutMessageCreator implements SingleLogoutMessageCreato
      * @return the jwt claims
      */
     protected JwtClaims buildJwtClaims(final SingleLogoutRequestContext request) {
-
+        val configurationContext = configurationProvider.getObject();
         val claims = new JwtClaims();
-        claims.setIssuer(this.configurationContext.getIssuerService().determineIssuer(Optional.empty()));
+        claims.setIssuer(configurationContext.getIssuerService().determineIssuer(Optional.empty()));
         claims.setSubject(request.getExecutionRequest().getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
         claims.setAudience(((OidcRegisteredService) request.getRegisteredService()).getClientId());
         claims.setIssuedAtToNow();

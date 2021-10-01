@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.pac4j.core.context.session.SessionStore;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * This is {@link UmaConfigurationContext}.
@@ -52,4 +53,6 @@ public class UmaConfigurationContext {
     private final SessionStore sessionStore;
 
     private final CentralAuthenticationService centralAuthenticationService;
+
+    private final ConfigurableApplicationContext applicationContext;
 }

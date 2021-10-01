@@ -214,7 +214,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
             var metadata = writer.toString();
 
             val customizers = configurationContext.getApplicationContext()
-                .getBeansOfType(SamlIdPMetadataCustomizer.class, false, true).values();
+                .getBeansOfType(SamlIdPMetadataCustomizer.class).values();
             if (!customizers.isEmpty()) {
                 val openSamlConfigBean = configurationContext.getOpenSamlConfigBean();
                 val entityDescriptor = SamlUtils.transformSamlObject(openSamlConfigBean, metadata, EntityDescriptor.class);

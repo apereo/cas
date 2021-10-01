@@ -270,7 +270,7 @@ public class MultifactorAuthenticationUtils {
     public static Map<String, MultifactorAuthenticationProvider> getAvailableMultifactorAuthenticationProviders(
         final ApplicationContext applicationContext) {
         try {
-            return applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
+            return applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class);
         } catch (final Exception e) {
             LOGGER.trace("No beans of type [{}] are available in the application context. "
                     + "CAS may not be configured to handle multifactor authentication requests in absence of a provider",

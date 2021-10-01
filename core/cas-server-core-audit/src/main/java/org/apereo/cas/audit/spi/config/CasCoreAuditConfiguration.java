@@ -60,7 +60,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -92,10 +91,7 @@ public class CasCoreAuditConfiguration {
         @ConditionalOnMissingBean(name = "auditPrincipalIdProvider")
         @Bean
         @Autowired
-        public AuditPrincipalIdProvider auditPrincipalIdProvider(
-            final ConfigurableApplicationContext applicationContext) {
-            val resolvers = applicationContext.getBeansOfType(AuditPrincipalIdProvider.class, false, true);
-            val providers = new ArrayList<>(resolvers.values());
+        public AuditPrincipalIdProvider auditPrincipalIdProvider(final List<AuditPrincipalIdProvider> providers) {
             AnnotationAwareOrderComparator.sortIfNecessary(providers);
             return new ChainingAuditPrincipalIdProvider(providers);
         }

@@ -109,11 +109,9 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
      */
     @ReadOperation
     @Operation(summary = "Get Spring webflow report using an optional flow id", parameters = {@Parameter(name = "flowId")})
-    public Map<?, ?> getReport(
-        @Nullable
-        final String flowId) {
+    public Map<?, ?> getReport(@Nullable final String flowId) {
         val jsonMap = new LinkedHashMap<String, Object>();
-        val map = applicationContext.getBeansOfType(FlowDefinitionRegistry.class, false, true);
+        val map = applicationContext.getBeansOfType(FlowDefinitionRegistry.class);
 
         map.forEach((k, value) -> Arrays.stream(value.getFlowDefinitionIds())
             .filter(currentId -> StringUtils.isBlank(flowId) || flowId.equalsIgnoreCase(currentId))

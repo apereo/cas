@@ -74,7 +74,7 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link CasCoreWebflowConfiguration}.
@@ -230,19 +230,15 @@ public class CasCoreWebflowConfiguration {
             final ResponseBuilderLocator responseBuilderLocator) {
             return new InjectResponseHeadersAction(responseBuilderLocator);
         }
-
-
+        
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
-        public Action authenticationExceptionHandler(final ConfigurableApplicationContext applicationContext) {
-            val beans = applicationContext.getBeansOfType(CasWebflowExceptionHandler.class, false, true);
-            val handlers = new ArrayList<CasWebflowExceptionHandler>(beans.values());
+        public Action authenticationExceptionHandler(final List<CasWebflowExceptionHandler> handlers) {
             AnnotationAwareOrderComparator.sort(handlers);
             return new AuthenticationExceptionHandlerAction(handlers);
         }
-
     }
 
     @Configuration(value = "CasCoreWebflowExceptionHandlingConfiguration", proxyBeanMethods = false)
@@ -345,9 +341,7 @@ public class CasCoreWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SingleSignOnParticipationStrategy singleSignOnParticipationStrategy(
-            final ConfigurableApplicationContext applicationContext) {
-            val resolvers = applicationContext.getBeansOfType(SingleSignOnParticipationStrategyConfigurer.class, false, true);
-            val providers = new ArrayList<SingleSignOnParticipationStrategyConfigurer>(resolvers.values());
+            final List<SingleSignOnParticipationStrategyConfigurer> providers) {
             AnnotationAwareOrderComparator.sort(providers);
             val chain = new ChainingSingleSignOnParticipationStrategy();
             providers.forEach(provider -> provider.configureStrategy(chain));

@@ -65,170 +65,188 @@ import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class PasswordManagementWebflowConfiguration {
-
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "passwordManagementSingleSignOnParticipationStrategy")
-    @Autowired
-    public SingleSignOnParticipationStrategy passwordManagementSingleSignOnParticipationStrategy(
-        @Qualifier("authenticationServiceSelectionPlan")
-        final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
-        @Qualifier("defaultTicketRegistrySupport")
-        final TicketRegistrySupport ticketRegistrySupport,
-        @Qualifier(CentralAuthenticationService.BEAN_NAME)
-        final CentralAuthenticationService centralAuthenticationService,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager) {
-        return new PasswordManagementSingleSignOnParticipationStrategy(
-            servicesManager, ticketRegistrySupport, authenticationServiceSelectionPlan, centralAuthenticationService);
-    }
-
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "passwordManagementSingleSignOnParticipationStrategyConfigurer")
-    public SingleSignOnParticipationStrategyConfigurer passwordManagementSingleSignOnParticipationStrategyConfigurer(
-        @Qualifier("passwordManagementSingleSignOnParticipationStrategy")
-        final SingleSignOnParticipationStrategy passwordManagementSingleSignOnParticipationStrategy) {
-        return chain -> chain.addStrategy(passwordManagementSingleSignOnParticipationStrategy);
-    }
-
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Bean
-    @Autowired
-    public HandlerAdapter passwordResetHandlerAdapter(
-        @Qualifier("loginFlowExecutor")
-        final FlowExecutor loginFlowExecutor) {
-        val handler = new FlowHandlerAdapter() {
-            @Override
-            public boolean supports(final Object handler) {
-                return super.supports(handler) && ((FlowHandler) handler)
-                    .getFlowId().equals(PasswordManagementWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
-            }
-        };
-        handler.setFlowExecutor(loginFlowExecutor);
-        return handler;
-    }
-
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Bean
-    @Autowired
-    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INIT_PASSWORD_CHANGE)
-    public Action initPasswordChangeAction(final CasConfigurationProperties casProperties) {
-        return new InitPasswordChangeAction(casProperties);
-    }
-
-    @ConditionalOnMissingBean(name = "initPasswordResetAction")
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Bean
-    @Autowired
-    public Action initPasswordResetAction(
-        @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-        final PasswordManagementService passwordManagementService) {
-        return new InitPasswordResetAction(passwordManagementService);
-    }
-
-    @ConditionalOnMissingBean(name = "passwordChangeAction")
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Bean
-    @Autowired
-    public Action passwordChangeAction(
-        @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-        final PasswordManagementService passwordManagementService,
-        @Qualifier("passwordValidationService")
-        final PasswordValidationService passwordValidationService) {
-        return new PasswordChangeAction(passwordManagementService, passwordValidationService);
-    }
-
-    @ConditionalOnMissingBean(name = "sendPasswordResetInstructionsAction")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public Action sendPasswordResetInstructionsAction(
-        final CasConfigurationProperties casProperties,
-        @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-        final PasswordManagementService passwordManagementService,
-        @Qualifier(TicketRegistry.BEAN_NAME)
-        final TicketRegistry ticketRegistry,
-        @Qualifier("defaultPrincipalResolver")
-        final PrincipalResolver defaultPrincipalResolver,
-        @Qualifier("communicationsManager")
-        final CommunicationsManager communicationsManager,
-        @Qualifier("defaultTicketFactory")
-        final TicketFactory ticketFactory) {
-        return new SendPasswordResetInstructionsAction(casProperties, communicationsManager,
-            passwordManagementService, ticketRegistry, ticketFactory, defaultPrincipalResolver);
-    }
-
-    @ConditionalOnMissingBean(name = "verifyPasswordResetRequestAction")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public Action verifyPasswordResetRequestAction(
-        final CasConfigurationProperties casProperties,
-        @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-        final PasswordManagementService passwordManagementService,
-        @Qualifier(CentralAuthenticationService.BEAN_NAME)
-        final CentralAuthenticationService centralAuthenticationService) {
-        return new VerifyPasswordResetRequestAction(casProperties,
-            passwordManagementService, centralAuthenticationService);
-    }
-
-    @ConditionalOnMissingBean(name = "handlePasswordExpirationWarningMessagesAction")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public Action handlePasswordExpirationWarningMessagesAction() {
-        return new HandlePasswordExpirationWarningMessagesAction();
-    }
-
-    @ConditionalOnMissingBean(name = "verifySecurityQuestionsAction")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public Action verifySecurityQuestionsAction(final CasConfigurationProperties casProperties,
-                                                @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-                                                final PasswordManagementService passwordManagementService) {
-        if (!casProperties.getAuthn().getPm().getReset().isSecurityQuestionsEnabled()) {
-            LOGGER.debug("Functionality to handle security questions for password management is not enabled");
-            return new StaticEventExecutionAction("success");
+    
+    @Configuration(value = "PasswordManagementWebflowSingleSignOnConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class PasswordManagementWebflowSingleSignOnConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "passwordManagementSingleSignOnParticipationStrategy")
+        @Autowired
+        public SingleSignOnParticipationStrategy passwordManagementSingleSignOnParticipationStrategy(
+            @Qualifier("authenticationServiceSelectionPlan")
+            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
+            @Qualifier("defaultTicketRegistrySupport")
+            final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return new PasswordManagementSingleSignOnParticipationStrategy(
+                servicesManager, ticketRegistrySupport, authenticationServiceSelectionPlan, centralAuthenticationService);
         }
-        return new VerifySecurityQuestionsAction(passwordManagementService);
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "passwordManagementSingleSignOnParticipationStrategyConfigurer")
+        public SingleSignOnParticipationStrategyConfigurer passwordManagementSingleSignOnParticipationStrategyConfigurer(
+            @Qualifier("passwordManagementSingleSignOnParticipationStrategy")
+            final SingleSignOnParticipationStrategy passwordManagementSingleSignOnParticipationStrategy) {
+            return chain -> chain.addStrategy(passwordManagementSingleSignOnParticipationStrategy);
+        }
+    }
+    
+    @Configuration(value = "PasswordManagementWebflowAdapterConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class PasswordManagementWebflowAdapterConfiguration {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @Autowired
+        public HandlerAdapter passwordResetHandlerAdapter(
+            @Qualifier("loginFlowExecutor")
+            final FlowExecutor loginFlowExecutor) {
+            val handler = new FlowHandlerAdapter() {
+                @Override
+                public boolean supports(final Object handler) {
+                    return super.supports(handler) && ((FlowHandler) handler)
+                        .getFlowId().equals(PasswordManagementWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
+                }
+            };
+            handler.setFlowExecutor(loginFlowExecutor);
+            return handler;
+        }
     }
 
-    @ConditionalOnMissingBean(name = "validatePasswordResetTokenAction")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public Action validatePasswordResetTokenAction(
-        @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-        final PasswordManagementService passwordManagementService,
-        @Qualifier(CentralAuthenticationService.BEAN_NAME)
-        final CentralAuthenticationService centralAuthenticationService) {
-        return new ValidatePasswordResetTokenAction(passwordManagementService, centralAuthenticationService);
+    @Configuration(value = "PasswordManagementWebflowBaseConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class PasswordManagementWebflowBaseConfiguration {
+        @ConditionalOnMissingBean(name = "passwordManagementWebflowConfigurer")
+        @Bean
+        @Autowired
+        public CasWebflowConfigurer passwordManagementWebflowConfigurer(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
+            return new PasswordManagementWebflowConfigurer(flowBuilderServices,
+                loginFlowDefinitionRegistry, applicationContext, casProperties);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "passwordManagementCasWebflowExecutionPlanConfigurer")
+        @Autowired
+        public CasWebflowExecutionPlanConfigurer passwordManagementCasWebflowExecutionPlanConfigurer(
+            @Qualifier("passwordManagementWebflowConfigurer")
+            final CasWebflowConfigurer passwordManagementWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(passwordManagementWebflowConfigurer);
+        }
     }
 
-    @ConditionalOnMissingBean(name = "passwordManagementWebflowConfigurer")
-    @Bean
-    @Autowired
-    public CasWebflowConfigurer passwordManagementWebflowConfigurer(
-        final CasConfigurationProperties casProperties,
-        final ConfigurableApplicationContext applicationContext,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-        final FlowBuilderServices flowBuilderServices) {
-        return new PasswordManagementWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, applicationContext, casProperties);
-    }
+    @Configuration(value = "PasswordManagementWebflowActionsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class PasswordManagementWebflowActionsConfiguration {
 
-    @Bean
-    @ConditionalOnMissingBean(name = "passwordManagementCasWebflowExecutionPlanConfigurer")
-    @Autowired
-    public CasWebflowExecutionPlanConfigurer passwordManagementCasWebflowExecutionPlanConfigurer(
-        @Qualifier("passwordManagementWebflowConfigurer")
-        final CasWebflowConfigurer passwordManagementWebflowConfigurer) {
-        return plan -> plan.registerWebflowConfigurer(passwordManagementWebflowConfigurer);
-    }
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @Autowired
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INIT_PASSWORD_CHANGE)
+        public Action initPasswordChangeAction(final CasConfigurationProperties casProperties) {
+            return new InitPasswordChangeAction(casProperties);
+        }
 
+        @ConditionalOnMissingBean(name = "initPasswordResetAction")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @Autowired
+        public Action initPasswordResetAction(
+            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
+            final PasswordManagementService passwordManagementService) {
+            return new InitPasswordResetAction(passwordManagementService);
+        }
+
+        @ConditionalOnMissingBean(name = "passwordChangeAction")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @Autowired
+        public Action passwordChangeAction(
+            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
+            final PasswordManagementService passwordManagementService,
+            @Qualifier("passwordValidationService")
+            final PasswordValidationService passwordValidationService) {
+            return new PasswordChangeAction(passwordManagementService, passwordValidationService);
+        }
+
+        @ConditionalOnMissingBean(name = "sendPasswordResetInstructionsAction")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public Action sendPasswordResetInstructionsAction(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
+            final PasswordManagementService passwordManagementService,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier("defaultPrincipalResolver")
+            final PrincipalResolver defaultPrincipalResolver,
+            @Qualifier("communicationsManager")
+            final CommunicationsManager communicationsManager,
+            @Qualifier("defaultTicketFactory")
+            final TicketFactory ticketFactory) {
+            return new SendPasswordResetInstructionsAction(casProperties, communicationsManager,
+                passwordManagementService, ticketRegistry, ticketFactory, defaultPrincipalResolver);
+        }
+
+        @ConditionalOnMissingBean(name = "verifyPasswordResetRequestAction")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public Action verifyPasswordResetRequestAction(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
+            final PasswordManagementService passwordManagementService,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService) {
+            return new VerifyPasswordResetRequestAction(casProperties,
+                passwordManagementService, centralAuthenticationService);
+        }
+
+        @ConditionalOnMissingBean(name = "handlePasswordExpirationWarningMessagesAction")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action handlePasswordExpirationWarningMessagesAction() {
+            return new HandlePasswordExpirationWarningMessagesAction();
+        }
+
+        @ConditionalOnMissingBean(name = "verifySecurityQuestionsAction")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public Action verifySecurityQuestionsAction(final CasConfigurationProperties casProperties,
+                                                    @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
+                                                    final PasswordManagementService passwordManagementService) {
+            if (!casProperties.getAuthn().getPm().getReset().isSecurityQuestionsEnabled()) {
+                LOGGER.debug("Functionality to handle security questions for password management is not enabled");
+                return new StaticEventExecutionAction("success");
+            }
+            return new VerifySecurityQuestionsAction(passwordManagementService);
+        }
+
+        @ConditionalOnMissingBean(name = "validatePasswordResetTokenAction")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public Action validatePasswordResetTokenAction(
+            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
+            final PasswordManagementService passwordManagementService,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService) {
+            return new ValidatePasswordResetTokenAction(passwordManagementService, centralAuthenticationService);
+        }
+
+    }
+    
     @ConditionalOnProperty(prefix = "cas.authn.pm.google-recaptcha", name = "enabled", havingValue = "true")
     @Configuration(value = "passwordManagementCaptchaConfiguration", proxyBeanMethods = false)
     public static class PasswordManagementCaptchaConfiguration {

@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.security.CasWebSecurityConfigurerAdapter;
 import org.apereo.cas.web.security.CasWebSecurityExpressionHandler;
@@ -28,6 +29,8 @@ import org.springframework.security.web.FilterInvocation;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.webflow.execution.Action;
+
+import java.util.List;
 
 /**
  * This is {@link CasWebAppSecurityConfiguration}.
@@ -64,12 +67,13 @@ public class CasWebAppSecurityConfiguration {
         @Autowired
         public WebSecurityConfigurerAdapter casWebSecurityConfigurerAdapter(
             final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
+            final List<ProtocolEndpointWebSecurityConfigurer> configurersList,
             final SecurityProperties securityProperties,
             final CasConfigurationProperties casProperties,
             @Qualifier("casWebSecurityExpressionHandler")
             final SecurityExpressionHandler<FilterInvocation> casWebSecurityExpressionHandler) {
             return new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
-                casWebSecurityExpressionHandler, pathMappedEndpoints);
+                casWebSecurityExpressionHandler, pathMappedEndpoints, configurersList);
         }
 
         @ConditionalOnProperty(name = "cas.monitor.endpoints.jdbc.query")
