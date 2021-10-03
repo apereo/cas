@@ -51,23 +51,47 @@ import org.springframework.webflow.execution.Action;
 public class CasSimpleMultifactorAuthenticationConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
-    @Configuration(value = "CasSimpleMultifactorAuthenticationWebflowConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "CasSimpleMultifactorAuthenticationActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasSimpleMultifactorAuthenticationWebflowConfiguration {
+    public static class CasSimpleMultifactorAuthenticationActionConfiguration {
+        @ConditionalOnMissingBean(name = "mfaSimpleMultifactorSendTokenAction")
         @Bean
-        @ConditionalOnMissingBean(name = "mfaSimpleAuthenticatorFlowRegistry")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
-        public FlowDefinitionRegistry mfaSimpleAuthenticatorFlowRegistry(
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
-            final FlowBuilder flowBuilder,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-            final FlowBuilderServices flowBuilderServices,
-            final ConfigurableApplicationContext applicationContext) {
-            val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
-            builder.addFlowBuilder(flowBuilder, CasSimpleMultifactorWebflowConfigurer.MFA_SIMPLE_EVENT_ID);
-            return builder.build();
+        public Action mfaSimpleMultifactorSendTokenAction(
+            @Qualifier("casSimpleMultifactorAuthenticationTicketFactory")
+            final CasSimpleMultifactorAuthenticationTicketFactory casSimpleMultifactorAuthenticationTicketFactory,
+            @Qualifier("mfaSimpleMultifactorTokenCommunicationStrategy")
+            final CasSimpleMultifactorTokenCommunicationStrategy mfaSimpleMultifactorTokenCommunicationStrategy,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier("communicationsManager")
+            final CommunicationsManager communicationsManager) {
+            val simple = casProperties.getAuthn().getMfa().getSimple();
+            return new CasSimpleMultifactorSendTokenAction(ticketRegistry,
+                communicationsManager, casSimpleMultifactorAuthenticationTicketFactory, simple,
+                mfaSimpleMultifactorTokenCommunicationStrategy);
         }
+    }
 
+    @Configuration(value = "CasSimpleMultifactorAuthenticationPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasSimpleMultifactorAuthenticationPlanConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "mfaSimpleCasWebflowExecutionPlanConfigurer")
+        @Autowired
+        public CasWebflowExecutionPlanConfigurer mfaSimpleCasWebflowExecutionPlanConfigurer(
+            @Qualifier("mfaSimpleMultifactorWebflowConfigurer")
+            final CasWebflowConfigurer mfaSimpleMultifactorWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(mfaSimpleMultifactorWebflowConfigurer);
+        }
+    }
+
+    @Configuration(value = "CasSimpleMultifactorAuthenticationBaseConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasSimpleMultifactorAuthenticationBaseConfiguration {
         @ConditionalOnMissingBean(name = "mfaSimpleMultifactorWebflowConfigurer")
         @Bean
         @Autowired
@@ -87,34 +111,23 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
             cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
             return cfg;
         }
+    }
 
+    @Configuration(value = "CasSimpleMultifactorAuthenticationWebflowConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasSimpleMultifactorAuthenticationWebflowConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = "mfaSimpleCasWebflowExecutionPlanConfigurer")
+        @ConditionalOnMissingBean(name = "mfaSimpleAuthenticatorFlowRegistry")
         @Autowired
-        public CasWebflowExecutionPlanConfigurer mfaSimpleCasWebflowExecutionPlanConfigurer(
-            @Qualifier("mfaSimpleMultifactorWebflowConfigurer")
-            final CasWebflowConfigurer mfaSimpleMultifactorWebflowConfigurer) {
-            return plan -> plan.registerWebflowConfigurer(mfaSimpleMultifactorWebflowConfigurer);
-        }
-
-        @ConditionalOnMissingBean(name = "mfaSimpleMultifactorSendTokenAction")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public Action mfaSimpleMultifactorSendTokenAction(
-            @Qualifier("casSimpleMultifactorAuthenticationTicketFactory")
-            final CasSimpleMultifactorAuthenticationTicketFactory casSimpleMultifactorAuthenticationTicketFactory,
-            @Qualifier("mfaSimpleMultifactorTokenCommunicationStrategy")
-            final CasSimpleMultifactorTokenCommunicationStrategy mfaSimpleMultifactorTokenCommunicationStrategy,
-            final CasConfigurationProperties casProperties,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier("communicationsManager")
-            final CommunicationsManager communicationsManager) {
-            val simple = casProperties.getAuthn().getMfa().getSimple();
-            return new CasSimpleMultifactorSendTokenAction(ticketRegistry,
-                communicationsManager, casSimpleMultifactorAuthenticationTicketFactory, simple,
-                mfaSimpleMultifactorTokenCommunicationStrategy);
+        public FlowDefinitionRegistry mfaSimpleAuthenticatorFlowRegistry(
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
+            final FlowBuilder flowBuilder,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices,
+            final ConfigurableApplicationContext applicationContext) {
+            val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
+            builder.addFlowBuilder(flowBuilder, CasSimpleMultifactorWebflowConfigurer.MFA_SIMPLE_EVENT_ID);
+            return builder.build();
         }
 
         @ConditionalOnMissingBean(name = "mfaSimpleMultifactorTokenCommunicationStrategy")

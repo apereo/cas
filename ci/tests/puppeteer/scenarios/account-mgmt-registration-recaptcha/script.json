@@ -5,7 +5,7 @@
     "--spring.mail.port=25000",
     
     "--cas.account-registration.mail.from=cas@apereo.org",
-    "--cas.account-registration.mail.html=true",
+    "--cas.account-registration.mail.html=false",
 
     "--cas.account-registration.google-recaptcha.enabled=true",
     "--cas.account-registration.google-recaptcha.verify-url=https://www.google.com/recaptcha/api/siteverify",

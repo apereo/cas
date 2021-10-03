@@ -20,6 +20,8 @@ public interface BeanContainer<T> {
     /**
      * To list container bean.
      *
+     * @param <T>     the type parameter
+     * @param entries the entries
      * @return the container bean
      */
     static <T> BeanContainer<T> of(final T... entries) {

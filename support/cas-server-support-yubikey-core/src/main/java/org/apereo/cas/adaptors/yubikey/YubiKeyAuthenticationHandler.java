@@ -12,8 +12,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import com.yubico.client.v2.ResponseStatus;
 import com.yubico.client.v2.YubicoClient;
-import com.yubico.client.v2.exceptions.YubicoValidationFailure;
-import com.yubico.client.v2.exceptions.YubicoVerificationException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -36,7 +34,8 @@ import java.security.GeneralSecurityException;
  */
 @Slf4j
 @Getter
-public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler implements MultifactorAuthenticationHandler {
+public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler
+    implements MultifactorAuthenticationHandler {
     private final YubiKeyAccountRegistry registry;
 
     private final YubicoClient client;
@@ -98,7 +97,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
                 return createHandlerResult(yubiKeyCredential, this.principalFactory.createPrincipal(uid));
             }
             throw new FailedLoginException("Authentication failed with status: " + status);
-        } catch (final YubicoVerificationException | YubicoValidationFailure e) {
+        } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException("YubiKey validation failed: " + e.getMessage());
         }
