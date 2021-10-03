@@ -19,7 +19,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -55,13 +54,13 @@ public class CasOAuth20ThrottleConfiguration {
         @Autowired
         public WebMvcConfigurer oauthThrottleWebMvcConfigurer(
             @Qualifier("authenticationThrottlingExecutionPlan")
-            final AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan) {
+            final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(final InterceptorRegistry registry) {
-                    authenticationThrottlingExecutionPlan.getAuthenticationThrottleInterceptors()
-                        .forEach(handler -> registry.addInterceptor(handler)
-                            .order(0).addPathPatterns(BASE_OAUTH20_URL.concat("/*")));
+                    authenticationThrottlingExecutionPlan.ifAvailable(plan ->
+                        plan.getAuthenticationThrottleInterceptors().forEach(handler -> registry.addInterceptor(handler)
+                            .order(0).addPathPatterns(BASE_OAUTH20_URL.concat("/*"))));
                 }
             };
         }

@@ -44,80 +44,107 @@ import org.springframework.webflow.execution.Action;
 public class SwivelConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
-    @Bean
-    @ConditionalOnMissingBean(name = "swivelAuthenticatorFlowRegistry")
-    @Autowired
-    public FlowDefinitionRegistry swivelAuthenticatorFlowRegistry(
-        final ConfigurableApplicationContext applicationContext,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-        final FlowBuilderServices flowBuilderServices,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
-        final FlowBuilder flowBuilder) {
-        val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
-        builder.addFlowBuilder(flowBuilder, SwivelMultifactorWebflowConfigurer.MFA_SWIVEL_EVENT_ID);
-        return builder.build();
+    @Configuration(value = "SwivelWebflowConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SwivelWebflowConfiguration {
+        @ConditionalOnMissingBean(name = "swivelMultifactorWebflowConfigurer")
+        @Bean
+        @Autowired
+        public CasWebflowConfigurer swivelMultifactorWebflowConfigurer(
+            @Qualifier("swivelAuthenticatorFlowRegistry")
+            final FlowDefinitionRegistry swivelAuthenticatorFlowRegistry,
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
+            val cfg = new SwivelMultifactorWebflowConfigurer(flowBuilderServices,
+                loginFlowDefinitionRegistry,
+                swivelAuthenticatorFlowRegistry, applicationContext, casProperties,
+                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+            cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
+            return cfg;
+        }
+
     }
 
-    @ConditionalOnMissingBean(name = "swivelMultifactorWebflowConfigurer")
-    @Bean
-    @Autowired
-    public CasWebflowConfigurer swivelMultifactorWebflowConfigurer(
-        @Qualifier("swivelAuthenticatorFlowRegistry")
-        final FlowDefinitionRegistry swivelAuthenticatorFlowRegistry,
-        final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-        final FlowBuilderServices flowBuilderServices) {
-        val cfg = new SwivelMultifactorWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry,
-            swivelAuthenticatorFlowRegistry, applicationContext, casProperties,
-            MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
-        cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
-        return cfg;
+    @Configuration(value = "SwivelWebflowEventsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SwivelWebflowEventsConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "swivelAuthenticationWebflowEventResolver")
+        @Autowired
+        public CasWebflowEventResolver swivelAuthenticationWebflowEventResolver(
+            @Qualifier("casWebflowConfigurationContext")
+            final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
+            return new SwivelAuthenticationWebflowEventResolver(casWebflowConfigurationContext);
+        }
+
     }
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "swivelAuthenticationWebflowEventResolver")
-    @Autowired
-    public CasWebflowEventResolver swivelAuthenticationWebflowEventResolver(
-        @Qualifier("casWebflowConfigurationContext")
-        final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
-        return new SwivelAuthenticationWebflowEventResolver(casWebflowConfigurationContext);
+    @Configuration(value = "SwivelWebflowActionsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SwivelWebflowActionsConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "swivelAuthenticationWebflowAction")
+        @Autowired
+        public Action swivelAuthenticationWebflowAction(
+            @Qualifier("swivelAuthenticationWebflowEventResolver")
+            final CasWebflowEventResolver swivelAuthenticationWebflowEventResolver) {
+            return new SwivelAuthenticationWebflowAction(swivelAuthenticationWebflowEventResolver);
+        }
+
     }
 
-    @Bean
-    @Autowired
-    public SwivelTuringImageGeneratorController swivelTuringImageGeneratorController(
-        final CasConfigurationProperties casProperties) {
-        val swivel = casProperties.getAuthn().getMfa().getSwivel();
-        return new SwivelTuringImageGeneratorController(swivel);
+    @Configuration(value = "SwivelWebflowRegistryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SwivelWebflowRegistryConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "swivelAuthenticatorFlowRegistry")
+        @Autowired
+        public FlowDefinitionRegistry swivelAuthenticatorFlowRegistry(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
+            final FlowBuilder flowBuilder) {
+            val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
+            builder.addFlowBuilder(flowBuilder, SwivelMultifactorWebflowConfigurer.MFA_SWIVEL_EVENT_ID);
+            return builder.build();
+        }
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "swivelCasWebflowExecutionPlanConfigurer")
-    @Autowired
-    public CasWebflowExecutionPlanConfigurer swivelCasWebflowExecutionPlanConfigurer(
-        @Qualifier("swivelMultifactorWebflowConfigurer")
-        final CasWebflowConfigurer swivelMultifactorWebflowConfigurer) {
-        return plan -> plan.registerWebflowConfigurer(swivelMultifactorWebflowConfigurer);
+    @Configuration(value = "SwivelWebConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SwivelWebConfiguration {
+        @Bean
+        @Autowired
+        public SwivelTuringImageGeneratorController swivelTuringImageGeneratorController(
+            final CasConfigurationProperties casProperties) {
+            val swivel = casProperties.getAuthn().getMfa().getSwivel();
+            return new SwivelTuringImageGeneratorController(swivel);
+        }
+
     }
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "swivelAuthenticationWebflowAction")
-    @Autowired
-    public Action swivelAuthenticationWebflowAction(
-        @Qualifier("swivelAuthenticationWebflowEventResolver")
-        final CasWebflowEventResolver swivelAuthenticationWebflowEventResolver) {
-        return new SwivelAuthenticationWebflowAction(swivelAuthenticationWebflowEventResolver);
+    @Configuration(value = "SwivelWebflowExecutionPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SwivelWebflowExecutionPlanConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "swivelCasWebflowExecutionPlanConfigurer")
+        @Autowired
+        public CasWebflowExecutionPlanConfigurer swivelCasWebflowExecutionPlanConfigurer(
+            @Qualifier("swivelMultifactorWebflowConfigurer")
+            final CasWebflowConfigurer swivelMultifactorWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(swivelMultifactorWebflowConfigurer);
+        }
+
     }
 
-    /**
-     * The swivel multifactor trust configuration.
-     */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.swivel")
     @Configuration(value = "swivelMultifactorTrustConfiguration", proxyBeanMethods = false)

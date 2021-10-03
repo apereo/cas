@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -116,6 +117,7 @@ public abstract class BaseDelegatedAuthenticationTests {
         CasPersonDirectoryTestConfiguration.class,
         CasCookieConfiguration.class,
         CasCoreConfiguration.class,
+        CasCoreAuditConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         DelegatedAuthenticationWebflowTestConfiguration.class,
         Pac4jDelegatedAuthenticationConfiguration.class,

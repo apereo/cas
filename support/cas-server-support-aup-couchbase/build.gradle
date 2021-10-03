@@ -21,6 +21,7 @@ dependencies {
     implementation project(":support:cas-server-support-couchbase-core")
 
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-logout")

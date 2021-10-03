@@ -379,14 +379,13 @@ public class CasWebflowContextConfiguration {
         @Autowired
         public ViewFactoryCreator viewFactoryCreator(
             final ObjectProvider<List<ViewResolver>> resolversProvider,
-            final ConfigurableApplicationContext applicationContext,
             @Qualifier("registeredServiceViewResolver")
             final ObjectProvider<ViewResolver> registeredServiceViewResolver) {
             val viewResolver = registeredServiceViewResolver.getIfAvailable();
             val resolver = new MvcViewFactoryCreator();
             if (viewResolver != null) {
                 resolver.setViewResolvers(CollectionUtils.wrap(viewResolver));
-            } else {
+            } else if (resolversProvider.getIfAvailable() != null) {
                 val resolvers = new ArrayList<>(resolversProvider.getObject());
                 AnnotationAwareOrderComparator.sort(resolvers);
                 resolver.setViewResolvers(resolvers);

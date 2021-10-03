@@ -171,19 +171,10 @@ public class CasCoreServicesConfiguration {
             return new DefaultRegisteredServiceResourceNamingStrategy();
         }
     }
-
-    @Configuration(value = "CasCoreServiceRegistryConfiguration", proxyBeanMethods = false)
+    
+    @Configuration(value = "CasCoreServiceRegistryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreServiceRegistryConfiguration {
-
-        private static Optional<List<RegisteredService>> getInMemoryRegisteredServices(final ApplicationContext applicationContext) {
-            if (applicationContext.containsBean("inMemoryRegisteredServices")) {
-                return Optional.of(applicationContext.getBean("inMemoryRegisteredServices", List.class));
-            }
-            return Optional.empty();
-        }
-
-
+    public static class CasCoreServiceRegistryPlanConfiguration {
         @ConditionalOnMissingBean(name = "serviceRegistryExecutionPlan")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -198,6 +189,18 @@ public class CasCoreServicesConfiguration {
                 }));
             });
             return plan;
+        }
+    }
+
+    @Configuration(value = "CasCoreServiceRegistryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreServiceRegistryConfiguration {
+
+        private static Optional<List<RegisteredService>> getInMemoryRegisteredServices(final ApplicationContext applicationContext) {
+            if (applicationContext.containsBean("inMemoryRegisteredServices")) {
+                return Optional.of(applicationContext.getBean("inMemoryRegisteredServices", List.class));
+            }
+            return Optional.empty();
         }
 
         @Bean

@@ -14,6 +14,7 @@ import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.QRAuthenticationConfiguration;
 import org.apereo.cas.config.TokenCoreConfiguration;
@@ -65,6 +66,7 @@ public abstract class BaseQRAuthenticationTokenValidatorServiceTests {
         CasCookieConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreUtilConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
         CasCoreNotificationsConfiguration.class
     })
     public static class SharedTestConfiguration {
