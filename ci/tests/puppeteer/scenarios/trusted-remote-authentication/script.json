@@ -1,0 +1,6 @@
+{
+  "dependencies": "trusted-webflow",
+  "properties": [
+    "--cas.authn.trusted.remote-principal-header=customprincipal"
+  ]
+}

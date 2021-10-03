@@ -111,10 +111,9 @@ public class PasswordManagementConfiguration {
         }
     }
 
-    @Configuration(value = "PasswordManagementCoreConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "PasswordManagementCipherConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class PasswordManagementCoreConfiguration {
-
+    public static class PasswordManagementCipherConfiguration {
         @ConditionalOnMissingBean(name = "passwordManagementCipherExecutor")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -127,8 +126,12 @@ public class PasswordManagementConfiguration {
             }
             return CipherExecutor.noOp();
         }
-
-
+    }
+    
+    @Configuration(value = "PasswordManagementCoreConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class PasswordManagementCoreConfiguration {
+        
         @ConditionalOnMissingBean(name = PasswordManagementService.DEFAULT_BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
