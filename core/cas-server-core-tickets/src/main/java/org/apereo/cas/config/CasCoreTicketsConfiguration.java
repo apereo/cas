@@ -213,7 +213,8 @@ public class CasCoreTicketsConfiguration {
         }
     }
 
-
+    @Configuration(value = "CasCoreTicketsFactoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreTicketsFactoryConfiguration {
         @ConditionalOnMissingBean(name = "defaultProxyGrantingTicketFactoryConfigurer")
         @Bean
@@ -265,64 +266,33 @@ public class CasCoreTicketsConfiguration {
             final TicketGrantingTicketFactory defaultTicketGrantingTicketFactory) {
             return () -> defaultTicketGrantingTicketFactory;
         }
+    }
 
+    @Configuration(value = "CasCoreTicketGrantingTicketFactoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreTicketGrantingTicketFactoryConfiguration {
+        @ConditionalOnMissingBean(name = "defaultTicketGrantingTicketFactory")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public TicketGrantingTicketFactory defaultTicketGrantingTicketFactory(
+            @Qualifier("grantingTicketExpirationPolicy")
+            final ExpirationPolicyBuilder grantingTicketExpirationPolicy,
+            @Qualifier("protocolTicketCipherExecutor")
+            final CipherExecutor protocolTicketCipherExecutor,
+            @Qualifier("ticketGrantingTicketUniqueIdGenerator")
+            final UniqueTicketIdGenerator ticketGrantingTicketUniqueIdGenerator,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return new DefaultTicketGrantingTicketFactory(ticketGrantingTicketUniqueIdGenerator,
+                grantingTicketExpirationPolicy, protocolTicketCipherExecutor, servicesManager);
+        }
 
     }
 
-    @Configuration(value = "CasCoreTicketFactoryConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "CasCoreServiceTicketFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreTicketFactoryConfiguration {
-        @ConditionalOnMissingBean(name = "defaultProxyGrantingTicketFactory")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory(
-            @Qualifier("proxyGrantingTicketExpirationPolicy")
-            final ExpirationPolicyBuilder proxyGrantingTicketExpirationPolicy,
-            @Qualifier("proxyGrantingTicketUniqueIdGenerator")
-            final UniqueTicketIdGenerator proxyGrantingTicketUniqueIdGenerator,
-            @Qualifier("protocolTicketCipherExecutor")
-            final CipherExecutor protocolTicketCipherExecutor,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
-            return new DefaultProxyGrantingTicketFactory(
-                proxyGrantingTicketUniqueIdGenerator,
-                proxyGrantingTicketExpirationPolicy,
-                protocolTicketCipherExecutor,
-                servicesManager);
-        }
-
-
-        @ConditionalOnMissingBean(name = "defaultProxyTicketFactory")
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Bean
-        @Autowired
-        public ProxyTicketFactory defaultProxyTicketFactory(
-            @Qualifier("protocolTicketCipherExecutor")
-            final CipherExecutor protocolTicketCipherExecutor,
-            @Qualifier("proxyTicketExpirationPolicy")
-            final ExpirationPolicyBuilder proxyTicketExpirationPolicy,
-            final CasConfigurationProperties casProperties,
-            @Qualifier("uniqueIdGeneratorsMap")
-            final Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
-            val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().getCore().isOnlyTrackMostRecentSession();
-            return new DefaultProxyTicketFactory(proxyTicketExpirationPolicy, uniqueIdGeneratorsMap,
-                protocolTicketCipherExecutor, onlyTrackMostRecentSession, servicesManager);
-        }
-
-
-        @ConditionalOnMissingBean(name = "defaultTransientSessionTicketFactory")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public TransientSessionTicketFactory defaultTransientSessionTicketFactory(
-            @Qualifier("transientSessionTicketExpirationPolicy")
-            final ExpirationPolicyBuilder transientSessionTicketExpirationPolicy) {
-            return new DefaultTransientSessionTicketFactory(transientSessionTicketExpirationPolicy);
-        }
-
+    public static class CasCoreServiceTicketFactoryConfiguration {
 
         @ConditionalOnMissingBean(name = "defaultServiceTicketFactory")
         @Bean
@@ -345,24 +315,73 @@ public class CasCoreTicketsConfiguration {
         }
 
 
-        @ConditionalOnMissingBean(name = "defaultTicketGrantingTicketFactory")
+    }
+
+    @Configuration(value = "CasCoreProxyTicketFactoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreProxyTicketFactoryConfiguration {
+        @ConditionalOnMissingBean(name = "defaultProxyTicketFactory")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @Autowired
+        public ProxyTicketFactory defaultProxyTicketFactory(
+            @Qualifier("protocolTicketCipherExecutor")
+            final CipherExecutor protocolTicketCipherExecutor,
+            @Qualifier("proxyTicketExpirationPolicy")
+            final ExpirationPolicyBuilder proxyTicketExpirationPolicy,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("uniqueIdGeneratorsMap")
+            final Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().getCore().isOnlyTrackMostRecentSession();
+            return new DefaultProxyTicketFactory(proxyTicketExpirationPolicy, uniqueIdGeneratorsMap,
+                protocolTicketCipherExecutor, onlyTrackMostRecentSession, servicesManager);
+        }
+    }
+
+    @Configuration(value = "CasCoreTransientSessionTicketFactoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreTransientSessionTicketFactoryConfiguration {
+
+        @ConditionalOnMissingBean(name = "defaultTransientSessionTicketFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
-        public TicketGrantingTicketFactory defaultTicketGrantingTicketFactory(
-            @Qualifier("grantingTicketExpirationPolicy")
-            final ExpirationPolicyBuilder grantingTicketExpirationPolicy,
+        public TransientSessionTicketFactory defaultTransientSessionTicketFactory(
+            @Qualifier("transientSessionTicketExpirationPolicy")
+            final ExpirationPolicyBuilder transientSessionTicketExpirationPolicy) {
+            return new DefaultTransientSessionTicketFactory(transientSessionTicketExpirationPolicy);
+        }
+    }
+
+    @Configuration(value = "CasCoreProxyGrantingTicketFactoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreProxyGrantingTicketFactoryConfiguration {
+        @ConditionalOnMissingBean(name = "defaultProxyGrantingTicketFactory")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory(
+            @Qualifier("proxyGrantingTicketExpirationPolicy")
+            final ExpirationPolicyBuilder proxyGrantingTicketExpirationPolicy,
+            @Qualifier("proxyGrantingTicketUniqueIdGenerator")
+            final UniqueTicketIdGenerator proxyGrantingTicketUniqueIdGenerator,
             @Qualifier("protocolTicketCipherExecutor")
             final CipherExecutor protocolTicketCipherExecutor,
-            @Qualifier("ticketGrantingTicketUniqueIdGenerator")
-            final UniqueTicketIdGenerator ticketGrantingTicketUniqueIdGenerator,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new DefaultTicketGrantingTicketFactory(ticketGrantingTicketUniqueIdGenerator,
-                grantingTicketExpirationPolicy, protocolTicketCipherExecutor, servicesManager);
+            return new DefaultProxyGrantingTicketFactory(
+                proxyGrantingTicketUniqueIdGenerator,
+                proxyGrantingTicketExpirationPolicy,
+                protocolTicketCipherExecutor,
+                servicesManager);
         }
+    }
 
-
+    @Configuration(value = "CasCoreTicketPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreTicketPlanConfiguration {
         @ConditionalOnMissingBean(name = "defaultTicketFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -376,8 +395,6 @@ public class CasCoreTicketsConfiguration {
             });
             return parentFactory;
         }
-
-
     }
 
     @Configuration(value = "CasCoreTicketExpirationPolicyConfiguration", proxyBeanMethods = false)
@@ -391,7 +408,6 @@ public class CasCoreTicketsConfiguration {
             final CasConfigurationProperties casProperties) {
             return new TransientSessionTicketExpirationPolicyBuilder(casProperties);
         }
-
 
         @ConditionalOnMissingBean(name = "grantingTicketExpirationPolicy")
         @Bean

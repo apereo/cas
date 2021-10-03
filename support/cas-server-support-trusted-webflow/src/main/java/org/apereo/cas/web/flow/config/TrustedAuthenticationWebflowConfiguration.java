@@ -28,28 +28,38 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class TrustedAuthenticationWebflowConfiguration {
 
-    @ConditionalOnMissingBean(name = "trustedWebflowConfigurer")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public CasWebflowConfigurer trustedWebflowConfigurer(
-        final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry loginFlowRegistry,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-        final FlowBuilderServices flowBuilderServices) {
-        return new TrustedAuthenticationWebflowConfigurer(flowBuilderServices,
-            loginFlowRegistry,
-            applicationContext, casProperties);
+
+    @Configuration(value = "TrustedAuthenticationWebflowBaseConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class TrustedAuthenticationWebflowBaseConfiguration {
+        @ConditionalOnMissingBean(name = "trustedWebflowConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public CasWebflowConfigurer trustedWebflowConfigurer(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry loginFlowRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
+            return new TrustedAuthenticationWebflowConfigurer(flowBuilderServices,
+                loginFlowRegistry,
+                applicationContext, casProperties);
+        }
+
     }
 
-    @Bean
-    @Autowired
-    @ConditionalOnMissingBean(name = "trustedCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer trustedCasWebflowExecutionPlanConfigurer(
-        @Qualifier("trustedWebflowConfigurer")
-        final CasWebflowConfigurer trustedWebflowConfigurer) {
-        return plan -> plan.registerWebflowConfigurer(trustedWebflowConfigurer);
+    @Configuration(value = "TrustedAuthenticationWebflowPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class TrustedAuthenticationWebflowPlanConfiguration {
+        @Bean
+        @Autowired
+        @ConditionalOnMissingBean(name = "trustedCasWebflowExecutionPlanConfigurer")
+        public CasWebflowExecutionPlanConfigurer trustedCasWebflowExecutionPlanConfigurer(
+            @Qualifier("trustedWebflowConfigurer")
+            final CasWebflowConfigurer trustedWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(trustedWebflowConfigurer);
+        }
     }
 }
