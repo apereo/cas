@@ -155,7 +155,8 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
         }
         if (yubi.getAllowedDevices() != null && !yubi.getAllowedDevices().isEmpty()) {
             LOGGER.debug("Using statically-defined devices for [{}] as the YubiKey account registry", yubi.getAllowedDevices().keySet());
-            val map = (Map<String, YubiKeyAccount>) yubi.getAllowedDevices().entrySet().stream().map(entry -> YubiKeyAccount.builder().id(System.currentTimeMillis()).username(entry.getKey())
+            val map = (Map<String, YubiKeyAccount>) yubi.getAllowedDevices().entrySet()
+                .stream().map(entry -> YubiKeyAccount.builder().id(System.currentTimeMillis()).username(entry.getKey())
                 .devices(
                     List.of(YubiKeyRegisteredDevice.builder().publicId(entry.getValue()).name(UUID.randomUUID().toString()).registrationDate(ZonedDateTime.now(Clock.systemUTC())).build()))
                 .build()).collect(Collectors.toMap(YubiKeyAccount::getUsername, acct -> acct));
