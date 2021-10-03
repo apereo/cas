@@ -434,7 +434,7 @@ exports.loginDuoSecurityBypassCode = async (page, type) => {
         await page.keyboard.down('Enter');
         await page.keyboard.up('Enter');
         await this.screenshot(page);
-        console.log(`Waiting for Duo Security to accept bypass code...`);
+        console.log(`Waiting for Duo Security to accept bypass code for ${type}...`);
         await page.waitForTimeout(15000);
     } else {
         let i = 0;

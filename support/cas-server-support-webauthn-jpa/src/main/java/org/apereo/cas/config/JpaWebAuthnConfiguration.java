@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.BeanContainer;
 import org.apereo.cas.webauthn.JpaWebAuthnCredentialRegistration;
 import org.apereo.cas.webauthn.JpaWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
@@ -27,7 +28,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.Set;
 
 /**
  * This is {@link JpaWebAuthnConfiguration}.
@@ -57,8 +57,8 @@ public class JpaWebAuthnConfiguration {
     }
 
     @Bean
-    public Set<String> jpaWebAuthnPackagesToScan() {
-        return CollectionUtils.wrapSet(JpaWebAuthnCredentialRegistration.class.getPackage().getName());
+    public BeanContainer<String> jpaWebAuthnPackagesToScan() {
+        return BeanContainer.of(CollectionUtils.wrapSet(JpaWebAuthnCredentialRegistration.class.getPackage().getName()));
     }
 
     @Lazy
@@ -70,13 +70,13 @@ public class JpaWebAuthnConfiguration {
         final JpaVendorAdapter jpaWebAuthnVendorAdapter,
         @Qualifier("dataSourceWebAuthn")
         final DataSource dataSourceWebAuthn,
-        final Set<String> jpaWebAuthnPackagesToScan,
+        final BeanContainer<String> jpaWebAuthnPackagesToScan,
         final CasConfigurationProperties casProperties,
         @Qualifier("jpaBeanFactory")
         final JpaBeanFactory jpaBeanFactory) {
         val ctx = JpaConfigurationContext.builder()
             .dataSource(dataSourceWebAuthn)
-            .packagesToScan(jpaWebAuthnPackagesToScan)
+            .packagesToScan(jpaWebAuthnPackagesToScan.toSet())
             .persistenceUnitName("jpaWebAuthnRegistryContext")
             .jpaVendorAdapter(jpaWebAuthnVendorAdapter)
             .build();

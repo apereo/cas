@@ -143,7 +143,11 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
             val simple = casProperties.getAuthn().getMfa().getSimple();
             return new CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator(simple.getTokenLength());
         }
+    }
 
+    @Configuration(value = "CasSimpleMultifactorAuthenticationTicketFactoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasSimpleMultifactorAuthenticationTicketFactoryConfiguration {
         @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationTicketFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -157,7 +161,11 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
                 casSimpleMultifactorAuthenticationTicketExpirationPolicy,
                 casSimpleMultifactorAuthenticationUniqueTicketIdGenerator);
         }
+    }
 
+    @Configuration(value = "CasSimpleMultifactorAuthenticationTicketFactoryPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasSimpleMultifactorAuthenticationTicketFactoryPlanConfiguration {
         @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationTicketFactoryConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

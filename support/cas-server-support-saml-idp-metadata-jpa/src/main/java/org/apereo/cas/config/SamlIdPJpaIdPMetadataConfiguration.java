@@ -15,6 +15,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +39,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.Set;
 
 /**
  * This is {@link SamlIdPJpaIdPMetadataConfiguration}.
@@ -75,28 +75,30 @@ public class SamlIdPJpaIdPMetadataConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
-    public Set<String> jpaSamlMetadataIdPPackagesToScan(final CasConfigurationProperties casProperties) {
+    public BeanContainer<String> jpaSamlMetadataIdPPackagesToScan(final CasConfigurationProperties casProperties) {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
         val type = new JpaSamlIdPMetadataDocumentFactory(idp.getJpa().getDialect()).getType();
-        return CollectionUtils.wrapSet(type.getPackage().getName());
+        return BeanContainer.of(CollectionUtils.wrapSet(type.getPackage().getName()));
     }
 
     @Lazy
     @Bean
     @Autowired
-    public LocalContainerEntityManagerFactoryBean samlMetadataIdPEntityManagerFactory(final CasConfigurationProperties casProperties,
-                                                                                      @Qualifier("jpaSamlMetadataIdPVendorAdapter")
-                                                                                      final JpaVendorAdapter jpaSamlMetadataIdPVendorAdapter,
-                                                                                      @Qualifier("dataSourceSamlMetadataIdP")
-                                                                                      final DataSource dataSourceSamlMetadataIdP,
-                                                                                      @Qualifier("jpaSamlMetadataIdPPackagesToScan")
-                                                                                      final Set<String> jpaSamlMetadataIdPPackagesToScan,
-                                                                                      @Qualifier("jpaBeanFactory")
-                                                                                      final JpaBeanFactory jpaBeanFactory) {
+    public LocalContainerEntityManagerFactoryBean samlMetadataIdPEntityManagerFactory(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("jpaSamlMetadataIdPVendorAdapter")
+        final JpaVendorAdapter jpaSamlMetadataIdPVendorAdapter,
+        @Qualifier("dataSourceSamlMetadataIdP")
+        final DataSource dataSourceSamlMetadataIdP,
+        @Qualifier("jpaSamlMetadataIdPPackagesToScan")
+        final BeanContainer<String> jpaSamlMetadataIdPPackagesToScan,
+        @Qualifier("jpaBeanFactory")
+        final JpaBeanFactory jpaBeanFactory) {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
         val factory = jpaBeanFactory;
-        val ctx = JpaConfigurationContext.builder().jpaVendorAdapter(jpaSamlMetadataIdPVendorAdapter).persistenceUnitName("jpaSamlMetadataIdPContext").dataSource(dataSourceSamlMetadataIdP)
-            .packagesToScan(jpaSamlMetadataIdPPackagesToScan).build();
+        val ctx = JpaConfigurationContext.builder().jpaVendorAdapter(jpaSamlMetadataIdPVendorAdapter)
+            .persistenceUnitName("jpaSamlMetadataIdPContext").dataSource(dataSourceSamlMetadataIdP)
+            .packagesToScan(jpaSamlMetadataIdPPackagesToScan.toSet()).build();
         return factory.newEntityManagerFactoryBean(ctx, idp.getJpa());
     }
 
@@ -120,8 +122,8 @@ public class SamlIdPJpaIdPMetadataConfiguration {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, JpaSamlIdPMetadataCipherExecutor.class);
         }
         LOGGER.info("JPA SAML IdP metadata encryption/signing is turned off and "
-            + "MAY NOT be safe in a production environment. "
-            + "Consider using other choices to handle encryption, signing and verification of metadata artifacts");
+                    + "MAY NOT be safe in a production environment. "
+                    + "Consider using other choices to handle encryption, signing and verification of metadata artifacts");
         return CipherExecutor.noOp();
     }
 

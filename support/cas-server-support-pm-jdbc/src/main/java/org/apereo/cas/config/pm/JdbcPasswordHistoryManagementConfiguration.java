@@ -7,6 +7,7 @@ import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.jdbc.JdbcPasswordHistoryEntity;
 import org.apereo.cas.pm.jdbc.JdbcPasswordHistoryService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.Set;
 
 /**
  * This is {@link JdbcPasswordHistoryManagementConfiguration}.
@@ -50,27 +50,28 @@ public class JdbcPasswordHistoryManagementConfiguration {
     }
 
     @Bean
-    public Set<String> jpaPasswordHistoryPackagesToScan() {
-        return CollectionUtils.wrapSet(JdbcPasswordHistoryEntity.class.getPackage().getName());
+    public BeanContainer<String> jpaPasswordHistoryPackagesToScan() {
+        return BeanContainer.of(CollectionUtils.wrapSet(JdbcPasswordHistoryEntity.class.getPackage().getName()));
     }
 
     @Lazy
     @Bean
     @Autowired
-    public LocalContainerEntityManagerFactoryBean passwordHistoryEntityManagerFactory(final CasConfigurationProperties casProperties,
-                                                                                      @Qualifier("jpaPasswordHistoryVendorAdapter")
-                                                                                      final JpaVendorAdapter jpaPasswordHistoryVendorAdapter,
-                                                                                      @Qualifier("jpaPasswordHistoryPackagesToScan")
-                                                                                      final Set<String> jpaPasswordHistoryPackagesToScan,
-                                                                                      @Qualifier("jdbcPasswordManagementDataSource")
-                                                                                      final DataSource jdbcPasswordManagementDataSource,
-                                                                                      @Qualifier("jpaBeanFactory")
-                                                                                      final JpaBeanFactory jpaBeanFactory) {
-        val factory = jpaBeanFactory;
+    public LocalContainerEntityManagerFactoryBean passwordHistoryEntityManagerFactory(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("jpaPasswordHistoryVendorAdapter")
+        final JpaVendorAdapter jpaPasswordHistoryVendorAdapter,
+        @Qualifier("jpaPasswordHistoryPackagesToScan")
+        final BeanContainer<String> jpaPasswordHistoryPackagesToScan,
+        @Qualifier("jdbcPasswordManagementDataSource")
+        final DataSource jdbcPasswordManagementDataSource,
+        @Qualifier("jpaBeanFactory")
+        final JpaBeanFactory jpaBeanFactory) {
         val ctx =
-            JpaConfigurationContext.builder().jpaVendorAdapter(jpaPasswordHistoryVendorAdapter).persistenceUnitName("jpaPasswordHistoryContext").dataSource(jdbcPasswordManagementDataSource)
-                .packagesToScan(jpaPasswordHistoryPackagesToScan).build();
-        return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getPm().getJdbc());
+            JpaConfigurationContext.builder().jpaVendorAdapter(jpaPasswordHistoryVendorAdapter)
+                .persistenceUnitName("jpaPasswordHistoryContext").dataSource(jdbcPasswordManagementDataSource)
+                .packagesToScan(jpaPasswordHistoryPackagesToScan.toSet()).build();
+        return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getPm().getJdbc());
     }
 
     @Autowired

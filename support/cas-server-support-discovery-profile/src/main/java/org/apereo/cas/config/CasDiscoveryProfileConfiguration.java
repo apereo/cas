@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.discovery.CasServerDiscoveryProfileEndpoint;
 import org.apereo.cas.discovery.CasServerProfileRegistrar;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -44,10 +45,11 @@ public class CasDiscoveryProfileConfiguration {
                                                                @Qualifier("builtClients")
                                                                final ObjectProvider<Clients> builtClients,
                                                                @Qualifier("discoveryProfileAvailableAttributes")
-                                                               final Set<String> discoveryProfileAvailableAttributes,
+                                                               final BeanContainer<String> discoveryProfileAvailableAttributes,
                                                                @Qualifier("authenticationEventExecutionPlan")
                                                                final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
-        return new CasServerProfileRegistrar(casProperties, builtClients.getIfAvailable(), discoveryProfileAvailableAttributes, authenticationEventExecutionPlan);
+        return new CasServerProfileRegistrar(casProperties, builtClients.getIfAvailable(),
+            discoveryProfileAvailableAttributes.toSet(), authenticationEventExecutionPlan);
     }
 
     @Bean
@@ -61,9 +63,10 @@ public class CasDiscoveryProfileConfiguration {
 
     @Bean
     @Autowired
-    public Set<String> discoveryProfileAvailableAttributes(final CasConfigurationProperties casProperties,
-                                                           @Qualifier("attributeRepository")
-                                                           final IPersonAttributeDao attributeRepository) {
+    public BeanContainer<String> discoveryProfileAvailableAttributes(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("attributeRepository")
+        final IPersonAttributeDao attributeRepository) {
         val attributes = new LinkedHashSet<String>(0);
         val possibleUserAttributeNames = attributeRepository.getPossibleUserAttributeNames(IPersonAttributeDaoFilter.alwaysChoose());
         if (possibleUserAttributeNames != null) {
@@ -80,6 +83,6 @@ public class CasDiscoveryProfileConfiguration {
         if (jdbcProps != null) {
             jdbcProps.getQuery().forEach(jdbc -> attributes.addAll(transformAttributes(jdbc.getPrincipalAttributeList())));
         }
-        return attributes;
+        return BeanContainer.of(attributes);
     }
 }

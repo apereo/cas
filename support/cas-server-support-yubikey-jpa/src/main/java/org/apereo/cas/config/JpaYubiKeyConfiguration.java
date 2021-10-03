@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.Set;
 
 /**
  * This is {@link JpaYubiKeyConfiguration}.
@@ -61,8 +61,8 @@ public class JpaYubiKeyConfiguration {
     }
 
     @Bean
-    public Set<String> jpaYubiKeyPackagesToScan() {
-        return CollectionUtils.wrapSet(JpaYubiKeyAccount.class.getPackage().getName());
+    public BeanContainer<String> jpaYubiKeyPackagesToScan() {
+        return BeanContainer.of(CollectionUtils.wrapSet(JpaYubiKeyAccount.class.getPackage().getName()));
     }
 
     @Autowired
@@ -78,23 +78,23 @@ public class JpaYubiKeyConfiguration {
     @Lazy
     @Bean
     @Autowired
-    public LocalContainerEntityManagerFactoryBean yubiKeyEntityManagerFactory(final CasConfigurationProperties casProperties,
-                                                                              @Qualifier("dataSourceYubiKey")
-                                                                              final DataSource dataSourceYubiKey,
-                                                                              @Qualifier("jpaYubiKeyPackagesToScan")
-                                                                              final Set<String> jpaYubiKeyPackagesToScan,
-                                                                              @Qualifier("jpaYubiKeyVendorAdapter")
-                                                                              final JpaVendorAdapter jpaYubiKeyVendorAdapter,
-                                                                              @Qualifier("jpaBeanFactory")
-                                                                              final JpaBeanFactory jpaBeanFactory) {
-        val factory = jpaBeanFactory;
+    public LocalContainerEntityManagerFactoryBean yubiKeyEntityManagerFactory(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("dataSourceYubiKey")
+        final DataSource dataSourceYubiKey,
+        @Qualifier("jpaYubiKeyPackagesToScan")
+        final BeanContainer<String> jpaYubiKeyPackagesToScan,
+        @Qualifier("jpaYubiKeyVendorAdapter")
+        final JpaVendorAdapter jpaYubiKeyVendorAdapter,
+        @Qualifier("jpaBeanFactory")
+        final JpaBeanFactory jpaBeanFactory) {
         val ctx = JpaConfigurationContext.builder()
             .dataSource(dataSourceYubiKey)
-            .packagesToScan(jpaYubiKeyPackagesToScan)
+            .packagesToScan(jpaYubiKeyPackagesToScan.toSet())
             .persistenceUnitName("jpaYubiKeyRegistryContext")
             .jpaVendorAdapter(jpaYubiKeyVendorAdapter)
             .build();
-        return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getYubikey().getJpa());
+        return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getYubikey().getJpa());
     }
 
     @Bean

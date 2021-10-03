@@ -40,11 +40,12 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
-    public AuthenticationHandler casAccepttoMultifactorAuthenticationHandler(final CasConfigurationProperties casProperties,
-                                                                             @Qualifier("casAccepttoMultifactorPrincipalFactory")
-                                                                             final PrincipalFactory casAccepttoMultifactorPrincipalFactory,
-                                                                             @Qualifier(ServicesManager.BEAN_NAME)
-                                                                             final ServicesManager servicesManager) {
+    public AuthenticationHandler casAccepttoMultifactorAuthenticationHandler(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("casAccepttoMultifactorPrincipalFactory")
+        final PrincipalFactory casAccepttoMultifactorPrincipalFactory,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager) {
         val props = casProperties.getAuthn().getMfa().getAcceptto();
         return new AccepttoMultifactorAuthenticationHandler(servicesManager, casAccepttoMultifactorPrincipalFactory, props);
     }
@@ -53,11 +54,12 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorAuthenticationProvider")
     @Autowired
-    public MultifactorAuthenticationProvider casAccepttoMultifactorAuthenticationProvider(final CasConfigurationProperties casProperties,
-                                                                                          @Qualifier("casAccepttoMultifactorBypassEvaluator")
-                                                                                          final MultifactorAuthenticationProviderBypassEvaluator casAccepttoMultifactorBypassEvaluator,
-                                                                                          @Qualifier("failureModeEvaluator")
-                                                                                          final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
+    public MultifactorAuthenticationProvider casAccepttoMultifactorAuthenticationProvider(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("casAccepttoMultifactorBypassEvaluator")
+        final MultifactorAuthenticationProviderBypassEvaluator casAccepttoMultifactorBypassEvaluator,
+        @Qualifier("failureModeEvaluator")
+        final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
         val simple = casProperties.getAuthn().getMfa().getAcceptto();
         val p = new AccepttoMultifactorAuthenticationProvider();
         p.setBypassEvaluator(casAccepttoMultifactorBypassEvaluator);
@@ -72,12 +74,14 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorAuthenticationMetaDataPopulator")
     @Autowired
-    public AuthenticationMetaDataPopulator casAccepttoMultifactorAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,
-                                                                                                 @Qualifier("casAccepttoMultifactorAuthenticationHandler")
-                                                                                                 final AuthenticationHandler casAccepttoMultifactorAuthenticationHandler,
-                                                                                                 @Qualifier("casAccepttoMultifactorAuthenticationProvider")
-                                                                                                 final MultifactorAuthenticationProvider casAccepttoMultifactorAuthenticationProvider) {
-        return new AuthenticationContextAttributeMetaDataPopulator(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
+    public AuthenticationMetaDataPopulator casAccepttoMultifactorAuthenticationMetaDataPopulator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("casAccepttoMultifactorAuthenticationHandler")
+        final AuthenticationHandler casAccepttoMultifactorAuthenticationHandler,
+        @Qualifier("casAccepttoMultifactorAuthenticationProvider")
+        final MultifactorAuthenticationProvider casAccepttoMultifactorAuthenticationProvider) {
+        return new AuthenticationContextAttributeMetaDataPopulator(
+            casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
             casAccepttoMultifactorAuthenticationHandler, casAccepttoMultifactorAuthenticationProvider.getId());
     }
 

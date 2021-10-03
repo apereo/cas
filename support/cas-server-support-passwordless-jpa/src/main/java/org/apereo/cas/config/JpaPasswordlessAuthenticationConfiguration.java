@@ -63,21 +63,22 @@ public class JpaPasswordlessAuthenticationConfiguration {
 
     @Bean
     @Autowired
-    public LocalContainerEntityManagerFactoryBean passwordlessEntityManagerFactory(final CasConfigurationProperties casProperties,
-                                                                                   @Qualifier("jpaPasswordlessVendorAdapter")
-                                                                                   final JpaVendorAdapter jpaPasswordlessVendorAdapter,
-                                                                                   @Qualifier("passwordlessDataSource")
-                                                                                   final DataSource passwordlessDataSource,
-                                                                                   @Qualifier("jpaBeanFactory")
-                                                                                   final JpaBeanFactory jpaBeanFactory) {
-        val factory = jpaBeanFactory;
+    public LocalContainerEntityManagerFactoryBean passwordlessEntityManagerFactory(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("jpaPasswordlessVendorAdapter")
+        final JpaVendorAdapter jpaPasswordlessVendorAdapter,
+        @Qualifier("passwordlessDataSource")
+        final DataSource passwordlessDataSource,
+        @Qualifier("jpaBeanFactory")
+        final JpaBeanFactory jpaBeanFactory) {
+
         val ctx = JpaConfigurationContext.builder()
             .jpaVendorAdapter(jpaPasswordlessVendorAdapter)
             .persistenceUnitName("jpaPasswordlessAuthNContext")
             .dataSource(passwordlessDataSource)
             .packagesToScan(jpaPasswordlessPackagesToScan())
             .build();
-        return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getPasswordless().getTokens().getJpa());
+        return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getPasswordless().getTokens().getJpa());
     }
 
     @Autowired

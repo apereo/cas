@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -31,7 +32,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.Set;
 
 /**
  * This is {@link U2FJpaConfiguration}.
@@ -47,9 +47,10 @@ public class U2FJpaConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
-    public JpaVendorAdapter jpaU2fVendorAdapter(final CasConfigurationProperties casProperties,
-                                                @Qualifier("jpaBeanFactory")
-                                                final JpaBeanFactory jpaBeanFactory) {
+    public JpaVendorAdapter jpaU2fVendorAdapter(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("jpaBeanFactory")
+        final JpaBeanFactory jpaBeanFactory) {
         return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
     }
 
@@ -62,27 +63,28 @@ public class U2FJpaConfiguration {
     }
 
     @Bean
-    public Set<String> jpaU2fPackagesToScan() {
-        return CollectionUtils.wrapSet(U2FDeviceRegistration.class.getPackage().getName());
+    public BeanContainer<String> jpaU2fPackagesToScan() {
+        return BeanContainer.of(CollectionUtils.wrapSet(U2FDeviceRegistration.class.getPackage().getName()));
     }
 
     @Lazy
     @Bean
     @ConditionalOnMissingBean(name = "u2fEntityManagerFactory")
     @Autowired
-    public LocalContainerEntityManagerFactoryBean u2fEntityManagerFactory(final CasConfigurationProperties casProperties,
-                                                                          @Qualifier("dataSourceU2f")
-                                                                          final DataSource dataSourceU2f,
-                                                                          @Qualifier("jpaU2fPackagesToScan")
-                                                                          final Set<String> jpaU2fPackagesToScan,
-                                                                          @Qualifier("jpaU2fVendorAdapter")
-                                                                          final JpaVendorAdapter jpaU2fVendorAdapter,
-                                                                          @Qualifier("jpaBeanFactory")
-                                                                          final JpaBeanFactory jpaBeanFactory) {
-        val factory = jpaBeanFactory;
-        val ctx = JpaConfigurationContext.builder().dataSource(dataSourceU2f).packagesToScan(jpaU2fPackagesToScan).persistenceUnitName("jpaU2fRegistryContext")
+    public LocalContainerEntityManagerFactoryBean u2fEntityManagerFactory(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("dataSourceU2f")
+        final DataSource dataSourceU2f,
+        @Qualifier("jpaU2fPackagesToScan")
+        final BeanContainer<String> jpaU2fPackagesToScan,
+        @Qualifier("jpaU2fVendorAdapter")
+        final JpaVendorAdapter jpaU2fVendorAdapter,
+        @Qualifier("jpaBeanFactory")
+        final JpaBeanFactory jpaBeanFactory) {
+        val ctx = JpaConfigurationContext.builder().dataSource(dataSourceU2f)
+            .packagesToScan(jpaU2fPackagesToScan.toSet()).persistenceUnitName("jpaU2fRegistryContext")
             .jpaVendorAdapter(jpaU2fVendorAdapter).build();
-        return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getU2f().getJpa());
+        return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getU2f().getJpa());
     }
 
     @Autowired

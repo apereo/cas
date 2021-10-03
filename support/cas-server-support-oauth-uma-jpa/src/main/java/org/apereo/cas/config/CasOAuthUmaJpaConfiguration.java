@@ -8,6 +8,7 @@ import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.ticket.resource.repository.impl.JpaResourceSetRepository;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.Set;
 
 /**
  * This is {@link CasOAuthUmaJpaConfiguration}.
@@ -54,30 +54,30 @@ public class CasOAuthUmaJpaConfiguration {
     }
 
     @Bean
-    public Set<String> jpaUmaPackagesToScan() {
-        return CollectionUtils.wrapSet(ResourceSet.class.getPackage().getName());
+    public BeanContainer<String> jpaUmaPackagesToScan() {
+        return BeanContainer.of(CollectionUtils.wrapSet(ResourceSet.class.getPackage().getName()));
     }
 
     @Lazy
     @Bean
     @Autowired
-    public LocalContainerEntityManagerFactoryBean umaEntityManagerFactory(final CasConfigurationProperties casProperties,
-                                                                          @Qualifier("jpaUmaVendorAdapter")
-                                                                          final JpaVendorAdapter jpaUmaVendorAdapter,
-                                                                          @Qualifier("dataSourceUma")
-                                                                          final DataSource dataSourceUma,
-                                                                          @Qualifier("jpaUmaPackagesToScan")
-                                                                          final Set<String> jpaUmaPackagesToScan,
-                                                                          @Qualifier("jpaBeanFactory")
-                                                                          final JpaBeanFactory jpaBeanFactory) {
-        val factory = jpaBeanFactory;
+    public LocalContainerEntityManagerFactoryBean umaEntityManagerFactory(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("jpaUmaVendorAdapter")
+        final JpaVendorAdapter jpaUmaVendorAdapter,
+        @Qualifier("dataSourceUma")
+        final DataSource dataSourceUma,
+        @Qualifier("jpaUmaPackagesToScan")
+        final BeanContainer<String> jpaUmaPackagesToScan,
+        @Qualifier("jpaBeanFactory")
+        final JpaBeanFactory jpaBeanFactory) {
         val ctx = JpaConfigurationContext.builder()
             .jpaVendorAdapter(jpaUmaVendorAdapter)
             .persistenceUnitName(getClass().getSimpleName())
             .dataSource(dataSourceUma)
-            .packagesToScan(jpaUmaPackagesToScan)
+            .packagesToScan(jpaUmaPackagesToScan.toSet())
             .build();
-        return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getOauth().getUma().getResourceSet().getJpa());
+        return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getOauth().getUma().getResourceSet().getJpa());
     }
 
     @Autowired

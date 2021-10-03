@@ -11,6 +11,7 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -37,7 +38,6 @@ import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * This this {@link JpaServiceRegistryConfiguration}.
@@ -71,33 +71,33 @@ public class JpaServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "jpaServicePackagesToScan")
-    public Set<String> jpaServicePackagesToScan() {
-        return CollectionUtils.wrapSet(JpaRegisteredServiceEntity.class.getPackage().getName());
+    public BeanContainer<String> jpaServicePackagesToScan() {
+        return BeanContainer.of(CollectionUtils.wrapSet(JpaRegisteredServiceEntity.class.getPackage().getName()));
     }
 
     @Lazy
     @Bean
     @Autowired
-    public LocalContainerEntityManagerFactoryBean serviceEntityManagerFactory(final CasConfigurationProperties casProperties,
-                                                                              @Qualifier("dataSourceService")
-                                                                              final DataSource dataSourceService,
-                                                                              @Qualifier("jpaServiceVendorAdapter")
-                                                                              final JpaVendorAdapter jpaServiceVendorAdapter,
-                                                                              @Qualifier("jpaServicePersistenceProvider")
-                                                                              final PersistenceProvider jpaServicePersistenceProvider,
-                                                                              @Qualifier("jpaServicePackagesToScan")
-                                                                              final Set<String> jpaServicePackagesToScan,
-                                                                              @Qualifier("jpaBeanFactory")
-                                                                              final JpaBeanFactory jpaBeanFactory) {
-        val factory = jpaBeanFactory;
+    public LocalContainerEntityManagerFactoryBean serviceEntityManagerFactory(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("dataSourceService")
+        final DataSource dataSourceService,
+        @Qualifier("jpaServiceVendorAdapter")
+        final JpaVendorAdapter jpaServiceVendorAdapter,
+        @Qualifier("jpaServicePersistenceProvider")
+        final PersistenceProvider jpaServicePersistenceProvider,
+        @Qualifier("jpaServicePackagesToScan")
+        final BeanContainer<String> jpaServicePackagesToScan,
+        @Qualifier("jpaBeanFactory")
+        final JpaBeanFactory jpaBeanFactory) {
         val ctx = JpaConfigurationContext.builder()
             .dataSource(dataSourceService)
             .persistenceUnitName("jpaServiceRegistryContext")
             .jpaVendorAdapter(jpaServiceVendorAdapter)
             .persistenceProvider(jpaServicePersistenceProvider)
-            .packagesToScan(jpaServicePackagesToScan)
+            .packagesToScan(jpaServicePackagesToScan.toSet())
             .build();
-        return factory.newEntityManagerFactoryBean(ctx, casProperties.getServiceRegistry().getJpa());
+        return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getServiceRegistry().getJpa());
     }
 
     @Autowired
