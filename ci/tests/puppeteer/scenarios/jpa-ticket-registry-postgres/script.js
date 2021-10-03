@@ -19,5 +19,5 @@ const loattest = async () => {
 loattest().then(results => {
     console.log(JSON.stringify(results, null, 2))
     const samples = JSONPath({path: '$..sample', json: results })
-    assert(samples.length == parseInt(config.samplesRequested))
+    assert(samples.length === parseInt(config.samplesRequested))
 });

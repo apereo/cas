@@ -66,101 +66,120 @@ public class MultifactorAuthnTrustConfiguration {
 
     private static final long MAX_CACHE_SIZE = 1_000_000;
 
-    @ConditionalOnMissingBean(name = "mfaTrustDeviceNamingStrategy")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public MultifactorAuthenticationTrustedDeviceNamingStrategy mfaTrustDeviceNamingStrategy() {
-        return MultifactorAuthenticationTrustedDeviceNamingStrategy.random();
-    }
-
-    @ConditionalOnMissingBean(name = "mfaTrustEngine")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public MultifactorAuthenticationTrustStorage mfaTrustEngine(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("mfaTrustCipherExecutor")
-        final CipherExecutor mfaTrustCipherExecutor,
-        @Qualifier("mfaTrustRecordKeyGenerator")
-        final MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator) {
-        val trusted = casProperties.getAuthn().getMfa().getTrusted();
-        val storage = Caffeine.newBuilder().initialCapacity(INITIAL_CACHE_SIZE).maximumSize(MAX_CACHE_SIZE).expireAfter(new MultifactorAuthenticationTrustRecordExpiry()).build(s -> {
-            LOGGER.error("Load operation of the cache is not supported.");
-            return null;
-        });
-        return FunctionUtils.doIf(trusted.getJson().getLocation() != null, () -> {
-            LOGGER.debug("Storing trusted device records inside the JSON resource [{}]", trusted.getJson().getLocation());
-            return new JsonMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(), mfaTrustCipherExecutor, trusted.getJson().getLocation(),
-                mfaTrustRecordKeyGenerator);
-        }, () -> {
-            LOGGER.warn("Storing trusted device records in runtime memory. Changes and records will be lost upon CAS restarts");
-            return new InMemoryMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(), mfaTrustCipherExecutor, storage, mfaTrustRecordKeyGenerator);
-        }).get();
-    }
-
-    @ConditionalOnMissingBean(name = "transactionManagerMfaAuthnTrust")
-    @Bean
-    public PlatformTransactionManager transactionManagerMfaAuthnTrust() {
-        return new PseudoPlatformTransactionManager();
-    }
-
-    @ConditionalOnMissingBean(name = "mfaTrustRecordKeyGenerator")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator(final CasConfigurationProperties casProperties) {
-        val type = casProperties.getAuthn().getMfa().getTrusted().getCore().getKeyGeneratorType();
-        if (type == TrustedDevicesMultifactorCoreProperties.TrustedDevicesKeyGeneratorTypes.DEFAULT) {
-            return new DefaultMultifactorAuthenticationTrustRecordKeyGenerator();
+    @Configuration(value = "MultifactorAuthnTrustCoreConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class MultifactorAuthnTrustCoreConfiguration {
+        @ConditionalOnMissingBean(name = "mfaTrustDeviceNamingStrategy")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public MultifactorAuthenticationTrustedDeviceNamingStrategy mfaTrustDeviceNamingStrategy() {
+            return MultifactorAuthenticationTrustedDeviceNamingStrategy.random();
         }
-        return new LegacyMultifactorAuthenticationTrustRecordKeyGenerator();
-    }
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "mfaTrustCipherExecutor")
-    @Autowired
-    public CipherExecutor mfaTrustCipherExecutor(final CasConfigurationProperties casProperties) {
-        val crypto = casProperties.getAuthn().getMfa().getTrusted().getCrypto();
-        if (crypto.isEnabled()) {
-            return CipherExecutorUtils.newStringCipherExecutor(crypto, MultifactorAuthenticationTrustCipherExecutor.class);
+        @ConditionalOnMissingBean(name = "mfaTrustEngine")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public MultifactorAuthenticationTrustStorage mfaTrustEngine(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("mfaTrustCipherExecutor")
+            final CipherExecutor mfaTrustCipherExecutor,
+            @Qualifier("mfaTrustRecordKeyGenerator")
+            final MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator) {
+            val trusted = casProperties.getAuthn().getMfa().getTrusted();
+            val storage = Caffeine.newBuilder().initialCapacity(INITIAL_CACHE_SIZE).maximumSize(MAX_CACHE_SIZE).expireAfter(new MultifactorAuthenticationTrustRecordExpiry()).build(s -> {
+                LOGGER.error("Load operation of the cache is not supported.");
+                return null;
+            });
+            return FunctionUtils.doIf(trusted.getJson().getLocation() != null, () -> {
+                LOGGER.debug("Storing trusted device records inside the JSON resource [{}]", trusted.getJson().getLocation());
+                return new JsonMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(), mfaTrustCipherExecutor, trusted.getJson().getLocation(),
+                    mfaTrustRecordKeyGenerator);
+            }, () -> {
+                LOGGER.warn("Storing trusted device records in runtime memory. Changes and records will be lost upon CAS restarts");
+                return new InMemoryMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(), mfaTrustCipherExecutor, storage, mfaTrustRecordKeyGenerator);
+            }).get();
         }
-        LOGGER.info("Multifactor trusted authentication record encryption/signing is turned off and "
-                    + "MAY NOT be safe in a production environment. "
-                    + "Consider using other choices to handle encryption, signing and verification of "
-                    + "trusted authentication records for MFA");
-        return CipherExecutor.noOp();
+
+        @ConditionalOnMissingBean(name = "transactionManagerMfaAuthnTrust")
+        @Bean
+        public PlatformTransactionManager transactionManagerMfaAuthnTrust() {
+            return new PseudoPlatformTransactionManager();
+        }
+
+        @ConditionalOnMissingBean(name = "mfaTrustRecordKeyGenerator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator(final CasConfigurationProperties casProperties) {
+            val type = casProperties.getAuthn().getMfa().getTrusted().getCore().getKeyGeneratorType();
+            if (type == TrustedDevicesMultifactorCoreProperties.TrustedDevicesKeyGeneratorTypes.DEFAULT) {
+                return new DefaultMultifactorAuthenticationTrustRecordKeyGenerator();
+            }
+            return new LegacyMultifactorAuthenticationTrustRecordKeyGenerator();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "mfaTrustCipherExecutor")
+        @Autowired
+        public CipherExecutor mfaTrustCipherExecutor(final CasConfigurationProperties casProperties) {
+            val crypto = casProperties.getAuthn().getMfa().getTrusted().getCrypto();
+            if (crypto.isEnabled()) {
+                return CipherExecutorUtils.newStringCipherExecutor(crypto, MultifactorAuthenticationTrustCipherExecutor.class);
+            }
+            LOGGER.info("Multifactor trusted authentication record encryption/signing is turned off and "
+                        + "MAY NOT be safe in a production environment. "
+                        + "Consider using other choices to handle encryption, signing and verification of "
+                        + "trusted authentication records for MFA");
+            return CipherExecutor.noOp();
+        }
     }
 
-    @ConditionalOnMatchingHostname(name = "cas.authn.mfa.trusted.cleaner.schedule.enabled-on-host")
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
-    @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
-    @Bean
-    public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner(
-        @Qualifier("mfaTrustEngine")
-        final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
-        return new MultifactorAuthenticationTrustStorageCleaner(mfaTrustEngine);
+    @Configuration(value = "MultifactorAuthnTrustSchedulerConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class MultifactorAuthnTrustSchedulerConfiguration {
+        @ConditionalOnMatchingHostname(name = "cas.authn.mfa.trusted.cleaner.schedule.enabled-on-host")
+        @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
+        @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
+        @Bean
+        public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner(
+            @Qualifier("mfaTrustEngine")
+            final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
+            return new MultifactorAuthenticationTrustStorageCleaner(mfaTrustEngine);
+        }
+
     }
 
-    @Bean
-    public AuditTrailRecordResolutionPlanConfigurer casMfaTrustAuditTrailRecordResolutionPlanConfigurer(
-        @Qualifier("ticketCreationActionResolver")
-        final AuditActionResolver ticketCreationActionResolver,
-        @Qualifier("returnValueResourceResolver")
-        final AuditResourceResolver returnValueResourceResolver) {
-        return plan -> {
-            plan.registerAuditResourceResolver(AuditResourceResolvers.TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER, returnValueResourceResolver);
-            plan.registerAuditActionResolver(AuditActionResolvers.TRUSTED_AUTHENTICATION_ACTION_RESOLVER, ticketCreationActionResolver);
-        };
+    @Configuration(value = "MultifactorAuthnTrustAuditConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class MultifactorAuthnTrustAuditConfiguration {
+        @Bean
+        public AuditTrailRecordResolutionPlanConfigurer casMfaTrustAuditTrailRecordResolutionPlanConfigurer(
+            @Qualifier("ticketCreationActionResolver")
+            final AuditActionResolver ticketCreationActionResolver,
+            @Qualifier("returnValueResourceResolver")
+            final AuditResourceResolver returnValueResourceResolver) {
+            return plan -> {
+                plan.registerAuditResourceResolver(AuditResourceResolvers.TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER, returnValueResourceResolver);
+                plan.registerAuditActionResolver(AuditActionResolvers.TRUSTED_AUTHENTICATION_ACTION_RESOLVER, ticketCreationActionResolver);
+            };
+        }
+
     }
 
-    @Bean
-    @ConditionalOnAvailableEndpoint
-    @Autowired
-    public MultifactorAuthenticationTrustReportEndpoint mfaTrustedDevicesReportEndpoint(final CasConfigurationProperties casProperties,
-                                                                                        @Qualifier("mfaTrustEngine")
-                                                                                        final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
-        return new MultifactorAuthenticationTrustReportEndpoint(casProperties, mfaTrustEngine);
+    @Configuration(value = "MultifactorAuthnTrustWebConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class MultifactorAuthnTrustWebConfiguration {
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @Autowired
+        public MultifactorAuthenticationTrustReportEndpoint mfaTrustedDevicesReportEndpoint(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("mfaTrustEngine")
+            final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
+            return new MultifactorAuthenticationTrustReportEndpoint(casProperties, mfaTrustEngine);
+        }
     }
 
     @Slf4j

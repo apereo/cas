@@ -22,23 +22,32 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "webApplicationServiceFactoryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasWebApplicationServiceFactoryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 public class CasWebApplicationServiceFactoryConfiguration {
-    @Bean
-    @ConditionalOnMissingBean(name = "webApplicationServiceFactory")
-    public ServiceFactory<WebApplicationService> webApplicationServiceFactory() {
-        return new WebApplicationServiceFactory();
+
+    @Configuration(value = "CasWebApplicationServiceFactoryBaseConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasWebApplicationServiceFactoryBaseConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "webApplicationServiceFactory")
+        public ServiceFactory<WebApplicationService> webApplicationServiceFactory() {
+            return new WebApplicationServiceFactory();
+        }
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "casWebApplicationServiceFactoryConfigurer")
-    @Autowired
-    public ServiceFactoryConfigurer casWebApplicationServiceFactoryConfigurer(
-        @Qualifier("webApplicationServiceFactory")
-        final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
-        return () -> CollectionUtils.wrap(webApplicationServiceFactory);
-    }
+    @Configuration(value = "CasWebApplicationServiceFactoryPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasWebApplicationServiceFactoryPlanConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "casWebApplicationServiceFactoryConfigurer")
+        @Autowired
+        public ServiceFactoryConfigurer casWebApplicationServiceFactoryConfigurer(
+            @Qualifier("webApplicationServiceFactory")
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
+            return () -> CollectionUtils.wrap(webApplicationServiceFactory);
+        }
 
+    }
 }

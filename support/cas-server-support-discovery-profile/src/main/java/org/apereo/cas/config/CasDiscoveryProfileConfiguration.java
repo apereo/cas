@@ -41,13 +41,14 @@ public class CasDiscoveryProfileConfiguration {
 
     @Bean
     @Autowired
-    public CasServerProfileRegistrar casServerProfileRegistrar(final CasConfigurationProperties casProperties,
-                                                               @Qualifier("builtClients")
-                                                               final ObjectProvider<Clients> builtClients,
-                                                               @Qualifier("discoveryProfileAvailableAttributes")
-                                                               final BeanContainer<String> discoveryProfileAvailableAttributes,
-                                                               @Qualifier("authenticationEventExecutionPlan")
-                                                               final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+    public CasServerProfileRegistrar casServerProfileRegistrar(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("builtClients")
+        final ObjectProvider<Clients> builtClients,
+        @Qualifier("discoveryProfileAvailableAttributes")
+        final BeanContainer<String> discoveryProfileAvailableAttributes,
+        @Qualifier("authenticationEventExecutionPlan")
+        final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
         return new CasServerProfileRegistrar(casProperties, builtClients.getIfAvailable(),
             discoveryProfileAvailableAttributes.toSet(), authenticationEventExecutionPlan);
     }
@@ -55,9 +56,10 @@ public class CasDiscoveryProfileConfiguration {
     @Bean
     @ConditionalOnAvailableEndpoint
     @Autowired
-    public CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint(final CasConfigurationProperties casProperties,
-                                                                      @Qualifier("casServerProfileRegistrar")
-                                                                      final CasServerProfileRegistrar casServerProfileRegistrar) {
+    public CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("casServerProfileRegistrar")
+        final CasServerProfileRegistrar casServerProfileRegistrar) {
         return new CasServerDiscoveryProfileEndpoint(casProperties, casServerProfileRegistrar);
     }
 

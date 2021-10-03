@@ -113,8 +113,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         }
 
     }
-
-
+    
     @Configuration(value = "CasCoreAuthenticationPrincipalFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreAuthenticationPrincipalFactoryConfiguration {
