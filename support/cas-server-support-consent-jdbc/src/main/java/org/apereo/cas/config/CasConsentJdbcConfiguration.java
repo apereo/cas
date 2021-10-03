@@ -8,6 +8,7 @@ import org.apereo.cas.consent.JpaConsentDecision;
 import org.apereo.cas.consent.JpaConsentRepository;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.Set;
 
 /**
  * This is {@link CasConsentJdbcConfiguration}.
@@ -63,8 +63,8 @@ public class CasConsentJdbcConfiguration {
     }
 
     @Bean
-    public Set<String> jpaConsentPackagesToScan() {
-        return CollectionUtils.wrapSet(JpaConsentDecision.class.getPackage().getName());
+    public BeanContainer<String> jpaConsentPackagesToScan() {
+        return BeanContainer.of(CollectionUtils.wrapSet(JpaConsentDecision.class.getPackage().getName()));
     }
 
     @Lazy
@@ -75,8 +75,8 @@ public class CasConsentJdbcConfiguration {
         final JpaVendorAdapter jpaConsentVendorAdapter,
         @Qualifier("dataSourceConsent")
         final DataSource dataSourceConsent,
-        @Qualifier("Set<String> jpaConsentPackagesToScan")
-        final Set<String> jpaConsentPackagesToScan,
+        @Qualifier("jpaConsentPackagesToScan")
+        final BeanContainer<String> jpaConsentPackagesToScan,
         @Qualifier("jpaBeanFactory")
         final JpaBeanFactory jpaBeanFactory,
         final CasConfigurationProperties casProperties) {
@@ -84,7 +84,7 @@ public class CasConsentJdbcConfiguration {
             .jpaVendorAdapter(jpaConsentVendorAdapter)
             .persistenceUnitName("jpaConsentContext")
             .dataSource(dataSourceConsent)
-            .packagesToScan(jpaConsentPackagesToScan)
+            .packagesToScan(jpaConsentPackagesToScan.toSet())
             .build();
         return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getConsent().getJpa());
     }

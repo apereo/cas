@@ -12,6 +12,7 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
@@ -33,7 +34,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.Set;
 
 /**
  * This is {@link GoogleAuthenticatorJpaConfiguration}.
@@ -50,9 +50,10 @@ public class GoogleAuthenticatorJpaConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
-    public JpaVendorAdapter jpaGoogleAuthenticatorVendorAdapter(final CasConfigurationProperties casProperties,
-                                                                @Qualifier("jpaBeanFactory")
-                                                                final JpaBeanFactory jpaBeanFactory) {
+    public JpaVendorAdapter jpaGoogleAuthenticatorVendorAdapter(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("jpaBeanFactory")
+        final JpaBeanFactory jpaBeanFactory) {
         return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
     }
 
@@ -66,28 +67,30 @@ public class GoogleAuthenticatorJpaConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "jpaPackagesToScanGoogleAuthenticator")
-    public Set<String> jpaPackagesToScanGoogleAuthenticator() {
-        return CollectionUtils.wrapSet(GoogleAuthenticatorAccount.class.getPackage().getName(), JpaGoogleAuthenticatorToken.class.getPackage().getName());
+    public BeanContainer<String> jpaPackagesToScanGoogleAuthenticator() {
+        return BeanContainer.of(CollectionUtils.wrapSet(GoogleAuthenticatorAccount.class.getPackage().getName(),
+            JpaGoogleAuthenticatorToken.class.getPackage().getName()));
     }
 
     @Lazy
     @Bean
     @Autowired
-    public LocalContainerEntityManagerFactoryBean googleAuthenticatorEntityManagerFactory(final CasConfigurationProperties casProperties,
-                                                                                          @Qualifier("jpaGoogleAuthenticatorVendorAdapter")
-                                                                                          final JpaVendorAdapter jpaGoogleAuthenticatorVendorAdapter,
-                                                                                          @Qualifier("dataSourceGoogleAuthenticator")
-                                                                                          final DataSource dataSourceGoogleAuthenticator,
-                                                                                          @Qualifier("jpaPackagesToScanGoogleAuthenticator")
-                                                                                          final Set<String> jpaPackagesToScanGoogleAuthenticator,
-                                                                                          @Qualifier("jpaBeanFactory")
-                                                                                          final JpaBeanFactory jpaBeanFactory) {
+    public LocalContainerEntityManagerFactoryBean googleAuthenticatorEntityManagerFactory(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("jpaGoogleAuthenticatorVendorAdapter")
+        final JpaVendorAdapter jpaGoogleAuthenticatorVendorAdapter,
+        @Qualifier("dataSourceGoogleAuthenticator")
+        final DataSource dataSourceGoogleAuthenticator,
+        @Qualifier("jpaPackagesToScanGoogleAuthenticator")
+        final BeanContainer<String> jpaPackagesToScanGoogleAuthenticator,
+        @Qualifier("jpaBeanFactory")
+        final JpaBeanFactory jpaBeanFactory) {
         val factory = jpaBeanFactory;
         val ctx = JpaConfigurationContext.builder()
             .jpaVendorAdapter(jpaGoogleAuthenticatorVendorAdapter)
             .persistenceUnitName("jpaGoogleAuthenticatorContext")
             .dataSource(dataSourceGoogleAuthenticator)
-            .packagesToScan(jpaPackagesToScanGoogleAuthenticator)
+            .packagesToScan(jpaPackagesToScanGoogleAuthenticator.toSet())
             .build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getGauth().getJpa());
     }

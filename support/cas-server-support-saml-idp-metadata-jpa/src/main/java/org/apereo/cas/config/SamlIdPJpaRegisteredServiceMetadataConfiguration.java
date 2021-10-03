@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.Set;
 
 /**
  * This is {@link SamlIdPJpaRegisteredServiceMetadataConfiguration}.
@@ -45,9 +45,10 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "jpaSamlRegisteredServiceMetadataResolver")
     @Autowired
-    public SamlRegisteredServiceMetadataResolver jpaSamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
-                                                                                          @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-                                                                                          final OpenSamlConfigBean openSamlConfigBean) {
+    public SamlRegisteredServiceMetadataResolver jpaSamlRegisteredServiceMetadataResolver(
+        final CasConfigurationProperties casProperties,
+        @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+        final OpenSamlConfigBean openSamlConfigBean) {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new JpaSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean);
     }
@@ -72,27 +73,28 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public Set<String> jpaSamlMetadataPackagesToScan() {
-        return CollectionUtils.wrapSet(SamlMetadataDocument.class.getPackage().getName());
+    public BeanContainer<String> jpaSamlMetadataPackagesToScan() {
+        return BeanContainer.of(CollectionUtils.wrapSet(SamlMetadataDocument.class.getPackage().getName()));
     }
 
     @Lazy
     @Bean
     @Autowired
-    public LocalContainerEntityManagerFactoryBean samlMetadataEntityManagerFactory(final CasConfigurationProperties casProperties,
-                                                                                   @Qualifier("jpaSamlMetadataVendorAdapter")
-                                                                                   final JpaVendorAdapter jpaSamlMetadataVendorAdapter,
-                                                                                   @Qualifier("dataSourceSamlMetadata")
-                                                                                   final DataSource dataSourceSamlMetadata,
-                                                                                   @Qualifier("jpaSamlMetadataPackagesToScan")
-                                                                                   final Set<String> jpaSamlMetadataPackagesToScan,
-                                                                                   @Qualifier("jpaBeanFactory")
-                                                                                   final JpaBeanFactory jpaBeanFactory) {
+    public LocalContainerEntityManagerFactoryBean samlMetadataEntityManagerFactory(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("jpaSamlMetadataVendorAdapter")
+        final JpaVendorAdapter jpaSamlMetadataVendorAdapter,
+        @Qualifier("dataSourceSamlMetadata")
+        final DataSource dataSourceSamlMetadata,
+        @Qualifier("jpaSamlMetadataPackagesToScan")
+        final BeanContainer<String> jpaSamlMetadataPackagesToScan,
+        @Qualifier("jpaBeanFactory")
+        final JpaBeanFactory jpaBeanFactory) {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
-        val factory = jpaBeanFactory;
-        val ctx = JpaConfigurationContext.builder().jpaVendorAdapter(jpaSamlMetadataVendorAdapter).persistenceUnitName("jpaSamlMetadataContext").dataSource(dataSourceSamlMetadata)
-            .packagesToScan(jpaSamlMetadataPackagesToScan).build();
-        return factory.newEntityManagerFactoryBean(ctx, idp.getJpa());
+        val ctx = JpaConfigurationContext.builder().jpaVendorAdapter(jpaSamlMetadataVendorAdapter)
+            .persistenceUnitName("jpaSamlMetadataContext").dataSource(dataSourceSamlMetadata)
+            .packagesToScan(jpaSamlMetadataPackagesToScan.toSet()).build();
+        return jpaBeanFactory.newEntityManagerFactoryBean(ctx, idp.getJpa());
     }
 
     @Autowired
