@@ -66,7 +66,7 @@ public class AuthenticationException extends RootCasException {
      */
     public AuthenticationException(final Map<String, Throwable> handlerErrors,
                                    final Map<String, AuthenticationHandlerExecutionResult> handlerSuccesses) {
-        this(String.format("%s errors, %s successes", handlerErrors.size(), handlerSuccesses.size()), handlerErrors, handlerSuccesses);
+        this(String.format("%d errors, %d successes", handlerErrors.size(), handlerSuccesses.size()), handlerErrors, handlerSuccesses);
     }
 
     /**
