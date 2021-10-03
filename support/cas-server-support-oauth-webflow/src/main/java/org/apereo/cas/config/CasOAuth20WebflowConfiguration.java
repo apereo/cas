@@ -37,24 +37,28 @@ import org.springframework.webflow.execution.Action;
 @AutoConfigureAfter(CasOAuth20Configuration.class)
 public class CasOAuth20WebflowConfiguration {
 
-    @ConditionalOnMissingBean(name = "oauth20RegisteredServiceUIAction")
-    @Bean
-    @Autowired
-    public Action oauth20RegisteredServiceUIAction(
-        @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
-        final AuthenticationServiceSelectionStrategy oauth20AuthenticationServiceSelectionStrategy,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager) {
-        return new OAuth20RegisteredServiceUIAction(servicesManager, oauth20AuthenticationServiceSelectionStrategy);
-    }
+    @Configuration(value = "CasOAuth20WebflowActionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasOAuth20WebflowActionConfiguration {
+        @ConditionalOnMissingBean(name = "oauth20RegisteredServiceUIAction")
+        @Bean
+        @Autowired
+        public Action oauth20RegisteredServiceUIAction(
+            @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
+            final AuthenticationServiceSelectionStrategy oauth20AuthenticationServiceSelectionStrategy,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return new OAuth20RegisteredServiceUIAction(servicesManager, oauth20AuthenticationServiceSelectionStrategy);
+        }
 
-    @Bean
-    @Autowired
-    @ConditionalOnMissingBean(name = "oauth20SessionStoreTicketGrantingTicketAction")
-    public Action oauth20SessionStoreTicketGrantingTicketAction(
-        @Qualifier("oauthDistributedSessionStore")
-        final SessionStore oauthDistributedSessionStore) {
-        return new SessionStoreTicketGrantingTicketAction(oauthDistributedSessionStore);
+        @Bean
+        @Autowired
+        @ConditionalOnMissingBean(name = "oauth20SessionStoreTicketGrantingTicketAction")
+        public Action oauth20SessionStoreTicketGrantingTicketAction(
+            @Qualifier("oauthDistributedSessionStore")
+            final SessionStore oauthDistributedSessionStore) {
+            return new SessionStoreTicketGrantingTicketAction(oauthDistributedSessionStore);
+        }
     }
 
     @Configuration(value = "CasOAuth20ViewsConfiguration", proxyBeanMethods = false)

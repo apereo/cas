@@ -18,6 +18,7 @@ import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,6 +26,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -46,18 +48,18 @@ public class CasOAuth20ThrottleConfiguration {
 
     @Configuration(value = "CasOAuth20ThrottlePlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnBean(name = "authenticationThrottlingExecutionPlan")
+    @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     public static class CasOAuth20ThrottlePlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oauthThrottleWebMvcConfigurer")
         @Autowired
         public WebMvcConfigurer oauthThrottleWebMvcConfigurer(
             @Qualifier("authenticationThrottlingExecutionPlan")
-            final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
+            final AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(final InterceptorRegistry registry) {
-                    authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors()
+                    authenticationThrottlingExecutionPlan.getAuthenticationThrottleInterceptors()
                         .forEach(handler -> registry.addInterceptor(handler)
                             .order(0).addPathPatterns(BASE_OAUTH20_URL.concat("/*")));
                 }
