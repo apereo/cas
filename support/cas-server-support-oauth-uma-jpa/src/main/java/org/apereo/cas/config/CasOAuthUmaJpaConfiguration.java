@@ -20,7 +20,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -44,62 +43,85 @@ import javax.sql.DataSource;
 @Configuration(value = "casOAuthUmaJpaConfiguration", proxyBeanMethods = false)
 public class CasOAuthUmaJpaConfiguration {
 
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Bean
-    @Autowired
-    public JpaVendorAdapter jpaUmaVendorAdapter(final CasConfigurationProperties casProperties,
-                                                @Qualifier("jpaBeanFactory")
-                                                final JpaBeanFactory jpaBeanFactory) {
-        return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
+
+    @Configuration(value = "CasOAuthUmaJpaEntityConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasOAuthUmaJpaEntityConfiguration {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @Autowired
+        public JpaVendorAdapter jpaUmaVendorAdapter(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("jpaBeanFactory")
+            final JpaBeanFactory jpaBeanFactory) {
+            return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
+        }
+
+
+        @Bean
+        public BeanContainer<String> jpaUmaPackagesToScan() {
+            return BeanContainer.of(CollectionUtils.wrapSet(ResourceSet.class.getPackage().getName()));
+        }
+
+        @Bean
+        @Autowired
+        public LocalContainerEntityManagerFactoryBean umaEntityManagerFactory(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("jpaUmaVendorAdapter")
+            final JpaVendorAdapter jpaUmaVendorAdapter,
+            @Qualifier("dataSourceUma")
+            final DataSource dataSourceUma,
+            @Qualifier("jpaUmaPackagesToScan")
+            final BeanContainer<String> jpaUmaPackagesToScan,
+            @Qualifier("jpaBeanFactory")
+            final JpaBeanFactory jpaBeanFactory) {
+            val ctx = JpaConfigurationContext.builder()
+                .jpaVendorAdapter(jpaUmaVendorAdapter)
+                .persistenceUnitName(getClass().getSimpleName())
+                .dataSource(dataSourceUma)
+                .packagesToScan(jpaUmaPackagesToScan.toSet())
+                .build();
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getOauth().getUma().getResourceSet().getJpa());
+        }
+
     }
 
-    @Bean
-    public BeanContainer<String> jpaUmaPackagesToScan() {
-        return BeanContainer.of(CollectionUtils.wrapSet(ResourceSet.class.getPackage().getName()));
+    @Configuration(value = "CasOAuthUmaJpaTransactionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasOAuthUmaJpaTransactionConfiguration {
+
+        @Autowired
+        @Bean
+        public PlatformTransactionManager umaTransactionManager(
+            @Qualifier("umaEntityManagerFactory")
+            final EntityManagerFactory emf) {
+            val mgmr = new JpaTransactionManager();
+            mgmr.setEntityManagerFactory(emf);
+            return mgmr;
+        }
+
+
     }
 
-    @Lazy
-    @Bean
-    @Autowired
-    public LocalContainerEntityManagerFactoryBean umaEntityManagerFactory(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("jpaUmaVendorAdapter")
-        final JpaVendorAdapter jpaUmaVendorAdapter,
-        @Qualifier("dataSourceUma")
-        final DataSource dataSourceUma,
-        @Qualifier("jpaUmaPackagesToScan")
-        final BeanContainer<String> jpaUmaPackagesToScan,
-        @Qualifier("jpaBeanFactory")
-        final JpaBeanFactory jpaBeanFactory) {
-        val ctx = JpaConfigurationContext.builder()
-            .jpaVendorAdapter(jpaUmaVendorAdapter)
-            .persistenceUnitName(getClass().getSimpleName())
-            .dataSource(dataSourceUma)
-            .packagesToScan(jpaUmaPackagesToScan.toSet())
-            .build();
-        return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getOauth().getUma().getResourceSet().getJpa());
+    @Configuration(value = "CasOAuthUmaJpaDataConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasOAuthUmaJpaDataConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "dataSourceUma")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public DataSource dataSourceUma(final CasConfigurationProperties casProperties) {
+            return JpaBeans.newDataSource(casProperties.getAuthn().getOauth().getUma().getResourceSet().getJpa());
+        }
     }
 
-    @Autowired
-    @Bean
-    public PlatformTransactionManager umaTransactionManager(
-        @Qualifier("umaEntityManagerFactory")
-        final EntityManagerFactory emf) {
-        val mgmr = new JpaTransactionManager();
-        mgmr.setEntityManagerFactory(emf);
-        return mgmr;
-    }
+    @Configuration(value = "CasOAuthUmaJpaRepositoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasOAuthUmaJpaRepositoryConfiguration {
 
-    @Bean
-    @ConditionalOnMissingBean(name = "dataSourceUma")
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public DataSource dataSourceUma(final CasConfigurationProperties casProperties) {
-        return JpaBeans.newDataSource(casProperties.getAuthn().getOauth().getUma().getResourceSet().getJpa());
-    }
-
-    @Bean
-    public ResourceSetRepository umaResourceSetRepository() {
-        return new JpaResourceSetRepository();
+        @Bean
+        public ResourceSetRepository umaResourceSetRepository() {
+            return new JpaResourceSetRepository();
+        }
     }
 }

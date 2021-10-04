@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
+import org.apereo.cas.util.spring.BeanContainer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -28,8 +29,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-
-import java.util.Collection;
 
 /**
  * This is {@link WsFederationAuthenticationWebflowConfiguration}.
@@ -79,10 +78,10 @@ public class WsFederationAuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "wsFederationRequestBuilder")
     public WsFederationRequestBuilder wsFederationRequestBuilder(
         @Qualifier("wsFederationConfigurations")
-        final Collection<WsFederationConfiguration> wsFederationConfigurations,
+        final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,
         @Qualifier("wsFederationHelper")
         final WsFederationHelper wsFederationHelper) {
-        return new WsFederationRequestBuilder(wsFederationConfigurations, wsFederationHelper);
+        return new WsFederationRequestBuilder(wsFederationConfigurations.toList(), wsFederationHelper);
     }
 
     @Bean
@@ -90,7 +89,7 @@ public class WsFederationAuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "wsFederationResponseValidator")
     public WsFederationResponseValidator wsFederationResponseValidator(
         @Qualifier("wsFederationConfigurations")
-        final Collection<WsFederationConfiguration> wsFederationConfigurations,
+        final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,
         @Qualifier("wsFederationCookieManager")
         final WsFederationCookieManager wsFederationCookieManager,
         @Qualifier("defaultAuthenticationSystemSupport")
@@ -98,7 +97,7 @@ public class WsFederationAuthenticationWebflowConfiguration {
         @Qualifier("wsFederationHelper")
         final WsFederationHelper wsFederationHelper) {
         return new WsFederationResponseValidator(wsFederationHelper,
-            wsFederationConfigurations, authenticationSystemSupport, wsFederationCookieManager);
+            wsFederationConfigurations.toList(), authenticationSystemSupport, wsFederationCookieManager);
     }
 
     @Bean

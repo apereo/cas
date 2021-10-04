@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.cassandra.CassandraSessionFactory;
 import org.apereo.cas.cassandra.DefaultCassandraSessionFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -20,7 +21,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
-import javax.net.ssl.SSLContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -53,11 +53,12 @@ public class CassandraServiceRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "cassandraServiceRegistrySessionFactory")
     @Autowired
-    public CassandraSessionFactory cassandraServiceRegistrySessionFactory(final CasConfigurationProperties casProperties,
-                                                                          @Qualifier("sslContext")
-                                                                          final SSLContext sslContext) {
+    public CassandraSessionFactory cassandraServiceRegistrySessionFactory(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext) {
         val cassandra = casProperties.getServiceRegistry().getCassandra();
-        return new DefaultCassandraSessionFactory(cassandra, sslContext);
+        return new DefaultCassandraSessionFactory(cassandra, casSslContext.getSslContext());
     }
 
     @Bean

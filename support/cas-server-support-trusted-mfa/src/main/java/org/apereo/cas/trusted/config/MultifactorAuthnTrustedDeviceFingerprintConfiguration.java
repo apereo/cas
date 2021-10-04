@@ -50,101 +50,118 @@ import java.util.List;
 @Configuration(value = "multifactorAuthnTrustedDeviceFingerprintConfiguration", proxyBeanMethods = false)
 public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
 
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.client-ip", name = "enabled", havingValue = "true")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "deviceFingerprintClientIpComponentExtractor")
-    @Autowired
-    public DeviceFingerprintComponentManager deviceFingerprintClientIpComponentExtractor(final CasConfigurationProperties casProperties) {
-        val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getClientIp();
-        val component = new ClientIpDeviceFingerprintComponentManager();
-        component.setOrder(properties.getOrder());
-        return component;
-    }
-
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.cookie", name = "enabled", havingValue = "true", matchIfMissing = true)
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "deviceFingerprintCookieComponentExtractor")
-    @Autowired
-    public DeviceFingerprintComponentManager deviceFingerprintCookieComponentExtractor(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("deviceFingerprintCookieGenerator")
-        final CasCookieBuilder deviceFingerprintCookieGenerator,
-        @Qualifier("deviceFingerprintCookieRandomStringGenerator")
-        final RandomStringGenerator deviceFingerprintCookieRandomStringGenerator) {
-        val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie();
-        val component = new CookieDeviceFingerprintComponentManager(deviceFingerprintCookieGenerator, deviceFingerprintCookieRandomStringGenerator);
-        component.setOrder(properties.getOrder());
-        return component;
-    }
-
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.cookie", name = "enabled", havingValue = "true", matchIfMissing = true)
-    @ConditionalOnMissingBean(name = "deviceFingerprintCookieGenerator")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public CasCookieBuilder deviceFingerprintCookieGenerator(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("deviceFingerprintCookieValueManager")
-        final CookieValueManager deviceFingerprintCookieValueManager) {
-        val cookie = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie();
-        return new TrustedDeviceCookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(cookie), deviceFingerprintCookieValueManager);
-    }
-
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.user-agent", name = "enabled", havingValue = "true")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "deviceFingerprintUserAgentComponentExtractor")
-    @Autowired
-    public DeviceFingerprintComponentManager deviceFingerprintUserAgentComponentExtractor(final CasConfigurationProperties casProperties) {
-        val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getUserAgent();
-        val component = new UserAgentDeviceFingerprintComponentManager();
-        component.setOrder(properties.getOrder());
-        return component;
-    }
-
-    @ConditionalOnMissingBean(name = DeviceFingerprintStrategy.DEFAULT_BEAN_NAME)
-    @Bean(DeviceFingerprintStrategy.DEFAULT_BEAN_NAME)
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public DeviceFingerprintStrategy deviceFingerprintStrategy(final List<DeviceFingerprintComponentManager> extractors,
-                                                               final CasConfigurationProperties casProperties) {
-        val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint();
-        return new DefaultDeviceFingerprintStrategy(extractors, properties.getComponentSeparator());
-    }
-
-    @ConditionalOnMissingBean(name = "deviceFingerprintCookieRandomStringGenerator")
-    @Bean
-    public RandomStringGenerator deviceFingerprintCookieRandomStringGenerator() {
-        return new Base64RandomStringGenerator();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "deviceFingerprintCookieValueManager")
-    public CookieValueManager deviceFingerprintCookieValueManager(
-        @Qualifier("deviceFingerprintCookieCipherExecutor")
-        final CipherExecutor deviceFingerprintCookieCipherExecutor) {
-        return new EncryptedCookieValueManager(deviceFingerprintCookieCipherExecutor);
-    }
-
-    @ConditionalOnMissingBean(name = "deviceFingerprintCookieCipherExecutor")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public CipherExecutor deviceFingerprintCookieCipherExecutor(final CasConfigurationProperties casProperties) {
-        val crypto = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie().getCrypto();
-        var enabled = crypto.isEnabled();
-        if (!enabled && StringUtils.isNotBlank(crypto.getEncryption().getKey()) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
-            LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet "
-                        + "signing/encryption keys are defined for operations. CAS will proceed to enable the cookie "
-                        + "encryption/signing functionality.");
-            enabled = true;
+    @Configuration(value = "MultifactorAuthnTrustedDeviceFingerprintComponentConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class MultifactorAuthnTrustedDeviceFingerprintComponentConfiguration {
+        @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.user-agent", name = "enabled", havingValue = "true")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "deviceFingerprintUserAgentComponentExtractor")
+        @Autowired
+        public DeviceFingerprintComponentManager deviceFingerprintUserAgentComponentExtractor(final CasConfigurationProperties casProperties) {
+            val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getUserAgent();
+            val component = new UserAgentDeviceFingerprintComponentManager();
+            component.setOrder(properties.getOrder());
+            return component;
         }
-        if (enabled) {
-            return CipherExecutorUtils.newStringCipherExecutor(crypto, CookieDeviceFingerprintComponentCipherExecutor.class);
+
+        @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.client-ip", name = "enabled", havingValue = "true")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "deviceFingerprintClientIpComponentExtractor")
+        @Autowired
+        public DeviceFingerprintComponentManager deviceFingerprintClientIpComponentExtractor(
+            final CasConfigurationProperties casProperties) {
+            val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getClientIp();
+            val component = new ClientIpDeviceFingerprintComponentManager();
+            component.setOrder(properties.getOrder());
+            return component;
         }
-        return CipherExecutor.noOp();
+
+        @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.cookie", name = "enabled", havingValue = "true", matchIfMissing = true)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "deviceFingerprintCookieComponentExtractor")
+        @Autowired
+        public DeviceFingerprintComponentManager deviceFingerprintCookieComponentExtractor(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("deviceFingerprintCookieGenerator")
+            final CasCookieBuilder deviceFingerprintCookieGenerator,
+            @Qualifier("deviceFingerprintCookieRandomStringGenerator")
+            final RandomStringGenerator deviceFingerprintCookieRandomStringGenerator) {
+            val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie();
+            val component = new CookieDeviceFingerprintComponentManager(deviceFingerprintCookieGenerator, deviceFingerprintCookieRandomStringGenerator);
+            component.setOrder(properties.getOrder());
+            return component;
+        }
+    }
+
+    @Configuration(value = "MultifactorAuthnTrustedDeviceFingerprintStrategyConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class MultifactorAuthnTrustedDeviceFingerprintStrategyConfiguration {
+
+        @ConditionalOnMissingBean(name = DeviceFingerprintStrategy.DEFAULT_BEAN_NAME)
+        @Bean(DeviceFingerprintStrategy.DEFAULT_BEAN_NAME)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public DeviceFingerprintStrategy deviceFingerprintStrategy(final List<DeviceFingerprintComponentManager> extractors,
+                                                                   final CasConfigurationProperties casProperties) {
+            val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint();
+            return new DefaultDeviceFingerprintStrategy(extractors, properties.getComponentSeparator());
+        }
+
+    }
+
+    @Configuration(value = "MultifactorAuthnTrustedDeviceFingerprintCookieConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class MultifactorAuthnTrustedDeviceFingerprintCookieConfiguration {
+        @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.cookie", name = "enabled", havingValue = "true", matchIfMissing = true)
+        @ConditionalOnMissingBean(name = "deviceFingerprintCookieGenerator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public CasCookieBuilder deviceFingerprintCookieGenerator(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("deviceFingerprintCookieValueManager")
+            final CookieValueManager deviceFingerprintCookieValueManager) {
+            val cookie = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie();
+            return new TrustedDeviceCookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(cookie), deviceFingerprintCookieValueManager);
+        }
+
+
+        @ConditionalOnMissingBean(name = "deviceFingerprintCookieRandomStringGenerator")
+        @Bean
+        public RandomStringGenerator deviceFingerprintCookieRandomStringGenerator() {
+            return new Base64RandomStringGenerator();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "deviceFingerprintCookieValueManager")
+        public CookieValueManager deviceFingerprintCookieValueManager(
+            @Qualifier("deviceFingerprintCookieCipherExecutor")
+            final CipherExecutor deviceFingerprintCookieCipherExecutor) {
+            return new EncryptedCookieValueManager(deviceFingerprintCookieCipherExecutor);
+        }
+
+        @ConditionalOnMissingBean(name = "deviceFingerprintCookieCipherExecutor")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public CipherExecutor deviceFingerprintCookieCipherExecutor(final CasConfigurationProperties casProperties) {
+            val crypto = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie().getCrypto();
+            var enabled = crypto.isEnabled();
+            if (!enabled && StringUtils.isNotBlank(crypto.getEncryption().getKey()) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
+                LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet "
+                            + "signing/encryption keys are defined for operations. CAS will proceed to enable the cookie "
+                            + "encryption/signing functionality.");
+                enabled = true;
+            }
+            if (enabled) {
+                return CipherExecutorUtils.newStringCipherExecutor(crypto, CookieDeviceFingerprintComponentCipherExecutor.class);
+            }
+            return CipherExecutor.noOp();
+        }
+
     }
 
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)

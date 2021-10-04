@@ -6,6 +6,7 @@ dependencies {
     implementation project(":core:cas-server-core-audit-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-throttle")
     implementation project(":support:cas-server-support-throttle")
     implementation project(":support:cas-server-support-throttle-core")
@@ -36,5 +37,4 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-util")
-    testImplementation project(":core:cas-server-core-authentication-api")
 }

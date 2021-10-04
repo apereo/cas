@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
@@ -17,8 +18,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.mongodb.core.MongoTemplate;
-
-import javax.net.ssl.SSLContext;
 
 /**
  * This is {@link MongoDbMultifactorAuthenticationTrustConfiguration}.
@@ -40,10 +39,10 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
     @Bean
     @Autowired
     public MongoTemplate mongoMfaTrustedAuthnTemplate(final CasConfigurationProperties casProperties,
-                                                      @Qualifier("sslContext")
-                                                      final SSLContext sslContext) {
+                                                      @Qualifier("casSslContext")
+                                                      final CasSSLContext casSslContext) {
         val mongo = casProperties.getAuthn().getMfa().getTrusted().getMongo();
-        val factory = new MongoDbConnectionFactory(sslContext);
+        val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;

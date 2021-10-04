@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.services.MongoDbServiceRegistry;
@@ -21,7 +22,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.TextIndexDefinition;
 
-import javax.net.ssl.SSLContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,11 +39,12 @@ public class MongoDbServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryTemplate")
     @Bean
     @Autowired
-    public MongoTemplate mongoDbServiceRegistryTemplate(final CasConfigurationProperties casProperties,
-                                                        @Qualifier("sslContext")
-                                                        final SSLContext sslContext) {
+    public MongoTemplate mongoDbServiceRegistryTemplate(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext) {
         val mongo = casProperties.getServiceRegistry().getMongo();
-        val factory = new MongoDbConnectionFactory(sslContext);
+        val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         val collection = mongoTemplate.getCollection(mongo.getCollection());

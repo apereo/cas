@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.monitor.MongoDbHealthIndicator;
@@ -17,8 +18,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import javax.net.ssl.SSLContext;
-
 /**
  * This is {@link MongoDbMonitoringConfiguration}.
  *
@@ -33,10 +32,11 @@ public class MongoDbMonitoringConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "mongoHealthIndicatorTemplate")
     @Autowired
-    public MongoTemplate mongoHealthIndicatorTemplate(final CasConfigurationProperties casProperties,
-                                                      @Qualifier("sslContext")
-                                                      final SSLContext sslContext) {
-        val factory = new MongoDbConnectionFactory(sslContext);
+    public MongoTemplate mongoHealthIndicatorTemplate(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext) {
+        val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongoProps = casProperties.getMonitor().getMongo();
         return factory.buildMongoTemplate(mongoProps);
     }

@@ -60,6 +60,7 @@ public class JpaTicketRegistryConfiguration {
         }
 
     }
+
     @Configuration(value = "JpaTicketRegistryEntityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaTicketRegistryEntityConfiguration {

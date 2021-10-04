@@ -2,6 +2,7 @@ description = "Apereo CAS MongoDB Monitoring"
 dependencies {
     implementation project(":core:cas-server-core-monitor")
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":support:cas-server-support-mongo-core")
 
@@ -14,7 +15,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-services-authentication")
-    testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core-authentication")

@@ -19,6 +19,7 @@ import org.apereo.cas.support.wsfederation.web.WsFederationCookieGenerator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.BeanContainer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 
@@ -36,7 +37,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
-import java.util.Collection;
 import java.util.HashSet;
 
 /**
@@ -105,7 +105,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
-    public Collection<WsFederationConfiguration> wsFederationConfigurations(
+    public BeanContainer<WsFederationConfiguration> wsFederationConfigurations(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         val col = new HashSet<WsFederationConfiguration>();
@@ -113,7 +113,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
             val cfg = getWsFederationConfiguration(wsfed, applicationContext);
             col.add(cfg);
         });
-        return col;
+        return BeanContainer.of(col);
     }
 
     @ConditionalOnMissingBean(name = "wsfedPrincipalFactory")
@@ -132,7 +132,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         @Qualifier("wsfedPrincipalFactory")
         final PrincipalFactory wsfedPrincipalFactory,
         @Qualifier("wsFederationConfigurations")
-        final Collection<WsFederationConfiguration> wsFederationConfigurations,
+        final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,
         @Qualifier("attributeRepository")
         final IPersonAttributeDao attributeRepository,
         @Qualifier(ServicesManager.BEAN_NAME)
@@ -148,8 +148,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                 if (!wsfed.isAttributeResolverEnabled()) {
                     plan.registerAuthenticationHandler(handler);
                 } else {
-                    val configurations = wsFederationConfigurations;
-                    val cfg = configurations.stream()
+                    val cfg = wsFederationConfigurations.toSet().stream()
                         .filter(c -> c.getIdentityProviderUrl().equalsIgnoreCase(wsfed.getIdentityProviderUrl()))
                         .findFirst()
                         .orElseThrow(() ->

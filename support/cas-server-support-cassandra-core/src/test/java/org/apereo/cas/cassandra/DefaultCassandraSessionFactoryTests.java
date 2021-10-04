@@ -7,6 +7,7 @@ package org.apereo.cas.cassandra;
  * @since 6.3.0
  */
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
@@ -43,13 +44,13 @@ public class DefaultCassandraSessionFactoryTests {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("sslContext")
-    private ObjectProvider<SSLContext> sslContext;
+    @Qualifier("casSslContext")
+    private CasSSLContext casSslContext;
 
     @Test
     public void verifyOperation() {
         val cassandra = casProperties.getAuthn().getCassandra();
-        val factory = new DefaultCassandraSessionFactory(cassandra, sslContext.getObject());
+        val factory = new DefaultCassandraSessionFactory(cassandra, casSslContext.getSslContext());
         assertNotNull(factory.getCassandraTemplate());
         assertNotNull(factory.getCqlTemplate());
         assertNotNull(factory.getSession());

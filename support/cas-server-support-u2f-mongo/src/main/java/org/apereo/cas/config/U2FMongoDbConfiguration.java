@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FMongoDbDeviceRepository;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -18,8 +19,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
-import javax.net.ssl.SSLContext;
-
 /**
  * This is {@link U2FMongoDbConfiguration}.
  *
@@ -33,13 +32,14 @@ public class U2FMongoDbConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
-    public U2FDeviceRepository u2fDeviceRepository(final CasConfigurationProperties casProperties,
-                                                   @Qualifier("u2fRegistrationRecordCipherExecutor")
-                                                   final CipherExecutor u2fRegistrationRecordCipherExecutor,
-                                                   @Qualifier("sslContext")
-                                                   final SSLContext sslContext) {
+    public U2FDeviceRepository u2fDeviceRepository(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("u2fRegistrationRecordCipherExecutor")
+        final CipherExecutor u2fRegistrationRecordCipherExecutor,
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext) {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
-        val factory = new MongoDbConnectionFactory(sslContext);
+        val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongoProps = u2f.getMongo();
         val mongoTemplate = factory.buildMongoTemplate(mongoProps);
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongoProps.getCollection(), mongoProps.isDropCollection());

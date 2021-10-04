@@ -1,5 +1,6 @@
 package org.apereo.cas.mfa.simple;
 
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
@@ -93,6 +94,7 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasCoreAuditConfiguration.class,
         CasCoreUtilConfiguration.class
     })
     @EnableConfigurationProperties(CasConfigurationProperties.class)

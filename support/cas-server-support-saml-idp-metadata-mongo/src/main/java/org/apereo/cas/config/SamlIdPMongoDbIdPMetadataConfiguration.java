@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.support.saml.idp.metadata.MongoDbSamlIdPMetadataCipherExecutor;
@@ -25,8 +26,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.mongodb.core.MongoTemplate;
-
-import javax.net.ssl.SSLContext;
 
 /**
  * This is {@link SamlIdPMongoDbIdPMetadataConfiguration}.
@@ -60,11 +59,11 @@ public class SamlIdPMongoDbIdPMetadataConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public MongoTemplate mongoDbSamlIdPMetadataTemplate(final CasConfigurationProperties casProperties,
-                                                        @Qualifier("sslContext")
-                                                        final SSLContext sslContext) {
+                                                        @Qualifier("casSslContext")
+                                                        final CasSSLContext casSslContext) {
         val idp = casProperties.getAuthn().getSamlIdp();
         val mongo = idp.getMetadata().getMongo();
-        val factory = new MongoDbConnectionFactory(sslContext);
+        val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getIdpMetadataCollection(), mongo.isDropCollection());
         return mongoTemplate;

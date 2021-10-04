@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.cassandra.CassandraSessionFactory;
 import org.apereo.cas.cassandra.DefaultCassandraSessionFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -18,8 +19,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-
-import javax.net.ssl.SSLContext;
 
 /**
  * This is {@link CassandraTicketRegistryConfiguration}.
@@ -53,10 +52,11 @@ public class CassandraTicketRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "cassandraTicketRegistrySessionFactory")
     @Autowired
-    public CassandraSessionFactory cassandraTicketRegistrySessionFactory(final CasConfigurationProperties casProperties,
-                                                                         @Qualifier("sslContext")
-                                                                         final SSLContext sslContext) {
+    public CassandraSessionFactory cassandraTicketRegistrySessionFactory(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext) {
         val cassandra = casProperties.getTicket().getRegistry().getCassandra();
-        return new DefaultCassandraSessionFactory(cassandra, sslContext);
+        return new DefaultCassandraSessionFactory(cassandra, casSslContext.getSslContext());
     }
 }
