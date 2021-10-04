@@ -284,6 +284,12 @@ public class CasOAuthUmaConfiguration {
             return new DefaultUmaPermissionTicketFactory(umaPermissionTicketIdGenerator, umaPermissionTicketExpirationPolicy);
         }
 
+
+    }
+    
+    @Configuration(value = "CasOAuthUmaTicketFactoryPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasOAuthUmaTicketFactoryPlanConfiguration {
         @ConditionalOnMissingBean(name = "defaultUmaPermissionTicketFactoryConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -192,6 +192,18 @@ public class CasCoreServicesConfiguration {
         }
     }
 
+    @Configuration(value = "CasCoreServicesListenerConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreServicesListenerConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "defaultServiceRegistryListener")
+        public ServiceRegistryListener defaultServiceRegistryListener() {
+            return ServiceRegistryListener.noOp();
+        }
+
+    }
+
     @Configuration(value = "CasCoreServiceRegistryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreServiceRegistryConfiguration {
@@ -201,12 +213,6 @@ public class CasCoreServicesConfiguration {
                 return Optional.of(applicationContext.getBean("inMemoryRegisteredServices", List.class));
             }
             return Optional.empty();
-        }
-
-        @Bean
-        @ConditionalOnMissingBean(name = "defaultServiceRegistryListener")
-        public ServiceRegistryListener defaultServiceRegistryListener() {
-            return ServiceRegistryListener.noOp();
         }
 
         @ConditionalOnMissingBean(name = "serviceRegistry")

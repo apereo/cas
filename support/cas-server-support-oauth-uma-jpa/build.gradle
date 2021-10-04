@@ -25,8 +25,7 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-cookie-api")
-
-
+    
     implementation libraries.pac4jcore
     implementation libraries.nimbus
     implementation libraries.jose4j
@@ -34,6 +33,7 @@ dependencies {
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-throttle")
     testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")
