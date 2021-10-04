@@ -227,6 +227,17 @@ public class SamlIdPMetadataConfiguration {
             return generator;
         }
 
+        @Bean
+        @ConditionalOnMissingBean(name = "samlIdPMetadataGeneratorCipherExecutor")
+        public CipherExecutor samlIdPMetadataGeneratorCipherExecutor() {
+            return CipherExecutor.noOpOfStringToString();
+        }
+
+    }
+
+    @Configuration(value = "SamlIdPMetadataLocatorConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPMetadataLocatorConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPMetadataLocator")
         @Bean
         @Autowired
@@ -239,14 +250,6 @@ public class SamlIdPMetadataConfiguration {
             val metadataLocation = ResourceUtils.getRawResourceFrom(location);
             return new FileSystemSamlIdPMetadataLocator(metadataLocation, samlIdPMetadataCache);
         }
-
-
-        @Bean
-        @ConditionalOnMissingBean(name = "samlIdPMetadataGeneratorCipherExecutor")
-        public CipherExecutor samlIdPMetadataGeneratorCipherExecutor() {
-            return CipherExecutor.noOpOfStringToString();
-        }
-
     }
 
     @Configuration(value = "SamlIdPMetadataCacheConfiguration", proxyBeanMethods = false)

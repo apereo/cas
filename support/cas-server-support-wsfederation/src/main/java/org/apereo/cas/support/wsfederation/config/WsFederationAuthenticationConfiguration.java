@@ -10,6 +10,7 @@ import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
+import org.apereo.cas.util.spring.BeanContainer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-
-import java.util.Collection;
 
 /**
  * This is {@link WsFederationAuthenticationConfiguration}.
@@ -50,17 +49,17 @@ public class WsFederationAuthenticationConfiguration {
     @Autowired
     public WsFederationCookieManager wsFederationCookieManager(
         @Qualifier("wsFederationConfigurations")
-        final Collection<WsFederationConfiguration> wsFederationConfigurations,
+        final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,
         final CasConfigurationProperties casProperties) {
-        return new WsFederationCookieManager(wsFederationConfigurations,
+        return new WsFederationCookieManager(wsFederationConfigurations.toList(),
             casProperties.getTheme().getParamName(), casProperties.getLocale().getParamName());
     }
 
     @Bean
     @Autowired
     public WsFederationNavigationController wsFederationNavigationController(
-        @Qualifier("Collection<WsFederationConfiguration> wsFederationConfigurations")
-        final Collection<WsFederationConfiguration> wsFederationConfigurations,
+        @Qualifier("wsFederationConfigurations")
+        final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,
         @Qualifier("webApplicationServiceFactory")
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
         final CasConfigurationProperties casProperties,
@@ -73,7 +72,7 @@ public class WsFederationAuthenticationConfiguration {
         @Qualifier("argumentExtractor")
         final ArgumentExtractor argumentExtractor) {
         return new WsFederationNavigationController(wsFederationCookieManager,
-            wsFederationHelper, wsFederationConfigurations, authenticationRequestServiceSelectionStrategies,
+            wsFederationHelper, wsFederationConfigurations.toList(), authenticationRequestServiceSelectionStrategies,
             webApplicationServiceFactory, casProperties.getServer().getLoginUrl(), argumentExtractor);
     }
 }

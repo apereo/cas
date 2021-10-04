@@ -1,5 +1,6 @@
 package org.apereo.cas.consent;
 
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasConsentCoreConfiguration;
@@ -148,6 +149,7 @@ public abstract class BaseConsentRepositoryTests {
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasCoreTicketsConfiguration.class,
+        CasCoreAuditConfiguration.class,
         CasCoreConfiguration.class
     })
     static class SharedTestConfiguration {

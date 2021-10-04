@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -19,8 +20,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.mongodb.core.MongoTemplate;
-
-import javax.net.ssl.SSLContext;
 
 /**
  * This is {@link MongoDbTicketRegistryConfiguration}.
@@ -54,10 +53,11 @@ public class MongoDbTicketRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
-    public MongoTemplate mongoDbTicketRegistryTemplate(final CasConfigurationProperties casProperties,
-                                                       @Qualifier("sslContext")
-                                                       final SSLContext sslContext) {
-        val factory = new MongoDbConnectionFactory(sslContext);
+    public MongoTemplate mongoDbTicketRegistryTemplate(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext) {
+        val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongo = casProperties.getTicket().getRegistry().getMongo();
         return factory.buildMongoTemplate(mongo);
     }

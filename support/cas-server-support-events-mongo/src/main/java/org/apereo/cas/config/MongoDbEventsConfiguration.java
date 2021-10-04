@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.support.events.CasEventRepository;
@@ -17,8 +18,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.mongodb.core.MongoTemplate;
-
-import javax.net.ssl.SSLContext;
 
 /**
  * This is {@link MongoDbEventsConfiguration}, defines certain beans via configuration
@@ -42,10 +41,10 @@ public class MongoDbEventsConfiguration {
     @ConditionalOnMissingBean(name = "mongoEventsTemplate")
     @Autowired
     public MongoTemplate mongoEventsTemplate(final CasConfigurationProperties casProperties,
-                                             @Qualifier("sslContext")
-                                             final SSLContext sslContext) {
+                                             @Qualifier("casSslContext")
+                                             final CasSSLContext casSslContext) {
         val mongo = casProperties.getEvents().getMongo();
-        val factory = new MongoDbConnectionFactory(sslContext);
+        val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;

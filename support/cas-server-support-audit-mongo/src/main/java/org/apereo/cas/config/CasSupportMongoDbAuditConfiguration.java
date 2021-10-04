@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.MongoDbAuditTrailManager;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 
@@ -13,8 +14,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.net.ssl.SSLContext;
 
 /**
  * This is {@link CasSupportMongoDbAuditConfiguration}.
@@ -30,10 +29,10 @@ public class CasSupportMongoDbAuditConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "mongoDbAuditTrailManager")
     public AuditTrailManager mongoDbAuditTrailManager(final CasConfigurationProperties casProperties,
-                                                      @Qualifier("sslContext")
-                                                      final SSLContext sslContext) {
+                                                      @Qualifier("casSslContext")
+                                                      final CasSSLContext casSslContext) {
         val mongo = casProperties.getAudit().getMongo();
-        val factory = new MongoDbConnectionFactory(sslContext);
+        val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return new MongoDbAuditTrailManager(mongoTemplate, mongo.getCollection(), mongo.isAsynchronous());

@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.config;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.MongoDbAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -22,8 +23,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-
-import javax.net.ssl.SSLContext;
 
 /**
  * This is {@link CasMongoAuthenticationConfiguration}.
@@ -46,15 +45,17 @@ public class CasMongoAuthenticationConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "mongoAuthenticationHandler")
     @Autowired
-    public AuthenticationHandler mongoAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                            @Qualifier("mongoPrincipalFactory")
-                                                            final PrincipalFactory mongoPrincipalFactory,
-                                                            @Qualifier(ServicesManager.BEAN_NAME)
-                                                            final ServicesManager servicesManager,
-                                                            @Qualifier("sslContext")
-                                                            final SSLContext sslContext) {
+    public AuthenticationHandler mongoAuthenticationHandler(
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier("mongoPrincipalFactory")
+        final PrincipalFactory mongoPrincipalFactory,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext) {
         val mongo = casProperties.getAuthn().getMongo();
-        val factory = new MongoDbConnectionFactory(sslContext);
+        val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         val handler = new MongoDbAuthenticationHandler(mongo.getName(), servicesManager, mongoPrincipalFactory, mongo, mongoTemplate);
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(mongo.getPasswordEncoder(), applicationContext));

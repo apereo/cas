@@ -1,7 +1,7 @@
 {
   "dependencies": "core,jpa-ticket-registry",
   "properties": [
-    "--cas.jdbc.show-sql=true",
+    "--cas.jdbc.show-sql=false",
     "--cas.audit.engine.enabled=false",
     "--cas.ticket.registry.jpa.driver-class=org.postgresql.Driver",
     "--cas.ticket.registry.jpa.ddl-auto=update",

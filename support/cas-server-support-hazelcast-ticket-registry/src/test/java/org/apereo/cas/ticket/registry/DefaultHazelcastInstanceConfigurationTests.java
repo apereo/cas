@@ -66,7 +66,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
-}, properties = "cas.ticket.registry.hazelcast.cluster.core.instance-name=samplelocalhostinstance")
+},
+    properties = "cas.ticket.registry.hazelcast.cluster.core.instance-name=samplelocalhostinstance")
 @Slf4j
 @Tag("Hazelcast")
 public class DefaultHazelcastInstanceConfigurationTests {

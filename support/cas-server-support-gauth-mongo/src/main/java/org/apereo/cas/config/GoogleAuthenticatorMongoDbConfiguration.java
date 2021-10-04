@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gauth.credential.MongoDbGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorMongoDbTokenRepository;
@@ -22,8 +23,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.net.ssl.SSLContext;
-
 /**
  * This is {@link GoogleAuthenticatorMongoDbConfiguration}.
  *
@@ -45,11 +44,12 @@ public class GoogleAuthenticatorMongoDbConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
-    public MongoTemplate mongoDbGoogleAuthenticatorTemplate(final CasConfigurationProperties casProperties,
-                                                            @Qualifier("sslContext")
-                                                            final SSLContext sslContext) {
+    public MongoTemplate mongoDbGoogleAuthenticatorTemplate(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext) {
         val mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
-        val factory = new MongoDbConnectionFactory(sslContext);
+        val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getTokenCollection(), mongo.isDropCollection());
         return mongoTemplate;
