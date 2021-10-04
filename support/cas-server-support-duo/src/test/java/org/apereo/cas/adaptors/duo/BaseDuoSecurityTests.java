@@ -134,6 +134,7 @@ public abstract class BaseDuoSecurityTests {
         CasCoreAuthenticationConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreLogoutConfiguration.class,
+        CasCoreAuditConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasMultifactorAuthenticationWebflowConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
