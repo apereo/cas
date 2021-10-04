@@ -33,51 +33,70 @@ import javax.sql.DataSource;
  */
 @EnableTransactionManagement
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "jdbcPasswordManagementConfiguration", proxyBeanMethods = false)
+@Configuration(value = "JdbcPasswordManagementConfiguration", proxyBeanMethods = false)
 public class JdbcPasswordManagementConfiguration {
 
-    @Bean
-    @ConditionalOnMissingBean(name = "jdbcPasswordManagementDataSource")
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public DataSource jdbcPasswordManagementDataSource(final CasConfigurationProperties casProperties) {
-        return JpaBeans.newDataSource(casProperties.getAuthn().getPm().getJdbc());
+    @Configuration(value = "JdbcPasswordManagementServiceConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class JdbcPasswordManagementServiceConfiguration {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @ConditionalOnMissingBean(name = "jdbcPasswordChangeService")
+        @Autowired
+        public PasswordManagementService passwordChangeService(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("jdbcPasswordManagementDataSource")
+            final DataSource jdbcPasswordManagementDataSource,
+            @Qualifier("jdbcPasswordManagementTransactionTemplate")
+            final TransactionTemplate jdbcPasswordManagementTransactionTemplate,
+            @Qualifier("passwordManagementCipherExecutor")
+            final CipherExecutor passwordManagementCipherExecutor,
+            @Qualifier("passwordHistoryService")
+            final PasswordHistoryService passwordHistoryService) {
+            val encoder = PasswordEncoderUtils.newPasswordEncoder(
+                casProperties.getAuthn().getPm().getJdbc().getPasswordEncoder(), applicationContext);
+            return new JdbcPasswordManagementService(passwordManagementCipherExecutor,
+                casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm(), jdbcPasswordManagementDataSource,
+                jdbcPasswordManagementTransactionTemplate, passwordHistoryService, encoder);
+        }
+
     }
 
-    @Bean
-    public PlatformTransactionManager jdbcPasswordManagementTransactionManager(
-        @Qualifier("jdbcPasswordManagementDataSource")
-        final DataSource jdbcPasswordManagementDataSource) {
-        return new DataSourceTransactionManager(jdbcPasswordManagementDataSource);
+    @Configuration(value = "JdbcPasswordManagementDataConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class JdbcPasswordManagementDataConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "jdbcPasswordManagementDataSource")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public DataSource jdbcPasswordManagementDataSource(final CasConfigurationProperties casProperties) {
+            return JpaBeans.newDataSource(casProperties.getAuthn().getPm().getJdbc());
+        }
     }
 
-    @ConditionalOnMissingBean(name = "jdbcPasswordManagementTransactionTemplate")
-    @Bean
-    @Autowired
-    public TransactionTemplate jdbcPasswordManagementTransactionTemplate(final CasConfigurationProperties casProperties,
-                                                                         @Qualifier("jdbcPasswordManagementTransactionManager")
-                                                                         final PlatformTransactionManager jdbcPasswordManagementTransactionManager) {
-        val t = new TransactionTemplate(jdbcPasswordManagementTransactionManager);
-        t.setIsolationLevelName(casProperties.getAuthn().getPm().getJdbc().getIsolationLevelName());
-        t.setPropagationBehaviorName(casProperties.getAuthn().getPm().getJdbc().getPropagationBehaviorName());
-        return t;
-    }
+    @Configuration(value = "JdbcPasswordManagementTransactionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class JdbcPasswordManagementTransactionConfiguration {
+        @Bean
+        public PlatformTransactionManager jdbcPasswordManagementTransactionManager(
+            @Qualifier("jdbcPasswordManagementDataSource")
+            final DataSource jdbcPasswordManagementDataSource) {
+            return new DataSourceTransactionManager(jdbcPasswordManagementDataSource);
+        }
 
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Bean
-    @ConditionalOnMissingBean(name = "jdbcPasswordChangeService")
-    @Autowired
-    public PasswordManagementService passwordChangeService(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                           @Qualifier("jdbcPasswordManagementDataSource")
-                                                           final DataSource jdbcPasswordManagementDataSource,
-                                                           @Qualifier("jdbcPasswordManagementTransactionTemplate")
-                                                           final TransactionTemplate jdbcPasswordManagementTransactionTemplate,
-                                                           @Qualifier("passwordManagementCipherExecutor")
-                                                           final CipherExecutor passwordManagementCipherExecutor,
-                                                           @Qualifier("passwordHistoryService")
-                                                           final PasswordHistoryService passwordHistoryService) {
-        val encoder = PasswordEncoderUtils.newPasswordEncoder(casProperties.getAuthn().getPm().getJdbc().getPasswordEncoder(), applicationContext);
-        return new JdbcPasswordManagementService(passwordManagementCipherExecutor, casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm(), jdbcPasswordManagementDataSource,
-            jdbcPasswordManagementTransactionTemplate, passwordHistoryService, encoder);
+        @ConditionalOnMissingBean(name = "jdbcPasswordManagementTransactionTemplate")
+        @Bean
+        @Autowired
+        public TransactionTemplate jdbcPasswordManagementTransactionTemplate(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("jdbcPasswordManagementTransactionManager")
+            final PlatformTransactionManager jdbcPasswordManagementTransactionManager) {
+            val t = new TransactionTemplate(jdbcPasswordManagementTransactionManager);
+            t.setIsolationLevelName(casProperties.getAuthn().getPm().getJdbc().getIsolationLevelName());
+            t.setPropagationBehaviorName(casProperties.getAuthn().getPm().getJdbc().getPropagationBehaviorName());
+            return t;
+        }
+
     }
 }

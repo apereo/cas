@@ -45,10 +45,10 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 @Configuration(value = "casThrottlingConfiguration", proxyBeanMethods = false)
 public class CasThrottlingConfiguration {
-    
-    @Configuration(value = "CasThrottlingContextConfiguration", proxyBeanMethods = false)
+
+    @Configuration(value = "CasThrottlingInterceptorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasThrottlingContextConfiguration {
+    public static class CasThrottlingInterceptorConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "authenticationThrottle")
         @Bean
@@ -66,11 +66,18 @@ public class CasThrottlingConfiguration {
             }
             if (StringUtils.isNotBlank(throttle.getCore().getUsernameParameter())) {
                 LOGGER.trace("Activating authentication throttling based on IP address and username...");
-                return new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(authenticationThrottlingConfigurationContext, throttleSubmissionMap);
+                return new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(
+                    authenticationThrottlingConfigurationContext, throttleSubmissionMap);
             }
             LOGGER.trace("Activating authentication throttling based on IP address...");
-            return new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter(authenticationThrottlingConfigurationContext, throttleSubmissionMap);
+            return new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter(
+                authenticationThrottlingConfigurationContext, throttleSubmissionMap);
         }
+    }
+
+    @Configuration(value = "CasThrottlingContextConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasThrottlingContextConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
