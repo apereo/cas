@@ -313,40 +313,9 @@ public class CasWebflowContextConfiguration {
         }
     }
 
-    @Configuration(value = "CasWebflowDefinitionsConfiguration", proxyBeanMethods = false)
-    @AutoConfigureAfter(CasCoreServicesConfiguration.class)
-    public static class CasWebflowDefinitionsConfiguration {
-        @Bean
-        public FlowBuilder flowBuilder() {
-            return new FlowModelFlowBuilder(new DefaultFlowModelHolder(new DynamicFlowModelBuilder()));
-        }
-
-        @Bean
-        @Autowired
-        public FlowDefinitionRegistry logoutFlowRegistry(
-            final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-            final FlowBuilderServices flowBuilderServices,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
-            final FlowBuilder flowBuilder) {
-            val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
-            builder.addFlowBuilder(flowBuilder, CasWebflowConfigurer.FLOW_ID_LOGOUT);
-            return builder.build();
-        }
-
-        @Bean
-        @Autowired
-        public FlowDefinitionRegistry loginFlowRegistry(
-            final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-            final FlowBuilderServices flowBuilderServices,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
-            final FlowBuilder flowBuilder) {
-            val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
-            builder.addFlowBuilder(flowBuilder, CasWebflowConfigurer.FLOW_ID_LOGIN);
-            return builder.build();
-        }
-
+    @Configuration(value = "CasWebflowContextBuilderConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasWebflowContextBuilderConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @Autowired
@@ -392,6 +361,45 @@ public class CasWebflowContextConfiguration {
             }
             return resolver;
         }
+
+        @Bean
+        public FlowBuilder flowBuilder() {
+            return new FlowModelFlowBuilder(new DefaultFlowModelHolder(new DynamicFlowModelBuilder()));
+        }
+
+    }
+
+    @Configuration(value = "CasWebflowDefinitionsConfiguration", proxyBeanMethods = false)
+    @AutoConfigureAfter(CasCoreServicesConfiguration.class)
+    public static class CasWebflowDefinitionsConfiguration {
+
+        @Bean
+        @Autowired
+        public FlowDefinitionRegistry logoutFlowRegistry(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
+            final FlowBuilder flowBuilder) {
+            val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
+            builder.addFlowBuilder(flowBuilder, CasWebflowConfigurer.FLOW_ID_LOGOUT);
+            return builder.build();
+        }
+
+        @Bean
+        @Autowired
+        public FlowDefinitionRegistry loginFlowRegistry(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
+            final FlowBuilder flowBuilder) {
+            val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
+            builder.addFlowBuilder(flowBuilder, CasWebflowConfigurer.FLOW_ID_LOGIN);
+            return builder.build();
+        }
+
+        
     }
 
     @AutoConfigureAfter(CasCoreServicesConfiguration.class)

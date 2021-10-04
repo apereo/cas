@@ -18,6 +18,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,26 +49,28 @@ public class AttributeConsentReportEndpointTests extends AbstractCasEndpointTest
 
     @Test
     public void verifyOperation() {
+        val uid = UUID.randomUUID().toString();
         val desc = consentDecisionBuilder.build(RegisteredServiceTestUtils.getService(),
-            RegisteredServiceTestUtils.getRegisteredService(), "casuser",
+            RegisteredServiceTestUtils.getRegisteredService(), uid,
             CoreAuthenticationTestUtils.getAttributes());
         consentRepository.storeConsentDecision(desc);
 
-        var results = attributeConsentReportEndpoint.consentDecisions("casuser");
+        var results = attributeConsentReportEndpoint.consentDecisions(uid);
         assertFalse(results.isEmpty());
 
         val entity = attributeConsentReportEndpoint.export();
         assertEquals(HttpStatus.OK, entity.getStatusCode());
 
         assertTrue(attributeConsentReportEndpoint.revokeConsents(desc.getPrincipal(), desc.getId()));
-        results = attributeConsentReportEndpoint.consentDecisions("casuser");
+        results = attributeConsentReportEndpoint.consentDecisions(uid);
         assertTrue(results.isEmpty());
     }
 
     @Test
     public void verifyImportOperation() throws Exception {
+        val uid = UUID.randomUUID().toString();
         val toSave = consentDecisionBuilder.build(RegisteredServiceTestUtils.getService(),
-            RegisteredServiceTestUtils.getRegisteredService(), "casuser",
+            RegisteredServiceTestUtils.getRegisteredService(), uid,
             CoreAuthenticationTestUtils.getAttributes());
         val request = new MockHttpServletRequest();
         val content = MAPPER.writeValueAsString(toSave);
