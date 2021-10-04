@@ -83,7 +83,7 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
+    @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
     private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Override

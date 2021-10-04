@@ -28,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -92,7 +93,8 @@ public class ElectronicFenceConfiguration {
             @Qualifier("dateTimeAuthenticationRequestRiskCalculator")
             final AuthenticationRequestRiskCalculator dateTimeAuthenticationRequestRiskCalculator,
             @Qualifier("geoLocationAuthenticationRequestRiskCalculator")
-            final AuthenticationRequestRiskCalculator geoLocationAuthenticationRequestRiskCalculator) {
+            final ObjectProvider<AuthenticationRequestRiskCalculator> geoLocationAuthenticationRequestRiskCalculator) {
+            
             val risk = casProperties.getAuthn().getAdaptive().getRisk();
             val calculators = new HashSet<AuthenticationRequestRiskCalculator>();
             if (risk.getIp().isEnabled()) {
@@ -105,7 +107,7 @@ public class ElectronicFenceConfiguration {
                 calculators.add(dateTimeAuthenticationRequestRiskCalculator);
             }
             if (risk.getGeoLocation().isEnabled()) {
-                calculators.add(geoLocationAuthenticationRequestRiskCalculator);
+                geoLocationAuthenticationRequestRiskCalculator.ifAvailable(calculators::add);
             }
             if (calculators.isEmpty()) {
                 LOGGER.warn("No risk calculators are defined to examine authentication requests");
@@ -211,9 +213,10 @@ public class ElectronicFenceConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
-        public AuthenticationRequestRiskCalculator userAgentAuthenticationRequestRiskCalculator(final CasConfigurationProperties casProperties,
-                                                                                                @Qualifier("casEventRepository")
-                                                                                                final CasEventRepository casEventRepository) {
+        public AuthenticationRequestRiskCalculator userAgentAuthenticationRequestRiskCalculator(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("casEventRepository")
+            final CasEventRepository casEventRepository) {
             return new UserAgentAuthenticationRequestRiskCalculator(casEventRepository, casProperties);
         }
 

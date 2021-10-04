@@ -72,7 +72,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
+    @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
     private AuthenticationSystemSupport authenticationSystemSupport;
 
     private OpenIdService openIdService;

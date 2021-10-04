@@ -55,7 +55,7 @@ public class CouchDbMultifactorAuthenticationTrustConfiguration {
     public MultifactorAuthenticationTrustStorage mfaTrustEngine(
         @Qualifier("couchDbTrustRecordRepository")
         final MultifactorAuthenticationTrustRecordCouchDbRepository couchDbTrustRecordRepository, final CasConfigurationProperties casProperties,
-        @Qualifier("keyGenerationStrategy")
+        @Qualifier("mfaTrustRecordKeyGenerator")
         final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy,
         @Qualifier("mfaTrustCipherExecutor")
         final CipherExecutor mfaTrustCipherExecutor) {

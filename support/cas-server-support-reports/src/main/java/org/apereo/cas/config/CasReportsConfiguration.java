@@ -204,7 +204,7 @@ public class CasReportsConfiguration {
     public CasReleaseAttributesReportEndpoint releaseAttributesReportEndpoint(
         @Qualifier("webApplicationServiceFactory")
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-        @Qualifier("defaultAuthenticationSystemSupport")
+        @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("principalFactory")
         final PrincipalFactory principalFactory,

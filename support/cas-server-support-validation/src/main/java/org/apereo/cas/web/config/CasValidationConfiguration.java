@@ -433,7 +433,7 @@ public class CasValidationConfiguration {
         public ServiceValidateController serviceValidateController(
             @Qualifier("requestedContextValidator")
             final RequestedAuthenticationContextValidator requestedContextValidator,
-            @Qualifier("defaultAuthenticationSystemSupport")
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -483,7 +483,7 @@ public class CasValidationConfiguration {
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             final CasConfigurationProperties casProperties,
-            @Qualifier("defaultAuthenticationSystemSupport")
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("legacyValidateControllerValidationSpecification")
             final CasProtocolValidationSpecification legacyValidateControllerValidationSpecification,
@@ -522,7 +522,7 @@ public class CasValidationConfiguration {
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             final CasConfigurationProperties casProperties,
-            @Qualifier("defaultAuthenticationSystemSupport")
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("proxyValidateControllerValidationSpecification")
             final CasProtocolValidationSpecification proxyValidateControllerValidationSpecification,
@@ -563,7 +563,7 @@ public class CasValidationConfiguration {
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             final CasConfigurationProperties casProperties,
-            @Qualifier("defaultAuthenticationSystemSupport")
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("v3ProxyValidateControllerValidationSpecification")
             final CasProtocolValidationSpecification v3ProxyValidateControllerValidationSpecification,
@@ -600,7 +600,7 @@ public class CasValidationConfiguration {
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             final CasConfigurationProperties casProperties,
-            @Qualifier("defaultAuthenticationSystemSupport")
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("requestedContextValidator")
             final RequestedAuthenticationContextValidator requestedContextValidator,

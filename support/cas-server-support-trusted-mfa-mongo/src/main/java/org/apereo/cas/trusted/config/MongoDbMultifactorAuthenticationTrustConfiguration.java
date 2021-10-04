@@ -51,13 +51,14 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
-    public MultifactorAuthenticationTrustStorage mfaTrustEngine(final CasConfigurationProperties casProperties,
-                                                                @Qualifier("mongoMfaTrustedAuthnTemplate")
-                                                                final MongoTemplate mongoMfaTrustedAuthnTemplate,
-                                                                @Qualifier("keyGenerationStrategy")
-                                                                final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy,
-                                                                @Qualifier("mfaTrustCipherExecutor")
-                                                                final CipherExecutor mfaTrustCipherExecutor) {
+    public MultifactorAuthenticationTrustStorage mfaTrustEngine(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("mongoMfaTrustedAuthnTemplate")
+        final MongoTemplate mongoMfaTrustedAuthnTemplate,
+        @Qualifier("mfaTrustRecordKeyGenerator")
+        final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy,
+        @Qualifier("mfaTrustCipherExecutor")
+        final CipherExecutor mfaTrustCipherExecutor) {
         return new MongoDbMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(), mfaTrustCipherExecutor, mongoMfaTrustedAuthnTemplate, keyGenerationStrategy);
     }
 }

@@ -142,7 +142,7 @@ public class CasCoreWebflowConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("defaultTicketRegistrySupport")
             final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier("defaultAuthenticationSystemSupport")
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("authenticationServiceSelectionPlan")
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,

@@ -92,7 +92,7 @@ public class WsFederationAuthenticationWebflowConfiguration {
         final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,
         @Qualifier("wsFederationCookieManager")
         final WsFederationCookieManager wsFederationCookieManager,
-        @Qualifier("defaultAuthenticationSystemSupport")
+        @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("wsFederationHelper")
         final WsFederationHelper wsFederationHelper) {

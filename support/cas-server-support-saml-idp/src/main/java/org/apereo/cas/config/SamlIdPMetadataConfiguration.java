@@ -140,7 +140,7 @@ public class SamlIdPMetadataConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
-            @Qualifier("defaultAuthenticationSystemSupport")
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("samlProfileSamlResponseBuilder")
             final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
@@ -280,7 +280,11 @@ public class SamlIdPMetadataConfiguration {
             return new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean,
                 httpClient, samlRegisteredServiceMetadataResolvers);
         }
+    }
 
+    @Configuration(value = "SamlIdPMetadataResolverConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPMetadataResolverConfiguration {
 
         @ConditionalOnMissingBean(name = SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
         @Bean

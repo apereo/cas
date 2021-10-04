@@ -215,7 +215,6 @@ public class CasOAuth20Configuration {
 
     }
 
-
     @Configuration(value = "CasOAuth20ContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20ContextConfiguration {
@@ -915,6 +914,63 @@ public class CasOAuth20Configuration {
         }
     }
 
+    @Configuration(value = "CasOAuth20TicketFactoryPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasOAuth20TicketFactoryPlanConfiguration {
+
+        @ConditionalOnMissingBean(name = "defaultRefreshTokenFactoryConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public TicketFactoryExecutionPlanConfigurer defaultRefreshTokenFactoryConfigurer(
+            @Qualifier("defaultRefreshTokenFactory")
+            final OAuth20RefreshTokenFactory defaultRefreshTokenFactory) {
+            return () -> defaultRefreshTokenFactory;
+        }
+
+        @ConditionalOnMissingBean(name = "defaultDeviceUserCodeFactoryConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public TicketFactoryExecutionPlanConfigurer defaultDeviceUserCodeFactoryConfigurer(
+            @Qualifier("defaultDeviceUserCodeFactory")
+            final OAuth20DeviceUserCodeFactory defaultDeviceUserCodeFactory) {
+            return () -> defaultDeviceUserCodeFactory;
+        }
+
+        @ConditionalOnMissingBean(name = "defaultAccessTokenFactoryConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public TicketFactoryExecutionPlanConfigurer defaultAccessTokenFactoryConfigurer(
+            @Qualifier("defaultAccessTokenFactory")
+            final OAuth20AccessTokenFactory defaultAccessTokenFactory) {
+            return () -> defaultAccessTokenFactory;
+        }
+
+        @ConditionalOnMissingBean(name = "defaultDeviceTokenFactoryConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public TicketFactoryExecutionPlanConfigurer defaultDeviceTokenFactoryConfigurer(
+            @Qualifier("defaultDeviceTokenFactory")
+            final OAuth20DeviceTokenFactory defaultDeviceTokenFactory) {
+            return () -> defaultDeviceTokenFactory;
+        }
+
+
+        @ConditionalOnMissingBean(name = "defaultOAuthCodeFactoryConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public TicketFactoryExecutionPlanConfigurer defaultOAuthCodeFactoryConfigurer(
+            @Qualifier("defaultOAuthCodeFactory")
+            final OAuth20CodeFactory defaultOAuthCodeFactory) {
+            return () -> defaultOAuthCodeFactory;
+        }
+
+    }
+
     @Configuration(value = "CasOAuth20TicketsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20TicketsConfiguration {
@@ -992,16 +1048,6 @@ public class CasOAuth20Configuration {
                 refreshTokenExpirationPolicy, servicesManager);
         }
 
-        @ConditionalOnMissingBean(name = "defaultRefreshTokenFactoryConfigurer")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public TicketFactoryExecutionPlanConfigurer defaultRefreshTokenFactoryConfigurer(
-            @Qualifier("defaultRefreshTokenFactory")
-            final OAuth20RefreshTokenFactory defaultRefreshTokenFactory) {
-            return () -> defaultRefreshTokenFactory;
-        }
-
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -1019,15 +1065,6 @@ public class CasOAuth20Configuration {
             return new OAuth20DefaultAccessTokenFactory(accessTokenIdGenerator, accessTokenExpirationPolicy, accessTokenJwtBuilder, servicesManager);
         }
 
-        @ConditionalOnMissingBean(name = "defaultAccessTokenFactoryConfigurer")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public TicketFactoryExecutionPlanConfigurer defaultAccessTokenFactoryConfigurer(
-            @Qualifier("defaultAccessTokenFactory")
-            final OAuth20AccessTokenFactory defaultAccessTokenFactory) {
-            return () -> defaultAccessTokenFactory;
-        }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -1045,15 +1082,6 @@ public class CasOAuth20Configuration {
                 casProperties.getAuthn().getOauth().getDeviceUserCode().getUserCodeLength(), servicesManager);
         }
 
-        @ConditionalOnMissingBean(name = "defaultDeviceTokenFactoryConfigurer")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public TicketFactoryExecutionPlanConfigurer defaultDeviceTokenFactoryConfigurer(
-            @Qualifier("defaultDeviceTokenFactory")
-            final OAuth20DeviceTokenFactory defaultDeviceTokenFactory) {
-            return () -> defaultDeviceTokenFactory;
-        }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -1071,15 +1099,6 @@ public class CasOAuth20Configuration {
                 casProperties.getAuthn().getOauth().getDeviceUserCode().getUserCodeLength(), servicesManager);
         }
 
-        @ConditionalOnMissingBean(name = "defaultDeviceUserCodeFactoryConfigurer")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public TicketFactoryExecutionPlanConfigurer defaultDeviceUserCodeFactoryConfigurer(
-            @Qualifier("defaultDeviceUserCodeFactory")
-            final OAuth20DeviceUserCodeFactory defaultDeviceUserCodeFactory) {
-            return () -> defaultDeviceUserCodeFactory;
-        }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -1095,15 +1114,6 @@ public class CasOAuth20Configuration {
             return new OAuth20DefaultOAuthCodeFactory(oAuthCodeIdGenerator, oAuthCodeExpirationPolicy, servicesManager);
         }
 
-        @ConditionalOnMissingBean(name = "defaultOAuthCodeFactoryConfigurer")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public TicketFactoryExecutionPlanConfigurer defaultOAuthCodeFactoryConfigurer(
-            @Qualifier("defaultOAuthCodeFactory")
-            final OAuth20CodeFactory defaultOAuthCodeFactory) {
-            return () -> defaultOAuthCodeFactory;
-        }
     }
 
     @Configuration(value = "CasOAuth20ResponseConfiguration", proxyBeanMethods = false)
@@ -1299,7 +1309,7 @@ public class CasOAuth20Configuration {
             final SessionStore oauthDistributedSessionStore,
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier("defaultAuthenticationSystemSupport")
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,

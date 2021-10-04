@@ -292,7 +292,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
             final CasCookieBuilder delegatedClientDistributedSessionCookieGenerator,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("defaultAuthenticationSystemSupport")
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("argumentExtractor")
             final ArgumentExtractor argumentExtractor,

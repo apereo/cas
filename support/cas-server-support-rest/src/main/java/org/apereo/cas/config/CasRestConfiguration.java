@@ -145,7 +145,7 @@ public class CasRestConfiguration {
             final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory,
             @Qualifier("defaultTicketRegistrySupport")
             final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier("defaultAuthenticationSystemSupport")
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("argumentExtractor")

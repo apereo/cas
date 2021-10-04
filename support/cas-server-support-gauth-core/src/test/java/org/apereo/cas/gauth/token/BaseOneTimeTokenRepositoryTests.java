@@ -3,6 +3,7 @@ package org.apereo.cas.gauth.token;
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepositoryCleaner;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.Getter;
 import lombok.val;
@@ -22,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Getter
 public abstract class BaseOneTimeTokenRepositoryTests {
-    public static final String CASUSER = "casuser";
+    public static final String CASUSER = RandomUtils.randomAlphabetic(6);
 
     @Autowired
     @Qualifier("oneTimeTokenAuthenticatorTokenRepository")

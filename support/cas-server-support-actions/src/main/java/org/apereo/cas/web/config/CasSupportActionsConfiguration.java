@@ -311,7 +311,7 @@ public class CasSupportActionsConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("defaultAuthenticationSystemSupport")
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("defaultTicketRegistrySupport")
             final TicketRegistrySupport ticketRegistrySupport,
@@ -429,7 +429,7 @@ public class CasSupportActionsConfiguration {
             final CasCookieBuilder warnCookieGenerator,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("defaultAuthenticationSystemSupport")
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("defaultTicketRegistrySupport")
             final TicketRegistrySupport ticketRegistrySupport,

@@ -30,7 +30,7 @@ public class RestMultifactorAuthenticationTrustConfiguration {
     @Autowired
     public MultifactorAuthenticationTrustStorage mfaTrustEngine(
         final CasConfigurationProperties casProperties,
-        @Qualifier("keyGenerationStrategy")
+        @Qualifier("mfaTrustRecordKeyGenerator")
         final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy,
         @Qualifier("mfaTrustCipherExecutor")
         final CipherExecutor mfaTrustCipherExecutor) {

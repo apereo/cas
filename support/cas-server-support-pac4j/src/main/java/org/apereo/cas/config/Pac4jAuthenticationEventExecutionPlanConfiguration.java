@@ -245,8 +245,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                     val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
                     val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
                     if (request != null && response != null) {
-                        val store = delegatedClientDistributedSessionStore;
-                        store.destroySession(new JEEContext(request, response));
+                        delegatedClientDistributedSessionStore.destroySession(new JEEContext(request, response));
                     }
                 });
             }

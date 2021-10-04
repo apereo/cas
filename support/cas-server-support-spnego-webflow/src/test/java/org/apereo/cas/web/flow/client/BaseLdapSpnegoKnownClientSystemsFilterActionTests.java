@@ -4,11 +4,14 @@ import org.apereo.cas.web.flow.AbstractSpnegoTests;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,6 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 public abstract class BaseLdapSpnegoKnownClientSystemsFilterActionTests extends AbstractSpnegoTests {
+
+    @Autowired
+    @Qualifier("ldapSpnegoClientAction")
+    protected Action ldapSpnegoClientAction;
 
     @Test
     public void ensureLdapAttributeShouldDoSpnego() throws Exception {

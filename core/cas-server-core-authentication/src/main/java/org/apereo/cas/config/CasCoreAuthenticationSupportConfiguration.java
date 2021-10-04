@@ -103,7 +103,7 @@ public class CasCoreAuthenticationSupportConfiguration {
     public static class CasCoreAuthenticationSupportBaseConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @ConditionalOnMissingBean(name = "defaultAuthenticationSystemSupport")
+        @ConditionalOnMissingBean(name = AuthenticationSystemSupport.BEAN_NAME)
         @Autowired
         public AuthenticationSystemSupport defaultAuthenticationSystemSupport(
             @Qualifier("authenticationTransactionManager")

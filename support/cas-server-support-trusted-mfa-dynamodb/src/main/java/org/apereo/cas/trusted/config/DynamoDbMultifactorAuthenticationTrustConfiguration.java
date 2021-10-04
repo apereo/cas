@@ -57,13 +57,14 @@ public class DynamoDbMultifactorAuthenticationTrustConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
-    public MultifactorAuthenticationTrustStorage mfaTrustEngine(final CasConfigurationProperties casProperties,
-                                                                @Qualifier("dynamoDbMultifactorTrustEngineFacilitator")
-                                                                final DynamoDbMultifactorTrustEngineFacilitator dynamoDbMultifactorTrustEngineFacilitator,
-                                                                @Qualifier("keyGenerationStrategy")
-                                                                final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy,
-                                                                @Qualifier("mfaTrustCipherExecutor")
-                                                                final CipherExecutor mfaTrustCipherExecutor) {
+    public MultifactorAuthenticationTrustStorage mfaTrustEngine(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("dynamoDbMultifactorTrustEngineFacilitator")
+        final DynamoDbMultifactorTrustEngineFacilitator dynamoDbMultifactorTrustEngineFacilitator,
+        @Qualifier("mfaTrustRecordKeyGenerator")
+        final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy,
+        @Qualifier("mfaTrustCipherExecutor")
+        final CipherExecutor mfaTrustCipherExecutor) {
         return new DynamoDbMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(), mfaTrustCipherExecutor, dynamoDbMultifactorTrustEngineFacilitator,
             keyGenerationStrategy);
     }

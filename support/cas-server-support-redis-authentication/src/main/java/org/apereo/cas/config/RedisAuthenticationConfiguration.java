@@ -122,9 +122,6 @@ public class RedisAuthenticationConfiguration {
     public PersonDirectoryAttributeRepositoryPlanConfigurer redisAttributeRepositoryPlanConfigurer(
         @Qualifier("redisPersonAttributeDaos")
         final List<IPersonAttributeDao> redisPersonAttributeDaos) {
-        return plan -> {
-            val daos = redisPersonAttributeDaos;
-            daos.forEach(plan::registerAttributeRepository);
-        };
+        return plan -> redisPersonAttributeDaos.forEach(plan::registerAttributeRepository);
     }
 }
