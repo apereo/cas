@@ -197,7 +197,8 @@ public class SamlIdPWebflowConfiguration {
                         val service = ssoRequest.getAttributeValue(Service.class.getName(), Service.class);
                         val registeredService = ssoRequest.getAttributeValue(RegisteredService.class.getName(), RegisteredService.class);
                         val authentication = ssoRequest.getAttributeValue(Authentication.class.getName(), Authentication.class);
-                        val consentRequired = consentActivationStrategy.isConsentRequired(service, registeredService, authentication);
+                        val requestContext = RequestContextHolder.getRequestContext();
+                        val consentRequired = consentActivationStrategy.isConsentRequired(service, registeredService, authentication, requestContext);
                         return !consentRequired && super.isParticipating(ssoRequest);
                     }
                 });
