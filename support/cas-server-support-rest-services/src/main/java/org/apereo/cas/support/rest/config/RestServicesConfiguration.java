@@ -43,7 +43,7 @@ public class RestServicesConfiguration {
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
-        @Qualifier("defaultAuthenticationSystemSupport")
+        @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
         final AuthenticationSystemSupport authenticationSystemSupport) {
         val rest = casProperties.getRest()
             .getServices();

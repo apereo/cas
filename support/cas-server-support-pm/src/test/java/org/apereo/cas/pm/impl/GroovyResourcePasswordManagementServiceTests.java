@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.impl;
 
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     PasswordManagementConfiguration.class,
     CasCoreNotificationsConfiguration.class,
+    CasCoreAuditConfiguration.class,
     CasCoreUtilConfiguration.class
 }, properties = {
     "cas.authn.pm.core.enabled=true",

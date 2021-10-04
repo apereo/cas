@@ -106,7 +106,7 @@ public abstract class BaseTicketResourceEntityResponseFactoryTests {
     protected ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
+    @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
     protected AuthenticationSystemSupport authenticationSystemSupport;
 
     @Autowired

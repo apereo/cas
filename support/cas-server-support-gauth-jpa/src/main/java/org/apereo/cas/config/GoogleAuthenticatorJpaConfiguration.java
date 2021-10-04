@@ -131,14 +131,13 @@ public class GoogleAuthenticatorJpaConfiguration {
             final BeanContainer<String> jpaPackagesToScanGoogleAuthenticator,
             @Qualifier("jpaBeanFactory")
             final JpaBeanFactory jpaBeanFactory) {
-            val factory = jpaBeanFactory;
             val ctx = JpaConfigurationContext.builder()
                 .jpaVendorAdapter(jpaGoogleAuthenticatorVendorAdapter)
                 .persistenceUnitName("jpaGoogleAuthenticatorContext")
                 .dataSource(dataSourceGoogleAuthenticator)
                 .packagesToScan(jpaPackagesToScanGoogleAuthenticator.toSet())
                 .build();
-            return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getGauth().getJpa());
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getGauth().getJpa());
         }
 
     }

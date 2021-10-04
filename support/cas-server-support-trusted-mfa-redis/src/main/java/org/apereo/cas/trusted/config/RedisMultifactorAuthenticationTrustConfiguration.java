@@ -55,13 +55,15 @@ public class RedisMultifactorAuthenticationTrustConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
-    public MultifactorAuthenticationTrustStorage mfaTrustEngine(final CasConfigurationProperties casProperties,
-                                                                @Qualifier("redisMfaTrustedAuthnTemplate")
-                                                                final RedisTemplate<String, List<MultifactorAuthenticationTrustRecord>> redisMfaTrustedAuthnTemplate,
-                                                                @Qualifier("keyGenerationStrategy")
-                                                                final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy,
-                                                                @Qualifier("mfaTrustCipherExecutor")
-                                                                final CipherExecutor mfaTrustCipherExecutor) {
-        return new RedisMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(), mfaTrustCipherExecutor, redisMfaTrustedAuthnTemplate, keyGenerationStrategy);
+    public MultifactorAuthenticationTrustStorage mfaTrustEngine(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("redisMfaTrustedAuthnTemplate")
+        final RedisTemplate<String, List<MultifactorAuthenticationTrustRecord>> redisMfaTrustedAuthnTemplate,
+        @Qualifier("mfaTrustRecordKeyGenerator")
+        final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy,
+        @Qualifier("mfaTrustCipherExecutor")
+        final CipherExecutor mfaTrustCipherExecutor) {
+        return new RedisMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
+            mfaTrustCipherExecutor, redisMfaTrustedAuthnTemplate, keyGenerationStrategy);
     }
 }

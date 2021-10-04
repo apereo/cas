@@ -130,8 +130,8 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
             @Qualifier("acceptableUsagePolicyRepository")
             final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository) {
             return new ConsumerExecutionAction(requestContext -> {
-                var repository = acceptableUsagePolicyRepository;
-                repository.fetchPolicy(requestContext).ifPresent(policy -> WebUtils.putAcceptableUsagePolicyTermsIntoFlowScope(requestContext, policy));
+                acceptableUsagePolicyRepository.fetchPolicy(requestContext)
+                    .ifPresent(policy -> WebUtils.putAcceptableUsagePolicyTermsIntoFlowScope(requestContext, policy));
             });
         }
 

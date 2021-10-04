@@ -50,10 +50,15 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class
 }, properties = {
+    "management.metrics.export.simple.enabled=true",
+
     "management.endpoint.metrics.enabled=true",
     "management.endpoints.web.exposure.include=*",
-    "management.metrics.export.simple.enabled=true",
-    "management.endpoint.health.enabled=true"
+    "management.endpoint.health.enabled=true",
+
+    "management.health.systemHealthIndicator.enabled=true",
+    "management.health.memoryHealthIndicator.enabled=true",
+    "management.health.sessionHealthIndicator.enabled=true"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Metrics")

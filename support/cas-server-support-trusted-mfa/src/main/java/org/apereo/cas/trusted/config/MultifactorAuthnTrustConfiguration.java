@@ -111,7 +111,8 @@ public class MultifactorAuthnTrustConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
-        public MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator(final CasConfigurationProperties casProperties) {
+        public MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator(
+            final CasConfigurationProperties casProperties) {
             val type = casProperties.getAuthn().getMfa().getTrusted().getCore().getKeyGeneratorType();
             if (type == TrustedDevicesMultifactorCoreProperties.TrustedDevicesKeyGeneratorTypes.DEFAULT) {
                 return new DefaultMultifactorAuthenticationTrustRecordKeyGenerator();

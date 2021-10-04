@@ -196,7 +196,7 @@ public class SamlConfiguration {
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("defaultAuthenticationSystemSupport")
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer) {
@@ -221,7 +221,7 @@ public class SamlConfiguration {
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("requestedContextValidator")
             final RequestedAuthenticationContextValidator requestedContextValidator,
-            @Qualifier("defaultAuthenticationSystemSupport")
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
             final CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification,

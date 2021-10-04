@@ -76,9 +76,6 @@ import org.springframework.webflow.execution.Action;
     "cas.authn.spnego.system.login-conf=classpath:jaas.conf"
 })
 public abstract class AbstractSpnegoTests {
-    @Autowired
-    @Qualifier("ldapSpnegoClientAction")
-    protected Action ldapSpnegoClientAction;
 
     @Autowired
     @Qualifier("negociateSpnego")

@@ -50,7 +50,7 @@ public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAut
     private static final String PASSWORD_31415 = "31415";
 
     @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
+    @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
     private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Autowired

@@ -20,7 +20,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -43,68 +42,90 @@ import javax.sql.DataSource;
 @Configuration(value = "jpaYubiKeyConfiguration", proxyBeanMethods = false)
 public class JpaYubiKeyConfiguration {
 
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Bean
-    @Autowired
-    public JpaVendorAdapter jpaYubiKeyVendorAdapter(final CasConfigurationProperties casProperties,
-                                                    @Qualifier("jpaBeanFactory")
-                                                    final JpaBeanFactory jpaBeanFactory) {
-        return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
+
+    @Configuration(value = "JpaYubiKeyEntityConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class JpaYubiKeyEntityConfiguration {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @Autowired
+        public JpaVendorAdapter jpaYubiKeyVendorAdapter(final CasConfigurationProperties casProperties,
+                                                        @Qualifier("jpaBeanFactory")
+                                                        final JpaBeanFactory jpaBeanFactory) {
+            return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
+        }
+
+        @Bean
+        public BeanContainer<String> jpaYubiKeyPackagesToScan() {
+            return BeanContainer.of(CollectionUtils.wrapSet(JpaYubiKeyAccount.class.getPackage().getName()));
+        }
+
+        @Bean
+        @Autowired
+        public LocalContainerEntityManagerFactoryBean yubiKeyEntityManagerFactory(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("dataSourceYubiKey")
+            final DataSource dataSourceYubiKey,
+            @Qualifier("jpaYubiKeyPackagesToScan")
+            final BeanContainer<String> jpaYubiKeyPackagesToScan,
+            @Qualifier("jpaYubiKeyVendorAdapter")
+            final JpaVendorAdapter jpaYubiKeyVendorAdapter,
+            @Qualifier("jpaBeanFactory")
+            final JpaBeanFactory jpaBeanFactory) {
+            val ctx = JpaConfigurationContext.builder()
+                .dataSource(dataSourceYubiKey)
+                .packagesToScan(jpaYubiKeyPackagesToScan.toSet())
+                .persistenceUnitName("jpaYubiKeyRegistryContext")
+                .jpaVendorAdapter(jpaYubiKeyVendorAdapter)
+                .build();
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getYubikey().getJpa());
+        }
+
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "dataSourceYubiKey")
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public DataSource dataSourceYubiKey(final CasConfigurationProperties casProperties) {
-        return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getYubikey().getJpa());
+    @Configuration(value = "JpaYubiKeyTransactionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class JpaYubiKeyTransactionConfiguration {
+        @Autowired
+        @Bean
+        public PlatformTransactionManager transactionManagerYubiKey(
+            @Qualifier("yubiKeyEntityManagerFactory")
+            final EntityManagerFactory emf) {
+            val mgmr = new JpaTransactionManager();
+            mgmr.setEntityManagerFactory(emf);
+            return mgmr;
+        }
+
     }
 
-    @Bean
-    public BeanContainer<String> jpaYubiKeyPackagesToScan() {
-        return BeanContainer.of(CollectionUtils.wrapSet(JpaYubiKeyAccount.class.getPackage().getName()));
+
+    @Configuration(value = "JpaYubiKeyRegistryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class JpaYubiKeyRegistryConfiguration {
+        @Bean
+        public YubiKeyAccountRegistry yubiKeyAccountRegistry(
+            @Qualifier("yubiKeyAccountValidator")
+            final YubiKeyAccountValidator yubiKeyAccountValidator,
+            @Qualifier("yubikeyAccountCipherExecutor")
+            final CipherExecutor yubikeyAccountCipherExecutor) {
+            val registry = new JpaYubiKeyAccountRegistry(yubiKeyAccountValidator);
+            registry.setCipherExecutor(yubikeyAccountCipherExecutor);
+            return registry;
+        }
     }
 
-    @Autowired
-    @Bean
-    public PlatformTransactionManager transactionManagerYubiKey(
-        @Qualifier("yubiKeyEntityManagerFactory")
-        final EntityManagerFactory emf) {
-        val mgmr = new JpaTransactionManager();
-        mgmr.setEntityManagerFactory(emf);
-        return mgmr;
-    }
 
-    @Lazy
-    @Bean
-    @Autowired
-    public LocalContainerEntityManagerFactoryBean yubiKeyEntityManagerFactory(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("dataSourceYubiKey")
-        final DataSource dataSourceYubiKey,
-        @Qualifier("jpaYubiKeyPackagesToScan")
-        final BeanContainer<String> jpaYubiKeyPackagesToScan,
-        @Qualifier("jpaYubiKeyVendorAdapter")
-        final JpaVendorAdapter jpaYubiKeyVendorAdapter,
-        @Qualifier("jpaBeanFactory")
-        final JpaBeanFactory jpaBeanFactory) {
-        val ctx = JpaConfigurationContext.builder()
-            .dataSource(dataSourceYubiKey)
-            .packagesToScan(jpaYubiKeyPackagesToScan.toSet())
-            .persistenceUnitName("jpaYubiKeyRegistryContext")
-            .jpaVendorAdapter(jpaYubiKeyVendorAdapter)
-            .build();
-        return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getYubikey().getJpa());
-    }
+    @Configuration(value = "JpaYubiKeyDataConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class JpaYubiKeyDataConfiguration {
 
-    @Bean
-    public YubiKeyAccountRegistry yubiKeyAccountRegistry(
-        @Qualifier("yubiKeyAccountValidator")
-        final YubiKeyAccountValidator yubiKeyAccountValidator,
-        @Qualifier("yubikeyAccountCipherExecutor")
-        final CipherExecutor yubikeyAccountCipherExecutor) {
-        val registry = new JpaYubiKeyAccountRegistry(yubiKeyAccountValidator);
-        registry.setCipherExecutor(yubikeyAccountCipherExecutor);
-        return registry;
+        @Bean
+        @ConditionalOnMissingBean(name = "dataSourceYubiKey")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public DataSource dataSourceYubiKey(final CasConfigurationProperties casProperties) {
+            return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getYubikey().getJpa());
+        }
+
     }
 }

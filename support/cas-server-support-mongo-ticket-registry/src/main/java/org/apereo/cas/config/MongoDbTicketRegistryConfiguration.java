@@ -42,10 +42,10 @@ public class MongoDbTicketRegistryConfiguration {
         @Qualifier("ticketSerializationManager")
         final TicketSerializationManager ticketSerializationManager) {
         val mongo = casProperties.getTicket().getRegistry().getMongo();
-        val mongoTemplate = mongoDbTicketRegistryTemplate;
-        val registry = new MongoDbTicketRegistry(ticketCatalog, mongoTemplate, ticketSerializationManager);
+        val registry = new MongoDbTicketRegistry(ticketCatalog, mongoDbTicketRegistryTemplate, ticketSerializationManager);
         registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(mongo.getCrypto(), "mongo"));
-        new MongoDbTicketRegistryFacilitator(ticketCatalog, mongoTemplate, mongo.isDropCollection()).createTicketCollections();
+        new MongoDbTicketRegistryFacilitator(ticketCatalog, mongoDbTicketRegistryTemplate,
+            mongo.isDropCollection()).createTicketCollections();
         return registry;
     }
 

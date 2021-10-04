@@ -101,14 +101,13 @@ public class CasSupportJdbcAuditConfiguration {
         final DataSource inspektrAuditTrailDataSource, final CasConfigurationProperties casProperties,
         @Qualifier("jpaBeanFactory")
         final JpaBeanFactory jpaBeanFactory) {
-        val factory = jpaBeanFactory;
         val ctx = JpaConfigurationContext.builder()
-            .jpaVendorAdapter(factory.newJpaVendorAdapter(casProperties.getJdbc()))
+            .jpaVendorAdapter(jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc()))
             .persistenceUnitName("jpaInspektrAuditContext")
             .dataSource(inspektrAuditTrailDataSource)
             .packagesToScan(CollectionUtils.wrapSet(AuditTrailEntity.class.getPackage().getName()))
             .build();
-        return factory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc());
+        return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc());
     }
 
     @ConditionalOnMissingBean(name = "auditCleanupCriteria")

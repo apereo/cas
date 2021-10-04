@@ -142,7 +142,7 @@ public class DefaultAuthenticationManagerTests {
         applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
-            CoreAuthenticationTestUtils.getAuthenticationSystemSupport(), "defaultAuthenticationSystemSupport");
+            CoreAuthenticationTestUtils.getAuthenticationSystemSupport(), AuthenticationSystemSupport.BEAN_NAME);
     }
 
     @Test

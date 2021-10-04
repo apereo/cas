@@ -140,17 +140,16 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
                                                          @Qualifier("yubikeyAccountCipherExecutor")
                                                          final CipherExecutor yubikeyAccountCipherExecutor) {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
-        val cipher = yubikeyAccountCipherExecutor;
         if (yubi.getJsonFile() != null) {
             LOGGER.debug("Using JSON resource [{}] as the YubiKey account registry", yubi.getJsonFile());
             val registry = new JsonYubiKeyAccountRegistry(yubi.getJsonFile(), yubiKeyAccountValidator);
-            registry.setCipherExecutor(cipher);
+            registry.setCipherExecutor(yubikeyAccountCipherExecutor);
             return registry;
         }
         if (StringUtils.isNotBlank(yubi.getRest().getUrl())) {
             LOGGER.debug("Using REST API resource [{}] as the YubiKey account registry", yubi.getRest().getUrl());
             val registry = new RestfulYubiKeyAccountRegistry(yubi.getRest(), yubiKeyAccountValidator);
-            registry.setCipherExecutor(cipher);
+            registry.setCipherExecutor(yubikeyAccountCipherExecutor);
             return registry;
         }
         if (yubi.getAllowedDevices() != null && !yubi.getAllowedDevices().isEmpty()) {
@@ -167,7 +166,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
         LOGGER.warn("All credentials are considered eligible for YubiKey authentication. " + "Consider providing an account registry implementation via [{}]",
             YubiKeyAccountRegistry.class.getName());
         val registry = new OpenYubiKeyAccountRegistry(new DefaultYubiKeyAccountValidator(yubicoClient));
-        registry.setCipherExecutor(cipher);
+        registry.setCipherExecutor(yubikeyAccountCipherExecutor);
         return registry;
     }
 
