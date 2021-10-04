@@ -1,11 +1,15 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.consent.ConsentActivationStrategy;
 import org.apereo.cas.consent.ConsentableAttributeBuilder;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -17,6 +21,7 @@ import org.apereo.cas.support.saml.web.idp.web.SamlIdPSingleSignOnParticipationS
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
 import org.apereo.cas.web.flow.login.SessionStoreTicketGrantingTicketAction;
@@ -44,6 +49,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.RequestContextHolder;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -97,7 +103,7 @@ public class SamlIdPWebflowConfiguration {
     @Autowired
     @Qualifier(DistributedJEESessionStore.DEFAULT_BEAN_NAME)
     private ObjectProvider<SessionStore> samlIdPDistributedSessionStore;
-    
+
     @Autowired
     @Qualifier(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
     private ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> defaultSamlRegisteredServiceCachingMetadataResolver;
@@ -176,6 +182,28 @@ public class SamlIdPWebflowConfiguration {
     public class SamlIdPConsentWebflowConfiguration {
 
         @Bean
+        @ConditionalOnMissingBean(name = "samlIdPConsentSingleSignOnParticipationStrategyConfigurer")
+        @RefreshScope
+        @Autowired
+        public SingleSignOnParticipationStrategyConfigurer samlIdPConsentSingleSignOnParticipationStrategyConfigurer(
+            final ServicesManager servicesManager,
+            final TicketRegistrySupport ticketRegistrySupport,
+            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
+            final ConsentActivationStrategy consentActivationStrategy) {
+            return chain -> chain.addStrategy(
+                new SamlIdPSingleSignOnParticipationStrategy(servicesManager, ticketRegistrySupport, authenticationServiceSelectionPlan) {
+                    @Override
+                    public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) {
+                        val service = ssoRequest.getAttributeValue(Service.class.getName(), Service.class);
+                        val registeredService = ssoRequest.getAttributeValue(RegisteredService.class.getName(), RegisteredService.class);
+                        val authentication = ssoRequest.getAttributeValue(Authentication.class.getName(), Authentication.class);
+                        val consentRequired = consentActivationStrategy.isConsentRequired(service, registeredService, authentication);
+                        return !consentRequired && super.isParticipating(ssoRequest);
+                    }
+                });
+        }
+
+        @Bean
         @ConditionalOnMissingBean(name = "samlIdPConsentableAttributeBuilder")
         @RefreshScope
         public ConsentableAttributeBuilder samlIdPConsentableAttributeBuilder() {
@@ -185,7 +213,7 @@ public class SamlIdPWebflowConfiguration {
                         if (defn instanceof SamlIdPAttributeDefinition) {
                             val samlAttr = SamlIdPAttributeDefinition.class.cast(defn);
                             return samlAttr.getName().equalsIgnoreCase(attribute.getName())
-                                && StringUtils.isNotBlank(samlAttr.getFriendlyName());
+                                   && StringUtils.isNotBlank(samlAttr.getFriendlyName());
                         }
                         return false;
                     });
