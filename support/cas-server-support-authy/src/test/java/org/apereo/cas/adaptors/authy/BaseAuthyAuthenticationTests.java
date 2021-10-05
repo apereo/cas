@@ -7,6 +7,7 @@ import org.apereo.cas.adaptors.authy.config.support.authentication.AuthyAuthenti
 import org.apereo.cas.adaptors.authy.config.support.authentication.AuthyAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -60,6 +61,7 @@ public abstract class BaseAuthyAuthenticationTests {
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasCookieConfiguration.class,
         CasCoreHttpConfiguration.class,

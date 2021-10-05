@@ -30,9 +30,10 @@ public class HazelcastMonitorConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnEnabledHealthIndicator("hazelcastHealthIndicator")
     @Autowired
-    public HealthIndicator hazelcastHealthIndicator(final CasConfigurationProperties casProperties,
-                                                    @Qualifier("casTicketRegistryHazelcastInstance")
-                                                    final HazelcastInstance casTicketRegistryHazelcastInstance) {
+    public HealthIndicator hazelcastHealthIndicator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("casTicketRegistryHazelcastInstance")
+        final HazelcastInstance casTicketRegistryHazelcastInstance) {
         val warn = casProperties.getMonitor().getWarn();
         return new HazelcastHealthIndicator(warn.getEvictionThreshold(),
             warn.getThreshold(), casTicketRegistryHazelcastInstance);
@@ -40,7 +41,7 @@ public class HazelcastMonitorConfiguration {
 
     @Bean
     @Autowired
-    public DisposableBean hazlcastMonitorDisposableBean(
+    public DisposableBean hazelcastMonitorDisposableBean(
         @Qualifier("casTicketRegistryHazelcastInstance")
         final HazelcastInstance casTicketRegistryHazelcastInstance) {
         return casTicketRegistryHazelcastInstance::shutdown;
