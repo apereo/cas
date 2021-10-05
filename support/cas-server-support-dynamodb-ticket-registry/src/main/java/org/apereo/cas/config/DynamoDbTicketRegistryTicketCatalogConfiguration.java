@@ -20,9 +20,10 @@ import java.util.function.Function;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DynamoDbTicketRegistryTicketCatalogConfiguration extends BaseTicketDefinitionBuilderSupportConfiguration {
 
-    public DynamoDbTicketRegistryTicketCatalogConfiguration(final CasConfigurationProperties casProperties,
-                                                            @Qualifier("dynamoDbTicketCatalogConfigurationValuesProvider")
-                                                            final CasTicketCatalogConfigurationValuesProvider configProvider) {
+    public DynamoDbTicketRegistryTicketCatalogConfiguration(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("dynamoDbTicketCatalogConfigurationValuesProvider")
+        final CasTicketCatalogConfigurationValuesProvider configProvider) {
         super(casProperties, configProvider);
     }
 

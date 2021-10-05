@@ -36,7 +36,7 @@ public class U2FCouchDbConfiguration {
     @Autowired
     public CouchDbConnectorFactory u2fCouchDbFactory(
         final CasConfigurationProperties casProperties,
-        @Qualifier("objectMapperFactory")
+        @Qualifier("defaultObjectMapperFactory")
         final ObjectMapperFactory objectMapperFactory) {
         return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getU2f().getCouchDb(), objectMapperFactory);
     }

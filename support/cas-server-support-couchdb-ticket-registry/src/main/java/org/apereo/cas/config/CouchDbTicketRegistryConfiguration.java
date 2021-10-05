@@ -35,7 +35,7 @@ public class CouchDbTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "ticketRegistryCouchDbFactory")
     @Autowired
     public CouchDbConnectorFactory ticketRegistryCouchDbFactory(final CasConfigurationProperties casProperties,
-                                                                @Qualifier("objectMapperFactory")
+                                                                @Qualifier("defaultObjectMapperFactory")
                                                                 final ObjectMapperFactory objectMapperFactory) {
         return new CouchDbConnectorFactory(casProperties.getTicket().getRegistry().getCouchDb(), objectMapperFactory);
     }

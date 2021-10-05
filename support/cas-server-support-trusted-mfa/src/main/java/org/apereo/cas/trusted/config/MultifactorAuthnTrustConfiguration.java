@@ -119,7 +119,11 @@ public class MultifactorAuthnTrustConfiguration {
             }
             return new LegacyMultifactorAuthenticationTrustRecordKeyGenerator();
         }
+    }
 
+    @Configuration(value = "MultifactorAuthnTrustCryptoConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class MultifactorAuthnTrustCryptoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "mfaTrustCipherExecutor")

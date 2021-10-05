@@ -39,7 +39,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CouchDbConnectorFactory oneTimeTokenAccountCouchDbFactory(final CasConfigurationProperties casProperties,
-                                                                     @Qualifier("objectMapperFactory")
+                                                                     @Qualifier("defaultObjectMapperFactory")
                                                                      final ObjectMapperFactory objectMapperFactory) {
         return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getGauth().getCouchDb(), objectMapperFactory);
     }
@@ -85,7 +85,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CouchDbConnectorFactory oneTimeTokenCouchDbFactory(final CasConfigurationProperties casProperties,
-                                                              @Qualifier("objectMapperFactory")
+                                                              @Qualifier("defaultObjectMapperFactory")
                                                               final ObjectMapperFactory objectMapperFactory) {
         return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getGauth().getCouchDb(), objectMapperFactory);
     }

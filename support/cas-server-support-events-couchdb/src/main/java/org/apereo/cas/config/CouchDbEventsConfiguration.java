@@ -46,7 +46,7 @@ public class CouchDbEventsConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CouchDbConnectorFactory eventCouchDbFactory(final CasConfigurationProperties casProperties,
-                                                       @Qualifier("objectMapperFactory")
+                                                       @Qualifier("defaultObjectMapperFactory")
                                                        final ObjectMapperFactory objectMapperFactory) {
         return new CouchDbConnectorFactory(casProperties.getEvents().getCouchDb(), objectMapperFactory);
     }

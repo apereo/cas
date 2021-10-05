@@ -35,7 +35,7 @@ public class CasAcceptableUsagePolicyCouchDbConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public CouchDbConnectorFactory aupCouchDbFactory(final CasConfigurationProperties casProperties,
-                                                     @Qualifier("objectMapperFactory")
+                                                     @Qualifier("defaultObjectMapperFactory")
                                                      final ObjectMapperFactory objectMapperFactory) {
         return new CouchDbConnectorFactory(casProperties.getAcceptableUsagePolicy().getCouchDb(), objectMapperFactory);
     }

@@ -23,6 +23,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusServerProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.BeanContainer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -42,7 +43,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -114,7 +114,7 @@ public class RadiusConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
-    public List<RadiusServer> radiusServers(
+    public BeanContainer<RadiusServer> radiusServers(
         @Qualifier("casSslContext")
         final CasSSLContext casSslContext,
         final CasConfigurationProperties casProperties) {
@@ -122,7 +122,9 @@ public class RadiusConfiguration {
         val client = radius.getClient();
         val server = radius.getServer();
         val ips = getClientIps(radius.getClient());
-        return ips.stream().map(ip -> getSingleRadiusServer(client, server, ip, casSslContext)).collect(Collectors.toList());
+        return BeanContainer.of(ips.stream()
+            .map(ip -> getSingleRadiusServer(client, server, ip, casSslContext))
+            .collect(Collectors.toList()));
     }
 
     @ConditionalOnMissingBean(name = "radiusAuthenticationHandler")
@@ -134,13 +136,14 @@ public class RadiusConfiguration {
         @Qualifier("radiusPrincipalFactory")
         final PrincipalFactory radiusPrincipalFactory,
         @Qualifier("radiusServers")
-        final List<RadiusServer> radiusServers,
+        final BeanContainer<RadiusServer> radiusServers,
         @Qualifier("radiusPasswordPolicyConfiguration")
         final PasswordPolicyContext radiusPasswordPolicyConfiguration,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val radius = casProperties.getAuthn().getRadius();
-        val h = new RadiusAuthenticationHandler(radius.getName(), servicesManager, radiusPrincipalFactory, radiusServers, radius.isFailoverOnException(),
+        val h = new RadiusAuthenticationHandler(radius.getName(), servicesManager,
+            radiusPrincipalFactory, radiusServers.toList(), radius.isFailoverOnException(),
             radius.isFailoverOnAuthenticationFailure());
         h.setState(radius.getState());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(radius.getPasswordEncoder(), applicationContext));

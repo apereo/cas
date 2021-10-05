@@ -42,7 +42,7 @@ public class CouchDbServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "serviceRegistryCouchDbFactory")
     @Autowired
     public CouchDbConnectorFactory serviceRegistryCouchDbFactory(final CasConfigurationProperties casProperties,
-                                                                 @Qualifier("objectMapperFactory")
+                                                                 @Qualifier("defaultObjectMapperFactory")
                                                                  final ObjectMapperFactory objectMapperFactory) {
         return new CouchDbConnectorFactory(casProperties.getServiceRegistry().getCouchDb(), objectMapperFactory);
     }

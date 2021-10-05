@@ -1,6 +1,7 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -146,6 +147,7 @@ public class BasePasswordManagementActionTests {
         CasThemesConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreWebConfiguration.class,
+        CasCoreAuditConfiguration.class,
         CasCoreWebflowConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasCoreNotificationsConfiguration.class,

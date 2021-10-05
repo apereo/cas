@@ -44,7 +44,7 @@ public class CouchDbAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "authenticationCouchDbFactory")
     @Autowired
     public CouchDbConnectorFactory authenticationCouchDbFactory(final CasConfigurationProperties casProperties,
-                                                                @Qualifier("objectMapperFactory")
+                                                                @Qualifier("defaultObjectMapperFactory")
                                                                 final ObjectMapperFactory objectMapperFactory) {
         return new CouchDbConnectorFactory(casProperties.getAuthn().getCouchDb(), objectMapperFactory);
     }
