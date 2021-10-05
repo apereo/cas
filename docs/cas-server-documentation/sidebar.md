@@ -508,6 +508,7 @@ layout: null
             *   [Delegation](/cas/{{ version }}/integration/Delegate-Authentication.html)    
             *   [Clients](/cas/{{ version }}/services/SAML2-Service-Management.html)    
             *   [Attribute Release](/cas/{{ version }}/installation/Configuring-SAML2-Attribute-Release.html)
+            *   [Attribute Value Types](/cas/{{ version }}/installation/Configuring-SAML2-Attribute-ValueTypes.html)
             *   [Metadata Management](/cas/{{ version }}/installation/Configuring-SAML2-DynamicMetadata.html)
             *   [NameID Selection](/cas/{{ version }}/installation/Configuring-SAML2-NameID.html)
     *   [REST](#casrestprotocol)

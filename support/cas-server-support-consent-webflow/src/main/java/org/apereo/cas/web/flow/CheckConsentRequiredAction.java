@@ -89,7 +89,9 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
                                        final RegisteredService registeredService,
                                        final Authentication authentication,
                                        final RequestContext requestContext) {
-        val required = consentActivationStrategy.isConsentRequired(service, registeredService, authentication, requestContext);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val required = consentActivationStrategy.isConsentRequired(service,
+            registeredService, authentication, request);
         return required ? EVENT_ID_CONSENT_REQUIRED : null;
     }
 }

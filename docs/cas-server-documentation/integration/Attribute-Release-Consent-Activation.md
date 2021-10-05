@@ -76,7 +76,7 @@ def run(Object[] args) {
     def service = args[2]
     def registeredService = args[3]
     def authentication = args[4]
-    def requestContext = args[5]
+    def request = args[5]
     def logger = args[6]
 
     logger.debug("Activating consent for ${registeredService.name}")
@@ -93,7 +93,7 @@ The following parameters are passed to the script:
 | `service`             | The `Service` object representing the requesting application.
 | `registeredService`   | The `RegisteredService` object representing the service definition in the registry.
 | `authentication`      | The `Authentication` object representing the active authentication transaction.
-| `requestContext`      | The object representing the Spring Webflow `RequestContext`.
+| `request`             | The object representing the HTTP servlet request.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
 The script is expected to return either `true` or `false` to determine whether or not consent is required.
