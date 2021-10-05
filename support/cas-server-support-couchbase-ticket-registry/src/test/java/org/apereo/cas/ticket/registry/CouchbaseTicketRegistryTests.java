@@ -14,9 +14,14 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.function.Executable;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestContext;
+import org.springframework.test.context.TestExecutionListener;
+import org.springframework.test.context.TestExecutionListeners;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,6 +45,10 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestExecutionListeners(value = {
+    SpringBootDependencyInjectionTestExecutionListener.class,
+    CouchbaseTicketRegistryTests.DisposingTestExecutionListener.class
+})
 public class CouchbaseTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
@@ -62,5 +71,13 @@ public class CouchbaseTicketRegistryTests extends BaseTicketRegistryTests {
                 newTicketRegistry.addTicket((Ticket) null);
             }
         });
+    }
+
+    public static class DisposingTestExecutionListener implements TestExecutionListener {
+        @Override
+        public void afterTestClass(final TestContext testContext) throws Exception {
+            var registry = testContext.getApplicationContext().getBean(TicketRegistry.BEAN_NAME, TicketRegistry.class);
+            DisposableBean.class.cast(registry).destroy();
+        }
     }
 }
