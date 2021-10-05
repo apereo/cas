@@ -76,7 +76,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     }
 
     @Override
-    public Map<String, List<Object>> getAttributes(final Principal principal, final Service selectedService, final RegisteredService registeredService) {
+    public Map<String, List<Object>> getAttributes(final Principal principal, final Service selectedService,
+                                                   final RegisteredService registeredService) {
         LOGGER.debug("Initiating attributes release phase for principal [{}] accessing service [{}] defined by registered service [{}]...",
             principal.getId(), selectedService, registeredService.getServiceId());
         LOGGER.trace("Locating principal attributes for [{}]", principal.getId());
@@ -121,8 +122,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     }
 
     @Override
-    public Map<String, List<Object>> getConsentableAttributes(final Principal p, final Service selectedService, final RegisteredService service) {
-        val attributes = getAttributes(p, selectedService, service);
+    public Map<String, List<Object>> getConsentableAttributes(final Principal principal, final Service selectedService, final RegisteredService service) {
+        val attributes = getAttributes(principal, selectedService, service);
         LOGGER.debug("Initial set of consentable attributes are [{}]", attributes);
         if (this.consentPolicy != null) {
             LOGGER.debug("Activating consent policy [{}] for service [{}]", this.consentPolicy, service);

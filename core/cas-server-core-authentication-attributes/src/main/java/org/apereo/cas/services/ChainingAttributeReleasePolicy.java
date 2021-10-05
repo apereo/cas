@@ -58,13 +58,12 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
     }
 
     @Override
-    public Map<String, List<Object>> getAttributes(final Principal p, final Service selectedService, final RegisteredService service) {
-
+    public Map<String, List<Object>> getAttributes(final Principal principal, final Service selectedService, final RegisteredService service) {
         val merger = CoreAuthenticationUtils.getAttributeMerger(mergingPolicy);
         val attributes = new HashMap<String, List<Object>>();
         policies.stream().sorted(AnnotationAwareOrderComparator.INSTANCE).forEach(policy -> {
-            LOGGER.trace("Fetching attributes from policy [{}] for principal [{}]", policy.getName(), p.getId());
-            val policyAttributes = policy.getAttributes(p, selectedService, service);
+            LOGGER.trace("Fetching attributes from policy [{}] for principal [{}]", policy.getName(), principal.getId());
+            val policyAttributes = policy.getAttributes(principal, selectedService, service);
             merger.mergeAttributes(attributes, policyAttributes);
             LOGGER.trace("Attributes that remain, after the merge with attribute policy results, are [{}]", attributes);
         });
@@ -72,7 +71,8 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
     }
 
     @Override
-    public Map<String, List<Object>> getConsentableAttributes(final Principal principal, final Service selectedService, final RegisteredService service) {
+    public Map<String, List<Object>> getConsentableAttributes(final Principal principal, final Service selectedService,
+                                                              final RegisteredService service) {
         val merger = CoreAuthenticationUtils.getAttributeMerger(mergingPolicy);
         val attributes = new HashMap<String, List<Object>>();
         policies.stream().sorted(AnnotationAwareOrderComparator.INSTANCE).forEach(policy -> {

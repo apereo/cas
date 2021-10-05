@@ -293,8 +293,8 @@ public class RegisteredServiceAttributeReleasePolicyTests {
             private static final long serialVersionUID = 6118477243447737445L;
 
             @Override
-            public Map<String, List<Object>> getAttributes(final Principal p, final Service selectedService, final RegisteredService service) {
-                return p.getAttributes();
+            public Map<String, List<Object>> getAttributes(final Principal principal, final Service selectedService, final RegisteredService service) {
+                return principal.getAttributes();
             }
         };
         assertNull(policy.getConsentPolicy());
