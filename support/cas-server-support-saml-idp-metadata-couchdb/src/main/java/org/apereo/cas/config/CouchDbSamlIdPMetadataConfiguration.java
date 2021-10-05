@@ -95,7 +95,7 @@ public class CouchDbSamlIdPMetadataConfiguration {
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
         @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
         final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext,
-        @Qualifier("samlIdPMetadataRepository")
+        @Qualifier("samlIdPMetadataCouchDbRepository")
         final SamlIdPMetadataCouchDbRepository samlIdPMetadataRepository) {
         val generator = new CouchDbSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext, samlIdPMetadataRepository);
         generator.generate(Optional.empty());
@@ -110,7 +110,7 @@ public class CouchDbSamlIdPMetadataConfiguration {
         final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache,
         @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
         final CipherExecutor samlIdPMetadataGeneratorCipherExecutor,
-        @Qualifier("samlIdPMetadataRepository")
+        @Qualifier("samlIdPMetadataCouchDbRepository")
         final SamlIdPMetadataCouchDbRepository samlIdPMetadataRepository) {
         return new CouchDbSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor,
             samlIdPMetadataCache, samlIdPMetadataRepository);

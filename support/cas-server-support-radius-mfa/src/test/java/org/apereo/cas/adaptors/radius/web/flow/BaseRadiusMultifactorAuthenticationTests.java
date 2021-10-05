@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.radius.web.flow;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -62,6 +63,7 @@ public abstract class BaseRadiusMultifactorAuthenticationTests {
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasCookieConfiguration.class,
         CasCoreHttpConfiguration.class,
