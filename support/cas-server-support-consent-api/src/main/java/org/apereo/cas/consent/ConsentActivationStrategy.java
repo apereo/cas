@@ -6,6 +6,8 @@ import org.apereo.cas.services.RegisteredService;
 
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * This is {@link ConsentActivationStrategy}.
  *
@@ -21,11 +23,11 @@ public interface ConsentActivationStrategy {
      * @param service           the service
      * @param registeredService the registered service
      * @param authentication    the authentication
-     * @param requestContext    the request context
-     * @return the boolean
+     * @param request           the request
+     * @return true/false
      */
     boolean isConsentRequired(Service service,
                               RegisteredService registeredService,
                               Authentication authentication,
-                              RequestContext requestContext);
+                              HttpServletRequest request);
 }

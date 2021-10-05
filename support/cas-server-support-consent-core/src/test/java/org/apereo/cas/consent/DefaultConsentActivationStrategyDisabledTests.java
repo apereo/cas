@@ -52,7 +52,7 @@ public class DefaultConsentActivationStrategyDisabledTests {
             CoreAuthenticationTestUtils.getService(),
             registeredService,
             CoreAuthenticationTestUtils.getAuthentication(),
-            context));
+            new MockHttpServletRequest()));
 
     }
 
