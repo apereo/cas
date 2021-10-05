@@ -71,7 +71,7 @@ import java.util.List;
  * @author Travis Schmidt
  * @since 6.0.0
  */
-@Configuration(value = "casMfaWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasMultifactorAuthenticationWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnWebApplication
 public class CasMultifactorAuthenticationWebflowConfiguration {

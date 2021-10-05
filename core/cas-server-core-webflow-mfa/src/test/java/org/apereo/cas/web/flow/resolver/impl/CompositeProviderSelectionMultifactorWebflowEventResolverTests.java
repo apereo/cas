@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -47,9 +48,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowEvents")
 @Import(CompositeProviderSelectionMultifactorWebflowEventResolverTests.MultifactorTestConfiguration.class)
+@TestPropertySource(properties = "cas.authn.mfa.core.provider-selection-enabled=true")
 public class CompositeProviderSelectionMultifactorWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
-    @Qualifier("compositeProviderSelectionMultifactorWebflowEventResolver")
+    @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
     private CasWebflowEventResolver compositeResolver;
 
     @Test
