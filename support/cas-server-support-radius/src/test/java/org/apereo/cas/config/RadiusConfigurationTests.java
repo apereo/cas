@@ -39,7 +39,6 @@ import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -64,23 +63,25 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCookieConfiguration.class,
     RefreshAutoConfiguration.class
 },
-                properties = {
-                    "cas.authn.radius.client.shared-secret=NoSecret",
-                    "cas.authn.radius.client.inet-address=localhost,localguest",
-                    "cas.authn.mfa.radius.id=" + TestMultifactorAuthenticationProvider.ID
-                })
+    properties = {
+        "cas.authn.radius.client.shared-secret=NoSecret",
+        "cas.authn.radius.client.inet-address=localhost,localguest",
+        "cas.authn.mfa.radius.id=" + TestMultifactorAuthenticationProvider.ID
+    })
 @Tag("Radius")
 public class RadiusConfigurationTests {
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("radiusAccessChallengedAuthenticationWebflowEventResolver")
     private ObjectProvider<CasWebflowEventResolver> radiusAccessChallengedAuthenticationWebflowEventResolver;
