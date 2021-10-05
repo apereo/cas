@@ -10,7 +10,6 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ConfigurableApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,16 +44,6 @@ public class CouchbaseTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @RepeatedTest(1)
-    @Order(Integer.MAX_VALUE)
-    public void verifyDestroyOperation() {
-        assertNotNull(newTicketRegistry);
-        applicationContext.getBeanFactory().destroyBean(newTicketRegistry);
-    }
 
     @RepeatedTest(2)
     public void verifyAddAndLoadExpired() {

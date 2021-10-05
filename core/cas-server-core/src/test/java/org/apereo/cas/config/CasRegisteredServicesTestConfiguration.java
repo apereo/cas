@@ -39,8 +39,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@TestConfiguration("casRegisteredServicesTestConfiguration")
-@Lazy(false)
+@TestConfiguration("CasRegisteredServicesTestConfiguration")
 public class CasRegisteredServicesTestConfiguration {
 
     @Bean
