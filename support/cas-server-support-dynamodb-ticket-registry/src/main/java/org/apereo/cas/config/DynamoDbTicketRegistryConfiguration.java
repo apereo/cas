@@ -39,15 +39,13 @@ public class DynamoDbTicketRegistryConfiguration {
         public TicketRegistry ticketRegistry(
             @Qualifier("dynamoDbTicketRegistryFacilitator")
             final DynamoDbTicketRegistryFacilitator dynamoDbTicketRegistryFacilitator,
-            final CasConfigurationProperties casProperties,
-            @Qualifier("ticketCatalog")
-            final TicketCatalog ticketCatalog) {
+            final CasConfigurationProperties casProperties) {
             val db = casProperties.getTicket().getRegistry().getDynamoDb();
             val crypto = db.getCrypto();
-            return new DynamoDbTicketRegistry(CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "dynamo-db"), dynamoDbTicketRegistryFacilitator);
+            return new DynamoDbTicketRegistry(CoreTicketUtils.newTicketRegistryCipherExecutor(crypto,
+                "dynamo-db"), dynamoDbTicketRegistryFacilitator);
         }
     }
-
 
     @Configuration(value = "DynamoDbTicketRegistryHelperConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -68,8 +66,7 @@ public class DynamoDbTicketRegistryConfiguration {
             }
             return f;
         }
-
-
+        
     }
 
     @Configuration(value = "DynamoDbTicketRegistryClientConfiguration", proxyBeanMethods = false)

@@ -10,8 +10,10 @@ import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 
+import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.instance.impl.HazelcastInstanceFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,28 +40,40 @@ import java.util.concurrent.TimeUnit;
 @Configuration(value = "casServicesStreamingHazelcastConfiguration", proxyBeanMethods = false)
 public class CasServicesStreamingHazelcastConfiguration {
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier> registeredServiceDistributedCacheManager(
-        @Qualifier("casRegisteredServiceHazelcastInstance")
-        final HazelcastInstance casRegisteredServiceHazelcastInstance) {
-        val mapName = casRegisteredServiceHazelcastInstance.getConfig().getMapConfigs().keySet().iterator().next();
-        LOGGER.debug("Retrieving Hazelcast map [{}] for service replication", mapName);
-        return new RegisteredServiceHazelcastDistributedCacheManager(casRegisteredServiceHazelcastInstance,
-            casRegisteredServiceHazelcastInstance.getMap(mapName));
+    @Configuration(value = "CasServicesStreamingHazelcastCacheConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasServicesStreamingHazelcastCacheConfiguration {
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier> registeredServiceDistributedCacheManager(
+            @Qualifier("casRegisteredServiceHazelcastInstance")
+            final HazelcastInstance casRegisteredServiceHazelcastInstance) {
+            val mapName = casRegisteredServiceHazelcastInstance.getConfig().getMapConfigs().keySet().iterator().next();
+            LOGGER.debug("Retrieving Hazelcast map [{}] for service replication", mapName);
+            return new RegisteredServiceHazelcastDistributedCacheManager(casRegisteredServiceHazelcastInstance,
+                casRegisteredServiceHazelcastInstance.getMap(mapName));
+        }
+
     }
 
-    @Bean(destroyMethod = "shutdown")
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "casRegisteredServiceHazelcastInstance")
-    @Autowired
-    public HazelcastInstance casRegisteredServiceHazelcastInstance(final CasConfigurationProperties casProperties) {
-        val name = DefaultCasRegisteredServiceStreamPublisher.class.getSimpleName();
-        LOGGER.debug("Creating Hazelcast instance [{}] to publish service definitions", name);
-        val stream = casProperties.getServiceRegistry().getStream().getHazelcast();
-        val hzConfig = stream.getConfig();
-        val duration = Beans.newDuration(stream.getDuration()).toMillis();
-        val mapConfig = HazelcastConfigurationFactory.buildMapConfig(hzConfig, name, TimeUnit.MILLISECONDS.toSeconds(duration));
-        return Hazelcast.newHazelcastInstance(HazelcastConfigurationFactory.build(hzConfig, mapConfig));
+    @Configuration(value = "CasServicesStreamingHazelcastCoreConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasServicesStreamingHazelcastCoreConfiguration {
+        @Bean(destroyMethod = "shutdown")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "casRegisteredServiceHazelcastInstance")
+        @Autowired
+        public HazelcastInstance casRegisteredServiceHazelcastInstance(final CasConfigurationProperties casProperties) {
+            val name = DefaultCasRegisteredServiceStreamPublisher.class.getSimpleName();
+            LOGGER.debug("Creating Hazelcast instance [{}] to publish service definitions", name);
+            val stream = casProperties.getServiceRegistry().getStream().getHazelcast();
+            val hzConfig = stream.getConfig();
+            val duration = Beans.newDuration(stream.getDuration()).toMillis();
+
+            val mapConfig = HazelcastConfigurationFactory.buildMapConfig(hzConfig, name, TimeUnit.MILLISECONDS.toSeconds(duration));
+            val config = HazelcastConfigurationFactory.build(hzConfig, mapConfig);
+            return HazelcastInstanceFactory.getOrCreateHazelcastInstance(config);
+        }
     }
 }

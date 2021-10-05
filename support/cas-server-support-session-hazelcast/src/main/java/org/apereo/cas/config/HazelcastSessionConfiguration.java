@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.instance.HazelcastInstanceFactory;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -40,7 +41,7 @@ public class HazelcastSessionConfiguration {
         val config = new XmlConfigBuilder(hzConfigResource.getInputStream()).build();
         config.setConfigurationUrl(configUrl);
         config.setInstanceName(getClass().getSimpleName()).setProperty("hazelcast.logging.type", "slf4j").setProperty("hazelcast.max.no.heartbeat.seconds", "300");
-        return Hazelcast.newHazelcastInstance(config);
+        return HazelcastInstanceFactory.getOrCreateHazelcastInstance(config);
     }
 
 }

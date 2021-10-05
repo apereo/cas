@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.authy;
 
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.adaptors.authy.config.AuthyConfiguration;
 import org.apereo.cas.adaptors.authy.config.AuthyConfiguration.AuthyMultifactorTrustConfiguration;
 import org.apereo.cas.adaptors.authy.config.support.authentication.AuthyAuthenticationComponentSerializationConfiguration;
@@ -70,6 +71,7 @@ public abstract class BaseAuthyAuthenticationTests {
         CasCoreWebflowConfiguration.class,
         CasWebflowContextConfiguration.class,
         CasCoreUtilConfiguration.class,
+        CasCoreAuditConfiguration.class,
 
         MultifactorAuthnTrustConfiguration.class,
         MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,

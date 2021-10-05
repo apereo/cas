@@ -20,40 +20,46 @@ import java.util.function.Function;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbTicketRegistryTicketCatalogConfiguration extends BaseTicketDefinitionBuilderSupportConfiguration {
 
-    public MongoDbTicketRegistryTicketCatalogConfiguration(final CasConfigurationProperties casProperties,
-                                                           @Qualifier("mongoDbTicketCatalogConfigurationValuesProvider")
-                                                           final CasTicketCatalogConfigurationValuesProvider configProvider) {
+    public MongoDbTicketRegistryTicketCatalogConfiguration(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("mongoDbTicketCatalogConfigurationValuesProvider")
+        final CasTicketCatalogConfigurationValuesProvider configProvider) {
         super(casProperties, configProvider);
     }
 
-    @ConditionalOnMissingBean(name = "mongoDbTicketCatalogConfigurationValuesProvider")
-    @Bean
-    public CasTicketCatalogConfigurationValuesProvider mongoDbTicketCatalogConfigurationValuesProvider() {
-        return new CasTicketCatalogConfigurationValuesProvider() {
-            @Override
-            public Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
-                return p -> "serviceTicketsCollection";
-            }
 
-            @Override
-            public Function<CasConfigurationProperties, String> getProxyTicketStorageName() {
-                return p -> "proxyTicketsCollection";
-            }
+    @Configuration(value = "MongoDbTicketRegistryTicketCatalogProviderConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class MongoDbTicketRegistryTicketCatalogProviderConfiguration {
+        @ConditionalOnMissingBean(name = "mongoDbTicketCatalogConfigurationValuesProvider")
+        @Bean
+        public CasTicketCatalogConfigurationValuesProvider mongoDbTicketCatalogConfigurationValuesProvider() {
+            return new CasTicketCatalogConfigurationValuesProvider() {
+                @Override
+                public Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
+                    return p -> "serviceTicketsCollection";
+                }
 
-            @Override
-            public Function<CasConfigurationProperties, String> getTicketGrantingTicketStorageName() {
-                return p -> "ticketGrantingTicketsCollection";
-            }
+                @Override
+                public Function<CasConfigurationProperties, String> getProxyTicketStorageName() {
+                    return p -> "proxyTicketsCollection";
+                }
 
-            @Override
-            public Function<CasConfigurationProperties, String> getProxyGrantingTicketStorageName() {
-                return p -> "proxyGrantingTicketsCollection";
-            }
+                @Override
+                public Function<CasConfigurationProperties, String> getTicketGrantingTicketStorageName() {
+                    return p -> "ticketGrantingTicketsCollection";
+                }
 
-            @Override
-            public Function<CasConfigurationProperties, String> getTransientSessionStorageName() {
-                return p -> "transientSessionTicketsCollection";
-            }
-        };
+                @Override
+                public Function<CasConfigurationProperties, String> getProxyGrantingTicketStorageName() {
+                    return p -> "proxyGrantingTicketsCollection";
+                }
+
+                @Override
+                public Function<CasConfigurationProperties, String> getTransientSessionStorageName() {
+                    return p -> "transientSessionTicketsCollection";
+                }
+            };
+        }
     }
 }
