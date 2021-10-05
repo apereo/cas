@@ -91,6 +91,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class,
+    CasCoreWebflowConfiguration.class,
+    CasWebflowContextConfiguration.class,
     CasThemesConfiguration.class,
     CasThymeleafConfiguration.class,
     CasFiltersConfiguration.class,
@@ -131,18 +133,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy
 public abstract class BaseCasWebflowSessionContextConfigurationTests {
-    @Test
-    public void verifyExecutorsAreBeans() {
-        assertNotNull(getFlowExecutor());
-    }
-
-    @Test
-    public void verifyFlowExecutorByClient() {
-        val ctx = getMockRequestContext();
-        val map = new LocalAttributeMap<>();
-        getFlowExecutor().launchExecution("login", map, ctx.getExternalContext());
-    }
-
     @SneakyThrows(IOException.class)
     protected static void assertResponseWrittenEquals(final String response, final MockRequestContext context) {
         val nativeResponse = (MockHttpServletResponse) context.getExternalContext().getNativeResponse();
@@ -160,6 +150,18 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
         return ctx;
     }
 
+    @Test
+    public void verifyExecutorsAreBeans() {
+        assertNotNull(getFlowExecutor());
+    }
+
+    @Test
+    public void verifyFlowExecutorByClient() {
+        val ctx = getMockRequestContext();
+        val map = new LocalAttributeMap<>();
+        getFlowExecutor().launchExecution("login", map, ctx.getExternalContext());
+    }
+
     public abstract FlowExecutor getFlowExecutor();
 
     /**
@@ -173,7 +175,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
         @Autowired
         @Qualifier("principalElectionStrategy")
         private ObjectProvider<PrincipalElectionStrategy> principalElectionStrategy;
-  
+
         @Bean
         public Action testWebflowSerialization() {
             //CHECKSTYLE:OFF

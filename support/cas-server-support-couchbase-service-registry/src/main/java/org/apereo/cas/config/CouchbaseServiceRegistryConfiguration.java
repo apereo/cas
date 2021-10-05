@@ -48,10 +48,11 @@ public class CouchbaseServiceRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "couchbaseServiceRegistry")
     @Autowired
-    public ServiceRegistry couchbaseServiceRegistry(final ConfigurableApplicationContext applicationContext,
-                                                    final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
-                                                    @Qualifier("serviceRegistryCouchbaseClientFactory")
-                                                    final CouchbaseClientFactory serviceRegistryCouchbaseClientFactory) {
+    public ServiceRegistry couchbaseServiceRegistry(
+        final ConfigurableApplicationContext applicationContext,
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
+        @Qualifier("serviceRegistryCouchbaseClientFactory")
+        final CouchbaseClientFactory serviceRegistryCouchbaseClientFactory) {
         return new CouchbaseServiceRegistry(applicationContext, serviceRegistryCouchbaseClientFactory,
             new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter()),
             Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));

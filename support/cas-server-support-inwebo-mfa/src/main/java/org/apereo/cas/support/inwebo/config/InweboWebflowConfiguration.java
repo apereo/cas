@@ -50,17 +50,22 @@ import org.springframework.webflow.execution.Action;
 public class InweboWebflowConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
-    @Bean
-    @Autowired
-    public FlowDefinitionRegistry inweboFlowRegistry(
-        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
-        final FlowBuilder flowBuilder,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-        final FlowBuilderServices flowBuilderServices,
-        final ConfigurableApplicationContext applicationContext) {
-        val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
-        builder.addFlowBuilder(flowBuilder, InweboMultifactorWebflowConfigurer.MFA_INWEBO_EVENT_ID);
-        return builder.build();
+    @Configuration(value = "InweboWebflowRegistryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class InweboWebflowRegistryConfiguration {
+        @Bean
+        @Autowired
+        public FlowDefinitionRegistry inweboFlowRegistry(
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
+            final FlowBuilder flowBuilder,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices,
+            final ConfigurableApplicationContext applicationContext) {
+            val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
+            builder.addFlowBuilder(flowBuilder, InweboMultifactorWebflowConfigurer.MFA_INWEBO_EVENT_ID);
+            return builder.build();
+        }
+
     }
 
     @ConditionalOnMissingBean(name = "inweboMultifactorWebflowConfigurer")
@@ -87,15 +92,6 @@ public class InweboWebflowConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "inweboCasWebflowExecutionPlanConfigurer")
-    @Autowired
-    public CasWebflowExecutionPlanConfigurer inweboCasWebflowExecutionPlanConfigurer(
-        @Qualifier("inweboMultifactorWebflowConfigurer")
-        final CasWebflowConfigurer inweboMultifactorWebflowConfigurer) {
-        return plan -> plan.registerWebflowConfigurer(inweboMultifactorWebflowConfigurer);
-    }
-
-    @Bean
     @ConditionalOnMissingBean(name = "inweboMultifactorAuthenticationWebflowEventResolver")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
@@ -105,52 +101,70 @@ public class InweboWebflowConfiguration {
         return new InweboMultifactorAuthenticationWebflowEventResolver(casWebflowConfigurationContext);
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "inweboPushAuthenticateAction")
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public Action inweboPushAuthenticateAction(
-        @Qualifier("inweboService")
-        final InweboService inweboService) {
-        return new InweboPushAuthenticateAction(inweboService);
+    @Configuration(value = "InweboWebflowExecutionPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class InweboWebflowExecutionPlanConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "inweboCasWebflowExecutionPlanConfigurer")
+        @Autowired
+        public CasWebflowExecutionPlanConfigurer inweboCasWebflowExecutionPlanConfigurer(
+            @Qualifier("inweboMultifactorWebflowConfigurer")
+            final CasWebflowConfigurer inweboMultifactorWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(inweboMultifactorWebflowConfigurer);
+        }
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "inweboCheckUserAction")
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public Action inweboCheckUserAction(
-        @Qualifier("inweboService")
-        final InweboService inweboService,
-        final CasConfigurationProperties casProperties) {
-        return new InweboCheckUserAction(inweboService, casProperties);
-    }
+    @Configuration(value = "InweboWebflowActionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class InweboWebflowActionConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "inweboPushAuthenticateAction")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public Action inweboPushAuthenticateAction(
+            @Qualifier("inweboService")
+            final InweboService inweboService) {
+            return new InweboPushAuthenticateAction(inweboService);
+        }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "inweboMustEnrollAction")
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public Action inweboMustEnrollAction() {
-        return new InweboMustEnrollAction();
-    }
+        @Bean
+        @ConditionalOnMissingBean(name = "inweboCheckUserAction")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public Action inweboCheckUserAction(
+            @Qualifier("inweboService")
+            final InweboService inweboService,
+            final CasConfigurationProperties casProperties) {
+            return new InweboCheckUserAction(inweboService, casProperties);
+        }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "inweboCheckAuthenticationAction")
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public Action inweboCheckAuthenticationAction(
-        @Qualifier("inweboMultifactorAuthenticationWebflowEventResolver")
-        final CasWebflowEventResolver inweboMultifactorAuthenticationWebflowEventResolver,
-        @Qualifier("inweboService")
-        final InweboService inweboService) {
-        return new InweboCheckAuthenticationAction(inweboService,
-            inweboMultifactorAuthenticationWebflowEventResolver);
-    }
+        @Bean
+        @ConditionalOnMissingBean(name = "inweboMustEnrollAction")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action inweboMustEnrollAction() {
+            return new InweboMustEnrollAction();
+        }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "inweboSuccessAction")
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public Action inweboSuccessAction() {
-        return StaticEventExecutionAction.SUCCESS;
+        @Bean
+        @ConditionalOnMissingBean(name = "inweboCheckAuthenticationAction")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public Action inweboCheckAuthenticationAction(
+            @Qualifier("inweboMultifactorAuthenticationWebflowEventResolver")
+            final CasWebflowEventResolver inweboMultifactorAuthenticationWebflowEventResolver,
+            @Qualifier("inweboService")
+            final InweboService inweboService) {
+            return new InweboCheckAuthenticationAction(inweboService,
+                inweboMultifactorAuthenticationWebflowEventResolver);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "inweboSuccessAction")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action inweboSuccessAction() {
+            return StaticEventExecutionAction.SUCCESS;
+        }
+
     }
 
     /**

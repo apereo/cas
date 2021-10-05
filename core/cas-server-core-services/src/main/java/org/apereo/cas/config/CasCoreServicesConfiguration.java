@@ -88,6 +88,18 @@ import java.util.stream.Collectors;
 @EnableAsync
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 public class CasCoreServicesConfiguration {
+    @Configuration(value = "CasCoreServicesResponseLocatorConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreServicesResponseLocatorConfiguration {
+        @ConditionalOnMissingBean(name = "webApplicationResponseBuilderLocator")
+        @Bean
+        @Autowired
+        public ResponseBuilderLocator webApplicationResponseBuilderLocator(final List<ResponseBuilder> responseBuilders) {
+            AnnotationAwareOrderComparator.sortIfNecessary(responseBuilders);
+            return new DefaultWebApplicationResponseBuilderLocator(responseBuilders);
+        }
+
+    }
 
     @Configuration(value = "CasCoreServicesEventsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -106,10 +118,9 @@ public class CasCoreServicesConfiguration {
         }
     }
 
-    @Configuration(value = "CasCoreServicesBaseConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "CasCoreServicesResponseBuilderConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreServicesBaseConfiguration {
-
+    public static class CasCoreServicesResponseBuilderConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "webApplicationServiceResponseBuilder")
         @Autowired
@@ -121,20 +132,17 @@ public class CasCoreServicesConfiguration {
             final UrlValidator urlValidator) {
             return new WebApplicationServiceResponseBuilder(servicesManager, urlValidator);
         }
+    }
 
+    @Configuration(value = "CasCoreServicesBaseConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreServicesBaseConfiguration {
+        
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "shibbolethCompatiblePersistentIdGenerator")
         public PersistentIdGenerator shibbolethCompatiblePersistentIdGenerator() {
             return new ShibbolethCompatiblePersistentIdGenerator();
-        }
-
-        @ConditionalOnMissingBean(name = "webApplicationResponseBuilderLocator")
-        @Bean
-        @Autowired
-        public ResponseBuilderLocator webApplicationResponseBuilderLocator(final List<ResponseBuilder> responseBuilders) {
-            AnnotationAwareOrderComparator.sortIfNecessary(responseBuilders);
-            return new DefaultWebApplicationResponseBuilderLocator(responseBuilders);
         }
 
         @ConditionalOnMissingBean(name = RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME)
@@ -152,7 +160,7 @@ public class CasCoreServicesConfiguration {
         }
 
     }
-    
+
     @Configuration(value = "CasCoreServicesStrategyConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreServicesStrategyConfiguration {
@@ -171,7 +179,7 @@ public class CasCoreServicesConfiguration {
             return new DefaultRegisteredServiceResourceNamingStrategy();
         }
     }
-    
+
     @Configuration(value = "CasCoreServiceRegistryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreServiceRegistryPlanConfiguration {

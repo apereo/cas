@@ -34,6 +34,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = {
+    MetricsAutoConfiguration.class,
+    SimpleMetricsExportAutoConfiguration.class,
+    MetricsEndpointAutoConfiguration.class,
+    RefreshAutoConfiguration.class,
+    AopAutoConfiguration.class,
+    
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
@@ -42,13 +48,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreNotificationsConfiguration.class,
-    MetricsAutoConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    SimpleMetricsExportAutoConfiguration.class,
-    MetricsEndpointAutoConfiguration.class,
-    RefreshAutoConfiguration.class,
-    AopAutoConfiguration.class
+    CasWebApplicationServiceFactoryConfiguration.class
 }, properties = {
     "management.metrics.export.simple.enabled=true",
 

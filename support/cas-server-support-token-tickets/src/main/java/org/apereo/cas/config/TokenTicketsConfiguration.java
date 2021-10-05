@@ -22,16 +22,21 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "tokenTicketsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class TokenTicketsConfiguration {
-    @Autowired
-    @Bean
-    public ResponseBuilder webApplicationServiceResponseBuilder(
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
-        @Qualifier("tokenTicketBuilder")
-        final TokenTicketBuilder tokenTicketBuilder,
-        @Qualifier("urlValidator")
-        final UrlValidator urlValidator) {
-        return new TokenWebApplicationServiceResponseBuilder(servicesManager, tokenTicketBuilder, urlValidator);
+
+    @Configuration(value = "TokenTicketsBuilderConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class TokenTicketsBuilderConfiguration {
+        @Autowired
+        @Bean
+        public ResponseBuilder webApplicationServiceResponseBuilder(
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("tokenTicketBuilder")
+            final TokenTicketBuilder tokenTicketBuilder,
+            @Qualifier("urlValidator")
+            final UrlValidator urlValidator) {
+            return new TokenWebApplicationServiceResponseBuilder(servicesManager, tokenTicketBuilder, urlValidator);
+        }
     }
 
 }

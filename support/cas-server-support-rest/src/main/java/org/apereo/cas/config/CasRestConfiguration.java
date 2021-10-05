@@ -37,6 +37,7 @@ import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -124,6 +125,7 @@ public class CasRestConfiguration {
 
     @Configuration(value = "CasRestThrottleConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnBean(AuthenticationThrottlingExecutionPlan.class)
     public static class CasRestThrottleConfiguration {
         @Bean
         @Autowired
@@ -141,7 +143,6 @@ public class CasRestConfiguration {
                 }
             };
         }
-
     }
 
     @Configuration(value = "CasRestControllerResourcesConfiguration", proxyBeanMethods = false)
