@@ -28,7 +28,7 @@ public class CouchDbSamlIdPFactoryConfiguration {
     @Bean
     @Autowired
     public CouchDbConnectorFactory samlMetadataCouchDbFactory(final CasConfigurationProperties casProperties,
-                                                              @Qualifier("objectMapperFactory")
+                                                              @Qualifier("defaultObjectMapperFactory")
                                                               final ObjectMapperFactory objectMapperFactory) {
         return new CouchDbConnectorFactory(casProperties.getAuthn()
             .getSamlIdp()

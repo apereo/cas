@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.BeanContainer;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
@@ -89,7 +90,7 @@ public class RadiusConfigurationTests {
 
     @Autowired
     @Qualifier("radiusServers")
-    private List<RadiusServer> radiusServers;
+    private BeanContainer<RadiusServer> radiusServers;
 
     @Autowired
     @Qualifier("radiusServer")
@@ -142,7 +143,8 @@ public class RadiusConfigurationTests {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
         val targetResolver = new DefaultTargetStateResolver(TestMultifactorAuthenticationProvider.ID);
-        val transition = new Transition(new DefaultTransitionCriteria(new LiteralExpression(TestMultifactorAuthenticationProvider.ID)), targetResolver);
+        val transition = new Transition(new DefaultTransitionCriteria(
+            new LiteralExpression(TestMultifactorAuthenticationProvider.ID)), targetResolver);
         context.getRootFlow().getGlobalTransitionSet().add(transition);
 
         result = radiusAccessChallengedAuthenticationWebflowEventResolver.getObject().resolve(context);

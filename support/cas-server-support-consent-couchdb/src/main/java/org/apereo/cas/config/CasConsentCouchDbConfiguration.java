@@ -32,7 +32,7 @@ public class CasConsentCouchDbConfiguration {
     @Bean
     @Autowired
     public CouchDbConnectorFactory consentCouchDbFactory(final CasConfigurationProperties casProperties,
-                                                         @Qualifier("objectMapperFactory")
+                                                         @Qualifier("defaultObjectMapperFactory")
                                                          final ObjectMapperFactory objectMapperFactory) {
         return new CouchDbConnectorFactory(casProperties.getConsent().getCouchDb(),
             objectMapperFactory);

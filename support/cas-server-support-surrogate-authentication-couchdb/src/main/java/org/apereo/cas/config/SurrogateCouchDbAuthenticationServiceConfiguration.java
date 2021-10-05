@@ -37,7 +37,7 @@ public class SurrogateCouchDbAuthenticationServiceConfiguration {
     @Bean
     @Autowired
     public CouchDbConnectorFactory surrogateCouchDbFactory(final CasConfigurationProperties casProperties,
-                                                           @Qualifier("objectMapperFactory")
+                                                           @Qualifier("defaultObjectMapperFactory")
                                                            final ObjectMapperFactory objectMapperFactory) {
         return new CouchDbConnectorFactory(casProperties.getAuthn().getSurrogate().getCouchDb(), objectMapperFactory);
     }

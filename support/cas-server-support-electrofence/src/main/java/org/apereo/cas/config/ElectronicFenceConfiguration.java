@@ -230,12 +230,17 @@ public class ElectronicFenceConfiguration {
             final CasEventRepository casEventRepository) {
             return new DateTimeAuthenticationRequestRiskCalculator(casEventRepository, casProperties);
         }
+    }
 
+
+    @ConditionalOnBean(name = "geoLocationService")
+    @Configuration(value = "ElectronicFenceGeoLocationConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class ElectronicFenceGeoLocationConfiguration {
         @ConditionalOnMissingBean(name = "geoLocationAuthenticationRequestRiskCalculator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
-        @ConditionalOnBean(name = "geoLocationService")
         public AuthenticationRequestRiskCalculator geoLocationAuthenticationRequestRiskCalculator(
             final CasConfigurationProperties casProperties,
             @Qualifier("geoLocationService")
