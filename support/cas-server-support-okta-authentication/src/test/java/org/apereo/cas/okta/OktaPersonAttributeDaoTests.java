@@ -3,6 +3,7 @@ package org.apereo.cas.okta;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.OktaPersonDirectoryConfiguration;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import com.okta.sdk.client.Client;
 import com.okta.sdk.resource.user.User;
@@ -70,7 +71,7 @@ public class OktaPersonAttributeDaoTests {
     public class OktaPersonDirectoryConfigurationTests {
         @Autowired
         @Qualifier("oktaPersonAttributeDaos")
-        private List<IPersonAttributeDao> oktaPersonAttributeDaos;
+        private BeanContainer<IPersonAttributeDao> oktaPersonAttributeDaos;
 
         @Autowired
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
@@ -81,7 +82,7 @@ public class OktaPersonAttributeDaoTests {
             assertEquals(1, oktaPersonAttributeDaos.size());
             assertNull(attributeRepository.getPerson("casuser"));
 
-            val dao = (OktaPersonAttributeDao) oktaPersonAttributeDaos.get(0);
+            val dao = (OktaPersonAttributeDao) oktaPersonAttributeDaos.toList().get(0);
             assertTrue(dao.getPossibleUserAttributeNames(IPersonAttributeDaoFilter.alwaysChoose()).isEmpty());
             assertTrue(dao.getAvailableQueryAttributes(IPersonAttributeDaoFilter.alwaysChoose()).isEmpty());
             assertNotNull(dao.getOktaClient());
@@ -102,7 +103,7 @@ public class OktaPersonAttributeDaoTests {
     public class OktaPersonDirectoryMockTests {
         @Autowired
         @Qualifier("oktaPersonAttributeDaos")
-        private List<IPersonAttributeDao> oktaPersonAttributeDaos;
+        private BeanContainer<IPersonAttributeDao> oktaPersonAttributeDaos;
 
         @Autowired
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
@@ -110,7 +111,7 @@ public class OktaPersonAttributeDaoTests {
 
         @Test
         public void verifyOperation() {
-            assertFalse(oktaPersonAttributeDaos.isEmpty());
+            assertFalse(oktaPersonAttributeDaos.toList().isEmpty());
             assertNotNull(attributeRepository.getPerson("casuser"));
             assertFalse(attributeRepository.getPeople(Map.of("username", "casuser"),
                 IPersonAttributeDaoFilter.alwaysChoose()).isEmpty());

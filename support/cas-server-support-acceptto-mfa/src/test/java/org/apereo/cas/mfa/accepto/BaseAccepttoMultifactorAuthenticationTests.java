@@ -1,5 +1,6 @@
 package org.apereo.cas.mfa.accepto;
 
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.AccepttoMultifactorAuthenticationComponentSerializationConfiguration;
 import org.apereo.cas.config.AccepttoMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration;
@@ -15,6 +16,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -56,6 +58,7 @@ public class BaseAccepttoMultifactorAuthenticationTests {
         AccepttoMultifactorAuthenticationMultifactorProviderBypassConfiguration.class,
         CasWebflowContextConfiguration.class,
         CasCoreTicketsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
@@ -64,6 +67,7 @@ public class BaseAccepttoMultifactorAuthenticationTests {
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreUtilSerializationConfiguration.class,
         CasCoreWebflowConfiguration.class,
+        CasCoreAuditConfiguration.class,
         CasCoreWebConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasCoreNotificationsConfiguration.class,

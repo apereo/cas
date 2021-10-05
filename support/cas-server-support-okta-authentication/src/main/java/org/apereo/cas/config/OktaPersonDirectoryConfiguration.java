@@ -5,6 +5,7 @@ import org.apereo.cas.okta.OktaPersonAttributeDao;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import com.okta.sdk.client.Client;
 import lombok.val;
@@ -19,8 +20,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-
-import java.util.List;
 
 /**
  * This is {@link OktaPersonDirectoryConfiguration}.
@@ -45,7 +44,7 @@ public class OktaPersonDirectoryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
-    public List<IPersonAttributeDao> oktaPersonAttributeDaos(
+    public BeanContainer<IPersonAttributeDao> oktaPersonAttributeDaos(
         @Qualifier("oktaPersonDirectoryClient")
         final Client oktaPersonDirectoryClient,
         final CasConfigurationProperties casProperties) {
@@ -54,7 +53,7 @@ public class OktaPersonDirectoryConfiguration {
         dao.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider(properties.getUsernameAttribute()));
         dao.setOrder(properties.getOrder());
         FunctionUtils.doIfNotNull(properties.getId(), dao::setId);
-        return CollectionUtils.wrapList(dao);
+        return BeanContainer.of(CollectionUtils.wrapList(dao));
     }
 
     @ConditionalOnMissingBean(name = "oktaAttributeRepositoryPlanConfigurer")
@@ -63,8 +62,8 @@ public class OktaPersonDirectoryConfiguration {
     @Autowired
     public PersonDirectoryAttributeRepositoryPlanConfigurer oktaAttributeRepositoryPlanConfigurer(
         @Qualifier("oktaPersonAttributeDaos")
-        final List<IPersonAttributeDao> oktaPersonAttributeDaos) {
-        return plan -> oktaPersonAttributeDaos.forEach(plan::registerAttributeRepository);
+        final BeanContainer<IPersonAttributeDao> oktaPersonAttributeDaos) {
+        return plan -> oktaPersonAttributeDaos.toList().forEach(plan::registerAttributeRepository);
     }
 
 }

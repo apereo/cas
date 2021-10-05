@@ -9,6 +9,7 @@ import org.apereo.cas.web.flow.config.DelegatedAuthenticationSAMLConfiguration;
 
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.instance.impl.HazelcastInstanceFactory;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -55,7 +56,7 @@ public class DelegatedAuthenticationSAMLConfigurationTests {
         public HazelcastInstance casTicketRegistryHazelcastInstance() {
             val hz = new BaseHazelcastProperties();
             hz.getCluster().getCore().setInstanceName(UUID.randomUUID().toString());
-            return Hazelcast.newHazelcastInstance(HazelcastConfigurationFactory.build(hz));
+            return HazelcastInstanceFactory.getOrCreateHazelcastInstance(HazelcastConfigurationFactory.build(hz));
         }
     }
 
