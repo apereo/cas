@@ -50,6 +50,7 @@ public class SendForgotUsernameInstructionsActionTests {
             when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
             when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
             when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
+            when(context.getRequestScope()).thenReturn(new LocalAttributeMap<>());
             when(context.getRequestParameters()).thenReturn(new MockParameterMap());
             when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
 
@@ -74,6 +75,7 @@ public class SendForgotUsernameInstructionsActionTests {
             val context = mock(RequestContext.class);
             when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
             when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
+            when(context.getRequestScope()).thenReturn(new LocalAttributeMap<>());
             when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
             when(context.getRequestParameters()).thenReturn(new MockParameterMap());
             when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
@@ -103,6 +105,8 @@ public class SendForgotUsernameInstructionsActionTests {
             when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
             when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
             when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
+            when(context.getRequestScope()).thenReturn(new LocalAttributeMap<>());
+            when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
             when(context.getRequestParameters()).thenReturn(new MockParameterMap());
             when(context.getExternalContext()).thenReturn(
                 new ServletExternalContext(new MockServletContext(), request, response));

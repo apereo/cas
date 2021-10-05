@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.trusted.device-fingerprint.client-ip.enabled=true",
         "cas.authn.mfa.trusted.device-fingerprint.geolocation.enabled=true",
         "cas.authn.mfa.trusted.device-fingerprint.user-agent.enabled=true",
-        
+
         "cas.authn.mfa.trusted.device-fingerprint.cookie.enabled=true",
         "cas.authn.mfa.trusted.device-fingerprint.cookie.crypto.enabled=false",
         "cas.authn.mfa.trusted.device-fingerprint.cookie.crypto.encryption.key=3RXtt06xYUAli7uU-Z915ZGe0MRBFw3uDjWgOEf1GT8",
@@ -53,7 +53,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfigurationTests {
         assertNotNull(deviceFingerprintClientIpComponentExtractor);
         assertNotNull(deviceFingerprintGeoLocationComponentExtractor);
         assertNotNull(deviceFingerprintUserAgentComponentExtractor);
-        
+
         assertEquals(4, deviceFingerprintStrategy.getDeviceFingerprintComponentManagers().size());
     }
 }

@@ -32,47 +32,62 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Configuration(value = "wsFederationConfiguration", proxyBeanMethods = false)
 public class WsFederationAuthenticationConfiguration {
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "wsFederationHelper")
-    public WsFederationHelper wsFederationHelper(
-        @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-        final OpenSamlConfigBean configBean,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager) {
-        return new WsFederationHelper(configBean, servicesManager);
+    @Configuration(value = "WsFederationAuthenticationHelperConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class WsFederationAuthenticationHelperConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "wsFederationHelper")
+        public WsFederationHelper wsFederationHelper(
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+            final OpenSamlConfigBean configBean,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return new WsFederationHelper(configBean, servicesManager);
+        }
+
     }
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "wsFederationCookieManager")
-    @Autowired
-    public WsFederationCookieManager wsFederationCookieManager(
-        @Qualifier("wsFederationConfigurations")
-        final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,
-        final CasConfigurationProperties casProperties) {
-        return new WsFederationCookieManager(wsFederationConfigurations.toList(),
-            casProperties.getTheme().getParamName(), casProperties.getLocale().getParamName());
+
+    @Configuration(value = "WsFederationAuthenticationCookieConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class WsFederationAuthenticationCookieConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "wsFederationCookieManager")
+        @Autowired
+        public WsFederationCookieManager wsFederationCookieManager(
+            @Qualifier("wsFederationConfigurations")
+            final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,
+            final CasConfigurationProperties casProperties) {
+            return new WsFederationCookieManager(wsFederationConfigurations.toList(),
+                casProperties.getTheme().getParamName(), casProperties.getLocale().getParamName());
+        }
+
     }
 
-    @Bean
-    @Autowired
-    public WsFederationNavigationController wsFederationNavigationController(
-        @Qualifier("wsFederationConfigurations")
-        final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,
-        @Qualifier("webApplicationServiceFactory")
-        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-        final CasConfigurationProperties casProperties,
-        @Qualifier("wsFederationCookieManager")
-        final WsFederationCookieManager wsFederationCookieManager,
-        @Qualifier("wsFederationHelper")
-        final WsFederationHelper wsFederationHelper,
-        @Qualifier("authenticationServiceSelectionPlan")
-        final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-        @Qualifier("argumentExtractor")
-        final ArgumentExtractor argumentExtractor) {
-        return new WsFederationNavigationController(wsFederationCookieManager,
-            wsFederationHelper, wsFederationConfigurations.toList(), authenticationRequestServiceSelectionStrategies,
-            webApplicationServiceFactory, casProperties.getServer().getLoginUrl(), argumentExtractor);
+    @Configuration(value = "WsFederationAuthenticationControllerConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class WsFederationAuthenticationControllerConfiguration {
+        @Bean
+        @Autowired
+        public WsFederationNavigationController wsFederationNavigationController(
+            @Qualifier("wsFederationConfigurations")
+            final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,
+            @Qualifier("webApplicationServiceFactory")
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("wsFederationCookieManager")
+            final WsFederationCookieManager wsFederationCookieManager,
+            @Qualifier("wsFederationHelper")
+            final WsFederationHelper wsFederationHelper,
+            @Qualifier("authenticationServiceSelectionPlan")
+            final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+            @Qualifier("argumentExtractor")
+            final ArgumentExtractor argumentExtractor) {
+            return new WsFederationNavigationController(wsFederationCookieManager,
+                wsFederationHelper, wsFederationConfigurations.toList(), authenticationRequestServiceSelectionStrategies,
+                webApplicationServiceFactory, casProperties.getServer().getLoginUrl(), argumentExtractor);
+        }
     }
 }
