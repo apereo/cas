@@ -27,7 +27,9 @@ public class ChainingRestHttpRequestCredentialFactory implements RestHttpRequest
     private final List<RestHttpRequestCredentialFactory> chain;
 
     public ChainingRestHttpRequestCredentialFactory(final RestHttpRequestCredentialFactory... chain) {
-        this.chain = Stream.of(chain).collect(Collectors.toList());
+        this.chain = Stream.of(chain)
+            .sorted(Comparator.comparing(RestHttpRequestCredentialFactory::getOrder))
+            .collect(Collectors.toList());
     }
 
     /**
@@ -37,11 +39,12 @@ public class ChainingRestHttpRequestCredentialFactory implements RestHttpRequest
      */
     public void registerCredentialFactory(final RestHttpRequestCredentialFactory factory) {
         this.chain.add(factory);
+        AnnotationAwareOrderComparator.sort(this.chain);
     }
 
     @Override
-    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
-        AnnotationAwareOrderComparator.sort(this.chain);
+    public List<Credential> fromRequest(final HttpServletRequest request,
+                                        final MultiValueMap<String, String> requestBody) {
         return this.chain
             .stream()
             .sorted(Comparator.comparing(RestHttpRequestCredentialFactory::getOrder))
@@ -51,10 +54,10 @@ public class ChainingRestHttpRequestCredentialFactory implements RestHttpRequest
     }
 
     @Override
-    public List<Credential> fromAuthentication(final HttpServletRequest request, final MultiValueMap<String, String> requestBody,
+    public List<Credential> fromAuthentication(final HttpServletRequest request,
+                                               final MultiValueMap<String, String> requestBody,
                                                final Authentication authentication,
                                                final MultifactorAuthenticationProvider provider) {
-        AnnotationAwareOrderComparator.sort(this.chain);
         return this.chain
             .stream()
             .sorted(Comparator.comparing(RestHttpRequestCredentialFactory::getOrder))

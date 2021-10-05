@@ -110,6 +110,7 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryTests extends BaseOneTime
 
     @BeforeEach
     public void initialize() {
+        super.initialize();
         oneTimeTokenAuthenticatorTokenRepository.removeAll();
     }
 

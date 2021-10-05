@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn.web.flow;
 
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationComponentSerializationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -77,6 +78,7 @@ public abstract class BaseWebAuthnWebflowTests {
         CasCoreNotificationsConfiguration.class,
         CasCoreWebflowConfiguration.class,
         CasWebflowContextConfiguration.class,
+        CasCoreAuditConfiguration.class,
         CasPersonDirectoryTestConfiguration.class,
         MultifactorAuthnTrustConfiguration.class,
         MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,

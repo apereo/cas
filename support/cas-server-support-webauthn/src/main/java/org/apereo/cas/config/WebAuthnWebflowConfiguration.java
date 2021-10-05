@@ -53,133 +53,78 @@ import org.springframework.webflow.execution.Action;
 public class WebAuthnWebflowConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
-    @Bean
-    @ConditionalOnMissingBean(name = "webAuthnFlowRegistry")
-    @Autowired
-    public FlowDefinitionRegistry webAuthnFlowRegistry(
-        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-        final FlowBuilderServices flowBuilderServices,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
-        final FlowBuilder flowBuilder,
-        final ConfigurableApplicationContext applicationContext) {
-        val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
-        builder.addFlowBuilder(flowBuilder, WebAuthnMultifactorWebflowConfigurer.MFA_WEB_AUTHN_EVENT_ID);
-        return builder.build();
+    @Configuration(value = "WebAuthnWebflowRegistryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class WebAuthnWebflowRegistryConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "webAuthnFlowRegistry")
+        @Autowired
+        public FlowDefinitionRegistry webAuthnFlowRegistry(
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
+            final FlowBuilder flowBuilder,
+            final ConfigurableApplicationContext applicationContext) {
+            val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
+            builder.addFlowBuilder(flowBuilder, WebAuthnMultifactorWebflowConfigurer.MFA_WEB_AUTHN_EVENT_ID);
+            return builder.build();
+        }
     }
 
-    @ConditionalOnMissingBean(name = "webAuthnAuthenticationWebflowAction")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public Action webAuthnAuthenticationWebflowAction(
-        @Qualifier("webAuthnAuthenticationWebflowEventResolver")
-        final CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver) {
-        return new WebAuthnAuthenticationWebflowAction(webAuthnAuthenticationWebflowEventResolver);
+    @Configuration(value = "WebAuthnWebflowBaseConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class WebAuthnWebflowBaseConfiguration {
+        @ConditionalOnMissingBean(name = "webAuthnMultifactorWebflowConfigurer")
+        @Bean
+        @Autowired
+        public CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer(
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices,
+            @Qualifier("webAuthnFlowRegistry")
+            final FlowDefinitionRegistry webAuthnFlowRegistry,
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            val cfg = new WebAuthnMultifactorWebflowConfigurer(flowBuilderServices,
+                loginFlowDefinitionRegistry, webAuthnFlowRegistry,
+                applicationContext, casProperties,
+                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+            cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
+            return cfg;
+        }
     }
 
-    @ConditionalOnMissingBean(name = "webAuthnMultifactorWebflowConfigurer")
-    @Bean
-    @Autowired
-    public CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer(
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-        final FlowBuilderServices flowBuilderServices,
-        @Qualifier("webAuthnFlowRegistry")
-        final FlowDefinitionRegistry webAuthnFlowRegistry,
-        final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties) {
-        val cfg = new WebAuthnMultifactorWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, webAuthnFlowRegistry,
-            applicationContext, casProperties,
-            MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
-        cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
-        return cfg;
+    @Configuration(value = "WebAuthnWebflowEventResolutionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class WebAuthnWebflowEventResolutionConfiguration {
+        @ConditionalOnMissingBean(name = "webAuthnAuthenticationWebflowEventResolver")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver(
+            @Qualifier("casWebflowConfigurationContext")
+            final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
+            return new WebAuthnAuthenticationWebflowEventResolver(casWebflowConfigurationContext);
+        }
+
     }
 
-    @ConditionalOnMissingBean(name = "webAuthnStartAuthenticationAction")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public Action webAuthnStartAuthenticationAction(
-        @Qualifier("webAuthnCredentialRepository")
-        final RegistrationStorage webAuthnCredentialRepository) {
-        return new WebAuthnStartAuthenticationAction(webAuthnCredentialRepository);
+    @Configuration(value = "WebAuthnWebflowExecutionPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class WebAuthnWebflowExecutionPlanConfiguration {
+
+        @ConditionalOnMissingBean(name = "webAuthnCasWebflowExecutionPlanConfigurer")
+        @Bean
+        @Autowired
+        public CasWebflowExecutionPlanConfigurer webAuthnCasWebflowExecutionPlanConfigurer(
+            @Qualifier("webAuthnMultifactorWebflowConfigurer")
+            final CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(webAuthnMultifactorWebflowConfigurer);
+        }
+
     }
 
-    @ConditionalOnMissingBean(name = "webAuthnStartRegistrationAction")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public Action webAuthnStartRegistrationAction(
-        @Qualifier("webAuthnCsrfTokenRepository")
-        final CsrfTokenRepository webAuthnCsrfTokenRepository,
-        @Qualifier("webAuthnCredentialRepository")
-        final RegistrationStorage webAuthnCredentialRepository,
-        final CasConfigurationProperties casProperties) {
-        return new WebAuthnStartRegistrationAction(webAuthnCredentialRepository,
-            casProperties, webAuthnCsrfTokenRepository);
-    }
-
-    @ConditionalOnMissingBean(name = "webAuthnCheckAccountRegistrationAction")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public Action webAuthnCheckAccountRegistrationAction(
-        @Qualifier("webAuthnCredentialRepository")
-        final RegistrationStorage webAuthnCredentialRepository) {
-        return new WebAuthnAccountCheckRegistrationAction(webAuthnCredentialRepository);
-    }
-
-    @ConditionalOnMissingBean(name = "webAuthnSaveAccountRegistrationAction")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public Action webAuthnSaveAccountRegistrationAction(
-        @Qualifier("webAuthnSessionManager")
-        final SessionManager webAuthnSessionManager,
-        @Qualifier("webAuthnCredentialRepository")
-        final RegistrationStorage webAuthnCredentialRepository) {
-        return new WebAuthnAccountSaveRegistrationAction(webAuthnCredentialRepository, webAuthnSessionManager);
-    }
-
-    @ConditionalOnMissingBean(name = "webAuthnValidateSessionCredentialTokenAction")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public Action webAuthnValidateSessionCredentialTokenAction(
-        @Qualifier("webAuthnSessionManager")
-        final SessionManager webAuthnSessionManager,
-        @Qualifier("webAuthnPrincipalFactory")
-        final PrincipalFactory webAuthnPrincipalFactory,
-        @Qualifier("webAuthnCredentialRepository")
-        final RegistrationStorage webAuthnCredentialRepository) {
-        return new WebAuthnValidateSessionCredentialTokenAction(webAuthnCredentialRepository,
-            webAuthnSessionManager, webAuthnPrincipalFactory);
-    }
-
-    @ConditionalOnMissingBean(name = "webAuthnAuthenticationWebflowEventResolver")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver(
-        @Qualifier("casWebflowConfigurationContext")
-        final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
-        return new WebAuthnAuthenticationWebflowEventResolver(casWebflowConfigurationContext);
-    }
-
-    @ConditionalOnMissingBean(name = "webAuthnCasWebflowExecutionPlanConfigurer")
-    @Bean
-    @Autowired
-    public CasWebflowExecutionPlanConfigurer webAuthnCasWebflowExecutionPlanConfigurer(
-        @Qualifier("webAuthnMultifactorWebflowConfigurer")
-        final CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer) {
-        return plan -> plan.registerWebflowConfigurer(webAuthnMultifactorWebflowConfigurer);
-    }
-
-    /**
-     * The WebAuthN multifactor trust configuration.
-     */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnWebAuthnEnabled
     @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.web-authn")
@@ -215,6 +160,83 @@ public class WebAuthnWebflowConfiguration {
             @Qualifier("webAuthnMultifactorTrustWebflowConfigurer")
             final CasWebflowConfigurer webAuthnMultifactorTrustWebflowConfigurer) {
             return plan -> plan.registerWebflowConfigurer(webAuthnMultifactorTrustWebflowConfigurer);
+        }
+    }
+
+    @Configuration(value = "WebAuthnWebflowActionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class WebAuthnWebflowActionConfiguration {
+
+        @ConditionalOnMissingBean(name = "webAuthnStartAuthenticationAction")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public Action webAuthnStartAuthenticationAction(
+            @Qualifier("webAuthnCredentialRepository")
+            final RegistrationStorage webAuthnCredentialRepository) {
+            return new WebAuthnStartAuthenticationAction(webAuthnCredentialRepository);
+        }
+
+        @ConditionalOnMissingBean(name = "webAuthnStartRegistrationAction")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public Action webAuthnStartRegistrationAction(
+            @Qualifier("webAuthnCsrfTokenRepository")
+            final CsrfTokenRepository webAuthnCsrfTokenRepository,
+            @Qualifier("webAuthnCredentialRepository")
+            final RegistrationStorage webAuthnCredentialRepository,
+            final CasConfigurationProperties casProperties) {
+            return new WebAuthnStartRegistrationAction(webAuthnCredentialRepository,
+                casProperties, webAuthnCsrfTokenRepository);
+        }
+
+        @ConditionalOnMissingBean(name = "webAuthnCheckAccountRegistrationAction")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public Action webAuthnCheckAccountRegistrationAction(
+            @Qualifier("webAuthnCredentialRepository")
+            final RegistrationStorage webAuthnCredentialRepository) {
+            return new WebAuthnAccountCheckRegistrationAction(webAuthnCredentialRepository);
+        }
+
+        @ConditionalOnMissingBean(name = "webAuthnSaveAccountRegistrationAction")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public Action webAuthnSaveAccountRegistrationAction(
+            @Qualifier("webAuthnSessionManager")
+            final SessionManager webAuthnSessionManager,
+            @Qualifier("webAuthnCredentialRepository")
+            final RegistrationStorage webAuthnCredentialRepository) {
+            return new WebAuthnAccountSaveRegistrationAction(webAuthnCredentialRepository, webAuthnSessionManager);
+        }
+
+        @ConditionalOnMissingBean(name = "webAuthnAuthenticationWebflowAction")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public Action webAuthnAuthenticationWebflowAction(
+            @Qualifier("webAuthnAuthenticationWebflowEventResolver")
+            final CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver) {
+            return new WebAuthnAuthenticationWebflowAction(webAuthnAuthenticationWebflowEventResolver);
+        }
+
+
+        @ConditionalOnMissingBean(name = "webAuthnValidateSessionCredentialTokenAction")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public Action webAuthnValidateSessionCredentialTokenAction(
+            @Qualifier("webAuthnSessionManager")
+            final SessionManager webAuthnSessionManager,
+            @Qualifier("webAuthnPrincipalFactory")
+            final PrincipalFactory webAuthnPrincipalFactory,
+            @Qualifier("webAuthnCredentialRepository")
+            final RegistrationStorage webAuthnCredentialRepository) {
+            return new WebAuthnValidateSessionCredentialTokenAction(webAuthnCredentialRepository,
+                webAuthnSessionManager, webAuthnPrincipalFactory);
         }
     }
 }

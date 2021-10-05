@@ -2,6 +2,7 @@ package org.apereo.cas.token;
 
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
@@ -12,7 +13,6 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.TokenCoreComponentSerializationConfiguration;
@@ -68,6 +68,7 @@ import java.util.List;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class
 })
 public abstract class BaseJwtTokenTicketBuilderTests {
@@ -97,26 +98,6 @@ public abstract class BaseJwtTokenTicketBuilderTests {
             inMemoryRegisteredServices.add(createRegisteredService("https://jwt.no-encryption-key.example.org/cas.*", true, false));
         }
 
-        private AbstractRegisteredService createRegisteredService(final String id, final boolean hasSigningKey, final boolean hasEncryptionKey) {
-            val registeredService = RegisteredServiceTestUtils.getRegisteredService(id);
-
-            if (hasSigningKey) {
-                val signingKey = new DefaultRegisteredServiceProperty();
-                signingKey.addValue("pR3Vizkn5FSY5xCg84cIS4m-b6jomamZD68C8ash-TlNmgGPcoLgbgquxHPoi24tRmGpqHgM4mEykctcQzZ-Xg");
-                registeredService.getProperties().put(
-                    RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_KEY.getPropertyName(), signingKey);
-            }
-            if (hasEncryptionKey) {
-                val encKey = new DefaultRegisteredServiceProperty();
-                encKey.addValue("0KVXaN-nlXafRUwgsr3H_l6hkufY7lzoTy7OVI5pN0E");
-                registeredService.getProperties().put(
-                    RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY.getPropertyName(), encKey);
-
-                inMemoryRegisteredServices.add(registeredService);
-            }
-            return registeredService;
-        }
-
         @Bean
         public TicketValidator tokenTicketValidator() {
             return new AbstractUrlBasedTicketValidator("https://cas.example.org") {
@@ -137,6 +118,26 @@ public abstract class BaseJwtTokenTicketBuilderTests {
                     return "theresponse";
                 }
             };
+        }
+
+        private AbstractRegisteredService createRegisteredService(final String id, final boolean hasSigningKey, final boolean hasEncryptionKey) {
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService(id);
+
+            if (hasSigningKey) {
+                val signingKey = new DefaultRegisteredServiceProperty();
+                signingKey.addValue("pR3Vizkn5FSY5xCg84cIS4m-b6jomamZD68C8ash-TlNmgGPcoLgbgquxHPoi24tRmGpqHgM4mEykctcQzZ-Xg");
+                registeredService.getProperties().put(
+                    RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_KEY.getPropertyName(), signingKey);
+            }
+            if (hasEncryptionKey) {
+                val encKey = new DefaultRegisteredServiceProperty();
+                encKey.addValue("0KVXaN-nlXafRUwgsr3H_l6hkufY7lzoTy7OVI5pN0E");
+                registeredService.getProperties().put(
+                    RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY.getPropertyName(), encKey);
+
+                inMemoryRegisteredServices.add(registeredService);
+            }
+            return registeredService;
         }
     }
 }
