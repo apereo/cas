@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(BaseGoogleAuthenticatorTests.SharedTestConfiguration.class)
 @TestPropertySource(properties = "management.endpoint.gauthCredentialRepository.enabled=true")
 @Getter
-@Tag("MFA")
+@Tag("MFAProvider")
 public class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("googleAuthenticatorTokenCredentialRepositoryEndpoint")

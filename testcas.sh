@@ -219,8 +219,11 @@ while (( "$#" )); do
             oidc)
                 task+="testOIDC "
                 ;;
-            mfa|duo|gauth|webauthn|authy|fido|u2f|swivel|acceptto)
+            mfa)
                 task+="testMFA "
+                ;;
+            mfaprovider|duo|gauth|webauthn|authy|fido|u2f|swivel|acceptto)
+                task+="testMFAProvider "
                 ;;
             mfatrigger)
                 task+="testMFATrigger "

@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.u2f.json.location=file:src/test/resources/u2f-accounts.json"
     }
 )
-@Tag("MFA")
+@Tag("MFAProvider")
 public class U2FAuthenticationHandlerTests {
     @Autowired
     @Qualifier("u2fAuthenticationHandler")

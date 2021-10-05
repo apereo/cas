@@ -1,0 +1,19 @@
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "https://apereo.github.io.*",
+  "name" : "Sample",
+  "id" : 1,
+  "proxyPolicy" : {
+    "@class" : "org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
+    "pattern" : "^https?://.*"
+  },
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "authorizedToReleaseProxyGrantingTicket" : true
+  },
+  "publicKey" : {
+    "@class" : "org.apereo.cas.services.RegisteredServicePublicKeyImpl",
+    "location" : "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVariables['SCENARIO']}/public.key",
+    "algorithm" : "RSA"
+  }
+}

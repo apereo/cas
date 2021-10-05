@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("MFA")
+@Tag("MFAProvider")
 @SpringBootTest(classes = BaseInweboConfiguration.SharedTestConfiguration.class,
     properties = {
         "cas.authn.mfa.inwebo.client-certificate.certificate.location=classpath:clientcert.p12",

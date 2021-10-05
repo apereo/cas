@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoints.web.exposure.include=*",
         "management.endpoint.webAuthnDevices.enabled=true"
     })
-@Tag("MFA")
+@Tag("MFAProvider")
 public class WebAuthnRegisteredDevicesEndpointTests {
     @Autowired
     @Qualifier("webAuthnRegisteredDevicesEndpoint")

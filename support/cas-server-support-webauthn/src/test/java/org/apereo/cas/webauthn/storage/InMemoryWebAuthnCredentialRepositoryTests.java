@@ -8,6 +8,6 @@ import org.junit.jupiter.api.Tag;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("MFA")
+@Tag("MFAProvider")
 public class InMemoryWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
 }

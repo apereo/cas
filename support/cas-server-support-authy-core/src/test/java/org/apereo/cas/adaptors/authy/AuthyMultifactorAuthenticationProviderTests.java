@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Tag;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("MFA")
+@Tag("MFAProvider")
 public class AuthyMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
     @Override
     public AbstractMultifactorAuthenticationProvider getMultifactorAuthenticationProvider() {
