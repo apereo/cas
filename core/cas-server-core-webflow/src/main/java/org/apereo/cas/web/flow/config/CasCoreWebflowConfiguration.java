@@ -48,6 +48,7 @@ import org.apereo.cas.web.flow.authentication.DefaultCasWebflowExceptionCatalog;
 import org.apereo.cas.web.flow.authentication.GenericCasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.authentication.GroovyCasWebflowAuthenticationExceptionHandler;
 import org.apereo.cas.web.flow.authentication.RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolver;
@@ -87,6 +88,7 @@ import java.util.List;
 @Slf4j
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasCoreWebflowConfiguration {
+
 
     @Configuration(value = "CasCoreWebflowEventResolutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -230,7 +232,7 @@ public class CasCoreWebflowConfiguration {
             final ResponseBuilderLocator responseBuilderLocator) {
             return new InjectResponseHeadersAction(responseBuilderLocator);
         }
-        
+
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

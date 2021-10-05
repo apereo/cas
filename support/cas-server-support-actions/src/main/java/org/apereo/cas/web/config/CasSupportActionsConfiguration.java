@@ -72,31 +72,6 @@ import org.springframework.webflow.execution.Action;
 @EnableTransactionManagement
 public class CasSupportActionsConfiguration {
 
-    @Configuration(value = "CasSupportActionsWebflowEventConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasSupportActionsWebflowEventConfiguration {
-        @ConditionalOnMissingBean(name = "rankedAuthenticationProviderWebflowEventResolver")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public CasDelegatingWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver(
-            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-            final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
-            @Qualifier("casWebflowConfigurationContext")
-            final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext,
-            @Qualifier("authenticationContextValidator")
-            final MultifactorAuthenticationContextValidator authenticationContextValidator,
-            @Qualifier("singleSignOnParticipationStrategy")
-            final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy) {
-            return new RankedMultifactorAuthenticationProviderWebflowEventResolver(
-                casWebflowConfigurationContext,
-                initialAuthenticationAttemptWebflowEventResolver,
-                authenticationContextValidator,
-                webflowSingleSignOnParticipationStrategy);
-        }
-    }
-
-
     @Configuration(value = "CasSupportActionsExceptionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasSupportActionsExceptionConfiguration {

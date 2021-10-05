@@ -3,6 +3,7 @@ package org.apereo.cas.support.inwebo.config;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -59,6 +60,7 @@ public class BaseInweboConfiguration {
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasCookieConfiguration.class,
         CasCoreHttpConfiguration.class,

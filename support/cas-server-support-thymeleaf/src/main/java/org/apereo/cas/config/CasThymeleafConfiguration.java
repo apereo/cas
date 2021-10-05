@@ -106,10 +106,11 @@ public class CasThymeleafConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "chainingTemplateViewResolver")
     @Autowired
-    public AbstractTemplateResolver chainingTemplateViewResolver(final ThymeleafProperties thymeleafProperties,
-                                                                 @Qualifier("themeResolver")
-                                                                 final ThemeResolver themeResolver,
-                                                                 final CasConfigurationProperties casProperties) {
+    public AbstractTemplateResolver chainingTemplateViewResolver(
+        final ThymeleafProperties thymeleafProperties,
+        @Qualifier("themeResolver")
+        final ThemeResolver themeResolver,
+        final CasConfigurationProperties casProperties) {
         val chain = new ChainingTemplateViewResolver();
         val rest = casProperties.getView().getRest();
         if (StringUtils.isNotBlank(rest.getUrl())) {
@@ -122,8 +123,9 @@ public class CasThymeleafConfiguration {
             try {
                 val prefixPath = ResourceUtils.getFile(prefix).getCanonicalPath();
                 val viewPath = StringUtils.appendIfMissing(prefixPath, "/");
-                val theme =
-                    prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX) ? new ThemeClassLoaderTemplateResolver(themeResolver) : new ThemeFileTemplateResolver(casProperties, themeResolver);
+                val theme = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)
+                    ? new ThemeClassLoaderTemplateResolver(themeResolver)
+                    : new ThemeFileTemplateResolver(casProperties, themeResolver);
                 configureTemplateViewResolver(theme, thymeleafProperties);
                 theme.setPrefix(viewPath + "themes/%s/");
                 chain.addResolver(theme);

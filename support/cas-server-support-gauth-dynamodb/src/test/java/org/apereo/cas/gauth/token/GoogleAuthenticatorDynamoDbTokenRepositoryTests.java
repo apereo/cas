@@ -115,24 +115,24 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryTests extends BaseOneTime
 
     @Test
     public void verifyExpiredTokens() {
-        val token = new GoogleAuthenticatorToken(1111, CASUSER);
+        val token = new GoogleAuthenticatorToken(1111, userId);
         token.setIssuedDateTime(LocalDateTime.now(ZoneOffset.UTC).plusHours(1));
         oneTimeTokenAuthenticatorTokenRepository.store(token);
-        var t1 = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, token.getToken());
+        var t1 = oneTimeTokenAuthenticatorTokenRepository.get(userId, token.getToken());
         assertEquals(token, t1);
         oneTimeTokenAuthenticatorTokenRepository.clean();
-        t1 = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, t1.getToken());
+        t1 = oneTimeTokenAuthenticatorTokenRepository.get(userId, t1.getToken());
         assertNull(t1);
     }
 
     @Test
     public void verifyLargeDataSet() {
-        val tokens = Stream.generate(() -> new GoogleAuthenticatorToken(Integer.valueOf(RandomUtils.randomNumeric(6)), CASUSER)).limit(500);
+        val tokens = Stream.generate(() -> new GoogleAuthenticatorToken(Integer.valueOf(RandomUtils.randomNumeric(6)), userId)).limit(500);
         var stopwatch = new StopWatch();
         stopwatch.start();
         tokens.forEach(token -> {
             oneTimeTokenAuthenticatorTokenRepository.store(token);
-            assertNotNull(oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, token.getToken()));
+            assertNotNull(oneTimeTokenAuthenticatorTokenRepository.get(userId, token.getToken()));
             oneTimeTokenAuthenticatorTokenRepository.remove(token.getToken());
         });
         stopwatch.stop();

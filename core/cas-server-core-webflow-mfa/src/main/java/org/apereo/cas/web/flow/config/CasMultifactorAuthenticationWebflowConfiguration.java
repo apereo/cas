@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationTriggerSelectionStrategy;
+import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
@@ -25,6 +26,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationAvailableAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationBypassAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationFailureAction;
@@ -39,6 +41,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.resolver.impl.CompositeProviderSelectionMultifactorWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.DefaultCasDelegatingWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.RankedMultifactorAuthenticationProviderWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.SelectiveMultifactorAuthenticationProviderWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderWebflowEventResolver;
 
@@ -72,6 +75,30 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnWebApplication
 public class CasMultifactorAuthenticationWebflowConfiguration {
+
+    @Configuration(value = "CasMultifactorAuthenticationWebflowRankedEventConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasMultifactorAuthenticationWebflowRankedEventConfiguration {
+        @ConditionalOnMissingBean(name = "rankedAuthenticationProviderWebflowEventResolver")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public CasDelegatingWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver(
+            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+            @Qualifier("casWebflowConfigurationContext")
+            final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext,
+            @Qualifier("authenticationContextValidator")
+            final MultifactorAuthenticationContextValidator authenticationContextValidator,
+            @Qualifier("singleSignOnParticipationStrategy")
+            final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy) {
+            return new RankedMultifactorAuthenticationProviderWebflowEventResolver(
+                casWebflowConfigurationContext,
+                initialAuthenticationAttemptWebflowEventResolver,
+                authenticationContextValidator,
+                webflowSingleSignOnParticipationStrategy);
+        }
+    }
 
     @Configuration(value = "CasMultifactorAuthenticationWebflowTriggersConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -447,7 +474,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @Configuration(value = "CasMultifactorAuthenticationWebflowContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasMultifactorAuthenticationWebflowContextConfiguration {
-        
+
 
         @ConditionalOnMissingBean(name = "initialAuthenticationAttemptWebflowEventResolver")
         @Bean

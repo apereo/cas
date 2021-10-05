@@ -41,9 +41,10 @@ public class CouchDbServiceRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "serviceRegistryCouchDbFactory")
     @Autowired
-    public CouchDbConnectorFactory serviceRegistryCouchDbFactory(final CasConfigurationProperties casProperties,
-                                                                 @Qualifier("defaultObjectMapperFactory")
-                                                                 final ObjectMapperFactory objectMapperFactory) {
+    public CouchDbConnectorFactory serviceRegistryCouchDbFactory(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("defaultObjectMapperFactory")
+        final ObjectMapperFactory objectMapperFactory) {
         return new CouchDbConnectorFactory(casProperties.getServiceRegistry().getCouchDb(), objectMapperFactory);
     }
 
@@ -51,11 +52,13 @@ public class CouchDbServiceRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "serviceRegistryCouchDbRepository")
     @Autowired
-    public RegisteredServiceCouchDbRepository serviceRegistryCouchDbRepository(final CasConfigurationProperties casProperties,
-                                                                               @Qualifier("couchDbFactory")
-                                                                               final CouchDbConnectorFactory couchDbFactory) {
+    public RegisteredServiceCouchDbRepository serviceRegistryCouchDbRepository(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("serviceRegistryCouchDbFactory")
+        final CouchDbConnectorFactory couchDbFactory) {
         val couchDbProperties = casProperties.getServiceRegistry().getCouchDb();
-        val serviceRepository = new RegisteredServiceCouchDbRepository(couchDbFactory.getCouchDbConnector(), couchDbProperties.isCreateIfNotExists());
+        val serviceRepository = new RegisteredServiceCouchDbRepository(couchDbFactory.getCouchDbConnector(),
+            couchDbProperties.isCreateIfNotExists());
         serviceRepository.initStandardDesignDocument();
         return serviceRepository;
     }
@@ -64,20 +67,26 @@ public class CouchDbServiceRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "couchDbServiceRegistry")
     @Autowired
-    public ServiceRegistry couchDbServiceRegistry(final ConfigurableApplicationContext applicationContext,
-                                                  final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
-                                                  @Qualifier("serviceRegistryCouchDbRepository")
-                                                  final RegisteredServiceCouchDbRepository serviceRegistryCouchDbRepository) {
+    public ServiceRegistry couchDbServiceRegistry(
+        final ConfigurableApplicationContext applicationContext,
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
+        @Qualifier("serviceRegistryCouchDbRepository")
+        final RegisteredServiceCouchDbRepository serviceRegistryCouchDbRepository) {
         return new CouchDbServiceRegistry(applicationContext, serviceRegistryCouchDbRepository,
             Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "couchDbServiceRegistryExecutionPlanConfigurer")
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public ServiceRegistryExecutionPlanConfigurer couchDbServiceRegistryExecutionPlanConfigurer(
-        @Qualifier("couchDbServiceRegistry")
-        final ServiceRegistry couchDbServiceRegistry) {
-        return plan -> plan.registerServiceRegistry(couchDbServiceRegistry);
+    @Configuration(value = "CouchDbServiceRegistryPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CouchDbServiceRegistryPlanConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "couchDbServiceRegistryExecutionPlanConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ServiceRegistryExecutionPlanConfigurer couchDbServiceRegistryExecutionPlanConfigurer(
+            @Qualifier("couchDbServiceRegistry")
+            final ServiceRegistry couchDbServiceRegistry) {
+            return plan -> plan.registerServiceRegistry(couchDbServiceRegistry);
+        }
     }
+
 }

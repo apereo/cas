@@ -87,7 +87,6 @@ public class CouchbaseServiceRegistryTests extends AbstractServiceRegistryTests 
     }
 
     @TestConfiguration("CouchbaseServiceRegistryTestConfiguration")
-    @Lazy(false)
     public static class CouchbaseServiceRegistryTestConfiguration {
 
         @SneakyThrows
