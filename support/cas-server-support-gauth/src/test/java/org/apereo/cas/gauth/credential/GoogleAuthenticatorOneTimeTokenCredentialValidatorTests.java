@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
     BaseGoogleAuthenticatorTests.SharedTestConfiguration.class
 })
 @Getter
-@Tag("MFA")
+@Tag("MFAProvider")
 public class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
 
     @Autowired
