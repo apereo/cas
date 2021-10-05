@@ -32,6 +32,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":support:cas-server-support-throttle")
     testImplementation project(":support:cas-server-support-validation")
 
     testImplementation project(":core:cas-server-core-util")

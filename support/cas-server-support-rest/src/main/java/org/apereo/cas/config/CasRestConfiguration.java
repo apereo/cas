@@ -56,72 +56,92 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casRestConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasRestConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasRestConfiguration {
-    @Bean
-    @Autowired
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "restServiceTicketResourceEntityResponseFactoryConfigurer")
-    public ServiceTicketResourceEntityResponseFactoryConfigurer restServiceTicketResourceEntityResponseFactoryConfigurer(
-        @Qualifier(CentralAuthenticationService.BEAN_NAME)
-        final CentralAuthenticationService centralAuthenticationService) {
-        return plan -> plan.registerFactory(new CasProtocolServiceTicketResourceEntityResponseFactory(centralAuthenticationService));
+
+    @Configuration(value = "CasRestResponseFactoryPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasRestResponseFactoryPlanConfiguration {
+        @Bean
+        @Autowired
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "restServiceTicketResourceEntityResponseFactoryConfigurer")
+        public ServiceTicketResourceEntityResponseFactoryConfigurer restServiceTicketResourceEntityResponseFactoryConfigurer(
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService) {
+            return plan -> plan.registerFactory(new CasProtocolServiceTicketResourceEntityResponseFactory(centralAuthenticationService));
+        }
+
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "serviceTicketResourceEntityResponseFactory")
-    @Autowired
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory(
-        final List<ServiceTicketResourceEntityResponseFactoryConfigurer> configurers) {
-        val plan = new DefaultServiceTicketResourceEntityResponseFactoryPlan();
-        configurers.forEach(c -> c.configureEntityResponseFactory(plan));
-        return new CompositeServiceTicketResourceEntityResponseFactory(plan.getFactories());
+    @Configuration(value = "CasRestResponseFactoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasRestResponseFactoryConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "serviceTicketResourceEntityResponseFactory")
+        @Autowired
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory(
+            final List<ServiceTicketResourceEntityResponseFactoryConfigurer> configurers) {
+            val plan = new DefaultServiceTicketResourceEntityResponseFactoryPlan();
+            configurers.forEach(c -> c.configureEntityResponseFactory(plan));
+            return new CompositeServiceTicketResourceEntityResponseFactory(plan.getFactories());
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "ticketGrantingTicketResourceEntityResponseFactory")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory() {
+            return new DefaultTicketGrantingTicketResourceEntityResponseFactory();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "userAuthenticationResourceEntityResponseFactory")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public UserAuthenticationResourceEntityResponseFactory userAuthenticationResourceEntityResponseFactory() {
+            return new DefaultUserAuthenticationResourceEntityResponseFactory();
+        }
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "ticketGrantingTicketResourceEntityResponseFactory")
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory() {
-        return new DefaultTicketGrantingTicketResourceEntityResponseFactory();
+    @Configuration(value = "CasRestWebConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasRestWebConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "restProtocolEndpointConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ProtocolEndpointWebSecurityConfigurer<Void> restProtocolEndpointConfigurer() {
+            return new ProtocolEndpointWebSecurityConfigurer<>() {
+                @Override
+                public List<String> getIgnoredEndpoints() {
+                    return List.of(StringUtils.prependIfMissing(RestProtocolConstants.BASE_ENDPOINT, "/"));
+                }
+            };
+        }
+
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "userAuthenticationResourceEntityResponseFactory")
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public UserAuthenticationResourceEntityResponseFactory userAuthenticationResourceEntityResponseFactory() {
-        return new DefaultUserAuthenticationResourceEntityResponseFactory();
-    }
+    @Configuration(value = "CasRestThrottleConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasRestThrottleConfiguration {
+        @Bean
+        @Autowired
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "restAuthenticationThrottle")
+        public WebMvcConfigurer casRestThrottlingWebMvcConfigurer(
+            @Qualifier("authenticationThrottlingExecutionPlan")
+            final AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan) {
+            return new WebMvcConfigurer() {
+                @Override
+                public void addInterceptors(final InterceptorRegistry registry) {
+                    LOGGER.debug("Activating authentication throttling for REST endpoints...");
+                    authenticationThrottlingExecutionPlan.getAuthenticationThrottleInterceptors()
+                        .forEach(handler -> registry.addInterceptor(handler).order(0).addPathPatterns("/v1/**"));
+                }
+            };
+        }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "restProtocolEndpointConfigurer")
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public ProtocolEndpointWebSecurityConfigurer<Void> restProtocolEndpointConfigurer() {
-        return new ProtocolEndpointWebSecurityConfigurer<>() {
-            @Override
-            public List<String> getIgnoredEndpoints() {
-                return List.of(StringUtils.prependIfMissing(RestProtocolConstants.BASE_ENDPOINT, "/"));
-            }
-        };
-    }
-
-    @Bean
-    @Autowired
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "restAuthenticationThrottle")
-    public WebMvcConfigurer casRestThrottlingWebMvcConfigurer(
-        @Qualifier("authenticationThrottlingExecutionPlan")
-        final AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan) {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addInterceptors(final InterceptorRegistry registry) {
-                LOGGER.debug("Activating authentication throttling for REST endpoints...");
-                authenticationThrottlingExecutionPlan.getAuthenticationThrottleInterceptors()
-                    .forEach(handler -> registry.addInterceptor(handler).order(0).addPathPatterns("/v1/**"));
-            }
-        };
     }
 
     @Configuration(value = "CasRestControllerResourcesConfiguration", proxyBeanMethods = false)

@@ -49,9 +49,12 @@ public class AuthenticationExceptionHandlerActionTests {
     }
 
     private static List<CasWebflowExceptionHandler> getExceptionHandlers(final CasWebflowExceptionCatalog errors) {
-        return List.of(new DefaultCasWebflowAuthenticationExceptionHandler(errors, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE),
-            new DefaultCasWebflowAbstractTicketExceptionHandler(errors, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE),
-            new GenericCasWebflowExceptionHandler(errors, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE));
+        return List.of(new DefaultCasWebflowAuthenticationExceptionHandler(errors,
+                MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE),
+            new DefaultCasWebflowAbstractTicketExceptionHandler(errors,
+                MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE),
+            new GenericCasWebflowExceptionHandler(errors,
+                MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE));
     }
 
     @Test
@@ -110,7 +113,7 @@ public class AuthenticationExceptionHandlerActionTests {
     @Test
     public void handleUnsatisfiedAuthenticationPolicyExceptionByDefault() {
         val catalog = new DefaultCasWebflowExceptionCatalog();
-        catalog.registerExceptions(CollectionUtils.wrapSet(AccountLockedException.class, AccountNotFoundException.class));
+        catalog.registerExceptions(CollectionUtils.wrapSet(UnsatisfiedAuthenticationPolicyException.class, AccountNotFoundException.class));
         val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(catalog));
         val req = getMockRequestContext();
 

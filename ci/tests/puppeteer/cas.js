@@ -215,14 +215,17 @@ exports.doRequest = async (url, method = "GET", headers = {}, statusCode = 200, 
     });
 }
 
-exports.doGet = async (url, successHandler, failureHandler) => {
+exports.doGet = async (url, successHandler, failureHandler, headers = {}) => {
     const instance = axios.create({
         httpsAgent: new https.Agent({
             rejectUnauthorized: false
         })
     });
+    let config = {
+      headers: headers
+    };
     await instance
-        .get(url)
+        .get(url, config)
         .then(res => {
             console.log(res.data);
             successHandler(res);

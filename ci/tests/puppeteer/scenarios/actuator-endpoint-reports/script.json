@@ -7,8 +7,8 @@
     "--cas.authn.accept.name=STATIC",
 
     "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
-    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org"
-  ,
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoint.health.show-details=always",
     "--management.endpoints.enabled-by-default=true"

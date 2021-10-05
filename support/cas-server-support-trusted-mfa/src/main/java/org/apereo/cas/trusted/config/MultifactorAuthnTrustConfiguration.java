@@ -66,6 +66,24 @@ public class MultifactorAuthnTrustConfiguration {
 
     private static final long MAX_CACHE_SIZE = 1_000_000;
 
+    @Configuration(value = "MultifactorAuthnTrustGeneratorConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class MultifactorAuthnTrustGeneratorConfiguration {
+
+        @ConditionalOnMissingBean(name = "mfaTrustRecordKeyGenerator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator(
+            final CasConfigurationProperties casProperties) {
+            val type = casProperties.getAuthn().getMfa().getTrusted().getCore().getKeyGeneratorType();
+            if (type == TrustedDevicesMultifactorCoreProperties.TrustedDevicesKeyGeneratorTypes.DEFAULT) {
+                return new DefaultMultifactorAuthenticationTrustRecordKeyGenerator();
+            }
+            return new LegacyMultifactorAuthenticationTrustRecordKeyGenerator();
+        }
+    }
+
     @Configuration(value = "MultifactorAuthnTrustCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class MultifactorAuthnTrustCoreConfiguration {
@@ -87,17 +105,21 @@ public class MultifactorAuthnTrustConfiguration {
             @Qualifier("mfaTrustRecordKeyGenerator")
             final MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator) {
             val trusted = casProperties.getAuthn().getMfa().getTrusted();
-            val storage = Caffeine.newBuilder().initialCapacity(INITIAL_CACHE_SIZE).maximumSize(MAX_CACHE_SIZE).expireAfter(new MultifactorAuthenticationTrustRecordExpiry()).build(s -> {
+            val storage = Caffeine.newBuilder().initialCapacity(INITIAL_CACHE_SIZE)
+                .maximumSize(MAX_CACHE_SIZE).expireAfter(new MultifactorAuthenticationTrustRecordExpiry()).build(s -> {
                 LOGGER.error("Load operation of the cache is not supported.");
                 return null;
             });
             return FunctionUtils.doIf(trusted.getJson().getLocation() != null, () -> {
                 LOGGER.debug("Storing trusted device records inside the JSON resource [{}]", trusted.getJson().getLocation());
-                return new JsonMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(), mfaTrustCipherExecutor, trusted.getJson().getLocation(),
+                return new JsonMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
+                    mfaTrustCipherExecutor, trusted.getJson().getLocation(),
                     mfaTrustRecordKeyGenerator);
             }, () -> {
                 LOGGER.warn("Storing trusted device records in runtime memory. Changes and records will be lost upon CAS restarts");
-                return new InMemoryMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(), mfaTrustCipherExecutor, storage, mfaTrustRecordKeyGenerator);
+                return new InMemoryMultifactorAuthenticationTrustStorage(
+                    casProperties.getAuthn().getMfa().getTrusted(),
+                    mfaTrustCipherExecutor, storage, mfaTrustRecordKeyGenerator);
             }).get();
         }
 
@@ -105,19 +127,6 @@ public class MultifactorAuthnTrustConfiguration {
         @Bean
         public PlatformTransactionManager transactionManagerMfaAuthnTrust() {
             return new PseudoPlatformTransactionManager();
-        }
-
-        @ConditionalOnMissingBean(name = "mfaTrustRecordKeyGenerator")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator(
-            final CasConfigurationProperties casProperties) {
-            val type = casProperties.getAuthn().getMfa().getTrusted().getCore().getKeyGeneratorType();
-            if (type == TrustedDevicesMultifactorCoreProperties.TrustedDevicesKeyGeneratorTypes.DEFAULT) {
-                return new DefaultMultifactorAuthenticationTrustRecordKeyGenerator();
-            }
-            return new LegacyMultifactorAuthenticationTrustRecordKeyGenerator();
         }
     }
 

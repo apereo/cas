@@ -36,13 +36,34 @@ import static org.mockito.Mockito.*;
 @Tag("Authentication")
 public class OktaPersonAttributeDaoTests {
 
+    @TestConfiguration("OktaClientMockConfiguration")
+    @SuppressWarnings("JavaUtilDate")
+    public static class OktaClientMockTestConfiguration {
+        @Bean
+        public Client oktaPersonDirectoryClient() {
+            val profile = mock(UserProfile.class);
+            when(profile.getEmail()).thenReturn("cas@example.org");
+            when(profile.getEmployeeNumber()).thenReturn("23947236572");
+
+            val user = mock(User.class);
+            when(user.getId()).thenReturn("casuser");
+            when(user.getStatus()).thenReturn(UserStatus.ACTIVE);
+            when(user.getProfile()).thenReturn(profile);
+            when(user.getLastUpdated()).thenReturn(new Date());
+            when(user.getLastLogin()).thenReturn(new Date());
+            val client = mock(Client.class);
+            when(client.getUser(anyString())).thenReturn(user);
+            return client;
+        }
+    }
+
     @SpringBootTest(classes = {
         OktaPersonDirectoryConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         BaseOktaTests.SharedTestConfiguration.class
     }, properties = {
-            "cas.authn.attribute-repository.okta.organization-url=https://dev-668371.oktapreview.com",
-            "cas.authn.attribute-repository.okta.api-token=0030j4HfPHEIQG39pl0nNacnx2bqqZMqDq6Hk5wfNa"
+        "cas.authn.attribute-repository.okta.organization-url=https://dev-668371.oktapreview.com",
+        "cas.authn.attribute-repository.okta.api-token=0030j4HfPHEIQG39pl0nNacnx2bqqZMqDq6Hk5wfNa"
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
@@ -66,13 +87,16 @@ public class OktaPersonAttributeDaoTests {
             assertNotNull(dao.getOktaClient());
         }
     }
-    
+
     @SpringBootTest(classes = {
         OktaPersonAttributeDaoTests.OktaClientMockTestConfiguration.class,
         OktaPersonDirectoryConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         BaseOktaTests.SharedTestConfiguration.class
-    }, properties = "cas.authn.attribute-repository.okta.organization-url=https://dev-668371.oktapreview.com")
+    }, properties = {
+        "cas.authn.attribute-repository.okta.organization-url=https://dev-668371.oktapreview.com",
+        "cas.authn.attribute-repository.okta.api-token=0030j4HfPHEIQG39pl0nNacnx2bqqZMqDq6Hk5wfNa"
+    })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     public class OktaPersonDirectoryMockTests {
@@ -88,28 +112,8 @@ public class OktaPersonAttributeDaoTests {
         public void verifyOperation() {
             assertFalse(oktaPersonAttributeDaos.isEmpty());
             assertNotNull(attributeRepository.getPerson("casuser"));
-            assertFalse(attributeRepository.getPeople(Map.of("username", "casuser"), IPersonAttributeDaoFilter.alwaysChoose()).isEmpty());
-        }
-    }
-
-    @TestConfiguration("OktaClientMockConfiguration")
-    @SuppressWarnings("JavaUtilDate")
-    public static class OktaClientMockTestConfiguration {
-        @Bean
-        public Client oktaPersonDirectoryClient() {
-            val profile = mock(UserProfile.class);
-            when(profile.getEmail()).thenReturn("cas@example.org");
-            when(profile.getEmployeeNumber()).thenReturn("23947236572");
-
-            val user = mock(User.class);
-            when(user.getId()).thenReturn("casuser");
-            when(user.getStatus()).thenReturn(UserStatus.ACTIVE);
-            when(user.getProfile()).thenReturn(profile);
-            when(user.getLastUpdated()).thenReturn(new Date());
-            when(user.getLastLogin()).thenReturn(new Date());
-            val client = mock(Client.class);
-            when(client.getUser(anyString())).thenReturn(user);
-            return client;
+            assertFalse(attributeRepository.getPeople(Map.of("username", "casuser"),
+                IPersonAttributeDaoFilter.alwaysChoose()).isEmpty());
         }
     }
 
