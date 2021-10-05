@@ -135,7 +135,6 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
     }
 
     @TestConfiguration("GeoLocationServiceTestConfiguration")
-    @Lazy(false)
     public static class GeoLocationServiceTestConfiguration {
         @Bean
         public GeoLocationService geoLocationService() {

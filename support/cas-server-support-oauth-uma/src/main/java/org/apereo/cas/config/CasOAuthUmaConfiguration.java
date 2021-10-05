@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
@@ -88,7 +87,9 @@ public class CasOAuthUmaConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "umaRequestingPartyTokenGenerator")
         @Autowired
-        public IdTokenGeneratorService umaRequestingPartyTokenGenerator(final ObjectProvider<OAuth20ConfigurationContext> context) {
+        public IdTokenGeneratorService umaRequestingPartyTokenGenerator(
+            @Qualifier("umaConfigurationContext")
+            final ObjectProvider<UmaConfigurationContext> context) {
             return new UmaIdTokenGeneratorService(context);
         }
     }
@@ -102,7 +103,6 @@ public class CasOAuthUmaConfiguration {
         public UmaResourceSetClaimPermissionExaminer umaResourceSetClaimPermissionExaminer() {
             return new DefaultUmaResourceSetClaimPermissionExaminer();
         }
-
 
         @Bean
         @ConditionalOnMissingBean(name = "umaResourceSetRepository")
@@ -141,6 +141,7 @@ public class CasOAuthUmaConfiguration {
             @Qualifier("umaResourceSetRepository")
             final ResourceSetRepository umaResourceSetRepository,
             final CasConfigurationProperties casProperties) {
+            
             val uma = casProperties.getAuthn().getOauth().getUma();
             val jwks = uma.getRequestingPartyToken().getJwksFile().getLocation();
             val signingService = new UmaRequestingPartyTokenSigningService(jwks, uma.getCore().getIssuer());
@@ -158,7 +159,7 @@ public class CasOAuthUmaConfiguration {
                 .centralAuthenticationService(centralAuthenticationService)
                 .umaPermissionTicketFactory(defaultUmaPermissionTicketFactory)
                 .umaResourceSetRepository(umaResourceSetRepository)
-                .signingService(signingService)
+                .idTokenSigningAndEncryptionService(signingService)
                 .build();
         }
 
@@ -227,9 +228,9 @@ public class CasOAuthUmaConfiguration {
         }
     }
 
-    @Configuration(value = "CasOAuthUmaWbMvcConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "CasOAuthUmaWebMvcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasOAuthUmaWbMvcConfiguration {
+    public static class CasOAuthUmaWebMvcConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "umaWebMvcConfigurer")

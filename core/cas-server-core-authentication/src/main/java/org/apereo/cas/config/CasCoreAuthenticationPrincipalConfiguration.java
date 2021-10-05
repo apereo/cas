@@ -20,6 +20,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,6 +33,7 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link CasCoreAuthenticationPrincipalConfiguration}.
@@ -52,12 +54,13 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         @ConditionalOnMissingBean(name = "defaultPrincipalResolver")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
-        public PrincipalResolver defaultPrincipalResolver(final List<PrincipalResolutionExecutionPlanConfigurer> configurers,
-                                                          final CasConfigurationProperties casProperties,
-                                                          @Qualifier("principalElectionStrategy")
-                                                          final PrincipalElectionStrategy principalElectionStrategy) {
+        public PrincipalResolver defaultPrincipalResolver(
+            final ObjectProvider<List<PrincipalResolutionExecutionPlanConfigurer>> configurers,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("principalElectionStrategy")
+            final PrincipalElectionStrategy principalElectionStrategy) {
             val plan = new DefaultPrincipalResolutionExecutionPlan();
-            val sortedConfigurers = new ArrayList<>(configurers);
+            val sortedConfigurers = new ArrayList<>(Optional.ofNullable(configurers.getIfAvailable()).orElse(new ArrayList<>(0)));
             AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
 
             sortedConfigurers.forEach(Unchecked.consumer(c -> {
@@ -72,7 +75,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
             return resolver;
         }
     }
-    
+
     @Configuration(value = "CasCoreAuthenticationPrincipalElectionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreAuthenticationPrincipalElectionConfiguration {
@@ -113,7 +116,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         }
 
     }
-    
+
     @Configuration(value = "CasCoreAuthenticationPrincipalFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreAuthenticationPrincipalFactoryConfiguration {
