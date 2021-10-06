@@ -53,6 +53,7 @@ public interface BeanContainer<T> {
     /**
      * Empty bean container.
      *
+     * @param <T> the type parameter
      * @return the bean container
      */
     static <T> BeanContainer<T> empty() {

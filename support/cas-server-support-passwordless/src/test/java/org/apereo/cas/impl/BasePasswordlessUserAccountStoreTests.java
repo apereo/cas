@@ -64,7 +64,6 @@ public abstract class BasePasswordlessUserAccountStoreTests {
         CasWebApplicationServiceFactoryConfiguration.class,
         CasMultifactorAuthenticationWebflowConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
