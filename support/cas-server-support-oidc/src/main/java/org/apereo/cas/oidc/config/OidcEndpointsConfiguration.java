@@ -137,8 +137,9 @@ public class OidcEndpointsConfiguration {
                 Authenticators.CAS_OAUTH_CLIENT_ACCESS_TOKEN_AUTHN,
                 Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
                 Authenticators.CAS_OAUTH_CLIENT_USER_FORM);
+            
             val interceptor = new SecurityInterceptor(oauthSecConfig, clients, JEEHttpActionAdapter.INSTANCE);
-        interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
+            interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
             interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
             return interceptor;
         }
@@ -150,7 +151,7 @@ public class OidcEndpointsConfiguration {
             final Config oauthSecConfig) {
             val clients = String.join(",", OidcConstants.CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN);
             val interceptor = new SecurityInterceptor(oauthSecConfig, clients, JEEHttpActionAdapter.INSTANCE);
-        interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
+            interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
             interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
             return interceptor;
         }

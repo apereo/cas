@@ -122,7 +122,7 @@ public class CasOAuth20ThrottleConfiguration {
             final Config oauthSecConfig) {
             val interceptor = new SecurityInterceptor(oauthSecConfig,
                 Authenticators.CAS_OAUTH_CLIENT, JEEHttpActionAdapter.INSTANCE);
-        interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
+            interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
             interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
             return interceptor;
         }
@@ -140,7 +140,7 @@ public class CasOAuth20ThrottleConfiguration {
                 .map(Client::getName)
                 .collect(Collectors.joining(","));
             val interceptor = new SecurityInterceptor(oauthSecConfig, clients, JEEHttpActionAdapter.INSTANCE);
-        interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
+            interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
             interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
             return interceptor;
         }
