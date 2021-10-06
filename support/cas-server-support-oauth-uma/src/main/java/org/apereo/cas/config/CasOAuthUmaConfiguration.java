@@ -175,13 +175,15 @@ public class CasOAuthUmaConfiguration {
                                                                   final String clientName,
                                                                   final SessionStore oauthDistributedSessionStore,
                                                                   final CasConfigurationProperties casProperties) {
-            val headerClient = new HeaderClient(HttpHeaders.AUTHORIZATION, OAuth20Constants.TOKEN_TYPE_BEARER.concat(" "), authenticator);
+            val headerClient = new HeaderClient(HttpHeaders.AUTHORIZATION,
+                OAuth20Constants.TOKEN_TYPE_BEARER.concat(" "), authenticator);
             headerClient.setName(clientName);
             val clients = Stream.of(headerClient.getName()).collect(Collectors.joining(","));
             val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), headerClient);
             config.setSessionStore(oauthDistributedSessionStore);
             val interceptor = new SecurityInterceptor(config, clients, JEEHttpActionAdapter.INSTANCE);
             interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
+            interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
             return interceptor;
         }
 
@@ -393,7 +395,6 @@ public class CasOAuthUmaConfiguration {
             @Qualifier("umaConfigurationContext")
             final UmaConfigurationContext umaConfigurationContext) {
             return new UmaDeletePolicyForResourceSetEndpointController(umaConfigurationContext);
-        interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
         }
 
         @Bean
