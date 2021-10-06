@@ -94,7 +94,11 @@ public class CoreWsSecurityIdentityProviderConfiguration {
             final ServicesManager servicesManager) {
             return new WSFederationAuthenticationServiceSelectionStrategy(servicesManager, webApplicationServiceFactory);
         }
+    }
 
+    @Configuration(value = "CoreWsSecurityIdentityProviderServiceSelectionPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CoreWsSecurityIdentityProviderServiceSelectionPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "wsFederationAuthenticationServiceSelectionStrategyConfigurer")
         @Autowired
@@ -104,7 +108,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
             return plan -> plan.registerStrategy(wsFederationAuthenticationServiceSelectionStrategy);
         }
     }
-
+    
     @Configuration(value = "CoreWsSecurityIdentityProviderServicesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CoreWsSecurityIdentityProviderServicesConfiguration {
