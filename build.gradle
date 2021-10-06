@@ -441,6 +441,7 @@ subprojects {
             if (generateTimestamps) {
                 attributes("Implementation-Date": java.time.ZonedDateTime.now(ZoneId.systemDefault()))
             }
+
             attributes(
                     "Specification-Version": "${-> project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'}",
                     "Implementation-Version": project.version)
