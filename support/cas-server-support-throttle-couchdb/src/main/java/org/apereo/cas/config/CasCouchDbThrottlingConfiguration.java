@@ -28,7 +28,7 @@ public class CasCouchDbThrottlingConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle(
-        @Qualifier("couchDbRepository")
+        @Qualifier("auditActionContextCouchDbRepository")
         final AuditActionContextCouchDbRepository couchDbRepository,
         @Qualifier("authenticationThrottlingConfigurationContext")
         final ThrottledSubmissionHandlerConfigurationContext authenticationThrottlingConfigurationContext) {

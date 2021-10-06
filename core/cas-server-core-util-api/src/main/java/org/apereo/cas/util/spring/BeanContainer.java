@@ -51,6 +51,15 @@ public interface BeanContainer<T> {
     }
 
     /**
+     * Empty bean container.
+     *
+     * @return the bean container
+     */
+    static <T> BeanContainer<T> empty() {
+        return BeanContainer.of();
+    }
+
+    /**
      * Gets items.
      *
      * @return the items

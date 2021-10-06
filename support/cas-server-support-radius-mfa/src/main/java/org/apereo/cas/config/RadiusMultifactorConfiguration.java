@@ -47,69 +47,93 @@ public class RadiusMultifactorConfiguration {
 
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
-    @Bean
-    @ConditionalOnMissingBean(name = "radiusFlowRegistry")
-    @Autowired
-    public FlowDefinitionRegistry radiusFlowRegistry(
-        final ConfigurableApplicationContext applicationContext,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-        final FlowBuilderServices flowBuilderServices,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
-        final FlowBuilder flowBuilder) {
-        val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
-        builder.addFlowBuilder(flowBuilder, RadiusMultifactorWebflowConfigurer.MFA_RADIUS_EVENT_ID);
-        return builder.build();
+    @Configuration(value = "RadiusMultifactorRegistryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class RadiusMultifactorRegistryConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "radiusFlowRegistry")
+        @Autowired
+        public FlowDefinitionRegistry radiusFlowRegistry(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
+            final FlowBuilder flowBuilder) {
+            val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
+            builder.addFlowBuilder(flowBuilder, RadiusMultifactorWebflowConfigurer.MFA_RADIUS_EVENT_ID);
+            return builder.build();
+        }
+
     }
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "radiusAuthenticationWebflowAction")
-    public Action radiusAuthenticationWebflowAction(
-        @Qualifier("radiusAuthenticationWebflowEventResolver")
-        final CasWebflowEventResolver radiusAuthenticationWebflowEventResolver) {
-        return new RadiusAuthenticationWebflowAction(radiusAuthenticationWebflowEventResolver);
+    @Configuration(value = "RadiusMultifactorWebflowActionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class RadiusMultifactorWebflowActionConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "radiusAuthenticationWebflowAction")
+        public Action radiusAuthenticationWebflowAction(
+            @Qualifier("radiusAuthenticationWebflowEventResolver")
+            final CasWebflowEventResolver radiusAuthenticationWebflowEventResolver) {
+            return new RadiusAuthenticationWebflowAction(radiusAuthenticationWebflowEventResolver);
+        }
+
     }
 
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Bean
-    @ConditionalOnMissingBean(name = "radiusAuthenticationWebflowEventResolver")
-    @Autowired
-    public CasWebflowEventResolver radiusAuthenticationWebflowEventResolver(final CasConfigurationProperties casProperties,
-                                                                            @Qualifier("casWebflowConfigurationContext")
-                                                                            final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
-        return new RadiusAuthenticationWebflowEventResolver(casWebflowConfigurationContext,
-            casProperties.getAuthn().getMfa().getRadius().getAllowedAuthenticationAttempts());
+    @Configuration(value = "RadiusMultifactorWebflowEventConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class RadiusMultifactorWebflowEventConfiguration {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @ConditionalOnMissingBean(name = "radiusAuthenticationWebflowEventResolver")
+        @Autowired
+        public CasWebflowEventResolver radiusAuthenticationWebflowEventResolver(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("casWebflowConfigurationContext")
+            final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
+            return new RadiusAuthenticationWebflowEventResolver(casWebflowConfigurationContext,
+                casProperties.getAuthn().getMfa().getRadius().getAllowedAuthenticationAttempts());
+        }
     }
 
-    @ConditionalOnMissingBean(name = "radiusMultifactorWebflowConfigurer")
-    @Bean
-    @Autowired
-    public CasWebflowConfigurer radiusMultifactorWebflowConfigurer(final CasConfigurationProperties casProperties,
-                                                                   final ConfigurableApplicationContext applicationContext,
-                                                                   @Qualifier("radiusFlowRegistry")
-                                                                   final FlowDefinitionRegistry radiusFlowRegistry,
-                                                                   @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-                                                                   final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                                   @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-                                                                   final FlowBuilderServices flowBuilderServices) {
-        val cfg = new RadiusMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, radiusFlowRegistry, applicationContext, casProperties,
-            MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
-        cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
-        return cfg;
+    @Configuration(value = "RadiusMultifactorWebflowConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class RadiusMultifactorWebflowConfiguration {
+        @ConditionalOnMissingBean(name = "radiusMultifactorWebflowConfigurer")
+        @Bean
+        @Autowired
+        public CasWebflowConfigurer radiusMultifactorWebflowConfigurer(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("radiusFlowRegistry")
+            final FlowDefinitionRegistry radiusFlowRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
+            val cfg = new RadiusMultifactorWebflowConfigurer(flowBuilderServices,
+                loginFlowDefinitionRegistry, radiusFlowRegistry, applicationContext, casProperties,
+                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+            cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
+            return cfg;
+        }
+
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "radiusMultifactorCasWebflowExecutionPlanConfigurer")
-    @Autowired
-    public CasWebflowExecutionPlanConfigurer radiusMultifactorCasWebflowExecutionPlanConfigurer(
-        @Qualifier("radiusMultifactorWebflowConfigurer")
-        final CasWebflowConfigurer radiusMultifactorWebflowConfigurer) {
-        return plan -> plan.registerWebflowConfigurer(radiusMultifactorWebflowConfigurer);
+    @Configuration(value = "RadiusMultifactorWebflowPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class RadiusMultifactorWebflowPlanConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "radiusMultifactorCasWebflowExecutionPlanConfigurer")
+        @Autowired
+        public CasWebflowExecutionPlanConfigurer radiusMultifactorCasWebflowExecutionPlanConfigurer(
+            @Qualifier("radiusMultifactorWebflowConfigurer")
+            final CasWebflowConfigurer radiusMultifactorWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(radiusMultifactorWebflowConfigurer);
+        }
+
     }
 
-    /**
-     * The Radius multifactor trust configuration.
-     */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.radius")
     @Configuration(value = "radiusMultifactorTrustConfiguration", proxyBeanMethods = false)
