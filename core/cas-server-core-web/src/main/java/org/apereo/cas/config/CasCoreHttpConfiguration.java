@@ -57,10 +57,9 @@ public class CasCoreHttpConfiguration {
         }
     }
 
-    @Configuration(value = "CasCoreHttpTlsConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "CasCoreHttpHostnameConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreHttpTlsConfiguration {
-
+    public static class CasCoreHttpHostnameConfiguration {
         @ConditionalOnMissingBean(name = "hostnameVerifier")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -71,7 +70,11 @@ public class CasCoreHttpConfiguration {
             }
             return new DefaultHostnameVerifier();
         }
-
+    }
+    
+    @Configuration(value = "CasCoreHttpTlsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreHttpTlsConfiguration {
         @ConditionalOnMissingBean(name = "casSslContext")
         @Autowired
         @Bean
