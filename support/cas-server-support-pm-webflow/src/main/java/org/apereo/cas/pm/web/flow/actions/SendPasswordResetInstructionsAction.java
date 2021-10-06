@@ -103,7 +103,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
 
         val query = PasswordManagementQuery.builder().username(username).build();
         val token = passwordManagementService.createToken(query);
-        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(token)) {
+        if (StringUtils.isNotBlank(token)) {
             val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
             val pm = casProperties.getAuthn().getPm();
             val seconds = Beans.newDuration(pm.getReset().getExpiration()).toSeconds();
@@ -111,7 +111,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
                 PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN, token,
                 ExpirationPolicy.class.getName(), HardTimeoutExpirationPolicy.builder().timeToKillInSeconds(seconds).build());
             val ticket = transientFactory.create(service, properties);
-            this.ticketRegistry.addTicket(ticket);
+            ticketRegistry.addTicket(ticket);
 
             val resetUrl = new StringBuilder(casProperties.getServer().getPrefix())
                 .append('/').append(CasWebflowConfigurer.FLOW_ID_LOGIN).append('?')

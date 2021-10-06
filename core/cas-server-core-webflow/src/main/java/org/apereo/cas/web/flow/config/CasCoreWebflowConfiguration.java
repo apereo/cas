@@ -290,6 +290,11 @@ public class CasCoreWebflowConfiguration {
             return new GenericCasWebflowExceptionHandler(
                 handledAuthenticationExceptions, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
         }
+    }
+
+    @Configuration(value = "CasCoreWebflowExceptionCatalogConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreWebflowExceptionCatalogConfiguration {
 
         /**
          * Handled authentication exceptions set.
@@ -330,7 +335,6 @@ public class CasCoreWebflowConfiguration {
             errors.registerExceptions(casProperties.getAuthn().getErrors().getExceptions());
             return errors;
         }
-
     }
 
     @Configuration(value = "CasCoreWebflowSingleSignOnConfiguration", proxyBeanMethods = false)

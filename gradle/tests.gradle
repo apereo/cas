@@ -51,7 +51,7 @@ enum TestCategories {
 //    PasswordOps,
 //    Postgres,
     Radius,
-    Redis,
+//    Redis,
 //    RegisteredService,
 //    RestfulApi,
 //    RestfulApiAuthentication,
