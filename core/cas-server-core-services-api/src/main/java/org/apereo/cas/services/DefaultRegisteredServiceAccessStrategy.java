@@ -197,7 +197,8 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      */
     protected boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes,
                                                                final Map<String, Set<String>> requiredAttributes) {
-        LOGGER.debug("These required attributes [{}] are examined against [{}] before service can proceed.", requiredAttributes, principalAttributes);
+        LOGGER.debug("These required attributes [{}] are examined against [{}] before service can proceed.",
+            requiredAttributes, principalAttributes);
         return requiredAttributes.isEmpty() || requiredAttributesFoundInMap(principalAttributes, requiredAttributes);
     }
 
@@ -226,7 +227,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         }
         if (principalAttributes.size() < this.rejectedAttributes.size()) {
             LOGGER.debug("The size of the principal attributes that are [{}] does not match defined rejected attributes, "
-                + "which means the principal is not carrying enough data to grant authorization", principalAttributes);
+                         + "which means the principal is not carrying enough data to grant authorization", principalAttributes);
             return false;
         }
         return true;
@@ -248,7 +249,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         }
         if (principalAttributes.size() < requiredAttributes.size()) {
             LOGGER.debug("The size of the principal attributes that are [{}] does not match defined required attributes, "
-                + "which indicates the principal is not carrying enough data to grant authorization", principalAttributes);
+                         + "which indicates the principal is not carrying enough data to grant authorization", principalAttributes);
             return false;
         }
         return true;
@@ -265,7 +266,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                                                    final Map<String, Set<String>> requiredAttributes) {
         val difference = requiredAttributes.keySet()
             .stream()
-            .filter(a -> principalAttributes.keySet().contains(a))
+            .filter(principalAttributes::containsKey)
             .collect(Collectors.toSet());
         LOGGER.debug("Difference of checking required attributes: [{}]", difference);
         if (this.requireAllAttributes && difference.size() < requiredAttributes.size()) {
@@ -280,13 +281,14 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     private boolean requiredAttributeFound(final String attributeName,
                                            final Map<String, Object> principalAttributes,
                                            final Map<String, Set<String>> requiredAttributes) {
-        val values = requiredAttributes.get(attributeName);
+        val requiredValues = requiredAttributes.get(attributeName);
         val availableValues = CollectionUtils.toCollection(principalAttributes.get(attributeName));
-        val pattern = RegexUtils.concatenate(values, this.caseInsensitive);
-        LOGGER.debug("Checking [{}] against [{}] with pattern [{}] for attribute [{}]", values, availableValues, pattern, attributeName);
+        val pattern = RegexUtils.concatenate(requiredValues, this.caseInsensitive);
+        LOGGER.debug("Checking [{}] against [{}] with pattern [{}] for attribute [{}]",
+            requiredValues, availableValues, pattern, attributeName);
         if (!pattern.equals(RegexUtils.MATCH_NOTHING_PATTERN)) {
             return availableValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
         }
-        return availableValues.stream().anyMatch(values::contains);
+        return availableValues.stream().anyMatch(requiredValues::contains);
     }
 }

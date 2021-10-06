@@ -155,7 +155,7 @@ public class MongoDbConnectionFactory {
                 val optionsMatch = indexOptions.entrySet().stream()
                     .allMatch(entry -> entry.getValue().equals(existingIndex.get(entry.getKey())));
                 val noExtraOptions = existingIndex.keySet().stream()
-                    .allMatch(key -> MONGO_INDEX_KEYS.contains(key) || indexOptions.keySet().contains(key));
+                    .allMatch(key -> MONGO_INDEX_KEYS.contains(key) || indexOptions.containsKey(key));
                 indexExistsWithDifferentOptions |= keyMatches && !(optionsMatch && noExtraOptions);
             }
 
