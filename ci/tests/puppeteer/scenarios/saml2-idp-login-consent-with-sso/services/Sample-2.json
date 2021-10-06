@@ -1,0 +1,28 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "https://httpbin.org/shibboleth",
+  "name" : "Sample",
+  "id" : 2,
+  "evaluationOrder" : 1,
+  "metadataLocation" : "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVariables['SCENARIO']}/sp-metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "mergingPolicy": "REPLACE",
+    "policies": [
+      "java.util.ArrayList",
+      [
+        {
+          "@class": "org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicy",
+          "salt": "SomahRah5oYo",
+          "attribute": "mail"
+        },
+        {
+          "@class": "org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicy",
+          "useFriendlyName": true
+        }
+      ]
+    ]
+  }
+}
+
+

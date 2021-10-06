@@ -54,7 +54,7 @@ public class CasAcceptableUsagePolicyRedisConfiguration {
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(final CasConfigurationProperties casProperties,
                                                                            @Qualifier("redisAcceptableUsagePolicyTemplate")
                                                                            final RedisTemplate redisAcceptableUsagePolicyTemplate,
-                                                                           @Qualifier("defaultTicketRegistrySupport")
+                                                                           @Qualifier(TicketRegistrySupport.BEAN_NAME)
                                                                            final TicketRegistrySupport ticketRegistrySupport) {
         return new RedisAcceptableUsagePolicyRepository(ticketRegistrySupport,
             casProperties.getAcceptableUsagePolicy(), redisAcceptableUsagePolicyTemplate);

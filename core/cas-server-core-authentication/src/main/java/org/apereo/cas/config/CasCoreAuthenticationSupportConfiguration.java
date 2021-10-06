@@ -67,7 +67,7 @@ public class CasCoreAuthenticationSupportConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("authenticationServiceSelectionPlan")
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
             val resolver = new RegisteredServiceAuthenticationHandlerResolver(servicesManager,
                 authenticationServiceSelectionPlan);
@@ -130,7 +130,7 @@ public class CasCoreAuthenticationSupportConfiguration {
         public AuthenticationPolicyResolver registeredServiceAuthenticationPolicyResolver(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("authenticationServiceSelectionPlan")
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
             return new RegisteredServiceAuthenticationPolicyResolver(servicesManager,
                 authenticationServiceSelectionPlan);

@@ -82,7 +82,7 @@ public class CasCoreConfiguration {
         @Autowired
         @ConditionalOnMissingBean(name = CentralAuthenticationService.BEAN_NAME)
         public CentralAuthenticationService centralAuthenticationService(
-            @Qualifier("authenticationServiceSelectionPlan")
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier("protocolTicketCipherExecutor")
             final CipherExecutor cipherExecutor,
@@ -111,7 +111,7 @@ public class CasCoreConfiguration {
     @Configuration(value = "CasCoreAuthenticationServiceSelectionConfiguration", proxyBeanMethods = false)
     @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
     public static class CasCoreAuthenticationServiceSelectionConfiguration {
-        @ConditionalOnMissingBean(name = "authenticationServiceSelectionPlan")
+        @ConditionalOnMissingBean(name = AuthenticationServiceSelectionPlan.BEAN_NAME)
         @Autowired
         @Bean
         public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan(

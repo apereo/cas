@@ -41,7 +41,7 @@ public class CasAcceptableUsagePolicyCouchbaseConfiguration {
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(final CasConfigurationProperties casProperties,
                                                                            @Qualifier("aupCouchbaseClientFactory")
                                                                            final CouchbaseClientFactory aupCouchbaseClientFactory,
-                                                                           @Qualifier("defaultTicketRegistrySupport")
+                                                                           @Qualifier(TicketRegistrySupport.BEAN_NAME)
                                                                            final TicketRegistrySupport ticketRegistrySupport) {
         return new CouchbaseAcceptableUsagePolicyRepository(ticketRegistrySupport, casProperties.getAcceptableUsagePolicy(), aupCouchbaseClientFactory);
     }

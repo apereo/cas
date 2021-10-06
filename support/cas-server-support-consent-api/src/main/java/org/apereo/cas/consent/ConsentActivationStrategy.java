@@ -14,6 +14,10 @@ import javax.servlet.http.HttpServletRequest;
  */
 @FunctionalInterface
 public interface ConsentActivationStrategy {
+    /**
+     * Bean name.
+     */
+    String BEAN_NAME = "consentActivationStrategy";
 
     /**
      * Determine if consent is required.

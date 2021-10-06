@@ -67,7 +67,9 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
      */
     @GetMapping(path = "{principal}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get consent decisions for principal", parameters = {@Parameter(name = "principal", required = true)})
-    public Collection<Map<String, Object>> consentDecisions(@PathVariable final String principal) {
+    public Collection<Map<String, Object>> consentDecisions(
+        @PathVariable
+        final String principal) {
         val result = new HashSet<Map<String, Object>>();
         LOGGER.debug("Fetching consent decisions for principal [{}]", principal);
         val consentDecisions = this.consentRepository.findConsentDecisions(principal);
@@ -126,7 +128,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
     }
 
     /**
-     * Revoke consents.
+     * Revoke consent for the principal and id.
      *
      * @param principal  the principal
      * @param decisionId the decision id
@@ -135,10 +137,27 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
     @DeleteMapping(path = "{principal}/{decisionId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Delete a consent decision for principal using a decision id",
         parameters = {@Parameter(name = "principal"), @Parameter(name = "decisionId", required = true)})
-    public boolean revokeConsents(@PathVariable final String principal,
-                                  @PathVariable final long decisionId) {
-        LOGGER.debug("Deleting consent decisions for principal [{}].", principal);
+    public boolean revokeConsents(
+        @PathVariable
+        final String principal,
+        @PathVariable
+        final long decisionId) {
+        LOGGER.debug("Deleting consent decision for principal [{}].", principal);
         return this.consentRepository.deleteConsentDecision(decisionId, principal);
     }
 
+    /**
+     * Revoke all consent for the principal.
+     *
+     * @param principal the principal
+     * @return true/false
+     */
+    @DeleteMapping(path = "{principal}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Delete consent decisions for principal", parameters = {@Parameter(name = "principal")})
+    public boolean revokeAllConsents(
+        @PathVariable
+        final String principal) {
+        LOGGER.debug("Deleting all consent decisions for principal [{}].", principal);
+        return this.consentRepository.deleteConsentDecisions(principal);
+    }
 }

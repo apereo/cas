@@ -363,6 +363,7 @@ exports.decodeJwt = async (token, complete = false) => {
 
 exports.uploadSamlMetadata = async (page, metadata) => {
     await page.goto("https://samltest.id/upload.php");
+    console.log(`Uploading metadata file ${metadata} to ${await page.url()}`);
     await page.waitForTimeout(1000)
     const fileElement = await page.$("input[type=file]");
     console.log(`Metadata file: ${metadata}`);

@@ -132,7 +132,7 @@ public class SamlConfiguration {
             final ArgumentExtractor argumentExtractor,
             @Qualifier("casAttributeEncoder")
             final ProtocolAttributeEncoder protocolAttributeEncoder,
-            @Qualifier("authenticationServiceSelectionPlan")
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -153,7 +153,7 @@ public class SamlConfiguration {
             final ArgumentExtractor argumentExtractor,
             @Qualifier("casAttributeEncoder")
             final ProtocolAttributeEncoder protocolAttributeEncoder,
-            @Qualifier("authenticationServiceSelectionPlan")
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,

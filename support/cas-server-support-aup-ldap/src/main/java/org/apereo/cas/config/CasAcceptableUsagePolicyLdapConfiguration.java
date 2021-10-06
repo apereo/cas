@@ -34,7 +34,7 @@ public class CasAcceptableUsagePolicyLdapConfiguration {
     @Bean
     @Autowired
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(final CasConfigurationProperties casProperties,
-                                                                           @Qualifier("defaultTicketRegistrySupport")
+                                                                           @Qualifier(TicketRegistrySupport.BEAN_NAME)
                                                                            final TicketRegistrySupport ticketRegistrySupport) {
         val connectionFactoryList = new ConcurrentHashMap<String, ConnectionFactory>();
         val aupProperties = casProperties.getAcceptableUsagePolicy();

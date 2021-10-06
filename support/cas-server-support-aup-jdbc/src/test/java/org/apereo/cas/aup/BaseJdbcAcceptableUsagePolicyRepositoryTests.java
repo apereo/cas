@@ -95,7 +95,7 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseA
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
+    @Qualifier(TicketRegistrySupport.BEAN_NAME)
     protected TicketRegistrySupport ticketRegistrySupport;
 
     @Autowired

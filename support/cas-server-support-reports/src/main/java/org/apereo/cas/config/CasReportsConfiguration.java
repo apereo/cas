@@ -153,7 +153,7 @@ public class CasReportsConfiguration {
     public SingleSignOnSessionStatusEndpoint singleSignOnSessionStatusEndpoint(
         @Qualifier("ticketGrantingTicketCookieGenerator")
         final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-        @Qualifier("defaultTicketRegistrySupport")
+        @Qualifier(TicketRegistrySupport.BEAN_NAME)
         final TicketRegistrySupport ticketRegistrySupport) {
         return new SingleSignOnSessionStatusEndpoint(ticketGrantingTicketCookieGenerator, ticketRegistrySupport);
     }

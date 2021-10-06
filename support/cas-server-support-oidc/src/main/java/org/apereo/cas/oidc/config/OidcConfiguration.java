@@ -160,7 +160,7 @@ public class OidcConfiguration {
             final Config oauthSecConfig) {
             val interceptor = new SecurityInterceptor(oauthSecConfig,
                 Authenticators.CAS_OAUTH_CLIENT, JEEHttpActionAdapter.INSTANCE);
-        interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
+            interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
             interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
             interceptor.setSecurityLogic(new OidcAuthenticationAuthorizeSecurityLogic());
             return interceptor;
@@ -231,6 +231,7 @@ public class OidcConfiguration {
         }
 
     }
+
     @Configuration(value = "OidcCacheConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class OidcCacheConfiguration {
@@ -274,7 +275,7 @@ public class OidcConfiguration {
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier("oidcIssuerService")
             final OidcIssuerService oidcIssuerService,
-            @Qualifier("defaultTicketRegistrySupport")
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport) {
             return new OidcRequestSupport(ticketGrantingTicketCookieGenerator, ticketRegistrySupport, oidcIssuerService);
         }

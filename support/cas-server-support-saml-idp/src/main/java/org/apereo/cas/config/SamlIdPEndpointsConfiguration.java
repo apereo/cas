@@ -137,7 +137,7 @@ public class SamlIdPEndpointsConfiguration {
             final Service samlIdPCallbackService,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
-            @Qualifier("defaultTicketRegistrySupport")
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
@@ -218,7 +218,7 @@ public class SamlIdPEndpointsConfiguration {
             final Service samlIdPCallbackService,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
-            @Qualifier("defaultTicketRegistrySupport")
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
@@ -299,7 +299,7 @@ public class SamlIdPEndpointsConfiguration {
             final Service samlIdPCallbackService,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
-            @Qualifier("defaultTicketRegistrySupport")
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
@@ -379,7 +379,7 @@ public class SamlIdPEndpointsConfiguration {
             final Service samlIdPCallbackService,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
-            @Qualifier("defaultTicketRegistrySupport")
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
@@ -462,7 +462,7 @@ public class SamlIdPEndpointsConfiguration {
             final Service samlIdPCallbackService,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
-            @Qualifier("defaultTicketRegistrySupport")
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
@@ -540,7 +540,7 @@ public class SamlIdPEndpointsConfiguration {
             final Service samlIdPCallbackService,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
-            @Qualifier("defaultTicketRegistrySupport")
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
@@ -621,7 +621,7 @@ public class SamlIdPEndpointsConfiguration {
             final Service samlIdPCallbackService,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
-            @Qualifier("defaultTicketRegistrySupport")
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
@@ -704,7 +704,7 @@ public class SamlIdPEndpointsConfiguration {
             final Service samlIdPCallbackService,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
-            @Qualifier("defaultTicketRegistrySupport")
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
@@ -788,7 +788,7 @@ public class SamlIdPEndpointsConfiguration {
             final Service samlIdPCallbackService,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
-            @Qualifier("defaultTicketRegistrySupport")
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
@@ -924,7 +924,7 @@ public class SamlIdPEndpointsConfiguration {
             final Service samlIdPCallbackService,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
-            @Qualifier("defaultTicketRegistrySupport")
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
@@ -1030,7 +1030,7 @@ public class SamlIdPEndpointsConfiguration {
             final HttpClient httpClient,
             @Qualifier("velocityEngineFactory")
             final VelocityEngine velocityEngineFactory,
-            @Qualifier("authenticationServiceSelectionPlan")
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,

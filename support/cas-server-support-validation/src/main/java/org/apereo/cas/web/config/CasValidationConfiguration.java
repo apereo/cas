@@ -232,7 +232,7 @@ public class CasValidationConfiguration {
             final ProtocolAttributeEncoder protocolAttributeEncoder,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("authenticationServiceSelectionPlan")
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier("cas3ProtocolAttributesRenderer")
             final CasProtocolAttributesRenderer cas3ProtocolAttributesRenderer,
@@ -336,7 +336,7 @@ public class CasValidationConfiguration {
             final ProtocolAttributeEncoder protocolAttributeEncoder,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("authenticationServiceSelectionPlan")
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier("cas1ProtocolAttributesRenderer")
             final CasProtocolAttributesRenderer cas1ProtocolAttributesRenderer) {
@@ -355,7 +355,7 @@ public class CasValidationConfiguration {
             final ProtocolAttributeEncoder protocolAttributeEncoder,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("authenticationServiceSelectionPlan")
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier("cas1ProtocolAttributesRenderer")
             final CasProtocolAttributesRenderer cas1ProtocolAttributesRenderer) {
@@ -374,7 +374,7 @@ public class CasValidationConfiguration {
             final ProtocolAttributeEncoder protocolAttributeEncoder,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("authenticationServiceSelectionPlan")
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier("cas2SuccessView")
             final View cas2SuccessView) {
@@ -394,7 +394,7 @@ public class CasValidationConfiguration {
             final ProtocolAttributeEncoder protocolAttributeEncoder,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("authenticationServiceSelectionPlan")
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier("cas3ProtocolAttributesRenderer")
             final CasProtocolAttributesRenderer cas3ProtocolAttributesRenderer) {

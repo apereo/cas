@@ -74,7 +74,7 @@ public class CasAcceptableUsagePolicyJdbcConfiguration {
         @Qualifier("jdbcAcceptableUsagePolicyTransactionTemplate")
         final TransactionTemplate jdbcAcceptableUsagePolicyTransactionTemplate,
         final CasConfigurationProperties casProperties,
-        @Qualifier("defaultTicketRegistrySupport")
+        @Qualifier(TicketRegistrySupport.BEAN_NAME)
         final TicketRegistrySupport ticketRegistrySupport) {
         return new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport,
             casProperties.getAcceptableUsagePolicy(),

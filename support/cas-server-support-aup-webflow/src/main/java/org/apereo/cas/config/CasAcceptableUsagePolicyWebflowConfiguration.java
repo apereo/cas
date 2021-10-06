@@ -76,7 +76,7 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
         @Autowired
         public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(
             final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-            @Qualifier("defaultTicketRegistrySupport")
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport) {
             val groovy = casProperties.getAcceptableUsagePolicy().getGroovy();
             if (groovy.getLocation() != null) {

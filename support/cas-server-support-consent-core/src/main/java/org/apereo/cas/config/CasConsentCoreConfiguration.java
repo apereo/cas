@@ -106,7 +106,7 @@ public class CasConsentCoreConfiguration {
     @Configuration(value = "CasConsentCoreActivationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasConsentCoreActivationConfiguration {
-        @ConditionalOnMissingBean(name = "consentActivationStrategy")
+        @ConditionalOnMissingBean(name = ConsentActivationStrategy.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired

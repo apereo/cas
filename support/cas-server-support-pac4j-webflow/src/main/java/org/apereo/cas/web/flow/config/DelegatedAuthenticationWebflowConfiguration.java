@@ -173,7 +173,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
             final ObjectProvider<List<DelegatedClientAuthenticationRequestCustomizer>> delegatedClientAuthenticationRequestCustomizers,
             @Qualifier("delegatedClientIdentityProviderRedirectionStrategy")
             final DelegatedClientIdentityProviderRedirectionStrategy delegatedClientIdentityProviderRedirectionStrategy,
-            @Qualifier("authenticationServiceSelectionPlan")
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
             @Qualifier("builtClients")
             final Clients builtClients) {
@@ -304,7 +304,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier("singleSignOnParticipationStrategy")
             final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy,
-            @Qualifier("authenticationServiceSelectionPlan")
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
             @Qualifier("delegatedAuthenticationCookieGenerator")
             final CasCookieBuilder delegatedAuthenticationCookieGenerator,

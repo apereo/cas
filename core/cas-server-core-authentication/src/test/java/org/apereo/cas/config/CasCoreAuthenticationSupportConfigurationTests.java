@@ -91,7 +91,7 @@ public class CasCoreAuthenticationSupportConfigurationTests {
     @TestConfiguration("CasCoreAuthenticationSupportConfigurationTestConfiguration")
     public static class CasCoreAuthenticationSupportConfigurationTestConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = "authenticationServiceSelectionPlan")
+        @ConditionalOnMissingBean(name = AuthenticationServiceSelectionPlan.BEAN_NAME)
         public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan() {
             return mock(AuthenticationServiceSelectionPlan.class);
         }
