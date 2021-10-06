@@ -56,6 +56,7 @@ import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
+import org.pac4j.core.matching.matcher.DefaultMatchers;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -216,6 +217,7 @@ public class OidcEndpointsConfiguration {
             Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
             Authenticators.CAS_OAUTH_CLIENT_USER_FORM);
         val interceptor = new SecurityInterceptor(oauthSecConfig.getObject(), clients, JEEHttpActionAdapter.INSTANCE);
+        interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
         interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
         return interceptor;
     }
@@ -224,6 +226,7 @@ public class OidcEndpointsConfiguration {
     public HandlerInterceptor requiresAuthenticationClientConfigurationInterceptor() {
         val clients = String.join(",", OidcConstants.CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN);
         val interceptor = new SecurityInterceptor(oauthSecConfig.getObject(), clients, JEEHttpActionAdapter.INSTANCE);
+        interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
         interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
         return interceptor;
     }
