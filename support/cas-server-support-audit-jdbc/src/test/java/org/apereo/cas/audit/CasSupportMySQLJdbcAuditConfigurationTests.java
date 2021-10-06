@@ -12,6 +12,7 @@ import org.springframework.test.context.TestPropertySource;
  * @since 5.3.0
  */
 @TestPropertySource(properties = {
+    "cas.audit.jdbc.ddl-auto=create",
     "cas.audit.jdbc.user=root",
     "cas.audit.jdbc.password=password",
     "cas.audit.jdbc.driver-class=com.mysql.cj.jdbc.Driver",

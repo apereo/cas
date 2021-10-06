@@ -230,13 +230,19 @@ public class SurrogateAuthenticationConfiguration {
             final IPersonAttributeDao attributeRepository) {
             val principal = casProperties.getAuthn().getSurrogate().getPrincipal();
             val personDirectory = casProperties.getPersonDirectory();
-            var attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
+            val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
             val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(surrogatePrincipalFactory,
                 attributeRepository, attributeMerger, SurrogatePrincipalResolver.class, principal,
                 personDirectory);
             resolver.setSurrogatePrincipalBuilder(surrogatePrincipalBuilder);
             return resolver;
         }
+
+    }
+
+    @Configuration(value = "SurrogateAuthenticationPrincipalFactoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SurrogateAuthenticationPrincipalFactoryConfiguration {
 
         @ConditionalOnMissingBean(name = "surrogatePrincipalFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

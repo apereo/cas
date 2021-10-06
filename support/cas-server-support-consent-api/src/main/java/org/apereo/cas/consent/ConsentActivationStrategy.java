@@ -4,8 +4,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 
-import org.springframework.webflow.execution.RequestContext;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**

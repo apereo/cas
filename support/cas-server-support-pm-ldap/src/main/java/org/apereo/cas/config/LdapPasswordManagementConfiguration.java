@@ -34,11 +34,12 @@ public class LdapPasswordManagementConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @Autowired
-    public PasswordManagementService passwordChangeService(final CasConfigurationProperties casProperties,
-                                                           @Qualifier("passwordManagementCipherExecutor")
-                                                           final CipherExecutor passwordManagementCipherExecutor,
-                                                           @Qualifier("passwordHistoryService")
-                                                           final PasswordHistoryService passwordHistoryService) {
+    public PasswordManagementService passwordChangeService(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("passwordManagementCipherExecutor")
+        final CipherExecutor passwordManagementCipherExecutor,
+        @Qualifier("passwordHistoryService")
+        final PasswordHistoryService passwordHistoryService) {
         val connectionFactoryMap = new ConcurrentHashMap<String, ConnectionFactory>();
         val passwordManagerProperties = casProperties.getAuthn().getPm();
         passwordManagerProperties.getLdap().forEach(ldap -> connectionFactoryMap.put(ldap.getLdapUrl(), LdapUtils.newLdaptiveConnectionFactory(ldap)));
