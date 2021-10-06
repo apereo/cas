@@ -109,7 +109,7 @@ public class JaasAuthenticationHandlersConfigurationTests {
         }
         
         @Bean
-        @ConditionalOnMissingBean(name = "authenticationServiceSelectionPlan")
+        @ConditionalOnMissingBean(name = AuthenticationServiceSelectionPlan.BEAN_NAME)
         public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan() {
             return new DefaultAuthenticationServiceSelectionPlan();
         }

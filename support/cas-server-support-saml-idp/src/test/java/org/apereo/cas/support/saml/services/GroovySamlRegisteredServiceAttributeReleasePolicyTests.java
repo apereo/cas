@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.services;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -79,6 +80,23 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends Base
         
         val service = RegisteredServiceTestUtils.getService();
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(registeredService.getServiceId()));
+        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(), service, registeredService);
+        assertFalse(attributes.isEmpty());
+    }
+
+    @Test
+    public void verifyScriptReleasesSamlAttributesWithProviderId() {
+        val filter = new GroovySamlRegisteredServiceAttributeReleasePolicy();
+        filter.setGroovyScript("classpath:saml-groovy-attrs.groovy");
+        filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));
+        val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
+        registeredService.setAttributeReleasePolicy(filter);
+
+        val request = (MockHttpServletRequest) HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+        request.removeParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID);
+
+        val service = RegisteredServiceTestUtils.getService();
+        service.getAttributes().put(SamlIdPConstants.PROVIDER_ID, List.of(registeredService.getServiceId()));
         val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(), service, registeredService);
         assertFalse(attributes.isEmpty());
     }

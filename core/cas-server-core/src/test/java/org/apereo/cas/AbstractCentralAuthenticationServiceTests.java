@@ -57,7 +57,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private ArgumentExtractor argumentExtractor;
 
     @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
+    @Qualifier(TicketRegistrySupport.BEAN_NAME)
     private TicketRegistrySupport ticketRegistrySupport;
 
     @Autowired

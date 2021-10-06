@@ -19,6 +19,11 @@ import java.util.Map;
 public interface TicketRegistrySupport {
 
     /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "defaultTicketRegistrySupport";
+
+    /**
      * Retrieve a valid Authentication object identified by the provided TGT SSO token.
      *
      * @param ticketGrantingTicketId an SSO token identifying the requested Authentication

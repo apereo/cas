@@ -87,7 +87,7 @@ public class CasCoreTicketsConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreTicketsBaseConfiguration {
 
-        @ConditionalOnMissingBean(name = "defaultTicketRegistrySupport")
+        @ConditionalOnMissingBean(name = TicketRegistrySupport.BEAN_NAME)
         @Bean
         @Autowired
         public TicketRegistrySupport defaultTicketRegistrySupport(

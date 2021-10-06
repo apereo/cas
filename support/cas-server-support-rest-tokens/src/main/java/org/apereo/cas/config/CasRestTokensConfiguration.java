@@ -40,7 +40,7 @@ public class CasRestTokensConfiguration {
         final TokenTicketBuilder tokenTicketBuilder,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
-        @Qualifier("defaultTicketRegistrySupport")
+        @Qualifier(TicketRegistrySupport.BEAN_NAME)
         final TicketRegistrySupport ticketRegistrySupport) {
         return plan -> plan.registerFactory(new JwtServiceTicketResourceEntityResponseFactory(centralAuthenticationService, tokenTicketBuilder, ticketRegistrySupport, servicesManager));
     }

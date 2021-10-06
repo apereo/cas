@@ -193,7 +193,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
             final HttpClient httpClient,
             @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
             final AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy,
-            @Qualifier("defaultTicketRegistrySupport")
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier("securityTokenTicketFactory")
             final SecurityTokenTicketFactory securityTokenTicketFactory,

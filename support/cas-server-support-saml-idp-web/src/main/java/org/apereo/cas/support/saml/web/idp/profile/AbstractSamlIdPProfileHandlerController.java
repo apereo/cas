@@ -403,6 +403,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
             .build()
+            .attribute(Service.class.getName(), service)
             .attribute(RegisteredService.class.getName(), registeredService)
             .attribute(Issuer.class.getName(), issuer)
             .attribute(Authentication.class.getName(), authn)

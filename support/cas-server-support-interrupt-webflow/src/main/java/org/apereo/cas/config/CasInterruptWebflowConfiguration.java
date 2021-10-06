@@ -83,11 +83,11 @@ public class CasInterruptWebflowConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "interruptSingleSignOnParticipationStrategy")
     public SingleSignOnParticipationStrategy interruptSingleSignOnParticipationStrategy(
-        @Qualifier("defaultTicketRegistrySupport")
+        @Qualifier(TicketRegistrySupport.BEAN_NAME)
         final TicketRegistrySupport ticketRegistrySupport,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
-        @Qualifier("authenticationServiceSelectionPlan")
+        @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
         return new InterruptSingleSignOnParticipationStrategy(servicesManager, ticketRegistrySupport, authenticationServiceSelectionPlan);
     }

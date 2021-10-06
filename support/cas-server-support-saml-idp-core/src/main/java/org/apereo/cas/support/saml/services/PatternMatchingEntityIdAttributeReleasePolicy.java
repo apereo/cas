@@ -38,14 +38,15 @@ public class PatternMatchingEntityIdAttributeReleasePolicy extends BaseSamlRegis
     private boolean reverseMatch;
 
     @Override
-    protected Map<String, List<Object>> getAttributesForSamlRegisteredService(final Map<String, List<Object>> attributes,
-                                                                              final SamlRegisteredService registeredService,
-                                                                              final ApplicationContext applicationContext,
-                                                                              final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                              final SamlRegisteredServiceServiceProviderMetadataFacade facade,
-                                                                              final EntityDescriptor entityDescriptor,
-                                                                              final Principal principal,
-                                                                              final Service selectedService) {
+    protected Map<String, List<Object>> getAttributesForSamlRegisteredService(
+        final Map<String, List<Object>> attributes,
+        final SamlRegisteredService registeredService,
+        final ApplicationContext applicationContext,
+        final SamlRegisteredServiceCachingMetadataResolver resolver,
+        final SamlRegisteredServiceServiceProviderMetadataFacade facade,
+        final EntityDescriptor entityDescriptor,
+        final Principal principal,
+        final Service selectedService) {
         val pattern = RegexUtils.createPattern(this.entityIds);
         val entityID = entityDescriptor.getEntityID();
         val matcher = pattern.matcher(entityID);

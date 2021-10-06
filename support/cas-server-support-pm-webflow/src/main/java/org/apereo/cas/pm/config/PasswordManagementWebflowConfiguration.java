@@ -74,9 +74,9 @@ public class PasswordManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = "passwordManagementSingleSignOnParticipationStrategy")
         @Autowired
         public SingleSignOnParticipationStrategy passwordManagementSingleSignOnParticipationStrategy(
-            @Qualifier("authenticationServiceSelectionPlan")
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
-            @Qualifier("defaultTicketRegistrySupport")
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,

@@ -105,7 +105,7 @@ public class CasSupportActionsConfiguration {
         public Action serviceAuthorizationCheck(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("authenticationServiceSelectionPlan")
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies) {
             return new ServiceAuthorizationCheckAction(servicesManager, authenticationRequestServiceSelectionStrategies);
         }
@@ -214,9 +214,9 @@ public class CasSupportActionsConfiguration {
                                              final CasCookieBuilder ticketGrantingTicketCookieGenerator,
                                              @Qualifier("warnCookieGenerator")
                                              final CasCookieBuilder warnCookieGenerator,
-                                             @Qualifier("defaultTicketRegistrySupport")
+                                             @Qualifier(TicketRegistrySupport.BEAN_NAME)
                                              final TicketRegistrySupport ticketRegistrySupport,
-                                             @Qualifier("authenticationServiceSelectionPlan")
+                                             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
                                              final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
                                              @Qualifier("singleSignOnParticipationStrategy")
                                              final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy,
@@ -237,7 +237,7 @@ public class CasSupportActionsConfiguration {
                                                   final ServicesManager servicesManager,
                                                   @Qualifier("ticketGrantingTicketCookieGenerator")
                                                   final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-                                                  @Qualifier("defaultTicketRegistrySupport")
+                                                  @Qualifier(TicketRegistrySupport.BEAN_NAME)
                                                   final TicketRegistrySupport ticketRegistrySupport) {
             return new VerifyRequiredServiceAction(servicesManager, ticketGrantingTicketCookieGenerator, casProperties, ticketRegistrySupport);
         }
@@ -286,9 +286,9 @@ public class CasSupportActionsConfiguration {
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
-            @Qualifier("defaultTicketRegistrySupport")
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier("authenticationServiceSelectionPlan")
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
             @Qualifier("principalElectionStrategy")
             final PrincipalElectionStrategy principalElectionStrategy) {
@@ -304,7 +304,7 @@ public class CasSupportActionsConfiguration {
         public Action gatewayServicesManagementCheck(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("authenticationServiceSelectionPlan")
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies) {
             return new GatewayServicesManagementCheckAction(servicesManager, authenticationRequestServiceSelectionStrategies);
         }
@@ -404,7 +404,7 @@ public class CasSupportActionsConfiguration {
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
-            @Qualifier("defaultTicketRegistrySupport")
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier("principalElectionStrategy")
             final PrincipalElectionStrategy principalElectionStrategy) {

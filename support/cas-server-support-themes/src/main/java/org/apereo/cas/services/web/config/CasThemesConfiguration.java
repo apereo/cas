@@ -68,7 +68,7 @@ public class CasThemesConfiguration {
         @Qualifier("serviceThemeResolverSupportedBrowsers")
         final Supplier<Map<String, String>> serviceThemeResolverSupportedBrowsers,
         final CasConfigurationProperties casProperties,
-        @Qualifier("authenticationServiceSelectionPlan")
+        @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
         final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {

@@ -7,6 +7,7 @@ import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -62,6 +63,11 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
         if (entityIdAttribute != null && !entityIdAttribute.isEmpty()) {
             LOGGER.debug("Found entity id [{}] as a service attribute", entityIdAttribute);
             return CollectionUtils.firstElement(entityIdAttribute).map(Object::toString).orElseThrow();
+        }
+        val providerIdAttribute = selectedService.getAttributes().get(SamlIdPConstants.PROVIDER_ID);
+        if (providerIdAttribute != null && !providerIdAttribute.isEmpty()) {
+            LOGGER.debug("Found provider entity id [{}] as a service attribute", providerIdAttribute);
+            return CollectionUtils.firstElement(providerIdAttribute).map(Object::toString).orElseThrow();
         }
         val samlRequest = selectedService.getAttributes().get(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
         if (samlRequest != null && !samlRequest.isEmpty()) {

@@ -164,7 +164,7 @@ public class CasRestConfiguration {
             final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory,
             @Qualifier("restHttpRequestCredentialFactory")
             final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory,
-            @Qualifier("defaultTicketRegistrySupport")
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,

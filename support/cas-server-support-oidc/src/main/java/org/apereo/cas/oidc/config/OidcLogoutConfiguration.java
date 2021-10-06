@@ -84,7 +84,7 @@ public class OidcLogoutConfiguration {
             final ServicesManager servicesManager,
             @Qualifier("oidcSingleLogoutMessageCreator")
             final SingleLogoutMessageCreator oidcSingleLogoutMessageCreator,
-            @Qualifier("authenticationServiceSelectionPlan")
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier("singleLogoutServiceLogoutUrlBuilder")
             final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,

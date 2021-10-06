@@ -30,7 +30,7 @@ public class CasAcceptableUsagePolicyRestConfiguration {
     @Bean
     @Autowired
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(final CasConfigurationProperties casProperties,
-                                                                           @Qualifier("defaultTicketRegistrySupport")
+                                                                           @Qualifier(TicketRegistrySupport.BEAN_NAME)
                                                                            final TicketRegistrySupport ticketRegistrySupport) {
         val aup = casProperties.getAcceptableUsagePolicy();
         return new RestAcceptableUsagePolicyRepository(ticketRegistrySupport, aup);

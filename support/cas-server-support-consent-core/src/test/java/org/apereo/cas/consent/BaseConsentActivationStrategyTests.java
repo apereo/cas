@@ -39,7 +39,7 @@ public abstract class BaseConsentActivationStrategyTests {
     private ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("consentActivationStrategy")
+    @Qualifier(ConsentActivationStrategy.BEAN_NAME)
     private ConsentActivationStrategy consentActivationStrategy;
 
     @BeforeEach

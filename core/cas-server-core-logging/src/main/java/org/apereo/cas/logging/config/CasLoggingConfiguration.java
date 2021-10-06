@@ -44,7 +44,7 @@ public class CasLoggingConfiguration {
         @Autowired
         @Bean
         public FilterRegistrationBean<ThreadContextMDCServletFilter> threadContextMDCServletFilter(
-            @Qualifier("defaultTicketRegistrySupport")
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier("ticketGrantingTicketCookieGenerator")
             final CasCookieBuilder ticketGrantingTicketCookieGenerator) {

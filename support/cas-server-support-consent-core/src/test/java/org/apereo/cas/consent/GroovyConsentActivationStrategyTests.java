@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 public class GroovyConsentActivationStrategyTests extends BaseConsentActivationStrategyTests {
     @Autowired
-    @Qualifier("consentActivationStrategy")
+    @Qualifier(ConsentActivationStrategy.BEAN_NAME)
     private ConsentActivationStrategy consentActivationStrategy;
 
     @Autowired

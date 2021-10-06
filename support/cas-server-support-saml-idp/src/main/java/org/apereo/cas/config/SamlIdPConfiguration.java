@@ -570,6 +570,50 @@ public class SamlIdPConfiguration {
 
     }
 
+    @Configuration(value = "SamlIdPTicketFactoryPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPTicketFactoryPlanConfiguration {
+        @ConditionalOnMissingBean(name = "samlAttributeQueryTicketFactoryConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public TicketFactoryExecutionPlanConfigurer samlAttributeQueryTicketFactoryConfigurer(
+            @Qualifier("samlAttributeQueryTicketFactory")
+            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory) {
+            return () -> samlAttributeQueryTicketFactory;
+        }
+
+        @ConditionalOnMissingBean(name = "samlArtifactTicketFactoryConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public TicketFactoryExecutionPlanConfigurer samlArtifactTicketFactoryConfigurer(
+            @Qualifier("samlArtifactTicketFactory")
+            final SamlArtifactTicketFactory samlArtifactTicketFactory) {
+            return () -> samlArtifactTicketFactory;
+        }
+    }
+
+    @Configuration(value = "SamlIdPTicketExpirationPolicyConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPTicketExpirationPolicyConfiguration {
+        @ConditionalOnMissingBean(name = "samlAttributeQueryTicketExpirationPolicy")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public ExpirationPolicyBuilder samlAttributeQueryTicketExpirationPolicy(final CasConfigurationProperties casProperties) {
+            return new SamlAttributeQueryTicketExpirationPolicyBuilder(casProperties);
+        }
+
+        @ConditionalOnMissingBean(name = "samlArtifactTicketExpirationPolicy")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public ExpirationPolicyBuilder samlArtifactTicketExpirationPolicy(final CasConfigurationProperties casProperties) {
+            return new SamlArtifactTicketExpirationPolicyBuilder(casProperties);
+        }
+    }
+
     @Configuration(value = "SamlIdPTicketConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPTicketConfiguration {
@@ -583,27 +627,9 @@ public class SamlIdPConfiguration {
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory) {
-            return new DefaultSamlAttributeQueryTicketFactory(samlAttributeQueryTicketExpirationPolicy, samlIdPServiceFactory, openSamlConfigBean);
+            return new DefaultSamlAttributeQueryTicketFactory(samlAttributeQueryTicketExpirationPolicy,
+                samlIdPServiceFactory, openSamlConfigBean);
         }
-
-        @ConditionalOnMissingBean(name = "samlAttributeQueryTicketFactoryConfigurer")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public TicketFactoryExecutionPlanConfigurer samlAttributeQueryTicketFactoryConfigurer(
-            @Qualifier("samlAttributeQueryTicketFactory")
-            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory) {
-            return () -> samlAttributeQueryTicketFactory;
-        }
-
-        @ConditionalOnMissingBean(name = "samlAttributeQueryTicketExpirationPolicy")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public ExpirationPolicyBuilder samlAttributeQueryTicketExpirationPolicy(final CasConfigurationProperties casProperties) {
-            return new SamlAttributeQueryTicketExpirationPolicyBuilder(casProperties);
-        }
-
 
         @ConditionalOnMissingBean(name = "samlArtifactTicketFactory")
         @Bean
@@ -617,24 +643,6 @@ public class SamlIdPConfiguration {
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory) {
             return new DefaultSamlArtifactTicketFactory(samlArtifactTicketExpirationPolicy, openSamlConfigBean, samlIdPServiceFactory);
-        }
-
-        @ConditionalOnMissingBean(name = "samlArtifactTicketFactoryConfigurer")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public TicketFactoryExecutionPlanConfigurer samlArtifactTicketFactoryConfigurer(
-            @Qualifier("samlArtifactTicketFactory")
-            final SamlArtifactTicketFactory samlArtifactTicketFactory) {
-            return () -> samlArtifactTicketFactory;
-        }
-
-        @ConditionalOnMissingBean(name = "samlArtifactTicketExpirationPolicy")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public ExpirationPolicyBuilder samlArtifactTicketExpirationPolicy(final CasConfigurationProperties casProperties) {
-            return new SamlArtifactTicketExpirationPolicyBuilder(casProperties);
         }
 
         @Bean(initMethod = "initialize", destroyMethod = "destroy")
@@ -704,11 +712,12 @@ public class SamlIdPConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
-        public SamlIdPObjectSigner samlObjectSigner(final CasConfigurationProperties casProperties,
-                                                    @Qualifier("casSamlIdPMetadataResolver")
-                                                    final MetadataResolver casSamlIdPMetadataResolver,
-                                                    @Qualifier("samlIdPMetadataLocator")
-                                                    final SamlIdPMetadataLocator samlIdPMetadataLocator) {
+        public SamlIdPObjectSigner samlObjectSigner(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("casSamlIdPMetadataResolver")
+            final MetadataResolver casSamlIdPMetadataResolver,
+            @Qualifier("samlIdPMetadataLocator")
+            final SamlIdPMetadataLocator samlIdPMetadataLocator) {
             return new DefaultSamlIdPObjectSigner(casSamlIdPMetadataResolver, casProperties, samlIdPMetadataLocator);
         }
     }

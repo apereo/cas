@@ -47,7 +47,7 @@ public class InitialFlowSetupCookieActionTests extends AbstractWebflowActionsTes
     private static final String CONST_CONTEXT_PATH_2 = "/test1";
 
     @Autowired
-    @Qualifier("authenticationServiceSelectionPlan")
+    @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     @Autowired
