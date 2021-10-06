@@ -27,6 +27,7 @@ public class SetServiceUnauthorizedRedirectUrlAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val registeredService = WebUtils.getRegisteredService(requestContext);
+        LOGGER.trace("Found registered service [{}] from the context", registeredService);
         if (registeredService != null && registeredService.getAccessStrategy() != null) {
             val unauthorizedRedirectUrl = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl();
             LOGGER.debug("Putting unauthorized redirect URL [{}] into the webflow", unauthorizedRedirectUrl);

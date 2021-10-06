@@ -53,7 +53,7 @@ public class CheckDuplicateTestConfiguration {
                         Arrays.stream(classes).forEach(clz -> {
                             var className = clz.trim();
                             if (!duplicatesInTestClass.add(className)) {
-                                print("Duplicate found: %s in %s", className, file);
+                                print("Duplicate found: %s in %s %n", className, file);
                                 failBuild.set(true);
                             }
                         });

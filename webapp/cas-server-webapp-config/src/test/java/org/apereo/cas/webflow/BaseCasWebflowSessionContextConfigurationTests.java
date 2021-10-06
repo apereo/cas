@@ -99,7 +99,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPropertiesConfiguration.class,
     CasWebAppConfiguration.class,
     CasWebflowServerSessionContextConfigurationTests.TestWebflowContextConfiguration.class,
-    CasWebflowContextConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
