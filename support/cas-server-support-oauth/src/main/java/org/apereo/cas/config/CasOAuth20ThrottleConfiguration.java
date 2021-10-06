@@ -14,6 +14,7 @@ import org.pac4j.core.client.Client;
 import org.pac4j.core.client.DirectClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
+import org.pac4j.core.matching.matcher.DefaultMatchers;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,7 @@ public class CasOAuth20ThrottleConfiguration {
     public HandlerInterceptor requiresAuthenticationAuthorizeInterceptor() {
         val interceptor = new SecurityInterceptor(oauthSecConfig.getObject(),
             Authenticators.CAS_OAUTH_CLIENT, JEEHttpActionAdapter.INSTANCE);
+        interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
         interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
         return interceptor;
     }
@@ -84,6 +86,7 @@ public class CasOAuth20ThrottleConfiguration {
             .map(Client::getName)
             .collect(Collectors.joining(","));
         val interceptor = new SecurityInterceptor(oauthSecConfig.getObject(), clients, JEEHttpActionAdapter.INSTANCE);
+        interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
         interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
         return interceptor;
     }
