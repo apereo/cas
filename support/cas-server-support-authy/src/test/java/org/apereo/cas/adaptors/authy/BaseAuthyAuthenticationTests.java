@@ -1,11 +1,11 @@
 package org.apereo.cas.adaptors.authy;
 
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.adaptors.authy.config.AuthyConfiguration;
 import org.apereo.cas.adaptors.authy.config.AuthyConfiguration.AuthyMultifactorTrustConfiguration;
 import org.apereo.cas.adaptors.authy.config.support.authentication.AuthyAuthenticationComponentSerializationConfiguration;
 import org.apereo.cas.adaptors.authy.config.support.authentication.AuthyAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.adaptors.authy.config.support.authentication.AuthyAuthenticationMultifactorProviderBypassConfiguration;
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;

@@ -84,7 +84,6 @@ public class DefaultHazelcastInstanceConfigurationTests {
         assertTrue(config.getNetworkConfig().isPortAutoIncrement());
         assertTrue(config.getManagementCenterConfig().isScriptingEnabled());
         assertEquals(5701, config.getNetworkConfig().getPort());
-        config.getMapConfigs().forEach((cfg, value) -> System.out.println(cfg + " " + value.getName()));
         assertEquals(5, config.getMapConfigs().size());
     }
 

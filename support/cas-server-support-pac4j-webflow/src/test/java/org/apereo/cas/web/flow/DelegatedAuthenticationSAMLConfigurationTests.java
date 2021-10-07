@@ -7,7 +7,6 @@ import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactory;
 import org.apereo.cas.web.flow.config.DelegatedAuthenticationSAMLConfiguration;
 
-import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.impl.HazelcastInstanceFactory;
 import lombok.val;
