@@ -96,7 +96,7 @@ To help simplify the testing process, you may use the following bash function in
 function pupcas() {
   scenario=$1
   cd /path/to/cas 
-  ./ci/tests/puppeteer/run.sh ./ci/tests/puppeteer/scenarios/"${scenario}"
+  ./ci/tests/puppeteer/run.sh --scenario ./ci/tests/puppeteer/scenarios/"${scenario}"
 }
 ```
 

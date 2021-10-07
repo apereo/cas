@@ -107,9 +107,9 @@ public class MultifactorAuthnTrustConfiguration {
             val trusted = casProperties.getAuthn().getMfa().getTrusted();
             val storage = Caffeine.newBuilder().initialCapacity(INITIAL_CACHE_SIZE)
                 .maximumSize(MAX_CACHE_SIZE).expireAfter(new MultifactorAuthenticationTrustRecordExpiry()).build(s -> {
-                LOGGER.error("Load operation of the cache is not supported.");
-                return null;
-            });
+                    LOGGER.error("Load operation of the cache is not supported.");
+                    return null;
+                });
             return FunctionUtils.doIf(trusted.getJson().getLocation() != null, () -> {
                 LOGGER.debug("Storing trusted device records inside the JSON resource [{}]", trusted.getJson().getLocation());
                 return new JsonMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
