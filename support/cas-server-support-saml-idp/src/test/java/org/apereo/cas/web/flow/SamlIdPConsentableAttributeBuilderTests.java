@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.config.CasConsentCoreConfiguration;
 import org.apereo.cas.consent.CasConsentableAttribute;
-import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentableAttributeBuilder;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -12,8 +12,6 @@ import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.XSURI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
@@ -30,7 +28,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("SAML")
-@Import(SamlIdPConsentableAttributeBuilderTests.SamlIdPConsentTestConfiguration.class)
+@Import(CasConsentCoreConfiguration.class)
 @TestPropertySource(properties =
     "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/basic-definitions.json")
 public class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowTests {
@@ -109,13 +107,5 @@ public class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowT
                 .values(CollectionUtils.wrapList("1", "2"))
                 .build());
         assertNull(attribute.getFriendlyName());
-    }
-
-    @TestConfiguration(value = "SamlIdPConsentTestConfiguration", proxyBeanMethods = false)
-    public static class SamlIdPConsentTestConfiguration {
-        @Bean
-        public ConsentEngine consentEngine() {
-            return mock(ConsentEngine.class);
-        }
     }
 }
