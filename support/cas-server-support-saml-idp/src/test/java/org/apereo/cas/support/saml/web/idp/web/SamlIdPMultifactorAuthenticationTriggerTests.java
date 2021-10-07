@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.web.idp.web;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.config.CasConsentCoreConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.SamlIdPUtils;
@@ -36,7 +37,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("MFATrigger")
-@Import(SamlIdPMultifactorAuthenticationTriggerTests.MultifactorTestConfiguration.class)
+@Import({
+    CasConsentCoreConfiguration.class,
+    SamlIdPMultifactorAuthenticationTriggerTests.MultifactorTestConfiguration.class
+})
 @TestPropertySource(properties = "cas.authn.saml-idp.core.authentication-context-class-mappings=context1->mfa-dummy")
 public class SamlIdPMultifactorAuthenticationTriggerTests extends BaseSamlIdPWebflowTests {
     @Autowired
@@ -47,7 +51,7 @@ public class SamlIdPMultifactorAuthenticationTriggerTests extends BaseSamlIdPWeb
     public void verifyContextMapping() throws Exception {
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
-        
+
         val authnRequest = SamlIdPTestUtils.getAuthnRequest(openSamlConfigBean, registeredService);
         var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
@@ -68,7 +72,7 @@ public class SamlIdPMultifactorAuthenticationTriggerTests extends BaseSamlIdPWeb
         val context = Pair.of(authnRequest, messageContext);
         SamlIdPUtils.storeSamlRequest(new JEEContext(request, response), openSamlConfigBean,
             samlIdPDistributedSessionStore, context);
-        
+
         assertTrue(samlIdPMultifactorAuthenticationTrigger.supports(request, registeredService,
             RegisteredServiceTestUtils.getAuthentication(), service));
         val result = samlIdPMultifactorAuthenticationTrigger.isActivated(RegisteredServiceTestUtils.getAuthentication(),

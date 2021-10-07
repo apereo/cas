@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.config.CasConsentCoreConfiguration;
 import org.apereo.cas.consent.CasConsentableAttribute;
 import org.apereo.cas.consent.ConsentableAttributeBuilder;
 import org.apereo.cas.util.CollectionUtils;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML")
+@Import(CasConsentCoreConfiguration.class)
 @TestPropertySource(properties =
     "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/basic-definitions.json")
 public class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowTests {

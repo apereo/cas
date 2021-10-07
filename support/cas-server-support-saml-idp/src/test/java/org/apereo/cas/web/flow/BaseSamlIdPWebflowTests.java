@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.config.CasConsentCoreConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.SamlIdPConfiguration;
@@ -40,6 +41,7 @@ import static org.mockito.Mockito.*;
 @Import({
     BaseSamlIdPWebflowTests.SamlIdPMetadataTestConfiguration.class,
     CoreSamlConfiguration.class,
+    CasConsentCoreConfiguration.class,
     SamlIdPConfiguration.class,
     SamlIdPTicketSerializationConfiguration.class,
     SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
