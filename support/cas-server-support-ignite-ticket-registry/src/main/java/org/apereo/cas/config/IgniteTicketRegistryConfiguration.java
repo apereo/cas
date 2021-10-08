@@ -125,7 +125,7 @@ public class IgniteTicketRegistryConfiguration {
         return r;
     }
 
-    private SslContextFactory buildSecureTransportForIgniteConfiguration() {
+    protected SslContextFactory buildSecureTransportForIgniteConfiguration() {
         val properties = casProperties.getTicket().getRegistry().getIgnite();
         val nullKey = "NULL";
         if (StringUtils.hasText(properties.getKeyStoreFilePath()) && StringUtils.hasText(properties.getKeyStorePassword())
