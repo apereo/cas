@@ -17,13 +17,13 @@ A SAML 1.1 ticket validation response is obtained by validating a ticket via POS
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-saml" %}
 
 ## Actuator Endpoints
            
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="samlValidate" %}
+{% include_cached actuators.html endpoints="samlValidate" %}
 
 ## Sample Request
 
@@ -100,7 +100,7 @@ Content-Type: text/xml
 
 ## Configuration
 
-{% include casproperties.html properties="cas.saml-core" %}
+{% include_cached casproperties.html properties="cas.saml-core" %}
 
 You may also need to declare the following repository in
 your CAS Overlay to be able to resolve dependencies:

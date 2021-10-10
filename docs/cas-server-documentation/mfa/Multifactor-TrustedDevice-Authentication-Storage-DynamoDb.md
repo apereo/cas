@@ -12,6 +12,6 @@ User decisions may also be kept inside a DynamoDb instance.
 
 Support is provided via the following module:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-dynamodb" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-dynamodb" %}
 
-{% include casproperties.html properties="cas.authn.mfa.trusted.dynamo-db" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.trusted.dynamo-db" %}

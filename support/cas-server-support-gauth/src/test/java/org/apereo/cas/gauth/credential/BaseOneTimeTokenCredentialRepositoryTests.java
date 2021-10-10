@@ -51,6 +51,7 @@ import org.springframework.context.annotation.Import;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -164,7 +165,8 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         assertEquals(acct2.getUsername(), acct3.getUsername());
         assertEquals(acct2.getValidationCode(), acct3.getValidationCode());
         assertEquals(acct2.getSecretKey(), acct3.getSecretKey());
-        assertEquals(acct2.getScratchCodes(), acct3.getScratchCodes());
+        assertEquals(acct2.getScratchCodes().stream().sorted().collect(Collectors.toList()),
+            acct3.getScratchCodes().stream().sorted().collect(Collectors.toList()));
         repo.delete(acct3.getId());
     }
 

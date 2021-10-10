@@ -46,7 +46,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         val key = constructKey(request);
         LOGGER.trace("Throttling threshold key is [{}] with submission threshold [{}]", key, getThresholdRate());
         val last = this.ipMap.get(key);
-        LOGGER.trace("Last throttling date time for key [{}] is [{}]", key, last);
+        LOGGER.debug("Last throttling date time for key [{}] is [{}]", key, last);
         return last != null && submissionRate(ZonedDateTime.now(ZoneOffset.UTC), last) > getThresholdRate();
     }
 
@@ -75,7 +75,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
      */
     private static double submissionRate(final ZonedDateTime a, final ZonedDateTime b) {
         val rate = SUBMISSION_RATE_DIVIDEND / (a.toInstant().toEpochMilli() - b.toInstant().toEpochMilli());
-        LOGGER.trace("Submitting rate for [{}] and [{}] is [{}]", a, b, rate);
+        LOGGER.debug("Submitting rate for [{}] and [{}] is [{}]", a, b, rate);
         return rate;
     }
 }

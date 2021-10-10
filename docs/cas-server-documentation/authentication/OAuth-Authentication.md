@@ -18,15 +18,15 @@ other providers (such as Google, Facebook, etc), <a href="../integration/Delegat
    
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="oauthTokens" %}
+{% include_cached actuators.html endpoints="oauthTokens" %}
 
 ## Configuration
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-oauth-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-oauth-webflow" %}
 
-{% include casproperties.html properties="cas.authn.oauth,cas.client." %}
+{% include_cached casproperties.html properties="cas.authn.oauth,cas.client." %}
 
 ## Endpoints
 
@@ -182,7 +182,7 @@ also the option to generate JWTs as access tokens on a per-service basis:
 
 Signing and encryption keys may also be defined on a per-service basis, or globally via CAS settings.
 
-{% include registeredserviceproperties.html groups="JWT_ACCESS_TOKENS" %}
+{% include_cached registeredserviceproperties.html groups="JWT_ACCESS_TOKENS" %}
 
 ## OAuth User Profile Structure
 
@@ -199,7 +199,7 @@ endpoints that are supported for throttling.
 
 ## CSRF Cookie Configuration
 
-{% include casproperties.html properties="cas.authn.oauth.csrf-cookie" %}
+{% include_cached casproperties.html properties="cas.authn.oauth.csrf-cookie" %}
 
 ## Server Configuration
 
@@ -210,7 +210,7 @@ environment and load balancers accordingly.
 
 ## Session Replication
 
-{% include casproperties.html properties="cas.session-replication" %}
+{% include_cached casproperties.html properties="cas.session-replication" %}
 
 ## Sample Client Applications
 

@@ -11,6 +11,7 @@ import org.apereo.cas.adaptors.radius.server.RadiusServerConfigurationContext;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
@@ -64,6 +65,10 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("failureModeEvaluator")
     private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
 
+    @Autowired
+    @Qualifier("casSslContext")
+    private ObjectProvider<CasSSLContext> casSslContext;
+
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "radiusMultifactorAuthenticationProvider")
@@ -90,10 +95,16 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
             return new ArrayList<>(0);
         }
 
-        val factory = new RadiusClientFactory(client.getAccountingPort(),
-            client.getAuthenticationPort(), client.getSocketTimeout(),
-            client.getInetAddress(), client.getSharedSecret());
-
+        val factory = RadiusClientFactory.builder()
+            .authenticationPort(client.getAccountingPort())
+            .authenticationPort(client.getAuthenticationPort())
+            .socketTimeout(client.getSocketTimeout())
+            .inetAddress(client.getInetAddress())
+            .sharedSecret(client.getSharedSecret())
+            .sslContext(casSslContext.getObject())
+            .transportType(client.getTransportType())
+            .build();
+        
         val protocol = RadiusProtocol.valueOf(server.getProtocol());
         val context = RadiusServerConfigurationContext.builder()
             .protocol(protocol)

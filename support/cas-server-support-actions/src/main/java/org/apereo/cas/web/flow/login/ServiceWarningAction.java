@@ -34,9 +34,13 @@ public class ServiceWarningAction extends AbstractAction {
     public static final String PARAMETER_NAME_IGNORE_WARNING = "ignorewarn";
 
     private final CentralAuthenticationService centralAuthenticationService;
+
     private final AuthenticationSystemSupport authenticationSystemSupport;
+
     private final TicketRegistrySupport ticketRegistrySupport;
+
     private final CasCookieBuilder warnCookieGenerator;
+
     private final PrincipalElectionStrategy principalElectionStrategy;
 
     @Override

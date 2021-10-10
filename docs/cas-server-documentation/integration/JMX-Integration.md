@@ -22,4 +22,4 @@ Additional wrappers and components will be worked out and added iteratively.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-jmx" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-jmx" %}

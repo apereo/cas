@@ -30,7 +30,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("mongoDbServiceRegistryConfiguration")
+@Configuration(value = "mongoDbServiceRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbServiceRegistryConfiguration {
     @Autowired
@@ -54,7 +54,7 @@ public class MongoDbServiceRegistryConfiguration {
         val factory = new MongoDbConnectionFactory(sslContext.getObject());
 
         val mongoTemplate = factory.buildMongoTemplate(mongo);
-        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
 
         val collection = mongoTemplate.getCollection(mongo.getCollection());
         val columnsIndex = new TextIndexDefinition.TextIndexDefinitionBuilder()
@@ -68,12 +68,14 @@ public class MongoDbServiceRegistryConfiguration {
     }
 
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistry")
-    public ServiceRegistry mongoDbServiceRegistry() {
+    public ServiceRegistry mongoDbServiceRegistry(@Qualifier("mongoDbServiceRegistryTemplate")
+                                                  final MongoTemplate mongoDbServiceRegistryTemplate) {
         val mongo = casProperties.getServiceRegistry().getMongo();
         return new MongoDbServiceRegistry(
             applicationContext,
-            mongoDbServiceRegistryTemplate(),
+            mongoDbServiceRegistryTemplate,
             mongo.getCollection(),
             serviceRegistryListeners.getObject());
     }
@@ -81,7 +83,10 @@ public class MongoDbServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryExecutionPlanConfigurer")
     @RefreshScope
-    public ServiceRegistryExecutionPlanConfigurer mongoDbServiceRegistryExecutionPlanConfigurer() {
-        return plan -> plan.registerServiceRegistry(mongoDbServiceRegistry());
+    @Autowired
+    public ServiceRegistryExecutionPlanConfigurer mongoDbServiceRegistryExecutionPlanConfigurer(
+        @Qualifier("mongoDbServiceRegistry")
+        final ServiceRegistry mongoDbServiceRegistry) {
+        return plan -> plan.registerServiceRegistry(mongoDbServiceRegistry);
     }
 }

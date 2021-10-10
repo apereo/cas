@@ -46,4 +46,4 @@ The following endpoints need also be available:
 | `GET`     | `count`    | N/A             | `200`. Numeric count | Count all records
 | `GET`     | `count`    | `username`             | `200`. Numeric count | Count all records for the user
 
-{% include casproperties.html properties="cas.authn.mfa.gauth.rest" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.gauth.rest" %}

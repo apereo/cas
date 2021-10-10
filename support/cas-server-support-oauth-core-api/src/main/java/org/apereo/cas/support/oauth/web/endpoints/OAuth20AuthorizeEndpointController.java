@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,17 +44,6 @@ import javax.servlet.http.HttpServletResponse;
 public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationContext> extends BaseOAuth20Controller<T> {
     public OAuth20AuthorizeEndpointController(final T oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
-    }
-
-    /**
-     * Is the request authenticated?
-     *
-     * @param manager the Profile Manager
-     * @return whether the request is authenticated or not
-     */
-    private static boolean isRequestAuthenticated(final ProfileManager manager) {
-        val opt = manager.getProfile();
-        return opt.isPresent();
     }
 
     /**
@@ -80,13 +70,13 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             }
         }
 
-        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID)
+        val clientId = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID)
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
         val registeredService = getRegisteredServiceByClientId(clientId);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
 
-        if (isRequestAuthenticated(manager)) {
+        if (isRequestAuthenticated(manager, context, registeredService)) {
             val mv = getConfigurationContext().getConsentApprovalViewResolver().resolve(context, registeredService);
             if (!mv.isEmpty() && mv.hasView()) {
                 LOGGER.debug("Redirecting to consent-approval view with model [{}]", mv.getModel());
@@ -108,6 +98,20 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
     @PostMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
     public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return handleRequest(request, response);
+    }
+
+    /**
+     * Is the request authenticated?
+     *
+     * @param manager           the Profile Manager
+     * @param context           the context
+     * @param registeredService the registered service
+     * @return whether the request is authenticated or not
+     */
+    protected boolean isRequestAuthenticated(final ProfileManager manager, final WebContext context,
+                                             final OAuthRegisteredService registeredService) {
+        val opt = manager.getProfile();
+        return opt.isPresent();
     }
 
     /**
@@ -204,22 +208,20 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
                                                         final String clientId,
                                                         final Service service,
                                                         final Authentication authentication) {
-        val configContext = getConfigurationContext();
-
-        val builder = configContext.getOauthAuthorizationResponseBuilders()
+        val builder = getConfigurationContext().getOauthAuthorizationResponseBuilders()
             .stream()
             .filter(b -> b.supports(context))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Could not build the callback url. Response type likely not supported"));
 
         var ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
-            configContext.getTicketGrantingTicketCookieGenerator(),
-            configContext.getTicketRegistry(), context.getNativeRequest());
+            getConfigurationContext().getTicketGrantingTicketCookieGenerator(),
+            getConfigurationContext().getTicketRegistry(), context.getNativeRequest());
 
         if (ticketGrantingTicket == null) {
-            ticketGrantingTicket = configContext.getSessionStore()
+            ticketGrantingTicket = getConfigurationContext().getSessionStore()
                 .get(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
-                .map(ticketId -> configContext.getCentralAuthenticationService().getTicket(ticketId.toString(), TicketGrantingTicket.class))
+                .map(ticketId -> getConfigurationContext().getCentralAuthenticationService().getTicket(ticketId.toString(), TicketGrantingTicket.class))
                 .orElse(null);
         }
         if (ticketGrantingTicket == null) {

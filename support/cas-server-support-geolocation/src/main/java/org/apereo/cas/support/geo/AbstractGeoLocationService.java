@@ -8,7 +8,6 @@ import org.apereo.cas.util.LoggingUtils;
 import io.userinfo.client.UserInfo;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 @Getter
 public abstract class AbstractGeoLocationService implements GeoLocationService {
     @Override
-    @SneakyThrows
     public GeoLocationResponse locate(final String address) {
         try {
             val info = UserInfo.getInfo(address);

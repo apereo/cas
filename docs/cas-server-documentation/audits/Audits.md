@@ -18,13 +18,13 @@ Note that the audit record management functionality of CAS supports handling mul
 record destinations at the same time. In other words, you may choose to route audit records 
 to both a database and a REST endpoint as well as any number of logger-based destinations all at the same time.
 
-{% include casproperties.html properties="cas.audit.engine." %}
+{% include_cached casproperties.html properties="cas.audit.engine." %}
 
 ## Actuator Endpoints
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="auditLog,auditevents" casModule="cas-server-support-reports" %}
+{% include_cached actuators.html endpoints="auditLog,auditevents" casModule="cas-server-support-reports" %}
      
 ## Storage
 
@@ -55,13 +55,10 @@ The following events are tracked and recorded in the audit log:
 | `AUTHENTICATION_EVENT`                | `TRIGGERED`
 | `AUP_VERIFY`                          | `TRIGGERED`
 | `AUP_SUBMIT`                          | `TRIGGERED`
-| `EVALUATE_RISKY_AUTHENTICATION`       | N/A
-| `MITIGATE_RISKY_AUTHENTICATION`       | N/A
-| `MULTIFACTOR_AUTHENTICATION_BYPASS`   | N/A
 | `SAVE_SERVICE`                        | `SUCCESS`, `FAILURE`
 | `SAVE_CONSENT`                        | `SUCCESS`, `FAILURE`
-| `REQUEST_CHANGE_PASSWORD`             | N/A
 | `CHANGE_PASSWORD`                     | `SUCCESS`, `FAILURE`
+| `PROTOCOL_SPECIFICATION_VALIDATE`     | `SUCCESS`, `FAILURE`
 | `DELETE_SERVICE`                      | `SUCCESS`, `FAILURE`
 | `SAML2_RESPONSE`                      | `CREATED`, `FAILED`
 | `SAML2_REQUEST`                       | `CREATED`, `FAILED`
@@ -75,3 +72,8 @@ The following events are tracked and recorded in the audit log:
 | `DELEGATED_CLIENT`                    | `SUCCESS`, `FAILURE`
 | `SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION`          | `TRIGGERED`
 | `SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION`             | `TRIGGERED`
+| `EVALUATE_RISKY_AUTHENTICATION`       | N/A
+| `MITIGATE_RISKY_AUTHENTICATION`       | N/A
+| `MULTIFACTOR_AUTHENTICATION_BYPASS`   | N/A
+| `REQUEST_CHANGE_PASSWORD`             | N/A
+| `ACCOUNT_REGISTRATION`                | `TOKEN_VALIDATED`, `TOKEN_CREATED`, `PROVISIONING_SUCCESS`

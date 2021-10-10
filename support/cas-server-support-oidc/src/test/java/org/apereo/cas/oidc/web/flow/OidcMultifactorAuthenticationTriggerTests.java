@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,6 +28,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 public class OidcMultifactorAuthenticationTriggerTests {
+
+    @TestConfiguration("OidcAuthenticationContextTestConfiguration")
+    public static class OidcAuthenticationContextTestConfiguration {
+        @Bean
+        public MultifactorAuthenticationProvider dummyProvider() {
+            return new TestMultifactorAuthenticationProvider();
+        }
+    }
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
@@ -40,6 +49,25 @@ public class OidcMultifactorAuthenticationTriggerTests {
             val registeredService = RegisteredServiceTestUtils.getRegisteredService();
             assertThrows(AuthenticationException.class,
                 () -> oidcMultifactorAuthenticationTrigger.isActivated(authn, registeredService, request, service));
+        }
+    }
+
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    @Import(OidcMultifactorAuthenticationTriggerTests.OidcAuthenticationContextTestConfiguration.class)
+    @TestPropertySource(properties = "cas.authn.oidc.core.authentication-context-reference-mappings=1->mfa-dummy")
+    public class WithMappedMultifactorProvidersTests extends AbstractOidcTests {
+        @Test
+        public void verifyAcrMfa() {
+            TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+            val service = RegisteredServiceTestUtils.getService();
+            val request = new MockHttpServletRequest();
+            request.addParameter(CasProtocolConstants.PARAMETER_SERVICE,
+                String.format("https://app.org?%s=1 2", OAuth20Constants.ACR_VALUES));
+            val authn = RegisteredServiceTestUtils.getAuthentication();
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService();
+            assertTrue(oidcMultifactorAuthenticationTrigger.isActivated(authn,
+                registeredService, request, service).isPresent());
         }
     }
 
@@ -62,8 +90,8 @@ public class OidcMultifactorAuthenticationTriggerTests {
 
             val service = RegisteredServiceTestUtils.getService();
             val request = new MockHttpServletRequest();
-            request.setQueryString(String.format("%s=https://app.org?%s=mfa-dummy",
-                CasProtocolConstants.PARAMETER_SERVICE, OAuth20Constants.ACR_VALUES));
+            request.addParameter(CasProtocolConstants.PARAMETER_SERVICE,
+                String.format("https://app.org?%s=mfa-dummy", OAuth20Constants.ACR_VALUES));
             val authn = RegisteredServiceTestUtils.getAuthentication();
             val registeredService = RegisteredServiceTestUtils.getRegisteredService();
             assertFalse(oidcMultifactorAuthenticationTrigger.isActivated(authn, registeredService, request, service).isEmpty());
@@ -74,20 +102,11 @@ public class OidcMultifactorAuthenticationTriggerTests {
             val url = "https://link.test.edu/web/cas?profile=Example Primo&targetURL=abc";
             val request = new MockHttpServletRequest();
             request.setRequestURI("/cas/login");
-            request.setQueryString(String.format("%s=%s", CasProtocolConstants.PARAMETER_SERVICE, url));
+            request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, url);
             val authn = RegisteredServiceTestUtils.getAuthentication();
             val registeredService = RegisteredServiceTestUtils.getRegisteredService();
             val service = RegisteredServiceTestUtils.getService(url);
             assertTrue(oidcMultifactorAuthenticationTrigger.isActivated(authn, registeredService, request, service).isEmpty());
-        }
-    }
-
-
-    @TestConfiguration("OidcAuthenticationContextTestConfiguration")
-    public static class OidcAuthenticationContextTestConfiguration {
-        @Bean
-        public MultifactorAuthenticationProvider dummyProvider() {
-            return new TestMultifactorAuthenticationProvider();
         }
     }
 }

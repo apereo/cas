@@ -36,5 +36,5 @@ Registered service property values can use the [Spring Expression Language](../c
 
 ## Supported Properties
 
-{% include registeredserviceproperties.html %}
+{% include_cached registeredserviceproperties.html %}
 

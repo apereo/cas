@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.web.view;
 
+import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -39,7 +40,9 @@ public class ViewProperties implements Serializable {
 
     /**
      * The default redirect URL if none is specified
-     * after a successful authentication event.
+     * after a successful login or logout event.
+     * For logout redirects, this setting is closely
+     * related to and requires {@link LogoutProperties#isFollowServiceRedirects()}.
      */
     private String defaultRedirectUrl;
 
@@ -54,6 +57,7 @@ public class ViewProperties implements Serializable {
 
     /**
      * Comma separated paths to where CAS templates may be found.
+     * Example might be {@code classpath:templates,file:/templates}.
      */
     private List<String> templatePrefixes = new ArrayList<>(1);
 

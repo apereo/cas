@@ -16,9 +16,9 @@ such as security keys or built-in platform authenticators such as biometric read
 
 Support is enabled by including the following module in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-webauthn" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-webauthn" %}
 
-{% include casproperties.html properties="cas.authn.mfa.web-authn.core,cas.authn.mfa.web-authn.crypto" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.web-authn.core,cas.authn.mfa.web-authn.crypto" %}
 
 ## Discoverable Credentials
 
@@ -40,7 +40,7 @@ repository periodically and remove expired device registration records
 based on configured parameters. In the default setting, devices
 expire after a fixed period since a user registered their device. 
 
-{% include casproperties.html properties="cas.authn.mfa.web-authn.cleaner" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.web-authn.cleaner" %}
 
 <div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is best to keep 
 the cleaner running on one designated CAS node only and turn it off on all others via CAS settings. Keeping the cleaner running 
@@ -50,7 +50,7 @@ on all nodes may likely lead to severe performance and locking issues.</p></div>
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="webAuthnDevices" %}
+{% include_cached actuators.html endpoints="webAuthnDevices" %}
 
 ### Default
 

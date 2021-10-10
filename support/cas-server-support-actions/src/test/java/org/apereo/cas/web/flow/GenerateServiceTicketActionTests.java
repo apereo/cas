@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -23,7 +24,6 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.Cookie;
-
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
@@ -38,19 +38,22 @@ import static org.mockito.Mockito.*;
  */
 @Tag("WebflowActions")
 public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
-
-    private static final String SERVICE_PARAM = "service";
-
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GENERATE_SERVICE_TICKET)
     private Action action;
 
     private TicketGrantingTicket ticketGrantingTicket;
 
+    private Service service;
+
     @BeforeEach
     public void onSetUp() {
-        val authnResult = getAuthenticationSystemSupport()
-            .finalizeAuthenticationTransaction(CoreAuthenticationTestUtils.getWebApplicationService(),
+        getServicesManager().deleteAll();
+        this.service = RegisteredServiceTestUtils.getService();
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
+        getServicesManager().save(registeredService);
+
+        val authnResult = getAuthenticationSystemSupport().finalizeAuthenticationTransaction(service,
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(authnResult);
         getTicketRegistry().addTicket(this.ticketGrantingTicket);
@@ -59,12 +62,12 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
     @Test
     public void verifyServiceTicketFromCookie() throws Exception {
         val context = new MockRequestContext();
-        context.getFlowScope().put(SERVICE_PARAM, RegisteredServiceTestUtils.getService());
+        context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
         context.getFlowScope().put(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, this.ticketGrantingTicket.getId());
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), request, new MockHttpServletResponse()));
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE_PARAM);
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         request.setCookies(new Cookie("TGT", this.ticketGrantingTicket.getId()));
         this.action.execute(context);
         assertNotNull(WebUtils.getServiceTicketFromRequestScope(context));
@@ -73,10 +76,10 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
     @Test
     public void verifyTicketGrantingTicketFromRequest() throws Exception {
         val context = new MockRequestContext();
-        context.getFlowScope().put(SERVICE_PARAM, RegisteredServiceTestUtils.getService());
+        context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE_PARAM);
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         WebUtils.putTicketGrantingTicketInScopes(context, this.ticketGrantingTicket);
 
         this.action.execute(context);
@@ -87,13 +90,12 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
     public void verifyServiceTicketWithAccessStrategyMapped() throws Exception {
         val context = new MockRequestContext();
         val serviceId = UUID.randomUUID().toString();
-
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(serviceId, Map.of("Role", Set.of(".*developer.*")));
         registeredService.setAttributeReleasePolicy(new ReturnMappedAttributeReleasePolicy(
             Map.of("Role", "groovy { return attributes['eduPersonAffiliation'].get(0) }")));
         getServicesManager().save(registeredService);
-        
-        context.getFlowScope().put(SERVICE_PARAM, RegisteredServiceTestUtils.getService(serviceId));
+
+        context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, RegisteredServiceTestUtils.getService(serviceId));
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, serviceId);
@@ -112,7 +114,7 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
         registeredService.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
         getServicesManager().save(registeredService);
 
-        context.getFlowScope().put(SERVICE_PARAM, RegisteredServiceTestUtils.getService(serviceId));
+        context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, RegisteredServiceTestUtils.getService(serviceId));
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, serviceId);
@@ -130,10 +132,10 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(serviceId, Map.of("eduPersonAffiliation", Set.of(".*developer.*")));
         registeredService.setAttributeReleasePolicy(new ReturnMappedAttributeReleasePolicy(
             Map.of("eduPersonAffiliation", "groovy { return 'engineers' }")));
-        
+
         getServicesManager().save(registeredService);
 
-        context.getFlowScope().put(SERVICE_PARAM, RegisteredServiceTestUtils.getService(serviceId));
+        context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, RegisteredServiceTestUtils.getService(serviceId));
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, serviceId);
@@ -142,15 +144,15 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
         this.action.execute(context);
         assertNotNull(WebUtils.getServiceTicketFromRequestScope(context));
     }
-    
+
     @Test
     public void verifyTicketGrantingTicketNoTgt() throws Exception {
         val context = new MockRequestContext();
-        context.getFlowScope().put(SERVICE_PARAM, RegisteredServiceTestUtils.getService());
+        context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
 
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE_PARAM);
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
 
         val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("bleh");
@@ -162,10 +164,10 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
     @Test
     public void verifyTicketGrantingTicketExpiredTgt() throws Exception {
         val context = new MockRequestContext();
-        context.getFlowScope().put(SERVICE_PARAM, RegisteredServiceTestUtils.getService());
+        context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE_PARAM);
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         WebUtils.putTicketGrantingTicketInScopes(context, this.ticketGrantingTicket);
         this.ticketGrantingTicket.markTicketExpired();
         getTicketRegistry().updateTicket(this.ticketGrantingTicket);
@@ -175,10 +177,10 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
     @Test
     public void verifyTicketGrantingTicketNotTgtButGateway() throws Exception {
         val context = new MockRequestContext();
-        context.getFlowScope().put(SERVICE_PARAM, RegisteredServiceTestUtils.getService());
+        context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE_PARAM);
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_GATEWAY, "true");
         val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("bleh");
@@ -189,10 +191,9 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
     @Test
     public void verifyWarnCookie() throws Exception {
         val context = new MockRequestContext();
-        val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
-        context.getFlowScope().put(SERVICE_PARAM, service);
-
-        val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
+        val randomService = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+        context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, randomService);
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(randomService.getId());
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy()
             .setUnauthorizedRedirectUrl(new URI("https://github.com")));
         getServicesManager().save(registeredService);

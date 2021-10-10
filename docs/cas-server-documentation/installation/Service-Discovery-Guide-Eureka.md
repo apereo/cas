@@ -43,9 +43,9 @@ instruct the CAS server how to locate and connect to the discover server service
 
 Support is added by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-eureka-client" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-eureka-client" %}
 
-{% include casproperties.html thirdParty="eureka.client,spring.cloud.config.discovery" %}
+{% include_cached casproperties.html thirdParty="eureka.client,spring.cloud.config.discovery" %}
 
 ### Authentication
 

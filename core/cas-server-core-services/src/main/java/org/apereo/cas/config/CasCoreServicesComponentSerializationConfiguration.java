@@ -23,6 +23,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPoli
 import org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
+import org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.FullRegexRegisteredServiceMatchingStrategy;
 import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategy;
@@ -106,6 +107,7 @@ public class CasCoreServicesComponentSerializationConfiguration {
             plan.registerSerializableClass(AnonymousRegisteredServiceUsernameAttributeProvider.class);
             plan.registerSerializableClass(GroovyRegisteredServiceUsernameProvider.class);
             plan.registerSerializableClass(DefaultRegisteredServiceUsernameProvider.class);
+            plan.registerSerializableClass(DefaultRegisteredServiceWebflowInterruptPolicy.class);
             plan.registerSerializableClass(ScriptedRegisteredServiceUsernameProvider.class);
             plan.registerSerializableClass(RegisteredServiceRegexAttributeFilter.class);
             plan.registerSerializableClass(RegisteredServiceChainingAttributeFilter.class);

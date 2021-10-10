@@ -46,7 +46,7 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
      * 1) All users are under a single branch in the directory, {@code e.g. ou=Users,dc=example,dc=org.}
      * 2) The username provided on the CAS login form is part of the DN, e.g.
      * {@code uid=%s,ou=Users,dc=example,dc=org}.</li>
-     * 
+     *
      * </ul>
      */
     @RequiredProperty
@@ -88,6 +88,12 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
      * </ul>
      */
     private String derefAliases;
+
+    /**
+     * If this attribute is set, the value found in the first attribute
+     * value will be used in place of the DN.
+     */
+    private String resolveFromAttribute;
 
     /**
      * The enum Authentication types.

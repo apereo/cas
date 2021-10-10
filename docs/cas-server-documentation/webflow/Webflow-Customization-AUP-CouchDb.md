@@ -14,6 +14,6 @@ the document is assumed to contain a `username` column as well as one that match
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-couchdb" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-aup-couchdb" %}
 
-{% include casproperties.html properties="cas.acceptable-usage-policy.couch-db" %}
+{% include_cached casproperties.html properties="cas.acceptable-usage-policy.couch-db" %}

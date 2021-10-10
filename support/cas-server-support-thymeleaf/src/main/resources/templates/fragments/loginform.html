@@ -57,8 +57,7 @@
                     </div>
 
                     <section class="cas-field my-3" id="usernameSection">
-                        <div class="d-flex">
-
+                        <div>
                             <label for="username" class="mdc-text-field mdc-text-field--outlined">
                                 <input class="mdc-text-field__input"
                                        id="username"
@@ -69,7 +68,7 @@
                                        th:accesskey="#{screen.welcome.label.netid.accesskey}"
                                        autocapitalize="none"
                                        spellcheck="false"
-                                       autocomplete="username"/>
+                                       autocomplete="username" required />
 
                                 <span class="mdc-notched-outline">
                                     <span class="mdc-notched-outline__leading"></span>
@@ -79,6 +78,12 @@
                                     <span class="mdc-notched-outline__trailing"></span>
                                   </span>
                             </label>
+
+                            <div class="mdc-text-field-helper-line">
+                                <div class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
+                                    <span th:utext="#{username.required}"></span>
+                                </div>
+                            </div>
 
                             <script type="text/javascript" th:inline="javascript">
                                 /*<![CDATA[*/
@@ -98,35 +103,41 @@
 
                     <section class="cas-field my-3 mdc-input-group" id="passwordSection">
                         <div class="mdc-input-group-field mdc-input-group-field-append">
-                            <div class="d-flex caps-check">
+                            <div class="caps-check">
 
                                 <label for="password"
                                        class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
 
                                     <input class="mdc-text-field__input pwd"
-                                           type="password" id="password" size="25"
+                                           type="password" id="password" size="25" required
                                            th:accesskey="#{screen.welcome.label.password.accesskey}"
                                            th:field="*{password}" autocomplete="off"/>
 
                                     <span class="mdc-notched-outline">
                                             <span class="mdc-notched-outline__leading"></span>
                                             <span class="mdc-notched-outline__notch">
-                                              <span class="mdc-floating-label" th:utext="#{screen.welcome.label.password}">Username</span>
+                                              <span class="mdc-floating-label" th:utext="#{screen.welcome.label.password}">Password</span>
                                             </span>
                                             <span class="mdc-notched-outline__trailing"></span>
                                         </span>
 
                                 </label>
+                                <div class="mdc-text-field-helper-line">
+                                    <div class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
+                                        <span th:utext="#{password.required}"></span>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="mdc-text-field-helper-line caps-warn">
-                                <p
-                                        class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">
+                                <p class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">
                                     <span th:utext="#{screen.capslock.on}"/>
                                 </p>
                             </div>
                         </div>
-                        <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button" type="button">
+                        <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button"
+                                tabindex="-1"
+                                type="button">
                             <i class="mdi mdi-eye reveal-password-icon"></i>
                             <span class="sr-only">Toggle Password</span>
                         </button>
@@ -277,6 +288,21 @@
                     <div th:replace="fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')"/>
                 </span>
             </form>
+
+            <div id="selectIdentityProvider" th:if="${#bools.isTrue(delegatedAuthenticationDynamicProviderSelection) and loginFormViewable and loginFormEnabled}">
+                <p>
+                <form method="post" id="providerDiscoveryForm">
+                    <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                    <input type="hidden" name="_eventId" value="discovery"/>
+                    <span class="fa fa-unlock"></span>
+                    <button th:id="selectProviderButton"
+                            class="mdc-button mdc-button--raised"
+                            onclick="$('#providerDiscoveryForm').submit();"
+                            th:value="#{screen.pac4j.button.selectprovider}">
+                        <span class="mdc-button__label" th:text="#{screen.pac4j.button.selectprovider}">Select</span>
+                    </button>
+                </form>
+            </div>
 
             <div id="x509Login" th:if="${x509ClientAuthLoginEndpointUrl}">
                 <span th:if="${loginFormViewable and loginFormEnabled}">

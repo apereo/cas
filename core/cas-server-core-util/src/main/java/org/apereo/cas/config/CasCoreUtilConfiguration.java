@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
+import org.apereo.cas.util.feature.DefaultCasRuntimeModuleLoader;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
@@ -41,7 +43,6 @@ import java.time.ZonedDateTime;
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreUtilConfiguration implements InitializingBean {
-
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public ApplicationContextProvider casApplicationContextProvider() {
@@ -73,6 +74,11 @@ public class CasCoreUtilConfiguration implements InitializingBean {
     @Bean
     public ObjectMapper objectMapper() {
         return JacksonObjectMapperFactory.builder().build().toObjectMapper();
+    }
+
+    @Bean
+    public CasRuntimeModuleLoader casRuntimeModuleLoader() {
+        return new DefaultCasRuntimeModuleLoader();
     }
 
     @Override

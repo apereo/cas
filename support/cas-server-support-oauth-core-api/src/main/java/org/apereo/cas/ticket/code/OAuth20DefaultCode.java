@@ -2,6 +2,8 @@ package org.apereo.cas.ticket.code;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -57,6 +59,10 @@ public class OAuth20DefaultCode extends AbstractTicket implements OAuth20Code {
 
     private String clientId;
 
+    private OAuth20ResponseTypes responseType;
+
+    private OAuth20GrantTypes grantType;
+
     public OAuth20DefaultCode(final String id,
                               final @NonNull Service service,
                               final @NonNull Authentication authentication,
@@ -66,7 +72,9 @@ public class OAuth20DefaultCode extends AbstractTicket implements OAuth20Code {
                               final String codeChallenge,
                               final String codeChallengeMethod,
                               final String clientId,
-                              final Map<String, Map<String, Object>> requestClaims) {
+                              final Map<String, Map<String, Object>> requestClaims,
+                              final OAuth20ResponseTypes responseType,
+                              final OAuth20GrantTypes grantType) {
         super(id, expirationPolicy);
         this.service = service;
         this.authentication = authentication;
@@ -74,6 +82,8 @@ public class OAuth20DefaultCode extends AbstractTicket implements OAuth20Code {
         this.codeChallenge = codeChallenge;
         this.codeChallengeMethod = codeChallengeMethod;
         this.clientId = clientId;
+        this.responseType = responseType;
+        this.grantType = grantType;
         this.scopes.addAll(scopes);
         this.claims.putAll(requestClaims);
     }

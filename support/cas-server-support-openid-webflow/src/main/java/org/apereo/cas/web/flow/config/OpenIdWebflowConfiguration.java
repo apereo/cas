@@ -8,6 +8,8 @@ import org.apereo.cas.support.openid.web.support.OpenIdUserNameExtractor;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
+import org.apereo.cas.web.flow.OpenIdCasWebflowLoginContextProvider;
 import org.apereo.cas.web.flow.OpenIdWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -91,6 +94,16 @@ public class OpenIdWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "openidCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer openidCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(openidWebflowConfigurer());
+        return plan -> {
+            plan.registerWebflowConfigurer(openidWebflowConfigurer());
+            plan.registerWebflowLoginContextProvider(openidCasWebflowLoginContextProvider());
+        };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "openidCasWebflowLoginContextProvider")
+    @RefreshScope
+    public CasWebflowLoginContextProvider openidCasWebflowLoginContextProvider() {
+        return new OpenIdCasWebflowLoginContextProvider();
     }
 }

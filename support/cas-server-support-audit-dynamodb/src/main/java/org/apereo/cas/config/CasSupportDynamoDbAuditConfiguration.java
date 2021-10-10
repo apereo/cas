@@ -6,7 +6,6 @@ import org.apereo.cas.audit.DynamoDbAuditTrailManagerFacilitator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,6 @@ public class CasSupportDynamoDbAuditConfiguration {
 
     @RefreshScope
     @Bean
-    @SneakyThrows
     @ConditionalOnMissingBean(name = "amazonDynamoDbAuditTrailManagerClient")
     public DynamoDbClient amazonDynamoDbAuditTrailManagerClient() {
         val db = casProperties.getAudit().getDynamoDb();

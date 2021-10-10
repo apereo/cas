@@ -27,6 +27,7 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.boot.configurationmetadata.Deprecation;
 import org.springframework.boot.configurationmetadata.ValueHint;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.File;
@@ -59,8 +60,8 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @RequiredArgsConstructor
+@Slf4j
 public class ConfigurationMetadataGenerator {
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .setDefaultPrettyPrinter(new MinimalPrettyPrinter())
@@ -98,8 +99,7 @@ public class ConfigurationMetadataGenerator {
     private static Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
                                                                final Collection<ConfigurationMetadataProperty> groups) {
 
-        final Set<ConfigurationMetadataHint> hints = new LinkedHashSet<>(0);
-
+        var hints = new LinkedHashSet<ConfigurationMetadataHint>(0);
         val allValidProps = props.stream()
             .filter(p -> p.getDeprecation() == null
                 || !Deprecation.Level.ERROR.equals(p.getDeprecation().getLevel()))
@@ -182,6 +182,37 @@ public class ConfigurationMetadataGenerator {
         return MAPPER.writeValueAsString(value);
     }
 
+    private static void removeNestedConfigurationPropertyGroups(final Set<ConfigurationMetadataProperty> properties,
+                                                                final Set<ConfigurationMetadataProperty> groups) {
+        var it = properties.iterator();
+        while (it.hasNext()) {
+            var entry = it.next();
+            try {
+                val propName = StringUtils.substringAfterLast(entry.getName(), ".");
+                val groupName = StringUtils.substringBeforeLast(entry.getName(), ".");
+                val res = groups
+                    .stream()
+                    .filter(g -> g.getName().equalsIgnoreCase(groupName))
+                    .findFirst();
+                if (res.isPresent()) {
+                    var grp = res.get();
+                    val className = grp.getType();
+                    val clazz = ClassUtils.getClass(className);
+
+                    val names = RelaxedPropertyNames.forCamelCase(propName);
+                    names.getValues().forEach(Unchecked.consumer(name -> {
+                        val f = ReflectionUtils.findField(clazz, name);
+                        if (f != null && f.isAnnotationPresent(NestedConfigurationProperty.class)) {
+                            it.remove();
+                        }
+                    }));
+                }
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     /**
      * Execute.
      *
@@ -204,6 +235,8 @@ public class ConfigurationMetadataGenerator {
         val hints = processHints(properties, groups);
         processNestedEnumProperties(properties, groups);
         processDeprecatedProperties(properties);
+
+        removeNestedConfigurationPropertyGroups(properties, groups);
 
         jsonMap.put("properties", properties);
         jsonMap.put("groups", groups);
@@ -252,7 +285,7 @@ public class ConfigurationMetadataGenerator {
                     parser.parseCompilationUnit(collectedProps, collectedGroups, property, typePath,
                         valueType, false);
                 } else {
-                    LOGGER.error("[{}] does not exist", typePath);
+                    throw new RuntimeException(typePath + " does not exist");
                 }
             }
         });
@@ -272,7 +305,9 @@ public class ConfigurationMetadataGenerator {
         for (val prop : propertiesToProcess) {
 
             val matcher = NESTED_CLASS_PATTERN.matcher(prop.getType());
-            matcher.matches();
+            if (!matcher.matches()) {
+                throw new RuntimeException("Unable to find a match for " + prop.getType());
+            }
 
             val parent = matcher.group(1);
             val innerType = matcher.group(2);
@@ -304,16 +339,27 @@ public class ConfigurationMetadataGenerator {
                     .stream()
                     .peek(member -> {
                         if (member.isFieldDeclaration()) {
-                            val fieldDecl = member.asFieldDeclaration();
-                            fieldDecl.getVariable(0).getInitializer().ifPresent(exp -> {
-                                if (exp instanceof LiteralStringValueExpr) {
-                                    prop.setDefaultValue(((LiteralStringValueExpr) exp).getValue());
-                                } else if (exp instanceof BooleanLiteralExpr) {
-                                    prop.setDefaultValue(((BooleanLiteralExpr) exp).getValue());
-                                } else if (exp instanceof FieldAccessExpr) {
-                                    prop.setDefaultValue(((FieldAccessExpr) exp).getNameAsString());
+                            var fieldDecl = member.asFieldDeclaration();
+                            var variable = fieldDecl.getVariable(0);
+
+                            if (variable.getInitializer().isPresent()) {
+                                var beginIndex = prop.getName().lastIndexOf('.');
+                                var propShortName = beginIndex != -1 ? prop.getName().substring(beginIndex + 1) : prop.getName();
+                                var names = RelaxedPropertyNames.forCamelCase(variable.getNameAsString()).getValues();
+                                if (names.contains(propShortName)) {
+                                    variable.getInitializer().ifPresent(exp -> {
+                                        var value = (Object) null;
+                                        if (exp instanceof LiteralStringValueExpr) {
+                                            value = ((LiteralStringValueExpr) exp).getValue();
+                                        } else if (exp instanceof BooleanLiteralExpr) {
+                                            value = ((BooleanLiteralExpr) exp).getValue();
+                                        } else if (exp instanceof FieldAccessExpr) {
+                                            value = ((FieldAccessExpr) exp).getNameAsString();
+                                        }
+                                        prop.setDefaultValue(value);
+                                    });
                                 }
-                            });
+                            }
                         }
                     })
                     .filter(member -> {

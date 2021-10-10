@@ -12,6 +12,8 @@ import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.OAuth20ProtocolTicketCatalogConfiguration;
 import org.apereo.cas.configuration.support.CloseableDataSource;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.DefaultSecurityTokenTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
@@ -38,6 +40,7 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -54,11 +57,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = JpaTicketRegistryTests.SharedTestConfiguration.class,
     properties = {
-        "cas.jdbc.show-sql=false",
+        "cas.jdbc.show-sql=true",
         "cas.ticket.registry.jpa.ddl-auto=create-drop"
     })
 @Tag("JDBC")
 @Getter
+@DirtiesContext
 public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
     private static final int COUNT = 500;
 
@@ -134,7 +138,8 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
 
         val oAuthCode = oAuthCodeFactory.create(RegisteredServiceTestUtils.getService(),
             originalAuthn, tgt, Collections.emptySet(), "challenge", "challenge_method",
-            "client_id", Collections.emptyMap());
+            "client_id", Collections.emptyMap(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
 
         this.newTicketRegistry.addTicket(oAuthCode);
 

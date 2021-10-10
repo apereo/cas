@@ -7,7 +7,6 @@ import org.apereo.cas.webauthn.DynamoDbWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.DynamoDbWebAuthnFacilitator;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,6 @@ public class DynamoDbWebAuthnConfiguration {
 
     @RefreshScope
     @Bean
-    @SneakyThrows
     @ConditionalOnMissingBean(name = "amazonDynamoDbWebAuthnClient")
     public DynamoDbClient amazonDynamoDbWebAuthnClient() {
         val db = casProperties.getAuthn().getMfa().getWebAuthn().getDynamoDb();

@@ -59,7 +59,7 @@ inject themselves into the running CAS application context only to be executed a
 
 At a minimum, your overlay will need to include the following modules:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-core-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-core-webflow" %}
 
 #### Design
 
@@ -82,6 +82,9 @@ public class SomethingWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 }
 ```
+
+The parent class, `AbstractCasWebflowConfigurer`, providers a lot of helper methods and utilities 
+in a *DSL-like* fashion to hide the complexity of Spring Webflow APIs to make customization easier.
 
 #### Register
 
@@ -140,7 +143,7 @@ You may configure CAS to alter and auto-configure the webflow via a Groovy scrip
 This is the less elaborate option where you have modest access to CAS APIs that allow you alter the webflow. However, 
 configuration and scaffolding of the overlay and required dependencies is easier as all is provided by CAS at runtime.
 
-{% include casproperties.html properties="cas.webflow.autoconfigure,cas.webflow.groovy" %}
+{% include_cached casproperties.html properties="cas.webflow.autoconfigure,cas.webflow.groovy" %}
 
 <div class="alert alert-warning"><strong>Stop Coding</strong><p>Remember that APIs provided 
 here, specifically executed as part of the Groovy script are considered implementations 

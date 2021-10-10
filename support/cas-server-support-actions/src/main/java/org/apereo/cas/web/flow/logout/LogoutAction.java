@@ -1,12 +1,16 @@
 package org.apereo.cas.web.flow.logout;
 
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutRequestStatus;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.execution.Event;
@@ -27,9 +31,15 @@ import java.util.Objects;
  * @since 3.0.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class LogoutAction extends AbstractLogoutAction {
-    private final LogoutExecutionPlan logoutExecutionPlan;
+
+    public LogoutAction(final CentralAuthenticationService centralAuthenticationService,
+                        final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+                        final ArgumentExtractor argumentExtractor, final ServicesManager servicesManager,
+                        final LogoutExecutionPlan logoutExecutionPlan, final CasConfigurationProperties casProperties) {
+        super(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
+            argumentExtractor, servicesManager, logoutExecutionPlan, casProperties);
+    }
 
     @Override
     protected Event doInternalExecute(final HttpServletRequest request,
@@ -38,10 +48,10 @@ public class LogoutAction extends AbstractLogoutAction {
 
         val logoutRequests = WebUtils.getLogoutRequests(context);
         val needFrontSlo = FunctionUtils.doIf(logoutRequests != null,
-            () -> Objects.requireNonNull(logoutRequests)
-                .stream()
-                .anyMatch(logoutRequest -> logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED),
-            () -> Boolean.FALSE)
+                () -> Objects.requireNonNull(logoutRequests)
+                    .stream()
+                    .anyMatch(logoutRequest -> logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED),
+                () -> Boolean.FALSE)
             .get();
 
         logoutExecutionPlan.getLogoutRedirectionStrategies()

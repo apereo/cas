@@ -16,15 +16,10 @@ import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.BillingMode;
-import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
-import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
@@ -142,37 +137,16 @@ public class DynamoDbServiceRegistryFacilitator {
      */
     @SneakyThrows
     public void createServicesTable(final boolean deleteTables) {
-        LOGGER.debug("Attempting to create DynamoDb services table");
-        val throughput = ProvisionedThroughput.builder()
-            .readCapacityUnits(dynamoDbProperties.getReadCapacity())
-            .writeCapacityUnits(dynamoDbProperties.getWriteCapacity())
-            .build();
-        val request = CreateTableRequest.builder()
-            .tableName(dynamoDbProperties.getTableName())
-            .attributeDefinitions(AttributeDefinition.builder()
+        DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
+            dynamoDbProperties.getTableName(), deleteTables,
+            List.of(AttributeDefinition.builder()
                 .attributeName(ColumnNames.ID.getColumnName())
                 .attributeType(ScalarAttributeType.S)
-                .build())
-            .keySchema(KeySchemaElement.builder()
+                .build()),
+            List.of(KeySchemaElement.builder()
                 .attributeName(ColumnNames.ID.getColumnName())
                 .keyType(KeyType.HASH)
-                .build())
-            .provisionedThroughput(throughput)
-            .billingMode(BillingMode.fromValue(dynamoDbProperties.getBillingMode().name()))
-            .build();
-        if (deleteTables) {
-            val delete = DeleteTableRequest.builder().tableName(request.tableName()).build();
-            LOGGER.debug("Sending delete request [{}] to remove table if necessary", delete);
-            DynamoDbTableUtils.deleteTableIfExists(amazonDynamoDBClient, delete);
-        }
-        LOGGER.debug("Sending create request [{}] to create table", request);
-        DynamoDbTableUtils.createTableIfNotExists(amazonDynamoDBClient, request);
-        LOGGER.debug("Waiting until table [{}] becomes active...", request.tableName());
-        DynamoDbTableUtils.waitUntilActive(amazonDynamoDBClient, request.tableName());
-        val describeTableRequest = DescribeTableRequest.builder().tableName(request.tableName()).build();
-        LOGGER.debug("Sending request [{}] to obtain table description...", describeTableRequest);
-        val tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).table();
-        LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
+                .build()));
     }
 
     /**
@@ -201,6 +175,18 @@ public class DynamoDbServiceRegistryFacilitator {
         createServicesTable(true);
     }
 
+    @Getter
+    @RequiredArgsConstructor
+    private enum ColumnNames {
+        ID("id"),
+        NAME("name"),
+        DESCRIPTION("description"),
+        SERVICE_ID("serviceId"),
+        ENCODED("encoded");
+
+        private final String columnName;
+    }
+
     private RegisteredService deserializeServiceFromBinaryBlob(final Map<String, AttributeValue> returnItem) {
         val bb = returnItem.get(ColumnNames.ENCODED.getColumnName()).b();
         LOGGER.debug("Located binary encoding of service item [{}]. Transforming item into service object", returnItem);
@@ -227,17 +213,5 @@ public class DynamoDbServiceRegistryFacilitator {
             LoggingUtils.error(LOGGER, e);
         }
         return null;
-    }
-
-    @Getter
-    @RequiredArgsConstructor
-    private enum ColumnNames {
-        ID("id"),
-        NAME("name"),
-        DESCRIPTION("description"),
-        SERVICE_ID("serviceId"),
-        ENCODED("encoded");
-
-        private final String columnName;
     }
 }

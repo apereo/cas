@@ -38,7 +38,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
     private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
 
-    private final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext;
+    private final CasWebflowEventResolutionConfigurationContext configurationContext;
 
     /**
      * New event based on the id, which contains an error attribute referring to the exception occurred.
@@ -102,7 +102,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     @Override
     public Set<Event> resolve(final RequestContext context) {
         LOGGER.trace("Attempting to resolve authentication event using resolver [{}]", getName());
-        WebUtils.putWarnCookieIfRequestParameterPresent(webflowEventResolutionConfigurationContext.getWarnCookieGenerator(), context);
+        WebUtils.putWarnCookieIfRequestParameterPresent(configurationContext.getWarnCookieGenerator(), context);
         WebUtils.putPublicWorkstationToFlowIfRequestParameterPresent(context);
         return resolveInternal(context);
     }
@@ -128,7 +128,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the service
      */
     protected Service resolveServiceFromAuthenticationRequest(final Service service) {
-        return webflowEventResolutionConfigurationContext.getAuthenticationRequestServiceSelectionStrategies().resolveService(service);
+        return configurationContext.getAuthenticationRequestServiceSelectionStrategies().resolveService(service);
     }
 
     /**
@@ -156,7 +156,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
             LOGGER.debug("Handling authentication transaction for credential [{}]", credential);
             val service = WebUtils.getService(context);
-            val builder = webflowEventResolutionConfigurationContext.getAuthenticationSystemSupport()
+            val builder = configurationContext.getAuthenticationSystemSupport()
                 .handleAuthenticationTransaction(service, builderResult, credential);
 
             LOGGER.debug("Issuing ticket-granting tickets for service [{}]", service);

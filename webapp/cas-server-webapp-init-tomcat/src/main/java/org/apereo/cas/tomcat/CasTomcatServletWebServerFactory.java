@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.catalina.Context;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.AprLifecycleListener;
 import org.apache.catalina.ha.session.BackupManager;
@@ -32,6 +33,8 @@ import org.apache.catalina.tribes.transport.nio.NioReceiver;
 import org.apache.catalina.tribes.transport.nio.PooledParallelSender;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.coyote.http11.Http11AprProtocol;
+import org.apache.tomcat.util.descriptor.web.SecurityCollection;
+import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.apache.tomcat.util.net.SSLHostConfig;
 import org.apache.tomcat.util.net.SSLHostConfigCertificate;
 import org.jooq.lambda.Unchecked;
@@ -69,6 +72,19 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
     protected TomcatWebServer getTomcatWebServer(final Tomcat tomcat) {
         configureSessionClustering(tomcat);
         return super.getTomcatWebServer(tomcat);
+    }
+
+    @Override
+    protected void postProcessContext(final Context context) {
+        val http = casProperties.getServer().getTomcat().getHttp();
+        if (http.getRedirectPort() > 0) {
+            val securityConstraint = new SecurityConstraint();
+            securityConstraint.setUserConstraint("CONFIDENTIAL");
+            val collection = new SecurityCollection();
+            collection.addPattern("/*");
+            securityConstraint.addCollection(collection);
+            context.addConstraint(securityConstraint);
+        }
     }
 
     private void configureConnectorForApr() {

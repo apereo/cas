@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
     "database.name:cas-bindmode-authentications",
     "database.password=Mellon"
 })
-@Tag("JDBC")
+@Tag("JDBCAuthentication")
 @Import(BindModeSearchDatabaseAuthenticationHandlerTests.DatabaseTestConfiguration.class)
 public class BindModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
     @Autowired

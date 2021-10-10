@@ -2,6 +2,7 @@ package org.apereo.cas.metadata;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
@@ -17,6 +18,7 @@ import java.io.Serializable;
 @Getter
 @EqualsAndHashCode(of = "name")
 @ToString
+@Setter
 public class CasReferenceProperty implements Serializable, Comparable<CasReferenceProperty> {
     private static final long serialVersionUID = 6084780445748297104L;
 
@@ -32,7 +34,7 @@ public class CasReferenceProperty implements Serializable, Comparable<CasReferen
 
     private final String type;
 
-    private final String description;
+    private String description;
 
     private final String shortDescription;
 

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,8 +54,8 @@ public abstract class AbstractCasEventRepositoryTests {
         assertEquals(2, col.size());
 
         assertNotEquals(dto2.getEventId(), dto1.getEventId(), "Created Event IDs are equal");
-
         assertEquals(2, col.stream().map(CasEvent::getEventId).distinct().count(), "Stored event IDs are equal");
+        
         col.forEach(event -> {
             assertFalse(event.getProperties().isEmpty());
             if (event.getEventId().equals(dto1.getEventId())) {
@@ -86,11 +87,14 @@ public abstract class AbstractCasEventRepositoryTests {
         val dto = new CasEvent();
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
-        dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
+        dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().format(DateTimeFormatter.ISO_ZONED_DATE_TIME));
         dto.putEventId(event.getTicketGrantingTicket().getId());
         dto.putClientIpAddress("1.2.3.4");
         dto.putServerIpAddress("1.2.3.4");
-        dto.putGeoLocation(new GeoLocationRequest(1234, 1234));
+        val location = new GeoLocationRequest(1234, 1234);
+        location.setAccuracy("80");
+        location.setTimestamp(String.valueOf(event.getTimestamp()));
+        dto.putGeoLocation(location);
         dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
         return dto;
     }

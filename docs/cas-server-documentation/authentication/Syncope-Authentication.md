@@ -17,9 +17,9 @@ are transformed into CAS attributes that can then be released to applications, e
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-syncope-authentication" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-syncope-authentication" %}
 
-{% include casproperties.html properties="cas.authn.syncope" %}
+{% include_cached casproperties.html properties="cas.authn.syncope" %}
 
 ## Attributes
 

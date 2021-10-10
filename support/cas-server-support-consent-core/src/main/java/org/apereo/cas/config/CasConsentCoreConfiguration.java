@@ -60,14 +60,14 @@ public class CasConsentCoreConfiguration {
     @Bean
     @RefreshScope
     public ConsentEngine consentEngine() {
-        return new DefaultConsentEngine(consentRepository(), consentDecisionBuilder());
+        return new DefaultConsentEngine(consentRepository(), consentDecisionBuilder(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "consentCipherExecutor")
     @Bean
     @RefreshScope
     public CipherExecutor consentCipherExecutor() {
-        val consent = casProperties.getConsent();
+        val consent = casProperties.getConsent().getCore();
         val crypto = consent.getCrypto();
         if (crypto.isEnabled()) {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, AttributeReleaseConsentCipherExecutor.class);

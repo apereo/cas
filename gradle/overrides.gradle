@@ -15,6 +15,9 @@ configurations.all {
                 if (requested.group == "gnu-getopt")  {
                     details.useTarget group: "gnu.getopt", name: "java-getopt", version: details.requested.version
                 }
+                if (requested.group == "org.opensaml")  {
+                    details.useVersion("${opensamlVersion}")
+                }
                 if (requested.group == "com.h2database")  {
                     details.useVersion("${h2Version}")
                 }
@@ -109,6 +112,9 @@ configurations.all {
                 }
                 if (requested.group == "com.signalfx.public")  {
                     details.useVersion("${signalFxVersion}")
+                }
+                if (requested.group == "org.apache.wss4j")  {
+                    details.useVersion("${wss4jVersion}")
                 }
             }
         }

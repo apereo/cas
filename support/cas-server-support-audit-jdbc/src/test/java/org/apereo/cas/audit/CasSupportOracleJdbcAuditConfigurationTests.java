@@ -12,7 +12,7 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.3.0
  */
 @TestPropertySource(properties = {
-    "cas.jdbc.show-sql=true",
+    "cas.jdbc.show-sql=false",
     "cas.audit.jdbc.ddl-auto=create",
     "cas.audit.jdbc.select-sql-query-template=SELECT * FROM %s WHERE AUD_DATE>=TO_DATE('%s', 'YYYY-MM-DD') ORDER BY AUD_DATE DESC",
     "cas.audit.jdbc.date-formatter-pattern=yyyy-MM-dd",

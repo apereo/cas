@@ -213,6 +213,10 @@ public class RegisteredServiceTestUtils {
         return getAuthentication(getPrincipal(name));
     }
 
+    public static Authentication getAuthentication(final String name, final Map<String, List<Object>> attributes) {
+        return getAuthentication(getPrincipal(name), attributes);
+    }
+
     public static Authentication getAuthentication(final Principal principal) {
         return getAuthentication(principal, new HashMap<>(0));
     }

@@ -1,5 +1,8 @@
 description = "Apereo CAS Server OpenID Connect Core"
 dependencies {
+    implementation libraries.jose4j
+    implementation libraries.nimbus
+    
     api project(":api:cas-server-core-api-throttle")
     
     implementation project(":core:cas-server-core-services")

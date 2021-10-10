@@ -25,4 +25,4 @@ storage and analytics. The following options are available:
 - CloudWatch
 - ...
 
-{% include {{ version }}/metrics-configuration.md %}
+{% include_cached {{ version }}/metrics-configuration.md %}

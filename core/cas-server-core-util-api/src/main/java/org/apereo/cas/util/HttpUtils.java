@@ -3,7 +3,6 @@ package org.apereo.cas.util;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import lombok.experimental.SuperBuilder;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -41,8 +40,6 @@ import java.util.Map;
 @Slf4j
 @UtilityClass
 public class HttpUtils {
-    private static final int MAP_SIZE = 4;
-
     private static final int MAX_CONNECTIONS = 200;
 
     private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
@@ -73,10 +70,10 @@ public class HttpUtils {
         private final String bearerToken;
 
         @Builder.Default
-        private final Map<String, Object> parameters = new LinkedHashMap<>(MAP_SIZE);
+        private final Map<String, Object> parameters = new LinkedHashMap<>();
 
         @Builder.Default
-        private final Map<String, Object> headers = new LinkedHashMap<>(MAP_SIZE);
+        private final Map<String, Object> headers = new LinkedHashMap<>();
 
         /**
          * Is basic authentication?
@@ -172,7 +169,6 @@ public class HttpUtils {
         return acceptHeaders;
     }
 
-    @SneakyThrows
     private static HttpUriRequest getHttpRequestByMethod(final String method, final String entity, final URI uri) {
         if ("post".equalsIgnoreCase(method)) {
             val request = new HttpPost(uri);

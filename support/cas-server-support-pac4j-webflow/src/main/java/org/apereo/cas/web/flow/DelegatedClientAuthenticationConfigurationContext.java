@@ -70,6 +70,8 @@ public class DelegatedClientAuthenticationConfigurationContext {
 
     private final DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProvidersProducer;
 
+    private final DelegatedClientIdentityProviderConfigurationPostProcessor delegatedClientIdentityProviderConfigurationPostProcessor;
+
     private final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     private final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;

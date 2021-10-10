@@ -50,7 +50,6 @@ public class Beans {
      * @param p the properties
      * @return the person attribute dao
      */
-    @SneakyThrows
     public static IPersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties p) {
         val dao = new NamedStubPersonAttributeDao();
         val pdirMap = new LinkedHashMap<String, List<Object>>();

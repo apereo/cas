@@ -1,0 +1,29 @@
+{
+  "dependencies": "pac4j-webflow",
+  "properties": [
+    "--cas.authn.attribute-repository.stub.attributes.first-name=Apereo",
+    "--cas.authn.attribute-repository.stub.attributes.last-name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@example.org",
+    
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    "--cas.audit.engine.enabled=false",
+    
+    "--cas.authn.pac4j.saml[0].keystore-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[0].private-key-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[0].service-provider-entity-id=cas:apereo:pac4j:saml:ff29a47a79e5b0f4",
+    "--cas.authn.pac4j.saml[0].service-provider-metadata-path=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/idp/sp-metadata.xml",
+    "--cas.authn.pac4j.saml[0].keystore-path=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/idp/samlKeystore.jks",
+    "--cas.authn.pac4j.saml[0].identity-provider-metadata-path=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/idp-metadata.xml",
+    "--cas.authn.pac4j.saml[0].client-name=SAML2Client",
+    "--cas.authn.pac4j.saml[0].principal-id-attribute=mail",
+
+    "--logging.level.org.apereo.cas=info",
+    "--logging.level.org.pac4j=warn",
+    "--logging.level.org.opensaml=warn",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

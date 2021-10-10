@@ -70,4 +70,4 @@ class MyExampleScript {
 }
 ```
 
-{% include casproperties.html properties="cas.authn.mfa.groovy-script" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.groovy-script" %}

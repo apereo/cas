@@ -27,9 +27,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.security.PrivilegedActionException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -233,13 +230,12 @@ public class ScriptingUtils {
         }
 
         try {
-            return AccessController.doPrivileged((PrivilegedAction<T>) () -> getGroovyResult(groovyScript, methodName, args, clazz, failOnError));
+            return getGroovyResult(groovyScript, methodName, args, clazz, failOnError);
         } catch (final Exception e) {
-            var cause = e instanceof PrivilegedActionException ? PrivilegedActionException.class.cast(e).getException() : e;
             if (failOnError) {
-                throw cause;
+                throw e;
             }
-            LoggingUtils.error(LOGGER, cause);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -304,23 +300,21 @@ public class ScriptingUtils {
      */
     public static GroovyObject parseGroovyScript(final Resource groovyScript,
                                                  final boolean failOnError) {
-        return AccessController.doPrivileged((PrivilegedAction<GroovyObject>) () -> {
-            val parent = ScriptingUtils.class.getClassLoader();
-            try (val loader = new GroovyClassLoader(parent)) {
-                val groovyClass = loadGroovyClass(groovyScript, loader);
-                if (groovyClass != null) {
-                    LOGGER.trace("Creating groovy object instance from class [{}]", groovyScript.getURI().getPath());
-                    return (GroovyObject) groovyClass.getDeclaredConstructor().newInstance();
-                }
-                LOGGER.warn("Groovy script at [{}] does not exist", groovyScript.getURI().getPath());
-            } catch (final Exception e) {
-                if (failOnError) {
-                    throw new RuntimeException(e);
-                }
-                LoggingUtils.error(LOGGER, e);
+        val parent = ScriptingUtils.class.getClassLoader();
+        try (val loader = new GroovyClassLoader(parent)) {
+            val groovyClass = loadGroovyClass(groovyScript, loader);
+            if (groovyClass != null) {
+                LOGGER.trace("Creating groovy object instance from class [{}]", groovyScript.getURI().getPath());
+                return (GroovyObject) groovyClass.getDeclaredConstructor().newInstance();
             }
-            return null;
-        });
+            LOGGER.warn("Groovy script at [{}] does not exist", groovyScript.getURI().getPath());
+        } catch (final Exception e) {
+            if (failOnError) {
+                throw new RuntimeException(e);
+            }
+            LoggingUtils.error(LOGGER, e);
+        }
+        return null;
     }
 
     private Class loadGroovyClass(final Resource groovyScript,
@@ -470,12 +464,9 @@ public class ScriptingUtils {
             }
 
             val script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-
-            val clazz = AccessController.doPrivileged((PrivilegedAction<Class<T>>) () -> {
-                val classLoader = new GroovyClassLoader(ScriptingUtils.class.getClassLoader(),
-                    new CompilerConfiguration(), true);
-                return classLoader.parseClass(script);
-            });
+            val classLoader = new GroovyClassLoader(ScriptingUtils.class.getClassLoader(),
+                new CompilerConfiguration(), true);
+            val clazz = classLoader.parseClass(script);
 
             LOGGER.trace("Preparing constructor arguments [{}] for resource [{}]", args, resource);
             val ctor = clazz.getDeclaredConstructor(constructorArgs);
@@ -486,7 +477,7 @@ public class ScriptingUtils {
                     + " is of type " + result.getClass()
                     + " when we were expecting " + expectedType);
             }
-            return result;
+            return (T) result;
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }

@@ -1,26 +1,24 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.cosmosdb.CosmosDbDocument;
-import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
+import com.azure.cosmos.CosmosContainer;
+import com.azure.cosmos.CosmosException;
+import com.azure.cosmos.models.CosmosItemRequestOptions;
+import com.azure.cosmos.models.CosmosQueryRequestOptions;
+import com.azure.cosmos.models.PartitionKey;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
-import com.microsoft.azure.documentdb.Document;
-import com.microsoft.azure.documentdb.DocumentClientException;
-import com.microsoft.azure.documentdb.FeedOptions;
-import com.microsoft.azure.documentdb.FeedResponse;
-import com.microsoft.azure.documentdb.PartitionKey;
-import com.microsoft.azure.documentdb.SqlQuerySpec;
-import com.microsoft.azure.documentdb.internal.HttpConstants;
-import com.microsoft.azure.spring.data.documentdb.DocumentDbFactory;
-import com.microsoft.azure.spring.data.documentdb.core.DocumentDbTemplate;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CosmosDbServiceRegistry}.
@@ -28,27 +26,23 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
-    private static final String PARTITION_KEY_FIELD_VALUE = "CasServices";
-
-    private final DocumentDbTemplate documentDbTemplate;
-    private final DocumentDbFactory documentDbFactory;
-    private final String collectionName;
-    private final String databaseName;
+    /**
+     * Partition key.
+     */
+    public static final String PARTITION_KEY = "id";
 
     private final StringSerializer<RegisteredService> serializer;
 
-    public CosmosDbServiceRegistry(final DocumentDbTemplate db, final DocumentDbFactory dbFactory,
-                                   final String collectionName, final String databaseName,
+    private final CosmosContainer container;
+
+    public CosmosDbServiceRegistry(final CosmosContainer container,
                                    final ConfigurableApplicationContext applicationContext,
                                    final Collection<ServiceRegistryListener> serviceRegistryListeners) {
         super(applicationContext, serviceRegistryListeners);
-
-        this.documentDbTemplate = db;
-        this.collectionName = collectionName;
-        this.documentDbFactory = dbFactory;
-        this.databaseName = databaseName;
         this.serializer = new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
+        this.container = container;
     }
 
     @Override
@@ -60,96 +54,100 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
         } else {
             update(registeredService);
         }
-
         return registeredService;
-    }
-
-    private void insert(final RegisteredService registeredService) {
-        val document = createCosmosDbDocument(registeredService);
-        this.documentDbTemplate.insert(this.collectionName, document, new PartitionKey(document.getPartitionKey()));
-    }
-
-    private void update(final RegisteredService registeredService) {
-        try {
-            val document = createCosmosDbDocument(registeredService);
-            val id = String.valueOf(registeredService.getId());
-            this.documentDbTemplate.upsert(this.collectionName, document, id, new PartitionKey(document.getPartitionKey()));
-        } catch (final Exception e) {
-            if (e.getCause().getClass().equals(DocumentClientException.class)) {
-                val ex = DocumentClientException.class.cast(e.getCause());
-                if (ex.getStatusCode() == HttpConstants.StatusCodes.NOTFOUND) {
-                    insert(registeredService);
-                }
-            }
-        }
     }
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
-        val id = String.valueOf(registeredService.getId());
-        this.documentDbTemplate.deleteById(this.collectionName, id, Document.class, new PartitionKey(PARTITION_KEY_FIELD_VALUE));
-        return true;
+        val doc = createCosmosDbDocument(registeredService);
+        LOGGER.debug("Deleting registered service [{}] from container [{}]", doc.getId(), container.getId());
+        val response = container.deleteItem(doc, new CosmosItemRequestOptions());
+        return !HttpStatus.valueOf(response.getStatusCode()).isError();
     }
 
     @Override
     public void deleteAll() {
-        this.documentDbTemplate.deleteAll(this.collectionName);
+        LOGGER.debug("Deleting registered services from container [{}]", container.getId());
+        val queryOptions = new CosmosQueryRequestOptions();
+        val items = container.queryItems("SELECT * FROM " + container.getId(), queryOptions, CosmosDbDocument.class);
+        items.iterableByPage()
+            .forEach(response -> response.getResults()
+                .forEach(doc -> container.deleteItem(doc, new CosmosItemRequestOptions())));
     }
 
     @Override
     public Collection<RegisteredService> load() {
-        val query = String.format("SELECT * FROM %s c", this.collectionName);
-        val results = queryDocuments(query);
-        val it = results.getQueryIterator();
-
         val services = new ArrayList<RegisteredService>();
-        while (it.hasNext()) {
-            val doc = it.next();
-            var svc = getRegisteredServiceFromDocumentBody(doc);
-            if (svc != null) {
-                svc = invokeServiceRegistryListenerPostLoad(svc);
-            }
-            if (svc != null) {
-                services.add(svc);
-            }
-        }
+        val queryOptions = new CosmosQueryRequestOptions();
+        LOGGER.trace("Loading registered services from container [{}]", container.getId());
+        val items = container.queryItems("SELECT * FROM " + container.getId(), queryOptions, CosmosDbDocument.class);
+        items.iterableByPage()
+            .forEach(response -> services.addAll(response.getResults()
+                .stream()
+                .map(this::getRegisteredServiceFromDocumentBody)
+                .peek(this::invokeServiceRegistryListenerPostLoad)
+                .collect(Collectors.toList())));
         return services;
     }
 
-    private RegisteredService getRegisteredServiceFromDocumentBody(final Document doc) {
-        if (doc != null) {
-            val body = doc.getString("body");
-            if (StringUtils.isNotBlank(body)) {
-                return this.serializer.from(body);
-            }
-        }
-        return null;
+    @Override
+    public RegisteredService findServiceBy(final String id) {
+        val services = new ArrayList<RegisteredService>();
+        val queryOptions = new CosmosQueryRequestOptions();
+        LOGGER.trace("Loading registered service by [{}] from container [{}]", id, container.getId());
+        val query = String.format("SELECT * FROM %s r WHERE r.serviceId LIKE '%s'", container.getId(), '%' + id + '%');
+        val items = container.queryItems(query, queryOptions, CosmosDbDocument.class);
+        items.iterableByPage()
+            .forEach(response -> services.addAll(response.getResults()
+                .stream()
+                .map(this::getRegisteredServiceFromDocumentBody)
+                .sorted()
+                .filter(r -> r.matches(id))
+                .peek(this::invokeServiceRegistryListenerPostLoad)
+                .collect(Collectors.toList())));
+        return services.isEmpty() ? null : services.get(0);
     }
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        val doc = this.documentDbTemplate.findById(this.collectionName, String.valueOf(id), CosmosDbDocument.class);
-        if (doc != null) {
-            return this.serializer.from(doc.getBody());
+        try {
+            val key = String.valueOf(id);
+            LOGGER.debug("Reading registered services with id [{}] from [{}]", key, container.getId());
+            val doc = container.readItem(key, new PartitionKey(key), CosmosDbDocument.class).getItem();
+            return getRegisteredServiceFromDocumentBody(doc);
+        } catch (final CosmosException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND.value()) {
+                LOGGER.debug("Unable to locate registered service with id [{}]", id);
+                LOGGER.trace(e.getMessage(), e);
+            } else {
+                LoggingUtils.warn(LOGGER, e);
+            }
         }
         return null;
     }
 
-    private FeedResponse<Document> queryDocuments(final String query) {
-        val sql = new SqlQuerySpec(query);
-        val feed = new FeedOptions();
-        feed.setEnableCrossPartitionQuery(Boolean.TRUE);
-        val documentClient = this.documentDbFactory.getDocumentClient();
-        val collectionLink = CosmosDbObjectFactory.getCollectionLink(this.databaseName, this.collectionName);
-        return documentClient.queryDocuments(collectionLink, sql, feed, PARTITION_KEY_FIELD_VALUE);
+    private RegisteredService getRegisteredServiceFromDocumentBody(final CosmosDbDocument doc) {
+        return this.serializer.from(doc.getBody());
+    }
+
+    private void insert(final RegisteredService registeredService) {
+        val doc = createCosmosDbDocument(registeredService);
+        LOGGER.trace("Creating registered service with id [{}] in container [{}]", doc.getId(), container.getId());
+        container.createItem(doc);
+    }
+
+    private void update(final RegisteredService registeredService) {
+        val doc = createCosmosDbDocument(registeredService);
+        LOGGER.trace("Upserting registered service with id [{}] in container [{}]", doc.getId(), container.getId());
+        container.upsertItem(doc);
     }
 
     private CosmosDbDocument createCosmosDbDocument(final RegisteredService registeredService) {
         val body = serializer.toString(registeredService);
         val document = new CosmosDbDocument();
-        document.setPartitionKey(PARTITION_KEY_FIELD_VALUE);
         document.setBody(body);
         document.setId(String.valueOf(registeredService.getId()));
+        document.setServiceId(registeredService.getServiceId());
         return document;
     }
 }

@@ -19,6 +19,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -106,10 +107,10 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         val sortedConfigurers = new ArrayList<>(configurers);
         AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
 
-        sortedConfigurers.forEach(c -> {
+        sortedConfigurers.forEach(Unchecked.consumer(c -> {
             LOGGER.trace("Configuring principal resolution execution plan [{}]", c.getName());
             c.configurePrincipalResolutionExecutionPlan(plan);
-        });
+        }));
         plan.registerPrincipalResolver(new EchoingPrincipalResolver());
 
         val registeredPrincipalResolvers = plan.getRegisteredPrincipalResolvers();
