@@ -99,6 +99,7 @@ import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.handler.DnAttributeEntryHandler;
 import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
+import org.ldaptive.handler.MergeResultHandler;
 import org.ldaptive.handler.RecursiveResultHandler;
 import org.ldaptive.handler.SearchResultHandler;
 import org.ldaptive.pool.BindConnectionPassivator;
@@ -297,10 +298,7 @@ public class LdapUtils {
      * @return true, if successful
      */
     public static boolean containsResultEntry(final SearchResponse response) {
-        if (response != null) {
-            return response.getEntry() != null;
-        }
-        return false;
+        return response != null && response.getEntry() != null;
     }
 
     /**
@@ -923,7 +921,7 @@ public class LdapUtils {
                 entryResolver.setConnectionFactory(factory);
                 entryResolver.setAllowMultipleEntries(l.isAllowMultipleEntries());
                 entryResolver.setBinaryAttributes(l.getBinaryAttributes().toArray(new String[0]));
-
+                
                 if (StringUtils.isNotBlank(l.getDerefAliases())) {
                     entryResolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
                 }
@@ -1022,7 +1020,9 @@ public class LdapUtils {
                         new RecursiveResultHandler(recursive.getSearchAttribute(),
                             recursive.getMergeAttributes().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
                     break;
+                case MERGE_ENTRIES:
                 default:
+                    searchResultHandlers.add(new MergeResultHandler());
                     break;
             }
         });
@@ -1132,6 +1132,7 @@ public class LdapUtils {
                 resolver.setAllowMultipleDns(l.isAllowMultipleDns());
                 resolver.setConnectionFactory(connectionFactory);
                 resolver.setUserFilter(l.getSearchFilter());
+                resolver.setResolveFromAttribute(l.getResolveFromAttribute());
                 if (l.isFollowReferrals()) {
                     resolver.setSearchResultHandlers(new FollowSearchReferralHandler());
                 }

@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenException;
@@ -18,10 +19,10 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.LoggingUtils;
 
 import com.google.common.base.Supplier;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -62,11 +63,12 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
         OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,
         OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.TOKEN_URL},
         produces = MediaType.APPLICATION_JSON_VALUE)
-    @SneakyThrows
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        val context = new JEEContext(request, response);
         try {
-            if (!verifyAccessTokenRequest(request, response)) {
-                throw new IllegalArgumentException("Access token validation failed");
+            if (!verifyAccessTokenRequest(context)) {
+                LoggingUtils.error(LOGGER, "Access token validation failed");
+                return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_GRANT);
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
@@ -77,10 +79,9 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
             val requestHolder = examineAndExtractAccessTokenGrantRequest(request, response);
             LOGGER.debug("Creating access token for [{}]", requestHolder);
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(requestHolder.getAuthentication());
-            val context = new JEEContext(request, response);
             val tokenResult = getConfigurationContext().getAccessTokenGenerator().generate(requestHolder);
             LOGGER.debug("Access token generated result is: [{}]", tokenResult);
-            return generateAccessTokenResponse(request, response, requestHolder, context, tokenResult);
+            return generateAccessTokenResponse(context, requestHolder, tokenResult);
         } catch (final InvalidOAuth20DeviceTokenException e) {
             LOGGER.error("Could not identify and extract device token request for device token [{}]", e.getTicketId());
             return OAuth20Utils.writeError(response, OAuth20Constants.ACCESS_DENIED);
@@ -116,17 +117,13 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
     /**
      * Generate access token response model and view.
      *
-     * @param request       the request
-     * @param response      the response
-     * @param requestHolder the request holder
      * @param context       the context
+     * @param requestHolder the request holder
      * @param result        the result
      * @return the model and view
      */
-    protected ModelAndView generateAccessTokenResponse(final HttpServletRequest request,
-                                                       final HttpServletResponse response,
+    protected ModelAndView generateAccessTokenResponse(final WebContext context,
                                                        final AccessTokenRequestDataHolder requestHolder,
-                                                       final JEEContext context,
                                                        final OAuth20TokenGeneratedResult result) {
         LOGGER.debug("Generating access token response for [{}]", result);
         val deviceRefreshInterval = Beans.newDuration(getConfigurationContext().getCasProperties()
@@ -141,12 +138,12 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
             .responseType(result.getResponseType().orElse(OAuth20ResponseTypes.NONE))
             .casProperties(getConfigurationContext().getCasProperties())
             .generatedToken(result)
+            .grantType(result.getGrantType().orElse(OAuth20GrantTypes.NONE))
             .build();
-        return getConfigurationContext().getAccessTokenResponseGenerator().generate(request, response, tokenResult);
+        return getConfigurationContext().getAccessTokenResponseGenerator().generate(context, tokenResult);
     }
 
-    private AccessTokenRequestDataHolder examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,
-                                                                                  final HttpServletResponse response) {
+    private AccessTokenRequestDataHolder examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val audit = AuditableContext.builder()
             .httpRequest(request)
             .httpResponse(response)
@@ -162,13 +159,10 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
     /**
      * Verify the access token request.
      *
-     * @param request  the HTTP request
-     * @param response the HTTP response
      * @return true, if successful
      */
-    private boolean verifyAccessTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
+    private boolean verifyAccessTokenRequest(final WebContext context) {
         val validators = getConfigurationContext().getAccessTokenGrantRequestValidators();
-        val context = new JEEContext(request, response);
         return validators.stream()
             .filter(ext -> ext.supports(context))
             .findFirst()

@@ -26,5 +26,4 @@ public class UmaAuthorizationNeedInfoResponseTests {
         info.setTicket("ticket");
         assertNotNull(info.toJson());
     }
-
 }

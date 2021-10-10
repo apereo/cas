@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@Tag("JDBC")
+@Tag("JDBCAuthentication")
 @Import(NamedQueryDatabaseAuthenticationHandlerTests.DatabaseTestConfiguration.class)
 public class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
 

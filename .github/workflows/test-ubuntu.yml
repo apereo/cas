@@ -9,7 +9,8 @@ env:
   CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
   SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  JDK_CURRENT: 11.0.11
+  JDK_CURRENT: 11.0.12
+  CATEGORY_REGEX: ".*" # Use this to limit which tests run
 
 ##########################################################################
 
@@ -43,7 +44,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'adopt'
+          distribution: 'zulu'
       - name: Initialize
         run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
 
@@ -58,7 +59,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'adopt'
+          distribution: 'zulu'
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/checkout@v2
@@ -83,7 +84,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'adopt'
+          distribution: 'zulu'
       - id: print-categories
         run: ./gradlew --build-cache --configure-on-demand --no-daemon -q testCategories
       - id: get-categories
@@ -106,7 +107,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'adopt'
+          distribution: 'zulu'
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
         shell: bash
@@ -121,9 +122,9 @@ jobs:
       - name: Run Tests
         run: ./testcas.sh --no-retry --no-watch --with-coverage --category ${{ matrix.category }}
       - name: "Upload to Codecov"
-        uses: "codecov/codecov-action@v1"
+        uses: "codecov/codecov-action@v2"
         with:
-          file: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
+          files: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
           flags: ${{ matrix.category }}
           name: ${{ matrix.category }}
           verbose: false
@@ -144,7 +145,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'adopt'
+          distribution: 'zulu'
       - name: "Download coverage files"
         uses: "actions/download-artifact@v2"
         with:

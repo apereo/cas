@@ -45,7 +45,7 @@ can be done in a few ways. To learn more, please [review this guide](../installa
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp" %}
 
 You may also need to declare the following repository in
 your CAS overlay to be able to resolve dependencies:
@@ -59,13 +59,13 @@ repositories {
 }
 ```
 
-{% include casproperties.html properties="cas.authn.saml-idp.core,cas.client,cas.session-replication" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.core,cas.client,cas.session-replication" %}
 
 ### Actuator Endpoints
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="samlPostProfileResponse" %}
+{% include_cached actuators.html endpoints="samlPostProfileResponse" %}
 
 ### SAML Services
 

@@ -15,6 +15,7 @@ dependencies {
     implementation project(":support:cas-server-support-oauth-core-api")
     implementation project(":support:cas-server-support-oauth-services")
 
+    implementation project(":core:cas-server-core-authentication-throttle")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-authentication-api")

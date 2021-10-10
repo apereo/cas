@@ -60,7 +60,6 @@ public class GitRepository implements DisposableBean {
      *
      * @return the objects in repository
      */
-    @SneakyThrows
     public Collection<GitObject> getObjectsInRepository() {
         return getObjectsInRepository(TreeFilter.ALL);
     }

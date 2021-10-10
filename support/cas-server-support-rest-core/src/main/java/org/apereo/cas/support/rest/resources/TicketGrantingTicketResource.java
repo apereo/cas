@@ -2,6 +2,8 @@ package org.apereo.cas.support.rest.resources;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
+import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.rest.BadRestRequestException;
 import org.apereo.cas.rest.authentication.RestAuthenticationService;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
@@ -25,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * {@link RestController} implementation of CAS' REST API.
@@ -52,6 +56,8 @@ public class TicketGrantingTicketResource {
     private final TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory;
 
     private final ApplicationContext applicationContext;
+
+    private final SingleLogoutRequestExecutor singleLogoutRequestExecutor;
 
     /**
      * Reject get response.
@@ -100,14 +106,18 @@ public class TicketGrantingTicketResource {
     /**
      * Destroy ticket granting ticket.
      *
-     * @param tgtId ticket granting ticket id URI path param
-     * @return {@link ResponseEntity} representing RESTful response. Signals
-     * {@link HttpStatus#OK} when successful.
+     * @param tgtId    ticket granting ticket id URI path param
+     * @param request  the request
+     * @param response the response
+     * @return {@link ResponseEntity} representing RESTful response. Signals {@link HttpStatus#OK} when successful.
      */
-    @DeleteMapping(value = RestProtocolConstants.ENDPOINT_TICKETS + "/{tgtId:.+}")
-    public ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
-        this.centralAuthenticationService.deleteTicket(tgtId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @DeleteMapping(value = RestProtocolConstants.ENDPOINT_TICKETS + "/{tgtId:.+}",
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<SingleLogoutRequestContext>> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId,
+                                                                                       final HttpServletRequest request,
+                                                                                       final HttpServletResponse response) {
+        val requests = singleLogoutRequestExecutor.execute(tgtId, request, response);
+        return new ResponseEntity<>(requests, HttpStatus.OK);
     }
 
     /**

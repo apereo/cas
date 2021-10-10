@@ -21,12 +21,12 @@ public class AttributeReleaseConsentCipherExecutor extends BaseStringCipherExecu
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.consent.crypto.encryption.key";
+        return "cas.consent.core.crypto.encryption.key";
     }
 
     @Override
     protected String getSigningKeySetting() {
-        return "cas.consent.crypto.signing.key";
+        return "cas.consent.core.crypto.signing.key";
     }
 
     @Override

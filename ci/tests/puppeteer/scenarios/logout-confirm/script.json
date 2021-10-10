@@ -1,7 +1,14 @@
 {
   "dependencies": "core",
   "properties": [
-      "--cas.logout.confirm-logout=true",
-      "--cas.service-registry.core.init-from-json=true"
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.logout.confirm-logout=true",
+    "--cas.logout.redirect-parameter=url",
+    "--cas.logout.follow-service-redirects=true",
+    
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+    "--cas.service-registry.core.init-from-json=true"
   ]
 }

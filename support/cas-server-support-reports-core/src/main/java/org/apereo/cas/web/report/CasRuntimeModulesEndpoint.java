@@ -1,13 +1,13 @@
 package org.apereo.cas.web.report;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.SystemUtils;
+import org.apereo.cas.util.feature.CasRuntimeModule;
+import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
-import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.List;
 
@@ -19,12 +19,11 @@ import java.util.List;
  */
 @Endpoint(id = "casModules", enableByDefault = false)
 public class CasRuntimeModulesEndpoint extends BaseCasActuatorEndpoint {
-    private final ConfigurableApplicationContext applicationContext;
+    private final CasRuntimeModuleLoader loader;
 
-    public CasRuntimeModulesEndpoint(final CasConfigurationProperties casProperties,
-                                     final ConfigurableApplicationContext applicationContext) {
+    public CasRuntimeModulesEndpoint(final CasConfigurationProperties casProperties, final CasRuntimeModuleLoader loader) {
         super(casProperties);
-        this.applicationContext = applicationContext;
+        this.loader = loader;
     }
 
     /**
@@ -34,7 +33,7 @@ public class CasRuntimeModulesEndpoint extends BaseCasActuatorEndpoint {
      */
     @ReadOperation
     @Operation(summary = "Get all available CAS runtime module descriptors")
-    public List<SystemUtils.CasRuntimeModule> reportModules() {
-        return SystemUtils.getRuntimeModules(applicationContext);
+    public List<CasRuntimeModule> reportModules() {
+        return loader.load();
     }
 }

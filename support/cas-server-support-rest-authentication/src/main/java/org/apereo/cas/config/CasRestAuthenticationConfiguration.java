@@ -12,7 +12,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
@@ -58,7 +57,6 @@ public class CasRestAuthenticationConfiguration {
 
     @Bean
     @RefreshScope
-    @SneakyThrows
     public RestTemplate restAuthenticationTemplate() {
         val rest = casProperties.getAuthn().getRest();
         val template = new RestTemplate();

@@ -3,9 +3,11 @@ package org.apereo.cas.support.saml.services;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -45,23 +47,30 @@ public class EduPersonTargetedIdAttributeReleasePolicy extends BaseSamlRegistere
     private static final long serialVersionUID = -1283755507124862357L;
 
     @JsonProperty
+    @ExpressionLanguageCapable
     private String salt;
 
     @JsonProperty
+    @ExpressionLanguageCapable
     private String attribute;
 
     @Override
     protected Map<String, List<Object>> getAttributesForSamlRegisteredService(final Map<String, List<Object>> attributes,
-                                                                        final SamlRegisteredService service,
-                                                                        final ApplicationContext applicationContext,
-                                                                        final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                        final SamlRegisteredServiceServiceProviderMetadataFacade facade,
-                                                                        final EntityDescriptor entityDescriptor,
-                                                                        final Principal principal,
-                                                                        final Service selectedService) {
+                                                                              final SamlRegisteredService service,
+                                                                              final ApplicationContext applicationContext,
+                                                                              final SamlRegisteredServiceCachingMetadataResolver resolver,
+                                                                              final SamlRegisteredServiceServiceProviderMetadataFacade facade,
+                                                                              final EntityDescriptor entityDescriptor,
+                                                                              final Principal principal,
+                                                                              final Service selectedService) {
         val releaseAttributes = new HashMap<String, List<Object>>();
-        val persistentIdGenerator = new ShibbolethCompatiblePersistentIdGenerator(this.salt);
-        persistentIdGenerator.setAttribute(this.attribute);
+
+        val resolvedSalt = SpringExpressionLanguageValueResolver.getInstance().resolve(this.salt);
+        val persistentIdGenerator = new ShibbolethCompatiblePersistentIdGenerator(resolvedSalt);
+
+        val resolvedAttrs = SpringExpressionLanguageValueResolver.getInstance().resolve(this.attribute);
+        persistentIdGenerator.setAttribute(resolvedAttrs);
+
         val principalId = persistentIdGenerator.determinePrincipalIdFromAttributes(principal.getId(), attributes);
         LOGGER.debug("Selected principal id [{}] to generate [{}] for service [{}]",
             principalId, ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID, selectedService);

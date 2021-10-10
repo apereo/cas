@@ -3,8 +3,10 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.jpa.AbstractJpaEntityFactory;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.registry.generic.BaseTicketEntity;
 import org.apereo.cas.ticket.registry.generic.JpaTicketEntity;
 import org.apereo.cas.ticket.registry.mysql.MySQLJpaTicketEntity;
+import org.apereo.cas.ticket.registry.postgres.PostgresJpaTicketEntity;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
@@ -23,7 +25,7 @@ import java.time.ZonedDateTime;
  * @since 6.4.0
  */
 @Slf4j
-public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<JpaTicketEntity> {
+public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<BaseTicketEntity> {
     private static TicketSerializationManager TICKET_SERIALIZATION_MANAGER;
 
     public JpaTicketEntityFactory(final String dialect) {
@@ -53,7 +55,7 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<JpaTicketEn
      * @return the jpa ticket entity
      */
     @SneakyThrows
-    public JpaTicketEntity fromTicket(final Ticket ticket) {
+    public BaseTicketEntity fromTicket(final Ticket ticket) {
         val jsonBody = getTicketSerializationManager().serializeTicket(ticket);
         val authentication = ticket instanceof AuthenticationAwareTicket
             ? ((AuthenticationAwareTicket) ticket).getAuthentication()
@@ -70,8 +72,8 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<JpaTicketEn
     }
 
     @Override
-    public Class<JpaTicketEntity> getType() {
-        return (Class<JpaTicketEntity>) getEntityClass();
+    public Class<BaseTicketEntity> getType() {
+        return (Class<BaseTicketEntity>) getEntityClass();
     }
 
     /**
@@ -80,15 +82,18 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<JpaTicketEn
      * @param entity the entity
      * @return the registered service
      */
-    public Ticket toTicket(final JpaTicketEntity entity) {
+    public Ticket toTicket(final BaseTicketEntity entity) {
         val ticket = getTicketSerializationManager().deserializeTicket(entity.getBody(), entity.getType());
         LOGGER.trace("Converted JPA entity [{}] to [{}]", this, ticket);
         return ticket;
     }
 
-    private Class<? extends JpaTicketEntity> getEntityClass() {
+    private Class<? extends BaseTicketEntity> getEntityClass() {
         if (isMySql()) {
             return MySQLJpaTicketEntity.class;
+        }
+        if (isPostgres()) {
+            return PostgresJpaTicketEntity.class;
         }
         return JpaTicketEntity.class;
     }

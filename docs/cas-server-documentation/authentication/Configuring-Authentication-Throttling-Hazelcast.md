@@ -12,6 +12,6 @@ This component requires and depends on the [CAS auditing functionality](../audit
 
 Enable the following module in your configuration overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-hazelcast" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-hazelcast" %}
 
-{% include {{ version }}/hazelcast-configuration.md configKey="cas.authn.throttle.hazelcast" %}
+{% include_cached {{ version }}/hazelcast-configuration.md configKey="cas.authn.throttle.hazelcast" %}

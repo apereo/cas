@@ -45,6 +45,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends Abst
 
     @BeforeEach
     public void before() {
+        servicesManager.deleteAll();
         val supportingService = RequestValidatorTestUtils.getService(
             RegisteredServiceTestUtils.CONST_TEST_URL,
             RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
@@ -67,9 +68,29 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends Abst
         servicesManager.save(nonSupportingService);
         servicesManager.save(promiscuousService);
 
-        registerTicket(SUPPORTING_TICKET);
-        registerTicket(NON_SUPPORTING_TICKET);
-        registerTicket(PROMISCUOUS_TICKET);
+        registerTicket(SUPPORTING_TICKET, RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
+        registerTicket(NON_SUPPORTING_TICKET, RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID);
+        registerTicket(PROMISCUOUS_TICKET, RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
+    }
+
+    @Test
+    public void verifyRefreshTokenFromAnotherClientId() {
+        val request = new MockHttpServletRequest();
+
+        val profile = new CommonProfile();
+        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
+        profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
+        val session = request.getSession(true);
+        assertNotNull(session);
+        session.setAttribute(Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+
+        val response = new MockHttpServletResponse();
+        request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.getType());
+        request.setParameter(OAuth20Constants.CLIENT_ID, RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
+        request.setParameter(OAuth20Constants.CLIENT_SECRET, RequestValidatorTestUtils.SHARED_SECRET);
+        request.setParameter(OAuth20Constants.REFRESH_TOKEN, SUPPORTING_TICKET);
+        assertFalse(validator.validate(new JEEContext(request, response)));
     }
 
     @Test
@@ -148,7 +169,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends Abst
         assertTrue(validator.validate(new JEEContext(request, response)));
     }
 
-    private void registerTicket(final String name) {
+    private void registerTicket(final String name, final String clientId) {
         val tgt = new MockTicketGrantingTicket("casuser");
         val token = mock(OAuth20RefreshToken.class);
         when(token.getId()).thenReturn(name);
@@ -156,6 +177,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends Abst
         when(token.isExpired()).thenReturn(false);
         when(token.getAuthentication()).thenReturn(tgt.getAuthentication());
         when(token.getTicketGrantingTicket()).thenReturn(tgt);
+        when(token.getClientId()).thenReturn(clientId);
         ticketRegistry.addTicket(token);
     }
 }

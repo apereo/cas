@@ -62,7 +62,6 @@ public class UniquePrincipalAuthenticationPolicyTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    @SneakyThrows
     public void verifyPolicyIsGoodUserNotFound() {
         this.ticketRegistry.deleteAll();
         val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
@@ -71,8 +70,7 @@ public class UniquePrincipalAuthenticationPolicyTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyPolicyWithAssertion() {
+    public void verifyPolicyWithAssertion() throws Exception {
         this.ticketRegistry.deleteAll();
         val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
         assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),

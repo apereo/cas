@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -40,8 +39,7 @@ public class AcceptableUsagePolicyRenderActionTests extends BaseAcceptableUsageP
     private Action acceptableUsagePolicyRenderAction;
 
     @Test
-    @SneakyThrows
-    public void verifyAction() {
+    public void verifyAction() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(),

@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import net.shibboleth.utilities.java.support.xml.BasicParserPool;
 import org.apache.commons.io.FileUtils;
@@ -70,13 +69,12 @@ public class CoreSamlConfiguration {
     }
 
     @Bean(name = OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-    public OpenSamlConfigBean openSamlConfigBean() {
+    public OpenSamlConfigBean openSamlConfigBean() throws Exception {
         return new OpenSamlConfigBean(parserPool());
     }
 
-    @SneakyThrows
     @Bean(name = "shibboleth.ParserPool", initMethod = "initialize")
-    public BasicParserPool parserPool() {
+    public BasicParserPool parserPool() throws Exception {
         val pool = new BasicParserPool();
         pool.setMaxPoolSize(POOL_SIZE);
         pool.setCoalescing(true);

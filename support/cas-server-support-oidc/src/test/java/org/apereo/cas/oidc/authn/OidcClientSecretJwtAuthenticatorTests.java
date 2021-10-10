@@ -6,6 +6,8 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
@@ -164,7 +166,8 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(),
             StringUtils.EMPTY, StringUtils.EMPTY,
-            clientId, new HashMap<>());
+            clientId, new HashMap<>(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         ticketRegistry.addTicket(code);
         request.addParameter(OAuth20Constants.CODE, code.getId());
         return credentials;

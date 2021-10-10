@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.SneakyThrows;
@@ -74,8 +75,11 @@ public class MultifactorAuthenticationUtils {
             val def = ctx.getMatchingTransition(event.getId());
             if (def == null) {
                 val msg = String.format("State [%s:%s:%s] does not have a matching transition for %s",
-                    ctx.getCurrentState().getId(), ctx.getCurrentEvent().getId(),
-                    ctx.getCurrentTransition().getId(), event.getId());
+                    ctx.getCurrentState().getId(),
+                    ctx.getCurrentEvent() != null ? ctx.getCurrentEvent().getId() : "N/A",
+                    ctx.getCurrentTransition() != null ? ctx.getCurrentTransition().getId() : "N/A",
+                    event.getId());
+                LoggingUtils.error(LOGGER, msg);
                 throw new AuthenticationException(msg);
             }
             return event;

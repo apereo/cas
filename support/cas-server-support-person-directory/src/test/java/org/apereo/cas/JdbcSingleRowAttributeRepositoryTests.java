@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.jdbc[0].case-insensitive-query-attributes=username->LOWER,attr1,attr2",
     "cas.authn.attribute-repository.jdbc[0].username=uid"
 })
-@Tag("JDBC")
+@Tag("JDBCAuthentication")
 public class JdbcSingleRowAttributeRepositoryTests extends BaseJdbcAttributeRepositoryTests {
 
     @Test

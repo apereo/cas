@@ -5,7 +5,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
+import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -46,11 +48,13 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
             return error();
         }
 
+        var passwordResetTicket = (TransientSessionTicket) null;
         try {
-            val tst = centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
-            val token = tst.getProperties().get(PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN).toString();
+            passwordResetTicket = centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
+            TicketState.class.cast(passwordResetTicket).update();
+
+            val token = passwordResetTicket.getProperties().get(PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN).toString();
             val username = passwordManagementService.parseToken(token);
-            centralAuthenticationService.deleteTicket(tst.getId());
 
             val query = PasswordManagementQuery.builder().username(username).build();
             PasswordManagementWebflowUtils.putPasswordResetToken(requestContext, token);
@@ -71,12 +75,17 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
                 pm.getReset().isSecurityQuestionsEnabled());
 
             if (pm.getReset().isSecurityQuestionsEnabled()) {
+                LOGGER.trace("Security questions are enabled; proceeding...");
                 return success();
             }
             return new EventFactorySupport().event(this, EVENT_ID_SECURITY_QUESTIONS_DISABLED);
         } catch (final Exception e) {
-            LOGGER.error("Password reset token could not be verified: [{}]", e.getMessage());
+            LoggingUtils.error(LOGGER, "Password reset token could not be located or verified", e);
             return error();
+        } finally {
+            if (passwordResetTicket != null && passwordResetTicket.isExpired()) {
+                centralAuthenticationService.deleteTicket(passwordResetTicket);
+            }
         }
     }
 }

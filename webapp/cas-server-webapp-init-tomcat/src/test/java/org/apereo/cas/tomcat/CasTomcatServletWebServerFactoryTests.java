@@ -53,6 +53,7 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
 
         "cas.server.tomcat.http.enabled=true",
         "cas.server.tomcat.http.port=0",
+        "cas.server.tomcat.http.redirect-port=9890",
 
         "cas.server.tomcat.ajp.enabled=true",
         "cas.server.tomcat.ajp.port=9944",

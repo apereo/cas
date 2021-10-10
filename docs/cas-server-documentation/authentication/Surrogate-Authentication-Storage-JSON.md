@@ -17,4 +17,4 @@ Similar to above, except that surrogate accounts may be defined in an external J
 }
 ```
 
-{% include casproperties.html properties="cas.authn.surrogate.json" %}
+{% include_cached casproperties.html properties="cas.authn.surrogate.json" %}

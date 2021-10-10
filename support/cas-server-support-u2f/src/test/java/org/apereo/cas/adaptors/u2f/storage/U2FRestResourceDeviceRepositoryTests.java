@@ -44,14 +44,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Hal Deadman
  * @since 5.3.0
  */
-@Tag("RestfulApi")
+@Tag("RestfulApiAuthentication")
 @SpringBootTest(classes = {
-        U2FRestResourceDeviceRepositoryTests.RestfulServiceRegistryTestConfiguration.class,
-        U2FConfiguration.class,
-        AopAutoConfiguration.class
+    U2FRestResourceDeviceRepositoryTests.RestfulServiceRegistryTestConfiguration.class,
+    U2FConfiguration.class,
+    AopAutoConfiguration.class
 }, properties = {
-        "server.port=9190",
-        "cas.authn.mfa.u2f.rest.url=http://localhost:9190"
+    "server.port=9190",
+    "cas.authn.mfa.u2f.rest.url=http://localhost:9190"
 }, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @Getter
 @EnableConfigurationProperties(CasConfigurationProperties.class)

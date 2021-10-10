@@ -17,7 +17,7 @@ support may apply here just the same.</p></div>
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-oidc" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-oidc" %}
 
 To learn more about OpenId Connect, please [review this guide](http://openid.net/specs/openid-connect-basic-1_0.html).
 
@@ -55,7 +55,7 @@ Instead, use the Dynamic Discovery endpoint and parse the discovery document to 
 
 ## Configuration
 
-{% include casproperties.html properties="cas.authn.oidc.core,cas.client" %}
+{% include_cached casproperties.html properties="cas.authn.oidc.core,cas.client" %}
 
 ## Server Configuration
 
@@ -65,7 +65,7 @@ You will need to configure your deployment environment and load-balancers accord
 
 ## Session Replication
 
-{% include casproperties.html properties="cas.session-replication" %}
+{% include_cached casproperties.html properties="cas.session-replication" %}
 
 ## Sample Client Applications
 

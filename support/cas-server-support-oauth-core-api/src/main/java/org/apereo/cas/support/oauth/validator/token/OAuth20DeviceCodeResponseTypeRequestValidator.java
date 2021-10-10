@@ -15,8 +15,10 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.springframework.core.Ordered;
+
+import java.util.Objects;
 
 /**
  * This is {@link OAuth20DeviceCodeResponseTypeRequestValidator}.
@@ -35,15 +37,14 @@ public class OAuth20DeviceCodeResponseTypeRequestValidator implements OAuth20Tok
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
-    public boolean validate(final JEEContext context) {
-        val request = context.getNativeRequest();
-        val responseType = request.getParameter(OAuth20Constants.RESPONSE_TYPE);
+    public boolean validate(final WebContext context) {
+        val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).orElse(StringUtils.EMPTY);
         if (!OAuth20Utils.checkResponseTypes(responseType, OAuth20ResponseTypes.values())) {
             LOGGER.warn("Response type [{}] is not supported.", responseType);
             return false;
         }
 
-        val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+        val clientId = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
 
         try {
@@ -52,14 +53,14 @@ public class OAuth20DeviceCodeResponseTypeRequestValidator implements OAuth20Tok
             LOGGER.warn("Registered service access is not allowed for service definition for client id [{}]", clientId);
             return false;
         }
-        return OAuth20Utils.isAuthorizedResponseTypeForService(context, registeredService);
+        return OAuth20Utils.isAuthorizedResponseTypeForService(context, Objects.requireNonNull(registeredService));
     }
 
     @Override
-    public boolean supports(final JEEContext context) {
-        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE)
+    public boolean supports(final WebContext context) {
+        val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID)
+        val clientId = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         return OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.DEVICE_CODE)
             && StringUtils.isNotBlank(clientId);

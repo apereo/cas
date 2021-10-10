@@ -1,6 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
-const url = require('url');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -11,17 +9,11 @@ const cas = require('../../cas.js');
     await page.goto("https://localhost:8443/cas/login?service=https://google.com");
     await cas.loginWith(page, "casuser", "Mellon");
 
-    console.log(page.url());
-    let result = new URL(page.url());
-    console.log(result.searchParams.get("ticket"));
-    assert(result.searchParams.has("ticket"));
+    await cas.assertTicketParameter(page);
 
     console.log("Generating service ticket with SSO")
     await page.goto("https://localhost:8443/cas/login?service=https://google.com");
-    console.log(page.url());
-    result = new URL(page.url());
-    console.log(result.searchParams.get("ticket"));
-    assert(result.searchParams.has("ticket"));
-
+    await cas.assertTicketParameter(page);
+    
     await browser.close();
 })();

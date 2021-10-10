@@ -13,9 +13,9 @@ are serialized into JSON and stored one-by-one in a multi-valued string attribut
 
 Support is enabled by including the following module in the WAR Overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-ldap" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-consent-ldap" %}
 
 ## Configuration
 
-{% include casproperties.html properties="cas.consent.ldap" %}
+{% include_cached casproperties.html properties="cas.consent.ldap" %}
 

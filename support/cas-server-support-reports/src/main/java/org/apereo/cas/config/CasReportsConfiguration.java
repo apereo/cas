@@ -9,12 +9,14 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.report.AuditLogEndpoint;
 import org.apereo.cas.web.report.CasInfoEndpointContributor;
@@ -58,6 +60,14 @@ import java.util.List;
 @Configuration(value = "casReportsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasReportsConfiguration {
+    @Autowired
+    @Qualifier("defaultSingleLogoutRequestExecutor")
+    private ObjectProvider<SingleLogoutRequestExecutor> defaultSingleLogoutRequestExecutor;
+
+    @Autowired
+    @Qualifier("casRuntimeModuleLoader")
+    private ObjectProvider<CasRuntimeModuleLoader> casRuntimeModuleLoader;
+
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
@@ -119,7 +129,7 @@ public class CasReportsConfiguration {
     @Bean
     @ConditionalOnAvailableEndpoint
     public CasRuntimeModulesEndpoint casRuntimeModulesEndpoint() {
-        return new CasRuntimeModulesEndpoint(casProperties, applicationContext);
+        return new CasRuntimeModulesEndpoint(casProperties, casRuntimeModuleLoader.getObject());
     }
 
     @Bean
@@ -146,13 +156,14 @@ public class CasReportsConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "casInfoEndpointContributor")
     public CasInfoEndpointContributor casInfoEndpointContributor() {
-        return new CasInfoEndpointContributor(applicationContext);
+        return new CasInfoEndpointContributor(casRuntimeModuleLoader.getObject());
     }
 
     @Bean
     @ConditionalOnAvailableEndpoint
     public SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint() {
-        return new SingleSignOnSessionsEndpoint(centralAuthenticationService.getObject(), casProperties);
+        return new SingleSignOnSessionsEndpoint(centralAuthenticationService.getObject(),
+            casProperties, defaultSingleLogoutRequestExecutor.getObject());
     }
 
     @Bean

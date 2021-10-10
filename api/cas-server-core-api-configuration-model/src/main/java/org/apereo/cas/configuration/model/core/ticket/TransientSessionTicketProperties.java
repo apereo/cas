@@ -26,6 +26,11 @@ public class TransientSessionTicketProperties implements Serializable {
     private static final long serialVersionUID = -3690545027059561010L;
 
     /**
+     * Controls number of times a ticket can be used within CAS server.
+     */
+    private int numberOfUses = 1;
+
+    /**
      * Number of seconds after which this ticket becomes invalid.
      */
     private long timeToKillInSeconds = TimeUnit.MINUTES.toSeconds(5);

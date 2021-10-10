@@ -51,7 +51,9 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends Abstra
         attributes.put(OAuth20Constants.NONCE, Collections.singletonList("nonce"));
 
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
-        val authentication = RegisteredServiceTestUtils.getAuthentication(CoreAuthenticationTestUtils.getPrincipal("casuser"), attributes);
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
+        val authentication = RegisteredServiceTestUtils.getAuthentication(principal, attributes);
+        val code = addCode(principal, registeredService);
         val holder = AccessTokenRequestDataHolder.builder()
             .clientId(registeredService.getClientId())
             .service(CoreAuthenticationTestUtils.getService())
@@ -60,6 +62,7 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends Abstra
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .responseType(OAuth20ResponseTypes.CODE)
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+            .token(code)
             .build();
 
         val request = new MockHttpServletRequest();

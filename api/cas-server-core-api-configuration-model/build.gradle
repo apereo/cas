@@ -34,6 +34,7 @@ if (!skipConfigurationMetadata) {
         args buildDir, projectDir.canonicalPath
     }
 
-    compileJava.inputs.files(processResources)
+    compileJava.inputs.files(processResources).withPropertyName("processResources")
+        .withPathSensitivity(PathSensitivity.RELATIVE).ignoreEmptyDirectories()
     jar.dependsOn(generateConfigurationMetadata)
 }

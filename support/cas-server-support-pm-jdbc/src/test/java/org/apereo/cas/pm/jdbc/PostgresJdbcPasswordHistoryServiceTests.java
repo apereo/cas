@@ -13,7 +13,7 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.1.0
  */
 @TestPropertySource(properties = {
-    "cas.jdbc.show-sql=true",
+    "cas.jdbc.show-sql=false",
     "cas.authn.pm.jdbc.user=postgres",
     "cas.authn.pm.jdbc.password=password",
     "cas.authn.pm.jdbc.driver-class=org.postgresql.Driver",

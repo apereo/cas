@@ -24,6 +24,7 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -45,15 +46,26 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
     private final SingleSignOnParticipationStrategy renewalStrategy;
 
     public RankedMultifactorAuthenticationProviderWebflowEventResolver(
-        final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext,
+        final CasWebflowEventResolutionConfigurationContext configurationContext,
         final CasDelegatingWebflowEventResolver casDelegatingWebflowEventResolver,
         final MultifactorAuthenticationContextValidator authenticationContextValidator,
         final SingleSignOnParticipationStrategy renewalStrategy) {
 
-        super(webflowEventResolutionConfigurationContext);
+        super(configurationContext);
         this.casDelegatingWebflowEventResolver = casDelegatingWebflowEventResolver;
         this.authenticationContextValidator = authenticationContextValidator;
         this.renewalStrategy = renewalStrategy;
+    }
+
+    private static Set<Event> buildEventForMultifactorProvider(final RequestContext context, final RegisteredService service,
+                                                               final Authentication authentication,
+                                                               final String id,
+                                                               final MultifactorAuthenticationProvider provider) {
+        val attributeMap = MultifactorAuthenticationUtils.buildEventAttributeMap(authentication.getPrincipal(), Optional.of(service), provider);
+        LOGGER.trace("Event attribute map for [{}] is [{}]", id, attributeMap);
+        val resultEvent = MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext(id, Optional.of(context), attributeMap);
+        LOGGER.trace("Finalized event for multifactor provider  [{}] is [{}]", id, resultEvent);
+        return CollectionUtils.wrapSet(resultEvent);
     }
 
     @Override
@@ -70,14 +82,14 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
             LOGGER.trace("Ticket-granting ticket is blank; proceed with flow normally.");
             return resumeFlow();
         }
-        val authentication = getWebflowEventResolutionConfigurationContext().getTicketRegistrySupport().getAuthenticationFrom(tgt);
+        val authentication = getConfigurationContext().getTicketRegistrySupport().getAuthenticationFrom(tgt);
         if (authentication == null) {
             LOGGER.trace("Ticket-granting ticket has no authentication and is blank; proceed with flow normally.");
             return resumeFlow();
         }
 
         val credential = WebUtils.getCredential(context);
-        val builder = getWebflowEventResolutionConfigurationContext().getAuthenticationSystemSupport()
+        val builder = getConfigurationContext().getAuthenticationSystemSupport()
             .establishAuthenticationContextFromInitial(authentication, credential);
 
         LOGGER.trace("Recording and tracking initial authentication results in the request context");
@@ -102,8 +114,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         val id = event.getId();
         LOGGER.trace("Resolved event from the initial authentication leg is [{}]", id);
 
-        if (List.of(CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
-            CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS).contains(id)) {
+        if (getOperableTransitions().contains(id)) {
             LOGGER.trace("Returning webflow event as [{}]", id);
             return CollectionUtils.wrapSet(event);
         }
@@ -131,7 +142,6 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         return CollectionUtils.wrapSet(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));
     }
 
-
     @Audit(action = AuditableActions.AUTHENTICATION_EVENT,
         actionResolverName = AuditActionResolvers.AUTHENTICATION_EVENT_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.AUTHENTICATION_EVENT_RESOURCE_RESOLVER)
@@ -141,27 +151,26 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
     }
 
     @Override
-    public void addDelegate(final CasWebflowEventResolver r) {
-        casDelegatingWebflowEventResolver.addDelegate(r);
+    public void addDelegate(final CasWebflowEventResolver resolver) {
+        casDelegatingWebflowEventResolver.addDelegate(resolver);
     }
 
     @Override
-    public void addDelegate(final CasWebflowEventResolver r, final int index) {
-        casDelegatingWebflowEventResolver.addDelegate(r, index);
+    public void addDelegate(final CasWebflowEventResolver resolver, final int index) {
+        casDelegatingWebflowEventResolver.addDelegate(resolver, index);
     }
 
     private Set<Event> resumeFlow() {
         return CollectionUtils.wrapSet(new EventFactorySupport().success(this));
     }
 
-    private static Set<Event> buildEventForMultifactorProvider(final RequestContext context, final RegisteredService service,
-                                                               final Authentication authentication,
-                                                               final String id,
-                                                               final MultifactorAuthenticationProvider provider) {
-        val attributeMap = MultifactorAuthenticationUtils.buildEventAttributeMap(authentication.getPrincipal(), Optional.of(service), provider);
-        LOGGER.trace("Event attribute map for [{}] is [{}]", id, attributeMap);
-        val resultEvent = MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext(id, Optional.of(context), attributeMap);
-        LOGGER.trace("Finalized event for multifactor provider  [{}] is [{}]", id, resultEvent);
-        return CollectionUtils.wrapSet(resultEvent);
+    private static List<String> getOperableTransitions() {
+        val events = new ArrayList<String>();
+        events.add(CasWebflowConstants.TRANSITION_ID_ERROR);
+        events.add(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
+        events.add(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        events.add(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS);
+        events.add(CasWebflowConstants.TRANSITION_ID_MFA_COMPOSITE);
+        return events;
     }
 }

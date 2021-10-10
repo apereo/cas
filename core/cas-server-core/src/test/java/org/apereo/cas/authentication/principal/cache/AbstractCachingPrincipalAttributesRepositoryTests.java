@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
@@ -72,8 +71,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     }
 
     @Test
-    @SneakyThrows
-    public void checkExpiredCachedAttributes() {
+    public void checkExpiredCachedAttributes() throws Exception {
         val svc = CoreAuthenticationTestUtils.getRegisteredService();
         assertEquals(1, this.principal.getAttributes().size());
         try (val repository = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100)) {
@@ -91,7 +89,6 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     }
 
     @Test
-    @SneakyThrows
     public void ensureCachedAttributesWithUpdate() {
         val svc = CoreAuthenticationTestUtils.getRegisteredService();
         try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
@@ -103,7 +100,6 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     }
 
     @Test
-    @SneakyThrows
     public void verifyMergingStrategyWithNoncollidingAttributeAdder() {
         val svc = CoreAuthenticationTestUtils.getRegisteredService();
         try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
@@ -116,7 +112,6 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     }
 
     @Test
-    @SneakyThrows
     public void verifyMergingStrategyWithReplacingAttributeAdder() {
         val svc = CoreAuthenticationTestUtils.getRegisteredService();
         try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
@@ -129,7 +124,6 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     }
 
     @Test
-    @SneakyThrows
     public void verifyMergingStrategyWithMultivaluedAttributeMerger() {
         try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             repository.setAttributeRepositoryIds(Collections.singleton("Stub"));

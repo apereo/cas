@@ -1,7 +1,5 @@
 description = "Apereo CAS Events Consumer JPA"
 dependencies {
-
-
     implementation project(":core:cas-server-core-events")
     implementation project(":core:cas-server-core-events-api")
     implementation project(":core:cas-server-core-util-api")

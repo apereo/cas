@@ -14,7 +14,7 @@ deal with more than a few bilateral SAML integrations.
 
 Support is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-metadata-redis" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-metadata-redis" %}
 
 SAML service definitions must then be designed as follows to allow CAS to fetch metadata documents from MongoDb instances:
 
@@ -34,7 +34,7 @@ The metadata location in the registration record above needs to be specified as 
 SAML metadata for registered service provider must be fetched from Redis data sources defined in CAS configuration. 
 </p></div>
 
-{% include casproperties.html properties="cas.authn.saml-idp.metadata.redis" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.redis" %}
 
 ## Identity Provider Metadata
 

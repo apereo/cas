@@ -114,8 +114,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
      * @throws Exception the exception
      */
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Import a consent decision as a JSON document",
-        parameters = {@Parameter(name = "request", required = true)})
+    @Operation(summary = "Import a consent decision as a JSON document")
     public HttpStatus importAccount(final HttpServletRequest request) throws Exception {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.trace("Submitted account: [{}]", requestBody);

@@ -12,13 +12,13 @@ Stores registered service data in a database.
 
 Support is enabled by adding the following module into the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-jpa-service-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-jpa-service-registry" %}
 
 To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
 
 ## Configuration
 
-{% include casproperties.html properties="cas.service-registry.jpa" %}
+{% include_cached casproperties.html properties="cas.service-registry.jpa" %}
 
 ## Auto Initialization
 

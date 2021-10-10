@@ -1,0 +1,31 @@
+{
+  "alias": "CAS",
+  "description": "CAS Server",
+  "client": {
+    "client_id": "client",
+    "client_secret": "secret"
+  },
+  "client_secret_post": {
+    "client_id": "client_post",
+    "client_secret": "secret"
+  },
+  "client2": {
+    "client_id": "client2",
+    "client_secret": "secret2"
+  },
+  "server": {
+    "discoveryUrl": "https://cas-oidc-cert.herokuapp.com/cas/oidc/.well-known/openid-configuration"
+  },
+  "browser": [{
+    "match": "https://cas-oidc-cert.herokuapp.com/cas/oidc/oidcAuthorize*",
+    "tasks": [{
+            "task": "Initial Login",
+            "commands": [
+                ["text", "id", "username", "casuser"],
+                ["text", "id", "password", "Mellon"],
+                ["click", "name", "submit"]
+            ]
+        }
+    ]
+  }]
+}

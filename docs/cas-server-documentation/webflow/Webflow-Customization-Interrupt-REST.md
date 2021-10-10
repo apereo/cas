@@ -20,4 +20,4 @@ dynamically calculate whether the authentication flow should be interrupted give
 On a successful operation with a status code of `200`, the response body is 
 expected to contain the JSON payload whose syntax and structure is identical to what is described above.
 
-{% include casproperties.html properties="cas.interrupt.rest" %}
+{% include_cached casproperties.html properties="cas.interrupt.rest" %}

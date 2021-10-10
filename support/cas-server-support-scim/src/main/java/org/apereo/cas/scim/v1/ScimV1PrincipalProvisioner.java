@@ -28,9 +28,11 @@ import java.net.URI;
  *
  * @author Misagh Moayyed
  * @since 5.1.0
+ * @deprecated Since 6.4.0
  */
 @Slf4j
 @RequiredArgsConstructor
+@Deprecated(since = "6.4.0")
 public class ScimV1PrincipalProvisioner implements PrincipalProvisioner {
 
     private final ScimProperties scimProperties;

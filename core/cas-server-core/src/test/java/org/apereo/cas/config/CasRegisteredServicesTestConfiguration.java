@@ -22,7 +22,6 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -51,8 +50,7 @@ public class CasRegisteredServicesTestConfiguration {
 
     @ConditionalOnMissingBean(name = "inMemoryRegisteredServices")
     @Bean
-    @SneakyThrows
-    public List inMemoryRegisteredServices() {
+    public List inMemoryRegisteredServices() throws Exception {
         val l = new ArrayList<>();
 
         val svc = RegisteredServiceTestUtils.getRegisteredService("testencryption$");

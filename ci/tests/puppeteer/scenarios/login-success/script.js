@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -10,13 +9,7 @@ const cas = require('../../cas.js');
     await cas.loginWith(page, "casuser", "Mellon");
 
     await cas.assertTicketGrantingCookie(page);
-    
-    const title = await page.title();
-    console.log(title);
-    assert(title === "CAS - Central Authentication Service")
-
-    const header = await cas.innerText(page, '#content div h2');
-    assert(header === "Log In Successful")
-
+    await cas.assertPageTitle(page, "CAS - Central Authentication Service");
+    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await browser.close();
 })();

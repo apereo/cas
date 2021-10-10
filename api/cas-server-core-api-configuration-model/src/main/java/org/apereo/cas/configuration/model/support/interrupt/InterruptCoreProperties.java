@@ -24,6 +24,14 @@ public class InterruptCoreProperties implements Serializable {
     private static final long serialVersionUID = 4263941933003310968L;
 
     /**
+     * Whether execution of the interrupt inquiry
+     * query should be always forced, and the status
+     * of interrupt check should be ignored. This is a global setting
+     * that can optionally be overruled for each application policy.
+     */
+    private boolean forceExecution;
+
+    /**
      * Define how interrupt notifications should be
      * triggered in the authentication flow.
      */

@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -33,10 +32,10 @@ public class HazelcastSessionConfiguration {
      * of this bean must be left untouched.
      *
      * @return the hazelcast instance
+     * @throws Exception the exception
      */
     @Bean(destroyMethod = "shutdown")
-    @SneakyThrows
-    public HazelcastInstance hazelcastInstance() {
+    public HazelcastInstance hazelcastInstance() throws Exception {
         val hzConfigResource = casProperties.getWebflow().getSession().getHzLocation();
         val configUrl = hzConfigResource.getURL();
         val config = new XmlConfigBuilder(hzConfigResource.getInputStream()).build();

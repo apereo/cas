@@ -89,6 +89,6 @@ public class SSOSamlIdPPostProfileHandlerEndpointTests extends BaseSamlIdPConfig
         request.addParameter("encrypt", "false");
         val response = new MockHttpServletResponse();
         val entity = endpoint.produceGet(request, response);
-        assertEquals(HttpStatus.NO_CONTENT, entity.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, entity.getStatusCode());
     }
 }

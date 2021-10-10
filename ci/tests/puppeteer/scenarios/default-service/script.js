@@ -11,7 +11,6 @@ const cas = require('../../cas.js');
     assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")))
     assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")))
     assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")))
-    
     await cas.loginWith(page, "casuser", "Mellon");
     
     const url = await page.url()

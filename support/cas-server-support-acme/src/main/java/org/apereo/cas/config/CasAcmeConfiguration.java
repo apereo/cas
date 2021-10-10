@@ -6,7 +6,6 @@ import org.apereo.cas.acme.AcmeChallengeRepository;
 import org.apereo.cas.acme.AcmeWellKnownChallengeController;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -66,10 +65,10 @@ public class CasAcmeConfiguration {
      * Handle application ready event.
      *
      * @param event the event
+     * @throws Exception the exception
      */
     @EventListener
-    @SneakyThrows
-    public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
+    public void handleApplicationReadyEvent(final ApplicationReadyEvent event) throws Exception {
         val domains = casProperties.getAcme().getDomains();
         LOGGER.info("Fetching certificates for domains [{}]", domains);
         if (event.getApplicationContext().containsBean("acmeCertificateManager")) {

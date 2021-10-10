@@ -8,6 +8,9 @@ import org.apereo.cas.interrupt.InterruptInquiryExecutionPlanConfigurer;
 import org.apereo.cas.interrupt.JsonResourceInterruptInquirer;
 import org.apereo.cas.interrupt.RegexAttributeInterruptInquirer;
 import org.apereo.cas.interrupt.RestEndpointInterruptInquirer;
+import org.apereo.cas.web.InterruptCookieRetrievingCookieGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -80,5 +83,13 @@ public class CasInterruptConfiguration {
     @ConditionalOnProperty(name = "cas.interrupt.rest.url")
     public InterruptInquiryExecutionPlanConfigurer restInterruptInquiryExecutionPlanConfigurer() {
         return plan -> plan.registerInterruptInquirer(new RestEndpointInterruptInquirer(casProperties.getInterrupt().getRest()));
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "interruptCookieGenerator")
+    public CasCookieBuilder interruptCookieGenerator() {
+        val props = casProperties.getInterrupt().getCookie();
+        return new InterruptCookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
     }
 }

@@ -28,6 +28,7 @@ enum TestCategories {
     Infinispan,
     InfluxDb,
     JDBC,
+    JDBCAuthentication,
     JMS,
     JMX,
     Kafka,
@@ -52,6 +53,7 @@ enum TestCategories {
     Redis,
     RegisteredService,
     RestfulApi,
+    RestfulApiAuthentication,
     SAML,
     SAMLMetadata,
     SAMLServiceProvider,
@@ -79,7 +81,9 @@ enum TestCategories {
 if (rootProject.tasks.findByName("testCategories") == null) {
     rootProject.tasks.create(name: "testCategories", description: "Display all available test categories") {
         doLast {
+            def categoryMatchPattern = System.getenv().get("CATEGORY_REGEX") ?: ".*"
             def result = TestCategories.values()
+                    .findAll { it.name().matches(categoryMatchPattern) }
                     .toSorted({ o1, o2 ->
                         o1.name().compareTo(o2.name())
                     })
@@ -161,6 +165,8 @@ tasks.withType(Test) {
     list.add("java.management/sun.management=ALL-UNNAMED")
     list.add("--add-opens")
     list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/sun.security.action=jdk.crypto.ec")
     list.add("-Xms512m")
     list.add("-Xmx4g")
     jvmArgs = list
@@ -214,6 +220,9 @@ Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.
     jacoco {
         dumpOnExit = true
         excludes = rootProject.excludedFilesFromTestCoverage
+    }
+    filter {
+        setFailOnNoMatchingTests(false)
     }
 }
 

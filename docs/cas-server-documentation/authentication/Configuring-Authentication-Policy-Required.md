@@ -9,4 +9,4 @@ category: Authentication
 
 Satisfied if and only if a specified handler successfully authenticates its credential.
 
-{% include casproperties.html properties="cas.authn.policy.req" %}
+{% include_cached casproperties.html properties="cas.authn.policy.req" %}

@@ -16,7 +16,7 @@
         <script th:inline="javascript">
             /*<![CDATA[*/
 
-            var policyPattern = /*[[${policyPattern}]]*/;
+            var policyPattern = /*[[${passwordPolicyPattern}]]*/;
             var passwordStrengthI18n = {
                 0: /*[[#{screen.pm.password.strength.0}]]*/,
                 1: /*[[#{screen.pm.password.strength.1}]]*/,
@@ -66,7 +66,9 @@
 
                     </div>
                 </div>
-                <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button" type="button">
+                <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button"
+                        tabindex="-1"
+                        type="button">
                     <i class="mdi mdi-eye reveal-password-icon"></i>
                     <span class="sr-only">Toggle Password</span>
                 </button>
@@ -157,8 +159,10 @@
                 </a>
             </div>
         </form>
+
         <p id="pwddesc" th:unless="${passwordManagementEnabled}"
            th:utext="${expiredPass} ? #{screen.expiredpass.message('https://pwd.example.org')} : #{screen.mustchangepass.message('https://pwd.example.org')}">Expired/Must Change Password text</p>
+        
     </div>
 </main>
 </body>

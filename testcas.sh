@@ -2,36 +2,45 @@
 
 RED="\e[31m"
 GREEN="\e[32m"
-YELLOW="\e[33m"
 CYAN="\e[36m"
 ENDCOLOR="\e[0m"
 
 clear
+find ./ci/tests -type f -name "*.sh" -exec chmod +x {} \;
 
-hasDocker() {
-  type docker &> /dev/null
-  if [[ $? -ne 0 ]] ; then
-    echo "Docker is not available."
-    return 1
-  fi
-  dockerserver=$(docker version --format '{{json .Server.Os}}')
-  echo -n "Docker server is ${dockerserver}."
-  if [[ $dockerserver =~ "linux" ]]; then
+dockerPlatform="unknown"
+type docker &> /dev/null
+if [[ $? -ne 0 ]] ; then
+  echo "Docker server is not available."
+else
+  dockerPlatform=$(docker version --format '{{json .Server.Os}}')
+  printf "Docker server platform is ${GREEN}%s${ENDCOLOR}\n" "$dockerPlatform."
+fi
+
+function isDockerOnLinux() {
+  if [[ $dockerPlatform =~ "linux" ]]; then
     return 0
   fi
-  echo "Docker server is not linux."
+  printf "${RED}Docker server is not available for the linux platform.${ENDCOLOR}"
+  return 1
+}
+
+function isDockerOnWindows() {
+  if [[ $dockerPlatform =~ "windows" ]]; then
+    return 0
+  fi
+  printf "${RED}Docker server is not available for the windows platform.${ENDCOLOR}"
   return 1
 }
 
 printHelp() {
-    hasDocker
     printf "\nUsage: ${CYAN}./testcas.sh${ENDCOLOR} --category [category1,category2,...] [--help] [--test TestClass]\n\t[--ignore-failures] [--no-watch] [--no-wrapper] [--no-retry] [--debug] [--no-parallel]\n\t[--dry-run][--info] [--with-coverage] [--no-build-cache] \n"
     printf "\nTo see what test categories are available, use:\n"
     printf "\t${GREEN}./gradlew -q testCategories${ENDCOLOR}\n"
     echo -e "\nPlease see the test script for details."
 }
 
-task="cleanTest "
+task=""
 parallel="--parallel "
 dryRun=""
 info=""
@@ -79,7 +88,7 @@ while (( "$#" )); do
         shift
         ;;
     --no-watch)
-        flags+=" --no-watch-fs"
+        flags+=" --no-watch-fs "
         shift
         ;;
     --test)
@@ -87,15 +96,15 @@ while (( "$#" )); do
         shift 2
         ;;
     --no-retry)
-        flags+=" -DskipTestRetry=true"
+        flags+=" -DskipTestRetry=true "
         shift
         ;;
     --ignore-failures)
-        flags+=" -DignoreTestFailures=true"
+        flags+=" -DignoreTestFailures=true "
         shift
         ;;
     --no-build-cache)
-        flags+=" --no-build-cache"
+        flags+=" --no-build-cache "
         shift
         ;;
     --category)
@@ -201,6 +210,9 @@ while (( "$#" )); do
             jdbc|jpa|database|db|hibernate|rdbms|hsql)
                 task+="testJDBC "
                 ;;
+            jdbcauthentication|jdbcauthn)
+                task+="testJDBCAuthentication "
+                ;;
             oauth)
                 task+="testOAuth "
                 ;;
@@ -227,6 +239,9 @@ while (( "$#" )); do
                 ;;
             jmx|jmx)
                 task+="testJMX "
+                ;;
+            restfulapiauthentication|restfulauthn|restauthn)
+                task+="testRestfulApiAuthentication "
                 ;;
             rest|restful|restapi|restfulapi)
                 task+="testRestfulApi "
@@ -265,94 +280,95 @@ while (( "$#" )); do
                 task+="testSpnego"
                 ;;
             cosmosdb|cosmos)
+                isDockerOnLinux && ./ci/tests/cosmosdb/run-cosmosdb-server.sh
                 task+="testCosmosDb "
                 ;;
             simple|unit)
                 task+="testSimple "
                 ;;
             mssql|mssqlserver)
-                hasDocker && ./ci/tests/mssqlserver/run-mssql-server.sh
+                isDockerOnLinux && ./ci/tests/mssqlserver/run-mssql-server.sh
                 task+="testMsSqlServer "
                 ;;
             influx|influxdb)
-                hasDocker && ./ci/tests/influxdb/run-influxdb-server.sh
+                isDockerOnLinux && ./ci/tests/influxdb/run-influxdb-server.sh
                 task+="testInfluxDb "
                 ;;
             memcached|memcache|kryo)
-                hasDocker && ./ci/tests/memcached/run-memcached-server.sh
+                isDockerOnLinux && ./ci/tests/memcached/run-memcached-server.sh
                 task+="testMemcached "
                 ;;
             ehcache)
-                hasDocker && ./ci/tests/ehcache/run-terracotta-server.sh
+                isDockerOnLinux && ./ci/tests/ehcache/run-terracotta-server.sh
                 task+="testEhcache "
                 ;;
             ldap|ad|activedirectory)
-                hasDocker && ./ci/tests/ldap/run-ldap-server.sh
-                hasDocker && ./ci/tests/ldap/run-ad-server.sh true
+                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
+                isDockerOnLinux && ./ci/tests/ldap/run-ad-server.sh true
                 task+="testLdap "
                 ;;
             couchbase)
-                hasDocker && ./ci/tests/couchbase/run-couchbase-server.sh
+                isDockerOnLinux && ./ci/tests/couchbase/run-couchbase-server.sh
                 task+="testCouchbase "
                 ;;
             mongo|mongodb)
-                hasDocker && ./ci/tests/mongodb/run-mongodb-server.sh
+                isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh
                 task+="testMongoDb "
                 ;;
             couchdb)
-                hasDocker && ./ci/tests/couchdb/run-couchdb-server.sh
+                isDockerOnLinux && ./ci/tests/couchdb/run-couchdb-server.sh
                 task+="testCouchDb "
                 ;;
             mysql)
-                hasDocker && ./ci/tests/mysql/run-mysql-server.sh
+                isDockerOnLinux && ./ci/tests/mysql/run-mysql-server.sh
                 task+="testMySQL "
                 ;;
             maria|mariadb)
-                hasDocker && ./ci/tests/mariadb/run-mariadb-server.sh
+                isDockerOnLinux && ./ci/tests/mariadb/run-mariadb-server.sh
                 task+="testMariaDb "
                 ;;
             postgres|pg|postgresql)
-                hasDocker && ./ci/tests/postgres/run-postgres-server.sh
+                isDockerOnLinux && ./ci/tests/postgres/run-postgres-server.sh
                 task+="testPostgres "
                 ;;
             cassandra)
-                hasDocker && ./ci/tests/cassandra/run-cassandra-server.sh
+                isDockerOnLinux && ./ci/tests/cassandra/run-cassandra-server.sh
                 task+="testCassandra "
                 ;;
             kafka)
-                hasDocker && ./ci/tests/kafka/run-kafka-server.sh
+                isDockerOnLinux && ./ci/tests/kafka/run-kafka-server.sh
                 task+="testKafka "
                 ;;
             aws|amz|amazonwebservices)
-                hasDocker && ./ci/tests/aws/run-aws-server.sh
+                isDockerOnLinux && ./ci/tests/aws/run-aws-server.sh
                 task+="testAmazonWebServices "
                 ;;
             radius)
-                hasDocker && ./ci/tests/radius/run-radius-server.sh
+                isDockerOnLinux && ./ci/tests/radius/run-radius-server.sh
                 task+="testRadius "
                 ;;
             mail|email)
-                hasDocker && ./ci/tests/mail/run-mail-server.sh
+                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh
                 task+="testMail "
                 ;;
             zoo|zookeeper)
-                hasDocker && ./ci/tests/zookeeper/run-zookeeper-server.sh
+                isDockerOnLinux && ./ci/tests/zookeeper/run-zookeeper-server.sh
                 task+="testZooKeeper "
                 ;;
             dynamodb|dynamo)
-                hasDocker && ./ci/tests/dynamodb/run-dynamodb-server.sh
+                isDockerOnLinux && ./ci/tests/dynamodb/run-dynamodb-server.sh
                 task+="testDynamoDb "
                 ;;
             oracle)
-                hasDocker && ./ci/tests/oracle/run-oracle-server.sh
+                isDockerOnLinux && ./ci/tests/oracle/run-oracle-server.sh
                 task+="testOracle "
                 ;;
             redis)
-                hasDocker && ./ci/tests/redis/run-redis-server.sh
+                isDockerOnLinux && ./ci/tests/redis/run-redis-server.sh
                 task+="testRedis "
                 ;;
             activemq|amq|jms)
-                hasDocker && ./ci/tests/activemq/run-activemq-server.sh
+                isDockerOnLinux && ./ci/tests/activemq/run-activemq-server.sh
                 task+="testJMS "
                 ;;
             *)

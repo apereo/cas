@@ -53,4 +53,32 @@ public class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPCo
         assertTrue(attributes.stream().anyMatch(a -> a.getName().equals("common-name")));
         assertTrue(attributes.stream().anyMatch(a -> a.getName().equals("nickname")));
     }
+
+    @Test
+    public void verifyFriendlyNamesForKnownAttributes() {
+        val service = getSamlRegisteredServiceForTestShib();
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+            .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
+        val statement = samlProfileSamlAttributeStatementBuilder.build(getAuthnRequestFor(service), new MockHttpServletRequest(),
+            new MockHttpServletResponse(),
+            getAssertion(Map.of("urn:oid:0.9.2342.19200300.100.1.1", "casuser",
+                "urn:oid:2.5.4.20", "+13477465341",
+                "urn:oid:1.3.6.1.4.1.5923.1.1.1.6", "casuser-principal",
+                "urn:oid:0.9.2342.19200300.100.1.3", "cas@example.org")),
+            service,
+            adaptor,
+            SAMLConstants.SAML2_POST_BINDING_URI,
+            new MessageContext());
+
+        val attributes = statement.getAttributes();
+        assertFalse(attributes.isEmpty());
+        assertTrue(attributes.stream()
+            .anyMatch(a -> a.getName().equals("urn:oid:0.9.2342.19200300.100.1.1") && a.getFriendlyName().equalsIgnoreCase("uid")));
+        assertTrue(attributes.stream()
+            .anyMatch(a -> a.getName().equals("urn:oid:2.5.4.20") && a.getFriendlyName().equalsIgnoreCase("telephoneNumber")));
+        assertTrue(attributes.stream()
+            .anyMatch(a -> a.getName().equals("urn:oid:1.3.6.1.4.1.5923.1.1.1.6") && a.getFriendlyName().equalsIgnoreCase("eduPersonPrincipalName")));
+        assertTrue(attributes.stream()
+            .anyMatch(a -> a.getName().equals("urn:oid:0.9.2342.19200300.100.1.3") && a.getFriendlyName().equalsIgnoreCase("email")));
+    }
 }

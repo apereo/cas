@@ -1,9 +1,7 @@
 const puppeteer = require('puppeteer');
 const performance = require('perf_hooks').performance;
-const fs = require('fs');
-const path = require('path');
-const assert = require('assert');
 const cas = require('../../cas.js');
+const path = require("path");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -24,12 +22,12 @@ const cas = require('../../cas.js');
         url += `?providerId=${entityId}`;
         url += "&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin";
 
-        console.log("Navigating to " + url);
+        console.log(`Navigating to ${url}`);
         let s = await performance.now();
         await page.goto(url);
         let e = await performance.now();
         let duration = (e - s) / 1000;
-        console.log("Request took " + duration + " seconds.")
+        console.log(`Request took ${duration} seconds.`)
 
         if (count > 1 && duration > 8) {
             throw "Request took longer than expected";
@@ -40,8 +38,6 @@ const cas = require('../../cas.js');
         await cas.assertVisibility(page, '#password')
         count++;
     }
-    let metadataDir = path.join(__dirname, '/saml-md');
-    fs.rmdirSync(metadataDir, { recursive: true });
-
+    await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();

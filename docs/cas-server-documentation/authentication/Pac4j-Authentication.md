@@ -22,7 +22,7 @@ in a CAS authentication handler and used for authentication.
 
 Support is added by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-pac4j-authentication" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-pac4j-authentication" %}
 
 ## Configuration
 

@@ -11,7 +11,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -32,10 +31,7 @@ import java.time.Instant;
  * @since 5.0.0
  */
 @EnableDiscoveryClient
-@SpringBootApplication(exclude = {
-    GroovyTemplateAutoConfiguration.class,
-    DataSourceAutoConfiguration.class
-}, proxyBeanMethods = false)
+@SpringBootApplication(exclude = DataSourceAutoConfiguration.class, proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync
 @EnableAspectJAutoProxy(proxyTargetClass = true)
@@ -44,19 +40,20 @@ import java.time.Instant;
 @NoArgsConstructor
 @Slf4j
 public class CasWebApplication {
-    
+
     /**
      * Main entry point of the CAS web application.
      *
      * @param args the args
      */
     public static void main(final String[] args) {
+        CasEmbeddedContainerUtils.getLoggingInitialization()
+            .ifPresent(init -> init.setMainArguments(args));
         val banner = CasEmbeddedContainerUtils.getCasBannerInstance();
         new SpringApplicationBuilder(CasWebApplication.class)
             .banner(banner)
             .web(WebApplicationType.SERVLET)
             .logStartupInfo(true)
-            .contextClass(CasWebApplicationContext.class)
             .contextFactory(webApplicationType -> new CasWebApplicationContext())
             .applicationStartup(CasEmbeddedContainerUtils.getApplicationStartup())
             .run(args);

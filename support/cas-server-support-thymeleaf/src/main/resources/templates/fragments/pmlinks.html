@@ -12,25 +12,33 @@
 
 <body>
     <div th:fragment="pmlinks" id="pmlinks" class="my-2">
+        <form th:if="${accountRegistrationEnabled}" method="post" id="accountMgmtSignupForm">
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+            <input type="hidden" name="_eventId" value="signup" />
+            <span class="mdi mdi-account-group"></span>
+            <a id="accountSignUpLink" th:utext="#{screen.acct.button.signUp}" href="javascript:void(0)"
+               onclick="document.getElementById('accountMgmtSignupForm').submit()" />
+            <br><br>
+        </form>
         <form th:if="${passwordManagementEnabled}" method="post" id="passwordManagementForm">
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
             <input type="hidden" name="_eventId" value="resetPassword" />
-            <span class="fa fa-unlock"></span>
+            <span class="mdi mdi-lock-open"></span>
             <a id="forgotPasswordLink" th:utext="#{screen.pm.button.resetPassword}" href="javascript:void(0)"
                 onclick="document.getElementById('passwordManagementForm').submit();" />
+            <br><br>
         </form>
-        <br>
         <form th:if="${passwordManagementEnabled}" method="post" id="passwordManagementUserForm">
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
             <input type="hidden" name="_eventId" value="forgotUsername" />
-            <span class="fa fa-unlock"></span>
+            <span class="mdi mdi-account-question"></span>
             <a id="forgotUsernameLink" th:utext="#{screen.pm.button.forgotUsername}" href="javascript:void(0)"
                 onclick="document.getElementById('passwordManagementUserForm').submit();" />
+            <br><br>
         </form>
-
         <div th:unless="${passwordManagementEnabled}">
             <br />
-            <span class="fa fa-question-circle"></span>
+            <span class="mdi mdi-account-question"></span>
             <span th:utext="#{screen.pm.button.forgotpwd('https://pwd.example.org')}">Forgot your password?</span>
         </div>
     </div>

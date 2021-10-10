@@ -115,7 +115,6 @@ public class SamlIdPObjectEncrypter {
      * @param adaptor    the adaptor
      * @return the encrypted attribute
      */
-    @SneakyThrows
     public EncryptedAttribute encode(final Attribute samlObject,
         final SamlRegisteredService service,
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {

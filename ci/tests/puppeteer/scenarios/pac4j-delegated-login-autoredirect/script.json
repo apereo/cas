@@ -1,0 +1,20 @@
+{
+  "dependencies": "pac4j-webflow",
+  "properties": [
+    "--logging.level.org.apereo.cas=info",
+    "--cas.audit.engine.enabled=false",
+    
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+
+    "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
+    "--cas.authn.pac4j.cas[0].protocol=CAS30",
+    "--cas.authn.pac4j.cas[0].client-name=CasClient",
+
+    "--cas.authn.pac4j.core.groovy-redirection-strategy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/DelegatedAuthnRedirection.groovy",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

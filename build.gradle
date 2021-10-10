@@ -42,6 +42,8 @@ ext {
 
     publishFlag = publishSnapshots || publishReleases
 
+    publishMinimalArtifacts = providers.systemProperty("publishMinimalArtifacts").forUseAtConfigurationTime().present
+
     skipBootifulArtifact = providers.systemProperty("skipBootifulArtifact").forUseAtConfigurationTime().present
     skipErrorProneCompiler = providers.systemProperty("skipErrorProneCompiler").forUseAtConfigurationTime().present
 
@@ -52,6 +54,8 @@ ext {
             .forUseAtConfigurationTime().getOrElse("false") == "true" ? "y" : "n"
     generateGitProperties = publishFlag
             || providers.systemProperty("generateGitProperties").forUseAtConfigurationTime().present
+    generateTimestamps = publishFlag
+        || providers.systemProperty("generateTimestamps").forUseAtConfigurationTime().present
 
     ci = System.getenv("CI") || providers.systemProperty("CI").forUseAtConfigurationTime().present
 
@@ -62,7 +66,7 @@ ext {
         '**/support/openid/**',
         '**/**ConfigurationMetadata**',
         '**/**NtlmAuthenticationHandler**',
-        '**/**CosmosDbServiceRegistry**',
+        '**/**CosmosDb**',
         '**/**NimbusOAuthJacksonModule**',
         '**/**Application**',
         '**/**Application$**',
@@ -153,7 +157,7 @@ allprojects {
     apply plugin: "java-library"
     apply plugin: "jacoco"
 
-    if (gradle.startParameter.taskNames.any {task -> task.equalsIgnoreCase("install") }) {
+    if (gradle.startParameter.taskNames.any { task -> task.equalsIgnoreCase("install") }) {
         apply plugin: "maven"
     }
 
@@ -212,23 +216,16 @@ allprojects {
         failOnError = providers.systemProperty("ignoreJavadocFailures").forUseAtConfigurationTime().present
         excludes = ['**/generated/**', '**/com/duosecurity/**']
     }
-    
+
 }
 
 subprojects {
     /**
-    task dependencyCheckAnalyze(type: org.owasp.dependencycheck.gradle.tasks.Analyze) {
-         Disable analyze in cas-server-core-api and cas-server-core because
-         support and webapp sub-projects will include their dependencies transitively.
-        enabled = !"${project.name}".contains("cas-server-core")
-    }
-    task allDependenciesInsight(type: DependencyInsightReportTask,
-            description: "Produce insight information for all dependencies") {
-    }
-    task allDependencies(type: DependencyReportTask,
-            description: "Display a graph of all project dependencies") {
-    }
-    **/
+     task dependencyCheckAnalyze(type: org.owasp.dependencycheck.gradle.tasks.Analyze) {Disable analyze in cas-server-core-api and cas-server-core because
+     support and webapp sub-projects will include their dependencies transitively.
+     enabled = !"${project.name}".contains("cas-server-core")}task allDependenciesInsight(type: DependencyInsightReportTask,
+     description: "Produce insight information for all dependencies") {}task allDependencies(type: DependencyReportTask,
+     description: "Display a graph of all project dependencies") {}**/
 
     if (projectShouldBePublished(project)) {
         apply plugin: "maven-publish"
@@ -247,7 +244,7 @@ subprojects {
         provided
     }
 
-    if (gradle.startParameter.taskNames.any {task -> task.startsWith("jacoco") }) {
+    if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
         jacocoTestReport {
             reports {
                 xml.required.set(true)
@@ -279,7 +276,7 @@ subprojects {
             }
         }
     }
-    
+
     apply from: rootProject.file("gradle/overrides.gradle")
 
     /**
@@ -309,10 +306,12 @@ subprojects {
                         logger.info "Project ${project.name} should be published as a JAR"
                         mavenJava(MavenPublication) {
                             from components.java
-                            artifact tasks['sourcesJar']
-                            artifact tasks['resourcesJar']
-                            artifact tasks['javadocJar']
-                            artifact tasks['testJar']
+                            if (!rootProject.publishMinimalArtifacts) {
+                                artifact tasks['sourcesJar']
+                                artifact tasks['resourcesJar']
+                                artifact tasks['javadocJar']
+                                artifact tasks['testJar']
+                            }
 
                             pom {
                                 createPom(it, project)
@@ -363,7 +362,7 @@ subprojects {
 
     artifacts {
         tests testJar
-        if (rootProject.publishFlag) {
+        if (rootProject.publishFlag && !rootProject.publishMinimalArtifacts) {
             archives sourcesJar
             archives javadocJar
             archives resourcesJar
@@ -375,7 +374,7 @@ subprojects {
         main {
             compileClasspath += configurations.provided
             runtimeClasspath += configurations.provided
-            
+
             java {
                 srcDirs = ["${projectDir}/src/main/java"]
             }
@@ -393,7 +392,6 @@ subprojects {
         }
     }
 
-    ext.buildDate = null
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
 
     [compileTestJava, compileJava].each {
@@ -424,16 +422,7 @@ subprojects {
         it.options.compilerArgs += casCompilerArgs
     }
 
-    def currentTime = java.time.ZonedDateTime.now(ZoneId.systemDefault())
-    compileJava.doLast {
-        buildDate = currentTime
-    }
-
-    tasks.jar.onlyIf {
-        project.buildDate != null || !project.buildJarFile.exists()
-    }
-
-    if (projectShouldBePublished(project)) {
+    if (projectRequiresLombok(project)) {
         apply plugin: "io.franzbecker.gradle-lombok"
         lombok {
             version = "$lombokVersion"
@@ -448,8 +437,12 @@ subprojects {
                     "Automatic-Module-Name": project.name,
                     "Implementation-Title": project.name,
                     "Implementation-Vendor": project.group,
-                    "Created-By": project.group,
-                    "Implementation-Date": java.time.ZonedDateTime.now(ZoneId.systemDefault()),
+                    "Created-By": project.group)
+            if (generateTimestamps) {
+                // Only generate timestamps when enabled, as they cause every build to update the JAR.
+                attributes("Implementation-Date": java.time.ZonedDateTime.now(ZoneId.systemDefault()))
+            }
+            attributes(
                     "Specification-Version": "${-> project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'}",
                     "Implementation-Version": project.version)
         }
@@ -459,8 +452,8 @@ subprojects {
         apply plugin: "checkstyle"
         checkstyle {
             configProperties = [
-                "checkstyle.suppressions.file" : new File(rootDir, "style/checkstyle-suppressions.xml"),
-                "checkstyle.importcontrol.file": new File(rootDir, "style/import-control.xml")
+                    "checkstyle.suppressions.file" : new File(rootDir, "style/checkstyle-suppressions.xml"),
+                    "checkstyle.importcontrol.file": new File(rootDir, "style/import-control.xml")
             ]
             configFile = new File(rootDir, "style/checkstyle-rules.xml")
             ignoreFailures false
@@ -473,7 +466,7 @@ subprojects {
         apply from: rootProject.file("gradle/spotbugs.gradle")
     }
 
-    if (gradle.startParameter.taskNames.any {task -> task.equalsIgnoreCase("checkLicense") }) {
+    if (gradle.startParameter.taskNames.any { task -> task.equalsIgnoreCase("checkLicense") }) {
         apply plugin: "com.github.jk1.dependency-license-report"
         licenseReport {
             outputDir = "$projectDir/build/licenses"
@@ -485,9 +478,9 @@ subprojects {
         }
         checkLicense.finalizedBy outputDependenciesWithoutLicense
     }
-    
+
     dependencies {
-        
+
         implementation libraries.aspectj
         implementation libraries.validationapi
 
@@ -515,7 +508,7 @@ subprojects {
         api libraries.javax
 
         annotationProcessor libraries.springindexer
-        
+
         if (!providers.systemProperty("skipSpotbugs").forUseAtConfigurationTime().present && projectShouldBePublished(project)) {
             spotbugsPlugins libraries.findbugscontrib
             spotbugsPlugins libraries.findbugssec
@@ -531,7 +524,7 @@ subprojects {
         if (!ci) {
             testRuntimeOnly "org.junit.platform:junit-platform-suite-engine:$junitPlatformVersion"
         }
-        compileOnlyApi  libraries.spotbugsannotations
+        compileOnlyApi libraries.spotbugsannotations
     }
 }
 
@@ -563,14 +556,14 @@ task gradleHome(description: "Display GRADLE_HOME environment variable") {
     }
 }
 
-if (rootProject.publishFlag) {
+if (rootProject.publishFlag && !rootProject.publishMinimalArtifacts) {
     artifacts {
         archives aggregateJavadocsIntoJar
         archives rootSourcesJar
     }
 }
 
-if (gradle.startParameter.taskNames.any {task -> task.startsWith("jacoco") }) {
+if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
     task jacocoMerge(type: JacocoMerge) {
         subprojects.each { subproject ->
             executionData subproject.tasks.withType(Test)
@@ -640,7 +633,14 @@ task verifyRequiredJavaVersion {
 boolean projectShouldBePublished(Project project) {
     def publishable = !["api", "core", "docs", "support", "webapp"].contains(project.name)
             && !project.getPath().contains("cas-server-documentation")
+    if ("${releaseRepositoryUrl}".contains("github.com") && project.getPath().contains("cas-server-support-shell")) {
+        // shell is too big for github
+        publishable = false
+    }
     project.ext.publishable = publishable
 }
 
-
+boolean projectRequiresLombok(Project project) {
+    return !["api", "core", "docs", "support", "webapp"].contains(project.name)
+            && !project.getPath().contains("cas-server-documentation")
+}

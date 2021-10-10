@@ -21,4 +21,4 @@ A metadata location for a SAML service definition may download SAML2 metadata fr
 }
 ```
 
-{% include casproperties.html properties="cas.authn.saml-idp.metadata.http" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.http" %}

@@ -8,7 +8,6 @@ import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecu
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.RetryingTest;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.JEESessionStore;
@@ -37,7 +36,6 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
             defaultPrincipalResolver);
     }
 
-    @Test
     @RetryingTest(3)
     public void verifyAuthentication() {
         val refreshToken = getRefreshToken(serviceWithoutSecret);

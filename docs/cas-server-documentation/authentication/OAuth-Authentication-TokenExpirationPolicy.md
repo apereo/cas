@@ -13,27 +13,27 @@ typically upper-bound to the length of the CAS single sign-on session.
   
 ## OAuth Codes
 
-{% include casproperties.html properties="cas.authn.oauth.code" %}
+{% include_cached casproperties.html properties="cas.authn.oauth.code" %}
 
 ## OAuth Access Tokens
 
-{% include casproperties.html properties="cas.authn.oauth.access-token" %}
+{% include_cached casproperties.html properties="cas.authn.oauth.access-token" %}
 
 ## OAuthJWT Access Tokens
 
-{% include casproperties.html properties="cas.authn.oauth.access-token" %}
+{% include_cached casproperties.html properties="cas.authn.oauth.access-token" %}
 
 ## OAuth Device Tokens
 
-{% include casproperties.html properties="cas.authn.oauth.device-token" %}
+{% include_cached casproperties.html properties="cas.authn.oauth.device-token" %}
 
 ## OAuth Refresh Tokens
 
-{% include casproperties.html properties="cas.authn.oauth.refresh-token" %}
+{% include_cached casproperties.html properties="cas.authn.oauth.refresh-token" %}
 
 ## OAuth Device User Codes
 
-{% include casproperties.html properties="cas.authn.oauth.device-user-code" %}
+{% include_cached casproperties.html properties="cas.authn.oauth.device-user-code" %}
 
 ## Per Service
 
@@ -71,7 +71,7 @@ whose token expiration policy is to deviate from the default configuration must 
   "accessTokenExpirationPolicy": {
     "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy",
     "maxTimeToLive": "1000",
-    "timeToLive": "100"
+    "timeToKill": "100"
   }
 }
 ```
@@ -88,7 +88,7 @@ whose token expiration policy is to deviate from the default configuration must 
   "id" : 100,
   "accessTokenExpirationPolicy": {
     "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthDeviceTokenExpirationPolicy",
-    "timeToLive": "100"
+    "timeToKill": "100"
   }
 }
 ```
@@ -105,7 +105,7 @@ whose token expiration policy is to deviate from the default configuration must 
   "id" : 100,
   "accessTokenExpirationPolicy": {
     "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthRefreshTokenExpirationPolicy",
-    "timeToLive": "100"
+    "timeToKill": "100"
   }
 }
 ```

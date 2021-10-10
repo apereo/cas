@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.authentication;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
@@ -7,11 +8,11 @@ import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClient
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -57,8 +58,11 @@ import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.metadata.SAML2ServiceProviderRequestedAttribute;
 import org.pac4j.saml.metadata.XMLSecSAML2MetadataSigner;
+import org.pac4j.saml.store.EmptyStoreFactory;
+import org.pac4j.saml.store.HttpSessionStoreFactory;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.context.ApplicationContext;
 
 import java.security.interfaces.ECPrivateKey;
 import java.time.Period;
@@ -78,13 +82,17 @@ import java.util.regex.Pattern;
 @Slf4j
 @Getter
 public class DefaultDelegatedClientFactory implements DelegatedClientFactory<IndirectClient>, DisposableBean {
-    private static final Pattern PATTERN_LOGIN_URL = Pattern.compile("/login$");
+    private static final Pattern PATTERN_LOGIN_URL = Pattern.compile('/' + CasWebflowConfigurer.FLOW_ID_LOGIN + '$');
 
     private final CasConfigurationProperties casProperties;
 
     private final Collection<DelegatedClientFactoryCustomizer> customizers;
 
     private final Set<IndirectClient> clients = new LinkedHashSet<>();
+
+    private final CasSSLContext casSSLContext;
+
+    private final ApplicationContext applicationContext;
 
     @SneakyThrows
     private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc,
@@ -409,6 +417,9 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 val cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol()));
                 val prefix = PATTERN_LOGIN_URL.matcher(cas.getLoginUrl()).replaceFirst("/");
                 cfg.setPrefixUrl(StringUtils.appendIfMissing(prefix, "/"));
+                cfg.setHostnameVerifier(casSSLContext.getHostnameVerifier());
+                cfg.setSslSocketFactory(casSSLContext.getSslContext().getSocketFactory());
+
                 val client = new CasClient(cfg);
 
                 if (StringUtils.isBlank(cas.getClientName())) {
@@ -458,6 +469,8 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 cfg.setAuthnRequestSigned(saml.isSignAuthnRequest());
                 cfg.setSpLogoutRequestSigned(saml.isSignServiceProviderLogoutRequest());
                 cfg.setAcceptedSkew(Beans.newDuration(saml.getAcceptedSkew()).toSeconds());
+                cfg.setSslSocketFactory(casSSLContext.getSslContext().getSocketFactory());
+                cfg.setHostnameVerifier(casSSLContext.getHostnameVerifier());
 
                 if (StringUtils.isNotBlank(saml.getPrincipalIdAttribute())) {
                     cfg.setAttributeAsId(saml.getPrincipalIdAttribute());
@@ -468,12 +481,21 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 cfg.setUseNameQualifier(saml.isUseNameQualifier());
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
 
-                try {
-                    val clazz = ClassUtils.getClass(DefaultDelegatedClientFactory.class.getClassLoader(), saml.getMessageStoreFactory());
-                    cfg.setSamlMessageStoreFactory(SAMLMessageStoreFactory.class.cast(clazz.getDeclaredConstructor().newInstance()));
-                } catch (final Exception e) {
-                    LOGGER.error("Unable to instantiate message store factory class [{}]", saml.getMessageStoreFactory());
-                    LoggingUtils.error(LOGGER, e);
+                if (applicationContext.containsBean(DelegatedClientFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)) {
+                    val factory = applicationContext.getBean(DelegatedClientFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY, SAMLMessageStoreFactory.class);
+                    cfg.setSamlMessageStoreFactory(factory);
+                } else {
+                    FunctionUtils.doIf(saml.getMessageStoreFactory().equalsIgnoreCase("EMPTY"),
+                        ig -> cfg.setSamlMessageStoreFactory(new EmptyStoreFactory())).accept(saml);
+                    FunctionUtils.doIf(saml.getMessageStoreFactory().equalsIgnoreCase("SESSION"),
+                        ig -> cfg.setSamlMessageStoreFactory(new HttpSessionStoreFactory())).accept(saml);
+                    if (saml.getMessageStoreFactory().contains(".")) {
+                        Unchecked.consumer(ig -> {
+                            val clazz = ClassUtils.getClass(DefaultDelegatedClientFactory.class.getClassLoader(), saml.getMessageStoreFactory());
+                            val factory = SAMLMessageStoreFactory.class.cast(clazz.getDeclaredConstructor().newInstance());
+                            cfg.setSamlMessageStoreFactory(factory);
+                        }).accept(saml);
+                    }
                 }
 
                 if (saml.getAssertionConsumerServiceIndex() >= 0) {

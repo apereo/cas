@@ -6,15 +6,30 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
     apply plugin: "org.springframework.boot"
 
     sourceSets {
+        /**
+         * Make resources become reloadable.
+         * Application’s static resources are loaded from their source location.
+         */
         bootRun {
             resources {
+                srcDirs new File("//etc/cas/templates/"),
+                        new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/"),
+                        new File("${project(":support").getProjectDir()}/cas-server-support-thymeleaf/src/main/resources/"),
+                        new File("${project(":support").getProjectDir()}/cas-server-support-themes-collection/src/main/resources/")
             }
         }
     }
 
     springBoot {
         mainClassName = project.ext.mainClassName
-        buildInfo()
+        buildInfo {
+            properties {
+                if (!rootProject.generateTimestamps) {
+                    // Only generate timestamps when enabled, as they cause every build to update JARs/WARs.
+                    time = null
+                }
+            }
+        }
     }
 
     if (plugins.hasPlugin("war")) {
@@ -30,8 +45,12 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
                         "Automatic-Module-Name": project.name,
                         "Implementation-Title": project.name,
                         "Implementation-Vendor": project.group,
-                        "Created-By": project.group,
-                        "Implementation-Date": java.time.ZonedDateTime.now(),
+                        "Created-By": project.group)
+                if (rootProject.generateTimestamps) {
+                    // Only generate timestamps when enabled, as they cause every build to update the WAR.
+                    attributes("Implementation-Date": java.time.ZonedDateTime.now())
+                }
+                attributes(
                         "Specification-Version": "${-> project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'}",
                         "Implementation-Version": project.version)
             }
@@ -84,13 +103,14 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         
         def list = []
         list.add("-XX:TieredStopAtLevel=1")
-        list.add("-Xverify:none")
         list.add("--add-modules")
         list.add("java.se")
         list.add("--add-exports")
         list.add("java.base/jdk.internal.ref=ALL-UNNAMED")
         list.add("--add-opens")
         list.add("java.base/java.lang=ALL-UNNAMED")
+        list.add("--add-opens")
+        list.add("java.base/sun.security.action=jdk.crypto.ec")
         list.add("--add-opens")
         list.add("java.base/java.nio=ALL-UNNAMED")
         list.add("--add-opens")

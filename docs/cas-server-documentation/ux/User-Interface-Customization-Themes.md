@@ -24,7 +24,7 @@ of views cannot be modified via this method.
 
 ### Configuration
 
-{% include casproperties.html properties="cas.theme." %}
+{% include_cached casproperties.html properties="cas.theme." %}
                        
 To create a theme, please follow the below instructions:
 
@@ -72,7 +72,7 @@ views are expected to be found at the specified path via CAS properties under a
 directory named after the theme. For instance, if the external path for CAS views is `/etc/cas/templates`, view template files for 
 theme `sample` may be located `/etc/cas/templates/sample/`.
 
-{% include casproperties.html properties="cas.view.template-" %}
+{% include_cached casproperties.html properties="cas.view.template-" %}
 
 ### Configuration
 
@@ -94,7 +94,7 @@ and samples, and attempt to automate much of the configuration.
 
 Support is enabled by including the following module in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-theme-collections" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-theme-collections" %}
       
 
 The following themes are provided by this module and can be assigned to service definitions:

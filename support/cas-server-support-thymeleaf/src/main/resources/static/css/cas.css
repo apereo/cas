@@ -625,3 +625,9 @@ text-align: justify;
 /* flex-basis: auto works in IE with the column view,
      but a specific value needs to be set for row view
    */
+
+/* fix for not showing password reveal icon on MSEdge and MSIE */
+.pwd::-ms-reveal,
+.pwd::-ms-clear {
+    display: none;
+}

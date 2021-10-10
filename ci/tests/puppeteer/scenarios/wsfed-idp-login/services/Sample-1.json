@@ -1,0 +1,16 @@
+{
+  "@class" : "org.apereo.cas.ws.idp.services.WSFederationRegisteredService",
+  "serviceId" : "https://localhost:9876/fediz.*",
+  "name" : "Sample",
+  "id" : 1,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.ws.idp.services.WSFederationClaimsReleasePolicy",
+    "allowedAttributes" : {
+      "@class" : "java.util.TreeMap",
+      "GIVEN_NAME" : "givenName",
+      "EMAIL_ADDRESS" : "email",
+      "EMAIL_ADDRESS_2005" : "groovy { return attributes['cn'].get(0) + '@example.org' }"
+    }
+  },
+  "tokenType": "http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0"
+}

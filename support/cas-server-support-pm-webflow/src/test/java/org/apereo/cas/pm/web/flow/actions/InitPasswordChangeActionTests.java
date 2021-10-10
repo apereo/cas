@@ -1,7 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -45,7 +44,7 @@ public class InitPasswordChangeActionTests extends BasePasswordManagementActionT
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         context.setCurrentEvent(new Event(this, "eventId", attributes));
         assertNull(initPasswordChangeAction.execute(context));
-        assertNotNull(PasswordManagementWebflowUtils.getPasswordResetPasswordPolicyPattern(context));
+        assertNotNull(WebUtils.getPasswordPolicyPattern(context));
         assertNotNull(WebUtils.getCredential(context));
     }
 }

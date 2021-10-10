@@ -54,8 +54,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
 
 import java.nio.charset.StandardCharsets;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -283,21 +281,15 @@ public class CoreAuthenticationUtils {
             if (StringUtils.isBlank(selectionCriteria)) {
                 return credential -> true;
             }
-
             if (selectionCriteria.endsWith(".groovy")) {
                 val loader = new DefaultResourceLoader();
                 val resource = loader.getResource(selectionCriteria);
                 val script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-
-                val clz = AccessController.doPrivileged((PrivilegedAction<Class<Predicate>>) () -> {
-                    val classLoader = new GroovyClassLoader(Beans.class.getClassLoader(),
-                        new CompilerConfiguration(), true);
-                    return classLoader.parseClass(script);
-                });
-                return clz.getDeclaredConstructor().newInstance();
-
+                val classLoader = new GroovyClassLoader(Beans.class.getClassLoader(),
+                    new CompilerConfiguration(), true);
+                val clz = classLoader.parseClass(script);
+                return (Predicate<Credential>) clz.getDeclaredConstructor().newInstance();
             }
-
             val predicateClazz = ClassUtils.getClass(selectionCriteria);
             return (Predicate<Credential>) predicateClazz.getDeclaredConstructor().newInstance();
         } catch (final Exception e) {
@@ -497,5 +489,5 @@ public class CoreAuthenticationUtils {
         return PrincipalElectionStrategyConflictResolver.last();
     }
 
-    
+
 }

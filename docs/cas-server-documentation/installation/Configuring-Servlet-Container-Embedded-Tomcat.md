@@ -9,7 +9,7 @@ category: Installation
 
 Note that by default, the embedded container attempts to enable the HTTP2 protocol.
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-webapp-tomcat" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-webapp-tomcat" %}
 
 ## IPv4 Configuration
 
@@ -58,22 +58,22 @@ java -jar /path/to/cas.war -Djava.util.logging.config.file=/path/to/logging.prop
 
 ### Configuration
 
-{% include casproperties.html thirdPartyStartsWith="server.tomcat." %}
+{% include_cached casproperties.html thirdPartyStartsWith="server.tomcat." %}
 
 #### HTTP Proxying
 
-{% include casproperties.html properties="cas.server.tomcat.http-proxy." %}
+{% include_cached casproperties.html properties="cas.server.tomcat.http-proxy." %}
                        
 
 #### HTTP
 
-{% include casproperties.html properties="cas.server.tomcat.http." %}
+{% include_cached casproperties.html properties="cas.server.tomcat.http." %}
                 
 
 #### AJP
 
 
-{% include casproperties.html properties="cas.server.tomcat.ajp." %}
+{% include_cached casproperties.html properties="cas.server.tomcat.ajp." %}
 
 #### SSL Valve
 
@@ -81,7 +81,7 @@ The Apache Tomcat `SSLValve` is a way to get a client certificate from an SSL pr
 running in front of Tomcat via an HTTP header. If you enable this, make sure your proxy is ensuring
 that this header does not originate with the client (e.g. the browser).
 
-{% include casproperties.html properties="cas.server.tomcat.ssl-valve" %}
+{% include_cached casproperties.html properties="cas.server.tomcat.ssl-valve" %}
 
 Example HAProxy Configuration (snippet): Configure SSL frontend
 with cert optional, redirect to cas, if cert provided, put it on header.
@@ -108,22 +108,22 @@ backend cas-pool
 
 #### Extended Access Log Valve
 
-{% include casproperties.html properties="cas.server.tomcat.ext-access-log." %}
+{% include_cached casproperties.html properties="cas.server.tomcat.ext-access-log." %}
 
 #### Rewrite Valve
 
-{% include casproperties.html properties="cas.server.tomcat.rewrite-valve." %}
+{% include_cached casproperties.html properties="cas.server.tomcat.rewrite-valve." %}
 
 #### Basic Authentication
 
-{% include casproperties.html properties="cas.server.tomcat.basic-authn." %}
+{% include_cached casproperties.html properties="cas.server.tomcat.basic-authn." %}
 
 #### Apache Portable Runtime (APR)
 
 Apache Tomcat can use the [Apache Portable Runtime](https://tomcat.apache.org/tomcat-9.0-doc/apr.html) to provide superior
 scalability, performance, and better integration with native server technologies.
 
-{% include casproperties.html properties="cas.server.tomcat.apr" %}
+{% include_cached casproperties.html properties="cas.server.tomcat.apr" %}
 
 Enabling APR requires the following JVM system property that indicates
 the location of the APR library binaries (i.e. `usr/local/opt/tomcat-native/lib`):
@@ -135,7 +135,7 @@ the location of the APR library binaries (i.e. `usr/local/opt/tomcat-native/lib`
 #### Connector IO
                       
 
-{% include casproperties.html properties="cas.server.tomcat.socket." %}
+{% include_cached casproperties.html properties="cas.server.tomcat.socket." %}
                                   
 
 #### Session Clustering & Replication
@@ -155,6 +155,6 @@ Enable in-memory session replication to replicate web application session deltas
 
 Most settings apply to the `DEFAULT` clustering type, which requires members to be defined via `clusterMembers` if multicast discovery doesn't work. The `cloudMembershipProvider` setting applies to the `CLOUD` type.
 
-{% include casproperties.html properties="cas.server.tomcat.clustering." %}
+{% include_cached casproperties.html properties="cas.server.tomcat.clustering." %}
 
 

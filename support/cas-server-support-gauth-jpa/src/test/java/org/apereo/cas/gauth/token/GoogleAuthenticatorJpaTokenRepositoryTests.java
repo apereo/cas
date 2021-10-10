@@ -79,7 +79,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreWebConfiguration.class
-}, properties = "cas.jdbc.show-sql=true"
+}, properties = "cas.jdbc.show-sql=false"
 )
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)

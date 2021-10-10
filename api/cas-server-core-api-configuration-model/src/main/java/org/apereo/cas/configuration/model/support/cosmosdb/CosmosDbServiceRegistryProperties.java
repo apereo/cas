@@ -25,5 +25,5 @@ public class CosmosDbServiceRegistryProperties extends BaseCosmosDbProperties {
      * Collection to store CAS service definitions.
      */
     @RequiredProperty
-    private String collection = "CasCosmosDbServiceRegistry";
+    private String container = "CasCosmosDbServiceRegistry";
 }

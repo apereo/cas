@@ -1,6 +1,5 @@
 package org.apereo.cas.util.http;
 
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -16,8 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class HttpMessageTests {
 
     @Test
-    @SneakyThrows
-    public void verifyAsyncArgIsTakenIntoAccount() {
+    public void verifyAsyncArgIsTakenIntoAccount() throws Exception {
         assertTrue(new HttpMessage(new URL("http://www.google.com"), "messageToSend").isAsynchronous());
         assertTrue(new HttpMessage(new URL("http://www.google.com"), "messageToSend", true).isAsynchronous());
         assertFalse(new HttpMessage(new URL("http://www.google.com"), "messageToSend", false).isAsynchronous());

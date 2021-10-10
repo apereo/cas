@@ -16,11 +16,11 @@ applications and service requests and override the global defaults.
            
 ## Global Configuration
 
-{% include casproperties.html properties="cas.http-web-request" %}
+{% include_cached casproperties.html properties="cas.http-web-request" %}
 
 ## Service HTTP Headers
 
-{% include registeredserviceproperties.html groups="HTTP_HEADERS" %}
+{% include_cached registeredserviceproperties.html groups="HTTP_HEADERS" %}
 
 A sample JSON file follows:
 
@@ -44,7 +44,7 @@ A sample JSON file follows:
 
 Cross-origin resource sharing (CORS) policies can also be defined per application in form of service properties.
 
-{% include registeredserviceproperties.html groups="CORS" %}
+{% include_cached registeredserviceproperties.html groups="CORS" %}
 
 A sample JSON file follows:
 

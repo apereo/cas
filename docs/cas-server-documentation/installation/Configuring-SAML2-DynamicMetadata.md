@@ -20,7 +20,7 @@ Note that the endpoint can accept a `service` parameter either by entity id or n
 is matched against the CAS service registry allowing the endpoint to calculate and combine any identity provider
 metadata overrides that may have been specified.
 
-{% include casproperties.html properties="cas.authn.saml-idp.metadata.core" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.core" %}
 
 You may use [this service](https://www.samltool.com/idp_metadata.php) to experiment with the metadata generation process
 and produce an example metadata for review and study.
@@ -29,7 +29,7 @@ and produce an example metadata for review and study.
         
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="samlIdPRegisteredServiceMetadataCache,caches" %}
+{% include_cached actuators.html endpoints="samlIdPRegisteredServiceMetadataCache,caches" %}
 
 
 ## Metadata Aggregates
@@ -70,7 +70,7 @@ Service provider or identity provider metadata can also be managed using the fol
 
 SAML2 identity provider metadata by default is generated on disk. 
 
-{% include casproperties.html properties="cas.authn.saml-idp.metadata.file-system" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.file-system" %}
 
 #### Per Service
 

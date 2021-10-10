@@ -99,6 +99,8 @@ public class EncodingUtilsTests {
 
     @Test
     public void verifyEncoding() {
+        assertNull(EncodingUtils.urlDecode(null));
+        
         assertTrue(EncodingUtils.encodeBase64(ArrayUtils.EMPTY_BYTE_ARRAY, true).isEmpty());
         assertFalse(EncodingUtils.encodeBase64("one".getBytes(StandardCharsets.UTF_8), true).isEmpty());
 

@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseOneTimeTokenCredentialRepositoryTests.SharedTestConfiguration.class
 },
     properties = {
-        "cas.jdbc.show-sql=true",
+        "cas.jdbc.show-sql=false",
         "cas.authn.mfa.gauth.crypto.enabled=false"
     })
 @EnableTransactionManagement(proxyTargetClass = true)

@@ -42,13 +42,13 @@ use <strong>casuser</strong> and <strong>Mellon</strong> as the username and pas
 configured via the static authentication handler, and <strong>MUST</strong> be removed from the configuration
 prior to production rollouts.</p></div>
 
-{% include casproperties.html properties="cas.authn.accept" %}
+{% include_cached casproperties.html properties="cas.authn.accept" %}
 
 ### Actuator Endpoints
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="authenticationHandlers" casModule="cas-server-support-reports" %}
+{% include_cached actuators.html endpoints="authenticationHandlers" casModule="cas-server-support-reports" %}
 
 ### Resolution Strategy
 

@@ -98,8 +98,8 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
         val encodeResponse = (Boolean) map.getOrDefault(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.TRUE);
 
         if (encodeResponse) {
-            var relayState = SAMLBindingSupport.getRelayState(messageContext);
-            LOGGER.trace("RelayState is [{}]", relayState);
+            val relayState = SAMLBindingSupport.getRelayState(messageContext);
+            LOGGER.trace("Relay state is [{}]", relayState);
             return encode(service, finalResponse, response, request,
                 adaptor, relayState, binding, authnRequest, assertion,
                 messageContext);

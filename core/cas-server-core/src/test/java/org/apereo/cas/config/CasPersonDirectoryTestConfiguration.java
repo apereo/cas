@@ -15,6 +15,7 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
@@ -30,6 +31,8 @@ import java.util.Map;
  */
 @TestConfiguration("casPersonDirectoryTestConfiguration")
 @Lazy(false)
+@ConditionalOnProperty(value = "spring.boot.config.CasPersonDirectoryTestConfiguration.enabled",
+    havingValue = "true", matchIfMissing = true)
 public class CasPersonDirectoryTestConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

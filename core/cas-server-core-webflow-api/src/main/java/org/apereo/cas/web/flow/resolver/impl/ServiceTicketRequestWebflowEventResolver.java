@@ -60,7 +60,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
         val service = WebUtils.getService(context);
         LOGGER.trace("Located service [{}] from the request context", service);
 
-        val configContext = getWebflowEventResolutionConfigurationContext();
+        val configContext = getConfigurationContext();
         if (service != null && StringUtils.isNotBlank(ticketGrantingTicketId)) {
             val authn = configContext.getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicketId);
             LOGGER.debug("Request identifies itself as one asking for service tickets. Checking for authentication context validity...");
@@ -94,7 +94,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
 
         try {
             val service = WebUtils.getService(context);
-            val configContext = getWebflowEventResolutionConfigurationContext();
+            val configContext = getConfigurationContext();
 
             val existingAuthn = configContext.getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicketId);
             val registeredService = configContext.getServicesManager().findServiceBy(service);
@@ -132,7 +132,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
     private boolean validateExistingAuthentication(final Authentication authentication,
                                                    final RequestContext requestContext) {
         if (authentication != null) {
-            val configContext = getWebflowEventResolutionConfigurationContext();
+            val configContext = getConfigurationContext();
             val ssoStrategy = configContext.getSingleSignOnParticipationStrategy();
 
             val ssoRequest = SingleSignOnParticipationRequest.builder()
@@ -155,7 +155,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
                                          final Authentication authentication) {
         if (credential != null) {
             LOGGER.trace("Finalizing authentication transaction for [{}]", credential);
-            val authenticationResult = getWebflowEventResolutionConfigurationContext().getAuthenticationSystemSupport()
+            val authenticationResult = getConfigurationContext().getAuthenticationSystemSupport()
                 .finalizeAuthenticationTransaction(service, credential);
             return authenticationResult.getAuthentication().getPrincipal();
         }

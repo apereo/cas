@@ -28,7 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 }, properties = {
     "cas.authn.mfa.yubikey.client-id=18423",
     "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As=",
-    "cas.jdbc.show-sql=true",
+    "cas.jdbc.show-sql=false",
     "cas.authn.mfa.yubikey.jpa.ddl-auto=create-drop"
 })
 @Tag("JDBC")

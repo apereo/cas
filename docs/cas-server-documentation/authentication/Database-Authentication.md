@@ -9,7 +9,7 @@ category: Authentication
 
 Database authentication is enabled by including the following dependencies in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-jdbc" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-jdbc" %}
 
 To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
 
@@ -20,7 +20,7 @@ To learn how to configure database drivers, [please see this guide](../installat
 Authenticates a user by comparing the user password (which can be encoded with a password encoder)
 against the password on record determined by a configurable database query.
 
-{% include casproperties.html properties="cas.authn.jdbc.query" %}
+{% include_cached casproperties.html properties="cas.authn.jdbc.query" %}
 
 
 ### Search Database Authentication
@@ -28,13 +28,13 @@ against the password on record determined by a configurable database query.
 Searches for a user record by querying against a username and password;
 the user is authenticated if at least one result is found.
 
-{% include casproperties.html properties="cas.authn.jdbc.search" %}
+{% include_cached casproperties.html properties="cas.authn.jdbc.search" %}
 
 ### Bind Database Authentication
 
 Authenticates a user by attempting to create a database connection using the username and (hashed) password.
 
-{% include casproperties.html properties="cas.authn.jdbc.bind" %}
+{% include_cached casproperties.html properties="cas.authn.jdbc.bind" %}
 
 
 ### Encode Database Authentication
@@ -47,7 +47,7 @@ This password encoding method combines the private Salt and the public salt whic
 If multiple iterations are used, the bytecode hash of the first iteration is rehashed without the salt values. The final hash
 is converted to hex before comparing it to the database value.
 
-{% include casproperties.html properties="cas.authn.jdbc.encode" %}
+{% include_cached casproperties.html properties="cas.authn.jdbc.encode" %}
 
 ## Password Policy Enforcement
 

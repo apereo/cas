@@ -35,6 +35,13 @@ public interface OidcConstants {
      * The Authorization Server SHOULD prompt the End-User consent.
      */
     String PROMPT_CONSENT = "consent";
+
+    /**
+     * Hint to the Authorization Server about the login identifier
+     * the End-User might use to log in (if necessary).
+     */
+    String LOGIN_HINT = "login_hint";
+
     /**
      * The sub claim.
      */
@@ -54,11 +61,15 @@ public interface OidcConstants {
     /**
      * The session identifier claim.
      */
-    String CLAIM_SESSIOND_ID = "sid";
+    String CLAIM_SESSION_ID = "sid";
     /**
      * The id token.
      */
     String ID_TOKEN = "id_token";
+    /**
+     * The issuer parameter.
+     */
+    String ISS = "iss";
     /**
      * The max age.
      */
@@ -67,6 +78,14 @@ public interface OidcConstants {
      * The prompt parameter.
      */
     String PROMPT = "prompt";
+
+    /**
+     * The {@code ui_locales} parameter.
+     * End-User's preferred languages and scripts for the user interface, represented
+     * as a space-separated list of language tag values, ordered by preference.
+     */
+    String UI_LOCALES = "ui_locales";
+
     /**
      * Base OIDC URL.
      */

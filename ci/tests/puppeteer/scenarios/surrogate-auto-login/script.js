@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
 const cas = require('../../cas.js');
 
 (async () => {
@@ -8,15 +7,12 @@ const cas = require('../../cas.js');
 
     await page.goto("https://localhost:8443/cas/login");
     await cas.loginWith(page, "unknown+casuser", "Mellon");
-    let p = await cas.innerText(page, '#loginErrorsPanel p');
-    assert(p.startsWith("You are not authorized to impersonate"));
+    await cas.assertInnerTextStartsWith(page, "#loginErrorsPanel p", "You are not authorized to impersonate");
 
     await page.goto("https://localhost:8443/cas/login");
     await cas.loginWith(page, "user3+casuser", "Mellon");
-    const header = await cas.innerText(page, '#content div h2');
-    assert(header === "Log In Successful")
-    p = await cas.innerText(page, '#content div p');
-    assert(p.startsWith("You, user3, have successfully logged into the Central Authentication Service"))
+    await cas.assertInnerText(page, '#content div h2', "Log In Successful");
+    await cas.assertInnerTextStartsWith(page, "#content div p", "You, user3, have successfully logged into the Central Authentication Service");
 
     await browser.close();
 })();

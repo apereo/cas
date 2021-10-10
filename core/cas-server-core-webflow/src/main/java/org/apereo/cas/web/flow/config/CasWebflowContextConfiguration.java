@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -16,6 +17,7 @@ import org.apereo.cas.web.flow.configurer.DynamicFlowModelBuilder;
 import org.apereo.cas.web.flow.configurer.GroovyWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.plan.DefaultCasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.executor.WebflowExecutorFactory;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
 
 import lombok.val;
@@ -85,13 +87,21 @@ public class CasWebflowContextConfiguration {
     @Autowired
     @Qualifier("registeredServiceViewResolver")
     private ObjectProvider<ViewResolver> registeredServiceViewResolver;
-    
+
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("webflowCipherExecutor")
     private ObjectProvider<CipherExecutor> webflowCipherExecutor;
+
+    @Autowired
+    @Qualifier("argumentExtractor")
+    private ObjectProvider<ArgumentExtractor> argumentExtractor;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("themeChangeInterceptor")
@@ -171,7 +181,12 @@ public class CasWebflowContextConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "localeChangeInterceptor")
     public LocaleChangeInterceptor localeChangeInterceptor() {
-        return new CasLocaleChangeInterceptor(casProperties.getLocale());
+        val interceptor = new CasLocaleChangeInterceptor(casProperties.getLocale(), argumentExtractor.getObject(), servicesManager.getObject());
+        interceptor.setParamName(casProperties.getLocale().getParamName());
+        interceptor.setSupportedFlows(List.of(
+            CasWebflowConfigurer.FLOW_ID_LOGOUT,
+            CasWebflowConfigurer.FLOW_ID_LOGIN));
+        return interceptor;
     }
 
     @Lazy(false)
@@ -185,23 +200,14 @@ public class CasWebflowContextConfiguration {
         return handler;
     }
 
-    @Lazy(false)
-    @Bean
-    public Object[] loginFlowHandlerMappingInterceptors() {
-        val interceptors = new ArrayList<>();
-        interceptors.add(localeChangeInterceptor());
-        themeChangeInterceptor.ifAvailable(interceptors::add);
-        authenticationThrottlingExecutionPlan.ifAvailable(p -> interceptors.addAll(p.getAuthenticationThrottleInterceptors()));
-        return interceptors.toArray();
-    }
-
     @Bean
     @Lazy(false)
-    public HandlerMapping loginFlowHandlerMapping() {
+    @Autowired
+    public HandlerMapping loginFlowHandlerMapping(@Qualifier("casWebflowExecutionPlan") final CasWebflowExecutionPlan webflowExecutionPlan) {
         val handler = new FlowHandlerMapping();
         handler.setOrder(LOGOUT_FLOW_HANDLER_ORDER - 1);
         handler.setFlowRegistry(loginFlowRegistry());
-        handler.setInterceptors(loginFlowHandlerMappingInterceptors());
+        handler.setInterceptors(webflowExecutionPlan.getWebflowInterceptors().toArray());
         return handler;
     }
 
@@ -301,6 +307,12 @@ public class CasWebflowContextConfiguration {
             plan.registerWebflowConfigurer(defaultWebflowConfigurer());
             plan.registerWebflowConfigurer(defaultLogoutWebflowConfigurer());
             plan.registerWebflowConfigurer(groovyWebflowConfigurer());
+
+            plan.registerWebflowInterceptor(localeChangeInterceptor());
+            themeChangeInterceptor.ifAvailable(plan::registerWebflowInterceptor);
+
+            authenticationThrottlingExecutionPlan.ifAvailable(
+                throttlingPlan -> throttlingPlan.getAuthenticationThrottleInterceptors().forEach(plan::registerWebflowInterceptor));
         };
     }
 }

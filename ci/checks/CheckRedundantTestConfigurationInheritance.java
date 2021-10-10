@@ -43,15 +43,16 @@ public class CheckRedundantTestConfigurationInheritance {
     protected static void checkPattern(final String arg,
                                        final Pattern... patterns) throws IOException {
         var failBuild = new AtomicBoolean(false);
-        var abstractClazzPattern = Pattern.compile("public abstract class \\w+");
+        var abstractClazzPattern = Pattern.compile("public abstract class (\\w+)");
         var parentClasses = new TreeMap<String, File>();
 
         Files.walk(Paths.get(arg))
             .filter(file -> Files.isRegularFile(file) && file.toFile().getName().endsWith("Tests.java"))
             .forEach(file -> {
                 var text = readFile(file);
-                if (abstractClazzPattern.matcher(text).find()) {
-                    parentClasses.put(getFileSimpleName(file.toFile()), file.toFile());
+                var matcher = abstractClazzPattern.matcher(text);
+                while (matcher.find()) {
+                    parentClasses.put(matcher.group(1), file.toFile());
                 }
             });
 

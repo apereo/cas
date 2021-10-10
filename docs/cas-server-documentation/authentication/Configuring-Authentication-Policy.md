@@ -28,7 +28,7 @@ Typical use cases of authentication policies may include:
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="authenticationPolicies" casModule="cas-server-support-reports" %}
+{% include_cached actuators.html endpoints="authenticationPolicies" casModule="cas-server-support-reports" %}
 
 ## Policies
 

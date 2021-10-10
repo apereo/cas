@@ -1,9 +1,11 @@
 package org.apereo.cas;
 
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.logging.LoggingInitialization;
 import org.apereo.cas.util.spring.boot.AbstractCasBanner;
 import org.apereo.cas.util.spring.boot.DefaultCasBanner;
 
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,6 +20,8 @@ import org.springframework.boot.context.metrics.buffering.BufferingApplicationSt
 import org.springframework.core.metrics.ApplicationStartup;
 import org.springframework.core.metrics.jfr.FlightRecorderApplicationStartup;
 
+import java.util.Optional;
+
 /**
  * This is {@link CasEmbeddedContainerUtils}.
  *
@@ -28,7 +32,25 @@ import org.springframework.core.metrics.jfr.FlightRecorderApplicationStartup;
 @UtilityClass
 public class CasEmbeddedContainerUtils {
     private static final int APPLICATION_EVENTS_CAPACITY = 5_000;
-    
+
+    /**
+     * Gets logging initialization.
+     *
+     * @return the logging initialization
+     */
+    @SneakyThrows
+    public static Optional<LoggingInitialization> getLoggingInitialization() {
+        val packageName = CasEmbeddedContainerUtils.class.getPackage().getName();
+        val reflections = new Reflections(new ConfigurationBuilder()
+            .filterInputsBy(new FilterBuilder().includePackage(packageName))
+            .setUrls(ClasspathHelper.forPackage(packageName))
+            .setScanners(new SubTypesScanner(true)));
+        val subTypes = reflections.getSubTypesOf(LoggingInitialization.class);
+        return subTypes.isEmpty()
+            ? Optional.empty()
+            : Optional.of(subTypes.iterator().next().getDeclaredConstructor().newInstance());
+    }
+
     /**
      * Gets cas banner instance.
      *
@@ -71,4 +93,5 @@ public class CasEmbeddedContainerUtils {
         }
         return ApplicationStartup.DEFAULT;
     }
+
 }

@@ -23,7 +23,7 @@ CAS via Spring Boot registers the following core metrics when applicable:
 
 Support is enabled by including the following module in the WAR Overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-metrics" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-metrics" %}
 
 Auto-configuration enables the instrumentation of all available DataSource objects 
 with a metric named `jdbc`. Data source instrumentation results in gauges representing the 
@@ -45,7 +45,7 @@ You can drill down to view information about a particular meter by providing its
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="statistics" casModule="cas-server-support-reports" %}
+{% include_cached actuators.html endpoints="statistics" casModule="cas-server-support-reports" %}
 
 ## Metrics Customization
 

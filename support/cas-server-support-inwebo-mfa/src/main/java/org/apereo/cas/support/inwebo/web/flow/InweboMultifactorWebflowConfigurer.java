@@ -82,9 +82,8 @@ public class InweboMultifactorWebflowConfigurer extends AbstractCasMultifactorWe
 
             val inweboErrorState = createViewState(flow, "inweboError", "inwebo/casInweboErrorView");
             createTransitionForState(inweboErrorState, WebflowConstants.BROWSER, "startBrowser");
-            createTransitionForState(inweboErrorState, "retry", CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+            createTransitionForState(inweboErrorState, CasWebflowConstants.TRANSITION_ID_RETRY, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
             createTransitionForState(inweboErrorState, CasWebflowConstants.TRANSITION_ID_ERROR, "inweboError");
-
         });
 
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_INWEBO_EVENT_ID,

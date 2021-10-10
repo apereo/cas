@@ -141,8 +141,7 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
         ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml",
         MediaType.APPLICATION_JSON_VALUE
     })
-    @Operation(summary = "Import registered services as a JSON document or a zip file",
-        parameters = {@Parameter(name = "request", required = true)})
+    @Operation(summary = "Import registered services as a JSON document or a zip file")
     public ResponseEntity<RegisteredService> importService(final HttpServletRequest request) throws Exception {
         val contentType = request.getContentType();
         if (StringUtils.equalsAnyIgnoreCase(MediaType.APPLICATION_OCTET_STREAM_VALUE, contentType)) {

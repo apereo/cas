@@ -15,10 +15,12 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
@@ -63,11 +65,25 @@ public class SSOSamlIdPPostProfileHandlerControllerWithBrowserStorageTests exten
         assertTrue(mv.getModel().containsKey(BrowserSessionStorage.KEY_SESSION_STORAGE));
     }
 
+    @Test
+    public void verifyUnknownBindingLocation() throws Exception {
+        val request = new MockHttpServletRequest();
+        request.setMethod("POST");
+        val response = new MockHttpServletResponse();
+        val authnRequest = getAuthnRequest();
+        authnRequest.setProtocolBinding(SAMLConstants.SAML1_ARTIFACT_BINDING_URI);
+        val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
+        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
+        val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
+        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, mv.getViewName());
+        assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
+    }
 
     private AuthnRequest getAuthnRequest() {
         var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
-        var authnRequest = (AuthnRequest) builder.buildObject();
+        val authnRequest = (AuthnRequest) builder.buildObject();
+        authnRequest.setProtocolBinding(SAMLConstants.SAML2_POST_BINDING_URI);
         builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
         val issuer = (Issuer) builder.buildObject();

@@ -8,13 +8,10 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     const service = "https://example.com";
 
-    await page.goto("https://localhost:8443/cas/login?TARGET=" + service);
+    await page.goto(`https://localhost:8443/cas/login?TARGET=${service}`);
     await cas.loginWith(page, "casuser", "Mellon");
 
-    let result = new URL(page.url());
-    let ticket = result.searchParams.get("SAMLart");
-    console.log(ticket);
-    assert(ticket != null);
+    let ticket = await cas.assertParameter(page, "SAMLart");
 
     let request = `<?xml version="1.0" encoding="UTF-8"?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
@@ -32,7 +29,7 @@ const cas = require('../../cas.js');
         protocol: 'https:',
         hostname: 'localhost',
         port: 8443,
-        path: '/cas/samlValidate?TARGET=' + service + "&SAMLart=" + ticket,
+        path: `/cas/samlValidate?TARGET=${service}&SAMLart=${ticket}`,
         method: 'POST',
         rejectUnauthorized: false,
         headers: {

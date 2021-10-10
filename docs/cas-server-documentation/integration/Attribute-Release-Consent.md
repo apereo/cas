@@ -20,13 +20,17 @@ Consent attribute records stored in the configured repository are signed and enc
 
 Support is enabled by including the following module in the WAR Overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-consent-webflow" %}
+      
+## Configuration
+
+{% include_cached casproperties.html properties="cas.consent.core" %}
 
 ## Actuator Endpoints
       
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="attributeConsent" %}
+{% include_cached actuators.html endpoints="attributeConsent" %}
 
 ## Attribute Selection
 
@@ -72,7 +76,7 @@ User consent decisions may be stored and remembered using one of the following o
 
 | Storage          | Description                                         
 |--------------------------------------------------------------------------------------
-| CoucbDb          | [See this guide](Attribute-Release-Consent-Storage-CouchDb.html).
+| CouchDb          | [See this guide](Attribute-Release-Consent-Storage-CouchDb.html).
 | Custom           | [See this guide](Attribute-Release-Consent-Storage-Custom.html).
 | Groovy           | [See this guide](Attribute-Release-Consent-Storage-Groovy.html).
 | JDBC             | [See this guide](Attribute-Release-Consent-Storage-JDBC.html).

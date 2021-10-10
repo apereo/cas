@@ -36,7 +36,7 @@ embedded servlet container is almost always the better choice.
 
 The following endpoints are provided:
 
-{% include actuators.html endpoints="shutdown,restart,pause,resume" %}
+{% include_cached actuators.html endpoints="shutdown,restart,pause,resume" %}
 
 ## Embedded
      

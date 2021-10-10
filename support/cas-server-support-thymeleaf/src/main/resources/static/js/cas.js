@@ -5,6 +5,8 @@
             material.autoInit();
         },
         attachFields: function () {
+            new material.textField.MDCTextFieldHelperText(document.querySelectorAll('.mdc-text-field-helper-text'));
+
             let divs = document.querySelectorAll('.mdc-text-field'),
                 field;
             let div;
@@ -15,7 +17,7 @@
                     field.foundation.adapter.registerInputInteractionHandler('keypress', cas.checkCaps);
                 }
             }
-            let selector = document.querySelector('.mdc-select.authn-source');
+            let selector = document.querySelector('.mdc-select');
             if (selector != null) {
                 const select = new material.select.MDCSelect(selector);
                 select.listen('MDCSelect:change', function () {
@@ -60,7 +62,7 @@ function randomWord() {
 
     let n1 = things[Math.floor(Math.random() * things.length)];
     let n2 = names[Math.floor(Math.random() * names.length)];
-    return n1 + "_" + n2
+    return `${n1}_${n2}`
 }
 
 function copyClipboard(element) {
@@ -107,9 +109,8 @@ function logGeoLocationError(error) {
 }
 
 function showGeoPosition(position) {
-    let loc = position.coords.latitude + ',' + position.coords.longitude
-        + ',' + position.coords.accuracy + ',' + position.timestamp;
-    console.log("Tracking geolocation for " + loc);
+    let loc = `${position.coords.latitude},${position.coords.longitude},${position.coords.accuracy},${position.timestamp}`;
+    console.log(`Tracking geolocation for ${loc}`);
     $('[name="geolocation"]').val(loc);
 }
 
@@ -119,16 +120,16 @@ function preserveAnchorTagOnForm() {
         let location = self.document.location;
         let hash = decodeURIComponent(location.hash);
 
-        if (hash != undefined && hash != '' && hash.indexOf('#') === -1) {
-            hash = '#' + hash;
+        if (hash !== undefined && hash != '' && hash.indexOf('#') === -1) {
+            hash = `#${hash}`;
         }
 
         let action = $('#fm1').attr('action');
-        if (action == undefined) {
+        if (action === undefined) {
             action = location.href;
         } else {
             let qidx = location.href.indexOf('?');
-            if (qidx != -1) {
+            if (qidx !== -1) {
                 let queryParams = location.href.substring(qidx);
                 action += queryParams;
             }
@@ -173,7 +174,7 @@ function readFromSessionStorage() {
 }
 
 function resourceLoadedSuccessfully() {
-
+    
     $(document).ready(function () {
 
         if (trackGeoLocation) {
@@ -189,16 +190,14 @@ function resourceLoadedSuccessfully() {
         $('#fm1 input[name="username"],[name="password"]').trigger('input');
         $('#fm1 input[name="username"]').focus();
 
-        let $revealpassword = $('.reveal-password');
-        $revealpassword.mouseup(function (ev) {
-            $('.pwd').attr('type', 'password');
-            $(".reveal-password-icon").removeClass("mdi mdi-eye-off").addClass("mdi mdi-eye");
-            ev.preventDefault();
-        })
-
-        $revealpassword.mousedown(function (ev) {
-            $('.pwd').attr('type', 'text');
-            $(".reveal-password-icon").removeClass("mdi mdi-eye").addClass("mdi mdi-eye-off");
+        $('.reveal-password').click(function (ev) {
+            if($('.pwd').attr('type') != 'text') {
+                $('.pwd').attr('type', 'text');
+                $(".reveal-password-icon").removeClass("mdi mdi-eye").addClass("mdi mdi-eye-off");
+            } else {
+                $('.pwd').attr('type', 'password');
+                $(".reveal-password-icon").removeClass("mdi mdi-eye-off").addClass("mdi mdi-eye");
+            }
             ev.preventDefault();
         });
 
@@ -208,3 +207,4 @@ function resourceLoadedSuccessfully() {
     });
 
 }
+

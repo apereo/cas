@@ -13,4 +13,4 @@ for testing and demo purposes. The key in the map is taken to be the username
 eligible for authentication while the value can either be an email
 address or phone number that would be used to contact the user with issued tokens.
 
-{% include casproperties.html properties="cas.authn.passwordless.accounts.simple" %}
+{% include_cached casproperties.html properties="cas.authn.passwordless.accounts.simple" %}

@@ -13,6 +13,7 @@ import org.apereo.cas.audit.spi.plan.DefaultAuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.spi.principal.ChainingAuditPrincipalIdProvider;
 import org.apereo.cas.audit.spi.principal.ThreadLocalAuditPrincipalResolver;
 import org.apereo.cas.audit.spi.resource.CredentialsAsFirstParameterResourceResolver;
+import org.apereo.cas.audit.spi.resource.ProtocolSpecificationValidationAuditResourceResolver;
 import org.apereo.cas.audit.spi.resource.ServiceAccessEnforcementAuditResourceResolver;
 import org.apereo.cas.audit.spi.resource.ServiceAuditResourceResolver;
 import org.apereo.cas.audit.spi.resource.TicketAsFirstParameterResourceResolver;
@@ -29,6 +30,7 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.FilterAndDelegateAuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.apereo.inspektr.audit.spi.support.BooleanAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.MessageBundleAwareResourceResolver;
 import org.apereo.inspektr.audit.spi.support.NullableReturnValueAuditResourceResolver;
@@ -47,6 +49,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -238,8 +241,7 @@ public class CasCoreAuditConfiguration {
     @ConditionalOnMissingBean(name = "ticketValidationResourceResolver")
     @Bean
     public AuditResourceResolver ticketValidationResourceResolver() {
-        val audit = casProperties.getAudit();
-        if (audit.getEngine().isIncludeValidationAssertion()) {
+        if (casProperties.getAudit().getEngine().isIncludeValidationAssertion()) {
             return new TicketValidationResourceResolver();
         }
         return ticketResourceResolver();
@@ -282,7 +284,7 @@ public class CasCoreAuditConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "credentialsAsFirstParameterResourceResolver")
-    public CredentialsAsFirstParameterResourceResolver credentialsAsFirstParameterResourceResolver() {
+    public AuditResourceResolver credentialsAsFirstParameterResourceResolver() {
         return new CredentialsAsFirstParameterResourceResolver();
     }
 
@@ -319,6 +321,20 @@ public class CasCoreAuditConfiguration {
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "protocolSpecificationValidationResourceResolver")
+    public AuditResourceResolver protocolSpecificationValidationResourceResolver() {
+        return new ProtocolSpecificationValidationAuditResourceResolver(casProperties);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "booleanActionResolver")
+    public AuditActionResolver booleanActionResolver() {
+        return new BooleanAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_SUCCESS,
+            AuditTrailConstants.AUDIT_ACTION_POSTFIX_FAILED);
+    }
+
+    @Bean
     @ConditionalOnMissingBean(name = "filterAndDelegateAuditTrailManager")
     protected AuditTrailManager filterAndDelegateAuditTrailManager() {
         val audit = casProperties.getAudit().getEngine();
@@ -339,8 +355,7 @@ public class CasCoreAuditConfiguration {
         val resolver = authenticationActionResolver();
         plan.registerAuditActionResolver(AuditActionResolvers.AUTHENTICATION_RESOLVER, resolver);
         plan.registerAuditActionResolver(AuditActionResolvers.SAVE_SERVICE_ACTION_RESOLVER, resolver);
-        plan.registerAuditActionResolver(AuditActionResolvers.DELETE_SERVICE_ACTION_RESOLVER,
-            objectCreationAuditActionResolver());
+        plan.registerAuditActionResolver(AuditActionResolvers.DELETE_SERVICE_ACTION_RESOLVER, objectCreationAuditActionResolver());
 
         val defResolver = defaultAuditActionResolver();
         plan.registerAuditActionResolver(AuditActionResolvers.DESTROY_TICKET_RESOLVER, defResolver);
@@ -354,8 +369,8 @@ public class CasCoreAuditConfiguration {
 
         val triggeredResolver = triggeredAuditActionResolver();
         plan.registerAuditActionResolver(AuditActionResolvers.AUTHENTICATION_EVENT_ACTION_RESOLVER, triggeredResolver);
-        plan.registerAuditActionResolver(AuditActionResolvers.VALIDATE_SERVICE_TICKET_RESOLVER,
-            ticketValidationActionResolver());
+        plan.registerAuditActionResolver(AuditActionResolvers.VALIDATE_SERVICE_TICKET_RESOLVER, ticketValidationActionResolver());
+        plan.registerAuditActionResolver(AuditActionResolvers.VALIDATE_PROTOCOL_SPECIFICATION_RESOLVER, booleanActionResolver());
 
         plan.registerAuditActionResolver(AuditActionResolvers.SERVICE_ACCESS_ENFORCEMENT_ACTION_RESOLVER, triggeredResolver);
     }
@@ -379,8 +394,9 @@ public class CasCoreAuditConfiguration {
         val serviceResolver = serviceAuditResourceResolver();
         plan.registerAuditResourceResolver(AuditResourceResolvers.GRANT_SERVICE_TICKET_RESOURCE_RESOLVER, serviceResolver);
         plan.registerAuditResourceResolver(AuditResourceResolvers.GRANT_PROXY_TICKET_RESOURCE_RESOLVER, serviceResolver);
-        plan.registerAuditResourceResolver(AuditResourceResolvers.VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER,
-            ticketValidationResourceResolver());
+        plan.registerAuditResourceResolver(AuditResourceResolvers.VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER, ticketValidationResourceResolver());
+        plan.registerAuditResourceResolver(AuditResourceResolvers.VALIDATE_PROTOCOL_SPECIFICATION_RESOURCE_RESOLVER,
+            protocolSpecificationValidationResourceResolver());
 
         plan.registerAuditResourceResolver(AuditResourceResolvers.SAVE_SERVICE_RESOURCE_RESOLVER,
             returnValueResourceResolver());

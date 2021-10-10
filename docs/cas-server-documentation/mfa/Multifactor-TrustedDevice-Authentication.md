@@ -31,17 +31,17 @@ This can be optionally disabled and applied only to a selected set of providers.
 
 Support is provided via the following module:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa" %}
 
 ## Actuator Endpoints
 
 The following endpoints are provided by CAS:
 
-{% include actuators.html endpoints="multifactorTrustedDevices" %}
+{% include_cached actuators.html endpoints="multifactorTrustedDevices" %}
 
 ## Settings
 
-{% include casproperties.html properties="cas.authn.mfa.trusted.core,cas.authn.mfa.trusted.crypto" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.trusted.core,cas.authn.mfa.trusted.crypto" %}
 
 ## Authentication Context
 
@@ -68,7 +68,7 @@ the cleaner running on one designated CAS
 node only and turn it off on all others via CAS settings. Keeping the cleaner running on all 
 nodes may likely lead to severe performance and locking issues.</p></div>
 
-{% include casproperties.html properties="cas.authn.mfa.trusted.cleaner" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.trusted.cleaner" %}
 
 ### Default
 

@@ -109,10 +109,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * @return true if algorithm requires initialization vector
      */
     public boolean isVectorInitializationRequiredFor(final String algorithm) {
-        if (StringUtils.isNotBlank(algorithm)) {
-            return algorithm.matches(ALGS_THAT_REQUIRE_IV_PATTERN);
-        }
-        return false;
+        return StringUtils.isNotBlank(algorithm) && algorithm.matches(ALGS_THAT_REQUIRE_IV_PATTERN);
     }
 
     /**

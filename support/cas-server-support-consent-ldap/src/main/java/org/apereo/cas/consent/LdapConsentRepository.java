@@ -135,10 +135,7 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
     public boolean deleteConsentDecisions(final String principal) {
         LOGGER.debug("Deleting consent decisions for principal [{}]", principal);
         val entry = readConsentEntry(principal);
-        if (entry != null) {
-            return executeModifyOperation(new HashSet<>(), entry);
-        }
-        return false;
+        return entry != null && executeModifyOperation(new HashSet<>(), entry);
     }
 
     @Override

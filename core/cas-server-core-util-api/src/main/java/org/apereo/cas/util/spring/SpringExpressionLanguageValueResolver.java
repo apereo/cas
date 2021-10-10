@@ -53,7 +53,7 @@ public class SpringExpressionLanguageValueResolver implements Function {
         evaluationContext.setVariable("environmentVariables", environment);
         evaluationContext.setVariable("envVars", environment);
         evaluationContext.setVariable("env", environment);
-
+        
         evaluationContext.setVariable("tempDir", FileUtils.getTempDirectoryPath());
         evaluationContext.setVariable("zoneId", ZoneId.systemDefault().getId());
     }
