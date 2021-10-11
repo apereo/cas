@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.support;
 
 import org.apereo.cas.configuration.CasConfigurationWatchService;
+import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.config.CasCoreEnvironmentConfiguration;
 import org.apereo.cas.configuration.config.standalone.CasCoreBootstrapStandaloneConfiguration;
 import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
@@ -40,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DefaultCasConfigurationPropertiesSourceLocatorTests {
     static {
         System.setProperty("spring.application.name", "cas");
-        System.setProperty("spring.profiles.active", "standalone,dev");
+        System.setProperty("spring.profiles.active", CasConfigurationPropertiesSourceLocator.PROFILE_STANDALONE + ",dev");
         System.setProperty("cas.standalone.configuration-directory", "src/test/resources/directory");
         System.setProperty("cas.standalone.configuration-file", "src/test/resources/standalone.properties");
     }

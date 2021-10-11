@@ -57,7 +57,7 @@ public class CasConfigurationWatchService implements Closeable, CasEventListener
         val configFile = configurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile();
         if (configFile != null && configFile.exists()) {
             LOGGER.debug("Starting to watch configuration file [{}]", configFile);
-            this.configurationFileWatch = new FileWatcherService(configFile.getParentFile(),
+            this.configurationFileWatch = new FileWatcherService(configFile,
                 createConfigurationCreatedEvent.andNext(eventPublisher::publishEvent),
                 createConfigurationModifiedEvent.andNext(eventPublisher::publishEvent),
                 createConfigurationDeletedEvent.andNext(eventPublisher::publishEvent));

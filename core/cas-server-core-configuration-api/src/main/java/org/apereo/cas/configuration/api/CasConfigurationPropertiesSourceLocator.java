@@ -16,6 +16,11 @@ import java.util.Optional;
 public interface CasConfigurationPropertiesSourceLocator {
 
     /**
+     * Standalone configuration profile.
+     */
+    String PROFILE_STANDALONE = "standalone";
+
+    /**
      * Locate property sources for CAS via the given environment and other resources.
      *
      * @param environment    the environment

@@ -14,7 +14,6 @@
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=yubikeyAccountRepository",
-    "--management.endpoint.health.show-details=always",
     "--management.endpoints.enabled-by-default=true"
   ]
 }
