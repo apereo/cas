@@ -19,7 +19,6 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
@@ -67,8 +66,8 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             val scopes = new LinkedHashSet<>(accessToken.getScopes());
             if (!scopes.contains(OidcConstants.StandardScopes.OPENID.getScope())) {
                 LOGGER.warn("Request does not indicate a scope [{}] that can identify an OpenID Connect request. "
-                    + "This is a REQUIRED scope that MUST be present in the request. Given its absence, "
-                    + "CAS will not process any attribute claims and will return the authenticated principal as is.", scopes);
+                            + "This is a REQUIRED scope that MUST be present in the request. Given its absence, "
+                            + "CAS will not process any attribute claims and will return the authenticated principal as is.", scopes);
                 return principal;
             }
 
@@ -127,7 +126,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         if (scopes.isEmpty()) {
             val attributes = principal.getAttributes();
             LOGGER.trace("No defined scopes are available to instruct attribute release policies for [{}]. "
-                    + "CAS will authorize the collection of resolved attributes [{}] for release to [{}]",
+                         + "CAS will authorize the collection of resolved attributes [{}] for release to [{}]",
                 registeredService.getServiceId(), attributes, service.getId());
             return attributes;
         }
@@ -153,11 +152,9 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     protected void configureAttributeReleasePoliciesByScope() {
         val oidc = casProperties.getAuthn().getOidc();
         val packageName = BaseOidcScopeAttributeReleasePolicy.class.getPackage().getName();
-        val reflections =
-            new Reflections(new ConfigurationBuilder()
-                .filterInputsBy(new FilterBuilder().includePackage(packageName))
-                .setUrls(ClasspathHelper.forPackage(packageName))
-                .setScanners(new SubTypesScanner(true)));
+        val reflections = new Reflections(new ConfigurationBuilder()
+            .filterInputsBy(new FilterBuilder().includePackage(packageName))
+            .setUrls(ClasspathHelper.forPackage(packageName)));
 
         val subTypes = reflections.getSubTypesOf(BaseOidcScopeAttributeReleasePolicy.class);
         subTypes.forEach(Unchecked.consumer(t -> {
@@ -198,7 +195,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         val serviceScopes = oidcService.getScopes();
         LOGGER.trace("Scopes assigned to service definition [{}] are [{}]", oidcService.getName(), serviceScopes);
         val scopeFree = serviceScopes.isEmpty() || (serviceScopes.size() == 1
-            && serviceScopes.contains(OidcConstants.StandardScopes.OPENID.getScope()));
+                                                    && serviceScopes.contains(OidcConstants.StandardScopes.OPENID.getScope()));
         if (!scopeFree) {
             scopes.retainAll(serviceScopes);
             LOGGER.trace("Service definition [{}] will filter attributes based on scopes [{}]", oidcService.getName(), scopes);
