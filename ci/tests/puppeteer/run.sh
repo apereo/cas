@@ -22,25 +22,28 @@ function printred() {
 casVersion=(`cat $PWD/gradle.properties | grep "version" | cut -d= -f2`)
 echo -n "Running Puppeteer tests for Apereo CAS Server: " && printcyan "${casVersion}"
 
+DEBUG_PORT="5000"
+DEBUG_SUSPEND="n"
+
 while (( "$#" )); do
   case "$1" in
   --scenario)
     scenario="$2"
     shift 2
     ;;
-  --install-puppeteer)
+  --install-puppeteer|--install)
       INSTALL_PUPPETEER="true"
       shift 1
       ;;
   --debug)
-    DEBUG="-debug"
+    DEBUG="true"
     shift 1
     ;;
-  --debug-port)
+  --debug-port|--port)
     DEBUG_PORT="$2"
     shift 2
     ;;
-  --debug-suspend)
+  --debug-suspend|--suspend)
     DEBUG_SUSPEND="y"
     shift 1
     ;;
@@ -194,7 +197,7 @@ if [[ "${RERUN}" != "true" ]]; then
   properties="${properties//\$\{PWD\}/${PORTABLE_PWD}}"
   properties="${properties//\$\{SCENARIO\}/${scenarioName}}"
   properties="${properties//\%\{random\}/${random}}"
-  if [[ "$DEBUG" == "debug" ]]; then
+  if [[ "$DEBUG" == "true" ]]; then
     printyellow "Enabling debugger on port $DEBUG_PORT"
     runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
   fi

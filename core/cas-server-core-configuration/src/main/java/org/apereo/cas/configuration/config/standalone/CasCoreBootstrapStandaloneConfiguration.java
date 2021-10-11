@@ -2,11 +2,9 @@ package org.apereo.cas.configuration.config.standalone;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
-import org.apereo.cas.configuration.CasConfigurationWatchService;
 import org.apereo.cas.configuration.DefaultCasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
-import org.apereo.cas.util.spring.CasEventListener;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -34,7 +31,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Profile("standalone")
 @ConditionalOnProperty(value = "spring.cloud.config.enabled", havingValue = "false")
 @Configuration(value = "CasCoreBootstrapStandaloneConfiguration", proxyBeanMethods = false)
 public class CasCoreBootstrapStandaloneConfiguration {
@@ -67,22 +63,9 @@ public class CasCoreBootstrapStandaloneConfiguration {
         }
     }
 
-    @Configuration(value = "CasCoreBootstrapStandaloneWatchConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnProperty(value = "cas.events.core.track-configuration-modifications", havingValue = "true")
-    public static class CasCoreBootstrapStandaloneWatchConfiguration {
-        @Autowired
-        @Bean(initMethod = "initialize")
-        public CasEventListener casConfigurationWatchService(
-            @Qualifier("configurationPropertiesEnvironmentManager")
-            final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager,
-            final ConfigurableApplicationContext applicationContext) {
-            return new CasConfigurationWatchService(configurationPropertiesEnvironmentManager, applicationContext);
-        }
-    }
-
     @Configuration(value = "CasCoreBootstrapStandaloneLocatorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @Profile(CasConfigurationPropertiesSourceLocator.PROFILE_STANDALONE)
     public static class CasCoreBootstrapStandaloneLocatorConfiguration {
         @ConditionalOnMissingBean(name = "casConfigurationPropertiesSourceLocator")
         @Bean

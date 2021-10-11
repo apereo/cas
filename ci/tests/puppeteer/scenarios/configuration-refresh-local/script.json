@@ -1,0 +1,13 @@
+{
+  "dependencies": "core,events-configuration",
+  "properties": [
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--cas.events.core.track-configuration-modifications=true",
+
+    "--management.endpoint.refresh.enabled=true",
+    "--management.endpoints.web.exposure.include=refresh",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.standalone.configuration-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/config.yml"
+  ]
+}
