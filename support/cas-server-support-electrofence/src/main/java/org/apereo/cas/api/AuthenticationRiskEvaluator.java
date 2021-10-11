@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Set;
+import java.util.List;
 
 /**
  * This is {@link AuthenticationRiskEvaluator}.
@@ -19,7 +19,7 @@ public interface AuthenticationRiskEvaluator {
      *
      * @return the calculators
      */
-    Set<AuthenticationRequestRiskCalculator> getCalculators();
+    List<AuthenticationRequestRiskCalculator> getCalculators();
 
     /**
      * Calculate final authentication risk score.
