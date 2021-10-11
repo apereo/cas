@@ -39,6 +39,6 @@ async function updateConfig(configFile, configFilePath, data) {
 
     const newConfig = YAML.stringify(configFile);
     console.log(`Updated configuration:\n${newConfig}`);
-    fs.writeFileSync(configFilePath, newConfig);
+    await fs.writeFileSync(configFilePath, newConfig);
     console.log(`Wrote changes to ${configFilePath}`);
 }
