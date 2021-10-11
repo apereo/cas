@@ -13,7 +13,7 @@ function build {
 
 function publish {
     echo -e "\n${GREEN}Publishing CAS. Please be patient as this might take a while...${NORMAL}\n"
-    ./gradlew closeAndReleaseSonatypeStagingRepository --no-watch-fs \
+    ./gradlew publishToSonatype closeAndReleaseStagingRepository --no-watch-fs -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2" \
       -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2" \
       -Dorg.gradle.internal.http.socketTimeout="${TIMEOUT}" \
       -Dorg.gradle.internal.http.connectionTimeout="${TIMEOUT}"  \
