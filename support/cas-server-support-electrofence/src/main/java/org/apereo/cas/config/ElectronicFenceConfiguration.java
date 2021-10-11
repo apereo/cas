@@ -24,15 +24,14 @@ import org.apereo.cas.impl.plans.MultifactorAuthenticationContingencyPlan;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.support.events.CasEventRepository;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -41,7 +40,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.util.HashSet;
+import java.util.List;
 
 /**
  * This is {@link ElectronicFenceConfiguration}.
@@ -51,8 +50,7 @@ import java.util.HashSet;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-@Slf4j
-@Configuration(value = "electronicFenceConfiguration", proxyBeanMethods = false)
+@Configuration(value = "ElectronicFenceConfiguration", proxyBeanMethods = false)
 public class ElectronicFenceConfiguration {
 
     @Configuration(value = "ElectronicFenceMitigatorConfiguration", proxyBeanMethods = false)
@@ -85,34 +83,8 @@ public class ElectronicFenceConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public AuthenticationRiskEvaluator authenticationRiskEvaluator(
-            final CasConfigurationProperties casProperties,
-            @Qualifier("ipAddressAuthenticationRequestRiskCalculator")
-            final AuthenticationRequestRiskCalculator ipAddressAuthenticationRequestRiskCalculator,
-            @Qualifier("userAgentAuthenticationRequestRiskCalculator")
-            final AuthenticationRequestRiskCalculator userAgentAuthenticationRequestRiskCalculator,
-            @Qualifier("dateTimeAuthenticationRequestRiskCalculator")
-            final AuthenticationRequestRiskCalculator dateTimeAuthenticationRequestRiskCalculator,
-            @Qualifier("geoLocationAuthenticationRequestRiskCalculator")
-            final ObjectProvider<AuthenticationRequestRiskCalculator> geoLocationAuthenticationRequestRiskCalculator) {
-            
-            val risk = casProperties.getAuthn().getAdaptive().getRisk();
-            val calculators = new HashSet<AuthenticationRequestRiskCalculator>();
-            if (risk.getIp().isEnabled()) {
-                calculators.add(ipAddressAuthenticationRequestRiskCalculator);
-            }
-            if (risk.getAgent().isEnabled()) {
-                calculators.add(userAgentAuthenticationRequestRiskCalculator);
-            }
-            if (risk.getDateTime().isEnabled()) {
-                calculators.add(dateTimeAuthenticationRequestRiskCalculator);
-            }
-            if (risk.getGeoLocation().isEnabled()) {
-                geoLocationAuthenticationRequestRiskCalculator.ifAvailable(calculators::add);
-            }
-            if (calculators.isEmpty()) {
-                LOGGER.warn("No risk calculators are defined to examine authentication requests");
-            }
-            return new DefaultAuthenticationRiskEvaluator(calculators);
+            final List<AuthenticationRequestRiskCalculator> ipAddressAuthenticationRequestRiskCalculators) {
+            return new DefaultAuthenticationRiskEvaluator(ipAddressAuthenticationRequestRiskCalculators);
         }
     }
 
@@ -177,9 +149,10 @@ public class ElectronicFenceConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
-        public AuthenticationRiskNotifier authenticationRiskEmailNotifier(final CasConfigurationProperties casProperties,
-                                                                          @Qualifier("communicationsManager")
-                                                                          final CommunicationsManager communicationsManager) {
+        public AuthenticationRiskNotifier authenticationRiskEmailNotifier(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("communicationsManager")
+            final CommunicationsManager communicationsManager) {
             return new AuthenticationRiskEmailNotifier(casProperties, communicationsManager);
         }
 
@@ -187,9 +160,10 @@ public class ElectronicFenceConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
-        public AuthenticationRiskNotifier authenticationRiskSmsNotifier(final CasConfigurationProperties casProperties,
-                                                                        @Qualifier("communicationsManager")
-                                                                        final CommunicationsManager communicationsManager) {
+        public AuthenticationRiskNotifier authenticationRiskSmsNotifier(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("communicationsManager")
+            final CommunicationsManager communicationsManager) {
             return new AuthenticationRiskSmsNotifier(casProperties, communicationsManager);
         }
 
@@ -198,6 +172,8 @@ public class ElectronicFenceConfiguration {
     @Configuration(value = "ElectronicFenceCalculatorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class ElectronicFenceCalculatorConfiguration {
+
+        @ConditionalOnProperty(prefix = "cas.authn.adaptive.risk.ip", name = "enabled", havingValue = "true", matchIfMissing = false)
         @ConditionalOnMissingBean(name = "ipAddressAuthenticationRequestRiskCalculator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -209,6 +185,7 @@ public class ElectronicFenceConfiguration {
             return new IpAddressAuthenticationRequestRiskCalculator(casEventRepository, casProperties);
         }
 
+        @ConditionalOnProperty(prefix = "cas.authn.adaptive.risk.agent", name = "enabled", havingValue = "true", matchIfMissing = false)
         @ConditionalOnMissingBean(name = "userAgentAuthenticationRequestRiskCalculator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -224,6 +201,7 @@ public class ElectronicFenceConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
+        @ConditionalOnProperty(prefix = "cas.authn.adaptive.risk.date-time", name = "enabled", havingValue = "true", matchIfMissing = false)
         public AuthenticationRequestRiskCalculator dateTimeAuthenticationRequestRiskCalculator(
             final CasConfigurationProperties casProperties,
             @Qualifier("casEventRepository")
@@ -232,10 +210,10 @@ public class ElectronicFenceConfiguration {
         }
     }
 
-
     @ConditionalOnBean(name = "geoLocationService")
     @Configuration(value = "ElectronicFenceGeoLocationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnProperty(prefix = "cas.authn.adaptive.risk.geo-location", name = "enabled", havingValue = "true", matchIfMissing = false)
     public static class ElectronicFenceGeoLocationConfiguration {
         @ConditionalOnMissingBean(name = "geoLocationAuthenticationRequestRiskCalculator")
         @Bean
@@ -261,8 +239,10 @@ public class ElectronicFenceConfiguration {
             @Qualifier("returnValueResourceResolver")
             final AuditResourceResolver returnValueResourceResolver) {
             return plan -> {
-                plan.registerAuditActionResolver(AuditActionResolvers.ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER, new DefaultAuditActionResolver());
-                plan.registerAuditResourceResolver(AuditResourceResolvers.ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER, returnValueResourceResolver);
+                plan.registerAuditActionResolver(AuditActionResolvers.ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER,
+                    new DefaultAuditActionResolver());
+                plan.registerAuditResourceResolver(AuditResourceResolvers.ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER,
+                    returnValueResourceResolver);
             };
         }
     }

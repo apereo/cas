@@ -23,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @TestPropertySource(properties = {
+    "cas.authn.adaptive.risk.ip.enabled=true",
+
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
 
