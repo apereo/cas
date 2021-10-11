@@ -24,6 +24,8 @@ echo -n "Running Puppeteer tests for Apereo CAS Server: " && printcyan "${casVer
 
 DEBUG_PORT="5000"
 DEBUG_SUSPEND="n"
+DAEMON=""
+BUILDFLAGS=""
 
 while (( "$#" )); do
   case "$1" in
@@ -85,6 +87,8 @@ export SCENARIO="${scenarioName}"
 if [[ "${CI}" == "true" ]]; then
   printgreen "DEBUG flag is turned off while running CI"
   DEBUG=""
+  printgreen "Gradle daemon is turned off while running CI"
+  DAEMON="--no-daemon"
 fi
 
 if [[ "${RERUN}" == "true" ]]; then
@@ -155,7 +159,7 @@ dependencies=$(cat "${config}" | jq -j '.dependencies')
 if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   printgreen "\nBuilding CAS found in $PWD for dependencies [${dependencies}] with flags [${BUILDFLAGS}]"
   ./gradlew :webapp:cas-server-webapp-${project}:build -DskipNestedConfigMetadataGen=true -x check -x javadoc \
-    --no-daemon --build-cache --configure-on-demand --parallel -PcasModules="${dependencies}" -q ${BUILDFLAGS}
+    ${DAEMON} --build-cache --configure-on-demand --parallel -PcasModules="${dependencies}" -q ${BUILDFLAGS}
   if [ $? -eq 1 ]; then
     printred "\nFailed to build CAS web application. Examine the build output."
     exit 1
