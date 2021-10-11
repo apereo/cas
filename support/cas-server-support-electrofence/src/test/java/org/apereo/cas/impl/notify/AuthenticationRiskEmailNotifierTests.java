@@ -27,6 +27,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnabledIfPortOpen(port = 25000)
 @TestPropertySource(properties = {
+    "cas.authn.adaptive.risk.ip.enabled=true",
+
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
 

@@ -15,7 +15,6 @@ import lombok.val;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.springframework.context.ApplicationContext;
@@ -64,10 +63,11 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
     }
 
     private static Object locateSubtypesByReflection(final Function<Class, Object> mapper, final Collector collector,
-                                                     final Class parentType, final Predicate filter, final String packageNamespace) {
+                                                     final Class parentType, final Predicate filter,
+                                                     final String packageNamespace) {
         val reflections = new Reflections(new ConfigurationBuilder()
-            .setUrls(ClasspathHelper.forPackage(packageNamespace))
-            .setScanners(new SubTypesScanner(false)));
+            .setUrls(ClasspathHelper.forPackage(packageNamespace)));
+
         val subTypes = (Set<Class<?>>) reflections.getSubTypesOf(parentType);
         return subTypes.stream()
             .filter(c -> !Modifier.isInterface(c.getModifiers()) && !Modifier.isAbstract(c.getModifiers()) && filter.test(c))
