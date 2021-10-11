@@ -18,7 +18,7 @@ import org.springframework.core.io.ResourceLoader;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -43,24 +43,16 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
 
     /**
      * Adding items to composite property source which contains property sources processed in order, first one wins.
-     * First Priority: Standalone configuration file
-     * Second Priority: Configuration files in config dir, profiles override non-profiles, last profile overrides first
-     * Third Priority: classpath:/application.yml
+     * First Priority: Configuration files in config dir, profiles override non-profiles, last profile overrides first
+     * Second Priority: classpath:/application.yml
      *
      * @param environment    the environment
      * @param resourceLoader the resource loader
      * @return CompositePropertySource containing sources listed above
      */
     @Override
-    public PropertySource<?> locate(final Environment environment, final ResourceLoader resourceLoader) {
+    public Optional<PropertySource<?>> locate(final Environment environment, final ResourceLoader resourceLoader) {
         val compositePropertySource = new CompositePropertySource("casCompositePropertySource");
-
-        val configFile = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile();
-        if (configFile != null) {
-            val sourceStandalone = loadSettingsFromStandaloneConfigFile(configFile);
-            compositePropertySource.addPropertySource(sourceStandalone);
-        }
-
         val config = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
         LOGGER.debug("Located CAS standalone configuration directory at [{}]", config);
         if (config != null && config.isDirectory() && config.exists()) {
@@ -73,14 +65,9 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         val sourceYaml = loadEmbeddedYamlOverriddenProperties(resourceLoader, environment);
         compositePropertySource.addPropertySource(sourceYaml);
 
-        return compositePropertySource;
+        return Optional.of(compositePropertySource);
     }
 
-    private PropertySource<Map<String, Object>> loadSettingsFromStandaloneConfigFile(final File configFile) {
-        return configurationPropertiesLoaderFactory
-            .getLoader(new FileSystemResource(configFile), "standaloneConfigurationFileProperties")
-            .load();
-    }
 
     /**
      * Make a list of files that will be processed in order where the last one processed wins.
@@ -151,7 +138,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     }
 
     private PropertySource<?> loadEmbeddedYamlOverriddenProperties(final ResourceLoader resourceLoader,
-        final Environment environment) {
+                                                                   final Environment environment) {
         val profiles = ConfigurationPropertiesLoaderFactory.getApplicationProfiles(environment);
         val yamlFiles = profiles.stream()
             .map(profile -> String.format("classpath:/application-%s.yml", profile))

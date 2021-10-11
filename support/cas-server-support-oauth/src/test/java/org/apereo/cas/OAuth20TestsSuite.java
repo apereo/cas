@@ -166,7 +166,7 @@ import org.junit.platform.suite.api.Suite;
     OAuth20InvalidAuthorizationResponseBuilderTests.class,
     OAuth20RegisteredServiceJwtAccessTokenCipherExecutorTests.class,
     CSRFCookieTests.class,
-    OAuth20AccessTokenSecurityLogicTests.class,
+    OAuth20AccessTokenSecurityLogicTests.class
 })
 @Suite
 public class OAuth20TestsSuite {

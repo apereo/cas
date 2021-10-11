@@ -4,6 +4,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ResourceLoader;
 
+import java.util.Optional;
+
 /**
  * This is {@link CasConfigurationPropertiesSourceLocator}.
  *
@@ -20,5 +22,5 @@ public interface CasConfigurationPropertiesSourceLocator {
      * @param resourceLoader the resource loader
      * @return the property source
      */
-    PropertySource<?> locate(Environment environment, ResourceLoader resourceLoader);
+    Optional<PropertySource<?>> locate(Environment environment, ResourceLoader resourceLoader);
 }
