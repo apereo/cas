@@ -44,7 +44,7 @@ this behavior, it likely is preferable to turn off the session monitor.
 </p></div>
 
 For more information on the Hazelcast configuration options available,
-refer to [the Hazelcast documentation](https://docs.hazelcast.com/imdg/4.2/)
+refer to [the Hazelcast documentation](https://docs.hazelcast.com/imdg/latest/)
 
 ## Logging
 
