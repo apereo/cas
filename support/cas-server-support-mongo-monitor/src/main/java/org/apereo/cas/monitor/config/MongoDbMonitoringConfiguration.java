@@ -46,9 +46,10 @@ public class MongoDbMonitoringConfiguration {
     @ConditionalOnEnabledHealthIndicator("mongoHealthIndicator")
     @ConditionalOnMissingBean(name = "mongoHealthIndicator")
     @Autowired
-    public HealthIndicator mongoHealthIndicator(final CasConfigurationProperties casProperties,
-                                                @Qualifier("mongoHealthIndicatorTemplate")
-                                                final MongoTemplate mongoHealthIndicatorTemplate) {
+    public HealthIndicator mongoHealthIndicator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("mongoHealthIndicatorTemplate")
+        final MongoTemplate mongoHealthIndicatorTemplate) {
         val warn = casProperties.getMonitor().getWarn();
         return new MongoDbHealthIndicator(mongoHealthIndicatorTemplate, warn.getEvictionThreshold(), warn.getThreshold());
     }

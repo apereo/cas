@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 public class MongoDbHealthIndicator extends AbstractCacheHealthIndicator {
-    private final transient MongoTemplate mongoTemplate;
+    private final MongoTemplate mongoTemplate;
 
     public MongoDbHealthIndicator(final MongoTemplate mongoTemplate,
                                   final long evictionThreshold, final long threshold) {
