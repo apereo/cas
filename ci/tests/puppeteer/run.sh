@@ -158,8 +158,12 @@ dependencies=$(cat "${config}" | jq -j '.dependencies')
 
 if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   printgreen "\nBuilding CAS found in $PWD for dependencies [${dependencies}] with flags [${BUILDFLAGS}]"
-  ./gradlew :webapp:cas-server-webapp-${project}:build -DskipNestedConfigMetadataGen=true -x check -x javadoc \
-    ${DAEMON} --build-cache --configure-on-demand --parallel -PcasModules="${dependencies}" -q ${BUILDFLAGS}
+
+  ./gradlew :webapp:cas-server-webapp-${project}:build \
+    -DskipNestedConfigMetadataGen=true -x check -x javadoc \
+    ${DAEMON} --build-cache --configure-on-demand --parallel \
+    -PcasModules="${dependencies}" -q ${BUILDFLAGS}
+
   if [ $? -eq 1 ]; then
     printred "\nFailed to build CAS web application. Examine the build output."
     exit 1
