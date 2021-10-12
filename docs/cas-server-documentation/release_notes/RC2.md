@@ -84,4 +84,8 @@ approximately `180` test scenarios and we'll continue to add more in the coming 
             
 - Pac4j
 - Lombok
+- Okta SDK
+- Hibernate
+- Bootstrap
 - Spring Boot
+- Amazon SDK
