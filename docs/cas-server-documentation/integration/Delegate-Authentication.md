@@ -124,6 +124,10 @@ Please [see this guide](Delegate-Authentication-AuthenticationPolicy.html).
 
 Please [see this guide](Delegate-Authentication-Provisioning.html).
 
+## Post Processing
+
+Please [see this guide](Delegate-Authentication-PostProcessing.html).
+
 ## Session Replication
                 
 For the current active session, the selected identity provider, the relying party
