@@ -59,6 +59,37 @@ public class IgniteTicketRegistryConfiguration {
         }).collect(Collectors.toSet());
     }
 
+    protected static SslContextFactory buildSecureTransportForIgniteConfiguration(final CasConfigurationProperties casProperties) {
+        val properties = casProperties.getTicket().getRegistry().getIgnite();
+        val nullKey = "NULL";
+        if (StringUtils.hasText(properties.getKeyStoreFilePath()) && StringUtils.hasText(properties.getKeyStorePassword())
+            && StringUtils.hasText(properties.getTrustStoreFilePath()) && StringUtils.hasText(properties.getTrustStorePassword())) {
+            val sslContextFactory = new SslContextFactory();
+            sslContextFactory.setKeyStoreFilePath(properties.getKeyStoreFilePath());
+            sslContextFactory.setKeyStorePassword(properties.getKeyStorePassword().toCharArray());
+            if (nullKey.equals(properties.getTrustStoreFilePath()) && nullKey.equals(properties.getTrustStorePassword())) {
+                sslContextFactory.setTrustManagers(SslContextFactory.getDisabledTrustManager());
+            } else {
+                sslContextFactory.setTrustStoreFilePath(properties.getTrustStoreFilePath());
+                sslContextFactory.setTrustStorePassword(properties.getTrustStorePassword().toCharArray());
+            }
+            if (org.apache.commons.lang3.StringUtils.isNotBlank(properties.getKeyAlgorithm())) {
+                sslContextFactory.setKeyAlgorithm(properties.getKeyAlgorithm());
+            }
+            if (org.apache.commons.lang3.StringUtils.isNotBlank(properties.getProtocol())) {
+                sslContextFactory.setProtocol(properties.getProtocol());
+            }
+            if (org.apache.commons.lang3.StringUtils.isNotBlank(properties.getTrustStoreType())) {
+                sslContextFactory.setTrustStoreType(properties.getTrustStoreType());
+            }
+            if (org.apache.commons.lang3.StringUtils.isNotBlank(properties.getKeyStoreType())) {
+                sslContextFactory.setKeyStoreType(properties.getKeyStoreType());
+            }
+            return sslContextFactory;
+        }
+        return null;
+    }
+
     @Autowired
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
@@ -115,36 +146,5 @@ public class IgniteTicketRegistryConfiguration {
         r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(igniteProperties.getCrypto(), "ignite"));
         r.initialize();
         return r;
-    }
-
-    protected SslContextFactory buildSecureTransportForIgniteConfiguration() {
-        val properties = casProperties.getTicket().getRegistry().getIgnite();
-        val nullKey = "NULL";
-        if (StringUtils.hasText(properties.getKeyStoreFilePath()) && StringUtils.hasText(properties.getKeyStorePassword())
-            && StringUtils.hasText(properties.getTrustStoreFilePath()) && StringUtils.hasText(properties.getTrustStorePassword())) {
-            val sslContextFactory = new SslContextFactory();
-            sslContextFactory.setKeyStoreFilePath(properties.getKeyStoreFilePath());
-            sslContextFactory.setKeyStorePassword(properties.getKeyStorePassword().toCharArray());
-            if (nullKey.equals(properties.getTrustStoreFilePath()) && nullKey.equals(properties.getTrustStorePassword())) {
-                sslContextFactory.setTrustManagers(SslContextFactory.getDisabledTrustManager());
-            } else {
-                sslContextFactory.setTrustStoreFilePath(properties.getTrustStoreFilePath());
-                sslContextFactory.setTrustStorePassword(properties.getTrustStorePassword().toCharArray());
-            }
-            if (org.apache.commons.lang3.StringUtils.isNotBlank(properties.getKeyAlgorithm())) {
-                sslContextFactory.setKeyAlgorithm(properties.getKeyAlgorithm());
-            }
-            if (org.apache.commons.lang3.StringUtils.isNotBlank(properties.getProtocol())) {
-                sslContextFactory.setProtocol(properties.getProtocol());
-            }
-            if (org.apache.commons.lang3.StringUtils.isNotBlank(properties.getTrustStoreType())) {
-                sslContextFactory.setTrustStoreType(properties.getTrustStoreType());
-            }
-            if (org.apache.commons.lang3.StringUtils.isNotBlank(properties.getKeyStoreType())) {
-                sslContextFactory.setKeyStoreType(properties.getKeyStoreType());
-            }
-            return sslContextFactory;
-        }
-        return null;
     }
 }
