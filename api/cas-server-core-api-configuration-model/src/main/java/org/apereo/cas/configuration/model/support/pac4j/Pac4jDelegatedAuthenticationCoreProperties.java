@@ -72,6 +72,14 @@ public class Pac4jDelegatedAuthenticationCoreProperties implements Serializable 
     private SpringResourceProperties groovyRedirectionStrategy = new SpringResourceProperties();
 
     /**
+     * Path to a groovy script to post-process identity providers
+     * before they are presented to the user.
+     */
+    @NestedConfigurationProperty
+    private SpringResourceProperties groovyProviderPostProcessor = new SpringResourceProperties();
+
+
+    /**
      * Discovery selection settings.
      */
     @NestedConfigurationProperty

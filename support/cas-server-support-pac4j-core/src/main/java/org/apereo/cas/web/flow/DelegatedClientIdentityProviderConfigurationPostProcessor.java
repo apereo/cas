@@ -2,8 +2,11 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Set;
 
 /**
@@ -12,7 +15,8 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-public interface DelegatedClientIdentityProviderConfigurationPostProcessor {
+@FunctionalInterface
+public interface DelegatedClientIdentityProviderConfigurationPostProcessor extends Closeable, DisposableBean {
 
     /**
      * No op.
@@ -22,6 +26,15 @@ public interface DelegatedClientIdentityProviderConfigurationPostProcessor {
     static DelegatedClientIdentityProviderConfigurationPostProcessor noOp() {
         return (context, providers) -> {
         };
+    }
+
+    @Override
+    default void close() throws IOException {
+    }
+
+    @Override
+    default void destroy() throws Exception {
+        close();
     }
 
     /**

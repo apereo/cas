@@ -32,6 +32,7 @@ import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowManager;
+import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationGroovyPostProcessor;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationPostProcessor;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -74,7 +75,7 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "delegatedAuthenticationWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "DelegatedAuthenticationWebflowConfiguration", proxyBeanMethods = false)
 public class DelegatedAuthenticationWebflowConfiguration {
 
     private static DelegatedAuthenticationAccessStrategyHelper getDelegatedAuthenticationAccessStrategyHelper(
@@ -155,8 +156,15 @@ public class DelegatedAuthenticationWebflowConfiguration {
     public static class DelegatedAuthenticationWebflowClientConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "delegatedClientIdentityProviderConfigurationPostProcessor")
-        public DelegatedClientIdentityProviderConfigurationPostProcessor delegatedClientIdentityProviderConfigurationPostProcessor() {
-            return DelegatedClientIdentityProviderConfigurationPostProcessor.noOp();
+        @RefreshScope
+        public DelegatedClientIdentityProviderConfigurationPostProcessor delegatedClientIdentityProviderConfigurationPostProcessor(
+            final CasConfigurationProperties casProperties) {
+            val resource = casProperties.getAuthn().getPac4j().getCore().getGroovyProviderPostProcessor().getLocation();
+            if (resource == null) {
+                return DelegatedClientIdentityProviderConfigurationPostProcessor.noOp();
+            }
+            return new DelegatedClientIdentityProviderConfigurationGroovyPostProcessor(
+                new WatchableGroovyScriptResource(resource));
         }
 
         @Bean
@@ -312,7 +320,8 @@ public class DelegatedAuthenticationWebflowConfiguration {
             final ObjectProvider<List<DelegatedClientAuthenticationRequestCustomizer>> delegatedClientAuthenticationRequestCustomizers) {
 
             val helper = getDelegatedAuthenticationAccessStrategyHelper(servicesManager, registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer);
-            val customizers = Optional.ofNullable(delegatedClientAuthenticationRequestCustomizers.getIfAvailable()).orElse(new ArrayList<>());
+            val customizers = Optional.ofNullable(delegatedClientAuthenticationRequestCustomizers.getIfAvailable())
+                .orElse(new ArrayList<>());
 
             return DelegatedClientAuthenticationConfigurationContext.builder()
                 .initialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver)
