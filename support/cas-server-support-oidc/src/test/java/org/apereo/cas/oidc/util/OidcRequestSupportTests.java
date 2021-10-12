@@ -154,7 +154,7 @@ public class OidcRequestSupportTests {
         assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("authorize"), "authorize"));
         assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("profile"), "profile"));
         assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("logout"), "logout"));
-        assertFalse(support.isValidIssuerForEndpoint(getContextForEndpoint("/realms/authorize"), "authorize"));
+        assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("realms/authorize"), "authorize"));
     }
 
     @Test
@@ -168,5 +168,25 @@ public class OidcRequestSupportTests {
         assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("custom/fawnoos/issuer/profile"), "profile"));
         assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("custom/fawnoos/issuer/oidcAuthorize"), "oidcAuthorize"));
         assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("custom/fawnoos/issuer"), "unknown"));
+    }
+
+    @Test
+    public void validateDynamicIssuerForLogout() {
+        val issuerService = mock(OidcIssuerService.class);
+        val staticIssuer = "https://sso.example.org:8443/cas/oidc";
+        when(issuerService.determineIssuer(any())).thenReturn(staticIssuer);
+        val support = new OidcRequestSupport(mock(CasCookieBuilder.class),
+            mock(TicketRegistrySupport.class), issuerService);
+        assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("logout"), "oidcLogout"));
+    }
+
+    @Test
+    public void validateIssuerMismatch() {
+        val issuerService = mock(OidcIssuerService.class);
+        val staticIssuer = "https://sso.example.org:8443/cas/openid-connect";
+        when(issuerService.determineIssuer(any())).thenReturn(staticIssuer);
+        val support = new OidcRequestSupport(mock(CasCookieBuilder.class),
+            mock(TicketRegistrySupport.class), issuerService);
+        assertFalse(support.isValidIssuerForEndpoint(getContextForEndpoint("logout"), "oidcLogout"));
     }
 }
