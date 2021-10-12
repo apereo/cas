@@ -22,6 +22,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.monitor.config.MongoDbMonitoringConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
@@ -73,12 +74,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class
 },
     properties = {
-        "cas.monitor.mongo.user-id=root",
-        "cas.monitor.mongo.password=secret",
-        "cas.monitor.mongo.host=localhost",
-        "cas.monitor.mongo.port=27017",
-        "cas.monitor.mongo.authentication-database-name=admin",
-        "cas.monitor.mongo.database-name=monitor"
+        "cas.monitor.mongo[0].user-id=root",
+        "cas.monitor.mongo[0].password=secret",
+        "cas.monitor.mongo[0].host=localhost",
+        "cas.monitor.mongo[0].port=27017",
+        "cas.monitor.mongo[0].authentication-database-name=admin",
+        "cas.monitor.mongo[0].database-name=monitor"
     })
 @EnabledIfPortOpen(port = 27017)
 @SuppressWarnings("JavaUtilDate")
@@ -89,10 +90,11 @@ public class MongoDbHealthIndicatorTests {
 
     @Autowired
     @Qualifier("mongoHealthIndicatorTemplate")
-    private MongoTemplate template;
+    private BeanContainer<MongoTemplate> mongoHealthIndicatorTemplate;
 
     @BeforeEach
     public void bootstrap() {
+        val template = mongoHealthIndicatorTemplate.first();
         template.save(new AuditActionContext("casuser", "resource",
             "action", "appcode", new Date(), "clientIp",
             "serverIp"), "monitor");
@@ -102,7 +104,7 @@ public class MongoDbHealthIndicatorTests {
     public void verifyMonitor() {
         val health = mongoHealthIndicator.health();
         assertEquals(Status.UP, health.getStatus());
-        val details = health.getDetails();
+        val details = (Map) health.getDetails().get(MongoDbHealthIndicator.class.getSimpleName() + "-monitor");
         assertTrue(details.containsKey("name"));
 
         details.values().forEach(value -> {

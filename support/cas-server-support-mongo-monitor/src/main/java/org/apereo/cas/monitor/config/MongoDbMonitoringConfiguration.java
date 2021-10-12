@@ -3,7 +3,9 @@ package org.apereo.cas.monitor.config;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
+import org.apereo.cas.monitor.CompositeHealthIndicator;
 import org.apereo.cas.monitor.MongoDbHealthIndicator;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.mongodb.core.MongoTemplate;
+
+import java.util.stream.Collectors;
 
 /**
  * This is {@link MongoDbMonitoringConfiguration}.
@@ -32,13 +36,17 @@ public class MongoDbMonitoringConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "mongoHealthIndicatorTemplate")
     @Autowired
-    public MongoTemplate mongoHealthIndicatorTemplate(
+    public BeanContainer<MongoTemplate> mongoHealthIndicatorTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier("casSslContext")
         final CasSSLContext casSslContext) {
-        val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
-        val mongoProps = casProperties.getMonitor().getMongo();
-        return factory.buildMongoTemplate(mongoProps);
+        return BeanContainer.of(casProperties.getMonitor().getMongo()
+            .stream()
+            .map(mongoProps -> {
+                val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
+                return factory.buildMongoTemplate(mongoProps);
+            })
+            .collect(Collectors.toList()));
     }
 
     @Bean
@@ -49,8 +57,13 @@ public class MongoDbMonitoringConfiguration {
     public HealthIndicator mongoHealthIndicator(
         final CasConfigurationProperties casProperties,
         @Qualifier("mongoHealthIndicatorTemplate")
-        final MongoTemplate mongoHealthIndicatorTemplate) {
+        final BeanContainer<MongoTemplate> mongoHealthIndicatorTemplate) {
+
         val warn = casProperties.getMonitor().getWarn();
-        return new MongoDbHealthIndicator(mongoHealthIndicatorTemplate, warn.getEvictionThreshold(), warn.getThreshold());
+        val results = mongoHealthIndicatorTemplate.toList()
+            .stream()
+            .map(template -> new MongoDbHealthIndicator(template, warn.getEvictionThreshold(), warn.getThreshold()))
+            .collect(Collectors.toList());
+        return new CompositeHealthIndicator(results);
     }
 }

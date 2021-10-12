@@ -17,7 +17,8 @@ public class MongoDbHealthIndicator extends AbstractCacheHealthIndicator {
     private final MongoTemplate mongoTemplate;
 
     public MongoDbHealthIndicator(final MongoTemplate mongoTemplate,
-                                  final long evictionThreshold, final long threshold) {
+                                  final long evictionThreshold,
+                                  final long threshold) {
         super(evictionThreshold, threshold);
         this.mongoTemplate = mongoTemplate;
     }
@@ -34,5 +35,11 @@ public class MongoDbHealthIndicator extends AbstractCacheHealthIndicator {
             .collect(Collectors.toList());
 
         return list.toArray(CacheStatistics[]::new);
+    }
+
+    @Override
+    protected String getName() {
+        val dbName = mongoTemplate.getMongoDatabaseFactory().getMongoDatabase().getName();
+        return super.getName() + '-' + dbName;
     }
 }

@@ -64,7 +64,7 @@ mvn --quiet -f "$PWD"/ci/tests/oidc-conformance/conformance-suite/pom.xml clean 
 
 echo -e "Launching MongoDb instance..."
 docker container stop $(docker container ls -aq) && docker container rm $(docker container ls -aq)
-docker run --rm -d -p 27017:27017 --name="mongodb-server" mongo:4.4.3
+docker run --rm -d -p 27017:27017 --name="mongodb-server" mongo:4.4.8
 
 echo -e "\nWaiting for OIDC conformance test suite"
 java -jar "$PWD"/ci/tests/oidc-conformance/conformance-suite/target/fapi-test-suite.jar \
