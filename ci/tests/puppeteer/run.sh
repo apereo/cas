@@ -53,10 +53,6 @@ while (( "$#" )); do
     REBUILD="true"
     shift 1
     ;;
-  --buildflags)
-    BUILDFLAGS="$2"
-    shift 2
-    ;;
   --headless)
     export HEADLESS="true"
     shift 1;
@@ -66,8 +62,8 @@ while (( "$#" )); do
     shift 1;
     ;;
   *)
-    printred "Unknown flag: $1"
-    exit 1
+    BUILDFLAGS="${BUILDFLAGS} $1"
+    shift 1;
     ;;
   esac
 done
