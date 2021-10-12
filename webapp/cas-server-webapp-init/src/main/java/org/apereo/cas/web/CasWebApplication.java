@@ -11,7 +11,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,7 +30,7 @@ import java.time.Instant;
  * @since 5.0.0
  */
 @EnableDiscoveryClient
-@SpringBootApplication(exclude = DataSourceAutoConfiguration.class, proxyBeanMethods = false)
+@SpringBootApplication(proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync
 @EnableAspectJAutoProxy

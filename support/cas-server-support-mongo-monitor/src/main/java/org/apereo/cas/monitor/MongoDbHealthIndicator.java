@@ -4,7 +4,6 @@ import lombok.val;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -25,10 +24,10 @@ public class MongoDbHealthIndicator extends AbstractCacheHealthIndicator {
 
     @Override
     protected CacheStatistics[] getStatistics() {
-        final List<CacheStatistics> list = mongoTemplate.getCollectionNames()
+        val list = mongoTemplate.getCollectionNames()
             .stream()
             .map(c -> {
-                val db = this.mongoTemplate.getMongoDbFactory().getMongoDatabase();
+                val db = mongoTemplate.getMongoDatabaseFactory().getMongoDatabase();
                 val stats = db.runCommand(new Document("collStats", c));
                 return new MongoDbCacheStatistics(stats, c);
             })
