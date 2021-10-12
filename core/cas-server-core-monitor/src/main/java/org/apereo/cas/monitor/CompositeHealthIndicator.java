@@ -19,14 +19,14 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 public class CompositeHealthIndicator extends AbstractHealthIndicator {
-    private final List<HealthIndicator> healthIndicators;
+    private final List<? extends HealthIndicator> healthIndicators;
 
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
         val aggregatedStatus = new ArrayList<Status>();
         healthIndicators.forEach(indicator -> {
             val health = indicator.getHealth(true);
-            val name = indicator.getClass().getSimpleName();
+            val name = (String) health.getDetails().getOrDefault("name", indicator.getClass().getSimpleName());
             val details = new LinkedHashMap<>(health.getDetails());
             details.putIfAbsent("status", health.getStatus());
             builder.withDetail(name, details);

@@ -89,9 +89,21 @@ public interface BeanContainer<T> {
      */
     int size();
 
+    /**
+     * First entry in the container.
+     *
+     * @return the entry
+     */
+    T first();
+
     @RequiredArgsConstructor
     class ListBeanContainer<T> implements BeanContainer<T> {
         private final List<T> items;
+
+        @Override
+        public T first() {
+            return items.get(0);
+        }
 
         @Override
         public List<T> toList() {

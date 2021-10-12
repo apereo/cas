@@ -18,13 +18,17 @@ const cas = require('../../cas.js');
             assert(res.data.components.mongo.status !== null);
             assert(res.data.components.mongo.details !== null);
 
-            let details = res.data.components.mongo.details;
-            assert(details.name === "MongoDbHealthIndicator");
+            let details = res.data.components.mongo.details["MongoDbHealthIndicator-ticket-registry"]
+            assert(details.name === "MongoDbHealthIndicator-ticket-registry");
             assert(details.proxyGrantingTicketsCache !== null);
             assert(details.ticketGrantingTicketsCache !== null);
             assert(details.proxyTicketsCache !== null);
             assert(details.serviceTicketsCache !== null);
-            assert(details.transientSessionTicketsCache !== null);
+            assert(details.transientSessionTicketsCache !== null)
+
+            details = res.data.components.mongo.details["MongoDbHealthIndicator-service-registry"]
+            assert(details.name === "MongoDbHealthIndicator-service-registry");
+
         }, function (error) {
             throw error;
         }, { 'Content-Type': "application/json" })
