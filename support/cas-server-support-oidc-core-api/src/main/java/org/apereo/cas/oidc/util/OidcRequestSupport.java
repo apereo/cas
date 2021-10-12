@@ -41,24 +41,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class OidcRequestSupport {
-    private static final String PATTERN_VALID_ISSUER_ENDPOINTS = String.join("|",
-        OidcConstants.LOGOUT_URL,
-        OidcConstants.JWKS_URL,
-        OidcConstants.ACCESS_TOKEN_URL,
-        OidcConstants.TOKEN_URL,
-        OidcConstants.PROFILE_URL,
-        OidcConstants.AUTHORIZE_URL,
-        OidcConstants.INTROSPECTION_URL,
-        OidcConstants.CLIENT_CONFIGURATION_URL,
-        OidcConstants.REVOCATION_URL,
-        OidcConstants.REGISTRATION_URL,
-        OAuth20Constants.ACCESS_TOKEN_URL,
-        OAuth20Constants.TOKEN_URL,
-        OAuth20Constants.AUTHORIZE_URL,
-        OAuth20Constants.INTROSPECTION_URL,
-        OAuth20Constants.PROFILE_URL,
-        OAuth20Constants.REVOCATION_URL);
-
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     private final TicketRegistrySupport ticketRegistrySupport;
@@ -259,17 +241,13 @@ public class OidcRequestSupport {
      */
     public boolean isValidIssuerForEndpoint(final JEEContext webContext, final String endpoint) {
         val requestUrl = webContext.getNativeRequest().getRequestURL().toString();
-        val issuer = StringUtils.removeEnd(StringUtils.remove(requestUrl, '/' + endpoint), "/");
-        val definedIssuer = this.oidcIssuerService.determineIssuer(Optional.empty());
+        val issuerFromRequestUrl = StringUtils.removeEnd(StringUtils.remove(requestUrl, '/' + endpoint), "/");
+        val definedIssuer = oidcIssuerService.determineIssuer(Optional.empty());
 
-        val issuerPattern = StringUtils.appendIfMissing(definedIssuer, "/")
-            .concat("(")
-            .concat(PATTERN_VALID_ISSUER_ENDPOINTS)
-            .concat(")");
-        val result = definedIssuer.equalsIgnoreCase(issuer) || issuer.matches(issuerPattern);
-        FunctionUtils.doIf(!result,
-                o -> LOGGER.trace("Issuer [{}] defined in CAS configuration does not match the request issuer [{}]", o, issuer))
-            .accept(definedIssuer);
+        val definedIssuerWithSlash = StringUtils.appendIfMissing(definedIssuer, "/");
+        val result = definedIssuer.equalsIgnoreCase(issuerFromRequestUrl) || issuerFromRequestUrl.startsWith(definedIssuerWithSlash);
+        FunctionUtils.doIf(!result, o -> LOGGER.trace("Configured issuer [{}] defined does not match the request issuer [{}]",
+            o, issuerFromRequestUrl)).accept(definedIssuer);
         return result;
     }
 }
