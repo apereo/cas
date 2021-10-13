@@ -41,6 +41,7 @@ public class OidcAuthorizeEndpointControllerTests extends AbstractOidcTests {
     @Test
     public void verifyBadEndpointRequest() throws Exception {
         val request = getHttpRequestForEndpoint("unknown/issuer");
+        request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
         val mv = oidcAuthorizeEndpointController.handleRequest(request, response);
         assertEquals(HttpStatus.NOT_FOUND, mv.getStatus());
