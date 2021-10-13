@@ -68,7 +68,7 @@ must be passed and injected dynamically. This has led to a significant cleanup e
 ensure all field injections are removed and all circular dependencies and injections are re-adjusted.
                                         
 Given the number of variations and combinations across modules, it's quite likely that there will be accidental 
-mishaps and misconfigurations at runtime to cause circular dependencies. Additional test scenarios and scripts will continuously
+mishaps and misconfigurations at runtime leading to circular dependencies issues. Additional test scenarios and scripts will continuously
 be added to ensure validity of as many combinations as possible.
 
 ### Testing Strategy
@@ -79,6 +79,7 @@ approximately `180` test scenarios and we'll continue to add more in the coming 
 ## Other Stuff
      
 - Delegated identity providers are now allowed to go through a [post-processing phase](../integration/Delegate-Authentication-PostProcessing.html).
+- Configuration schema is now updated to support multiple MongoDb instances for monitoring and health indication. 
 
 ## Library Upgrades
             
