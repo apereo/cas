@@ -28,6 +28,7 @@ import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactoryCustomi
 import org.apereo.cas.support.pac4j.authentication.RestfulDelegatedClientFactory;
 import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationHandler;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
@@ -45,6 +46,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -56,6 +58,8 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link Pac4jAuthenticationEventExecutionPlanConfiguration}.
@@ -118,14 +122,12 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @Configuration(value = "Pac4jAuthenticationEventExecutionPlanMetadataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class Pac4jAuthenticationEventExecutionPlanMetadataConfiguration {
-
         @ConditionalOnMissingBean(name = "clientAuthenticationMetaDataPopulator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationMetaDataPopulator clientAuthenticationMetaDataPopulator() {
             return new ClientAuthenticationMetaDataPopulator();
         }
-
     }
 
     @Configuration(value = "Pac4jAuthenticationEventExecutionPlanHandlerConfiguration", proxyBeanMethods = false)
@@ -158,29 +160,47 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
 
     }
 
+    @Configuration(value = "Pac4jAuthenticationEventExecutionPlanProvisionerConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class Pac4jAuthenticationEventExecutionPlanProvisionerConfiguration {
+        @Bean
+        @Autowired
+        @ConditionalOnProperty(name = "cas.authn.pac4j.provisioning.groovy.location")
+        @ConditionalOnMissingBean(name = "groovyDelegatedClientUserProfileProvisioner")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Supplier<DelegatedClientUserProfileProvisioner> groovyDelegatedClientUserProfileProvisioner(
+            final CasConfigurationProperties casProperties) {
+            val provisioning = casProperties.getAuthn().getPac4j().getProvisioning();
+            val script = provisioning.getGroovy().getLocation();
+            return () -> new GroovyDelegatedClientUserProfileProvisioner(script);
+        }
+
+        @Bean
+        @Autowired
+        @ConditionalOnProperty(name = "cas.authn.pac4j.provisioning.rest.url")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "restDelegatedClientUserProfileProvisioner")
+        public Supplier<DelegatedClientUserProfileProvisioner> restDelegatedClientUserProfileProvisioner(
+            final CasConfigurationProperties casProperties) {
+            val provisioning = casProperties.getAuthn().getPac4j().getProvisioning();
+            return () -> new RestfulDelegatedClientUserProfileProvisioner(provisioning.getRest());
+        }
+    }
+
     @Configuration(value = "Pac4jAuthenticationEventExecutionPlanProvisionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class Pac4jAuthenticationEventExecutionPlanProvisionConfiguration {
+
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "clientUserProfileProvisioner")
         @Autowired
-        public DelegatedClientUserProfileProvisioner clientUserProfileProvisioner(final CasConfigurationProperties casProperties) {
-            val provisioning = casProperties.getAuthn().getPac4j().getProvisioning();
-            val chain = new ChainingDelegatedClientUserProfileProvisioner();
-            val script = provisioning.getGroovy().getLocation();
-            if (script != null) {
-                chain.addProvisioner(new GroovyDelegatedClientUserProfileProvisioner(script));
-            }
-            if (StringUtils.isNotBlank(provisioning.getRest().getUrl())) {
-                chain.addProvisioner(new RestfulDelegatedClientUserProfileProvisioner(provisioning.getRest()));
-            }
-            if (chain.isEmpty()) {
-                return DelegatedClientUserProfileProvisioner.noOp();
-            }
-            return chain;
+        public DelegatedClientUserProfileProvisioner clientUserProfileProvisioner(
+            final ObjectProvider<List<Supplier<DelegatedClientUserProfileProvisioner>>> provisioners) {
+            val results = provisioners.getIfAvailable(() -> CollectionUtils.wrapList(DelegatedClientUserProfileProvisioner::noOp))
+                .stream().map(Supplier::get).collect(Collectors.toList());
+            return new ChainingDelegatedClientUserProfileProvisioner(results);
         }
-
     }
 
     @Configuration(value = "Pac4jAuthenticationEventExecutionPlanClientFactoryConfiguration", proxyBeanMethods = false)
@@ -222,7 +242,6 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                                     final DelegatedClientFactory pac4jDelegatedClientFactory) {
             return new RefreshableDelegatedClients(casProperties.getServer().getLoginUrl(), pac4jDelegatedClientFactory);
         }
-
     }
 
     @Configuration(value = "Pac4jAuthenticationEventExecutionPlanAuditConfiguration", proxyBeanMethods = false)
@@ -240,7 +259,6 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @Configuration(value = "Pac4jAuthenticationEventExecutionPlanAuditPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class Pac4jAuthenticationEventExecutionPlanAuditPlanConfiguration {
-
 
         @Bean
         @ConditionalOnMissingBean(name = "delegatedAuthenticationAuditTrailRecordResolutionPlanConfigurer")
